@@ -1,0 +1,6 @@
+## Build generated
+build/
+DerivedData
+
+##Cocoapods
+/Pods
