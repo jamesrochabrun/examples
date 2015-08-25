@@ -11,6 +11,8 @@
 NSString *const kFontIcons = @"icons";
 NSString *const kFontSFTextRegular = @"SFUIText-Regular";
 NSString *const kFontSFTextLight = @"SFUIText-Light";
+NSString *const kFontLatoThin = @"Lato-Thin";
+NSString *const kFontLatoRegular = @"Lato-Regular";
 
 NSString *const kFontIconExplore = @"a";
 NSString *const kFontIconMeet = @"b";

@@ -163,7 +163,7 @@
     if (token) {
         self.view.alpha = 1;
 
-//        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     }
 }
 
@@ -231,8 +231,11 @@
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email" parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
-             
-             FBSDKProfile *fbProfile = [FBSDKProfile currentProfile];
+             //profile photo link
+             //10152388406186153/picture?type=large
+             //fields
+             //me?fields=first_name,age_range,last_name,id,gender,email
+
              NSLog(@"fetched user:%@", result);
          }
      }];

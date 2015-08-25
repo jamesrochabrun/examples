@@ -29,13 +29,13 @@
     
     for (int i=0; i<7;i++) {
         l = [[UILabel alloc] initWithFrame:CGRectMake(20, 70+i*20, width(self.view), 20)];
-        [l withFont:[UIFont fontWithName:kFontSFTextRegular size:fontSize+i] textColor:kColorWhite backgroundColor:kColorBlack];
+        [l withFont:[UIFont fontWithName:kFontLatoRegular size:fontSize+i] textColor:kColorWhite backgroundColor:kColorBlack];
         l.text = [NSString stringWithFormat:@"Oomami...font size %ld, %@", fontSize+i, l.font.fontName] ;
         [self.view addSubview:l];
     }
     
-    l = [[UILabel alloc] initWithFrame:CGRectMake(20, 40+9*20, width(self.view), 20)];
-    l.font = [UIFont fontWithName:kFontIcons size:15];
+    l = [[UILabel alloc] initWithFrame:CGRectMake(kGeomSpaceIcon, 40+9*20, width(self.view), 45)];
+    l.font = [UIFont fontWithName:kFontIcons size:45];
     l.backgroundColor = UIColorRGBA(kColorBlack);
     l.textColor = UIColorRGBA(kColorWhite);
     l.text = [NSString stringWithFormat:@"abcdefghi"] ;
