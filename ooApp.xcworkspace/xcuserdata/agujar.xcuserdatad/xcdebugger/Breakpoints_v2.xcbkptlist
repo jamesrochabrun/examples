@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ooApp/LoginVC.m"
-            timestampString = "461982757.948742"
+            timestampString = "462296016.758832"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "192"
-            endingLineNumber = "192"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
             landmarkName = "-loginThroughFacebook:"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ooApp/LoginVC.m"
-            timestampString = "461982757.948742"
+            timestampString = "462296016.758832"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
             landmarkName = "-loginThroughFacebook:"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ooApp/LoginVC.m"
-            timestampString = "461982757.948742"
+            timestampString = "462296016.758832"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
             landmarkName = "-loginThroughFacebook:"
             landmarkType = "5">
             <Locations>
@@ -90,11 +90,11 @@
                   moduleName = "Oomami"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/agujar/Projects/Oomami/ooApp/ooApp/LoginVC.m"
-                  timestampString = "462160462.224478"
+                  timestampString = "462384762.610309"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "183"
-                  endingLineNumber = "183"
+                  startingLineNumber = "187"
+                  endingLineNumber = "187"
                   offsetFromSymbolStart = "114">
                </Location>
                <Location
@@ -105,11 +105,11 @@
                   moduleName = "Oomami"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/agujar/Projects/Oomami/ooApp/ooApp/LoginVC.m"
-                  timestampString = "462160462.2247"
+                  timestampString = "462384762.610478"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "183"
-                  endingLineNumber = "183"
+                  startingLineNumber = "187"
+                  endingLineNumber = "187"
                   offsetFromSymbolStart = "67">
                </Location>
             </Locations>

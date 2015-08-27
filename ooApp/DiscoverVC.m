@@ -1,28 +1,43 @@
 //
-//  FirstViewController.m
+//  DiscoverVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "FirstViewController.h"
+#import "DiscoverVC.h"
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
+#import "SWRevealViewController.h"
 
-@interface FirstViewController ()
+@interface DiscoverVC ()
 
 @property (nonatomic, strong) NSArray *restaurants;
 
+
 @end
 
-@implementation FirstViewController
+@implementation DiscoverVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.view.backgroundColor = UIColorRGBA(kColorBlack);
+    
+    SWRevealViewController *revealViewController = self.revealViewController;
+    if (revealViewController) {
+        [_menu setTitle:kFontIconExplore];
+        [_menu setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                       [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
+                                       [UIColor whiteColor], NSForegroundColorAttributeName,
+                                       nil] forState:UIControlStateNormal];
+        [_menu setTarget: self.revealViewController];
+        [_menu setAction: @selector(revealToggle:)];
+        [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
+    }
+    
         
     UILabel *l;
     NSInteger fontSize = 9;

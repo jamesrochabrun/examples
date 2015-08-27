@@ -1,5 +1,5 @@
 //
-//  SecondViewController.h
+//  DiscoverVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SecondViewController : UIViewController
+@interface DiscoverVC : UIViewController
 
+@property (nonatomic, weak) IBOutlet UIBarButtonItem *menu;
 
 @end
 

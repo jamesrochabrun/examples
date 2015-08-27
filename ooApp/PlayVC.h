@@ -1,5 +1,5 @@
 //
-//  FirstViewController.h
+//  PlayVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FirstViewController : UIViewController
+@interface PlayVC : UIViewController
 
 
 @end

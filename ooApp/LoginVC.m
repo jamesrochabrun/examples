@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UITextField *password;
 @property (nonatomic, strong) UIButton *forgotPassword;
 @property (nonatomic, strong) UIImageView *logo;
+
 @end
 
 @implementation LoginVC
@@ -55,7 +56,7 @@
     _password.delegate = self;
     
     _forgotPassword = [[UIButton alloc] init];
-    [_forgotPassword withText:@"Forgot your password?" fontSize:9 width:40 height:10 backgroundColor:kColorClear target:nil selector:nil];
+    [_forgotPassword withText:@"Forgot your password?" fontSize:9 width:40 height:10 backgroundColor:kColorClear target:self selector:@selector(showMainUI)];
     
     _forgotPassword.translatesAutoresizingMaskIntoConstraints = NO;
     _username.translatesAutoresizingMaskIntoConstraints = NO;
@@ -162,9 +163,12 @@
     FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
     if (token) {
         self.view.alpha = 1;
-
-        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+        [self showMainUI];
     }
+}
+
+- (void)showMainUI {
+    [self performSegueWithIdentifier:@"mainUISegue" sender:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -225,8 +229,6 @@
 */
 
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error {
-    
-    [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email" parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {

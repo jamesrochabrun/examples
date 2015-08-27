@@ -1,18 +1,18 @@
 //
-//  SecondViewController.m
+//  PlayVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "SecondViewController.h"
+#import "PlayVC.h"
 
-@interface SecondViewController ()
+@interface PlayVC ()
 
 @end
 
-@implementation SecondViewController
+@implementation PlayVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
