@@ -7,7 +7,6 @@
 //
 
 #import "LoginVC.h"
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 #import "DebugUtilities.h"
@@ -26,8 +25,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
     
     _backgroundImage = [[UIImageView alloc] init];
     _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
@@ -35,13 +32,14 @@
     
     _logo = [[UIImageView alloc] init];
     _logo.contentMode = UIViewContentModeScaleAspectFit;
-    _logo.backgroundColor = UIColorRGBA(0x33333377);
+    _logo.backgroundColor = UIColorRGBA(kColorClear);
     _logo.image = [UIImage imageNamed:@"Logo.png"];
     
     _facebookLogin = [[FBSDKLoginButton alloc] init];
     _facebookLogin.delegate = self;
     _facebookLogin.layer.cornerRadius = kGeomCornerRadius;
-    
+    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
+
     _username = [[UITextField alloc] init];
     _username.backgroundColor = UIColorRGBA(kColorGrayMiddle);
     _username.placeholder = @"username";
@@ -158,12 +156,6 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
-    
-    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
-    if (token) {
-        self.view.alpha = 1;
-        [self showMainUI];
-    }
 }
 
 - (void)showMainUI {
@@ -179,6 +171,10 @@
     NSLog(@"frames: UN=%@", NSStringFromCGRect(_username.frame));
     NSLog(@"frames: PW=%@", NSStringFromCGRect(_password.frame));
 //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
+    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+    if (token) {
+        [self showMainUI];
+    }
 }
 
 - (void)loginThroughFacebook:(id)sender {
@@ -193,6 +189,7 @@
             // should check if specific permissions missing
             if ([result.grantedPermissions containsObject:@"email"]) {
                 // Do work
+                [self showMainUI];
             }
         }
     }];

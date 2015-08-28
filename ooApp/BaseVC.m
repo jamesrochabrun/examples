@@ -7,7 +7,6 @@
 //
 
 #import "BaseVC.h"
-#import "SWRevealViewController.h"
 #import "DiscoverVC.h"
 
 //revealViewController.rearViewRevealWidth = 200;

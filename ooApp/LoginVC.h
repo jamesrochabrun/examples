@@ -11,4 +11,6 @@
 
 @interface LoginVC : UIViewController <UITextFieldDelegate, FBSDKLoginButtonDelegate>
 
+- (void)showMainUI;
+
 @end

@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "BaseVC.h"
 
-@interface ProfileVC : BaseVC
+@interface ProfileVC : BaseVC <FBSDKLoginButtonDelegate>
 
 @end

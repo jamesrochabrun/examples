@@ -41,86 +41,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ooApp/LoginVC.m"
-            timestampString = "462426455.100528"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "195"
-            endingLineNumber = "195"
-            landmarkName = "-loginThroughFacebook:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ooApp/LoginVC.m"
-            timestampString = "462426455.100528"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
-            landmarkName = "-loginThroughFacebook:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ooApp/LoginVC.m"
-            timestampString = "462426455.100528"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
-            landmarkName = "-loginThroughFacebook:"
-            landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[LoginVC loginThroughFacebook:]"
-                  moduleName = "Oomami"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/agujar/Projects/Oomami/ooApp/ooApp/LoginVC.m"
-                  timestampString = "462430923.557457"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "186"
-                  endingLineNumber = "186"
-                  offsetFromSymbolStart = "114">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__32-[LoginVC loginThroughFacebook:]_block_invoke"
-                  moduleName = "Oomami"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/agujar/Projects/Oomami/ooApp/ooApp/LoginVC.m"
-                  timestampString = "462430923.557701"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "186"
-                  endingLineNumber = "186"
-                  offsetFromSymbolStart = "67">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "ooApp/DiscoverVC.m"
             timestampString = "462429723.223371"
             startingColumnNumber = "9223372036854775807"
@@ -144,6 +64,22 @@
             startingLineNumber = "57"
             endingLineNumber = "57"
             landmarkName = "-setMenuItem:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ooApp/LoginVC.m"
+            timestampString = "462479755.963632"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
+            landmarkName = "-loginButtonDidLogOut:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
