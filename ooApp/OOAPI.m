@@ -54,7 +54,7 @@
         }
         success(users);
     } failure:^(NSError *error) {
-        NSLog(@"Error: %@", error);
+        failure(error);
     }];
 }
 
@@ -69,6 +69,7 @@
 //            [restaurants addObject:[self restaurantFromDict:dict]];
         }
     } failure:^(NSError *error) {
+        failure(error);
         NSLog(@"Error: %@", error);
     }];
 }
@@ -79,7 +80,7 @@
     [rm POST:URL parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
         ;
     } failure:^(NSError *error) {
-        ;
+        failure(error);
     }];
 }
 

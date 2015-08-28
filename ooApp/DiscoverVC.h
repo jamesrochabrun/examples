@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseVC.h"
 
-@interface DiscoverVC : UIViewController
-
-@property (nonatomic, weak) IBOutlet UIBarButtonItem *menu;
+@interface DiscoverVC : BaseVC
 
 @end
 

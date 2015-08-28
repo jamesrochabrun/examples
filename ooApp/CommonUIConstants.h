@@ -18,6 +18,7 @@
 
 // App colors
 static NSUInteger kColorBlack = 0x000000FF;
+static NSUInteger kColorCellSelected = 0x330000FF;
 static NSUInteger kColorClear = 0x00000000;
 static NSUInteger kColorGray = 0x555555FF;
 static NSUInteger kColorGrayMiddle = 0xB2B2B2FF;
@@ -44,16 +45,16 @@ extern NSString *const kFontSFTextRegular;
 extern NSString *const kFontSFTextLight;
 extern NSString *const kFontLatoThin;
 extern NSString *const kFontLatoRegular;
+extern NSString *const kFontLatoBold;
 
 // Icon font mappings
-extern NSString *const kFontIconExplore;
+extern NSString *const kFontIconDiscover;
 extern NSString *const kFontIconMeet;
-extern NSString *const kFontIconInbox;
-extern NSString *const kFontIconLike;
-extern NSString *const kFontIconShare;
+extern NSString *const kFontIconEat;
+extern NSString *const kFontIconUserProfile;
+extern NSString *const kFontIconConnect;
 extern NSString *const kFontIconAddToList;
-extern NSString *const kFontIconHeart;
+extern NSString *const kFontIconPlay;
 extern NSString *const kFontIconFacebook;
-
 
 #endif

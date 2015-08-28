@@ -1,5 +1,5 @@
 //
-//  MenuTVCell.h
+//  ProfileVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 8/27/15.
@@ -7,10 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MenuObject.h"
+#import "BaseVC.h"
 
-@interface MenuTVCell : UITableViewCell
-
-@property (nonatomic, strong) MenuObject *menuItem;
+@interface ProfileVC : BaseVC
 
 @end

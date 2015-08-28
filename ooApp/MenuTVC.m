@@ -8,8 +8,14 @@
 
 #import "MenuTVC.h"
 #import "MenuTVCell.h"
+#import "MenuObject.h"
+#import "SWRevealViewController.h"
+#import "ProfileVC.h"
+#import "DiscoverVC.h"
 
 @interface MenuTVC ()
+
+@property (nonatomic, strong) NSMutableArray *menuItems;
 
 @end
 
@@ -17,7 +23,57 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [self.tableView registerClass:[MenuTVCell class] forCellReuseIdentifier:@"menuCell"];
+    self.tableView.backgroundColor = UIColorRGBA(kColorGray);
+    
+    MenuObject *menuItem;
+    _menuItems = [NSMutableArray array];
+    
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconDiscover;
+    menuItem.name = @"Discover";
+    [_menuItems addObject:menuItem];
+
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconDiscover;
+    menuItem.name = @"Discover";
+    [_menuItems addObject:menuItem];
+
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconEat;
+    menuItem.name = @"Eat";
+    [_menuItems addObject:menuItem];
+    
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconPlay;
+    menuItem.name = @"Play";
+    menuItem.type = kMenutItemPlay;
+    [_menuItems addObject:menuItem];
+    
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconMeet;
+    menuItem.name = @"Meet";
+    [_menuItems addObject:menuItem];
+
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconConnect;
+    menuItem.name = @"Connect";
+    menuItem.type = kMenutItemConnect;
+    [_menuItems addObject:menuItem];
+    
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconUserProfile;
+    menuItem.name = @"User Profile";
+    menuItem.type = kMenutItemProfile;
+    [_menuItems addObject:menuItem];
+    
+    self.tableView.layoutMargins = UIEdgeInsetsZero;
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.tableView.scrollEnabled = NO;
+    self.tableView.separatorColor = UIColorRGBA(kColorGray);
+    
+    NSLog(@"tableView frame=%@", NSStringFromCGRect(self.tableView.frame));
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -40,17 +96,23 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return 1;
+    return [_menuItems count];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    MenuTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"menuCell" forIndexPath:indexPath];
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"menuCell" forIndexPath:indexPath];
-    
+    if (indexPath.row !=0)
+        cell.menuItem = [_menuItems objectAtIndex:indexPath.row];
+    else {
+        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed: @"background-image.jpg"]];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
     // Configure the cell...
-    cell.backgroundColor = UIColorRGBA(kColorGray);
+    
+
     return cell;
 }
 
@@ -91,12 +153,49 @@
 
 /*
 #pragma mark - Navigation
-
+*/
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    
 }
-*/
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    SWRevealViewController *revealController = self.revealViewController;
+    
+    // selecting row
+    
+    // if we are trying to push the same row or perform an operation that does not imply frontViewController replacement
+    // we'll just set position and return
+    MenuObject *menuItem = [_menuItems objectAtIndex:indexPath.row];
+    UIViewController *newFrontController = nil;
+    UIViewController *fvc;
+    
+    if ([menuItem.type isEqualToString:kMenutItemProfile]) {
+        [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
+        fvc = [[ProfileVC alloc] init];
+        //newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
+    } else if ([menuItem.type isEqualToString:kMenutItemDiscover]) {
+        fvc = [[DiscoverVC alloc] init];
+        //newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
+    } else {
+        //TODO AUG: fill in other cases
+        fvc = [[DiscoverVC alloc] init];
+    }
+    
+    newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
+    [revealController pushFrontViewController:newFrontController animated:YES];
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == 0) {
+        return (self.view.frame.size.height - (60 * ([_menuItems count]-1)));
+    }
+    return 60;
+}
+
+
 
 @end

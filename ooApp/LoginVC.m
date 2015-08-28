@@ -33,11 +33,10 @@
     _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
     _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
     
-    
     _logo = [[UIImageView alloc] init];
-    _logo.contentMode = UIViewContentModeScaleAspectFill;
-    _logo.backgroundColor = UIColorRGBA(0x33333333);
-    _logo.image = [UIImage imageNamed:@"Logo_idea1.png"];
+    _logo.contentMode = UIViewContentModeScaleAspectFit;
+    _logo.backgroundColor = UIColorRGBA(0x33333377);
+    _logo.image = [UIImage imageNamed:@"Logo.png"];
     
     _facebookLogin = [[FBSDKLoginButton alloc] init];
     _facebookLogin.delegate = self;
@@ -81,7 +80,7 @@
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _forgotPassword, _logo, _username, _password, _facebookLogin, _backgroundImage);
 
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(50)-[_logo(100)]-(>=20)-[_facebookLogin(height)]-(>=60)-[_username(height)]-spaceInter-[_password(height)]-(>=20)-[_forgotPassword]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(75)-[_logo(100)]-(>=20)-[_facebookLogin(height)]-(>=60)-[_username(height)]-spaceInter-[_password(height)]-(>=20)-[_forgotPassword]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -89,7 +88,7 @@
     // Horizontal layout - we only need one "column" of information because of the alignment options used when creating the horizontal layout
 
     [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-(>=20)-[_logo(<=200)]-(>=20)-|" options:0 metrics:metrics views:views]];
+                               constraintsWithVisualFormat:@"H:|-(>=20)-[_logo(<=275)]-(>=20)-|" options:0 metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint
                                constraintsWithVisualFormat:@"H:|-(>=20)-[_facebookLogin(width)]-(>=20)-|" options:0 metrics:metrics views:views]];

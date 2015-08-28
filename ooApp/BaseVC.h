@@ -1,5 +1,5 @@
 //
-//  MenuTVCell.h
+//  BaseVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 8/27/15.
@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MenuObject.h"
 
-@interface MenuTVCell : UITableViewCell
+@interface BaseVC : UIViewController
 
-@property (nonatomic, strong) MenuObject *menuItem;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem *menu;
 
 @end

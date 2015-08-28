@@ -10,7 +10,6 @@
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
-#import "SWRevealViewController.h"
 
 @interface DiscoverVC ()
 
@@ -23,21 +22,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    self.view.backgroundColor = UIColorRGBA(kColorBlack);
-    
-    SWRevealViewController *revealViewController = self.revealViewController;
-    if (revealViewController) {
-        [_menu setTitle:kFontIconExplore];
-        [_menu setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                       [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
-                                       [UIColor whiteColor], NSForegroundColorAttributeName,
-                                       nil] forState:UIControlStateNormal];
-        [_menu setTarget: self.revealViewController];
-        [_menu setAction: @selector(revealToggle:)];
-        [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
-    }
-    
+    // Do any additional setup after loading the view, typically from a nib.    
         
     UILabel *l;
     NSInteger fontSize = 9;
@@ -60,6 +45,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
+    [self testAPI];
 }
 
 - (void)testAPI {
@@ -103,7 +89,7 @@
 
 - (void)printRestaurants {
     [_restaurants enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSLog(@"rest name = %@",  ((RestaurantObject *)obj).name);
+        NSLog(@"rest name = %@",  (RestaurantObject *)obj);
     }];
 }
 

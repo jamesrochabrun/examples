@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11A1B8E6A06004537B6 /* MenuTVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
+		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
+		3621F1251B900EC7004537B6 /* Logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3621F1231B900EC7004537B6 /* Logo.png */; };
+		3621F1261B900EC7004537B6 /* Logo2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3621F1241B900EC7004537B6 /* Logo2.png */; };
+		3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1281B9014DD004537B6 /* ProfileVC.m */; };
+		3621F12C1B901D24004537B6 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F12B1B901D24004537B6 /* BaseVC.m */; };
 		36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36250BDB1B82679A00F456B5 /* LoginVC.m */; };
 		36250BDF1B82704300F456B5 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */; };
 		36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */; };
@@ -43,8 +48,6 @@
 		367704341B8819A600B594E5 /* SF-UI-Text-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3677041F1B8819A600B594E5 /* SF-UI-Text-Semibold.otf */; };
 		367704351B8819A600B594E5 /* SF-UI-Text-SemiboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 367704201B8819A600B594E5 /* SF-UI-Text-SemiboldItalic.otf */; };
 		367704371B88552E00B594E5 /* background-image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 367704361B88552E00B594E5 /* background-image.jpg */; };
-		3677043A1B894BDE00B594E5 /* Logo_idea1.png in Resources */ = {isa = PBXBuildFile; fileRef = 367704381B894BDE00B594E5 /* Logo_idea1.png */; };
-		3677043B1B894BDE00B594E5 /* Logo_idea2.png in Resources */ = {isa = PBXBuildFile; fileRef = 367704391B894BDE00B594E5 /* Logo_idea2.png */; };
 		367704511B8BF05100B594E5 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3677043D1B8BF05100B594E5 /* Lato-Black.ttf */; };
 		367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3677043E1B8BF05100B594E5 /* Lato-BlackItalic.ttf */; };
 		367704531B8BF05100B594E5 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3677043F1B8BF05100B594E5 /* Lato-Bold.ttf */; };
@@ -96,6 +99,14 @@
 		3621F11A1B8E6A06004537B6 /* MenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
 		3621F11E1B8F6E32004537B6 /* MenuTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVCell.m; sourceTree = "<group>"; };
+		3621F1201B8F7E7A004537B6 /* MenuObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuObject.h; sourceTree = "<group>"; };
+		3621F1211B8F7E7A004537B6 /* MenuObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuObject.m; sourceTree = "<group>"; };
+		3621F1231B900EC7004537B6 /* Logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo.png; path = "Graphic Assets/Logo.png"; sourceTree = "<group>"; };
+		3621F1241B900EC7004537B6 /* Logo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo2.png; path = "Graphic Assets/Logo2.png"; sourceTree = "<group>"; };
+		3621F1271B9014DD004537B6 /* ProfileVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileVC.h; sourceTree = "<group>"; };
+		3621F1281B9014DD004537B6 /* ProfileVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileVC.m; sourceTree = "<group>"; };
+		3621F12A1B901D24004537B6 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
+		3621F12B1B901D24004537B6 /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
 		36250BDA1B82679A00F456B5 /* LoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
 		36250BDB1B82679A00F456B5 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
@@ -140,8 +151,6 @@
 		3677041F1B8819A600B594E5 /* SF-UI-Text-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-UI-Text-Semibold.otf"; path = "Fonts/SF-UI-Text-Semibold.otf"; sourceTree = "<group>"; };
 		367704201B8819A600B594E5 /* SF-UI-Text-SemiboldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-UI-Text-SemiboldItalic.otf"; path = "Fonts/SF-UI-Text-SemiboldItalic.otf"; sourceTree = "<group>"; };
 		367704361B88552E00B594E5 /* background-image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "background-image.jpg"; path = "Graphic Assets/background-image.jpg"; sourceTree = "<group>"; };
-		367704381B894BDE00B594E5 /* Logo_idea1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo_idea1.png; path = "Graphic Assets/Logo_idea1.png"; sourceTree = "<group>"; };
-		367704391B894BDE00B594E5 /* Logo_idea2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo_idea2.png; path = "Graphic Assets/Logo_idea2.png"; sourceTree = "<group>"; };
 		3677043C1B8BCB9100B594E5 /* ooApp.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ooApp.pch; sourceTree = "<group>"; };
 		3677043D1B8BF05100B594E5 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Lato-Black.ttf"; path = "Fonts/Lato-Black.ttf"; sourceTree = "<group>"; };
 		3677043E1B8BF05100B594E5 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Lato-BlackItalic.ttf"; path = "Fonts/Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
@@ -233,6 +242,8 @@
 				363B60C61B6BF0CE00987A1B /* GroupObject.m */,
 				36DD24241B7C88E800C6348F /* EventObject.h */,
 				36DD24251B7C88E800C6348F /* EventObject.m */,
+				3621F1201B8F7E7A004537B6 /* MenuObject.h */,
+				3621F1211B8F7E7A004537B6 /* MenuObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -307,8 +318,8 @@
 		367703FF1B87E41F00B594E5 /* Graphic Assets */ = {
 			isa = PBXGroup;
 			children = (
-				367704381B894BDE00B594E5 /* Logo_idea1.png */,
-				367704391B894BDE00B594E5 /* Logo_idea2.png */,
+				3621F1231B900EC7004537B6 /* Logo.png */,
+				3621F1241B900EC7004537B6 /* Logo2.png */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
 			);
 			name = "Graphic Assets";
@@ -329,6 +340,8 @@
 				367704071B88103900B594E5 /* UIImage+Additions.m */,
 				367704091B8816C300B594E5 /* UILabel+Additions.h */,
 				3677040A1B8816C300B594E5 /* UILabel+Additions.m */,
+				3621F12A1B901D24004537B6 /* BaseVC.h */,
+				3621F12B1B901D24004537B6 /* BaseVC.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -369,6 +382,8 @@
 				367703FC1B87E3A500B594E5 /* Resources */,
 				363B60BE1B6AC13900987A1B /* Models */,
 				3621F11C1B8F6DF5004537B6 /* Table View Cells */,
+				3621F1271B9014DD004537B6 /* ProfileVC.h */,
+				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				36FDA6F71B585F650029D29D /* AppDelegate.h */,
 				36FDA6F81B585F650029D29D /* AppDelegate.m */,
 				36FDA6FA1B585F650029D29D /* DiscoverVC.h */,
@@ -519,7 +534,6 @@
 				367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */,
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
 				367704591B8BF05100B594E5 /* Lato-Italic.ttf in Resources */,
-				3677043A1B894BDE00B594E5 /* Logo_idea1.png in Resources */,
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
 				367704301B8819A600B594E5 /* SF-UI-Text-LightItalic.otf in Resources */,
 				367704261B8819A600B594E5 /* SF-UI-Display-Regular.otf in Resources */,
@@ -534,7 +548,6 @@
 				367704321B8819A600B594E5 /* SF-UI-Text-MediumItalic.otf in Resources */,
 				367704641B8BF05100B594E5 /* README.txt in Resources */,
 				367704331B8819A600B594E5 /* SF-UI-Text-Regular.otf in Resources */,
-				3677043B1B894BDE00B594E5 /* Logo_idea2.png in Resources */,
 				367704371B88552E00B594E5 /* background-image.jpg in Resources */,
 				3677042A1B8819A600B594E5 /* SF-UI-Text-Bold.otf in Resources */,
 				36FDA7071B585F650029D29D /* LaunchScreen.xib in Resources */,
@@ -550,6 +563,7 @@
 				367704531B8BF05100B594E5 /* Lato-Bold.ttf in Resources */,
 				367704581B8BF05100B594E5 /* Lato-HeavyItalic.ttf in Resources */,
 				367704231B8819A600B594E5 /* SF-UI-Display-Heavy.otf in Resources */,
+				3621F1251B900EC7004537B6 /* Logo.png in Resources */,
 				367704611B8BF05100B594E5 /* Lato-Thin.ttf in Resources */,
 				36FDA7041B585F650029D29D /* Images.xcassets in Resources */,
 				3677042D1B8819A600B594E5 /* SF-UI-Text-HeavyItalic.otf in Resources */,
@@ -558,6 +572,7 @@
 				367704561B8BF05100B594E5 /* Lato-HairlineItalic.ttf in Resources */,
 				3677042F1B8819A600B594E5 /* SF-UI-Text-Light.otf in Resources */,
 				3677045F1B8BF05100B594E5 /* Lato-Semibold.ttf in Resources */,
+				3621F1261B900EC7004537B6 /* Logo2.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -615,10 +630,12 @@
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
+				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,
 				36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */,
 				367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */,
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
 				36FDA6FC1B585F650029D29D /* DiscoverVC.m in Sources */,
+				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
@@ -627,6 +644,7 @@
 				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
+				3621F12C1B901D24004537B6 /* BaseVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
