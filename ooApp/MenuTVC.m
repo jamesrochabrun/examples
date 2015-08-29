@@ -12,6 +12,7 @@
 #import "SWRevealViewController.h"
 #import "ProfileVC.h"
 #import "DiscoverVC.h"
+#import "DefaultVC.h"
 
 @interface MenuTVC ()
 
@@ -31,18 +32,20 @@
     _menuItems = [NSMutableArray array];
     
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconDiscover;
-    menuItem.name = @"Discover";
+    menuItem.icon = nil;
+    menuItem.name = nil;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
     menuItem.name = @"Discover";
+    menuItem.type = kMenutItemDiscover;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconEat;
     menuItem.name = @"Eat";
+    menuItem.type = kMenutItemEat;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
@@ -181,7 +184,7 @@
         //newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
     } else {
         //TODO AUG: fill in other cases
-        fvc = [[DiscoverVC alloc] init];
+        fvc = [[DefaultVC alloc] init];
     }
     
     newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];

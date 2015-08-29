@@ -25,7 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = UIColorRGBA(kColorBlack);
+    self.view.backgroundColor = UIColorRGBA(kColorNavBar);
 
     _menu = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _menu;
@@ -43,6 +43,16 @@
         [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
     }
 
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.translucent = YES;
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
+    self.navigationController.view.backgroundColor = UIColorRGBA(kColorNavBar);
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorNavBar);
+    
 }
 
 - (void)didReceiveMemoryWarning {

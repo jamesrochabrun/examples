@@ -24,6 +24,8 @@
     NSLog(@"application finished launching");
 //    [DebugUtilities displayAllFonts];
     
+    [application setStatusBarStyle:UIStatusBarStyleLightContent];
+    
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }

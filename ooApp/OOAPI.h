@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 #import "OONetworkManager.h"
 #import "RestaurantObject.h"
 
@@ -16,7 +17,10 @@
 
 /* Read */
 
+//Restaurants
 - (void)getRestaurantsWithIDs:(NSArray *)restaurantIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
+- (void)getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure;
+
 - (void)getUsersWithIDs:(NSArray *)userIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 - (void)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 

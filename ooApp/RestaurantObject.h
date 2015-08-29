@@ -7,14 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface RestaurantObject : NSObject
 
 @property (nonatomic, strong) NSString *restaurantID;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSArray *photos;
+@property (nonatomic, strong) NSString *rating;
+@property (nonatomic, strong) NSString *imageURL;
 @property (nonatomic, strong) NSString *cuisine;
-@property (nonatomic, strong) NSString *distance;
+@property (nonatomic) CLLocationCoordinate2D location;
 @property (nonatomic, strong) NSString *priceRange;
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict;

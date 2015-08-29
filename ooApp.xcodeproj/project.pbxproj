@@ -20,6 +20,8 @@
 		363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C01B6AC15400987A1B /* RestaurantObject.m */; };
 		363B60C41B6AE49F00987A1B /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C31B6AE49F00987A1B /* UserObject.m */; };
 		363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C61B6BF0CE00987A1B /* GroupObject.m */; };
+		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
+		365F17611B9105B500015D5D /* ListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListTVCell.m */; };
 		366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */; };
 		367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 367703FA1B86884700B594E5 /* CommonUIConstants.m */; };
 		367704011B87E43400B594E5 /* icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 367704001B87E43400B594E5 /* icons.ttf */; };
@@ -119,6 +121,10 @@
 		363B60C61B6BF0CE00987A1B /* GroupObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupObject.m; sourceTree = "<group>"; };
 		363B60C91B6C22F000987A1B /* CommonConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonConstants.h; sourceTree = "<group>"; };
 		363B60CA1B6C231900987A1B /* CommonUIConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonUIConstants.h; sourceTree = "<group>"; };
+		365F175C1B91046B00015D5D /* DefaultVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultVC.m; sourceTree = "<group>"; };
+		365F175D1B91046B00015D5D /* DefaultVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultVC.h; sourceTree = "<group>"; };
+		365F175F1B9105B500015D5D /* ListTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListTVCell.h; sourceTree = "<group>"; };
+		365F17601B9105B500015D5D /* ListTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTVCell.m; sourceTree = "<group>"; };
 		366B623D1B8D3ED700B9F1C5 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SWRevealViewController.h; path = External/SWRevealViewController/SWRevealViewController.h; sourceTree = "<group>"; };
 		366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SWRevealViewController.m; path = External/SWRevealViewController/SWRevealViewController.m; sourceTree = "<group>"; };
 		367703FA1B86884700B594E5 /* CommonUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUIConstants.m; sourceTree = "<group>"; };
@@ -227,6 +233,8 @@
 			children = (
 				3621F11D1B8F6E32004537B6 /* MenuTVCell.h */,
 				3621F11E1B8F6E32004537B6 /* MenuTVCell.m */,
+				365F175F1B9105B500015D5D /* ListTVCell.h */,
+				365F17601B9105B500015D5D /* ListTVCell.m */,
 			);
 			name = "Table View Cells";
 			sourceTree = "<group>";
@@ -388,6 +396,8 @@
 				36FDA6F81B585F650029D29D /* AppDelegate.m */,
 				36FDA6FA1B585F650029D29D /* DiscoverVC.h */,
 				36FDA6FB1B585F650029D29D /* DiscoverVC.m */,
+				365F175C1B91046B00015D5D /* DefaultVC.m */,
+				365F175D1B91046B00015D5D /* DefaultVC.h */,
 				36FDA6FD1B585F650029D29D /* PlayVC.h */,
 				3621F1191B8E6A06004537B6 /* MenuTVC.h */,
 				3621F11A1B8E6A06004537B6 /* MenuTVC.m */,
@@ -636,12 +646,14 @@
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
 				36FDA6FC1B585F650029D29D /* DiscoverVC.m in Sources */,
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
+				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
 				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
+				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
 				3621F12C1B901D24004537B6 /* BaseVC.m in Sources */,
