@@ -75,6 +75,7 @@
 		36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D5D2191B69DA48009EE877 /* OONetworkManager.m */; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
+		36F872D91B919BC200006C29 /* ListObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F872D81B919BC200006C29 /* ListObject.m */; };
 		36FDA6F61B585F650029D29D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6F51B585F650029D29D /* main.m */; };
 		36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6F81B585F650029D29D /* AppDelegate.m */; };
 		36FDA6FC1B585F650029D29D /* DiscoverVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6FB1B585F650029D29D /* DiscoverVC.m */; };
@@ -187,6 +188,8 @@
 		36DD24241B7C88E800C6348F /* EventObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventObject.h; sourceTree = "<group>"; };
 		36DD24251B7C88E800C6348F /* EventObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventObject.m; sourceTree = "<group>"; };
 		36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
+		36F872D71B919BC200006C29 /* ListObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListObject.h; sourceTree = "<group>"; };
+		36F872D81B919BC200006C29 /* ListObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListObject.m; sourceTree = "<group>"; };
 		36FDA6F01B585F650029D29D /* Oomami.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oomami.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36FDA6F41B585F650029D29D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		36FDA6F51B585F650029D29D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -252,6 +255,8 @@
 				36DD24251B7C88E800C6348F /* EventObject.m */,
 				3621F1201B8F7E7A004537B6 /* MenuObject.h */,
 				3621F1211B8F7E7A004537B6 /* MenuObject.m */,
+				36F872D71B919BC200006C29 /* ListObject.h */,
+				36F872D81B919BC200006C29 /* ListObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -394,8 +399,8 @@
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				36FDA6F71B585F650029D29D /* AppDelegate.h */,
 				36FDA6F81B585F650029D29D /* AppDelegate.m */,
-				36FDA6FA1B585F650029D29D /* DiscoverVC.h */,
 				36FDA6FB1B585F650029D29D /* DiscoverVC.m */,
+				36FDA6FA1B585F650029D29D /* DiscoverVC.h */,
 				365F175C1B91046B00015D5D /* DefaultVC.m */,
 				365F175D1B91046B00015D5D /* DefaultVC.h */,
 				36FDA6FD1B585F650029D29D /* PlayVC.h */,
@@ -651,6 +656,7 @@
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
+				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
 				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,

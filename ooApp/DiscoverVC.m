@@ -11,9 +11,13 @@
 #import "UserObject.h"
 #import "RestaurantObject.h"
 #import "ListTVCell.h"
+#import "DebugUtilities.h"
+
+static NSUInteger kNoRowSelected = -1;
 
 @interface DiscoverVC ()
 
+@property (nonatomic) NSUInteger selectedRow;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UITableView *tableView;
 
@@ -27,11 +31,26 @@
     
     _tableView = [[UITableView alloc] init];
     [self.view addSubview:_tableView];
-    _tableView.frame = self.view.frame;
     _tableView.delegate = self;
     _tableView.dataSource = self;
+    _tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _tableView.rowHeight = kGeomListRowHeight;
     
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:@"listCell"];
+    _selectedRow = kNoRowSelected;
+    [self layout];
+}
+
+-(void)layout {
+    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+    
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
+    
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -98,6 +117,17 @@
     RestaurantObject *restaurant = (RestaurantObject *)[_restaurants objectAtIndex:indexPath.row];
     cell.textLabel.text = restaurant.name;
     return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == _selectedRow) return 250;
+    return kGeomListRowHeight;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSUInteger row = indexPath.row;
+    _selectedRow = (row == _selectedRow) ? kNoRowSelected : row;
+    [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString *const kMenutItemPlay;
-extern NSString *const kMenutItemConnect;
-extern NSString *const kMenutItemProfile;
-extern NSString *const kMenutItemDiscover;
-extern NSString *const kMenutItemEat;
-extern NSString *const kMenutItemMeet;
+extern NSString *const kMenuItemPlay;
+extern NSString *const kMenuItemConnect;
+extern NSString *const kMenuItemProfile;
+extern NSString *const kMenuItemDiscover;
+extern NSString *const kMenuItemEat;
+extern NSString *const kMenuItemMeet;
 
 @interface MenuObject : NSObject
 

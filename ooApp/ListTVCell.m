@@ -8,6 +8,14 @@
 
 #import "ListTVCell.h"
 
+@interface ListTVCell ()
+
+@property (nonatomic, strong) UILabel *name;
+@property (nonatomic, strong) UIButton *actionButton;
+@property (nonatomic, strong) UIImageView *backgroundImage;
+
+@end
+
 @implementation ListTVCell
 
 - (void)awakeFromNib {

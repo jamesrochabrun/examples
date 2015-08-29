@@ -8,12 +8,12 @@
 
 #import "MenuObject.h"
 
-NSString *const kMenutItemPlay = @"play";
-NSString *const kMenutItemConnect = @"connect";
-NSString *const kMenutItemProfile = @"profile";
-NSString *const kMenutItemDiscover = @"discover";
-NSString *const kMenutItemEat = @"eat";
-NSString *const kMenutItemMeet = @"meet";
+NSString *const kMenuItemPlay = @"play";
+NSString *const kMenuItemConnect = @"connect";
+NSString *const kMenuItemProfile = @"profile";
+NSString *const kMenuItemDiscover = @"discover";
+NSString *const kMenuItemEat = @"eat";
+NSString *const kMenuItemMeet = @"meet";
 
 @implementation MenuObject
 

@@ -39,36 +39,37 @@
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
     menuItem.name = @"Discover";
-    menuItem.type = kMenutItemDiscover;
+    menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconEat;
     menuItem.name = @"Eat";
-    menuItem.type = kMenutItemEat;
+    menuItem.type = kMenuItemEat;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconPlay;
     menuItem.name = @"Play";
-    menuItem.type = kMenutItemPlay;
+    menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconMeet;
     menuItem.name = @"Meet";
+    menuItem.type = kMenuItemMeet;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconConnect;
     menuItem.name = @"Connect";
-    menuItem.type = kMenutItemConnect;
+    menuItem.type = kMenuItemConnect;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconUserProfile;
     menuItem.name = @"User Profile";
-    menuItem.type = kMenutItemProfile;
+    menuItem.type = kMenuItemProfile;
     [_menuItems addObject:menuItem];
     
     self.tableView.layoutMargins = UIEdgeInsetsZero;
@@ -161,7 +162,6 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -175,11 +175,11 @@
     UIViewController *newFrontController = nil;
     UIViewController *fvc;
     
-    if ([menuItem.type isEqualToString:kMenutItemProfile]) {
+    if ([menuItem.type isEqualToString:kMenuItemProfile]) {
         [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
         fvc = [[ProfileVC alloc] init];
         //newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
-    } else if ([menuItem.type isEqualToString:kMenutItemDiscover]) {
+    } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
         //newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
     } else {
