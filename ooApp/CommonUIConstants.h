@@ -22,7 +22,7 @@ static NSUInteger kColorCellSelected = 0x330000FF;
 static NSUInteger kColorClear = 0x00000000;
 static NSUInteger kColorGray = 0x555555FF;
 static NSUInteger kColorGrayMiddle = 0xB2B2B2FF;
-static NSUInteger kColorNavBar = 0x777777FF;
+static NSUInteger kColorNavBar = 0x000000CC;
 static NSUInteger kColorWhite = 0xFFFFFFFF;
 
 // Geometry and metrics
