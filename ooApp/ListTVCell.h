@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ListObject.h"
 
 @interface ListTVCell : UITableViewCell
+
+@property (nonatomic, strong) ListObject *listItem;
 
 @end

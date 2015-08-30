@@ -30,25 +30,24 @@
         [_icon withFont:[UIFont fontWithName:kFontIcons size:35] textColor:kColorWhite backgroundColor:kColorClear];
         _name = [[UILabel alloc] init];
         [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
-    }
     
-    [self addSubview:_icon];
-    [self addSubview:_name];
-    
-    _icon.translatesAutoresizingMaskIntoConstraints = NO;
-    _name.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    //set the selected color for the cell
-    UIView *bgColorView = [[UIView alloc] init];
-    bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
-    [self setSelectedBackgroundView:bgColorView];
-    
-    self.backgroundColor = UIColorRGBA(kColorBlack);
-    self.separatorInset = UIEdgeInsetsZero;
-    self.layoutMargins = UIEdgeInsetsZero;
+        [self addSubview:_icon];
+        [self addSubview:_name];
+        
+        _icon.translatesAutoresizingMaskIntoConstraints = NO;
+        _name.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        //set the selected color for the cell
+        UIView *bgColorView = [[UIView alloc] init];
+        bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
+        [self setSelectedBackgroundView:bgColorView];
+        
+        self.backgroundColor = UIColorRGBA(kColorBlack);
+        self.separatorInset = UIEdgeInsetsZero;
+        self.layoutMargins = UIEdgeInsetsZero;
 
-    [self layout];
-    
+        [self layout];
+    }
     return self;
 }
 

@@ -20,6 +20,7 @@ static NSUInteger kNoRowSelected = -1;
 @property (nonatomic) NSUInteger selectedRow;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) NSMutableArray *lists;
 
 @end
 
@@ -35,10 +36,77 @@ static NSUInteger kNoRowSelected = -1;
     _tableView.dataSource = self;
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    _tableView.rowHeight = kGeomListRowHeight;
+    _tableView.rowHeight = kGeomHeightListRow;
     
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:@"listCell"];
     _selectedRow = kNoRowSelected;
+    
+    _lists = [NSMutableArray array];
+    ListObject *list;
+    list = [[ListObject alloc] init];
+    list.name = @"Thai";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Burgers";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Chinese";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Noe";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Mexican";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Peruvian";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Burgers";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Chinese";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Noe";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Mexican";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Peruvian";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Burgers";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Chinese";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Noe";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Mexican";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Peruvian";
+    [_lists addObject:list];
+    
     [self layout];
 }
 
@@ -56,7 +124,8 @@ static NSUInteger kNoRowSelected = -1;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    [self testAPI];
+//    [self testAPI];
+    [_tableView reloadData];
 }
 
 
@@ -114,14 +183,14 @@ static NSUInteger kNoRowSelected = -1;
 #pragma table view delegates/datasources
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     ListTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"listCell" forIndexPath:indexPath];
-    RestaurantObject *restaurant = (RestaurantObject *)[_restaurants objectAtIndex:indexPath.row];
-    cell.textLabel.text = restaurant.name;
+    ListObject *list = (ListObject *)[_lists objectAtIndex:indexPath.row];
+    cell.listItem = list;
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == _selectedRow) return 250;
-    return kGeomListRowHeight;
+    return kGeomHeightListRow;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -135,7 +204,7 @@ static NSUInteger kNoRowSelected = -1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [_restaurants count];
+    return [_lists count];
 }
 
 @end
