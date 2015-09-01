@@ -17,7 +17,7 @@ static NSUInteger kNoRowSelected = -1;
 
 @interface DiscoverVC ()
 
-@property (nonatomic) NSUInteger selectedRow;
+@property (nonatomic) NSInteger selectedRow;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *lists;
@@ -189,8 +189,12 @@ static NSUInteger kNoRowSelected = -1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == _selectedRow) return (kGeomHeightListRow + kGeomHeightListRowReveal + 2*kGeomSpaceInter);
-    return kGeomHeightListRow;
+    CGFloat height = 0;
+    height = (indexPath.row == _selectedRow) ? (kGeomHeightListRow + kGeomHeightListRowReveal + 2*kGeomSpaceInter) : kGeomHeightListRow;
+    
+    NSLog(@"row=%zd selectedRow=%zd height=%f", indexPath.row, _selectedRow, height);
+    
+    return height;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
