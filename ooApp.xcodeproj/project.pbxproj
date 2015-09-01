@@ -20,6 +20,10 @@
 		363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C01B6AC15400987A1B /* RestaurantObject.m */; };
 		363B60C41B6AE49F00987A1B /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C31B6AE49F00987A1B /* UserObject.m */; };
 		363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C61B6BF0CE00987A1B /* GroupObject.m */; };
+		36587B711B93964C00D01EB5 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36587B6F1B93964C00D01EB5 /* Icon@2x.png */; };
+		36587B721B93964C00D01EB5 /* Icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36587B701B93964C00D01EB5 /* Icon@3x.png */; };
+		36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B741B93C7AD00D01EB5 /* ListCVFL.m */; };
+		36587B7B1B9423D700D01EB5 /* ListCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B7A1B9423D700D01EB5 /* ListCVCell.m */; };
 		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
 		365F17611B9105B500015D5D /* ListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListTVCell.m */; };
 		366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */; };
@@ -122,6 +126,12 @@
 		363B60C61B6BF0CE00987A1B /* GroupObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupObject.m; sourceTree = "<group>"; };
 		363B60C91B6C22F000987A1B /* CommonConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonConstants.h; sourceTree = "<group>"; };
 		363B60CA1B6C231900987A1B /* CommonUIConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonUIConstants.h; sourceTree = "<group>"; };
+		36587B6F1B93964C00D01EB5 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Graphic Assets/Icon@2x.png"; sourceTree = "<group>"; };
+		36587B701B93964C00D01EB5 /* Icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@3x.png"; path = "Graphic Assets/Icon@3x.png"; sourceTree = "<group>"; };
+		36587B731B93C7AD00D01EB5 /* ListCVFL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCVFL.h; sourceTree = "<group>"; };
+		36587B741B93C7AD00D01EB5 /* ListCVFL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListCVFL.m; sourceTree = "<group>"; };
+		36587B791B9423D700D01EB5 /* ListCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCVCell.h; sourceTree = "<group>"; };
+		36587B7A1B9423D700D01EB5 /* ListCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListCVCell.m; sourceTree = "<group>"; };
 		365F175C1B91046B00015D5D /* DefaultVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultVC.m; sourceTree = "<group>"; };
 		365F175D1B91046B00015D5D /* DefaultVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultVC.h; sourceTree = "<group>"; };
 		365F175F1B9105B500015D5D /* ListTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListTVCell.h; sourceTree = "<group>"; };
@@ -238,6 +248,10 @@
 				3621F11E1B8F6E32004537B6 /* MenuTVCell.m */,
 				365F175F1B9105B500015D5D /* ListTVCell.h */,
 				365F17601B9105B500015D5D /* ListTVCell.m */,
+				36587B731B93C7AD00D01EB5 /* ListCVFL.h */,
+				36587B741B93C7AD00D01EB5 /* ListCVFL.m */,
+				36587B791B9423D700D01EB5 /* ListCVCell.h */,
+				36587B7A1B9423D700D01EB5 /* ListCVCell.m */,
 			);
 			name = "Table View Cells";
 			sourceTree = "<group>";
@@ -331,6 +345,8 @@
 		367703FF1B87E41F00B594E5 /* Graphic Assets */ = {
 			isa = PBXGroup;
 			children = (
+				36587B6F1B93964C00D01EB5 /* Icon@2x.png */,
+				36587B701B93964C00D01EB5 /* Icon@3x.png */,
 				3621F1231B900EC7004537B6 /* Logo.png */,
 				3621F1241B900EC7004537B6 /* Logo2.png */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
@@ -549,8 +565,10 @@
 				367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */,
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
 				367704591B8BF05100B594E5 /* Lato-Italic.ttf in Resources */,
+				36587B711B93964C00D01EB5 /* Icon@2x.png in Resources */,
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
 				367704301B8819A600B594E5 /* SF-UI-Text-LightItalic.otf in Resources */,
+				36587B721B93964C00D01EB5 /* Icon@3x.png in Resources */,
 				367704261B8819A600B594E5 /* SF-UI-Display-Regular.otf in Resources */,
 				367704241B8819A600B594E5 /* SF-UI-Display-Light.otf in Resources */,
 				367704291B8819A600B594E5 /* SF-UI-Display-Ultralight.otf in Resources */,
@@ -649,11 +667,13 @@
 				36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */,
 				367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */,
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
+				36587B7B1B9423D700D01EB5 /* ListCVCell.m in Sources */,
 				36FDA6FC1B585F650029D29D /* DiscoverVC.m in Sources */,
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
+				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,

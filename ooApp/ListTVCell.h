@@ -9,8 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "ListObject.h"
 
-@interface ListTVCell : UITableViewCell
+@interface ListTVCell : UITableViewCell <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, strong) ListObject *listItem;
+
+- (void)getRestaurants;
 
 @end

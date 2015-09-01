@@ -164,12 +164,6 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    NSLog(@"frames: self=%@", NSStringFromCGRect(self.view.frame));
-    NSLog(@"frames: IV=%@", NSStringFromCGRect(_backgroundImage.frame));
-    NSLog(@"frames: LG=%@", NSStringFromCGRect(_logo.frame));
-    NSLog(@"frames: FB=%@", NSStringFromCGRect(_facebookLogin.frame));
-    NSLog(@"frames: UN=%@", NSStringFromCGRect(_username.frame));
-    NSLog(@"frames: PW=%@", NSStringFromCGRect(_password.frame));
 //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
     FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
     if (token) {

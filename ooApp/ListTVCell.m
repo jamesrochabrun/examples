@@ -8,6 +8,9 @@
 
 #import "ListTVCell.h"
 #import "DebugUtilities.h"
+#import "OOAPI.h"
+#import "ListCVFL.h"
+#import "ListCVCell.h"
 
 @interface ListTVCell ()
 
@@ -15,8 +18,14 @@
 @property (nonatomic, strong) UIButton *actionButton;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIView *foregroundView;
+@property (nonatomic, strong) NSArray *restaurants;
+
+@property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, strong) UICollectionViewFlowLayout *cvl;
 
 @end
+
+static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 
 @implementation ListTVCell
 
@@ -93,19 +102,90 @@
 }
 
 - (void)setListItem:(ListObject *)listItem {
+    _listItem = listItem;
     _name.text = listItem.name;
-    [self setNeedsLayout];
+}
+
+- (void)getRestaurants
+{
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    [self.collectionView reloadData];
+    
+    
+    [api getRestaurantsWithKeyword:_listItem.name andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
+        _restaurants = r;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self gotRestaurants];
+        });
+    } failure:^(NSError *err) {
+        ;
+    }];
+}
+
+//------------------
+// gotR
+///
+
+- (void)gotRestaurants
+{
+    [_restaurants enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSLog(@"rest name = %@",  [(RestaurantObject *)obj name]);
+    }];
+    self.collectionView.delegate = self;
+    self.collectionView.dataSource = self;
+    [self.collectionView reloadData];
+    [DebugUtilities addBorderToViews:@[self.collectionView]];
 }
 
 
-- (void)awakeFromNib {
+- (void)awakeFromNib
+{
     // Initialization code
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+}
+
+#pragma Collection View delegate methods
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return [_restaurants count];
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    ListCVCell *restaurantCell = [collectionView dequeueReusableCellWithReuseIdentifier:RestaurantCellIdentifier forIndexPath:indexPath];
+    return restaurantCell;
+}
+
+
+
+#pragma lazy load some stuff
+
+- (UICollectionView *)collectionView
+{
+    if (_collectionView == nil) {
+        _cvl = [[ListCVFL alloc] init];
+        [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+        [_cvl setMinimumInteritemSpacing:kGeomSpaceInter];
+        [_cvl setItemSize:CGSizeMake(150, kGeomHeightListRowReveal)];
+        
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightListRow, self.frame.size.width, kGeomHeightListRowReveal+2*kGeomSpaceInter) collectionViewLayout:_cvl];
+        [self addSubview:_collectionView];
+        [_collectionView registerClass:[ListCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
+    }
+    return _collectionView;
 }
 
 @end

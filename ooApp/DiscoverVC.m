@@ -189,13 +189,16 @@ static NSUInteger kNoRowSelected = -1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == _selectedRow) return 250;
+    if (indexPath.row == _selectedRow) return (kGeomHeightListRow + kGeomHeightListRowReveal + 2*kGeomSpaceInter);
     return kGeomHeightListRow;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSUInteger row = indexPath.row;
     _selectedRow = (row == _selectedRow) ? kNoRowSelected : row;
+    if (_selectedRow != kNoRowSelected) {
+        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] getRestaurants];;
+    }
     [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
