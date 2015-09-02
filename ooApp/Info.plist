@@ -42,8 +42,6 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>icons.ttf</string>
-		<string>SF-UI-Text-Regular.otf</string>
-		<string>SF-UI-Text-Light.otf</string>
 		<string>Lato-Regular.ttf</string>
 		<string>Lato-Thin.ttf</string>
 		<string>Lato-Bold.ttf</string>
