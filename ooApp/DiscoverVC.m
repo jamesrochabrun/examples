@@ -184,6 +184,11 @@ static NSUInteger kNoRowSelected = -1;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     ListTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"listCell" forIndexPath:indexPath];
     ListObject *list = (ListObject *)[_lists objectAtIndex:indexPath.row];
+    
+    if (indexPath.row != _selectedRow) {
+        [cell deselectRow];
+    }
+    
     cell.listItem = list;
     return cell;
 }

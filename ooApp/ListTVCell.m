@@ -110,9 +110,6 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 {
     OOAPI *api = [[OOAPI alloc] init];
     
-    [self.collectionView reloadData];
-    
-    
     [api getRestaurantsWithKeyword:_listItem.name andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
         _restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -149,6 +146,10 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+}
+
+- (void)deselectRow {
+    _collectionView = nil;
 }
 
 #pragma Collection View delegate methods

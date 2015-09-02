@@ -14,5 +14,6 @@
 @property (nonatomic, strong) ListObject *listItem;
 
 - (void)getRestaurants;
+- (void)deselectRow;
 
 @end
