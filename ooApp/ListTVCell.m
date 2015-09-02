@@ -144,9 +144,9 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-
     // Configure the view for the selected state
 }
+
 
 - (void)deselectRow {
     _collectionView = nil;
@@ -182,7 +182,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
         [_cvl setMinimumInteritemSpacing:kGeomSpaceInter];
         [_cvl setItemSize:CGSizeMake(150, kGeomHeightListRowReveal)];
         
-        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightListRow, self.frame.size.width, kGeomHeightListRowReveal+2*kGeomSpaceInter) collectionViewLayout:_cvl];
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, kGeomHeightListRowReveal+2*kGeomSpaceInter) collectionViewLayout:_cvl];
         [self addSubview:_collectionView];
         [_collectionView registerClass:[ListCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
     }

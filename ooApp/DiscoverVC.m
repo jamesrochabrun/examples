@@ -13,11 +13,9 @@
 #import "ListTVCell.h"
 #import "DebugUtilities.h"
 
-static NSUInteger kNoRowSelected = -1;
-
 @interface DiscoverVC ()
 
-@property (nonatomic) NSInteger selectedRow;
+@property (nonatomic) ListObject *selectedItem;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *lists;
@@ -39,7 +37,7 @@ static NSUInteger kNoRowSelected = -1;
     _tableView.rowHeight = kGeomHeightListRow;
     
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:@"listCell"];
-    _selectedRow = kNoRowSelected;
+    _selectedItem = nil;
     
     _lists = [NSMutableArray array];
     ListObject *list;
@@ -185,9 +183,7 @@ static NSUInteger kNoRowSelected = -1;
     ListTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"listCell" forIndexPath:indexPath];
     ListObject *list = (ListObject *)[_lists objectAtIndex:indexPath.row];
     
-    if (indexPath.row != _selectedRow) {
-        [cell deselectRow];
-    }
+//    if ([_lists objectAtIndex:indexPath.row] == _selectedItem)
     
     cell.listItem = list;
     return cell;
@@ -195,17 +191,23 @@ static NSUInteger kNoRowSelected = -1;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat height = 0;
-    height = (indexPath.row == _selectedRow) ? (kGeomHeightListRow + kGeomHeightListRowReveal + 2*kGeomSpaceInter) : kGeomHeightListRow;
+    height = (_selectedItem && ([_lists indexOfObject:_selectedItem] == indexPath.row)) ? (kGeomHeightListRow + kGeomHeightListRowReveal + 2*kGeomSpaceInter) : kGeomHeightListRow;
     
-    NSLog(@"row=%zd selectedRow=%zd height=%f", indexPath.row, _selectedRow, height);
+    NSLog(@"row=%@ selectedRow=%@ height=%f", ((ListObject*)[_lists objectAtIndex:indexPath.row]).name, _selectedItem.name, height);
     
     return height;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSUInteger row = indexPath.row;
-    _selectedRow = (row == _selectedRow) ? kNoRowSelected : row;
-    if (_selectedRow != kNoRowSelected) {
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    _selectedItem = (_selectedItem && ([_lists indexOfObject:_selectedItem] == indexPath.row)) ? nil : [_lists objectAtIndex:indexPath.row];
+
+    if (_selectedItem) {
         [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] getRestaurants];;
     }
     [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
