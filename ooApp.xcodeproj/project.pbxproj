@@ -68,6 +68,8 @@
 		36FDA7071B585F650029D29D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36FDA7051B585F650029D29D /* LaunchScreen.xib */; };
 		36FDA7131B585F650029D29D /* ooAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA7121B585F650029D29D /* ooAppTests.m */; };
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
+		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
+		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -175,6 +177,10 @@
 		36FDA7111B585F650029D29D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		36FDA7121B585F650029D29D /* ooAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ooAppTests.m; sourceTree = "<group>"; };
 		46FE088B27B54BA7AAE65CC4 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		964BC81C1B97935F00760C83 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
+		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
+		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
+		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		F945100C76CB8545DC64E837 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -351,6 +357,10 @@
 				3621F11C1B8F6DF5004537B6 /* Table View Cells */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
+				964BC81C1B97935F00760C83 /* Settings.h */,
+				964BC81D1B97935F00760C83 /* Settings.m */,
+				964BC81F1B97A4E700760C83 /* LocationManager.m */,
+				964BC8201B97A4E700760C83 /* LocationManager.h */,
 				36FDA6F71B585F650029D29D /* AppDelegate.h */,
 				36FDA6F81B585F650029D29D /* AppDelegate.m */,
 				36FDA6FB1B585F650029D29D /* DiscoverVC.m */,
@@ -588,6 +598,7 @@
 				3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */,
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
+				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
 				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,
 				36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */,
@@ -608,6 +619,7 @@
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
+				964BC8211B97A4E700760C83 /* LocationManager.m in Sources */,
 				3621F12C1B901D24004537B6 /* BaseVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

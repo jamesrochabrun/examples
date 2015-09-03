@@ -23,7 +23,8 @@
 
 @implementation LoginVC
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     _backgroundImage = [[UIImageView alloc] init];
@@ -71,7 +72,8 @@
     [self layout];
 }
 
-- (void)layout {
+- (void)layout
+{
     // Create the views and metrics dictionaries
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self.view;

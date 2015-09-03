@@ -1,6 +1,6 @@
 //
 //  UserObject.h
-//  ooApp
+//  Oomami
 //
 //  Created by Anuj Gujar on 7/30/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
@@ -18,4 +18,6 @@
 @property (nonatomic, strong) NSString *token;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
+- (NSDictionary*) dictionaryFromUser;
+
 @end

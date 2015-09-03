@@ -1,6 +1,6 @@
 //
 //  UserObject.m
-//  ooApp
+//  Oomami
 //
 //  Created by Anuj Gujar on 7/30/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
@@ -17,7 +17,12 @@ NSString *const kKeyToken = @"general_token";
 
 @implementation UserObject
 
-+ (UserObject *)userFromDict:(NSDictionary *)dict {
+//------------------------------------------------------------------------------
+// Name:    +userFromDict
+// Purpose: Instantiates user object from user dictionary.
+//------------------------------------------------------------------------------
++ (UserObject *)userFromDict:(NSDictionary *)dict
+{
     UserObject *user =[[UserObject alloc] init];
     user.userID = [dict objectForKey:kKeyID];
     user.firstName = [dict objectForKey:kKeyFirstName];
@@ -26,6 +31,22 @@ NSString *const kKeyToken = @"general_token";
     user.phoneNumber = [dict objectForKey:kKeyPhoneNumber];
     user.token = [dict objectForKey:kKeyToken];
     return user;
+}
+
+//------------------------------------------------------------------------------
+// Name:    dictionaryFromUser
+// Purpose: Provides dict from user object.
+//------------------------------------------------------------------------------
+- (NSDictionary*) dictionaryFromUser;
+{
+    return @{
+             kKeyID : self.userID ?: @"",
+             kKeyFirstName:self.firstName ?: @"",
+             kKeyLastName:self.lastName ?: @"",
+             kKeyEmail: self.email ?: @"",
+             kKeyPhoneNumber:self.phoneNumber ?: @"",
+             kKeyToken:self.token ?: @""
+             };
 }
 
 @end
