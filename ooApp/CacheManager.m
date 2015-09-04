@@ -43,16 +43,21 @@
 {
 }
 
-- (void) fetchImage:(NSString*) urlString into:(UIImageView*) imageView;
+- (void) fetchImageAsynchronously:(NSString*) urlString into:(UIImageView*) imageView;
 {
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString: urlString]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:60];
+                                                  cachePolicy: NSURLRequestUseProtocolCachePolicy
+                                              timeoutInterval: 60];
     
     [imageView setImageWithURLRequest:imageRequest
                      placeholderImage:[UIImage imageNamed:@"placeholder"]
                               success:nil
                               failure:nil];
+}
+
+- (void) cancelDownloadsForImageView:(UIImageView*) imageView;
+{
+    [imageView cancelImageRequestOperation];
 }
 
 @end

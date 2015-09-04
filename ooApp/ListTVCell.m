@@ -11,6 +11,7 @@
 #import "OOAPI.h"
 #import "ListCVFL.h"
 #import "ListCVCell.h"
+#import "CacheManager.h"
 
 @interface ListTVCell ()
 
@@ -99,6 +100,11 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
                                                      attribute:NSLayoutAttributeCenterX
                                                     multiplier:1.f constant:0.f]];
 
+}
+
+- (void)prepareForReuse
+{
+    [[CacheManager sharedInstance] cancelDownloadsForImageView: self.backgroundImage];
 }
 
 - (void)setListItem:(ListObject *)listItem {

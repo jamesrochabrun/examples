@@ -15,10 +15,8 @@
 
 + (instancetype) sharedInstance;
 
-- (unsigned long) totalAssets;
-
-- (void) fetchImage:(NSString*) urlString into:(UIImageView*) imageView;
-- (void) fetchRestaurant: (NSString*) identifier;
+- (void) fetchImageAsynchronously:(NSString*) urlString into:(UIImageView*) imageView;
+- (void) cancelDownloadsForImageView:(UIImageView*) imageView;
 
 @end
 
