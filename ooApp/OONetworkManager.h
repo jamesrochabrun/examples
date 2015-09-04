@@ -18,11 +18,11 @@
 + (id)sharedRequestManager;
 
 //-(void)getResource:(NSString *)url;
-- (void)GET:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation*) GET:(NSString *)path parameters:(NSDictionary *)parameters
     success:(void (^)(id responseObject))success
     failure:(void (^)(NSError *error))failure;
 
-- (void)POST:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation*) POST:(NSString *)path parameters:(NSDictionary *)parameters
      success:(void (^)(id responseObject))success
      failure:(void (^)(NSError *error))failure;
 @end

@@ -18,14 +18,14 @@
 /* Read */
 
 //Restaurants
-- (void)getRestaurantsWithIDs:(NSArray *)restaurantIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
-- (void)getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation*)getRestaurantsWithIDs:(NSArray *)restaurantIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation*)getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure;
 
-- (void)getUsersWithIDs:(NSArray *)userIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
-- (void)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 
 /* Create */
 
-- (void)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
 
 @end

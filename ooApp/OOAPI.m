@@ -25,12 +25,13 @@
     return self;
 }
 
-- (void)getRestaurantsWithIDs:(NSArray *)restaurantIds success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure {
+- (AFHTTPRequestOperation*) getRestaurantsWithIDs:(NSArray *)restaurantIds success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
+{
     NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
     
-    [rm GET:URL parameters:nil success:^(id responseObject) {
+    return [rm GET:URL parameters:nil success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
@@ -42,14 +43,15 @@
     }];
 }
 
-- (void)getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure {
+- (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
+{
     
     NSString *URL = [NSString stringWithFormat:@"http://%@/search", [self ooURL]];
     NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    [rm GET:URL parameters:parameters success:^(id responseObject) {
+    return [rm GET:URL parameters:parameters success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
@@ -61,11 +63,12 @@
     }];
 }
 
-- (void)getUsersWithIDs:(NSArray *)userIDs success:(void(^)(NSArray *users))success failure:(void (^)(NSError *))failure {
+- (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs success:(void(^)(NSArray *users))success failure:(void (^)(NSError *))failure
+{
     NSString *URL = [NSString stringWithFormat:@"http://%@/users", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    [rm GET:URL parameters:nil success:^(id responseObject) {
+    return [rm GET:URL parameters:nil success:^(id responseObject) {
         NSMutableArray *users = [NSMutableArray array];
         for (id dict in responseObject) {
 //            NSLog(@"user: %@", dict);
@@ -77,11 +80,12 @@
     }];
 }
 
-- (void)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure {
+- (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
+{
     NSString *URL = [NSString stringWithFormat:@"http://%@/dishes", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    [rm GET:URL parameters:nil success:^(id responseObject) {
+    return [rm GET:URL parameters:nil success:^(id responseObject) {
 //        NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             NSLog(@"dish: %@", dict);
@@ -93,14 +97,18 @@
     }];
 }
 
-- (void)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure {
+- (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
+{
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants", [self ooURL]];
-    [rm POST:URL parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
+    
+    AFHTTPRequestOperation *op = [rm POST:URL parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
         ;
     } failure:^(NSError *error) {
         failure(error);
     }];
+    
+    return op;
 }
 
 
