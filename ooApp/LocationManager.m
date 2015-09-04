@@ -15,7 +15,7 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
 
 @interface LocationManager ()
 @property (nonatomic,retain) CLLocationManager *locationManager;
-@property (nonatomic,assign) float currentLatitude, currentLongitude;
+@property (nonatomic,assign) CLLocationCoordinate2D currentLocation;
 @end
 
 @implementation LocationManager
@@ -43,29 +43,58 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
 // Name:    dontTrackLocation
 // Purpose: Reads the current user location tracking choice from settings.
 //------------------------------------------------------------------------------
-- (BOOL) dontTrackLocation
+- (TrackingChoice) dontTrackLocation;
 {
     NSArray* ary= [[Settings sharedInstance] mostRecentChoice: kDefaultsUserLocationChoice];
     if (!ary) {
         NSLog  (@"User has not yet specified whether to track the location.");
-        return NO;
+        return TRACKING_UNKNOWN;
     }
     
     BOOL dontTrackLocation= ((NSNumber*)ary[1]).boolValue;
-    return dontTrackLocation;
+    return dontTrackLocation ? TRACKING_NO : TRACKING_YES;
+}
+
+//------------------------------------------------------------------------------
+// Name:    askUserWhetherToTrack
+// Purpose: This is our own routine in addition to the system's pop-up.
+//------------------------------------------------------------------------------
+- (void) askUserWhetherToTrack
+{
+    // RULE:  if the user previously said no, give them the chance to say yes.
+    
+    if ([self dontTrackLocation] ==TRACKING_YES) {
+        return;
+    }
+    
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Do you want to have your location tracked?" message:nil
+                                                    delegate: self
+                                           cancelButtonTitle: @"No" otherButtonTitles: @"Yes", nil ];
+    [alert show];
+}
+
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // 0 == No, don't track
+    
+    [self setUserLocationTrackingChoice: 0==buttonIndex ? TRACKING_NO : TRACKING_YES];
 }
 
 //------------------------------------------------------------------------------
 // Name:    setUserLocationTrackingChoice
 // Purpose: Writes the current user location tracking choice from settings.
 //------------------------------------------------------------------------------
-- (void) setUserLocationTrackingChoice:  (BOOL) choice
+- (void) setUserLocationTrackingChoice:  (TrackingChoice) choice
 {
     [[Settings sharedInstance] setMostRecentChoice: kDefaultsUserLocationChoice
                                                 to: @[
                                                       [NSDate date],
-                                                      [NSNumber numberWithBool: choice]
+                                                      [NSNumber numberWithInteger: choice?1:0]
                                                       ]];
+    if (choice==TRACKING_YES ) {
+        //  start the location manager if not already started.
+        [self currentUserLocation];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +109,7 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
 }
 
 //------------------------------------------------------------------------------
-// Name:    currentUserLocation
+// Name:    stopTrackingLocation
 // Purpose: Shuts down the location tracking mechanism.
 //------------------------------------------------------------------------------
 - (void) stopTrackingLocation
@@ -95,18 +124,17 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
 // Name:    currentUserLocation
 // Purpose: Returns current location if available.
 //------------------------------------------------------------------------------
-- (CLLocation*) currentUserLocation
+- (CLLocationCoordinate2D) currentUserLocation
 {
-    if ([self dontTrackLocation]) {
-        return nil;
+    if (TRACKING_NO == [self dontTrackLocation]) {
+        return CLLocationCoordinate2DMake(0,0);
     }
-    if  (!self.locationManager) {
+    if (!self.locationManager) {
         [self startTrackingLocation];
-        return nil;
+        return CLLocationCoordinate2DMake(0,0);
     }
 
-    CLLocation *loc = [[CLLocation alloc] initWithLatitude: self.currentLatitude longitude:self.currentLongitude ];
-    return loc;
+    return self.currentLocation;
 }
 
 #pragma mark - Core location delegate
@@ -143,7 +171,7 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
-    NSLog (@"Location manager error");
+    NSLog (@"Location manager error %@",error.localizedDescription);
 
 }
 

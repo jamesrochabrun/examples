@@ -48,15 +48,18 @@
 
         [self layout];
     }
+    
     return self;
 }
 
-- (void)setMenuItem:(MenuObject *)menuItem {
+- (void)setMenuItem:(MenuObject *)menuItem
+{
     _icon.text = menuItem.icon;
     _name.text = menuItem.name;
 }
 
-- (void)layout {
+- (void)layout
+{
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
 
     UIView *superview = self;

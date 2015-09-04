@@ -72,8 +72,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
         return nil;
     }
     NSDate *date = ary[0];
-    NSNumber *decision = ary[1];
-    if ([date isMemberOfClass: [NSDate class]] && [decision isMemberOfClass: [NSNumber class]]) {
+    if ([date isMemberOfClass: [NSDate class]]) {
         return ary;
     }
     return nil;
@@ -90,8 +89,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
     }
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSDate *date = ary[0];
-    NSNumber *decision = ary[1];
-    if ([date isMemberOfClass: [NSDate class]] && [decision isMemberOfClass: [NSNumber class]]) {
+    if ([date isMemberOfClass: [NSDate class]]) {
         [ud setObject: ary forKey: key];
     }
 }

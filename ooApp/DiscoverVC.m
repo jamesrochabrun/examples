@@ -12,6 +12,8 @@
 #import "RestaurantObject.h"
 #import "ListTVCell.h"
 #import "DebugUtilities.h"
+#import "Settings.h"
+#import "LocationManager.h"
 
 @interface DiscoverVC ()
 
@@ -19,7 +21,7 @@
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *lists;
-
+@property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
 @end
 
 @implementation DiscoverVC
@@ -126,11 +128,49 @@
     [_tableView reloadData];
 }
 
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self verifyTrackingIsOkay];
+}
 
-- (void)testAPI {
+- (void) verifyTrackingIsOkay
+{
+    if (0==self.currentLocation.longitude) {
+        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation ];
+        if (TRACKING_UNKNOWN == c) {
+            [[LocationManager sharedInstance] askUserWhetherToTrack];
+        }
+        else if (TRACKING_YES == c) {
+            [self updateLocation];
+        }
+    }
+}
+
+- (void)updateLocation
+{
+    self.currentLocation= [[LocationManager sharedInstance] currentUserLocation ];
+}
+
+- (void) testAPI
+{
     OOAPI *api = [[OOAPI alloc] init];
     
-    [api getRestaurantsWithKeyword:@"thai" andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
+    [self updateLocation];
+
+    CLLocationCoordinate2D locationToUse= self.currentLocation;
+   
+    if (0 == locationToUse.longitude) {
+        // RULE: 
+        float latitude, longitude;
+        //  San Francisco
+        latitude=37.7833;
+        longitude= -122.4167;
+        locationToUse= CLLocationCoordinate2DMake(latitude, longitude);
+    }
+    
+    [api getRestaurantsWithKeyword:@"thai" andLocation:locationToUse success:^(NSArray *r) {
         _restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self printRestaurants];

@@ -13,16 +13,21 @@
 
 extern NSString *const kDefaultsUserLocationChoice;
 
-@interface LocationManager : NSObject <CLLocationManagerDelegate>
+@interface LocationManager : NSObject <CLLocationManagerDelegate, UIAlertViewDelegate>
 
 + (instancetype) sharedInstance;
 
-- (CLLocation*) currentUserLocation;
+- (CLLocationCoordinate2D) currentUserLocation;
 - (void) startTrackingLocation;
 - (void) stopTrackingLocation;
+- (void) askUserWhetherToTrack;
 
-- (void) setUserLocationTrackingChoice:  (BOOL) choice;
-- (BOOL) dontTrackLocation;
+typedef enum : int {
+    TRACKING_UNKNOWN=0,
+    TRACKING_YES=1,
+    TRACKING_NO=2,
+} TrackingChoice;
+- (TrackingChoice) dontTrackLocation;
 
 @end
 
