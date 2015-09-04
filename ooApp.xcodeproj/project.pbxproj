@@ -70,7 +70,6 @@
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
-		96821D841B98F42A00ED9E10 /* CacheManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 96821D831B98F42A00ED9E10 /* CacheManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -182,8 +181,6 @@
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
-		96821D831B98F42A00ED9E10 /* CacheManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheManager.m; sourceTree = "<group>"; };
-		96821D851B98F43200ED9E10 /* CacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheManager.h; sourceTree = "<group>"; };
 		F945100C76CB8545DC64E837 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -362,8 +359,6 @@
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				964BC81C1B97935F00760C83 /* Settings.h */,
 				964BC81D1B97935F00760C83 /* Settings.m */,
-				96821D851B98F43200ED9E10 /* CacheManager.h */,
-				96821D831B98F42A00ED9E10 /* CacheManager.m */,
 				964BC81F1B97A4E700760C83 /* LocationManager.m */,
 				964BC8201B97A4E700760C83 /* LocationManager.h */,
 				36FDA6F71B585F650029D29D /* AppDelegate.h */,
@@ -613,7 +608,6 @@
 				36FDA6FC1B585F650029D29D /* DiscoverVC.m in Sources */,
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,
-				96821D841B98F42A00ED9E10 /* CacheManager.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
