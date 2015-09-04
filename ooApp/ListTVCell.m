@@ -24,6 +24,8 @@
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *cvl;
 
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+
 @end
 
 static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
@@ -104,7 +106,14 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 
 - (void)prepareForReuse
 {
+    self.requestOperation= nil;
+    
+    // AFNetworking
     [self.backgroundImage cancelImageRequestOperation];
+    
+    // AFNetworking
+    [self.requestOperation cancel ];
+    self.requestOperation= nil;
 }
 
 - (void)setListItem:(ListObject *)listItem {
@@ -116,7 +125,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 {
     OOAPI *api = [[OOAPI alloc] init];
     
-    [api getRestaurantsWithKeyword:_listItem.name andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
+    self.requestOperation= [api getRestaurantsWithKeyword:_listItem.name andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
         _restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self gotRestaurants];
