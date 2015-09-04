@@ -160,8 +160,7 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
     float la = coord.latitude;
     float lo = coord.longitude;
     NSLog  (@"New location data lat= %g, long= %g",la,lo);
-    self.currentLatitude= la;
-    self.currentLongitude= lo;
+    self.currentLocation= coord;
 }
 
 //------------------------------------------------------------------------------

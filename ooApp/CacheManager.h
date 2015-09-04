@@ -17,20 +17,8 @@
 
 - (unsigned long) totalAssets;
 
-- (void) addImage:(UIImage*) image withMetadata: (NSDictionary*)metadata;
-- (void) addRestaurant: (NSDictionary*)metadata;
-
-- (NSArray*) lookupImagesByRestaurant: (NSString*)identifier;
-- (NSArray*) lookupRestaurantsByLocation: (CLLocationCoordinate2D) location  radius: (float) radius;
-
-- (void) removeAll;
-- (void) removeImages;
-- (void) removeRestaurants;
-
-- (void) saveListings;
-
-- (void) updateImages;
-- (void) updateRestaurants;
+- (void) fetchImage:(NSString*) urlString into:(UIImageView*) imageView;
+- (void) fetchRestaurant: (NSString*) identifier;
 
 @end
 
