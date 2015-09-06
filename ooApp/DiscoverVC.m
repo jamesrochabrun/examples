@@ -38,6 +38,8 @@
     
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:@"listCell"];
     _selectedItem = nil;
+
+    self.screenTitle = @"Discover";
     
     _lists = [NSMutableArray array];
     ListObject *list;
@@ -109,6 +111,7 @@
 }
 
 -(void)layout {
+    [super layout];
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
