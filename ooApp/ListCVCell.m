@@ -75,7 +75,7 @@
     _restaurant = restaurant;
     _name.text = _restaurant.name;
     
-    CLLocationCoordinate2D loc =CLLocationCoordinate2DMake(37.7833,-122.4167);/// [[LocationManager sharedInstance] currentUserLocation];
+    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     
     CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
     CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];

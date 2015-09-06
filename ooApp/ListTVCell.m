@@ -135,8 +135,8 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 {
     OOAPI *api = [[OOAPI alloc] init];
     
-    //    self.requestOperation= [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
-    self.requestOperation= [api getRestaurantsWithKeyword:_listItem.name andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
+    self.requestOperation= [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
+//    self.requestOperation= [api getRestaurantsWithKeyword:_listItem.name andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
         _restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self gotRestaurants];
