@@ -24,6 +24,7 @@ static NSUInteger kColorClear = 0x00000000;
 static NSUInteger kColorGray = 0x555555FF;
 static NSUInteger kColorGrayMiddle = 0xB2B2B2FF;
 static NSUInteger kColorNavBar = 0x000000FF;
+static NSUInteger kColorNavyBlue = 0x000080FF;
 static NSUInteger kColorStripOverlay = 0x00000077;
 static NSUInteger kColorWhite = 0xFFFFFFFF;
 
@@ -33,10 +34,11 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
 static CGFloat kGeomHeightButton = 40.0;
-static CGFloat kGeomHeightListRow = 80.0;
+static CGFloat kGeomHeightListRow = 120.0;
+static CGFloat kGeomHeightListCell = 100.0;
 static CGFloat kGeomHeightListRowReveal = 240.0;
 static NSUInteger kGeomIconSize = 25;
-static CGFloat kGeomSpaceEdge = 10.0;
+static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 10.0;
 

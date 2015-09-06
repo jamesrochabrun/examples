@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RestaurantObject.h"
 
 @interface ListCVCell : UICollectionViewCell
+
+@property (nonatomic, strong) RestaurantObject *restaurant;
 
 @end

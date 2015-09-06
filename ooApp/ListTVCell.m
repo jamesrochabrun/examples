@@ -25,6 +25,7 @@
 
 @end
 
+
 static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 
 @implementation ListTVCell
@@ -46,6 +47,12 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
         _foregroundView = [[UIView alloc] init];
         _foregroundView.backgroundColor = UIColorRGBA(kColorStripOverlay);
 
+        _cvl = [[ListCVFL alloc] init];
+        [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+        [_cvl setMinimumInteritemSpacing:0];
+
+        [_cvl setItemSize:CGSizeMake(kGeomHeightListCell, kGeomHeightListCell)];
+        
         [self addSubview:_backgroundImage];
         [self addSubview:_foregroundView];
         [self addSubview:_actionButton];
@@ -77,7 +84,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     
     CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_name.font}];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightListRow), @"labelY":@((kGeomHeightListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightListRow), @"labelY":@((kGeomHeightListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _foregroundView, _backgroundImage, _name, _actionButton);
@@ -85,7 +92,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_foregroundView(height)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(labelY)-[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(buttonY)-[_actionButton]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -101,9 +108,11 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 
 }
 
-- (void)setListItem:(ListObject *)listItem {
+- (void)setListItem:(ListObject *)listItem
+{
     _listItem = listItem;
     _name.text = listItem.name;
+    [self getRestaurants];
 }
 
 - (void)getRestaurants
@@ -120,19 +129,16 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     }];
 }
 
-//------------------
-// gotR
-///
-
 - (void)gotRestaurants
 {
     [_restaurants enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSLog(@"rest name = %@",  [(RestaurantObject *)obj name]);
     }];
+//    [self addSubview:_collectionView];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     [self.collectionView reloadData];
-    [DebugUtilities addBorderToViews:@[self.collectionView]];
+//    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
 
 
@@ -149,7 +155,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 
 
 - (void)deselectRow {
-    _collectionView = nil;
+//    [_collectionView removeFromSuperview];
 }
 
 #pragma Collection View delegate methods
@@ -167,24 +173,19 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     ListCVCell *restaurantCell = [collectionView dequeueReusableCellWithReuseIdentifier:RestaurantCellIdentifier forIndexPath:indexPath];
+    restaurantCell.restaurant = [_restaurants objectAtIndex:indexPath.row];
     return restaurantCell;
 }
-
-
 
 #pragma lazy load some stuff
 
 - (UICollectionView *)collectionView
 {
-    if (_collectionView == nil) {
-        _cvl = [[ListCVFL alloc] init];
-        [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-        [_cvl setMinimumInteritemSpacing:kGeomSpaceInter];
-        [_cvl setItemSize:CGSizeMake(150, kGeomHeightListRowReveal)];
-        
-        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, kGeomHeightListRowReveal+2*kGeomSpaceInter) collectionViewLayout:_cvl];
-        [self addSubview:_collectionView];
+    if (!_collectionView) {
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 20, self.frame.size.width, self.frame.size.height-20) collectionViewLayout:_cvl];
         [_collectionView registerClass:[ListCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
+        [self addSubview:_collectionView];
+        [self bringSubviewToFront:_name];
     }
     return _collectionView;
 }
