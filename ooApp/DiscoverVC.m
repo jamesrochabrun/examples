@@ -36,8 +36,6 @@
     _tableView.dataSource = self;
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    _tableView.rowHeight = kGeomHeightListRow;
-    
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:@"listCell"];
     _selectedItem = nil;
     
@@ -219,7 +217,8 @@
 }
 
 #pragma table view delegates/datasources
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     ListTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"listCell" forIndexPath:indexPath];
     ListObject *list = (ListObject *)[_lists objectAtIndex:indexPath.row];
     
@@ -229,35 +228,37 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     CGFloat height = 0;
-    height = (_selectedItem && ([_lists indexOfObject:_selectedItem] == indexPath.row)) ? (kGeomHeightListRow + kGeomHeightListRowReveal + 2*kGeomSpaceInter) : kGeomHeightListRow;
-    
-    NSLog(@"row=%@ selectedRow=%@ height=%f", ((ListObject*)[_lists objectAtIndex:indexPath.row]).name, _selectedItem.name, height);
-    
+    height = kGeomHeightListRow;
     return height;
 }
 
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
     
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
     _selectedItem = (_selectedItem && ([_lists indexOfObject:_selectedItem] == indexPath.row)) ? nil : [_lists objectAtIndex:indexPath.row];
 
     if (_selectedItem) {
-        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] getRestaurants];;
+        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] getRestaurants];
+    } else {
+        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] deselectRow];
     }
     [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return [_lists count];
 }
 
