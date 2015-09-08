@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "LocationManager.h"
 #import "Settings.h"
 #import "UserObject.h"
 
@@ -26,6 +27,16 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
         sharedInstance = [[self alloc] init];
     });
     return sharedInstance;
+}
+
+//------------------------------------------------------------------------------
+// Name:    save
+// Purpose: Make sure all of user defaults is on disk.
+//------------------------------------------------------------------------------
+- (void) save;
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud  synchronize ];
 }
 
 //------------------------------------------------------------------------------
@@ -95,6 +106,20 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
     }
 }
 
+- (CLLocationCoordinate2D) mostRecentLocation
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    double lat = [ud doubleForKey:kDefaultsUserLocationLastKnownLatitude];
+    double lon = [ud doubleForKey:kDefaultsUserLocationLastKnownLongitude];
+    return  CLLocationCoordinate2DMake(lat,lon);
+}
+
+- (void) setMostRecentLocation: (CLLocationCoordinate2D) coord;
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setDouble: coord.latitude forKey:kDefaultsUserLocationLastKnownLatitude ];
+    [ud setDouble: coord.longitude  forKey:kDefaultsUserLocationLastKnownLongitude ];
+}
 @end
 
 

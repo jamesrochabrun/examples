@@ -30,7 +30,7 @@
     for (int i=0; i<7;i++) {
         l = [[UILabel alloc] initWithFrame:CGRectMake(20, 70+i*20, width(self.view), 20)];
         [l withFont:[UIFont fontWithName:kFontLatoRegular size:fontSize+i] textColor:kColorWhite backgroundColor:kColorBlack];
-        l.text = [NSString stringWithFormat:@"Oomami...font size %ld, %@", fontSize+i, l.font.fontName] ;
+        l.text = [NSString stringWithFormat:@"Oomami...font size %ld, %@",(long) fontSize+i, l.font.fontName] ;
         [self.view addSubview:l];
     }
     

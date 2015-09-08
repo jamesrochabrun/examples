@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
+
 #import "UserObject.h"
 
 extern NSString *const kDefaultsCurrentUserInfo;
@@ -15,11 +17,16 @@ extern NSString *const kDefaultsCurrentUserInfo;
 
 + (instancetype) sharedInstance;
 
+- (void) save;
+
 - (UserObject*) currentUser;
 - (void) setCurrentUser: (UserObject*) user;
 
 - (NSArray*) mostRecentChoice: (NSString *) key;
 - (void) setMostRecentChoice: (NSString *) key to:(NSArray*) ary;
+
+- (CLLocationCoordinate2D) mostRecentLocation;
+- (void) setMostRecentLocation: (CLLocationCoordinate2D) coord;
 
 @end
 

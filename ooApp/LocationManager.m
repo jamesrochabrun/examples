@@ -12,6 +12,8 @@
 #import "UserObject.h"
 
 NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
+NSString *const kDefaultsUserLocationLastKnownLatitude = @"lastKnownLocationLat";
+NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLong";
 
 @interface LocationManager ()
 @property (nonatomic,retain) CLLocationManager *locationManager;
@@ -39,6 +41,15 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
     [self stopTrackingLocation];
 }
 
+- (instancetype) init
+{
+    self = [super init];
+    if (self) {
+        _currentLocation = [[Settings sharedInstance] mostRecentLocation ];
+    }
+    return self;
+}
+
 //------------------------------------------------------------------------------
 // Name:    dontTrackLocation
 // Purpose: Reads the current user location tracking choice from settings.
@@ -63,7 +74,7 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
 {
     // RULE:  if the user previously said no, give them the chance to say yes.
     
-    if ([self dontTrackLocation] ==TRACKING_YES) {
+    if ([self dontTrackLocation] == TRACKING_YES) {
         return;
     }
     
@@ -89,11 +100,11 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
     [[Settings sharedInstance] setMostRecentChoice: kDefaultsUserLocationChoice
                                                 to: @[
                                                       [NSDate date],
-                                                      [NSNumber numberWithInteger: choice?1:0]
+                                                      [NSNumber numberWithInteger: choice==TRACKING_NO?1:0]
                                                       ]];
     if (choice==TRACKING_YES ) {
         //  start the location manager if not already started.
-        [self currentUserLocation];
+//        [self currentUserLocation];
     }
 }
 
@@ -135,14 +146,13 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
     }
     if (!self.locationManager) {
         [self startTrackingLocation];
-        return CLLocationCoordinate2DMake(0,0);
+        return [[Settings sharedInstance] mostRecentLocation ];
     }
-
+    
     return self.currentLocation;
 }
 
 #pragma mark - Core location delegate
-
 
 //------------------------------------------------------------------------------
 // Name:    locationManagerDidPauseLocationUpdates:
@@ -165,6 +175,8 @@ NSString *const kDefaultsUserLocationChoice = @"dontTrackLocation";
     float lo = coord.longitude;
     NSLog  (@"New location data lat= %g, long= %g",la,lo);
     self.currentLocation= coord;
+    
+    [[Settings sharedInstance] setMostRecentLocation:coord ];
 }
 
 //------------------------------------------------------------------------------

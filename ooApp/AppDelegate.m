@@ -11,6 +11,8 @@
 #import "OOAPI.h"
 #import "DebugUtilities.h"
 #import "LoginVC.h"
+#import "Settings.h"
+#import "LocationManager.h"
 
 @interface AppDelegate ()
 
@@ -29,6 +31,9 @@
                                                             diskCapacity:100 * 1024 * 1024
                                                                 diskPath:nil];
     [NSURLCache setSharedURLCache:sharedCache];
+    
+    CLLocationCoordinate2D location= [[Settings sharedInstance] mostRecentLocation ];
+    NSLog  (@"Last known location: %g,%g", location.latitude,location.longitude);
     
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
@@ -49,7 +54,10 @@
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+    [[Settings sharedInstance]  save ];
+    
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }

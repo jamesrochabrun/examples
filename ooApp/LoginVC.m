@@ -10,6 +10,7 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 #import "DebugUtilities.h"
+#import "LocationManager.h"
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImage;
@@ -70,6 +71,8 @@
     [self.view addSubview:_password];
     [self.view addSubview:_forgotPassword];
     [self layout];
+    
+    [[LocationManager sharedInstance] askUserWhetherToTrack ];
 }
 
 - (void)layout
