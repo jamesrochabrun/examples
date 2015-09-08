@@ -13,4 +13,7 @@
 
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *menu;
 
+@property (nonatomic, strong) NSString *screenTitle;
+
+- (void)layout;
 @end

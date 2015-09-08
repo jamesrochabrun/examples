@@ -24,6 +24,8 @@
     [self.view addSubview:_facebookButton];
     _facebookButton.translatesAutoresizingMaskIntoConstraints = NO;
     
+    self.screenTitle = @"Profile";
+    
     [self layout];
 }
 

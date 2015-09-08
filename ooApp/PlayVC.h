@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseVC.h"
 
-@interface PlayVC : UIViewController
+@interface PlayVC : BaseVC
 
 
 @end

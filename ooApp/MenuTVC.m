@@ -13,6 +13,7 @@
 #import "ProfileVC.h"
 #import "DiscoverVC.h"
 #import "DefaultVC.h"
+#import "PlayVC.h"
 
 @interface MenuTVC ()
 
@@ -178,10 +179,10 @@
     if ([menuItem.type isEqualToString:kMenuItemProfile]) {
         [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
         fvc = [[ProfileVC alloc] init];
-        //newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
-        //newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
+    } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
+        fvc = [[PlayVC alloc] init];
     } else {
         //TODO AUG: fill in other cases
         fvc = [[DefaultVC alloc] init];

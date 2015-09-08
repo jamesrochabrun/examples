@@ -7,6 +7,7 @@
 //
 
 #import "ListCVCell.h"
+#import "LocationManager.h"
 #import "DebugUtilities.h"
 
 @interface ListCVCell ()
@@ -73,8 +74,16 @@
 - (void)setRestaurant:(RestaurantObject *)restaurant {
     _restaurant = restaurant;
     _name.text = _restaurant.name;
-    _distance.text = @"1.0 mi.";
-    _rating.text = @"4.5";
+    
+    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+    
+    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
+    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];
+    
+    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
+    
+    _distance.text = [NSString stringWithFormat:@"%0.1f mi.", distanceInMeters/1000/1.6];
+    _rating.text = restaurant.rating;
 }
 
 @end
