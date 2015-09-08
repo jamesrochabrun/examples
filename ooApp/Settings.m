@@ -72,7 +72,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
         return nil;
     }
     NSDate *date = ary[0];
-    if ([date isMemberOfClass: [NSDate class]]) {
+    if ([date isKindOfClass: [NSDate class]]) {
         return ary;
     }
     return nil;
@@ -89,8 +89,9 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
     }
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSDate *date = ary[0];
-    if ([date isMemberOfClass: [NSDate class]]) {
+    if ([date isKindOfClass: [NSDate class]]) {
         [ud setObject: ary forKey: key];
+        [ud synchronize];
     }
 }
 
