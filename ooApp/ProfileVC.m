@@ -16,7 +16,8 @@
 
 @implementation ProfileVC
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     _facebookButton = [[FBSDKLoginButton alloc] init];
@@ -29,14 +30,14 @@
     [self layout];
 }
 
-
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)layout {
-
+- (void)layout
+{
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self.view;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _facebookButton);

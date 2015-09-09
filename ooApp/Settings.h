@@ -15,18 +15,18 @@ extern NSString *const kDefaultsCurrentUserInfo;
 
 @interface Settings : NSObject
 
-+ (instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 
-- (void) save;
+- (void)save;
 
-- (UserObject*) currentUser;
-- (void) setCurrentUser: (UserObject*) user;
+- (UserObject *)currentUser;
+- (void)setCurrentUser:(UserObject *)user;
 
-- (NSArray*) mostRecentChoice: (NSString *) key;
-- (void) setMostRecentChoice: (NSString *) key to:(NSArray*) ary;
+- (NSArray *)mostRecentChoice:(NSString *)key;
+- (void)setMostRecentChoice:(NSString *)key to:(NSArray*)ary;
 
-- (CLLocationCoordinate2D) mostRecentLocation;
-- (void) setMostRecentLocation: (CLLocationCoordinate2D) coord;
+- (CLLocationCoordinate2D)mostRecentLocation;
+- (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;
 
 @end
 

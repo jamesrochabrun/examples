@@ -18,7 +18,6 @@
 
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UIButton *actionButton;
-//@property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) NSArray *restaurants;
 
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -38,7 +37,6 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     
     if (self) {
         _listItem = [[ListObject alloc] init];
-//        _backgroundImage = [[UIImageView alloc] init];
         _name = [[UILabel alloc] init];
         [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -53,19 +51,12 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 
         [_cvl setItemSize:CGSizeMake(kGeomHeightListCell, kGeomHeightListCell)];
         
-//        [self addSubview:_backgroundImage];
         [self addSubview:_actionButton];
         [self addSubview:_name];
         
         _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
-//        _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         _name.translatesAutoresizingMaskIntoConstraints = NO;
         
-        //set the selected color for the cell
-//        UIView *bgColorView = [[UIView alloc] init];
-//        bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
-//        [self setSelectedBackgroundView:bgColorView];
-
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = UIColorRGBA(kColorBlack);
         self.separatorInset = UIEdgeInsetsZero;
@@ -88,11 +79,9 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _actionButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(buttonY)-[_actionButton]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[_actionButton]-(spaceEdge)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[_name]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_name
@@ -161,11 +150,6 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     // Configure the view for the selected state
 }
 
-
-- (void)deselectRow {
-//    [_collectionView removeFromSuperview];
-}
-
 #pragma Collection View delegate methods
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -183,6 +167,10 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     ListCVCell *restaurantCell = [collectionView dequeueReusableCellWithReuseIdentifier:RestaurantCellIdentifier forIndexPath:indexPath];
     restaurantCell.restaurant = [_restaurants objectAtIndex:indexPath.row];
     return restaurantCell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
 }
 
 #pragma lazy load some stuff

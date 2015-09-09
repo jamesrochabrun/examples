@@ -44,7 +44,7 @@
     _lists = [NSMutableArray array];
     ListObject *list;
     list = [[ListObject alloc] init];
-    list.name = @"Thai";
+    list.name = @"Noe";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
@@ -246,13 +246,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     _selectedItem = (_selectedItem && ([_lists indexOfObject:_selectedItem] == indexPath.row)) ? nil : [_lists objectAtIndex:indexPath.row];
-
-    if (_selectedItem) {
-        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] getRestaurants];
-    } else {
-        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] deselectRow];
-    }
-    [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
