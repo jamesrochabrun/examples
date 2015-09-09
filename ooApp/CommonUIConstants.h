@@ -34,15 +34,13 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
 static CGFloat kGeomHeightButton = 40.0;
-static CGFloat kGeomHeightListRow = 120.0;
+static CGFloat kGeomHeightListRow = 130.0;
 static CGFloat kGeomHeightListCell = 100.0;
 static CGFloat kGeomHeightListRowReveal = 240.0;
 static NSUInteger kGeomIconSize = 25;
 static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 10.0;
-
-//restaurant cards 42 spacing, 280 wide, 632
 
 // Custom Fonts
 extern NSString *const kFontIcons;
@@ -61,5 +59,5 @@ extern NSString *const kFontIconConnect;
 extern NSString *const kFontIconAddToList;
 extern NSString *const kFontIconPlay;
 extern NSString *const kFontIconFacebook;
-
+extern NSString *const kFontIconLike;
 #endif

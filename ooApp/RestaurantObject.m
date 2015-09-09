@@ -10,7 +10,7 @@
 
 NSString *const kKeyName = @"name";
 NSString *const kKeyRating = @"rating";
-NSString *const kKeyImageURL = @"image_url";
+NSString *const kKeyImageRef = @"image_ref";
 NSString *const kKeyLocation = @"location";
 NSString *const kKeyLatitude = @"latitude";
 NSString *const kKeyLongitude = @"longitude";
@@ -22,7 +22,8 @@ NSString *const kKeyPriceRange = @"price_range";
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
     restaurant.name = [dict objectForKey:kKeyName];
     restaurant.rating = [NSString stringWithFormat:@"%@", [dict objectForKey:kKeyRating]];
-    restaurant.imageURL = [dict objectForKey:kKeyImageURL];
+    NSArray *imageRefs = [dict objectForKey:kKeyImageRef];
+    restaurant.imageRef = (imageRefs && ![imageRefs isKindOfClass:[NSNull class]]) ? [ImageRefObject imageRefFromDict:[imageRefs objectAtIndex:0]] : nil;
     
     NSDictionary *location = [dict objectForKey:kKeyLocation];
     restaurant.location = CLLocationCoordinate2DMake([[location objectForKey:kKeyLatitude] doubleValue],
@@ -37,7 +38,6 @@ NSString *const kKeyPriceRange = @"price_range";
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:restaurant.name forKey:kKeyName];
     [dict setObject:restaurant.rating forKey:kKeyRating];
-    [dict setObject:restaurant.imageURL forKey:kKeyImageURL];
     return dict;
 }
 

@@ -18,8 +18,7 @@
 
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UIButton *actionButton;
-@property (nonatomic, strong) UIImageView *backgroundImage;
-@property (nonatomic, strong) UIView *foregroundView;
+//@property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) NSArray *restaurants;
 
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -39,7 +38,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     
     if (self) {
         _listItem = [[ListObject alloc] init];
-        _backgroundImage = [[UIImageView alloc] init];
+//        _backgroundImage = [[UIImageView alloc] init];
         _name = [[UILabel alloc] init];
         [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -48,23 +47,18 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
         [_actionButton setTitleColor:UIColorRGBA(kColorButtonSelected) forState:UIControlStateHighlighted];
         [_actionButton.titleLabel setFont:[UIFont fontWithName:kFontIcons size:20]];
         
-        _foregroundView = [[UIView alloc] init];
-        _foregroundView.backgroundColor = UIColorRGBA(kColorStripOverlay);
-
         _cvl = [[ListCVFL alloc] init];
         [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
         [_cvl setMinimumInteritemSpacing:0];
 
         [_cvl setItemSize:CGSizeMake(kGeomHeightListCell, kGeomHeightListCell)];
         
-        [self addSubview:_backgroundImage];
-        [self addSubview:_foregroundView];
+//        [self addSubview:_backgroundImage];
         [self addSubview:_actionButton];
         [self addSubview:_name];
         
-        _foregroundView.translatesAutoresizingMaskIntoConstraints = NO;
         _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
-        _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+//        _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         _name.translatesAutoresizingMaskIntoConstraints = NO;
         
         //set the selected color for the cell
@@ -73,12 +67,12 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 //        [self setSelectedBackgroundView:bgColorView];
 
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = UIColorRGBA(kColorWhite);
+        self.backgroundColor = UIColorRGBA(kColorBlack);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
         [self layout];
         
-//        [DebugUtilities addBorderToViews:@[_backgroundImage, _foregroundView, _name,_actionButton]];
+//        [DebugUtilities addBorderToViews:@[_name,_actionButton]];
     }
     
     return self;
@@ -91,16 +85,14 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     NSDictionary *metrics = @{@"height":@(kGeomHeightListRow), @"labelY":@((kGeomHeightListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _foregroundView, _backgroundImage, _name, _actionButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _actionButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_foregroundView(height)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(buttonY)-[_actionButton]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_foregroundView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[_actionButton]-(spaceEdge)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[_name]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_name
@@ -117,7 +109,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
     self.requestOperation= nil;
     
     // AFNetworking
-    [self.backgroundImage cancelImageRequestOperation];
+//    [self.backgroundImage cancelImageRequestOperation];
     
     // AFNetworking
     [self.requestOperation cancel ];
@@ -135,8 +127,7 @@ static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 {
     OOAPI *api = [[OOAPI alloc] init];
     
-    self.requestOperation= [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
-//    self.requestOperation= [api getRestaurantsWithKeyword:_listItem.name andLocation:CLLocationCoordinate2DMake(37.7833,-122.4167) success:^(NSArray *r) {
+    self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
         _restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [self gotRestaurants];
