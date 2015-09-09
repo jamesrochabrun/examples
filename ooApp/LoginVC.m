@@ -90,6 +90,19 @@
     if (token) {
         // Instantaneous transition if the user  really logged in.
         [self showMainUI];
+    } else {
+        NSLog (@"Was not able to get token, will try again in one second.");
+        [self performSelector:@selector(facebookLoginDidTranspire2) withObject:nil afterDelay:1];
+    }
+}
+- (void)facebookLoginDidTranspire2
+{
+    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+    if (token) {
+        // Instantaneous transition if the user  really logged in.
+        [self showMainUI];
+    } else {
+        NSLog (@"Really unable to get token.");
     }
 }
 
