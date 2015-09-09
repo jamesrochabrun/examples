@@ -27,7 +27,7 @@
 		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
 		365F17611B9105B500015D5D /* ListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListTVCell.m */; };
 		366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */; };
-		367112CE1B9A076B006FDCE7 /* ImageRefModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112CD1B9A076B006FDCE7 /* ImageRefModel.m */; };
+		367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112CD1B9A076B006FDCE7 /* ImageRefObject.m */; };
 		367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 367703FA1B86884700B594E5 /* CommonUIConstants.m */; };
 		367704011B87E43400B594E5 /* icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 367704001B87E43400B594E5 /* icons.ttf */; };
 		367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704041B8807F600B594E5 /* UIButton+Additions.m */; };
@@ -121,8 +121,8 @@
 		365F17601B9105B500015D5D /* ListTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTVCell.m; sourceTree = "<group>"; };
 		366B623D1B8D3ED700B9F1C5 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SWRevealViewController.h; path = External/SWRevealViewController/SWRevealViewController.h; sourceTree = "<group>"; };
 		366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SWRevealViewController.m; path = External/SWRevealViewController/SWRevealViewController.m; sourceTree = "<group>"; };
-		367112CC1B9A076B006FDCE7 /* ImageRefModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRefModel.h; sourceTree = "<group>"; };
-		367112CD1B9A076B006FDCE7 /* ImageRefModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageRefModel.m; sourceTree = "<group>"; };
+		367112CC1B9A076B006FDCE7 /* ImageRefObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRefObject.h; sourceTree = "<group>"; };
+		367112CD1B9A076B006FDCE7 /* ImageRefObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageRefObject.m; sourceTree = "<group>"; };
 		367703FA1B86884700B594E5 /* CommonUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUIConstants.m; sourceTree = "<group>"; };
 		367704001B87E43400B594E5 /* icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icons.ttf; path = Fonts/icons.ttf; sourceTree = "<group>"; };
 		367704031B8807F600B594E5 /* UIButton+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Additions.h"; sourceTree = "<group>"; };
@@ -239,8 +239,8 @@
 				3621F1211B8F7E7A004537B6 /* MenuObject.m */,
 				36F872D71B919BC200006C29 /* ListObject.h */,
 				36F872D81B919BC200006C29 /* ListObject.m */,
-				367112CC1B9A076B006FDCE7 /* ImageRefModel.h */,
-				367112CD1B9A076B006FDCE7 /* ImageRefModel.m */,
+				367112CC1B9A076B006FDCE7 /* ImageRefObject.h */,
+				367112CD1B9A076B006FDCE7 /* ImageRefObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -605,7 +605,7 @@
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
 				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
-				367112CE1B9A076B006FDCE7 /* ImageRefModel.m in Sources */,
+				367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */,
 				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,
 				36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */,
 				367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */,
@@ -707,6 +707,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -745,6 +746,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
