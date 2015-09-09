@@ -43,6 +43,22 @@
     }];
 }
 
+- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef success:(void(^)(NSString *link))success failure:(void (^)(NSError *))failure
+{
+    NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants/photos", [self ooURL]];
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+
+    NSDictionary *parameters = @{@"reference": imageRef.reference};
+    
+    return [rm GET:URL parameters:parameters success:^(id responseObject) {
+        success([responseObject objectForKey:@"link"]);
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
+
+
 - (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
 {
     

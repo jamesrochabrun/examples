@@ -1,5 +1,5 @@
 //
-//  ImageRefModel.h
+//  ImageRefObject.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/4/15.
@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ImageRefModel : NSObject
+@interface ImageRefObject : NSObject
 
-@property (nonatomic, strong) NSString *imageRef;
+@property (nonatomic, strong) NSString *reference;
 @property (nonatomic, strong) NSString *type;
 @property (nonatomic) NSUInteger height;
 @property (nonatomic) NSUInteger width;
 
++ (ImageRefObject *)imageRefFromDict:(NSDictionary *)dict;
 
 @end

@@ -23,3 +23,4 @@ NSString *const kFontIconConnect = @"e";
 NSString *const kFontIconAddToList = @"f";
 NSString *const kFontIconPlay = @"g";
 NSString *const kFontIconFacebook = @"h";
+NSString *const kFontIconLike = @"d";

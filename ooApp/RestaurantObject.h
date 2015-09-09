@@ -8,13 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "ImageRefObject.h"
 
 @interface RestaurantObject : NSObject
 
 @property (nonatomic, strong) NSString *restaurantID;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *rating;
-@property (nonatomic, strong) NSString *imageURL;
+@property (nonatomic, strong) ImageRefObject *imageRef;
 @property (nonatomic, strong) NSString *cuisine;
 @property (nonatomic) CLLocationCoordinate2D location;
 @property (nonatomic, strong) NSString *priceRange;
