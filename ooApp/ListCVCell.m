@@ -32,6 +32,8 @@
         _distance = [[UILabel alloc] init];
         _rating = [[UILabel alloc] init];
         _backgroundImage = [[UIImageView alloc] init];
+        _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
+        _backgroundImage.clipsToBounds = YES;
         _overlay = [[UIView alloc] init];
         
         _overlay.translatesAutoresizingMaskIntoConstraints = NO;
@@ -101,7 +103,14 @@
     if (restaurant.imageRef) {
         [api getRestaurantImageWithImageRef:restaurant.imageRef success:^(NSString *link) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
+                NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:link]
+                                                              cachePolicy:NSURLRequestReturnCacheDataElseLoad
+                                                          timeoutInterval:60];
+                
+                [_backgroundImage setImageWithURLRequest:imageRequest
+                                 placeholderImage:[UIImage imageNamed:@"Logo2.png"]
+                                          success:nil
+                                          failure:nil];
             });
         } failure:^(NSError *error) {
             ;
