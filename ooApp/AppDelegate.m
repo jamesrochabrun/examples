@@ -41,11 +41,17 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    return [[FBSDKApplicationDelegate sharedInstance] application:application
+    if ([[FBSDKApplicationDelegate sharedInstance] application:application
                                                           openURL:url
                                                 sourceApplication:sourceApplication
                                                        annotation:annotation
-            ];
+            ])
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"facebookLoginDidTranspire" object:nil ];
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -8,7 +8,7 @@
 
 #import "LoginVC.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
-
+#import "Common.h"
 #import "DebugUtilities.h"
 #import "LocationManager.h"
 
@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UITextField *password;
 @property (nonatomic, strong) UIButton *forgotPassword;
 @property (nonatomic, strong) UIImageView *logo;
+@property (nonatomic, assign) BOOL showingKeyboard;
 
 @end
 
@@ -46,6 +47,7 @@
     _username.backgroundColor = UIColorRGBA(kColorGrayMiddle);
     _username.placeholder = @"username";
     _username.layer.cornerRadius = kGeomCornerRadius;
+    _username.delegate= self;
     
     _password = [[UITextField alloc] init];
     _password.backgroundColor = UIColorRGBA(kColorGrayMiddle);
@@ -73,6 +75,22 @@
     [self layout];
     
     [[LocationManager sharedInstance] askUserWhetherToTrack ];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(facebookLoginDidTranspire) name:@"facebookLoginDidTranspire" object:nil ];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)facebookLoginDidTranspire
+{
+    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+    if (token) {
+        // Instantaneous transition if the user  really logged in.
+        [self showMainUI];
+    }
 }
 
 - (void)layout
@@ -143,12 +161,14 @@
     [self performSelector:@selector(adjustInputFields) withObject:nil afterDelay:4];
 }
 
-- (void)adjustInputFields {
+- (void)adjustInputFields
+{
 //    [self.view layoutIfNeeded];
 //    [self adjustInputField];
 }
 
-- (void)adjustInputField {
+- (void)adjustInputField
+{
     
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self.view;
@@ -158,34 +178,63 @@
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(50)-[_logo(100)]-(>=20)-[_facebookLogin(height)]-spaceInter-[_username(height)]-spaceInter-[_password(height)]-(>=200)-[_forgotPassword]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
 }
 
-- (void)showMainUI {
+- (void)showMainUI
+{
     [self performSegueWithIdentifier:@"mainUISegue" sender:self];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [super viewDidDisappear:animated ];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
     [super viewDidAppear:animated];
 //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
     FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
     if (token) {
+        // Instantaneous transition if the user recently logged in.
         [self showMainUI];
+    } else {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
     }
 }
 
-- (void)loginThroughFacebook:(id)sender {
+- (void)keyboardHidden: (id) foobar
+{
+    self.showingKeyboard= NO;
+}
+
+- (void)keyboardShown: (id) foobar
+{
+    self.showingKeyboard= YES;
+}
+
+- (void)loginThroughFacebook:(id)sender
+{
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
     [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
         if (error) {
-            // Process error
-        } else if (result.isCancelled) {
+            // Automatic login was not possible,  so transferring to Facebook website or app...
+            
+            NSLog (@"Unable to log you in immediately: %@",error.localizedDescription);
+        }
+        else if (result.isCancelled) {
             // Handle cancellations
-        } else {
+        }
+        else {
             // If you ask for multiple permissions at once, you
             // should check if specific permissions missing
+            
             if ([result.grantedPermissions containsObject:@"email"]) {
                 // Do work
                 [self showMainUI];
@@ -194,17 +243,20 @@
     }];
 }
 
-- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {
-    
+- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
+{
+    NSLog (@"loginButtonDidLogOut");
 }
 
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
+- (BOOL)textFieldShouldReturn:(UITextField *)theTextField
+{
     if (theTextField == _password) {
         [theTextField resignFirstResponder];
     } else if (theTextField == _username) {
@@ -223,8 +275,8 @@
 }
 */
 
-- (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error {
-    
+- (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
+{
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email" parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {

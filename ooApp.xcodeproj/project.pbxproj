@@ -71,6 +71,7 @@
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
+		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -184,6 +185,8 @@
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
+		96D35F7B1B9F879200A18A23 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		96D35F7C1B9F879200A18A23 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
 		F945100C76CB8545DC64E837 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -307,6 +310,8 @@
 			isa = PBXGroup;
 			children = (
 				3677043C1B8BCB9100B594E5 /* ooApp.pch */,
+				96D35F7B1B9F879200A18A23 /* Common.h */,
+				96D35F7C1B9F879200A18A23 /* Common.m */,
 				36C39BDF1B84C7CD00648879 /* DebugUtilities.h */,
 				36C39BE01B84C7CD00648879 /* DebugUtilities.m */,
 				363B60C91B6C22F000987A1B /* CommonConstants.h */,
@@ -621,6 +626,7 @@
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
+				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,
 				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
