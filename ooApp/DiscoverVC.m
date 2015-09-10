@@ -22,7 +22,11 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *lists;
 @property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
+
 @end
+
+static NSString * const ListRowID = @"ListRowCell";
+static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 @implementation DiscoverVC
 
@@ -36,27 +40,39 @@
     _tableView.dataSource = self;
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:@"listCell"];
+    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:ListRowID];
+    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:FeaturedRowID];
+    
     _selectedItem = nil;
 
     self.screenTitle = @"Discover";
     
     _lists = [NSMutableArray array];
     ListObject *list;
-    list = [[ListObject alloc] init];
-    list.name = @"Thai";
-    [_lists addObject:list];
     
     list = [[ListObject alloc] init];
-    list.name = @"Burgers";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Chinese";
+    list.name = @"Featured";
+    list.listType = kListTypeFeatured;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Noe";
+    list.listType = KListTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Burgers";
+    list.listType = KListTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Chinese";
+    list.listType = KListTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Noe";
+    list.listType = KListTypeStrip;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
@@ -207,14 +223,13 @@
     //    }];
 }
 
-- (void)printRestaurants {
-    [_restaurants enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSLog(@"rest name = %@",  (RestaurantObject *)obj);
-    }];
+- (void)printRestaurants
+{
     [_tableView reloadData];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -222,8 +237,14 @@
 #pragma table view delegates/datasources
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ListTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"listCell" forIndexPath:indexPath];
-    ListObject *list = (ListObject *)[_lists objectAtIndex:indexPath.row];
+    ListObject *list = [_lists objectAtIndex:indexPath.row];
+    
+    ListTVCell *cell;
+    if (list.listType == kListTypeFeatured) {
+        cell = [tableView dequeueReusableCellWithIdentifier:FeaturedRowID forIndexPath:indexPath];
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
+    }
     
 //    if ([_lists objectAtIndex:indexPath.row] == _selectedItem)
     
@@ -234,7 +255,13 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = 0;
-    height = kGeomHeightListRow;
+    ListObject *lo = [_lists objectAtIndex:indexPath.row];
+    
+    if (lo.listType == kListTypeFeatured) {
+        height = kGeomHeightFeaturedRow;
+    } else {
+        height = kGeomHeightListRow;
+    }
     return height;
 }
 
@@ -246,13 +273,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     _selectedItem = (_selectedItem && ([_lists indexOfObject:_selectedItem] == indexPath.row)) ? nil : [_lists objectAtIndex:indexPath.row];
-
-    if (_selectedItem) {
-        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] getRestaurants];
-    } else {
-        [(ListTVCell *)[tableView cellForRowAtIndexPath:indexPath] deselectRow];
-    }
-    [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

@@ -10,4 +10,11 @@
 
 @implementation ListObject
 
+-(instancetype)init {
+    if (self) {
+        self.listType = KListTypeStrip;
+    }
+    return self;
+}
+
 @end

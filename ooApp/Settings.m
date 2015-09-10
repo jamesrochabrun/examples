@@ -19,7 +19,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 // Name:    +sharedInstance
 // Purpose: Provides the singleton instance.
 //------------------------------------------------------------------------------
-+ (instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 {
     static dispatch_once_t once;
     static id sharedInstance;
@@ -33,7 +33,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 // Name:    save
 // Purpose: Make sure all of user defaults is on disk.
 //------------------------------------------------------------------------------
-- (void) save;
+- (void)save;
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud  synchronize ];
@@ -43,7 +43,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 // Name:    currentUser
 // Purpose: Loads the user dict.
 //------------------------------------------------------------------------------
-- (UserObject*) currentUser
+- (UserObject *)currentUser
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSDictionary *d= [ud dictionaryForKey: kDefaultsCurrentUserInfo];
@@ -57,7 +57,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 // Name:    setCurrentUser
 // Purpose: Saves the user dict.
 //------------------------------------------------------------------------------
-- (void) setCurrentUser: (UserObject*) user
+- (void)setCurrentUser:(UserObject *)user
 {
     if  (! user) {
         return;
@@ -72,7 +72,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 // Name:    mostRecentChoice
 // Purpose: Returns the date and boolean for a recent user choice.
 //------------------------------------------------------------------------------
-- (NSArray*) mostRecentChoice: (NSString *) key;
+- (NSArray *)mostRecentChoice:(NSString *)key;
 {
     if  (! key) {
         return nil;
@@ -93,7 +93,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 // Name:    setMostRecentChoice
 // Purpose: Stores the date and boolean for a recent user choice.
 //------------------------------------------------------------------------------
-- (void) setMostRecentChoice: (NSString *) key to:(NSArray*) ary
+- (void)setMostRecentChoice:(NSString *)key to:(NSArray *)ary
 {
     if  (!key || !ary || ary.count != 2) {
         return;
@@ -106,7 +106,7 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
     }
 }
 
-- (CLLocationCoordinate2D) mostRecentLocation
+- (CLLocationCoordinate2D)mostRecentLocation
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     double lat = [ud doubleForKey:kDefaultsUserLocationLastKnownLatitude];
@@ -114,12 +114,13 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
     return  CLLocationCoordinate2DMake(lat,lon);
 }
 
-- (void) setMostRecentLocation: (CLLocationCoordinate2D) coord;
+- (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud setDouble: coord.latitude forKey:kDefaultsUserLocationLastKnownLatitude ];
     [ud setDouble: coord.longitude  forKey:kDefaultsUserLocationLastKnownLongitude ];
 }
+
 @end
 
 
