@@ -1,14 +1,14 @@
 //
-//  HorizonalListTVCell.m
+//  HorizonalTVCell.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/9/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "HorizonalListTVCell.h"
+#import "HorizonalTVCell.h"
 
-@implementation HorizonalListTVCell
+@implementation HorizonalTVCell
 
 - (void)awakeFromNib {
     // Initialization code

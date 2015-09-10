@@ -1,5 +1,5 @@
 //
-//  ListCVCell.h
+//  TileCVCell.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 8/30/15.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "RestaurantObject.h"
 
-@interface ListCVCell : UICollectionViewCell
+@interface TileCVCell : UICollectionViewCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 

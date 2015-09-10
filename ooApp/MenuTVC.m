@@ -39,37 +39,37 @@
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
-    menuItem.name = @"Discover";
+    menuItem.name = @"WHATS'S NEW";
     menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconEat;
-    menuItem.name = @"Eat";
+    menuItem.name = @"DISCOVER";
     menuItem.type = kMenuItemEat;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconPlay;
-    menuItem.name = @"Play";
+    menuItem.name = @"FRIEND FEED";
     menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconMeet;
-    menuItem.name = @"Meet";
+    menuItem.name = @"EVENTS";
     menuItem.type = kMenuItemMeet;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconConnect;
-    menuItem.name = @"Connect";
+    menuItem.name = @"PROFILE";
     menuItem.type = kMenuItemConnect;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconUserProfile;
-    menuItem.name = @"User Profile";
+    menuItem.name = @"SETTINGS";
     menuItem.type = kMenuItemProfile;
     [_menuItems addObject:menuItem];
     

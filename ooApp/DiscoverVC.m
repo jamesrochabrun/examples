@@ -14,11 +14,10 @@
 #import "DebugUtilities.h"
 #import "Settings.h"
 #import "LocationManager.h"
+#import "HorizontalListVC.h"
 
 @interface DiscoverVC ()
 
-@property (nonatomic) ListObject *selectedItem;
-@property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *lists;
 @property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
@@ -43,8 +42,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:ListRowID];
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:FeaturedRowID];
     
-    _selectedItem = nil;
-
     self.screenTitle = @"Discover";
     
     _lists = [NSMutableArray array];
@@ -143,7 +140,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-//    [self testAPI];
     [_tableView reloadData];
 }
 
@@ -172,63 +168,58 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     self.currentLocation= [[LocationManager sharedInstance] currentUserLocation ];
 }
 
-- (void) testAPI
-{
-    OOAPI *api = [[OOAPI alloc] init];
-    
-    [self updateLocation];
-
-    CLLocationCoordinate2D locationToUse= self.currentLocation;
-   
-    if (0 == locationToUse.longitude) {
-        // RULE: 
-        float latitude, longitude;
-        //  San Francisco
-        latitude=37.7833;
-        longitude= -122.4167;
-        locationToUse= CLLocationCoordinate2DMake(latitude, longitude);
-    }
-    
-    [api getRestaurantsWithKeyword:@"thai" andLocation:locationToUse success:^(NSArray *r) {
-        _restaurants = r;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self printRestaurants];
-        });
-    } failure:^(NSError *err) {
-        ;
-    }];
-    
-    [api getUsersWithIDs:nil success:^(NSArray *r) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [r enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                UserObject *user =  (UserObject *)obj;
-                NSLog(@"id = %@ user = %@ %@ email=%@", user.userID, user.firstName, user.lastName, user.email);
-            }];
-        });
-    } failure:^(NSError *err) {
-        ;
-    }];
-    
-    [api getDishesWithIDs:nil success:^(NSArray *r) {
-        
-    } failure:^(NSError *err) {
-        ;
-    }];
-    
-    RestaurantObject *restaurant = [[RestaurantObject alloc] init];
-    restaurant.name = @"Papalote";
-    //    [api addRestaurant:restaurant success:^(NSArray *dishes) {
-    //        ;
-    //    } failure:^(NSError *error) {
-    //        ;
-    //    }];
-}
-
-- (void)printRestaurants
-{
-    [_tableView reloadData];
-}
+//- (void)testAPI
+//{
+//    OOAPI *api = [[OOAPI alloc] init];
+//    
+//    [self updateLocation];
+//
+//    CLLocationCoordinate2D locationToUse= self.currentLocation;
+//   
+//    if (0 == locationToUse.longitude) {
+//        // RULE: 
+//        float latitude, longitude;
+//        //  San Francisco
+//        latitude=37.7833;
+//        longitude= -122.4167;
+//        locationToUse= CLLocationCoordinate2DMake(latitude, longitude);
+//    }
+//    
+//    [api getRestaurantsWithKeyword:@"thai" andLocation:locationToUse success:^(NSArray *r) {
+//        _restaurants = r;
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self printRestaurants];
+//        });
+//    } failure:^(NSError *err) {
+//        ;
+//    }];
+//    
+//    [api getUsersWithIDs:nil success:^(NSArray *r) {
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [r enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//                UserObject *user =  (UserObject *)obj;
+//                NSLog(@"id = %@ user = %@ %@ email=%@", user.userID, user.firstName, user.lastName, user.email);
+//            }];
+//        });
+//    } failure:^(NSError *err) {
+//        ;
+//    }];
+//    
+//    [api getDishesWithIDs:nil success:^(NSArray *r) {
+//        
+//    } failure:^(NSError *err) {
+//        ;
+//    }];
+//    
+//    RestaurantObject *restaurant = [[RestaurantObject alloc] init];
+//    restaurant.name = @"Papalote";
+//    //    [api addRestaurant:restaurant success:^(NSArray *dishes) {
+//    //        ;
+//    //    } failure:^(NSError *error) {
+//    //        ;
+//    //    }];
+//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -247,8 +238,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     }
-    
-//    if ([_lists objectAtIndex:indexPath.row] == _selectedItem)
     
     cell.listItem = list;
     return cell;
@@ -274,7 +263,12 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    _selectedItem = (_selectedItem && ([_lists indexOfObject:_selectedItem] == indexPath.row)) ? nil : [_lists objectAtIndex:indexPath.row];
+    ListObject *item = [_lists objectAtIndex:indexPath.row];
+    
+//    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
+//    vc.items = _restaurants;
+//    [nc pushViewController:vc animated:YES];
+//    vc.title = _listItem.name;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

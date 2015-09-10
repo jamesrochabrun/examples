@@ -29,5 +29,6 @@
 /* Create */
 
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation *)addList:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
 
 @end

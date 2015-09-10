@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HorizontalListVC : UIViewController
+@interface HorizontalListVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @end

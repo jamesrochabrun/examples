@@ -1,28 +1,29 @@
 //
-//  ListCVCell.m
+//  TileCVCell.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 8/30/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "ListCVCell.h"
+#import "TileCVCell.h"
 #import "LocationManager.h"
 #import "OOAPI.h"
 #import "DebugUtilities.h"
 #import "UIImageView+AFNetworking.h"
 
-@interface ListCVCell ()
+@interface TileCVCell ()
 
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UILabel *distance;
 @property (nonatomic, strong) UILabel *rating;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIView *overlay;
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
 @end
 
-@implementation ListCVCell
+@implementation TileCVCell
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -33,6 +34,7 @@
         _rating = [[UILabel alloc] init];
         _backgroundImage = [[UIImageView alloc] init];
         _overlay = [[UIView alloc] init];
+        _requestOperation = nil;
         
         _overlay.translatesAutoresizingMaskIntoConstraints = NO;
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
@@ -56,8 +58,6 @@
         [self addSubview:_rating];
         [self addSubview:_name];
         
-        self.backgroundColor = UIColorRGBA(kColorBlack);
-
 //        [DebugUtilities addBorderToViews:@[self]];
         [self layout];
     }
@@ -104,8 +104,9 @@
     _rating.text = restaurant.rating ? [restaurant.rating stringValue] : @"";
     
     OOAPI *api = [[OOAPI alloc] init];
+
     if (restaurant.imageRef) {
-        [api getRestaurantImageWithImageRef:restaurant.imageRef success:^(NSString *link) {
+        _requestOperation = [api getRestaurantImageWithImageRef:restaurant.imageRef success:^(NSString *link) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:link]
                                                               cachePolicy:NSURLRequestReturnCacheDataElseLoad
@@ -120,6 +121,18 @@
             ;
         }];
     }
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+//    _requestOperation = nil;
+
+    [self.backgroundImage cancelImageRequestOperation];
+    
+    // AFNetworking
+    [_requestOperation cancel];
+    _requestOperation = nil;
 }
 
 

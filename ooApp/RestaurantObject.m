@@ -26,8 +26,7 @@ NSString *const kKeyPriceRange = @"price_range";
     restaurant.imageRef = (imageRefs && ![imageRefs isKindOfClass:[NSNull class]]) ? [ImageRefObject imageRefFromDict:[imageRefs objectAtIndex:0]] : nil;
     
     NSDictionary *location = [dict objectForKey:kKeyLocation];
-    restaurant.location = CLLocationCoordinate2DMake([[location objectForKey:kKeyLatitude] doubleValue],
-                               [[location objectForKey:kKeyLongitude] doubleValue]);
+    restaurant.location = CLLocationCoordinate2DMake([[location objectForKey:kKeyLatitude] doubleValue], [[location objectForKey:kKeyLongitude] doubleValue]);
     
     restaurant.priceRange = [dict objectForKey:kKeyPriceRange];
     

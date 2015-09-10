@@ -29,7 +29,7 @@
         _icon = [[UILabel alloc] init];
         [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorWhite backgroundColor:kColorClear];
         _name = [[UILabel alloc] init];
-        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
     
         [self addSubview:_icon];
         [self addSubview:_name];

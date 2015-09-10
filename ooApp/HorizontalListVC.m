@@ -7,21 +7,100 @@
 //
 
 #import "HorizontalListVC.h"
+#import "HorizonalTVCell.h"
+#import "RestaurantObject.h"
+#import "OOAPI.h"
+#import "LocationManager.h"
+#import "UIImageView+AFNetworking.h"
+#import "ListObject.h"
 
 @interface HorizontalListVC ()
 
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) ListObject *listItem;
+@property (nonatomic, strong) NSArray *restaurants;
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+
 @end
+
+static NSString * const cellIdentifier = @"horizontalCell";
 
 @implementation HorizontalListVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    _tableView = [[UITableView alloc] init];
+    [self.view addSubview:_tableView];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+
+    [_tableView registerClass:[HorizonalTVCell class] forCellReuseIdentifier:cellIdentifier];
+    _tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _requestOperation = nil;
+    
+    [self layout];
+}
+
+- (void)layout {
+    NSDictionary *metrics = @{@"height":@(kGeomHeightListRow), @"buttonY":@(kGeomHeightListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightListRow+2*kGeomSpaceInter)};
+
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
+
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [_tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)getRestaurants
+{
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
+        _restaurants = r;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self gotRestaurants];
+        });
+    } failure:^(NSError *err) {
+        ;
+    }];
+}
+
+- (void)gotRestaurants
+{
+    NSLog(@"%@: %tu", _listItem.name, [_restaurants count]);
+    [_tableView reloadData];
+
+//    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_restaurants count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    HorizonalTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    
+    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+    
+    cell.textLabel.text = restaurant.name;
+    
+    return cell;
 }
 
 /*
