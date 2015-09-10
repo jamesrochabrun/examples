@@ -11,6 +11,7 @@
 #import "Common.h"
 #import "DebugUtilities.h"
 #import "LocationManager.h"
+#import "OONetworkManager.h"
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImage;
@@ -199,7 +200,157 @@
 
 - (void)showMainUI
 {
+    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+    if (!token) {
+        // RULE: Currently Facebook access is required.
+        return;
+    }
+    
+    // NOTE:  This section of code is kind of useless.
+    NSString*  identifier = token.userID;
+    NSSet * permissions= [ token permissions ];
+    NSLog  (@"USER PERMISSIONS=  %@", permissions );
+    NSString* first=nil;
+    NSString* last= nil;
+    NSString* name= nil;
+    NSString* gender= nil;
+//    int age= 0;
+    if (![FBSDKProfile currentProfile ].refreshDate) {
+        NSLog  (@"PROFILE NOT YET REFRESHED");
+    } else {
+        if ([permissions containsObject: @"public_profile"]) {
+            // NOTE: These are nil.  For some reason Facebook has not populated these.
+            
+            first= [FBSDKProfile currentProfile ].firstName;
+            last= [FBSDKProfile currentProfile ].lastName;
+            name= [FBSDKProfile currentProfile ].name;
+            NSLog  (@" first=  %@, last=  %@, name=  %@", first, last, name);
+            
+            //        NSString* middle= [FBSDKProfile currentProfile ].middleName;
+            //        NSString* link= [FBSDKProfile currentProfile ].linkURL;
+        }
+    }
+    if  (!first) {
+        first=  @"unknown";
+    }
+    if  (!last) {
+        last=  @"unknown";
+    }
+    if  (!gender) {
+        gender=  @"unknown";
+    }
+    if  (! name) {
+        name=  @"unknown";
+    }
+    
+    //---------------------------------------------
+    //  Make a formal request for user information.
+    //
+    __weak LoginVC *weakSelf= self;
+    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=name,gender", identifier] //picture?type=large&redirect=false
+                                  parameters:nil
+                                  HTTPMethod:@"GET"];
+    [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
+                                           id result,
+                                           NSError *error)
+     {
+        if (!error) {
+            NSLog(@"result: %@",result);
+            
+            NSString* nameFromGetRequest=nil;
+            NSString* genderFromGetRequest=nil;
+            if ([result isKindOfClass: [NSDictionary  class] ] ) {
+                nameFromGetRequest= ((NSDictionary*)result) [ @"name"];
+                genderFromGetRequest= ((NSDictionary*)result) [ @"gender"];
+            }
+            
+            // NOTE  if the Facebook server gave us the username then use it.
+            [weakSelf conveyUserInformationToOurServer: nameFromGetRequest ?:  name
+                                                gender: genderFromGetRequest ?: gender];
+        }  else {
+            NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
+            
+            // NOTE:  Even if Facebook gives an error we should probably still contact our backend.
+            [weakSelf conveyUserInformationToOurServer: name
+                                                gender: gender];
+        }
+    }
+     ];     // startWithCompletionHandler
+    
+    // RULE:  While the above is happening take the user to the Discover page regardless of whether the backend was reached.
     [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+}
+
+- (void) conveyUserInformationToOurServer: (NSString*)name  gender: (NSString*)gender
+{
+    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+    if (!token) {
+        return;
+    }
+    
+    // RULE:  first find out if we know this user already.
+    
+    NSString*  identifier = token.userID;
+    NSString* requestString;
+    if  (! [identifier containsString: @":" ]) {
+        requestString= [NSString stringWithFormat:  @"https://%@/users?facebook_id=%@", kOOURL, identifier];
+    } else {
+        requestString= [NSString stringWithFormat:  @"https://%@/users?email=%@", kOOURL, identifier];
+    }
+    [[OONetworkManager sharedRequestManager] GET:requestString
+                                      parameters:nil
+                                         success:^void(AFHTTPRequestOperation * operation, id   result) {
+                                             NSLog  (@"PRE-EXISTING OO USER %@", name);
+                                             [self provideDetailsAboutPreExistingUser:identifier name: name ];
+                                         }
+                                         failure:^void(AFHTTPRequestOperation * operation, NSError *   error) {
+                                             NSLog  (@"AS YET UNKNOWN OO USER  %@", name);
+                                             [self provideDetailsAboutNewUser:identifier name: name];
+                                         }];
+}
+
+- (void) provideDetailsAboutPreExistingUser: (NSString*)identifier
+                                       name:(NSString*)name
+{
+    NSString* requestString=[NSString stringWithFormat: @"https://%@/users?facebook_id=%@&name=%@",
+                             kOOURL,
+                             identifier,
+                             name ?:  @"unknown"];
+    
+    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+    
+    [[OONetworkManager sharedRequestManager] PUT: requestString
+                                      parameters:nil
+                                         success:^void(AFHTTPRequestOperation * operation, id   result) {
+                                             NSLog  (@"DID PUT");
+                                         }
+                                         failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
+                                             NSLog (@"PUT FAILED %@",error);
+                                         }
+     ];
+    
+}
+
+- (void) provideDetailsAboutNewUser: (NSString*)identifier
+                               name:(NSString*)name
+{
+    NSString* requestString=[NSString stringWithFormat: @"https://%@/users?facebook_id=%@&name=%@",
+                             kOOURL,
+                             identifier,
+                             name ?:  @"unknown"];
+    
+    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+
+    [[OONetworkManager sharedRequestManager] POST: requestString
+                                       parameters:nil
+                                          success:^void(AFHTTPRequestOperation * operation, id   result) {
+                                              NSLog  (@"DID POST");
+                                          }
+                                          failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
+                                              NSLog (@"POST FAILED %@",error);
+                                          }     ];
+    
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -211,41 +362,41 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-//    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
+    //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
     FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
     if (token) {
         // Instantaneous transition if the user recently logged in.
         [self showMainUI];
     } else {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+        }
     }
-}
-
-- (void)keyboardHidden: (id) foobar
-{
-    self.showingKeyboard= NO;
-}
-
-- (void)keyboardShown: (id) foobar
-{
-    self.showingKeyboard= YES;
-}
-
-- (void)loginThroughFacebook:(id)sender
-{
-    FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-    [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-        if (error) {
-            // Automatic login was not possible,  so transferring to Facebook website or app...
-            
-            NSLog (@"Unable to log you in immediately: %@",error.localizedDescription);
-        }
-        else if (result.isCancelled) {
-            // Handle cancellations
-        }
-        else {
-            // If you ask for multiple permissions at once, you
+     
+     - (void)keyboardHidden: (id) foobar
+    {
+        self.showingKeyboard= NO;
+    }
+     
+     - (void)keyboardShown: (id) foobar
+    {
+        self.showingKeyboard= YES;
+    }
+     
+     - (void)loginThroughFacebook:(id)sender
+    {
+        FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+        [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+            if (error) {
+                // Automatic login was not possible,  so transferring to Facebook website or app...
+                
+                NSLog (@"Unable to log you in immediately: %@",error.localizedDescription);
+            }
+            else if (result.isCancelled) {
+                // Handle cancellations
+            }
+            else {
+                // If you ask for multiple permissions at once, you
             // should check if specific permissions missing
             
             if ([result.grantedPermissions containsObject:@"email"]) {

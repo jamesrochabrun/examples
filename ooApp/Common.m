@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+NSString*const kOOURL= @"www.oomamiapp.com/api/v1";
+
 void message (NSString *str)
 {
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: str
