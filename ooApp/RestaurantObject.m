@@ -21,7 +21,7 @@ NSString *const kKeyPriceRange = @"price_range";
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
     restaurant.name = [dict objectForKey:kKeyName];
-    restaurant.rating = [NSString stringWithFormat:@"%@", [dict objectForKey:kKeyRating]];
+    restaurant.rating = [dict objectForKey:kKeyRating];
     NSArray *imageRefs = [dict objectForKey:kKeyImageRef];
     restaurant.imageRef = (imageRefs && ![imageRefs isKindOfClass:[NSNull class]]) ? [ImageRefObject imageRefFromDict:[imageRefs objectAtIndex:0]] : nil;
     

@@ -23,7 +23,7 @@ extern NSString *const kDefaultsCurrentUserInfo;
 - (void)setCurrentUser:(UserObject *)user;
 
 - (NSArray *)mostRecentChoice:(NSString *)key;
-- (void)setMostRecentChoice:(NSString *)key to:(NSArray*)ary;
+- (void)setMostRecentChoice:(NSString *)key to:(NSArray *)ary;
 
 - (CLLocationCoordinate2D)mostRecentLocation;
 - (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;

@@ -14,7 +14,7 @@
 
 @property (nonatomic, strong) NSString *restaurantID;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *rating;
+@property (nonatomic, strong) NSNumber *rating;
 @property (nonatomic, strong) ImageRefObject *imageRef;
 @property (nonatomic, strong) NSString *cuisine;
 @property (nonatomic) CLLocationCoordinate2D location;

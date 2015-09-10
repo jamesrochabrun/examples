@@ -20,17 +20,18 @@ extern NSString *const kDefaultsUserLocationLastKnownLongitude;
 
 + (instancetype) sharedInstance;
 
-- (CLLocationCoordinate2D) currentUserLocation;
-- (void) startTrackingLocation;
-- (void) stopTrackingLocation;
-- (void) askUserWhetherToTrack;
+- (CLLocationCoordinate2D)currentUserLocation;
+- (void)startTrackingLocation;
+- (void)stopTrackingLocation;
+- (void)askUserWhetherToTrack;
 
 typedef enum : int {
     TRACKING_UNKNOWN=0,
     TRACKING_YES=1,
     TRACKING_NO=2,
 } TrackingChoice;
-- (TrackingChoice) dontTrackLocation;
+
+- (TrackingChoice)dontTrackLocation;
 
 @end
 
