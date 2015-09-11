@@ -395,21 +395,24 @@
 {
 //    [self fetchDetailsAboutNewUser: identifier]; return;
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-
-    NSString* requestString=[NSString stringWithFormat: @"https://%@/users/%@",
-                             kOOURL, userInfo.userID ?:  @""
-                             ];
+    NSString* requestString=nil;
+    
+//    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+//    if (token.tokenString) {
+//        
+//        requestString=[NSString stringWithFormat: @"https://%@/facebook_ids/%@",
+//                                 kOOURL,  identifier
+//                                 ];
+//        
+//    }  else {
+        UserObject* userInfo= [Settings sharedInstance].userObject;
+        
+        requestString=[NSString stringWithFormat: @"https://%@/users/%@",
+                       kOOURL, userInfo.userID ?:  @""
+                       ];
+//    }
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
-   
-    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
-//    NSDictionary* d= @{
-//                       @"user_id": ,
-//                       @"email": userInfo.email ?:  @"" ,
-//                       @"token":  token.tokenString,
-//                       @"facebook_id":  identifier,
-//                       };
     
     [[OONetworkManager sharedRequestManager] PUT: requestString
                                       parameters: nil
@@ -476,7 +479,7 @@
                                                        @"zip_code_local": location ?:  @"",
                                                       @"date_of_birth":birthday ?:  @"",
                                                      }
-                                          success:^void(AFHTTPRequestOperation * operation, id   result) {
+                                          success:^void(id   result) {
                                               NSLog  (@"DID POST");
                                               
                                               if (!result) {
@@ -490,7 +493,7 @@
                                                   [self updateEmail:email];
                                               }
                                           }
-                                          failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
+                                          failure:^  void(NSError *error) {
                                               NSLog (@"POST FAILED %@",error);
                                           }     ];
 }
