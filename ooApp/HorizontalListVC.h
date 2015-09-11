@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ListObject.h"
 
 @interface HorizontalListVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) ListObject *listItem;
+
+- (void)getRestaurants;
 
 @end

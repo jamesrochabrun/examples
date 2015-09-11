@@ -237,6 +237,12 @@
             
             if ([result.grantedPermissions containsObject:@"email"]) {
                 // Do work
+                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=first_name,age_range,last_name,id,gender,email" parameters:nil]
+                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                     if (!error) {
+                         NSLog(@"fetched user:%@", result);
+                     }
+                 }];
                 [self showMainUI];
             }
         }

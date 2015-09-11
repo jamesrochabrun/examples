@@ -218,7 +218,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3621F11C1B8F6DF5004537B6 /* Table View Cells */ = {
+		3621F11C1B8F6DF5004537B6 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				3621F11D1B8F6E32004537B6 /* MenuTVCell.h */,
@@ -232,7 +232,7 @@
 				367112CF1BA13E69006FDCE7 /* HorizonalTVCell.h */,
 				367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */,
 			);
-			name = "Table View Cells";
+			name = Cells;
 			sourceTree = "<group>";
 		};
 		363B60BE1B6AC13900987A1B /* Models */ = {
@@ -372,7 +372,7 @@
 				367704021B88078400B594E5 /* Common Tools */,
 				367703FC1B87E3A500B594E5 /* Resources */,
 				363B60BE1B6AC13900987A1B /* Models */,
-				3621F11C1B8F6DF5004537B6 /* Table View Cells */,
+				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* HorizontalListVC.h */,
 				367112D31BA14071006FDCE7 /* HorizontalListVC.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,

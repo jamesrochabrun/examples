@@ -51,7 +51,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _fcvl = [[ListCVFL alloc] init];
         [_fcvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
 
-
         [self addSubview:_name];
         
         _name.translatesAutoresizingMaskIntoConstraints = NO;

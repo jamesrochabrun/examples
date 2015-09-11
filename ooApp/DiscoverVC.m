@@ -265,10 +265,11 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 {
     ListObject *item = [_lists objectAtIndex:indexPath.row];
     
-//    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
-//    vc.items = _restaurants;
-//    [nc pushViewController:vc animated:YES];
-//    vc.title = _listItem.name;
+    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+    vc.title = item.name;
+    vc.listItem = item;
+    [vc getRestaurants];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

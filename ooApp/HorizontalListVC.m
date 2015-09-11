@@ -17,7 +17,6 @@
 @interface HorizontalListVC ()
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) ListObject *listItem;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
@@ -48,14 +47,13 @@ static NSString * const cellIdentifier = @"horizontalCell";
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
 
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [_tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
