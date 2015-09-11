@@ -74,7 +74,7 @@
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
     [nm.requestManager.requestSerializer setValue:@"9b9e2d8b047f63b7b5684c42388fd5ac" forHTTPHeaderField:@"authorization"];
     
-    return [nm.requestManager POST:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    return [nm.requestManager PUT:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"JSON: %@", responseObject);;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure(error);
@@ -92,7 +92,7 @@
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
     [nm.requestManager.requestSerializer setValue:@"9b9e2d8b047f63b7b5684c42388fd5ac" forHTTPHeaderField:@"authorization"];
     
-    return [nm.requestManager POST:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    return [nm.requestManager DELETE:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"JSON: %@", responseObject);;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure(error);

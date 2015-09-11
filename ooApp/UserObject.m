@@ -11,6 +11,7 @@
 NSString *const kKeyID = @"user_id";
 NSString *const kKeyFirstName = @"first_name";
 NSString *const kKeyLastName = @"last_name";
+NSString *const kKeyMiddleName = @"middle_name";
 NSString *const kKeyEmail = @"email";
 NSString *const kKeyPhoneNumber = @"phone_number";
 NSString *const kKeyToken = @"general_token";
@@ -27,6 +28,7 @@ NSString *const kKeyGender = @"gender";
     UserObject *user =[[UserObject alloc] init];
     user.userID = [dict objectForKey:kKeyID];
     user.firstName = [dict objectForKey:kKeyFirstName];
+    user.middleName = [dict objectForKey:kKeyMiddleName];
     user.lastName = [dict objectForKey:kKeyLastName];
     user.email = [dict objectForKey:kKeyEmail];
     user.phoneNumber = [dict objectForKey:kKeyPhoneNumber];
@@ -44,6 +46,7 @@ NSString *const kKeyGender = @"gender";
 {
     return @{
              kKeyID : self.userID ?: @"",
+             kKeyMiddleName:self.middleName ?: @"",
              kKeyFirstName:self.firstName ?: @"",
              kKeyLastName:self.lastName ?: @"",
              kKeyEmail: self.email ?: @"",

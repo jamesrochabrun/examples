@@ -199,6 +199,31 @@
     [self.navigationController setNavigationBarHidden:YES];
 }
 
+- (void)updateUserID: (id) value// NOTE:  the value should be an NSNumber.
+{
+    if (!value) {
+        return;
+    }
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    id currentUserID= userInfo.userID;
+    if (!currentUserID || ([currentUserID isKindOfClass:[NSNumber class]] && !((NSNumber*)currentUserID).intValue)) {
+        userInfo.userID= value;
+        [[Settings sharedInstance]save ];
+    }
+}
+
+- (void)updateEmail: (NSString*) value
+{
+    if  (!value) {
+        return;
+    }
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    if  (!userInfo.email  || !userInfo.email.length) {
+        userInfo.email= value;
+    }
+}
+
 - (void)showMainUI
 {
     FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
@@ -227,12 +252,19 @@
     // RULE: Find out if back end knows this user already.
     //
     NSString*  identifier = token.userID;
+    if  (!identifier ||! identifier.length) {
+         identifier=  @"UNKNOWN";
+    }
     NSString* requestString;
-//    identifier=  @"abcdef";
-    if  (! [identifier containsString: @":" ]) {
-        requestString= [NSString stringWithFormat:  @"https://%@/users?facebook_id=%@&email=%@", kOOURL, identifier, email ?: @""];
-    } else {
-        requestString= [NSString stringWithFormat:  @"https://%@/users?email=%@", kOOURL, identifier];
+    if  ( [identifier containsString: @":" ]) {
+        requestString= [NSString stringWithFormat:  @"https://%@/users/emails/%@", kOOURL, identifier];
+    }
+    else if (isdigit((int) identifier.UTF8String[0])) {
+        requestString= [NSString stringWithFormat:  @"https://%@/users/facebook_ids/%@", kOOURL, identifier ];
+    }
+    else {
+            requestString= [NSString stringWithFormat:  @"https://%@/users/usernames/%@", kOOURL, identifier];
+        
     }
     
     __weak LoginVC *weakSelf= self;
@@ -240,6 +272,19 @@
                                       parameters:nil
                                          success:^void(id   result) {
                                              NSLog  (@"PRE-EXISTING OO USER %@, %@",  identifier , result);
+                                             
+                                             if ([result isKindOfClass: [NSDictionary  class] ] ) {
+                                                 NSDictionary* d=  (NSDictionary*)result;
+                                                 NSString* userid= d[ @"user_id"];
+                                                 NSString* email= d[ @"email"];
+                                                 [self updateUserID: userid];
+                                                 [self updateEmail:email];
+                                                 NSLog (@"EMAIL=  %@",userInfo.email);
+                                             }
+                                             else  {
+                                                 NSLog  (@"result was not parsed into a dictionary.");
+                                             }
+                                             
                                              [weakSelf letBackendKnowThatPreExistingUserLoggedIntoFacebook:identifier ];
                                          }
                                          failure:^void(NSError *   error) {
@@ -257,17 +302,13 @@
         return;
     }
     
-    NSString* first=nil;
-    NSString* last= nil;
-    NSString* name= nil;
-    NSString* gender= nil;
-
     //---------------------------------------------
     //  Make a formal request for user information.
     //
     __weak LoginVC *weakSelf= self;
     FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=name,gender", identifier] //picture?type=large&redirect=false
+                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,name,gender",
+                                                     identifier] //picture?type=large&redirect=false
                                   parameters:nil
                                   HTTPMethod:@"GET"];
     [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
@@ -275,23 +316,71 @@
                                            NSError *error)
      {
         if (!error) {
-            NSLog(@"result: %@",result);
+            NSLog(@"FACEBOOK RESPONSE: %@",result);
             
-            NSString* nameFromGetRequest=nil;
-            NSString* genderFromGetRequest=nil;
+            NSString* name=nil;
+            NSString* firstName=nil;
+            NSString* lastName=nil;
+            NSString* middleName=nil;
+            NSString* gender=nil;
+            NSString* email=nil;
+            NSString* birthday=nil;
+            NSString* location=nil;
+            NSString* about=nil;
+            
             if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                nameFromGetRequest= ((NSDictionary*)result) [ @"name"];
-                genderFromGetRequest= ((NSDictionary*)result) [ @"gender"];
+                NSDictionary*d= (NSDictionary*)result;
+                
+                name= d [ @"name"];
+                firstName= d[ @"first_name"];
+                lastName= d [ @"last_name"];
+                middleName= d [ @"middle_name"];
+                gender= d [ @"gender"];
+                email= d [ @"email"];
+                birthday= d [ @"birthday"];
+                location= d [ @"location"];
+                about= d [ @"about"];
             }
             
             // NOTE  if the Facebook server gave us the username then use it.
             [weakSelf conveyUserInformationToOurServer: identifier
-                                                  name:nameFromGetRequest ?:  name
-                                                gender: genderFromGetRequest ?: gender];
+                                             firstName: firstName
+                                              lastName:lastName
+                                            middleName:middleName
+                                                  name:name
+                                                gender: gender
+                                                 email: email
+                                              birthday:birthday
+                                              location:location
+                                              about:about
+             ];
             
             UserObject* userInfo= [Settings sharedInstance].userObject;
-            userInfo.userID= identifier;
-            userInfo.gender=  genderFromGetRequest ?: gender;
+            if  (lastName ) {
+                userInfo.lastName=lastName;
+            }
+            if  (middleName ) {
+                userInfo.middleName =middleName;
+            }
+            if  (firstName ) {
+                userInfo.firstName=firstName;
+            }
+            if  ( gender) {
+                userInfo.gender=  gender;
+            }
+            if  (email ) {
+                userInfo.email=  email;
+            }
+            if (birthday ) {
+                userInfo.birthday=  birthday;
+            }
+            if (location ) {
+                userInfo.location=  location;
+            }
+            if (about ) {
+                userInfo.about=  about;
+            }
+            
         } else {
             NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
             
@@ -306,45 +395,104 @@
 {
 //    [self fetchDetailsAboutNewUser: identifier]; return;
     
-    NSString* requestString=[NSString stringWithFormat: @"https://%@/users?facebook_id=%@",
-                             kOOURL,
-                             identifier
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+
+    NSString* requestString=[NSString stringWithFormat: @"https://%@/users/%@",
+                             kOOURL, userInfo.userID ?:  @""
                              ];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+   
+    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+//    NSDictionary* d= @{
+//                       @"user_id": ,
+//                       @"email": userInfo.email ?:  @"" ,
+//                       @"token":  token.tokenString,
+//                       @"facebook_id":  identifier,
+//                       };
     
     [[OONetworkManager sharedRequestManager] PUT: requestString
-                                      parameters:nil
-                                         success:^void(AFHTTPRequestOperation * operation, id   result) {
+                                      parameters: nil
+                                         success:^void(id   result) {
                                              NSLog  (@"DID PUT");
                                          }
-                                         failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
+                                         failure:^  void(NSError *error) {
                                              NSLog (@"PUT FAILED %@",error);
                                          }
      ];
     
 }
 
-- (void) conveyUserInformationToOurServer: (NSString*)identifier
+- (void) conveyUserInformationToOurServer: (NSString*) identifier
+                                firstName:(NSString*) firstName
+                                 lastName:(NSString*)lastName
+                               middleName:(NSString*)middleName
                                      name:(NSString*)name
-                                   gender: (NSString*)gender;
+                                   gender: (NSString*)gender
+                                    email: (NSString*)email
+                                 birthday:(NSString*)birthday
+                                 location:(NSString*)location
+                                 about:(NSString*)about
 {
-    NSString* requestString=[NSString stringWithFormat: @"https://%@/users?facebook_id=%@&name=%@",
-                             kOOURL,
-                             identifier,
-                             name ?:  @"unknown"];
+    if  (!email) {
+        return;
+    }
     
+    NSString* requestString=[NSString stringWithFormat: @"https://%@/users",
+                             kOOURL
+                             ];
+    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
+
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+    
+    if  (!firstName  && !lastName) {
+        firstName= nil;
+        lastName= nil;
+        NSArray*array=  [ name  componentsSeparatedByString: @" " ];
+        if ( array &&  array.count >= 2) {
+            firstName=   array[0];
+            lastName=  array[ array.count - 1];
+        }
+        else {
+            firstName=  name;
+        }
+    }
+    
+    if ( middleName && middleName.length) {
+        middleName= [middleName substringToIndex: 1];
+    }
 
     [[OONetworkManager sharedRequestManager] POST: requestString
-                                       parameters:nil
+                                       parameters: @{
+                                                     @"email":   email,
+                                                     @"token":  token.tokenString,
+                                                      @"facebook_id":  identifier,
+                                                     @"first_name": firstName ?:  @"",
+                                                      @"middle_initial": middleName ?:  @"",
+                                                      @"last_name": lastName ?:  @"",
+                                                    @"gender": gender ?: @"",
+//                                                     @"social_platform":  @"Facebook",
+                                                      @"about": about ?:  @"",
+                                                       @"zip_code_local": location ?:  @"",
+                                                      @"date_of_birth":birthday ?:  @"",
+                                                     }
                                           success:^void(AFHTTPRequestOperation * operation, id   result) {
                                               NSLog  (@"DID POST");
+                                              
+                                              if (!result) {
+                                                  NSLog  (@"RESULT WAS NULL.");
+                                              }
+                                              else if ([result isKindOfClass: [NSDictionary  class] ] ) {
+                                                  NSDictionary* d=  (NSDictionary*)result;
+                                                  NSString* userid= d[ @"user_id"];
+                                                  NSString* email= d[ @"email"];
+                                                  [self updateUserID: userid];
+                                                  [self updateEmail:email];
+                                              }
                                           }
                                           failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
                                               NSLog (@"POST FAILED %@",error);
                                           }     ];
-    
 }
 
 - (void)viewDidDisappear:(BOOL)animated

@@ -12,11 +12,15 @@
 
 @property (nonatomic, strong) NSString *userID;
 @property (nonatomic, strong) NSString *firstName;
+@property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;
 @property (nonatomic, strong) NSString *email;
 @property (nonatomic, strong) NSString *gender;
 @property (nonatomic, strong) NSString *phoneNumber;
 @property (nonatomic, strong) NSString *token;
+@property (nonatomic, strong) NSString *birthday;
+@property (nonatomic, strong) NSString *location;
+@property (nonatomic, strong) NSString *about;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryFromUser;
