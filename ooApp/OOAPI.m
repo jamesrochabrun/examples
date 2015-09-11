@@ -9,6 +9,7 @@
 #import "OOAPI.h"
 #import "RestaurantObject.h"
 #import "UserObject.h"
+#import "Common.h"
 
 //NSString *const kKeyName = @"name";
 
@@ -127,10 +128,8 @@
     return op;
 }
 
-
-
 - (NSString *)ooURL {
-    return @"www.oomamiapp.com/api/v1";
+    return kOOURL;
 }
 
 @end

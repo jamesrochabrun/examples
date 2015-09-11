@@ -14,6 +14,7 @@ NSString *const kKeyLastName = @"last_name";
 NSString *const kKeyEmail = @"email";
 NSString *const kKeyPhoneNumber = @"phone_number";
 NSString *const kKeyToken = @"general_token";
+NSString *const kKeyGender = @"gender";
 
 @implementation UserObject
 
@@ -30,6 +31,8 @@ NSString *const kKeyToken = @"general_token";
     user.email = [dict objectForKey:kKeyEmail];
     user.phoneNumber = [dict objectForKey:kKeyPhoneNumber];
     user.token = [dict objectForKey:kKeyToken];
+    user.gender = [dict objectForKey:kKeyGender];
+
     return user;
 }
 
@@ -45,7 +48,8 @@ NSString *const kKeyToken = @"general_token";
              kKeyLastName:self.lastName ?: @"",
              kKeyEmail: self.email ?: @"",
              kKeyPhoneNumber:self.phoneNumber ?: @"",
-             kKeyToken:self.token ?: @""
+             kKeyToken:self.token ?: @"",
+             kKeyGender:self.gender ?: @""
              };
 }
 

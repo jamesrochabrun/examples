@@ -7,6 +7,7 @@
 //
 
 #import "LoginVC.h"
+#import "AppDelegate.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import "Common.h"
 #import "DebugUtilities.h"
@@ -206,43 +207,61 @@
         return;
     }
     
-    // NOTE:  This section of code is kind of useless.
-    NSString*  identifier = token.userID;
     NSSet * permissions= [ token permissions ];
     NSLog  (@"USER PERMISSIONS=  %@", permissions );
+    
+    //---------------------------------------------------
+    // RULE: If we have valid user information already
+    // that means the user logged in via OO but not FB,
+    // so we must update the backend to add the FB
+    // user ID.
+    //
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString *email= nil;
+    if  (userInfo.gender.length > 1 && userInfo.userID.length == 0) {
+        message( @"user has OO account already but this is their first Facebook login.");
+        email= userInfo.email;
+    }
+    
+    //---------------------------------------------------
+    // RULE: Find out if back end knows this user already.
+    //
+    NSString*  identifier = token.userID;
+    NSString* requestString;
+//    identifier=  @"abcdef";
+    if  (! [identifier containsString: @":" ]) {
+        requestString= [NSString stringWithFormat:  @"https://%@/users?facebook_id=%@&email=%@", kOOURL, identifier, email ?: @""];
+    } else {
+        requestString= [NSString stringWithFormat:  @"https://%@/users?email=%@", kOOURL, identifier];
+    }
+    
+    __weak LoginVC *weakSelf= self;
+    [[OONetworkManager sharedRequestManager] GET:requestString
+                                      parameters:nil
+                                         success:^void(id   result) {
+                                             NSLog  (@"PRE-EXISTING OO USER %@, %@",  identifier , result);
+                                             [weakSelf letBackendKnowThatPreExistingUserLoggedIntoFacebook:identifier ];
+                                         }
+                                         failure:^void(NSError *   error) {
+                                             NSLog  (@"AS YET UNKNOWN OO USER  %@, %@",  identifier, error.localizedDescription);
+                                             [weakSelf fetchDetailsAboutNewUser:identifier ];
+                                         }];
+
+    // RULE:  While the above is happening take the user to the Discover page regardless of whether the backend was reached.
+    [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+}
+
+- (void)fetchDetailsAboutNewUser: (NSString*)identifier
+{
+    if  (!identifier) {
+        return;
+    }
+    
     NSString* first=nil;
     NSString* last= nil;
     NSString* name= nil;
     NSString* gender= nil;
-//    int age= 0;
-    if (![FBSDKProfile currentProfile ].refreshDate) {
-        NSLog  (@"PROFILE NOT YET REFRESHED");
-    } else {
-        if ([permissions containsObject: @"public_profile"]) {
-            // NOTE: These are nil.  For some reason Facebook has not populated these.
-            
-            first= [FBSDKProfile currentProfile ].firstName;
-            last= [FBSDKProfile currentProfile ].lastName;
-            name= [FBSDKProfile currentProfile ].name;
-            NSLog  (@" first=  %@, last=  %@, name=  %@", first, last, name);
-            
-            //        NSString* middle= [FBSDKProfile currentProfile ].middleName;
-            //        NSString* link= [FBSDKProfile currentProfile ].linkURL;
-        }
-    }
-    if  (!first) {
-        first=  @"unknown";
-    }
-    if  (!last) {
-        last=  @"unknown";
-    }
-    if  (!gender) {
-        gender=  @"unknown";
-    }
-    if  (! name) {
-        name=  @"unknown";
-    }
-    
+
     //---------------------------------------------
     //  Make a formal request for user information.
     //
@@ -266,57 +285,31 @@
             }
             
             // NOTE  if the Facebook server gave us the username then use it.
-            [weakSelf conveyUserInformationToOurServer: nameFromGetRequest ?:  name
+            [weakSelf conveyUserInformationToOurServer: identifier
+                                                  name:nameFromGetRequest ?:  name
                                                 gender: genderFromGetRequest ?: gender];
-        }  else {
+            
+            UserObject* userInfo= [Settings sharedInstance].userObject;
+            userInfo.userID= identifier;
+            userInfo.gender=  genderFromGetRequest ?: gender;
+        } else {
             NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
             
-            // NOTE:  Even if Facebook gives an error we should probably still contact our backend.
-            [weakSelf conveyUserInformationToOurServer: name
-                                                gender: gender];
+            // NOTE: If we reach this point,  the backend does not yet know about this user.
         }
     }
      ];     // startWithCompletionHandler
     
-    // RULE:  While the above is happening take the user to the Discover page regardless of whether the backend was reached.
-    [self performSegueWithIdentifier:@"mainUISegue" sender:self];
 }
 
-- (void) conveyUserInformationToOurServer: (NSString*)name  gender: (NSString*)gender
+- (void) letBackendKnowThatPreExistingUserLoggedIntoFacebook: (NSString*)identifier
 {
-    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
-    if (!token) {
-        return;
-    }
+//    [self fetchDetailsAboutNewUser: identifier]; return;
     
-    // RULE:  first find out if we know this user already.
-    
-    NSString*  identifier = token.userID;
-    NSString* requestString;
-    if  (! [identifier containsString: @":" ]) {
-        requestString= [NSString stringWithFormat:  @"https://%@/users?facebook_id=%@", kOOURL, identifier];
-    } else {
-        requestString= [NSString stringWithFormat:  @"https://%@/users?email=%@", kOOURL, identifier];
-    }
-    [[OONetworkManager sharedRequestManager] GET:requestString
-                                      parameters:nil
-                                         success:^void(AFHTTPRequestOperation * operation, id   result) {
-                                             NSLog  (@"PRE-EXISTING OO USER %@", name);
-                                             [self provideDetailsAboutPreExistingUser:identifier name: name ];
-                                         }
-                                         failure:^void(AFHTTPRequestOperation * operation, NSError *   error) {
-                                             NSLog  (@"AS YET UNKNOWN OO USER  %@", name);
-                                             [self provideDetailsAboutNewUser:identifier name: name];
-                                         }];
-}
-
-- (void) provideDetailsAboutPreExistingUser: (NSString*)identifier
-                                       name:(NSString*)name
-{
-    NSString* requestString=[NSString stringWithFormat: @"https://%@/users?facebook_id=%@&name=%@",
+    NSString* requestString=[NSString stringWithFormat: @"https://%@/users?facebook_id=%@",
                              kOOURL,
-                             identifier,
-                             name ?:  @"unknown"];
+                             identifier
+                             ];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
     
@@ -332,8 +325,9 @@
     
 }
 
-- (void) provideDetailsAboutNewUser: (NSString*)identifier
-                               name:(NSString*)name
+- (void) conveyUserInformationToOurServer: (NSString*)identifier
+                                     name:(NSString*)name
+                                   gender: (NSString*)gender;
 {
     NSString* requestString=[NSString stringWithFormat: @"https://%@/users?facebook_id=%@&name=%@",
                              kOOURL,

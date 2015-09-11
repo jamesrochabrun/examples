@@ -15,11 +15,12 @@ extern NSString *const kDefaultsCurrentUserInfo;
 
 @interface Settings : NSObject
 
+@property (strong, nonatomic) UserObject *userObject;
+
 + (instancetype)sharedInstance;
 
 - (void)save;
 
-- (UserObject *)currentUser;
 - (void)setCurrentUser:(UserObject *)user;
 
 - (NSArray *)mostRecentChoice:(NSString *)key;

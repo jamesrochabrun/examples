@@ -29,28 +29,45 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
     return sharedInstance;
 }
 
+- (instancetype) init
+{
+    self = [super init];
+    if (self) {
+        
+        [ self readUser ];
+        if (!_userObject) {
+            _userObject= [[UserObject alloc]init ];
+
+        }
+        
+    }
+    return self;
+}
+
 //------------------------------------------------------------------------------
 // Name:    save
 // Purpose: Make sure all of user defaults is on disk.
 //------------------------------------------------------------------------------
 - (void)save;
 {
+    [self storeUser];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud  synchronize ];
 }
 
 //------------------------------------------------------------------------------
-// Name:    currentUser
+// Name:    readUser
 // Purpose: Loads the user dict.
 //------------------------------------------------------------------------------
-- (UserObject *)currentUser
+- ( void )readUser
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSDictionary *d= [ud dictionaryForKey: kDefaultsCurrentUserInfo];
     if  (! d) {
-        return nil;
+        NSLog (@"NO USER INFO FOUND.");
+        return;
     }
-    return [UserObject userFromDict:d];
+    self.userObject=  [UserObject userFromDict:d];
 }
 
 //------------------------------------------------------------------------------
@@ -62,7 +79,12 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
     if  (! user) {
         return;
     }
-    NSDictionary *d= [user dictionaryFromUser];
+    self.userObject= user;
+}
+
+- (void)storeUser
+{
+    NSDictionary *d= [self.userObject dictionaryFromUser];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud setObject: d forKey: kDefaultsCurrentUserInfo];
     [ud synchronize];
