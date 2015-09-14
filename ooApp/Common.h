@@ -9,3 +9,4 @@
 void message (NSString *str);
 
 extern NSString* kOOURL;
+extern NSString *getDateString();

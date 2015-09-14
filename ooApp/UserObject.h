@@ -17,7 +17,7 @@
 @property (nonatomic, strong) NSString *email;
 @property (nonatomic, strong) NSString *gender;
 @property (nonatomic, strong) NSString *phoneNumber;
-@property (nonatomic, strong) NSString *token;
+@property (nonatomic, strong) NSString *backendAuthorizationToken;
 @property (nonatomic, strong) NSString *birthday;
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *about;

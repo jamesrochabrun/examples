@@ -7,7 +7,9 @@
 //
 
 #import "OONetworkManager.h"
-
+#import "Settings.h"
+#import "UserObject.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @implementation OONetworkManager
 
@@ -39,6 +41,13 @@
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
     
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.lowercaseString.length ) {
+        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+    } else {
+        NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN (NOT NEEDED FOR GET)");
+    }
     return [nm.requestManager GET:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"JSON: %@", responseObject);
         success(responseObject);
@@ -55,8 +64,15 @@
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
-    [nm.requestManager.requestSerializer setValue:@"9b9e2d8b047f63b7b5684c42388fd5ac" forHTTPHeaderField:@"authorization"];
     
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.lowercaseString.length ) {
+        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+    }else {
+        NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
+    }
+
     return [nm.requestManager POST:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"JSON: %@", responseObject);;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -72,8 +88,14 @@
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
-    [nm.requestManager.requestSerializer setValue:@"9b9e2d8b047f63b7b5684c42388fd5ac" forHTTPHeaderField:@"authorization"];
     
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.lowercaseString.length ) {
+        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+    } else {
+        NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
+    }
     return [nm.requestManager PUT:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"JSON: %@", responseObject);;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -90,10 +112,16 @@
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
-    [nm.requestManager.requestSerializer setValue:@"9b9e2d8b047f63b7b5684c42388fd5ac" forHTTPHeaderField:@"authorization"];
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.lowercaseString.length ) {
+        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+    } else {
+        NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
+    }
     
     return [nm.requestManager DELETE:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"JSON: %@", responseObject);;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure(error);
     }];

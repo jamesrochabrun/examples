@@ -18,3 +18,12 @@ void message (NSString *str)
     [alert show];
 }
 
+NSString *getDateString()
+{
+    struct tm tm;
+    timelocal(&tm);
+    int year= tm.tm_year;
+    int month= tm.tm_mon;
+    int day= 1 + tm.tm_mday;
+    return [NSString stringWithFormat: @"%04d/%02d/%02d",year,month,day];
+}

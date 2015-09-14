@@ -14,4 +14,6 @@
 static inline CGFloat width(UIView *view) { return view.frame.size.width; }
 static inline CGFloat height(UIView *view) { return view.frame.size.height; }
 
+#define SECRET_BACKEND_SALT @"48723492NaCl"
+
 #endif

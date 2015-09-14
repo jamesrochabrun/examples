@@ -29,5 +29,7 @@ extern NSString *const kDefaultsCurrentUserInfo;
 - (CLLocationCoordinate2D)mostRecentLocation;
 - (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;
 
+- (NSString*) lastKnownDateString;
+
 @end
 

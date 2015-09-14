@@ -12,6 +12,7 @@
 #import "UserObject.h"
 
 NSString *const kDefaultsCurrentUserInfo = @"currentUser";
+NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
 
 @implementation Settings
 
@@ -80,6 +81,12 @@ NSString *const kDefaultsCurrentUserInfo = @"currentUser";
         return;
     }
     self.userObject= user;
+}
+
+- (NSString*) lastKnownDateString;
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    return  [ud stringForKey:kDefaultsLastKnownDate ];
 }
 
 - (void)storeUser

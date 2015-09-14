@@ -71,6 +71,7 @@
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
+		96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D175B91BA76926000C88AC /* NSString+MD5.m */; };
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
 /* End PBXBuildFile section */
 
@@ -185,6 +186,8 @@
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
+		96D175B91BA76926000C88AC /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
+		96D175BA1BA76926000C88AC /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		96D35F7B1B9F879200A18A23 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		96D35F7C1B9F879200A18A23 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
 		F945100C76CB8545DC64E837 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -312,6 +315,8 @@
 				3677043C1B8BCB9100B594E5 /* ooApp.pch */,
 				96D35F7B1B9F879200A18A23 /* Common.h */,
 				96D35F7C1B9F879200A18A23 /* Common.m */,
+				96D175B91BA76926000C88AC /* NSString+MD5.m */,
+				96D175BA1BA76926000C88AC /* NSString+MD5.h */,
 				36C39BDF1B84C7CD00648879 /* DebugUtilities.h */,
 				36C39BE01B84C7CD00648879 /* DebugUtilities.m */,
 				363B60C91B6C22F000987A1B /* CommonConstants.h */,
@@ -492,6 +497,7 @@
 				TargetAttributes = {
 					36FDA6EF1B585F650029D29D = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = XP52D9KRG4;
 					};
 					36FDA70B1B585F650029D29D = {
 						CreatedOnToolsVersion = 6.4;
@@ -620,6 +626,7 @@
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
+				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
@@ -765,7 +772,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"Frameworks/**",
 					"$(inherited)",
@@ -798,6 +806,7 @@
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = Oomami;
+				PROVISIONING_PROFILE = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				VALIDATE_PRODUCT = NO;
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -810,7 +819,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"Frameworks/**",
 					"$(inherited)",
@@ -843,6 +853,7 @@
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = Oomami;
+				PROVISIONING_PROFILE = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
