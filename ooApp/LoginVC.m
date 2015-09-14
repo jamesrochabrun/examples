@@ -346,7 +346,7 @@
     if (lastKnownDateString && ![lastKnownDateString isEqualToString:dateString]) {
         newDay= 1;
     }
-    requestString= [NSString stringWithFormat: @"%@&newday=%d", requestString, newDay];
+    requestString= [NSString stringWithFormat: @"%@?newday=%d", requestString, newDay];
 
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString *email= userInfo.email;
@@ -358,7 +358,7 @@
     if ((newDay  || (!backendToken || !backendToken.length)) && email && email.length) {
         NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
         NSString* md5= [ saltedString MD5String ];
-        requestString= [NSString stringWithFormat: @"%@?needtoken=%@",requestString,  md5];
+        requestString= [NSString stringWithFormat: @"%@&needtoken=%@",requestString,  md5];
     }
     
     __weak LoginVC *weakSelf= self;
