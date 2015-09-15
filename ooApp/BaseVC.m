@@ -7,7 +7,8 @@
 //
 
 #import "BaseVC.h"
-#import "DiscoverVC.h"
+#import "WhatsNewVC.h"
+#import "NavTitleView.h"
 
 //revealViewController.rearViewRevealWidth = 200;
 //revealViewController.rearViewRevealOverdraw = 0;// Cannot drag and see beyond width 200
@@ -18,7 +19,8 @@
 
 @interface BaseVC ()
 
-@property (nonatomic, strong) UILabel *titleView;
+@property (nonatomic, strong) NavTitleView *navTitleView;
+
 @end
 
 @implementation BaseVC
@@ -45,45 +47,19 @@
         [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
     }
     
-    _titleView = [[UILabel alloc] init];
-//    _titleView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_titleView withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
-    self.navigationItem.titleView = _titleView;
+    _navTitleView = [[NavTitleView alloc] init];
+    self.navigationItem.titleView = _navTitleView;
 }
 
 - (void)layout
 {
-//    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-//    
-//    NSDictionary *views = NSDictionaryOfVariableBindings(_titleView);
-//    
-//    // Vertical layout - note the options for aligning the top and bottom of all views
-//    [self.navigationController.navigationBar.titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|->=10-[_titleView]->=10-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    
-//    [self.navigationItem.titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|->=10-[_titleView]->=10-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    
-//    [self.navigationItem.titleView addConstraint:[NSLayoutConstraint constraintWithItem:_titleView
-//                                                     attribute:NSLayoutAttributeCenterX
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_titleView.superview
-//                                                     attribute:NSLayoutAttributeCenterX
-//                                                    multiplier:1.f constant:0.f]];
-//
-//    
-//    [self.navigationItem.titleView addConstraint:[NSLayoutConstraint constraintWithItem:_titleView
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_titleView.superview
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                    multiplier:1.f constant:0.f]];
-//
-//
+
 }
 
-- (void)setScreenTitle:(NSString *)screenTitle {
-    _screenTitle = screenTitle;
-    _titleView.text = _screenTitle;
-    [_titleView sizeToFit];
+- (void)setNavTitle:(NavTitleObject *)navTitle {
+    _navTitle = navTitle;
+    _navTitleView.navTitle = _navTitle;
+    _navTitleView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame)-100 , 44);
 }
 
 - (void)viewWillAppear:(BOOL)animated

@@ -11,7 +11,7 @@
 #import "MenuObject.h"
 #import "SWRevealViewController.h"
 #import "ProfileVC.h"
-#import "DiscoverVC.h"
+#import "WhatsNewVC.h"
 #import "DefaultVC.h"
 #import "PlayVC.h"
 
@@ -180,7 +180,7 @@
         [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
         fvc = [[ProfileVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
-        fvc = [[DiscoverVC alloc] init];
+        fvc = [[WhatsNewVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
         fvc = [[PlayVC alloc] init];
     } else {

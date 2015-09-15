@@ -1,12 +1,12 @@
 //
-//  DiscoverVC.m
+//  WhatsNewVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "DiscoverVC.h"
+#import "WhatsNewVC.h"
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
@@ -16,7 +16,7 @@
 #import "LocationManager.h"
 #import "HorizontalListVC.h"
 
-@interface DiscoverVC ()
+@interface WhatsNewVC ()
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *lists;
@@ -27,7 +27,7 @@
 static NSString * const ListRowID = @"ListRowCell";
 static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
-@implementation DiscoverVC
+@implementation WhatsNewVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -42,7 +42,8 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:ListRowID];
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:FeaturedRowID];
     
-    self.screenTitle = @"Discover";
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"What's New" subHeader:@"what"];
+    self.navTitle = nto;
     
     _lists = [NSMutableArray array];
     ListObject *list;

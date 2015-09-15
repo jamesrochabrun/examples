@@ -1,5 +1,5 @@
 //
-//  DiscoverVC.h
+//  WhatsNewVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
@@ -9,9 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 
-@interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
-
-- (void)getRestaurants;
+@interface WhatsNewVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @end
 

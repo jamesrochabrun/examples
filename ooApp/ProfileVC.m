@@ -25,7 +25,8 @@
     [self.view addSubview:_facebookButton];
     _facebookButton.translatesAutoresizingMaskIntoConstraints = NO;
     
-    self.screenTitle = @"Profile";
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Profile" subHeader:nil];
+    self.navTitle = nto;
     
     [self layout];
 }
