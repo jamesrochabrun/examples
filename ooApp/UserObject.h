@@ -10,7 +10,7 @@
 
 @interface UserObject : NSObject
 
-@property (nonatomic, strong) NSString *userID;
+@property (nonatomic, strong) NSNumber *userID;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;

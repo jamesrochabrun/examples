@@ -207,12 +207,30 @@
         return;
     }
     
+    if  ([ value isKindOfClass:[NSString class]] ) {
+        NSString* s= value;
+        int i = atoi( s.UTF8String);
+        if  (!i) {
+            return;
+        }
+        value= [NSNumber numberWithInt: i ];
+    }
+    
     UserObject* userInfo= [Settings sharedInstance].userObject;
     id currentUserID= userInfo.userID;
-    if (!currentUserID || ([currentUserID isKindOfClass:[NSNumber class]] && !((NSNumber*)currentUserID).intValue)) {
-        userInfo.userID= value;
-        [[Settings sharedInstance]save ];
+    BOOL isANumber = [currentUserID isKindOfClass:[NSNumber class]];
+    if  (currentUserID && isANumber ) {
+        NSNumber *n= currentUserID;
+        int i= [n intValue];
+        int j= [((NSNumber*) value) intValue];
+        if  (i != j ) {
+            NSLog  (@"USER ID HAS CHANGED");
+        }
     }
+    
+    userInfo.userID= value;
+    [[Settings sharedInstance]save ];
+    
 }
 
 - (void)updateEmail: (NSString*) value
@@ -298,7 +316,7 @@
     //
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString *email= nil;
-    if  (userInfo.gender.length > 1 && userInfo.userID.length == 0) {
+    if  (userInfo.gender.length > 1 && userInfo.userID.intValue <= 0) {
         message( @"user has OO account already but this is their first Facebook login.");
         email= userInfo.email;
     }
@@ -497,42 +515,6 @@
     
 }
 
-//- (void) letBackendKnowThatPreExistingUserLoggedIntoFacebook: (NSString*)identifier
-//{
-//    //    [self fetchDetailsAboutNewUser: identifier]; return;
-//    
-//    NSString* requestString=nil;
-//    
-//    //    FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
-//    //    if (token.tokenString) {
-//    //
-//    //        requestString=[NSString stringWithFormat: @"https://%@/facebook_ids/%@",
-//    //                                 kOOURL,  identifier
-//    //                                 ];
-//    //
-//    //    }  else {
-//    UserObject* userInfo= [Settings sharedInstance].userObject;
-//    
-//    requestString=[NSString stringWithFormat: @"https://%@/users/%@",
-//                   kOOURL, userInfo.userID ?:  @""];
-//    //    }
-//    
-//    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
-//    
-//    NSDictionary *params = @{
-//                             };
-//    [[OONetworkManager sharedRequestManager] PUT: requestString
-//                                      parameters: params
-//                                         success:^void(id   result) {
-//                                             NSLog  (@"DID PUT");
-//                                         }
-//                                         failure:^  void(NSError *error) {
-//                                             NSLog (@"PUT FAILED %@",error);
-//                                         }
-//     ];
-//    
-//}
-
 - (void) conveyUserInformationToBackend: (NSString*) identifier
                               firstName:(NSString*) firstName
                                lastName:(NSString*)lastName
@@ -571,9 +553,10 @@
     
     if  (alreadyKnown ) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
-
+        NSNumber* userid= userInfo.userID;
+        
         requestString=[NSString stringWithFormat: @"https://%@/users/%@",
-                       kOOURL, userInfo.userID ?:  @""];
+                       kOOURL, userid];
         
         requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
         
@@ -591,7 +574,7 @@
                                                         @"date_of_birth": birthday ?:  @"",
                                                         }
                                              success:^void(id   result) {
-                                                 NSLog  (@"PUT POST");
+                                                 NSLog  (@"PUT PUT");
                                                  
                                                  if (!result) {
                                                      NSLog  (@"RESULT WAS NULL.");
