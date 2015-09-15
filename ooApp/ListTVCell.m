@@ -13,7 +13,7 @@
 #import "TileCVCell.h"
 #import "UIImageView+AFNetworking.h"
 #import "LocationManager.h"
-#import "HorizontalListVC.h"
+#import "RestaurantVC.h"
 
 @interface ListTVCell ()
 
@@ -175,10 +175,11 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     
-}
-
-- (void)showHorizontalListWithNavController:(UINavigationController *)nc {
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    [_navigationController pushViewController:vc animated:YES];
+    vc.title = restaurant.name;    
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {

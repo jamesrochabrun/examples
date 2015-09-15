@@ -384,14 +384,14 @@
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				964BC81C1B97935F00760C83 /* Settings.h */,
 				964BC81D1B97935F00760C83 /* Settings.m */,
-				964BC81F1B97A4E700760C83 /* LocationManager.m */,
 				964BC8201B97A4E700760C83 /* LocationManager.h */,
+				964BC81F1B97A4E700760C83 /* LocationManager.m */,
 				36FDA6F71B585F650029D29D /* AppDelegate.h */,
 				36FDA6F81B585F650029D29D /* AppDelegate.m */,
-				36FDA6FB1B585F650029D29D /* DiscoverVC.m */,
 				36FDA6FA1B585F650029D29D /* DiscoverVC.h */,
-				365F175C1B91046B00015D5D /* DefaultVC.m */,
+				36FDA6FB1B585F650029D29D /* DiscoverVC.m */,
 				365F175D1B91046B00015D5D /* DefaultVC.h */,
+				365F175C1B91046B00015D5D /* DefaultVC.m */,
 				36FDA6FD1B585F650029D29D /* PlayVC.h */,
 				36FDA6FE1B585F650029D29D /* PlayVC.m */,
 				3621F1191B8E6A06004537B6 /* MenuTVC.h */,
@@ -507,7 +507,7 @@
 				TargetAttributes = {
 					36FDA6EF1B585F650029D29D = {
 						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = 6DK389PPR7;
+						DevelopmentTeam = XP52D9KRG4;
 					};
 					36FDA70B1B585F650029D29D = {
 						CreatedOnToolsVersion = 6.4;

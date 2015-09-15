@@ -233,12 +233,14 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     ListObject *list = [_lists objectAtIndex:indexPath.row];
     
     ListTVCell *cell;
+    
     if (list.listType == kListTypeFeatured) {
         cell = [tableView dequeueReusableCellWithIdentifier:FeaturedRowID forIndexPath:indexPath];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     }
     
+    cell.navigationController = self.navigationController;
     cell.listItem = list;
     return cell;
 }

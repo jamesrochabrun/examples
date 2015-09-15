@@ -39,7 +39,7 @@
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
-    menuItem.name = @"WHATS'S NEW";
+    menuItem.name = @"WHAT'S NEW";
     menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];
 

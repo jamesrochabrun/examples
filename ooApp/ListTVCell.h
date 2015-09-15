@@ -12,8 +12,8 @@
 @interface ListTVCell : UITableViewCell <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, strong) ListObject *listItem;
+@property (nonatomic, weak) UINavigationController *navigationController;
 
 - (void)getRestaurants;
-- (void)showHorizontalListWithNavController:(UINavigationController *)nc;
 
 @end
