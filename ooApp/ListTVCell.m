@@ -42,7 +42,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _requestOperation = nil;
         _listItem = [[ListObject alloc] init];
         _name = [[UILabel alloc] init];
-        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         
         _cvl = [[ListCVFL alloc] init];
         [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
@@ -80,13 +80,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(labelY)-[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(spaceEdge)-[_name]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_name
-                                                     attribute:NSLayoutAttributeCenterX
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:_name.superview
-                                                     attribute:NSLayoutAttributeCenterX
-                                                    multiplier:1.f constant:0.f]];
-
 }
 
 - (void)prepareForReuse
@@ -108,7 +101,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         [_collectionView reloadData];
     }
     _listItem = listItem;
-    _name.text = listItem.name;
+    _name.text = [listItem.name uppercaseString];
     _restaurants = nil;
     [self getRestaurants];
 }

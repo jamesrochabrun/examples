@@ -100,22 +100,15 @@
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
     
-    _distance.text = [NSString stringWithFormat:@"%0.1f mi.", distanceInMeters/1000/1.6];
+    _distance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
     _rating.text = restaurant.rating ? [restaurant.rating stringValue] : @"";
     
     OOAPI *api = [[OOAPI alloc] init];
-
+    
     if (restaurant.imageRef) {
-        _requestOperation = [api getRestaurantImageWithImageRef:restaurant.imageRef success:^(NSString *link) {
+        _requestOperation = [api getRestaurantImageWithImageRef:restaurant.imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:link]
-                                                              cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                                          timeoutInterval:60];
-                
-                [_backgroundImage setImageWithURLRequest:imageRequest
-                                 placeholderImage:[UIImage imageNamed:@"Logo2.png"]
-                                          success:nil
-                                          failure:nil];
+                [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
             });
         } failure:^(NSError *error) {
             ;
@@ -128,7 +121,7 @@
     [super prepareForReuse];
 //    _requestOperation = nil;
 
-    [self.backgroundImage cancelImageRequestOperation];
+//    [self.backgroundImage cancelImageRequestOperation];
     
     // AFNetworking
     [_requestOperation cancel];
