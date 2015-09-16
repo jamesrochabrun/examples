@@ -29,6 +29,8 @@
 		366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */; };
 		366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8A1BA8B70100292F80 /* NavTitleView.m */; };
 		366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */; };
+		366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8F1BA8DEB400292F80 /* SettingsVC.m */; };
+		366BBC941BA8E59F00292F80 /* DiscoverVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC921BA8E59F00292F80 /* DiscoverVC.m */; };
 		367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112CD1B9A076B006FDCE7 /* ImageRefObject.m */; };
 		367112D11BA13E69006FDCE7 /* HorizonalTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */; };
 		367112D41BA14071006FDCE7 /* HorizontalListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D31BA14071006FDCE7 /* HorizontalListVC.m */; };
@@ -131,6 +133,10 @@
 		366BBC8A1BA8B70100292F80 /* NavTitleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavTitleView.m; sourceTree = "<group>"; };
 		366BBC8C1BA8B74A00292F80 /* NavTitleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavTitleObject.h; sourceTree = "<group>"; };
 		366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavTitleObject.m; sourceTree = "<group>"; };
+		366BBC8F1BA8DEB400292F80 /* SettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
+		366BBC901BA8DEB400292F80 /* SettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
+		366BBC921BA8E59F00292F80 /* DiscoverVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiscoverVC.m; sourceTree = "<group>"; };
+		366BBC931BA8E59F00292F80 /* DiscoverVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiscoverVC.h; sourceTree = "<group>"; };
 		367112CC1B9A076B006FDCE7 /* ImageRefObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRefObject.h; sourceTree = "<group>"; };
 		367112CD1B9A076B006FDCE7 /* ImageRefObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageRefObject.m; sourceTree = "<group>"; };
 		367112CF1BA13E69006FDCE7 /* HorizonalTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizonalTVCell.h; sourceTree = "<group>"; };
@@ -392,6 +398,8 @@
 				36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
+				366BBC8F1BA8DEB400292F80 /* SettingsVC.m */,
+				366BBC901BA8DEB400292F80 /* SettingsVC.h */,
 				964BC81C1B97935F00760C83 /* Settings.h */,
 				964BC81D1B97935F00760C83 /* Settings.m */,
 				964BC8201B97A4E700760C83 /* LocationManager.h */,
@@ -400,6 +408,8 @@
 				36FDA6F81B585F650029D29D /* AppDelegate.m */,
 				36FDA6FA1B585F650029D29D /* WhatsNewVC.h */,
 				36FDA6FB1B585F650029D29D /* WhatsNewVC.m */,
+				366BBC921BA8E59F00292F80 /* DiscoverVC.m */,
+				366BBC931BA8E59F00292F80 /* DiscoverVC.h */,
 				365F175D1B91046B00015D5D /* DefaultVC.h */,
 				365F175C1B91046B00015D5D /* DefaultVC.m */,
 				36FDA6FD1B585F650029D29D /* PlayVC.h */,
@@ -641,6 +651,7 @@
 				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,
 				36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */,
 				367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */,
+				366BBC941BA8E59F00292F80 /* DiscoverVC.m in Sources */,
 				367112D11BA13E69006FDCE7 /* HorizonalTVCell.m in Sources */,
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
 				36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */,
@@ -653,6 +664,7 @@
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
+				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
 				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,

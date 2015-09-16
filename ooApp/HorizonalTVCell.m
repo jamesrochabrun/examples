@@ -8,6 +8,15 @@
 
 #import "HorizonalTVCell.h"
 
+@interface HorizonalTVCell ()
+
+@property (nonatomic, strong) UIImageView *iv;
+@property (nonatomic, strong) UILabel *header;
+@property (nonatomic, strong) UILabel *subHeader1;
+@property (nonatomic, strong) UILabel *subHeader2;
+
+@end
+
 @implementation HorizonalTVCell
 
 - (void)awakeFromNib {

@@ -11,9 +11,11 @@
 #import "MenuObject.h"
 #import "SWRevealViewController.h"
 #import "ProfileVC.h"
+#import "SettingsVC.h"
 #import "WhatsNewVC.h"
 #import "DefaultVC.h"
 #import "PlayVC.h"
+#import "DiscoverVC.h"
 
 @interface MenuTVC ()
 
@@ -39,14 +41,20 @@
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
-    menuItem.name = @"WHAT'S NEW";
-    menuItem.type = kMenuItemDiscover;
+    menuItem.name = @"SEARCH";
+    menuItem.type = kMenuItemSearch;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconEat;
+    menuItem.icon = kFontIconDiscover;
+    menuItem.name = @"WHAT'S NEW";
+    menuItem.type = kMenuItemWhatsNew;
+    [_menuItems addObject:menuItem];
+
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconDiscover;
     menuItem.name = @"DISCOVER";
-    menuItem.type = kMenuItemEat;
+    menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
@@ -64,13 +72,13 @@
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconConnect;
     menuItem.name = @"PROFILE";
-    menuItem.type = kMenuItemConnect;
+    menuItem.type = kMenuItemProfile;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconUserProfile;
     menuItem.name = @"SETTINGS";
-    menuItem.type = kMenuItemProfile;
+    menuItem.type = kMenuItemSettings;
     [_menuItems addObject:menuItem];
     
     self.tableView.layoutMargins = UIEdgeInsetsZero;
@@ -179,8 +187,12 @@
     if ([menuItem.type isEqualToString:kMenuItemProfile]) {
         [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
         fvc = [[ProfileVC alloc] init];
-    } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
+    } else if ([menuItem.type isEqualToString:kMenuItemSettings]) {
+        fvc = [[SettingsVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemWhatsNew]) {
         fvc = [[WhatsNewVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
+        fvc = [[DiscoverVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
         fvc = [[PlayVC alloc] init];
     } else {
