@@ -13,6 +13,7 @@
 #import "LocationManager.h"
 #import "UIImageView+AFNetworking.h"
 #import "ListObject.h"
+#import "RestaurantVC.h"
 
 @interface HorizontalListVC ()
 
@@ -65,6 +66,14 @@ static NSString * const cellIdentifier = @"horizontalCell";
     // Dispose of any resources that can be recreated.
 }
 
+- (void)setListItem:(ListObject *)listItem {
+    if (_listItem == listItem) return;
+    _listItem = listItem;
+    
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listItem.name subHeader:nil];
+    self.navTitle = nto;
+}
+
 - (void)getRestaurants
 {
     OOAPI *api = [[OOAPI alloc] init];
@@ -106,6 +115,15 @@ static NSString * const cellIdentifier = @"horizontalCell";
     cell.textLabel.text = restaurant.name;
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+    
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = restaurant;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 /*

@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "RestaurantObject.h"
+#import "SubBaseVC.h"
 
-@interface RestaurantVC : UIViewController
+@interface RestaurantVC : SubBaseVC
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 

@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "ListObject.h"
+#import "SubBaseVC.h"
 
-@interface HorizontalListVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface HorizontalListVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) ListObject *listItem;
 

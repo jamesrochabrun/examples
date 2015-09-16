@@ -179,7 +179,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     
     RestaurantVC *vc = [[RestaurantVC alloc] init];
     [_navigationController pushViewController:vc animated:YES];
-    vc.title = restaurant.name;    
+    vc.restaurant = restaurant;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {

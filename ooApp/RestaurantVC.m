@@ -26,6 +26,14 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)setRestaurant:(RestaurantObject *)restaurant {
+    if (_restaurant == restaurant) return;
+    _restaurant = restaurant;
+    
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:restaurant.name subHeader:nil];
+    self.navTitle = nto;
+}
+
 /*
 #pragma mark - Navigation
 
