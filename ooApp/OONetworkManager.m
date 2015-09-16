@@ -93,6 +93,7 @@
     NSString* token= userInfo.backendAuthorizationToken;
     if  (token  &&  token.lowercaseString.length ) {
         [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+        NSLog (@" authorization token %@", token.lowercaseString);
     } else {
         NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
     }

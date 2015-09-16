@@ -24,7 +24,7 @@
 @property (nonatomic, strong) UIButton *forgotPassword;
 @property (nonatomic, strong) UIImageView *logo;
 @property (nonatomic, assign) BOOL showingKeyboard;
-
+@property (nonatomic, strong) NSArray *keyboardConstraint;
 @end
 
 @implementation LoginVC
@@ -187,12 +187,16 @@
 - (void)adjustInputField
 {
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(3)};
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self.view;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _forgotPassword, _logo, _username, _password, _facebookLogin, _backgroundImage);
     
+    self.keyboardConstraint= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(50)-[_logo(50)]-(>=10)-[_facebookLogin(0)]-spaceInter-[_username(height)]-spaceInter-[_password(height)]-(>=250)-[_forgotPassword]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(50)-[_logo(100)]-(>=20)-[_facebookLogin(height)]-spaceInter-[_username(height)]-spaceInter-[_password(height)]-(>=200)-[_forgotPassword]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints: self.keyboardConstraint
+     ];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -246,7 +250,6 @@
 
 - (void)updateAuthorizationToken: (NSString*) value
 {
-//     value=  @"32e5d03bc057daf6c3495ca1db4c7a1d";// Present value for testing.
     if  (!value) {
         return;
     }
@@ -393,8 +396,7 @@
                                                  NSString* email= d[ @"email"];
                                                  [self updateEmail:email];
                                                  
-                                                NSString* token= d[ @"token"];
-                                                  token=  @"32e5d03bc057daf6c3495ca1db4c7a1d";
+                                                NSString* token= d[ @"hashed_email"];
                                                  [self updateAuthorizationToken: token];
                                                  NSLog (@"EMAIL=  %@",userInfo.email);
                                              }
@@ -574,7 +576,7 @@
                                                         @"date_of_birth": birthday ?:  @"",
                                                         }
                                              success:^void(id   result) {
-                                                 NSLog  (@"PUT PUT");
+                                                 NSLog  (@"PUT SUCCESS");
                                                  
                                                  if (!result) {
                                                      NSLog  (@"RESULT WAS NULL.");
@@ -587,7 +589,7 @@
                                                      NSString* email= d[ @"email"];
                                                      [self updateEmail:email];
                                                      
-                                                     NSString* token= d[ @"token"];
+                                                     NSString* token= d[ @"hashed_email"];
                                                      [self updateAuthorizationToken: token];
                                                  }
                                              }
@@ -661,11 +663,16 @@
 - (void)keyboardHidden: (id) foobar
 {
     self.showingKeyboard= NO;
+    [self.view removeConstraints: self.keyboardConstraint];
+    self.keyboardConstraint= nil;
+    [self  layout];
 }
 
 - (void)keyboardShown: (id) foobar
 {
     self.showingKeyboard= YES;
+    [self  layout];
+    [self adjustInputField];
 }
 
 - (void)loginThroughFacebook:(id)sender
