@@ -189,13 +189,19 @@
 
 - (void)adjustInputField
 {
+    [self.view removeConstraints: self.view.constraints];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(3)};
-//    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+    int keyboardHeight= 140;
+    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(keyboardHeight+kGeomSpaceEdge), @"spaceInter": @(3)};
     UIView *superview = self.view;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _forgotPassword, _logo, _username, _password, _facebookLogin, _backgroundImage);
     
-    self.keyboardConstraint= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(50)-[_logo(50)]-(>=10)-[_facebookLogin(0)]-spaceInter-[_username(height)]-spaceInter-[_password(height)]-(>=250)-[_forgotPassword]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    NSString* s= [NSString stringWithFormat:  @"V:|-(50)-[_logo(50)]-[_facebookLogin(0)]-spaceInter-[_username(height)]-spaceInter-[_password(height)]-(>=250)-[_forgotPassword]-spaceEdge-|"
+                  ];
+    self.keyboardConstraint= [NSLayoutConstraint constraintsWithVisualFormat: s
+                                                                     options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                     metrics:metrics
+                                                                       views:views];
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints: self.keyboardConstraint
@@ -397,7 +403,6 @@
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
 
-#if 0
     [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
                                          success:^void(id   result) {
@@ -419,7 +424,7 @@
                                              }
                                              
                                              if  (facebookID ) {
-                                                 [weakSelf performSelectorOnMainThread: @selector(fetchDetailsAboutUserFromFacebook:) withObjects: @[facebookID , @YES] ];
+                                                 [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @YES] ];
                                              } else {
                                                  // XX:  this is the OO log in flow
                                              }
@@ -435,74 +440,6 @@
                                          }];
     
     // RULE:  While the above is happening take the user to the Discover page regardless of whether the backend was reached.
-#else
-    NSURLSession *session = [NSURLSession sharedSession];
-
-    NSURL *url= [ NSURL  URLWithString:requestString ];
-    
-    NSURLSessionDataTask * task= [session dataTaskWithURL:url
-            completionHandler:^(NSData *data,
-                                NSURLResponse *response,
-                                NSError *error) {
-                if  (!error) {
-                    
-                    NSLog  (@" response= %@", response);
-                   
-                    NSHTTPURLResponse *resp =  (NSHTTPURLResponse*)response;
-                    long code= resp.statusCode;
-                    BOOL alreadyKnown=  code == 200;
-                    if  (alreadyKnown ) {
-                        NSError *errorJson=nil;
-                        NSDictionary* result = [NSJSONSerialization JSONObjectWithData: data
-                                                                                     options:kNilOptions
-                                                                                       error:&errorJson];
-                        NSLog  (@"PRE-EXISTING OO USER %@, %@",  facebookID , result);
-                        NSLog  (@" json= %@", result);
-
-                        if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                            NSDictionary* d=  (NSDictionary*)result;
-                            
-                            NSString* token= d[ @"token"];
-                            [weakSelf updateAuthorizationToken: token];
-                            
-                            NSDictionary* subdictionary=d[ @"user"];
-                            if (subdictionary) {
-                                NSString* userid= subdictionary[ @"user_id"];
-                                [weakSelf updateUserID: userid];
-                            }
-                        }
-                        else  {
-                            NSLog  (@"result was not parsed into a dictionary.");
-                        }
-                        
-                        if  (facebookID ) {
-//                            [weakSelf fetchDetailsAboutUserFromFacebook: facebookID alreadyKnown: YES];
-                            [weakSelf performSelectorOnMainThread: @selector(fetchDetailsAboutUserFromFacebook:) withObject:@[facebookID , @YES]
-                                                    waitUntilDone:NO  ];
-                        } else {
-                            // XX:  this is the OO log in flow
-                        }
-
-                    } else {
-                        NSLog  (@"AS YET UNKNOWN OO USER  %@,  %@",  facebookID,requestString);
-                        
-                        if ( facebookID ) {
-                            
-                            [weakSelf performSelectorOnMainThread: @selector(fetchDetailsAboutUserFromFacebook:) withObject:@[facebookID , @NO]
-                                                    waitUntilDone:NO  ];
-                        } else {
-                            // XX:  this is the OO log in flow
-                        }
-
-                    }
-                } else {
-                    NSLog  (@" error  %@",  error);
-
-                }
-            }
-                                  ];
-    [task resume];
-#endif
     [self performSegueWithIdentifier:@"mainUISegue" sender:self];
 }
 
@@ -519,7 +456,7 @@
     //  Make a formal request for user information.
     //
     __weak LoginVC *weakSelf= self;
-#if 1
+
     FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
                                   initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,name,gender",
                                                      identifier] //picture?type=large&redirect=false
@@ -606,43 +543,6 @@
      }
      ];     // startWithCompletionHandler
     
-    NSLog (@"graphPath:  %@",[request graphPath ]);
-#else
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSString* requestString= [NSString stringWithFormat:
-                              @"HTTPS://graph.facebook.com/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,name,gender",
-                               identifier];
-    
-    NSURL *url= [ NSURL  URLWithString:requestString ];
-    
-    NSURLSessionDataTask* task= [session dataTaskWithURL:url
-            completionHandler:^(NSData *data,
-                                NSURLResponse *response,
-                                NSError *error) {
-//                if  (!error) {
-//                    
-//                    NSLog  (@" response= %@", response);
-//                    
-//                    NSHTTPURLResponse *resp =  (NSHTTPURLResponse*)response;
-//                    long code= resp.statusCode;
-//                    BOOL alreadyKnown=  code == 200;
-//                    if  (alreadyKnown )  {
-//                        NSError *errorJson=nil;
-//                        NSDictionary* result = [NSJSONSerialization JSONObjectWithData: data
-//                                                                               options:kNilOptions
-//                                                                                 error:&errorJson];
-//                        NSLog  (@" json= %@", result);
-//                        
-//                        if ([result isKindOfClass: [NSDictionary  class] ] ) {
-//                            NSDictionary* d=  (NSDictionary*)result;
-//                            NSString* userid= d[ @"user_id"];
-//                        }
-//                    }
-//                }
-            }
-     ];
-    [ task  resume];
-#endif
 }
 
 - (void) conveyUserInformationToBackend: (id)alreadyKnown_
@@ -706,6 +606,8 @@
         parametersDictionary [ @"date_of_birth"]= userInfo.birthday;
     }
     
+    __weak LoginVC *weakSelf= self;
+ 
     if  (alreadyKnown ) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
         NSNumber* userid= userInfo.userID;
@@ -715,7 +617,6 @@
         
         requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
 
-#if 0
         [[OONetworkManager sharedRequestManager] PUT: requestString
                                           parameters: parametersDictionary
                                              success:^void(id   result) {
@@ -740,98 +641,14 @@
                                              failure:^  void(NSError *error) {
                                                  NSLog (@"PUT FAILED %@",error);
                                              }     ];
-#else
-        NSURLSession *session = [NSURLSession sharedSession];
-        NSURL *url= [ NSURL  URLWithString:requestString ];
-        NSMutableURLRequest* request= [[NSMutableURLRequest alloc] initWithURL:url ];
-        //        [ request setValue: @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40o" forHTTPHeaderField: @"User-Agent" ];
-        [ request  setHTTPMethod: @"PUT" ];
-        NSData *body;
-#if 0
-        NSError *error= nil;
-        body= [NSJSONSerialization dataWithJSONObject: parametersDictionary
-                                              options:NSJSONWritingPrettyPrinted
-                                                error:&error];
-        if  (error) {
-            NSLog  (@"UNABLE TO CREATE JSON BODY");
-            return;
-        }
-        NSString *bodyString=  [NSString stringWithUTF8String:[body bytes]];
-        NSLog  (@"THE JSON REQUEST IS:  %@",bodyString);
-#else
-        NSMutableString *bodyString= [NSMutableString new];
-        for(NSString*key in parametersDictionary) {
-            NSString* value=parametersDictionary[ key];
-            [bodyString appendFormat:@"%@=%@&", key, value];
-        }
-        [bodyString deleteCharactersInRange:NSMakeRange([bodyString length]-1, 1)];
-        
-        body= [[bodyString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ] dataUsingEncoding:NSUTF8StringEncoding ];
-        
-        NSLog  (@"THE PUT BODY IS:  %@",bodyString);
-        [ request setValue: @"application/x-www-form-urlencoded" forHTTPHeaderField: @"Content-Type" ];
-#endif
-        [  request  setHTTPBody:  body];
-        
-        NSString* token= userInfo.backendAuthorizationToken;
-        if  (token  &&  token.length ) {
-            [request setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
-        }else {
-            NSLog (@"NOT A PROBLEM FOR PUT: MISSING BACKEND AUTHORIZATION TOKEN");
-        }
-        __weak LoginVC *weakSelf= self;
 
-        NSURLSessionDataTask*  task= [session dataTaskWithRequest:request
-                                                completionHandler:^(NSData *data,
-                                                                    NSURLResponse *response,
-                                                                    NSError *error) {
-                                                    if  (!error) {
-                                                        
-                                                        NSLog  (@" response= %@", response);
-                                                        
-                                                        NSHTTPURLResponse *resp =  (NSHTTPURLResponse*)response;
-                                                        long code= resp.statusCode;
-                                                        BOOL  success=  code == 200;
-                                                        if  ( success ) {
-                                                            NSLog  (@"PUT SUCCESS");
-                                                            
-                                                            NSError *errorJson=nil;
-                                                            NSDictionary* result = [NSJSONSerialization JSONObjectWithData: data
-                                                                                                                   options:kNilOptions
-                                                                                                                     error:&errorJson];
-                                                            
-                                                            NSLog  (@" response json= %@", result);
-                                                            if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                                                                NSDictionary* d=  (NSDictionary*)result;
-                                                                
-                                                                NSString* returnedAuthorizationToken= d[ @"token"];
-                                                                [weakSelf updateAuthorizationToken: returnedAuthorizationToken];
-                                                                
-                                                                NSDictionary* subdictionary=d[ @"user"];
-                                                                if (subdictionary) {
-                                                                    NSString* userid= subdictionary[ @"user_id"];
-                                                                    [weakSelf updateUserID: userid];
-                                                                }
-                                                            }
-                                                            
-                                                        }
-                                                        else {
-                                                            NSLog (@"PUT FAILED WITH CODE:  %ld", code);
-                                                        }
-                                                    } else {
-                                                        NSLog (@"PUT ERROR %@",error);
-                                                    }
-                                                }//  and a block
-                                      ];
-        [ task resume ];
-#endif
     }else {
         
         NSString* requestString=[NSString stringWithFormat: @"https://%@/users",
                                  kOOURL
                                  ];
         NSLog (@"requestString  %@",requestString);
-#if 0
+
         [[OONetworkManager sharedRequestManager] POST: requestString
                                            parameters: parametersDictionary
                                               success:^void(id   result) {
@@ -856,86 +673,6 @@
                                               failure:^  void(NSError *error) {
                                                   NSLog (@"POST FAILED %@",error);
                                               }     ];
-#else
-        NSURLSession *session = [NSURLSession sharedSession];
-        NSURL *url= [ NSURL  URLWithString:requestString ];
-        NSMutableURLRequest* request= [[NSMutableURLRequest alloc] initWithURL:url ];
-//        [ request setValue: @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40o" forHTTPHeaderField: @"User-Agent" ];
-        [ request  setHTTPMethod: @"POST" ];
-        NSData *body;
-#if 0
-        NSError *error= nil;
-        body= [NSJSONSerialization dataWithJSONObject: parametersDictionary
-                                                           options:NSJSONWritingPrettyPrinted
-                                                             error:&error];
-        if  (error) {
-            NSLog  (@"UNABLE TO CREATE JSON BODY");
-            return;
-        }
-        NSString *bodyString=  [NSString stringWithUTF8String:[body bytes]];
-        NSLog  (@"THE JSON REQUEST IS:  %@",bodyString);
-#else
-        NSMutableString *bodyString= [NSMutableString new];
-        for(NSString*key in parametersDictionary) {
-            NSString* value=parametersDictionary[ key];
-            [bodyString appendFormat:@"%@=%@&", key, value];
-        }
-        [bodyString deleteCharactersInRange:NSMakeRange([bodyString length]-1, 1)];
-
-        body= [[bodyString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ] dataUsingEncoding:NSUTF8StringEncoding ];
-        
-        NSLog  (@"THE POST BODY IS:  %@",bodyString);
-#endif
-        
-        [  request  setHTTPBody:  body];
-        [ request setValue: @"application/x-www-form-urlencoded" forHTTPHeaderField: @"Content-Type" ];
-
-        __weak LoginVC *weakSelf= self;
-
-        NSURLSessionDataTask*  task= [session dataTaskWithRequest:request
-                completionHandler:^(NSData *data,
-                                    NSURLResponse *response,
-                                    NSError *error) {
-                    if  (!error) {
-                        
-                        NSLog  (@" response= %@", response);
-                        
-                        NSHTTPURLResponse *resp =  (NSHTTPURLResponse*)response;
-                        long code= resp.statusCode;
-                        BOOL  success=  code == 200;
-                        if  ( success ) {
-                            NSLog  (@"POST SUCCESS");
-
-                            NSError *errorJson=nil;
-                            NSDictionary* result = [NSJSONSerialization JSONObjectWithData: data
-                                                                                   options:kNilOptions
-                                                                                     error:&errorJson];
-
-                            NSLog  (@" response json= %@", result);
-                            if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                                NSDictionary* d=  (NSDictionary*)result;
-                                
-                                NSString* token= d[ @"token"];
-                                [weakSelf updateAuthorizationToken: token];
-                                
-                                NSDictionary* subdictionary=d[ @"user"];
-                                if (subdictionary) {
-                                    NSString* userid= subdictionary[ @"user_id"];
-                                    [weakSelf updateUserID: userid];
-                                }
-                            }
-
-                        }
-                        else {
-                            NSLog (@"POST FAILED WITH CODE:  %ld", code);
-                        }
-                    } else {
-                        NSLog (@"POST ERROR %@",error);
-                    }
-                }//  and a block
-          ];
-        [ task resume ];
-#endif
     }
 }
 
@@ -964,12 +701,14 @@
     self.showingKeyboard= NO;
     [self.view removeConstraints: self.keyboardConstraint];
     self.keyboardConstraint= nil;
+    
     [self  layout];
 }
 
 - (void)keyboardShown: (id) foobar
 {
     self.showingKeyboard= YES;
+    [self.view removeConstraints: self.keyboardConstraint];
     [self  layout];
     [self adjustInputField];
 }
