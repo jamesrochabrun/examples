@@ -171,8 +171,8 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 {
     CLLocationCoordinate2D coord = newLocation.coordinate;
     
-    float la = coord.latitude;
-    float lo = coord.longitude;
+//    float la = coord.latitude;
+//    float lo = coord.longitude;
 //    NSLog  (@"New location data lat= %g, long= %g",la,lo);
     self.currentLocation= coord;
     
