@@ -67,14 +67,17 @@
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* token= userInfo.backendAuthorizationToken;
-    if  (token  &&  token.lowercaseString.length ) {
+    if  (token  &&  token.length ) {
         [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
     }else {
         NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
     }
 
+    NSLog (@"POST PARAMETERS:  %@",parameters);
+    NSLog (@"SERIALIZER SAYS HEADERS:  %@", nm.requestManager.requestSerializer.HTTPRequestHeaders);
+    NSLog (@"SERIALIZER SAYS TIMEOUT:   %g", nm.requestManager.requestSerializer.timeoutInterval);
     return [nm.requestManager POST:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"JSON: %@", responseObject);;
+        NSLog(@"JSON: %@", responseObject);;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure(error);
     }];
@@ -91,7 +94,7 @@
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* token= userInfo.backendAuthorizationToken;
-    if  (token  &&  token.lowercaseString.length ) {
+    if  (token  &&  token.length ) {
         [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
         NSLog (@" authorization token %@", token.lowercaseString);
     } else {

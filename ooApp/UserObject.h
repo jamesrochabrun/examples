@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;
+@property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *email;
 @property (nonatomic, strong) NSString *gender;
 @property (nonatomic, strong) NSString *phoneNumber;
@@ -21,6 +22,7 @@
 @property (nonatomic, strong) NSString *birthday;
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *about;
+@property (nonatomic, strong) NSString *facebookIdentifier;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryFromUser;
