@@ -5,7 +5,6 @@
 //  Created by Anuj Gujar on 7/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
-
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import "AppDelegate.h"
 #import "OOAPI.h"
@@ -32,19 +31,25 @@
     CLLocationCoordinate2D location= [[Settings sharedInstance] mostRecentLocation ];
     NSLog  (@"Last known location: %g,%g", location.latitude,location.longitude);
     
+//    if (![[UIApplication sharedApplication] canOpenURL: [NSURL URLWithString:@"fb927463500628206://foo.com"]]) {
+//        NSLog (@"THIS APPLICATION CANNOT OPEN THE SCHEME fb927463500628206");
+//    }
+    
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
+    NSLog (@"URL  %@",url);
+
     if ([[FBSDKApplicationDelegate sharedInstance] application:application
                                                           openURL:url
                                                 sourceApplication:sourceApplication
                                                        annotation:annotation
             ])
     {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"facebookLoginDidTranspire" object:nil ];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:@"facebookLoginDidTranspire" object:nil ];
         return YES;
     } else {
         return NO;

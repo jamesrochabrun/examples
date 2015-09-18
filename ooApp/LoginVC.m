@@ -716,7 +716,9 @@
 - (void)loginThroughFacebook:(id)sender
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-    [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+    [ login logInWithReadPermissions:@[@"email"]
+                  fromViewController: self
+                             handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
         if (error) {
             // Automatic login was not possible,  so transferring to Facebook website or app...
             
@@ -724,7 +726,7 @@
         }
         else if (result.isCancelled) {
             // Handle cancellations
-            NSLog  (@"LOGIN PROCESS WAS CANCELEDu");
+            NSLog  (@"LOGIN PROCESS WAS CANCELED");
         }
         else {
             // If you ask for multiple permissions at once, you
