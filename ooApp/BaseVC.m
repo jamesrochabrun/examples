@@ -37,7 +37,7 @@
     SWRevealViewController *revealViewController = self.revealViewController;
     if (revealViewController) {
         revealViewController.rearViewRevealWidth = self.view.frame.size.width - 60;
-        [self.menu setTitle:kFontIconDiscover];
+        [self.menu setTitle:kFontIconMenu];
         [self.menu setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                            [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
                                            [UIColor whiteColor], NSForegroundColorAttributeName,

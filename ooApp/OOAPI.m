@@ -27,7 +27,7 @@
 
 - (AFHTTPRequestOperation*) getRestaurantsWithIDs:(NSArray *)restaurantIds success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
     
@@ -48,7 +48,7 @@
 //
 - (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef maxWidth:(NSUInteger)maxWidth maxHeight:(NSUInteger)maxHeight success:(void(^)(NSString *link))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants/photos", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
@@ -75,7 +75,7 @@
 - (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
 {
     
-    NSString *URL = [NSString stringWithFormat:@"http://%@/search", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/search", [self ooURL]];
     NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -94,7 +94,7 @@
 
 - (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs success:(void(^)(NSArray *users))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/users", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/users", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:URL parameters:nil success:^(id responseObject) {
@@ -111,7 +111,7 @@
 
 - (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/dishes", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/dishes", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:URL parameters:nil success:^(id responseObject) {
@@ -129,7 +129,7 @@
 - (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     
     AFHTTPRequestOperation *op = [rm POST:URL parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
         ;

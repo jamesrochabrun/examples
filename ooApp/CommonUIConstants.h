@@ -56,13 +56,15 @@ extern NSString *const kFontLatoRegular;
 extern NSString *const kFontLatoBold;
 
 // Icon font mappings
+extern NSString *const kFontIconAdd;
 extern NSString *const kFontIconDiscover;
-extern NSString *const kFontIconMeet;
-extern NSString *const kFontIconEat;
-extern NSString *const kFontIconUserProfile;
-extern NSString *const kFontIconConnect;
-extern NSString *const kFontIconAddToList;
-extern NSString *const kFontIconPlay;
-extern NSString *const kFontIconFacebook;
-extern NSString *const kFontIconLike;
+extern NSString *const kFontIconEvent;
+extern NSString *const kFontIconFeed;
+extern NSString *const kFontIconMenu;
+extern NSString *const kFontIconMore;
+extern NSString *const kFontIconProfile;
+extern NSString *const kFontIconSearch;
+extern NSString *const kFontIconSettings;
+extern NSString *const kFontIconWhatsNew;
+
 #endif

@@ -200,7 +200,7 @@
     [super viewDidAppear:animated];
 //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
     FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
-    if (token) {
+    if (1) {//token) {
         // Instantaneous transition if the user recently logged in.
         [self showMainUI];
     } else {
@@ -222,7 +222,7 @@
 - (void)loginThroughFacebook:(id)sender
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-    [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+    [login logInWithReadPermissions:@[@"email"] fromViewController:nil handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
         if (error) {
             // Automatic login was not possible,  so transferring to Facebook website or app...
             

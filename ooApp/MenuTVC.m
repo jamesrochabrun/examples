@@ -40,13 +40,13 @@
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconDiscover;
+    menuItem.icon = kFontIconSearch;
     menuItem.name = @"SEARCH";
     menuItem.type = kMenuItemSearch;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconDiscover;
+    menuItem.icon = kFontIconWhatsNew;
     menuItem.name = @"WHAT'S NEW";
     menuItem.type = kMenuItemWhatsNew;
     [_menuItems addObject:menuItem];
@@ -58,25 +58,25 @@
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconPlay;
+    menuItem.icon = kFontIconFeed;
     menuItem.name = @"FRIEND FEED";
     menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconMeet;
+    menuItem.icon = kFontIconEvent;
     menuItem.name = @"EVENTS";
     menuItem.type = kMenuItemMeet;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconConnect;
+    menuItem.icon = kFontIconProfile;
     menuItem.name = @"PROFILE";
     menuItem.type = kMenuItemProfile;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconUserProfile;
+    menuItem.icon = kFontIconSettings;
     menuItem.name = @"SETTINGS";
     menuItem.type = kMenuItemSettings;
     [_menuItems addObject:menuItem];
