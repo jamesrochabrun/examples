@@ -11,9 +11,11 @@
 #import "MenuObject.h"
 #import "SWRevealViewController.h"
 #import "ProfileVC.h"
-#import "DiscoverVC.h"
+#import "SettingsVC.h"
+#import "WhatsNewVC.h"
 #import "DefaultVC.h"
 #import "PlayVC.h"
+#import "DiscoverVC.h"
 
 @interface MenuTVC ()
 
@@ -38,39 +40,45 @@
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconDiscover;
-    menuItem.name = @"Discover";
-    menuItem.type = kMenuItemDiscover;
+    menuItem.icon = kFontIconSearch;
+    menuItem.name = @"SEARCH";
+    menuItem.type = kMenuItemSearch;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconEat;
-    menuItem.name = @"Eat";
-    menuItem.type = kMenuItemEat;
+    menuItem.icon = kFontIconWhatsNew;
+    menuItem.name = @"WHAT'S NEW";
+    menuItem.type = kMenuItemWhatsNew;
+    [_menuItems addObject:menuItem];
+
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconDiscover;
+    menuItem.name = @"DISCOVER";
+    menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconPlay;
-    menuItem.name = @"Play";
+    menuItem.icon = kFontIconFeed;
+    menuItem.name = @"FRIEND FEED";
     menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconMeet;
-    menuItem.name = @"Meet";
+    menuItem.icon = kFontIconEvent;
+    menuItem.name = @"EVENTS";
     menuItem.type = kMenuItemMeet;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconConnect;
-    menuItem.name = @"Connect";
-    menuItem.type = kMenuItemConnect;
+    menuItem.icon = kFontIconProfile;
+    menuItem.name = @"PROFILE";
+    menuItem.type = kMenuItemProfile;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconUserProfile;
-    menuItem.name = @"User Profile";
-    menuItem.type = kMenuItemProfile;
+    menuItem.icon = kFontIconSettings;
+    menuItem.name = @"SETTINGS";
+    menuItem.type = kMenuItemSettings;
     [_menuItems addObject:menuItem];
     
     self.tableView.layoutMargins = UIEdgeInsetsZero;
@@ -179,6 +187,10 @@
     if ([menuItem.type isEqualToString:kMenuItemProfile]) {
         [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
         fvc = [[ProfileVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemSettings]) {
+        fvc = [[SettingsVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemWhatsNew]) {
+        fvc = [[WhatsNewVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {

@@ -20,4 +20,7 @@ typedef enum {
 @property (nonatomic, strong) NSString *imageURL;
 @property (nonatomic) ListType listType;
 
++ (ListObject *)listFromDict:(NSDictionary *)dict;
++ (NSDictionary *)dictFromList:(ListObject *)list;
+
 @end

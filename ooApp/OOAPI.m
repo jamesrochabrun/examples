@@ -28,7 +28,7 @@
 
 - (AFHTTPRequestOperation*) getRestaurantsWithIDs:(NSArray *)restaurantIds success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
     
@@ -44,12 +44,25 @@
     }];
 }
 
-- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef success:(void(^)(NSString *link))success failure:(void (^)(NSError *))failure
+//
+// Only one of max width or max height is heeded. Preference is given to max width
+//
+- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef maxWidth:(NSUInteger)maxWidth maxHeight:(NSUInteger)maxHeight success:(void(^)(NSString *link))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants/photos", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
+    
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
-    NSDictionary *parameters = @{@"reference": imageRef.reference};
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    [parameters setObject:imageRef.reference forKey:@"reference"];
+    
+    if (maxWidth) {
+        maxWidth = (isRetinaDisplay()) ? 2*maxWidth: maxWidth;
+        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxwidth"];
+    } else if (maxHeight) {
+        maxHeight = (isRetinaDisplay()) ? 2*maxHeight: maxHeight;
+        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxHeight"];
+    }
     
     return [rm GET:URL parameters:parameters success:^(id responseObject) {
         success([responseObject objectForKey:@"link"]);
@@ -63,7 +76,7 @@
 - (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
 {
     
-    NSString *URL = [NSString stringWithFormat:@"http://%@/search", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/search", [self ooURL]];
     NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -82,7 +95,7 @@
 
 - (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs success:(void(^)(NSArray *users))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/users", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/users", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:URL parameters:nil success:^(id responseObject) {
@@ -99,7 +112,7 @@
 
 - (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"http://%@/dishes", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/dishes", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:URL parameters:nil success:^(id responseObject) {
@@ -117,7 +130,7 @@
 - (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *URL = [NSString stringWithFormat:@"http://%@/restaurants", [self ooURL]];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     
     AFHTTPRequestOperation *op = [rm POST:URL parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
         ;
@@ -125,6 +138,35 @@
         failure(error);
     }];
     
+    return op;
+}
+
+- (AFHTTPRequestOperation *)getImageWithURL:(NSString *)URL success:(void (^)(UIImage *))success failure:(void (^)(NSError *))failure {
+
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:URL]
+                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
+                                              timeoutInterval:180];
+    
+    UIImage *image = [[UIImageView sharedImageCache] cachedImageForRequest:imageRequest];
+
+    NSMutableDictionary *parms = [NSMutableDictionary dictionary];
+    AFHTTPRequestOperation *op;
+ 
+    if (image != nil) {
+        success(image);
+    } else {
+        op = [[AFHTTPRequestOperation alloc] initWithRequest:imageRequest];
+        op.responseSerializer = [AFImageResponseSerializer serializer];
+        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            UIImage *image = responseObject;
+            [[UIImageView sharedImageCache] cacheImage:image forRequest:imageRequest];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Image error: %@", error);
+        }];
+        [op start];
+    }
     return op;
 }
 

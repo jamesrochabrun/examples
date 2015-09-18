@@ -18,7 +18,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    self.screenTitle = @"Play";
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:@"please"];
+    self.navTitle = nto;
 }
 
 - (void)didReceiveMemoryWarning {

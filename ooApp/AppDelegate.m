@@ -21,8 +21,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-//    [DebugUtilities displayAllFonts];
-    
+    // Override point for customization after application launch.
+    NSLog(@"application finished launching");
+    [DebugUtilities displayAllFonts];
+
     NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:10 * 1024 * 1024
                                                             diskCapacity:100 * 1024 * 1024
                                                                 diskPath:nil];
@@ -35,13 +37,15 @@
 //        NSLog (@"THIS APPLICATION CANNOT OPEN THE SCHEME fb927463500628206");
 //    }
     
+    [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
+    
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    NSLog (@"URL  %@",url);
+    NSLog (@"OPEN URL  %@",url);
 
     if ([[FBSDKApplicationDelegate sharedInstance] application:application
                                                           openURL:url

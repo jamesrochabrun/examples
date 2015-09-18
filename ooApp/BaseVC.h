@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "SWRevealViewController.h"
+#import "NavTitleObject.h"
 
 @interface BaseVC : UIViewController
 
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *menu;
 
-@property (nonatomic, strong) NSString *screenTitle;
+@property (nonatomic, strong) NavTitleObject *navTitle;
 
 - (void)layout;
 @end

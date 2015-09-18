@@ -48,7 +48,9 @@
     _facebookLogin = [[FBSDKLoginButton alloc] init];
     _facebookLogin.delegate = self;
     _facebookLogin.layer.cornerRadius = kGeomCornerRadius;
-    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // NOTE: this was conflicting with the Facebook login process
+//    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
     
     _username = [[UITextField alloc] init];
     _username.backgroundColor = UIColorRGBA(kColorGrayMiddle);
@@ -685,10 +687,11 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
     //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (facebookToken) {
-        // Instantaneous transition if the user recently logged in.
+        // Transition if the user recently logged in.
         [self showMainUI];
     } else {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
@@ -716,9 +719,9 @@
 - (void)loginThroughFacebook:(id)sender
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-    [ login logInWithReadPermissions:@[@"email"]
-                  fromViewController: self
-                             handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+
+    [login logInWithReadPermissions:@[@"email"] fromViewController:self handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+
         if (error) {
             // Automatic login was not possible,  so transferring to Facebook website or app...
             
@@ -726,7 +729,7 @@
         }
         else if (result.isCancelled) {
             // Handle cancellations
-            NSLog  (@"LOGIN PROCESS WAS CANCELED");
+            NSLog  (@"LOGIN PROCESS WAS CANCELED: THIS MEANS THAT SAFARI WAS BROUGHT UP.");
         }
         else {
             // If you ask for multiple permissions at once, you
@@ -734,6 +737,12 @@
             
             if ([result.grantedPermissions containsObject:@"email"]) {
                 // Do work
+                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=first_name,age_range,last_name,id,gender,email" parameters:nil]
+                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                     if (!error) {
+                         NSLog(@"fetched user:%@", result);
+                     }
+                 }];
                 [self showMainUI];
             } else {
                 NSLog  (@"Granted permission do not include email");
@@ -744,7 +753,7 @@
 
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
 {
-    NSLog (@"loginButtonDidLogOut");
+    NSLog (@"loginButtonDidLogOut: USER LOGGED OUT");
 }
 
 

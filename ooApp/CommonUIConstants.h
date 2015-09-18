@@ -36,9 +36,9 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
 static CGFloat kGeomHeightButton = 40.0;
-static CGFloat kGeomHeightFeaturedRow = 160.0;
-static CGFloat kGeomHeightFeaturedCellWidth = 250.0;
-static CGFloat kGeomHeightFeaturedCellHeight = 130.0;
+static CGFloat kGeomHeightFeaturedRow = 180.0;
+static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
+static CGFloat kGeomHeightFeaturedCellHeight = 150.0;
 static CGFloat kGeomHeightListRow = 130.0;
 static CGFloat kGeomHeightListCell = 100.0;
 static CGFloat kGeomHeightListRowReveal = 240.0;
@@ -56,13 +56,15 @@ extern NSString *const kFontLatoRegular;
 extern NSString *const kFontLatoBold;
 
 // Icon font mappings
+extern NSString *const kFontIconAdd;
 extern NSString *const kFontIconDiscover;
-extern NSString *const kFontIconMeet;
-extern NSString *const kFontIconEat;
-extern NSString *const kFontIconUserProfile;
-extern NSString *const kFontIconConnect;
-extern NSString *const kFontIconAddToList;
-extern NSString *const kFontIconPlay;
-extern NSString *const kFontIconFacebook;
-extern NSString *const kFontIconLike;
+extern NSString *const kFontIconEvent;
+extern NSString *const kFontIconFeed;
+extern NSString *const kFontIconMenu;
+extern NSString *const kFontIconMore;
+extern NSString *const kFontIconProfile;
+extern NSString *const kFontIconSearch;
+extern NSString *const kFontIconSettings;
+extern NSString *const kFontIconWhatsNew;
+
 #endif

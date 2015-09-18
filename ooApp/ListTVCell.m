@@ -10,9 +10,10 @@
 #import "DebugUtilities.h"
 #import "OOAPI.h"
 #import "ListCVFL.h"
-#import "ListCVCell.h"
+#import "TileCVCell.h"
 #import "UIImageView+AFNetworking.h"
 #import "LocationManager.h"
+#import "RestaurantVC.h"
 
 @interface ListTVCell ()
 
@@ -38,9 +39,10 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     
     if (self) {
+        _requestOperation = nil;
         _listItem = [[ListObject alloc] init];
         _name = [[UILabel alloc] init];
-        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         
         _cvl = [[ListCVFL alloc] init];
         [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
@@ -48,7 +50,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 
         _fcvl = [[ListCVFL alloc] init];
         [_fcvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-        [_fcvl setItemSize:CGSizeMake(kGeomHeightFeaturedCellWidth, kGeomHeightFeaturedCellHeight)];
 
         [self addSubview:_name];
         
@@ -78,32 +79,30 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(labelY)-[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[_name]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_name
-                                                     attribute:NSLayoutAttributeCenterX
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:_name.superview
-                                                     attribute:NSLayoutAttributeCenterX
-                                                    multiplier:1.f constant:0.f]];
-
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(spaceEdge)-[_name]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)prepareForReuse
 {
-    self.requestOperation= nil;
+//    self.requestOperation= nil;
     
     // AFNetworking
-//    [self.backgroundImage cancelImageRequestOperation];
-    
-    // AFNetworking
-    [self.requestOperation cancel ];
+    [self.requestOperation cancel];
     self.requestOperation= nil;
 }
 
 - (void)setListItem:(ListObject *)listItem
 {
+    if (_listItem == listItem) return;
+    
+    if (_listItem == kListTypeFeatured) {
+        [_featuredCollectionView reloadData];
+    } else {
+        [_collectionView reloadData];
+    }
     _listItem = listItem;
-    _name.text = listItem.name;
+    _name.text = [listItem.name uppercaseString];
+    _restaurants = nil;
     [self getRestaurants];
 }
 
@@ -164,8 +163,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ListCVCell *restaurantCell;
-    if (_listItem.listType == kListTypeFeatured) {
+    TileCVCell *restaurantCell;
+    if (collectionView == _featuredCollectionView) {
         restaurantCell = [collectionView dequeueReusableCellWithReuseIdentifier:FeaturedRestaurantCellIdentifier forIndexPath:indexPath];
     } else {
         restaurantCell = [collectionView dequeueReusableCellWithReuseIdentifier:RestaurantCellIdentifier forIndexPath:indexPath];
@@ -174,9 +173,13 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     return restaurantCell;
 }
 
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPat
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    [_navigationController pushViewController:vc animated:YES];
+    vc.restaurant = restaurant;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
@@ -189,7 +192,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 {
     if (!_collectionView) {
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightListRow-kGeomHeightListCell, self.frame.size.width, self.frame.size.height-(kGeomHeightListRow-kGeomHeightListCell)) collectionViewLayout:_cvl];
-        [_collectionView registerClass:[ListCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
+        [_collectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
         _collectionView.backgroundColor = UIColorRGBA(kColorOffBlack);
         [self addSubview:_collectionView];
         [self bringSubviewToFront:_name];
@@ -200,8 +203,11 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 - (UICollectionView *)featuredCollectionView
 {
     if (!_featuredCollectionView) {
+        [_fcvl setItemSize:CGSizeMake(self.frame.size.width-2*kGeomSpaceEdge, kGeomHeightFeaturedCellHeight)];
         _featuredCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight, self.frame.size.width, self.frame.size.height-(kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight)) collectionViewLayout:_fcvl];
-        [_featuredCollectionView registerClass:[ListCVCell class] forCellWithReuseIdentifier:FeaturedRestaurantCellIdentifier];
+        [_featuredCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:FeaturedRestaurantCellIdentifier];
+        _featuredCollectionView.backgroundColor = UIColorRGBA(kColorOffBlack);
+        _featuredCollectionView.pagingEnabled = YES;
         [self addSubview:_featuredCollectionView];
         [self bringSubviewToFront:_name];
     }
