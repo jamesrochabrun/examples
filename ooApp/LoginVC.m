@@ -41,7 +41,6 @@
     _facebookLogin = [[FBSDKLoginButton alloc] init];
     _facebookLogin.delegate = self;
     _facebookLogin.layer.cornerRadius = kGeomCornerRadius;
-    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
 
     _username = [[UITextField alloc] init];
     _username.backgroundColor = UIColorRGBA(kColorGrayMiddle);
@@ -200,7 +199,8 @@
     [super viewDidAppear:animated];
 //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
     FBSDKAccessToken *token = [FBSDKAccessToken currentAccessToken];
-    if (1) {//token) {
+
+    if (token) {
         // Instantaneous transition if the user recently logged in.
         [self showMainUI];
     } else {
