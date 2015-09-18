@@ -44,7 +44,7 @@
 	<true/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>icons.ttf</string>
+		<string>oomami-icons.ttf</string>
 		<string>Lato-Regular.ttf</string>
 		<string>Lato-Thin.ttf</string>
 		<string>Lato-Bold.ttf</string>
