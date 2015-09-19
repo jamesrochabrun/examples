@@ -48,10 +48,7 @@
     _facebookLogin = [[FBSDKLoginButton alloc] init];
     _facebookLogin.delegate = self;
     _facebookLogin.layer.cornerRadius = kGeomCornerRadius;
-    
-    // NOTE: this was conflicting with the Facebook login process
-//    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
-    
+
     _username = [[UITextField alloc] init];
     _username.backgroundColor = UIColorRGBA(kColorGrayMiddle);
     _username.placeholder = @"username";

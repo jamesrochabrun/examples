@@ -36,7 +36,6 @@
 		367112D11BA13E69006FDCE7 /* HorizonalTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */; };
 		367112D41BA14071006FDCE7 /* HorizontalListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D31BA14071006FDCE7 /* HorizontalListVC.m */; };
 		367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 367703FA1B86884700B594E5 /* CommonUIConstants.m */; };
-		367704011B87E43400B594E5 /* icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 367704001B87E43400B594E5 /* icons.ttf */; };
 		367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704041B8807F600B594E5 /* UIButton+Additions.m */; };
 		367704081B88103900B594E5 /* UIImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704071B88103900B594E5 /* UIImage+Additions.m */; };
 		3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3677040A1B8816C300B594E5 /* UILabel+Additions.m */; };
@@ -61,6 +60,7 @@
 		367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3677044E1B8BF05100B594E5 /* Lato-ThinItalic.ttf */; };
 		367704631B8BF05100B594E5 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3677044F1B8BF05100B594E5 /* OFL.txt */; };
 		367704641B8BF05100B594E5 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 367704501B8BF05100B594E5 /* README.txt */; };
+		3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3679D2041BAC8887004BF4DC /* oomami-icons.ttf */; settings = {ASSET_TAGS = (); }; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */; };
 		36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C39BE01B84C7CD00648879 /* DebugUtilities.m */; };
@@ -148,7 +148,6 @@
 		367112D21BA14071006FDCE7 /* HorizontalListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalListVC.h; sourceTree = "<group>"; };
 		367112D31BA14071006FDCE7 /* HorizontalListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizontalListVC.m; sourceTree = "<group>"; };
 		367703FA1B86884700B594E5 /* CommonUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUIConstants.m; sourceTree = "<group>"; };
-		367704001B87E43400B594E5 /* icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = icons.ttf; path = Fonts/icons.ttf; sourceTree = "<group>"; };
 		367704031B8807F600B594E5 /* UIButton+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Additions.h"; sourceTree = "<group>"; };
 		367704041B8807F600B594E5 /* UIButton+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Additions.m"; sourceTree = "<group>"; };
 		367704061B88103900B594E5 /* UIImage+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Additions.h"; sourceTree = "<group>"; };
@@ -177,6 +176,7 @@
 		3677044E1B8BF05100B594E5 /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Lato-ThinItalic.ttf"; path = "Fonts/Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
 		3677044F1B8BF05100B594E5 /* OFL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OFL.txt; path = Fonts/OFL.txt; sourceTree = "<group>"; };
 		367704501B8BF05100B594E5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Fonts/README.txt; sourceTree = "<group>"; };
+		3679D2041BAC8887004BF4DC /* oomami-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "oomami-icons.ttf"; path = "Fonts/oomami-icons.ttf"; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantVC.h; sourceTree = "<group>"; };
@@ -300,6 +300,7 @@
 		367703FD1B87E3AD00B594E5 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				3679D2041BAC8887004BF4DC /* oomami-icons.ttf */,
 				3677043D1B8BF05100B594E5 /* Lato-Black.ttf */,
 				3677043E1B8BF05100B594E5 /* Lato-BlackItalic.ttf */,
 				3677043F1B8BF05100B594E5 /* Lato-Bold.ttf */,
@@ -320,7 +321,6 @@
 				3677044E1B8BF05100B594E5 /* Lato-ThinItalic.ttf */,
 				3677044F1B8BF05100B594E5 /* OFL.txt */,
 				367704501B8BF05100B594E5 /* README.txt */,
-				367704001B87E43400B594E5 /* icons.ttf */,
 			);
 			name = Fonts;
 			sourceTree = "<group>";
@@ -578,9 +578,9 @@
 				367704591B8BF05100B594E5 /* Lato-Italic.ttf in Resources */,
 				36587B711B93964C00D01EB5 /* Icon@2x.png in Resources */,
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
+				3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */,
 				36587B721B93964C00D01EB5 /* Icon@3x.png in Resources */,
 				367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */,
-				367704011B87E43400B594E5 /* icons.ttf in Resources */,
 				367704631B8BF05100B594E5 /* OFL.txt in Resources */,
 				367704641B8BF05100B594E5 /* README.txt in Resources */,
 				367704371B88552E00B594E5 /* background-image.jpg in Resources */,
