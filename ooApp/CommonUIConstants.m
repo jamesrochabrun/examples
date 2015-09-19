@@ -8,19 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
-NSString *const kFontIcons = @"icons";
+NSString *const kFontIcons = @"oomami-icons";
 NSString *const kFontSFTextRegular = @"SFUIText-Regular";
 NSString *const kFontSFTextLight = @"SFUIText-Light";
 NSString *const kFontLatoThin = @"Lato-Thin";
 NSString *const kFontLatoRegular = @"Lato-Regular";
 NSString *const kFontLatoBold = @"Lato-Bold";
 
-NSString *const kFontIconDiscover = @"a";
-NSString *const kFontIconMeet = @"b";
-NSString *const kFontIconEat = @"c";
-NSString *const kFontIconUserProfile = @"d";
-NSString *const kFontIconConnect = @"e";
-NSString *const kFontIconAddToList = @"f";
-NSString *const kFontIconPlay = @"g";
-NSString *const kFontIconFacebook = @"h";
-NSString *const kFontIconLike = @"d";
+NSString *const kFontIconAdd = @"b";
+NSString *const kFontIconDiscover = @"q";
+NSString *const kFontIconEvent = @"h";
+NSString *const kFontIconFeed = @"g";
+NSString *const kFontIconMenu = @"d";
+NSString *const kFontIconMore = @"f";
+NSString *const kFontIconProfile = @"i";
+NSString *const kFontIconSearch = @"c";
+NSString *const kFontIconSettings = @"m";
+NSString *const kFontIconWhatsNew = @"G";

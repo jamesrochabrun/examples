@@ -32,7 +32,7 @@
     return self;
 }
 
-- (AFHTTPRequestOperation*) GET:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation *)GET:(NSString *)path parameters:(NSDictionary *)parameters
                         success:(void (^)(id responseObject))success
                         failure:(void (^)(NSError *error))failure
 {
@@ -56,7 +56,7 @@
     }];
 }
 
-- (AFHTTPRequestOperation*) POST:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation *)POST:(NSString *)path parameters:(NSDictionary *)parameters
                          success:(void (^)(id responseObject))success
                          failure:(void (^)(NSError *error))failure
 {

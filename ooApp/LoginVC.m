@@ -48,8 +48,7 @@
     _facebookLogin = [[FBSDKLoginButton alloc] init];
     _facebookLogin.delegate = self;
     _facebookLogin.layer.cornerRadius = kGeomCornerRadius;
-    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
-    
+
     _username = [[UITextField alloc] init];
     _username.backgroundColor = UIColorRGBA(kColorGrayMiddle);
     _username.placeholder = @"username";
@@ -685,6 +684,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
     //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImage, _logo, _facebookLogin, _username, _password]];
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (facebookToken) {
@@ -716,7 +716,7 @@
 - (void)loginThroughFacebook:(id)sender
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-    [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+    [login logInWithReadPermissions:@[@"email"] fromViewController:nil handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
         if (error) {
             // Automatic login was not possible,  so transferring to Facebook website or app...
             
@@ -732,6 +732,12 @@
             
             if ([result.grantedPermissions containsObject:@"email"]) {
                 // Do work
+                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=first_name,age_range,last_name,id,gender,email" parameters:nil]
+                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                     if (!error) {
+                         NSLog(@"fetched user:%@", result);
+                     }
+                 }];
                 [self showMainUI];
             } else {
                 NSLog  (@"Granted permission do not include email");

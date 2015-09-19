@@ -17,4 +17,16 @@
     return self;
 }
 
++ (ListObject *)listFromDict:(NSDictionary *)dict {
+    ListObject *list = [[ListObject alloc] init];
+    
+    return list;
+}
+
++ (NSDictionary *)dictFromList:(ListObject *)list {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    
+    return dict;
+}
+
 @end
