@@ -10,6 +10,6 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "BaseVC.h"
 
-@interface ProfileVC : BaseVC <FBSDKLoginButtonDelegate>
+@interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @end

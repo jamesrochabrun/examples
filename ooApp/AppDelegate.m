@@ -53,7 +53,6 @@
                                                        annotation:annotation
             ])
     {
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"facebookLoginDidTranspire" object:nil ];
         return YES;
     } else {
         return NO;

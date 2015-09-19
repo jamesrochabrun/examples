@@ -49,9 +49,6 @@
     _facebookLogin.delegate = self;
     _facebookLogin.layer.cornerRadius = kGeomCornerRadius;
     
-    // NOTE: this was conflicting with the Facebook login process
-//    [_facebookLogin addTarget:self action:@selector(loginThroughFacebook:) forControlEvents:UIControlEventTouchUpInside];
-    
     _username = [[UITextField alloc] init];
     _username.backgroundColor = UIColorRGBA(kColorGrayMiddle);
     _username.placeholder = @"username";
@@ -84,35 +81,11 @@
     [self layout];
     
     [[LocationManager sharedInstance] askUserWhetherToTrack ];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(facebookLoginDidTranspire) name:@"facebookLoginDidTranspire" object:nil ];
 }
 
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)facebookLoginDidTranspire
-{
-    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
-    if (facebookToken) {
-        // Instantaneous transition if the user  really logged in.
-        [self showMainUI];
-    } else {
-        NSLog (@"Was not able to get token, will try again in one second.");
-        [self performSelector:@selector(facebookLoginDidTranspire2) withObject:nil afterDelay:3];
-    }
-}
-- (void)facebookLoginDidTranspire2
-{
-    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
-    if (facebookToken) {
-        // Instantaneous transition if the user  really logged in.
-        [self showMainUI];
-    } else {
-        NSLog (@"Really unable to get token.");
-    }
 }
 
 - (void)layout
@@ -191,8 +164,6 @@
 
 - (void)adjustInputField
 {
-    [self.view removeConstraints: self.view.constraints];
-    
     int keyboardHeight= 140;
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(keyboardHeight+kGeomSpaceEdge), @"spaceInter": @(3)};
     UIView *superview = self.view;
@@ -309,12 +280,11 @@
     }
 }
 ];
-
 }
 
 - (void)showMainUI
 {
-    if ( _wentToDiscover) {
+    if ( _wentToDiscover) { // Prevent duplicate simultaneous calls.
         return;
     }
     _wentToDiscover= YES;
@@ -356,14 +326,13 @@
     }
 }
 
-// Find out if back end knows this user already.
+// Find out whether back end knows this user already.
 - (void)showMainUIForUserWithEmail:  (NSString*) email
 {
     if  (!email) {
         return;
     }
     
-//    email=@"another@test.user";
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* requestString= [NSString stringWithFormat:  @"https://%@/users/emails/%@", kOOURL,  email];
    
@@ -389,7 +358,6 @@
         NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
         NSString* md5= [ saltedString MD5String ];
         md5 = [md5 lowercaseString];
-        NSLog (@"MD5=  %@",md5);
         seekingToken= YES;
         
         requestString= [NSString stringWithFormat:  @"https://%@/users?needtoken=%@", kOOURL, md5];
@@ -704,58 +672,20 @@
     self.showingKeyboard= NO;
     [self.view removeConstraints: self.keyboardConstraint];
     self.keyboardConstraint= nil;
-    
-    [self  layout];
+    [self.view setNeedsLayout ];
 }
 
 - (void)keyboardShown: (id) foobar
 {
     self.showingKeyboard= YES;
-    [self.view removeConstraints: self.keyboardConstraint];
-    [self  layout];
     [self adjustInputField];
-}
-
-- (void)loginThroughFacebook:(id)sender
-{
-    FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-
-    [login logInWithReadPermissions:@[@"email"] fromViewController:self handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-
-        if (error) {
-            // Automatic login was not possible,  so transferring to Facebook website or app...
-            
-            NSLog (@"Unable to log you in immediately: %@",error.localizedDescription);
-        }
-        else if (result.isCancelled) {
-            // Handle cancellations
-            NSLog  (@"LOGIN PROCESS WAS CANCELED: THIS MEANS THAT SAFARI WAS BROUGHT UP.");
-        }
-        else {
-            // If you ask for multiple permissions at once, you
-            // should check if specific permissions missing
-            
-            if ([result.grantedPermissions containsObject:@"email"]) {
-                // Do work
-                [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=first_name,age_range,last_name,id,gender,email" parameters:nil]
-                 startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-                     if (!error) {
-                         NSLog(@"fetched user:%@", result);
-                     }
-                 }];
-                [self showMainUI];
-            } else {
-                NSLog  (@"Granted permission do not include email");
-            }
-        }
-    }];
+    [self.view setNeedsLayout ];
 }
 
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
 {
     NSLog (@"loginButtonDidLogOut: USER LOGGED OUT");
 }
-
 
 - (void)didReceiveMemoryWarning
 {
@@ -785,7 +715,8 @@
 
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
 {
-    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email" parameters:nil]
+    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email"
+                                       parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
              //profile photo link

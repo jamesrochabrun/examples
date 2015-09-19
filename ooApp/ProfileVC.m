@@ -7,10 +7,21 @@
 //
 
 #import "ProfileVC.h"
+#import "UserObject.h"
+#import "Settings.h"
+#import "Common.h"
 
 @interface ProfileVC ()
 
 @property (nonatomic, strong) FBSDKLoginButton *facebookButton;
+@property (nonatomic, strong) UIView *headerView;
+@property (nonatomic, strong) UIImageView *iv;
+@property (nonatomic, strong) UIButton *buttonFollow;
+@property (nonatomic, strong) UIButton *buttonNewList;
+@property (nonatomic, strong) UILabel *labelUsername;
+@property (nonatomic, strong) UILabel *labelDescription;
+@property (nonatomic, strong) UILabel *labelRestaurants;
+@property (nonatomic, strong) UITableView *table;
 
 @end
 
@@ -19,16 +30,33 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    _facebookButton = [[FBSDKLoginButton alloc] init];
-    _facebookButton.delegate = self;
-    [self.view addSubview:_facebookButton];
-    _facebookButton.translatesAutoresizingMaskIntoConstraints = NO;
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Profile" subHeader:nil];
-    self.navTitle = nto;
+    // kFontIconAdd
+//    self.view.backgroundColor=[UIColor clearColor];
     
-    [self layout];
+    self.headerView= [UIView new];
+    
+    self.iv= makeImageView(self.headerView, nil);
+    self.buttonFollow= makeButton(self.headerView,  @"FOLLOW",[UIColor whiteColor], UIColorRGB(kColorNavyBlue) ,  self, @selector (userPressedFollow:));
+    self.buttonNewList= makeButton(self.headerView,  @"NEW LIST",[UIColor redColor], [UIColor yellowColor],  self, @selector (userPressedNewList:));
+    
+    self.table= [UITableView new];
+    self.table.delegate= self;
+    self.table.dataSource= self;
+    [ self.view addSubview:_table];
+    self.table.backgroundColor=[UIColor clearColor];
+
+    self.iv.layer.borderColor=[UIColor redColor ].CGColor;
+    self.iv.layer.borderWidth= 1;
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* first= userInfo.firstName ?:  @"";
+    NSString* last= userInfo.lastName ?:  @"";
+    NSString* name=  [NSString stringWithFormat: @"%@ %@", first, last ];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: name subHeader:nil];
+    [self setNavTitle:  nto];
+//    [self layout];
+    [ self.view setNeedsLayout ];
 }
 
 - (void)didReceiveMemoryWarning
@@ -39,28 +67,87 @@
 
 - (void)layout
 {
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-    UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _facebookButton);
-    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(75)-[_facebookButton(height)]-(75)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-(>=20)-[_facebookButton(width)]-(>=20)-|" options:0 metrics:metrics views:views]];
-    
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_facebookButton
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:_facebookButton.superview
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.f constant:0.f]];
-    
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+//    UIView *superview = self.view;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _iv,_buttonFollow,_buttonNewList);
+//
+//    NSArray* constraints= [NSLayoutConstraint constraintsWithVisualFormat:
+//                                     @"V:|-(75)-[_iv(height)]-(75)-[_buttonFollow(50)][_buttonNewList(height)]|"
+//                                                                            options:NSLayoutFormatDirectionLeadingToTrailing
+//                                                                            metrics:metrics
+//                                                                              views:views];
+//    
+//    // Vertical layout - note the options for aligning the top and bottom of all views
+//    [self.view addConstraints: constraints];
+//    
+//    
+//    [self.view addConstraints:[NSLayoutConstraint
+//                               constraintsWithVisualFormat:@"H:|-(>=20)-[_iv(width)]-[_buttonFollow(80)]-[_buttonNewList(80)]-(>=20)-|"
+//                               options:0
+//                               metrics:metrics
+//                               views:views]];
+//    
+//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_iv
+//                                                          attribute:NSLayoutAttributeCenterX
+//                                                          relatedBy:NSLayoutRelationEqual
+//                                                             toItem:_iv.superview
+//                                                          attribute:NSLayoutAttributeCenterX
+//                                                         multiplier:1.f
+//                                                           constant:0.f]];
+//    
     
 }
+- (void) viewWillLayoutSubviews
+{
+    // NOTE:  this is just temporary
+    
+    [ super viewWillLayoutSubviews ];
+    
+    float w=  self.view.bounds.size.width;
+    self.table.frame=  self.view.bounds;
+    
+    const int margin=  kGeomSpaceEdge;
+    const int spacer=  kGeomSpaceInter;
+    const  int buttonWidth=  100;
+    int x=  margin;
+    int y=  margin;
+    _iv.frame= CGRectMake(x, y,  buttonWidth,  100);
+    _buttonFollow.frame=CGRectMake(w- margin-buttonWidth,y,buttonWidth,  kGeomHeightButton);
+    y += 100 + spacer;
+    
+    _buttonNewList.frame=CGRectMake(x,y,180,  kGeomHeightButton); y +=  kGeomHeightButton+ spacer;
+    
+}
+- (void)userPressedNewList: (id) sender
+{
+    message( @"you pressed new list");
+}
 
+- (void)userPressedFollow: (id) sender
+{
+    message( @"you pressed follow");
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
+{
+    return  300;
+}
+- ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 10;
+}
+- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    return _headerView;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *cellIdentifier = @"pcell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+          cell = [[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellIdentifier];
+    }
+    return cell;
+}
 /*
 #pragma mark - Navigation
 
