@@ -12,9 +12,9 @@
 #define ooApp_CommonUI_h
 
 // Convenience marcos
-#define UIColorRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF000000) >> 24))/255.0 green:((float)((rgbValue & 0x00FF0000) >> 16))/255.0 blue:((float)((rgbValue & 0x0000FF00) >> 8))/255.0 alpha:1.0]
+#define UIColorRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 24))/255.0 green:((float)((rgbValue & 0x00FF00) >> 16))/255.0 blue:((float)((rgbValue & 0x0000FF) >> 8))/255.0 alpha:1.0]
 
-#define UIColorRGBA(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF000000) >> 24))/255.0 green:((float)((rgbValue & 0x00FF0000) >> 16))/255.0 blue:((float)((rgbValue & 0x0000FF00) >> 8))/255.0 alpha:(rgbValue & 0x000000FF)/255.0]
+#define UIColorRGBA(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 24))/255.0 green:((float)((rgbValue & 0x00FF00) >> 16))/255.0 blue:((float)((rgbValue & 0x0000FF) >> 8))/255.0 alpha:(rgbValue & 0xff000000)/255.0]
 
 // App colors
 static NSUInteger kColorBlack = 0x000000FF;

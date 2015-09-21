@@ -10,10 +10,10 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "Common.h"
+#import "ListTVCell.h"
 
 @interface ProfileVC ()
 
-@property (nonatomic, strong) FBSDKLoginButton *facebookButton;
 @property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIButton *buttonFollow;
@@ -32,13 +32,13 @@
     [super viewDidLoad];
     
     // kFontIconAdd
-//    self.view.backgroundColor=[UIColor clearColor];
+
     
     self.headerView= [UIView new];
     
     self.iv= makeImageView(self.headerView, nil);
-    self.buttonFollow= makeButton(self.headerView,  @"FOLLOW",[UIColor whiteColor], UIColorRGB(kColorNavyBlue) ,  self, @selector (userPressedFollow:));
-    self.buttonNewList= makeButton(self.headerView,  @"NEW LIST",[UIColor redColor], [UIColor yellowColor],  self, @selector (userPressedNewList:));
+    self.buttonFollow= makeButton(self.headerView,  @"FOLLOW",[UIColor  blackColor], [UIColor  clearColor],  self, @selector (userPressedFollow:));
+    self.buttonNewList= makeButton(self.headerView,  @"NEW LIST",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
     
     self.table= [UITableView new];
     self.table.delegate= self;
@@ -127,25 +127,57 @@
 {
     message( @"you pressed follow");
 }
+
+- (int) getNumberOfLists
+{
+    return 3;
+}
+
+- (NSString*)getNameOfList: ( int) which
+{
+    return  @[
+              @"first", @"second", @"third"
+              ] [which];
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
 {
-    return  300;
+    if (!section) {
+        return  300;
+    }
+    return  30;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
+{
+    return 1 + [self getNumberOfLists];
 }
 - ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 10;
+    return 1;
 }
+
 - (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    return _headerView;
+    if  (!section) {
+        return _headerView;
+    }
+    
+    UILabel* titleLabel= [UILabel new];
+    titleLabel.text=[ self getNameOfList:  section-1];
+    return  titleLabel;
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *cellIdentifier = @"pcell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (!cell) {
-          cell = [[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellIdentifier];
+    
+    if  (!indexPath.section) {
+        return nil;
     }
+    
+    ListTVCell* cell= [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    
     return cell;
 }
 /*

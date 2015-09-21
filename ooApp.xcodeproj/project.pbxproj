@@ -79,6 +79,7 @@
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
+		965244FF1BB0865900F91741 /* placeholderProfile.png in Resources */ = {isa = PBXBuildFile; fileRef = 965244FE1BB0865900F91741 /* placeholderProfile.png */; settings = {ASSET_TAGS = (); }; };
 		96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D175B91BA76926000C88AC /* NSString+MD5.m */; };
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
 /* End PBXBuildFile section */
@@ -210,6 +211,7 @@
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
+		965244FE1BB0865900F91741 /* placeholderProfile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = placeholderProfile.png; path = "Graphic Assets/placeholderProfile.png"; sourceTree = "<group>"; };
 		96D175B91BA76926000C88AC /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 		96D175BA1BA76926000C88AC /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		96D35F7B1B9F879200A18A23 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 				3621F1231B900EC7004537B6 /* Logo.png */,
 				3621F1241B900EC7004537B6 /* Logo2.png */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
+				965244FE1BB0865900F91741 /* placeholderProfile.png */,
 			);
 			name = "Graphic Assets";
 			sourceTree = "<group>";
@@ -580,6 +583,7 @@
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
 				36587B721B93964C00D01EB5 /* Icon@3x.png in Resources */,
 				367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */,
+				965244FF1BB0865900F91741 /* placeholderProfile.png in Resources */,
 				367704011B87E43400B594E5 /* icons.ttf in Resources */,
 				367704631B8BF05100B594E5 /* OFL.txt in Resources */,
 				367704641B8BF05100B594E5 /* README.txt in Resources */,
