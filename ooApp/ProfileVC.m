@@ -14,7 +14,7 @@
 
 @interface ProfileVC ()
 
-@property (nonatomic, strong) UIView *headerView;
+@property (nonatomic, strong) UIView *firstCellHeaderView;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @property (nonatomic, strong) UIButton *buttonNewList;
@@ -33,12 +33,11 @@
     
     // kFontIconAdd
 
+    self.firstCellHeaderView= [UIView new];
     
-    self.headerView= [UIView new];
-    
-    self.iv= makeImageView(self.headerView, nil);
-    self.buttonFollow= makeButton(self.headerView,  @"FOLLOW",[UIColor  blackColor], [UIColor  clearColor],  self, @selector (userPressedFollow:));
-    self.buttonNewList= makeButton(self.headerView,  @"NEW LIST",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
+    self.iv= makeImageView(self.firstCellHeaderView, nil);
+    self.buttonFollow= makeButton(self.firstCellHeaderView,  @"FOLLOW",[UIColor  blackColor], [UIColor  clearColor],  self, @selector (userPressedFollow:));
+    self.buttonNewList= makeButton(self.firstCellHeaderView,  @"NEW LIST",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
     
     self.table= [UITableView new];
     self.table.delegate= self;
@@ -160,7 +159,7 @@
 - (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if  (!section) {
-        return _headerView;
+        return _firstCellHeaderView;
     }
     
     UILabel* titleLabel= [UILabel new];
