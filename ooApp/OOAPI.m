@@ -141,35 +141,6 @@
     return op;
 }
 
-- (AFHTTPRequestOperation *)getImageWithURL:(NSString *)URL success:(void (^)(UIImage *))success failure:(void (^)(NSError *))failure {
-
-    OONetworkManager *rm = [[OONetworkManager alloc] init];
-    
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:URL]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:180];
-    
-    UIImage *image = [[UIImageView sharedImageCache] cachedImageForRequest:imageRequest];
-
-    NSMutableDictionary *parms = [NSMutableDictionary dictionary];
-    AFHTTPRequestOperation *op;
- 
-    if (image != nil) {
-        success(image);
-    } else {
-        op = [[AFHTTPRequestOperation alloc] initWithRequest:imageRequest];
-        op.responseSerializer = [AFImageResponseSerializer serializer];
-        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            UIImage *image = responseObject;
-            [[UIImageView sharedImageCache] cacheImage:image forRequest:imageRequest];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Image error: %@", error);
-        }];
-        [op start];
-    }
-    return op;
-}
-
 - (NSString *)ooURL {
     return kOOURL;
 }

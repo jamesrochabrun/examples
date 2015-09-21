@@ -27,10 +27,6 @@
 - (AFHTTPRequestOperation *)getUsersWithIDs:(NSArray *)userIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 - (AFHTTPRequestOperation *)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 
-/* Get Image */
-- (AFHTTPRequestOperation *)getImageWithURL:(NSString *)url maxWidth:(NSUInteger)maxWidth maxHeight:(NSUInteger)maxHeight success:(void (^)(UIImage *))success failure:(void (^)(NSError *))failure;
-
-
 /* Create */
 
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
