@@ -10,6 +10,7 @@
 #import "RestaurantObject.h"
 #import "UserObject.h"
 #import "Common.h"
+#import "Settings.h"
 
 //NSString *const kKeyName = @"name";
 
@@ -125,6 +126,16 @@
         failure(error);
         NSLog(@"Error: %@", error);
     }];
+}
+
+- (AFHTTPRequestOperation*)getUserListsWithSuccess:(void (^)(NSArray *lists))success failure:(void (^)(NSError *))failure
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber* currentUserID= userInfo.userID;
+    NSString *URL = [NSString stringWithFormat:@"https://%@/users/%@/lists", [self ooURL], currentUserID];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:URL parameters:nil success:success failure: failure];
 }
 
 - (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure

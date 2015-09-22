@@ -24,7 +24,13 @@ NSString *const kKeyPriceRange = @"price_range";
     NSArray *imageRefs = [dict objectForKey:kKeyImageRef];
     restaurant.imageRef = (imageRefs && ![imageRefs isKindOfClass:[NSNull class]]) ? [ImageRefObject imageRefFromDict:[imageRefs objectAtIndex:0]] : nil;
     
-    restaurant.location = CLLocationCoordinate2DMake([[dict objectForKey:kKeyLatitude] doubleValue], [[dict objectForKey:kKeyLongitude] doubleValue]);
+    id lat= [dict objectForKey:kKeyLatitude];
+    id lon= [dict objectForKey:kKeyLongitude];
+    if  (lat && lon  && [lat isKindOfClass:[NSNumber class]]  && [lon isKindOfClass:[NSNumber class]]) {
+        restaurant.location = CLLocationCoordinate2DMake([lat doubleValue ], [lon doubleValue]);
+    } else {
+        restaurant.location= CLLocationCoordinate2DMake(0, 0);
+    }
     
     restaurant.priceRange = [dict objectForKey:kKeyPriceRange];
     

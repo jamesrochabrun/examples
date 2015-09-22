@@ -54,6 +54,9 @@ static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 10.0;
 static float kProfileImageSize=  100;
 
+// Images
+extern NSString *const kImageNoProfileImage;
+
 // Custom Fonts
 extern NSString *const kFontIcons;
 extern NSString *const kFontSFTextRegular;

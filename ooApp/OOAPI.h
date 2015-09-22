@@ -27,6 +27,10 @@
 - (AFHTTPRequestOperation *)getUsersWithIDs:(NSArray *)userIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 - (AFHTTPRequestOperation *)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 
+// Lists
+
+- (AFHTTPRequestOperation*)getUserListsWithSuccess:(void (^)(NSArray *lists))success failure:(void (^)(NSError *))failure;
+
 /* Create */
 
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;

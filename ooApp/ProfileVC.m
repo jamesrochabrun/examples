@@ -11,6 +11,7 @@
 #import "Settings.h"
 #import "Common.h"
 #import "ListTVCell.h"
+#import "OOAPI.h"
 
 @interface ProfileVCFirstRow : UITableViewCell
 
@@ -36,9 +37,7 @@
     self = [super init];
     if (self) {
         
-        // kFontIconAdd
-        
-        self.iv= makeImageView (self,  @"No-Profile_Image");
+        self.iv= makeImageView (self,  kImageNoProfileImage);
         self.buttonFollow= makeButton(self,  @"FOLLOW", kGeomFontSizeHeader,BLACK, CLEAR, self, @selector (userPressedFollow:), 1);
         self.buttonNewList= makeButton(self,  @"NEW LIST", kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
         self.buttonNewListIcon= makeButton(self, @"b",kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
@@ -148,85 +147,119 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _lists = [NSMutableArray array];
-    ListObject *list;
     
+    _lists = [NSMutableArray array];
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    [api getUserListsWithSuccess:^(NSArray *foundLists) {
+        NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
+        if  (!foundLists.count) {
+            ListObject *list;
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Featured";
+            list.listType = kListTypeFeatured;
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Thai";
+            list.listType = KListTypeStrip;
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Chinese";
+            list.listType = KListTypeStrip;
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Vegetarian";
+            list.listType = kListTypeFeatured;
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Burgers";
+            list.listType = KListTypeStrip;
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Vietnamese";
+            list.listType = KListTypeStrip;
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"New";
+            list.listType = kListTypeFeatured;
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Mexican";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Peruvian";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Delivery";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Date Night";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Party";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Drinks";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Mediterranean";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Steak";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Indian";
+            [_lists addObject:list];
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Tandoor";
+            [_lists addObject:list];
+        }else {
+            ListObject *list;
+
+            for (NSDictionary* item  in foundLists ) {
+                NSLog (@" user list:  %@", item);
+
+                if (![item isKindOfClass:[NSDictionary class]]) {
+                    NSLog  (@" item is not a dictionary");
+                    continue;
+                }
+                
+                NSString* name=  item[ @"name"];
+                if (!name) {
+                    NSLog  (@" missing listing name");
+                    continue;
+                }
+                
+                list = [[ListObject alloc] init];
+                list.name =  name;
+                [_lists addObject:list];
+                
+            }
+        }
+        
+        [self.table reloadData];
+    } failure:^(NSError *e) {
+        NSLog  (@" error while getting lists for user:  %@",e);
+    }];
     // NOTE:  these will later be stored in user defaults.
     
-    list = [[ListObject alloc] init];
-    list.name = @"Featured";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Thai";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Chinese";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Vegetarian";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Burgers";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Vietnamese";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"New";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mexican";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Peruvian";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Delivery";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Date Night";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Party";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Drinks";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mediterranean";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Steak";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Indian";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Tandoor";
-    [_lists addObject:list];
     
     self.view.backgroundColor= WHITE;
     
