@@ -13,3 +13,5 @@ extern NSString *getDateString();
 
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
 extern UIButton* makeButton (UIView *parent, NSString*  title,  UIColor *fg, UIColor *bg, id  target, SEL callback);
+extern UILabel* makeLabel (UIView *parent, NSString*  text);
+extern UILabel* makeLabelLeft (UIView *parent, NSString*  text);

@@ -12,15 +12,108 @@
 #import "Common.h"
 #import "ListTVCell.h"
 
-@interface ProfileVC ()
+@interface ProfileVCFirstRow : UITableViewCell
 
-@property (nonatomic, strong) UIView *firstCellHeaderView;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UILabel *labelUsername;
 @property (nonatomic, strong) UILabel *labelDescription;
 @property (nonatomic, strong) UILabel *labelRestaurants;
+@property (nonatomic, strong) UIButton *buttonNewListIcon;
+@property (nonatomic, assign) float spaceNeededForFirstCell;
+
+@end
+
+@implementation  ProfileVCFirstRow
+- (instancetype) init
+{
+    self = [super init];
+    if (self) {
+        
+        // kFontIconAdd
+        
+        self.backgroundColor= [ UIColor  grayColor];
+        
+        self.iv= makeImageView (self,  @"placeholderProfile");
+        self.buttonFollow= makeButton(self,  @"FOLLOW",[UIColor  blackColor], [UIColor  clearColor],  self, @selector (userPressedFollow:));
+        self.buttonNewList= makeButton(self,  @"NEW LIST",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
+        self.buttonNewListIcon= makeButton(self, @"b",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
+        [_buttonNewListIcon.titleLabel setFont: [UIFont fontWithName:@"oomami-icons" size:17]];
+        
+        _buttonFollow.layer.borderColor=[UIColor  blackColor].CGColor;
+        _buttonFollow.layer.borderWidth= 1;
+        
+        UserObject* userInfo= [Settings sharedInstance].userObject;
+        NSString* username= userInfo.email.length? userInfo.email: @"user name";
+        NSString * description= userInfo.about.length? userInfo.about: @"description";
+        NSString* restaurants=  @"restaurants";
+        self.labelUsername= makeLabelLeft(self, username);
+        self.labelDescription= makeLabelLeft(self, description);
+        self.labelRestaurants= makeLabelLeft(self, restaurants);
+        
+        self.iv.layer.borderColor=[UIColor  grayColor ].CGColor;
+        self.iv.layer.borderWidth= 1;
+        self.iv.contentMode=UIViewContentModeScaleAspectFit;
+        
+        self.backgroundColor=[ UIColor redColor];
+    }
+    return self;
+}
+- ( void)layoutsSubviews
+{
+    float w=  [UIScreen mainScreen].bounds.size.width;
+
+    const  float kFollowButtonWidth=  80;
+    const  float kProfileImageSize=  100;
+    const  float kProfileLabelHeight=   20;
+    
+    const int margin=  kGeomSpaceEdge;
+    const int spacer=  kGeomSpaceInter;
+    int x=  margin;
+    int y=  margin;
+    _iv.frame= CGRectMake(x, y,  kProfileImageSize,  kProfileImageSize);
+    int bottomOfImage= y + kProfileImageSize;
+    x += kProfileImageSize+ spacer;
+    _labelUsername.frame=CGRectMake(x,y,w-x,kProfileLabelHeight);
+    y +=kProfileLabelHeight+ spacer;
+    _labelDescription.frame=CGRectMake(x,y,w-x,kProfileLabelHeight);
+    y +=kProfileLabelHeight+ spacer;
+    _labelRestaurants.frame=CGRectMake(x,y,w-x,kProfileLabelHeight);
+    y +=kProfileLabelHeight+ spacer;
+    
+    _buttonFollow.frame=CGRectMake(w- margin-kFollowButtonWidth,y,kFollowButtonWidth,  kGeomHeightButton);
+    y += kGeomHeightButton + spacer;
+    
+    if  (y < bottomOfImage ) {
+        y= bottomOfImage;
+    }
+    x = margin;
+    [_buttonNewListIcon sizeToFit];
+    float iconWith= _buttonNewListIcon.frame.size.width;
+    _buttonNewListIcon.frame=CGRectMake(x,y, iconWith,  kGeomHeightButton);
+    x += iconWith + spacer;
+    [_buttonNewList sizeToFit];
+    float textWidth= _buttonNewList.frame.size.width;
+    _buttonNewList.frame=CGRectMake(x,y,textWidth,  kGeomHeightButton);
+    y +=  kGeomHeightButton+ spacer;
+    self.spaceNeededForFirstCell= y;
+}
+
+- (int)neededHeight
+{
+    if  (!_spaceNeededForFirstCell) {
+        [self layoutsSubviews];
+    }
+    return self.spaceNeededForFirstCell;
+
+}
+
+@end
+
+@interface ProfileVC ()
+
+@property (nonatomic, strong) ProfileVCFirstRow* headerCell;
 @property (nonatomic, strong) UITableView *table;
 
 @end
@@ -31,29 +124,23 @@
 {
     [super viewDidLoad];
     
-    // kFontIconAdd
-
-    self.firstCellHeaderView= [UIView new];
+    UserObject* userInfo= [Settings sharedInstance].userObject;
     
-    self.iv= makeImageView(self.firstCellHeaderView, nil);
-    self.buttonFollow= makeButton(self.firstCellHeaderView,  @"FOLLOW",[UIColor  blackColor], [UIColor  clearColor],  self, @selector (userPressedFollow:));
-    self.buttonNewList= makeButton(self.firstCellHeaderView,  @"NEW LIST",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
+    self.headerCell=[[ProfileVCFirstRow  alloc] init];
     
     self.table= [UITableView new];
     self.table.delegate= self;
     self.table.dataSource= self;
     [ self.view addSubview:_table];
     self.table.backgroundColor=[UIColor clearColor];
+    self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
 
-    self.iv.layer.borderColor=[UIColor redColor ].CGColor;
-    self.iv.layer.borderWidth= 1;
-    
-    UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* first= userInfo.firstName ?:  @"";
     NSString* last= userInfo.lastName ?:  @"";
     NSString* name=  [NSString stringWithFormat: @"%@ %@", first, last ];
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: name subHeader:nil];
     [self setNavTitle:  nto];
+    
 //    [self layout];
     [ self.view setNeedsLayout ];
 }
@@ -94,29 +181,19 @@
 //                                                         multiplier:1.f
 //                                                           constant:0.f]];
 //    
-    
 }
+
+
 - (void) viewWillLayoutSubviews
 {
     // NOTE:  this is just temporary
     
     [ super viewWillLayoutSubviews ];
-    
-    float w=  self.view.bounds.size.width;
+  
     self.table.frame=  self.view.bounds;
     
-    const int margin=  kGeomSpaceEdge;
-    const int spacer=  kGeomSpaceInter;
-    const  int buttonWidth=  100;
-    int x=  margin;
-    int y=  margin;
-    _iv.frame= CGRectMake(x, y,  buttonWidth,  100);
-    _buttonFollow.frame=CGRectMake(w- margin-buttonWidth,y,buttonWidth,  kGeomHeightButton);
-    y += 100 + spacer;
-    
-    _buttonNewList.frame=CGRectMake(x,y,180,  kGeomHeightButton); y +=  kGeomHeightButton+ spacer;
-    
 }
+
 - (void)userPressedNewList: (id) sender
 {
     message( @"you pressed new list");
@@ -129,56 +206,73 @@
 
 - (int) getNumberOfLists
 {
-    return 3;
+    UserObject *u= [Settings sharedInstance].userObject;
+    return [u lists].count;
 }
 
 - (NSString*)getNameOfList: ( int) which
 {
-    return  @[
-              @"first", @"second", @"third"
-              ] [which];
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
-{
-    if (!section) {
-        return  300;
+    UserObject *u= [Settings sharedInstance].userObject;
+    NSMutableArray* a= [u  lists];
+    if  (which < 0 ||  which >= a.count) {
+        return  @"";
     }
-    return  30;
+    return [a objectAtIndex: which ];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:( NSIndexPath *)indexPath
+{
+    int row = indexPath.row;
+
+    if (! row) {
+        return [_headerCell neededHeight];
+    }
+    return 100;
+}
+
+- ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return 1 + [self getNumberOfLists];
 }
-- ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 1;
-}
 
-- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    if  (!section) {
-        return _firstCellHeaderView;
-    }
-    
-    UILabel* titleLabel= [UILabel new];
-    titleLabel.text=[ self getNameOfList:  section-1];
-    return  titleLabel;
-}
+//- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    if  (!section) {
+//        return _firstCellHeaderView;
+//    }
+//    
+//    NSIndexPath *ip= [NSIndexPath indexPathForRow:0 inSection:section];
+//    ListTVCell *l=  [self.table cellForRowAtIndexPath:ip];
+//
+//    NSString *name=   l.listItem.name;
+//    UILabel* label= [UILabel new];
+//    if  (!name) {
+//         name=  @"untitled";
+//    }
+//    label.text=  name;
+//    return  label;
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *cellIdentifier = @"pcell";
     
-    if  (!indexPath.section) {
-        return nil;
+    int row = indexPath.row;
+    
+    if  (!row) {
+        return _headerCell;
     }
     
-    ListTVCell* cell= [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    cell. backgroundColor=  ( indexPath.row & 1 ) ? [ UIColor   orangeColor]:[ UIColor yellowColor];
     
+    UserObject *u= [Settings sharedInstance].userObject;
+    NSMutableArray* a= [u  lists];
+    cell.listItem= a[indexPath.row-1];
+    [cell getRestaurants];
     return cell;
 }
+
 /*
 #pragma mark - Navigation
 

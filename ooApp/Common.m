@@ -36,6 +36,21 @@ UIImageView* makeImageView (UIView *parent, NSString* imageName)
     return iv;
 }
 
+UILabel* makeLabel (UIView *parent, NSString*  text)
+{
+     UILabel* l= [ [ UILabel alloc ]init ];
+    [ parent addSubview: l ];
+    l.text=  text;
+    return l;
+}
+
+UILabel* makeLabelLeft (UIView *parent, NSString*  text)
+{
+    UILabel *l= makeLabel( parent, text);
+    l.textAlignment= NSTextAlignmentLeft;
+    return l;
+}
+
 UIButton* makeButton (UIView *parent, NSString*  title,  UIColor *fg, UIColor *bg, id  target, SEL callback)
 {
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];

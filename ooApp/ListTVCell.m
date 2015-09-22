@@ -67,6 +67,20 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     return self;
 }
 
+- ( void) prepareForReuse
+{
+    // NOTE:  for some reason this is not been called.
+    
+    [super prepareForReuse];
+    self.listItem= nil;
+    self.name.text=  nil;
+    
+    // AFNetworking
+    [self.requestOperation cancel];
+    self.requestOperation= nil;
+    
+}
+
 - (void)layout {
     
     CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_name.font}];
@@ -80,15 +94,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(labelY)-[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(spaceEdge)-[_name]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-}
-
-- (void)prepareForReuse
-{
-//    self.requestOperation= nil;
-    
-    // AFNetworking
-    [self.requestOperation cancel];
-    self.requestOperation= nil;
 }
 
 - (void)setListItem:(ListObject *)listItem
@@ -110,10 +115,11 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 {
     OOAPI *api = [[OOAPI alloc] init];
     
+    __weak ListTVCell *weakSelf=self;
     self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
-        _restaurants = r;
+        weakSelf.restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self gotRestaurants];
+            [weakSelf gotRestaurants];
         });
     } failure:^(NSError *err) {
         ;
@@ -124,7 +130,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 {
     NSLog(@"%@: %tu", _listItem.name, [_restaurants count]);
 
-//    [self addSubview:_collectionView];
+    //    [self addSubview:_collectionView];
     if (_listItem.listType == kListTypeFeatured) {
         self.featuredCollectionView.delegate = self;
         self.featuredCollectionView.dataSource = self;
@@ -136,7 +142,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     }
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
-
 
 - (void)awakeFromNib
 {

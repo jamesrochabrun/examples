@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ListObject.h"
 
 @interface UserObject : NSObject
 
@@ -26,5 +27,8 @@
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryFromUser;
+
+- (NSMutableArray*) lists;
+- (void) addList: (ListObject*) list;
 
 @end
