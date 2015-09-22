@@ -11,24 +11,28 @@
 #ifndef ooApp_CommonUI_h
 #define ooApp_CommonUI_h
 
-// Convenience marcos
-#define UIColorRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 24))/255.0 green:((float)((rgbValue & 0x00FF00) >> 16))/255.0 blue:((float)((rgbValue & 0x0000FF) >> 8))/255.0 alpha:1.0]
-
-#define UIColorRGBA(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 24))/255.0 green:((float)((rgbValue & 0x00FF00) >> 16))/255.0 blue:((float)((rgbValue & 0x0000FF) >> 8))/255.0 alpha:(rgbValue & 0xff000000)/255.0]
+// Convenience Macros
+#define UIColorRGB(rgbValue) [UIColor colorWithRed:(255&(rgbValue>> 16))/255.0f \
+        green:(255&(rgbValue >> 8))/255.0 \
+        blue:(255&rgbValue)/255.0 alpha:1.0]
+#define UIColorRGBA(rgbValue) [UIColor colorWithRed:(255&(rgbValue>> 16))/255.0f \
+        green:(255&(rgbValue >> 8))/255.0f \
+        blue:(255&rgbValue)/255.0f \
+        alpha:(rgbValue >> 24)/255.0f ]
 
 // App colors
-static NSUInteger kColorBlack = 0x000000FF;
-static NSUInteger kColorButtonSelected = 0x0000FFFF;
-static NSUInteger kColorCellSelected = 0x330000FF;
+static NSUInteger kColorBlack = 0xff000000;
+static NSUInteger kColorButtonSelected = 0xff0000FF;
+static NSUInteger kColorCellSelected = 0xff330000;
 static NSUInteger kColorClear = 0x00000000;
-static NSUInteger kColorGray = 0x555555FF;
-static NSUInteger kColorGrayMiddle = 0xB2B2B2FF;
-static NSUInteger kColorNavBar = 0x000000FF;
-static NSUInteger kColorNavyBlue = 0x000080FF;
-static NSUInteger kColorOffBlack = 0x222222FF;
-static NSUInteger kColorOffWhite = 0xDDDDDDFF;
-static NSUInteger kColorStripOverlay = 0x00000099;
-static NSUInteger kColorWhite = 0xFFFFFFFF;
+static NSUInteger kColorGray = 0xff555555;
+static NSUInteger kColorGrayMiddle = 0xffB2B2B2;
+static NSUInteger kColorNavBar = 0xff000000;
+static NSUInteger kColorNavyBlue = 0xff000080;
+static NSUInteger kColorOffBlack = 0xff222222;
+static NSUInteger kColorOffWhite = 0xffDDDDDD;
+static NSUInteger kColorStripOverlay = 0x99000000;
+static NSUInteger kColorWhite = 0xffFFFFFF;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
@@ -36,6 +40,8 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
 static CGFloat kGeomHeightButton = 40.0;
+static CGFloat kGeomProfileInformationHeight = 18;
+static CGFloat kGeomButtonWidth = 100;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
 static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
 static CGFloat kGeomHeightFeaturedCellHeight = 150.0;
@@ -46,6 +52,7 @@ static NSUInteger kGeomIconSize = 25;
 static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 10.0;
+static float kProfileImageSize=  100;
 
 // Custom Fonts
 extern NSString *const kFontIcons;

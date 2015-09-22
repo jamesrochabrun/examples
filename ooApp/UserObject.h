@@ -15,7 +15,7 @@
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *username;
 @property (nonatomic, strong) NSString *email;
 @property (nonatomic, strong) NSString *gender;
 @property (nonatomic, strong) NSString *phoneNumber;
@@ -27,8 +27,5 @@
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryFromUser;
-
-- (NSMutableArray*) lists;
-- (void) addList: (ListObject*) list;
 
 @end

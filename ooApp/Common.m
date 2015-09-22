@@ -36,32 +36,39 @@ UIImageView* makeImageView (UIView *parent, NSString* imageName)
     return iv;
 }
 
-UILabel* makeLabel (UIView *parent, NSString*  text)
+UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
 {
      UILabel* l= [ [ UILabel alloc ]init ];
     [ parent addSubview: l ];
     l.text=  text;
+    l.font= [UIFont systemFontOfSize:fontSize];
     return l;
 }
 
-UILabel* makeLabelLeft (UIView *parent, NSString*  text)
+UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
 {
-    UILabel *l= makeLabel( parent, text);
+    UILabel *l= makeLabel( parent, text,fontSize);
     l.textAlignment= NSTextAlignmentLeft;
     return l;
 }
 
-UIButton* makeButton (UIView *parent, NSString*  title,  UIColor *fg, UIColor *bg, id  target, SEL callback)
+UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
     if  (title ) {
         [ button setTitle: title forState:UIControlStateNormal ];
+        button.titleLabel.font= [UIFont systemFontOfSize:fontSize];
     }
     if ( target && callback) {
         [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
     }
     if  (fg ) {
         [button setTitleColor:fg forState:UIControlStateNormal];
+        if (borderWidth > 0 ) {
+            button.layer.borderColor=fg.CGColor;
+            button.layer.borderWidth= borderWidth;
+            button.layer.cornerRadius= kGeomCornerRadius;
+        }
     }
     if  (bg ) {
         button.layer.backgroundColor= bg.CGColor;

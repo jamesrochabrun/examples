@@ -14,11 +14,11 @@ NSString *const kKeyLastName = @"last_name";
 NSString *const kKeyMiddleName = @"middle_name";
 NSString *const kKeyEmail = @"email";
 NSString *const kKeyPhoneNumber = @"phone_number";
+NSString *const kKeyUsername = @"username";
 NSString *const kKeyToken = @"backend_auth_token";
 NSString *const kKeyGender = @"gender";
 
 @interface UserObject()
-@property (nonatomic, strong) NSMutableArray *lists;
 
 @end
 
@@ -28,87 +28,7 @@ NSString *const kKeyGender = @"gender";
 {
     self = [super init];
     if (self) {
-        _lists = [NSMutableArray array];
-        ListObject *list;
-
-        // NOTE:  these will later be stored in user defaults.
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Featured";
-        list.listType = kListTypeFeatured;
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Thai";
-        list.listType = KListTypeStrip;
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Chinese";
-        list.listType = KListTypeStrip;
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Vegetarian";
-        list.listType = kListTypeFeatured;
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Burgers";
-        list.listType = KListTypeStrip;
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Vietnamese";
-        list.listType = KListTypeStrip;
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"New";
-        list.listType = kListTypeFeatured;
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Mexican";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Peruvian";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Delivery";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Date Night";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Party";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Drinks";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Mediterranean";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Steak";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Indian";
-        [_lists addObject:list];
-        
-        list = [[ListObject alloc] init];
-        list.name = @"Tandoor";
-        [_lists addObject:list];
-        
-    }
+     }
     return self;
 }
 
@@ -127,7 +47,7 @@ NSString *const kKeyGender = @"gender";
     user.phoneNumber = [dict objectForKey:kKeyPhoneNumber];
     user.backendAuthorizationToken = [dict objectForKey:kKeyToken];
     user.gender = [dict objectForKey:kKeyGender];
-
+    user.username=[dict objectForKey:kKeyUsername];
     return user;
 }
 
@@ -145,21 +65,9 @@ NSString *const kKeyGender = @"gender";
              kKeyEmail: self.email ?: @"",
              kKeyPhoneNumber:self.phoneNumber ?: @"",
              kKeyToken:self.backendAuthorizationToken ?: @"",
-             kKeyGender:self.gender ?: @""
+             kKeyGender:self.gender ?: @"",
+             kKeyUsername:self.username ?: @"",
              };
-}
-
-- (NSMutableArray*) lists;
-{
-    return _lists;
-}
-
-- (void) addList: (ListObject*) list;
-{
-    if (! list) {
-        return;
-    }
-    [self.lists  addObject: list];
 }
 
 @end

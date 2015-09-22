@@ -12,6 +12,6 @@ extern NSString* kOOURL;
 extern NSString *getDateString();
 
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
-extern UIButton* makeButton (UIView *parent, NSString*  title,  UIColor *fg, UIColor *bg, id  target, SEL callback);
-extern UILabel* makeLabel (UIView *parent, NSString*  text);
-extern UILabel* makeLabelLeft (UIView *parent, NSString*  text);
+extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
+extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
+extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);

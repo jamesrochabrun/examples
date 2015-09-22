@@ -25,7 +25,12 @@
 
 @end
 
-@implementation  ProfileVCFirstRow
+#define BLACK UIColorRGB(kColorBlack)
+#define WHITE UIColorRGB(kColorWhite)
+#define GRAY UIColorRGB(kColorGray)
+#define CLEAR UIColorRGBA(kColorClear)
+
+@implementation ProfileVCFirstRow
 - (instancetype) init
 {
     self = [super init];
@@ -33,62 +38,82 @@
         
         // kFontIconAdd
         
-        self.backgroundColor= [ UIColor  grayColor];
-        
-        self.iv= makeImageView (self,  @"placeholderProfile");
-        self.buttonFollow= makeButton(self,  @"FOLLOW",[UIColor  blackColor], [UIColor  clearColor],  self, @selector (userPressedFollow:));
-        self.buttonNewList= makeButton(self,  @"NEW LIST",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
-        self.buttonNewListIcon= makeButton(self, @"b",[UIColor blackColor], [UIColor  clearColor],  self, @selector (userPressedNewList:));
-        [_buttonNewListIcon.titleLabel setFont: [UIFont fontWithName:@"oomami-icons" size:17]];
-        
-        _buttonFollow.layer.borderColor=[UIColor  blackColor].CGColor;
-        _buttonFollow.layer.borderWidth= 1;
+        self.iv= makeImageView (self,  @"No-Profile_Image");
+        self.buttonFollow= makeButton(self,  @"FOLLOW", kGeomFontSizeHeader,BLACK, CLEAR, self, @selector (userPressedFollow:), 1);
+        self.buttonNewList= makeButton(self,  @"NEW LIST", kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
+        self.buttonNewListIcon= makeButton(self, @"b",kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
+        [_buttonNewListIcon.titleLabel setFont: [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader]];
         
         UserObject* userInfo= [Settings sharedInstance].userObject;
-        NSString* username= userInfo.email.length? userInfo.email: @"user name";
-        NSString * description= userInfo.about.length? userInfo.about: @"description";
-        NSString* restaurants=  @"restaurants";
-        self.labelUsername= makeLabelLeft(self, username);
-        self.labelDescription= makeLabelLeft(self, description);
-        self.labelRestaurants= makeLabelLeft(self, restaurants);
+        NSString* username= nil;
+        if  (userInfo.username.length ) {
+            username= userInfo.username;
+        } else {
+            username=  @"Missing username";
+        }
         
-        self.iv.layer.borderColor=[UIColor  grayColor ].CGColor;
+        NSString * description= userInfo.about.length? userInfo.about: nil;
+        NSString* restaurants=  nil;
+        
+        self.labelUsername= makeLabelLeft(self, username,kGeomFontSizeHeader);
+        self.labelDescription= makeLabelLeft(self, description,kGeomFontSizeHeader);
+        self.labelRestaurants= makeLabelLeft(self, restaurants,kGeomFontSizeHeader);
+        
+        self.iv.layer.borderColor= GRAY.CGColor;
         self.iv.layer.borderWidth= 1;
         self.iv.contentMode=UIViewContentModeScaleAspectFit;
         
-        self.backgroundColor=[ UIColor redColor];
+        self.backgroundColor= WHITE;
     }
     return self;
 }
+
+- (void)userPressedNewList: (id) sender
+{
+    message( @"you pressed new list");
+}
+
+- (void)userPressedFollow: (id) sender
+{
+    message( @"you pressed follow");
+}
+
 - ( void)layoutsSubviews
 {
     float w=  [UIScreen mainScreen].bounds.size.width;
-
-    const  float kFollowButtonWidth=  80;
-    const  float kProfileImageSize=  100;
-    const  float kProfileLabelHeight=   20;
     
-    const int margin=  kGeomSpaceEdge;
     const int spacer=  kGeomSpaceInter;
-    int x=  margin;
-    int y=  margin;
+    int x=  kGeomSpaceEdge;
+    int y=  kGeomSpaceEdge;
     _iv.frame= CGRectMake(x, y,  kProfileImageSize,  kProfileImageSize);
     int bottomOfImage= y + kProfileImageSize;
-    x += kProfileImageSize+ spacer;
-    _labelUsername.frame=CGRectMake(x,y,w-x,kProfileLabelHeight);
-    y +=kProfileLabelHeight+ spacer;
-    _labelDescription.frame=CGRectMake(x,y,w-x,kProfileLabelHeight);
-    y +=kProfileLabelHeight+ spacer;
-    _labelRestaurants.frame=CGRectMake(x,y,w-x,kProfileLabelHeight);
-    y +=kProfileLabelHeight+ spacer;
     
-    _buttonFollow.frame=CGRectMake(w- margin-kFollowButtonWidth,y,kFollowButtonWidth,  kGeomHeightButton);
+    x += kProfileImageSize+ spacer;
+    _labelUsername.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
+    y +=kGeomProfileInformationHeight+ spacer;
+    
+    if (_labelDescription.text.length ) {
+        _labelDescription.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
+        y += kGeomProfileInformationHeight+ spacer;
+    } else {
+        _labelDescription.hidden= YES;
+    }
+    
+    if (_labelRestaurants.text.length ) {
+        _labelRestaurants.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
+        y += kGeomProfileInformationHeight + spacer;
+    } else {
+        _labelRestaurants.hidden= YES;
+    }
+    
+    _buttonFollow.frame=CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
     y += kGeomHeightButton + spacer;
     
     if  (y < bottomOfImage ) {
         y= bottomOfImage;
     }
-    x = margin;
+    
+    x = kGeomSpaceEdge;
     [_buttonNewListIcon sizeToFit];
     float iconWith= _buttonNewListIcon.frame.size.width;
     _buttonNewListIcon.frame=CGRectMake(x,y, iconWith,  kGeomHeightButton);
@@ -96,7 +121,7 @@
     [_buttonNewList sizeToFit];
     float textWidth= _buttonNewList.frame.size.width;
     _buttonNewList.frame=CGRectMake(x,y,textWidth,  kGeomHeightButton);
-    y +=  kGeomHeightButton+ spacer;
+    y +=  kGeomHeightButton + spacer;
     self.spaceNeededForFirstCell= y;
 }
 
@@ -106,7 +131,6 @@
         [self layoutsSubviews];
     }
     return self.spaceNeededForFirstCell;
-
 }
 
 @end
@@ -115,6 +139,7 @@
 
 @property (nonatomic, strong) ProfileVCFirstRow* headerCell;
 @property (nonatomic, strong) UITableView *table;
+@property (nonatomic, strong) NSMutableArray *lists;
 
 @end
 
@@ -123,6 +148,87 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    _lists = [NSMutableArray array];
+    ListObject *list;
+    
+    // NOTE:  these will later be stored in user defaults.
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Featured";
+    list.listType = kListTypeFeatured;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Thai";
+    list.listType = KListTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Chinese";
+    list.listType = KListTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Vegetarian";
+    list.listType = kListTypeFeatured;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Burgers";
+    list.listType = KListTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Vietnamese";
+    list.listType = KListTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"New";
+    list.listType = kListTypeFeatured;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Mexican";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Peruvian";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Delivery";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Date Night";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Party";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Drinks";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Mediterranean";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Steak";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Indian";
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Tandoor";
+    [_lists addObject:list];
+    
+    self.view.backgroundColor= WHITE;
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     
@@ -141,7 +247,6 @@
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: name subHeader:nil];
     [self setNavTitle:  nto];
     
-//    [self layout];
     [ self.view setNeedsLayout ];
 }
 
@@ -183,7 +288,6 @@
 //    
 }
 
-
 - (void) viewWillLayoutSubviews
 {
     // NOTE:  this is just temporary
@@ -191,29 +295,16 @@
     [ super viewWillLayoutSubviews ];
   
     self.table.frame=  self.view.bounds;
-    
-}
-
-- (void)userPressedNewList: (id) sender
-{
-    message( @"you pressed new list");
-}
-
-- (void)userPressedFollow: (id) sender
-{
-    message( @"you pressed follow");
 }
 
 - (int) getNumberOfLists
 {
-    UserObject *u= [Settings sharedInstance].userObject;
-    return [u lists].count;
+    return self.lists.count;
 }
 
 - (NSString*)getNameOfList: ( int) which
 {
-    UserObject *u= [Settings sharedInstance].userObject;
-    NSMutableArray* a= [u  lists];
+    NSMutableArray* a= self.lists;
     if  (which < 0 ||  which >= a.count) {
         return  @"";
     }
@@ -235,25 +326,8 @@
     return 1 + [self getNumberOfLists];
 }
 
-//- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    if  (!section) {
-//        return _firstCellHeaderView;
-//    }
-//    
-//    NSIndexPath *ip= [NSIndexPath indexPathForRow:0 inSection:section];
-//    ListTVCell *l=  [self.table cellForRowAtIndexPath:ip];
-//
-//    NSString *name=   l.listItem.name;
-//    UILabel* label= [UILabel new];
-//    if  (!name) {
-//         name=  @"untitled";
-//    }
-//    label.text=  name;
-//    return  label;
-//}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     
     static NSString *cellIdentifier = @"pcell";
     
@@ -264,10 +338,9 @@
     }
     
     ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    cell. backgroundColor=  ( indexPath.row & 1 ) ? [ UIColor   orangeColor]:[ UIColor yellowColor];
+    cell. backgroundColor= GRAY;
     
-    UserObject *u= [Settings sharedInstance].userObject;
-    NSMutableArray* a= [u  lists];
+    NSMutableArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
     [cell getRestaurants];
     return cell;
