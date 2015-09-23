@@ -23,6 +23,7 @@
 @property (nonatomic, strong) UILabel *labelRestaurants;
 @property (nonatomic, strong) UIButton *buttonNewListIcon;
 @property (nonatomic, assign) float spaceNeededForFirstCell;
+@property (nonatomic, assign) UINavigationController *navigationController;
 
 @end
 
@@ -69,12 +70,23 @@
 
 - (void)userPressedNewList: (id) sender
 {
-    message( @"you pressed new list");
+    if (!_navigationController) {
+        return;
+    }
+    BaseVC *vc=[[BaseVC  alloc]init ];
+    vc.view.backgroundColor= [ UIColor  orangeColor];
+    [_navigationController pushViewController:vc animated:YES];
 }
 
 - (void)userPressedFollow: (id) sender
 {
-    message( @"you pressed follow");
+    if (!_navigationController) {
+        return;
+    }
+    
+    BaseVC *vc=[[BaseVC  alloc]init ];
+    vc.view.backgroundColor= [ UIColor   blueColor];
+    [_navigationController pushViewController:vc animated:YES];
 }
 
 - ( void)layoutsSubviews
@@ -276,6 +288,7 @@
     UserObject* userInfo= [Settings sharedInstance].userObject;
     
     self.headerCell=[[ProfileTableFirstRow  alloc] init];
+    self.headerCell.navigationController= self.navigationController;
     
     self.table= [UITableView new];
     self.table.delegate= self;
@@ -297,38 +310,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)layout
-{
-//    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-//    UIView *superview = self.view;
-//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _iv,_buttonFollow,_buttonNewList);
-//
-//    NSArray* constraints= [NSLayoutConstraint constraintsWithVisualFormat:
-//                                     @"V:|-(75)-[_iv(height)]-(75)-[_buttonFollow(50)][_buttonNewList(height)]|"
-//                                                                            options:NSLayoutFormatDirectionLeadingToTrailing
-//                                                                            metrics:metrics
-//                                                                              views:views];
-//    
-//    // Vertical layout - note the options for aligning the top and bottom of all views
-//    [self.view addConstraints: constraints];
-//    
-//    
-//    [self.view addConstraints:[NSLayoutConstraint
-//                               constraintsWithVisualFormat:@"H:|-(>=20)-[_iv(width)]-[_buttonFollow(80)]-[_buttonNewList(80)]-(>=20)-|"
-//                               options:0
-//                               metrics:metrics
-//                               views:views]];
-//    
-//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_iv
-//                                                          attribute:NSLayoutAttributeCenterX
-//                                                          relatedBy:NSLayoutRelationEqual
-//                                                             toItem:_iv.superview
-//                                                          attribute:NSLayoutAttributeCenterX
-//                                                         multiplier:1.f
-//                                                           constant:0.f]];
-//    
 }
 
 - (void) viewWillLayoutSubviews
