@@ -12,8 +12,9 @@
 #import "Common.h"
 #import "ListTVCell.h"
 #import "OOAPI.h"
+#import "EmptyListVC.h"
 
-@interface ProfileTableFirstRow : UITableViewCell
+@interface ProfileTableFirstRow : UITableViewCell <UIAlertViewDelegate>
 
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIButton *buttonFollow;
@@ -24,15 +25,12 @@
 @property (nonatomic, strong) UIButton *buttonNewListIcon;
 @property (nonatomic, assign) float spaceNeededForFirstCell;
 @property (nonatomic, assign) UINavigationController *navigationController;
-
+@property (nonatomic,assign) NSInteger  userID;
+@property (nonatomic,strong) UserObject* userInfo;
 @end
 
-#define BLACK UIColorRGB(kColorBlack)
-#define WHITE UIColorRGB(kColorWhite)
-#define GRAY UIColorRGB(kColorGray)
-#define CLEAR UIColorRGBA(kColorClear)
-
 @implementation ProfileTableFirstRow
+
 - (instancetype) init
 {
     self = [super init];
@@ -44,15 +42,14 @@
         self.buttonNewListIcon= makeButton(self, @"b",kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
         [_buttonNewListIcon.titleLabel setFont: [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader]];
         
-        UserObject* userInfo= [Settings sharedInstance].userObject;
         NSString* username= nil;
-        if  (userInfo.username.length ) {
-            username= userInfo.username;
+        if  (_userInfo.username.length ) {
+            username= _userInfo.username;
         } else {
             username=  @"Missing username";
         }
         
-        NSString * description= userInfo.about.length? userInfo.about: nil;
+        NSString * description= _userInfo.about.length? _userInfo.about: nil;
         NSString* restaurants=  nil;
         
         self.labelUsername= makeLabelLeft(self, username,kGeomFontSizeHeader);
@@ -73,9 +70,34 @@
     if (!_navigationController) {
         return;
     }
-    BaseVC *vc=[[BaseVC  alloc]init ];
-    vc.view.backgroundColor= [ UIColor  orangeColor];
-    [_navigationController pushViewController:vc animated:YES];
+    
+    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle: @"New List"
+                                                     message: @"Enter a name for the new list"
+                                                    delegate:  self
+                                           cancelButtonTitle: @"Cancel"
+                                           otherButtonTitles: @"Create", nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if  (1==buttonIndex) {
+        UITextField *textField = [alertView textFieldAtIndex: 0];
+        NSString *string = textField.text;
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        [api addList:string
+             success:^(id response) {
+                 EmptyListVC* vc=[[EmptyListVC  alloc] init];
+                 vc.listName=  string;
+                 [self.navigationController pushViewController:vc animated:YES];
+             }
+             failure:^(NSError * error) {
+                 message( @"response from backend to creation of list produced error.");
+             }
+         ];
+    }
 }
 
 - (void)userPressedFollow: (id) sender
@@ -84,9 +106,7 @@
         return;
     }
     
-    BaseVC *vc=[[BaseVC  alloc]init ];
-    vc.view.backgroundColor= [ UIColor   blueColor];
-    [_navigationController pushViewController:vc animated:YES];
+    message( @" user pressed follow");
 }
 
 - ( void)layoutsSubviews
@@ -96,11 +116,11 @@
     const int spacer=  kGeomSpaceInter;
     int x=  kGeomSpaceEdge;
     int y=  kGeomSpaceEdge;
-    _iv.frame= CGRectMake(x, y,  kProfileImageSize,  kProfileImageSize);
-    int bottomOfImage= y + kProfileImageSize;
+    _iv.frame= CGRectMake(x, y,  kGeomProfileImageSize,  kGeomProfileImageSize);
+    int bottomOfImage= y + kGeomProfileImageSize;
     
     // Place the image
-    x += kProfileImageSize+ spacer;
+    x += kGeomProfileImageSize + spacer;
     _labelUsername.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
     y +=kGeomProfileInformationHeight+ spacer;
     
@@ -120,9 +140,10 @@
     }
     
     // Place the follow button
-    _buttonFollow.frame=CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
-    y += kGeomHeightButton + spacer;
-    
+    if ( _userID >= 0) {
+        _buttonFollow.frame=CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
+        y += kGeomHeightButton + spacer;
+    }
     if  (y < bottomOfImage ) {
         y= bottomOfImage;
     }
@@ -141,7 +162,7 @@
     self.spaceNeededForFirstCell= y;
 }
 
-- (int)neededHeight
+- (NSInteger)neededHeight
 {
     if  (!_spaceNeededForFirstCell) {
         [self layoutsSubviews];
@@ -156,139 +177,154 @@
 @property (nonatomic, strong) ProfileTableFirstRow* headerCell;
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) NSMutableArray *lists;
-
+@property (nonatomic,strong) UserObject *profileOwner;
 @end
 
 @implementation ProfileVC
+- (instancetype) init
+{
+    self = [super init];
+    if (self) {
+        _userID= -1;
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    if ( _userID < 0) {
+        UserObject* userInfo= [Settings sharedInstance].userObject;
+        self.profileOwner=userInfo;
+    } else {
+        
+    }
+    
     _lists = [NSMutableArray array];
     
     OOAPI *api = [[OOAPI alloc] init];
-    [api getUserListsWithSuccess:^(NSArray *foundLists) {
-        NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
-        if  (!foundLists.count) {
-            ListObject *list;
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Featured";
-            list.listType = kListTypeFeatured;
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Thai";
-            list.listType = KListTypeStrip;
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Chinese";
-            list.listType = KListTypeStrip;
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Vegetarian";
-            list.listType = kListTypeFeatured;
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Burgers";
-            list.listType = KListTypeStrip;
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Vietnamese";
-            list.listType = KListTypeStrip;
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"New";
-            list.listType = kListTypeFeatured;
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Mexican";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Peruvian";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Delivery";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Date Night";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Party";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Drinks";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Mediterranean";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Steak";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Indian";
-            [_lists addObject:list];
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Tandoor";
-            [_lists addObject:list];
-        }else {
-            ListObject *list;
-
-            for (NSDictionary* item  in foundLists ) {
-                NSLog (@" user list:  %@", item);
-
-                if (![item isKindOfClass:[NSDictionary class]]) {
-                    NSLog  (@" item is not a dictionary");
-                    continue;
+    [api getListsOfUser: _userID
+                success:^(NSArray *foundLists) {
+                    NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
+                    if  (!foundLists.count) {
+                        ListObject *list;
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Featured";
+                        list.listType = kListTypeFeatured;
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Thai";
+                        list.listType = KListTypeStrip;
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Chinese";
+                        list.listType = KListTypeStrip;
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Vegetarian";
+                        list.listType = kListTypeFeatured;
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Burgers";
+                        list.listType = KListTypeStrip;
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Vietnamese";
+                        list.listType = KListTypeStrip;
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"New";
+                        list.listType = kListTypeFeatured;
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Mexican";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Peruvian";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Delivery";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Date Night";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Party";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Drinks";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Mediterranean";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Steak";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Indian";
+                        [_lists addObject:list];
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Tandoor";
+                        [_lists addObject:list];
+                    }else {
+                        ListObject *list;
+                        
+                        for (NSDictionary* item  in foundLists ) {
+                            NSLog (@" user list:  %@", item);
+                            
+                            if (![item isKindOfClass:[NSDictionary class]]) {
+                                NSLog  (@" item is not a dictionary");
+                                continue;
+                            }
+                            
+                            NSString* name=  item[ @"name"];
+                            if (!name) {
+                                NSLog  (@" missing listing name");
+                                continue;
+                            }
+                            
+                            list = [[ListObject alloc] init];
+                            list.name =  name;
+                            [_lists addObject:list];
+                        }
+                        
+                        list = [[ListObject alloc] init];
+                        list.name = @"Indian";
+                        [_lists addObject:list];
+                    }
+                    
+                    [self.table reloadData];
                 }
-                
-                NSString* name=  item[ @"name"];
-                if (!name) {
-                    NSLog  (@" missing listing name");
-                    continue;
-                }
-                
-                list = [[ListObject alloc] init];
-                list.name =  name;
-                [_lists addObject:list];
-            }
-            
-            
-            list = [[ListObject alloc] init];
-            list.name = @"Indian";
-            [_lists addObject:list];
-        }
-        
-        [self.table reloadData];
-    }
-                         failure:^(NSError *e) {
-        NSLog  (@" error while getting lists for user:  %@",e);
-    }];
+                failure:^(NSError *e) {
+                    NSLog  (@" error while getting lists for user:  %@",e);
+                }];
     // NOTE:  these will later be stored in user defaults.
     
     
     self.view.backgroundColor= WHITE;
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    
-    self.headerCell=[[ProfileTableFirstRow  alloc] init];
-    self.headerCell.navigationController= self.navigationController;
+    _headerCell=[[ProfileTableFirstRow  alloc] init];
+    _headerCell.navigationController= self.navigationController;
+    _headerCell.userID= _userID;
+    _headerCell.userInfo= _profileOwner;
     
     self.table= [UITableView new];
     self.table.delegate= self;
@@ -296,11 +332,11 @@
     [ self.view addSubview:_table];
     self.table.backgroundColor=[UIColor clearColor];
     self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
-
-    NSString* first= userInfo.firstName ?:  @"";
-    NSString* last= userInfo.lastName ?:  @"";
-    NSString* name=  [NSString stringWithFormat: @"%@ %@", first, last ];
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: name subHeader:nil];
+    
+    NSString* first= _profileOwner.firstName ?:  @"";
+    NSString* last= _profileOwner.lastName ?:  @"";
+    NSString* fullName=  [NSString stringWithFormat: @"%@ %@", first, last ];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: fullName subHeader:nil];
     [self setNavTitle:  nto];
     
     [ self.view setNeedsLayout ];
@@ -362,8 +398,7 @@
     }
     
     ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    cell. backgroundColor= GRAY;
-    
+    cell.backgroundColor= GRAY;
     NSMutableArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
     [cell getRestaurants];

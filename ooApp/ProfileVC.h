@@ -11,5 +11,5 @@
 #import "BaseVC.h"
 
 @interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
-
+@property (nonatomic,assign) NSInteger  userID;
 @end

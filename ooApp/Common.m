@@ -52,6 +52,15 @@ UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
     return l;
 }
 
+UITextView* makeTextView (UIView*parent, UIColor *bg,BOOL  editable)
+{
+    UITextView *textView= [ UITextView  new];
+    textView.editable= editable;
+    textView.backgroundColor= bg;
+    [parent addSubview: textView];
+    return textView;
+}
+
 UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];

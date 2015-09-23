@@ -54,7 +54,7 @@ static NSUInteger kGeomIconSize = 25;
 static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 10.0;
-static float kProfileImageSize=  100;
+static float kGeomProfileImageSize=  100;
 
 // Images
 extern NSString *const kImageNoProfileImage;
@@ -78,5 +78,10 @@ extern NSString *const kFontIconProfile;
 extern NSString *const kFontIconSearch;
 extern NSString *const kFontIconSettings;
 extern NSString *const kFontIconWhatsNew;
+
+#define BLACK UIColorRGB(kColorBlack)
+#define WHITE UIColorRGB(kColorWhite)
+#define GRAY UIColorRGB(kColorGray)
+#define CLEAR UIColorRGBA(kColorClear)
 
 #endif

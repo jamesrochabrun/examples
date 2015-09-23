@@ -36,21 +36,30 @@
                                      success:(void (^)(NSArray *))success
                                      failure:(void (^)(NSError *))failure;
 
+- (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
+                                   toList: (NSInteger) listIdentifier
+                            success:(void (^)(NSArray *dishes))success
+                            failure:(void (^)(NSError *))failure;
+
 // Lists
 
-- (AFHTTPRequestOperation*)getUserListsWithSuccess:(void (^)(NSArray *lists))success
-                                           failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation *)addList:(NSString *)listName
+                                  success:(void (^)(id response))success
+                                  failure:(void (^)(NSError *))failure;
+
+- (AFHTTPRequestOperation*)getListsOfUser:(NSInteger)userid
+                                  success:(void (^)(NSArray *lists))success
+                                  failure:(void (^)(NSError *))failure;
+
 - (AFHTTPRequestOperation*)getRestaurantsWithListID:( long) identifier
                                             success:(void (^)(NSArray *lists))success
                                             failure:(void (^)(NSError *))failure;
+
 /* Create */
 
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
                                   success:(void (^)(NSArray *dishes))success
                                   failure:(void (^)(NSError *))failure;
-- (AFHTTPRequestOperation *)addList:(RestaurantObject *)restaurant
-                            success:(void (^)(NSArray *dishes))success
-                            failure:(void (^)(NSError *))failure;
 
 
 @end

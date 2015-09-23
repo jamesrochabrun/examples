@@ -140,13 +140,16 @@
     }];
 }
 
-- (AFHTTPRequestOperation*)getUserListsWithSuccess:(void (^)(NSArray *lists))success
-                                           failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation*)getListsOfUser:(NSInteger)userid
+                                  success:(void (^)(NSArray *lists))success
+                                  failure:(void (^)(NSError *))failure
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber* currentUserID= userInfo.userID;
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists",
-                           kOOURL, currentUserID];
+    if  (userid<0 ) {
+        UserObject* userInfo= [Settings sharedInstance].userObject;
+        userid= [userInfo.userID integerValue ];
+    }
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld/lists",
+                           kOOURL, ( long)userid];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:urlString parameters:nil success:success failure: failure];
@@ -171,11 +174,42 @@
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", kOOURL];
     
-    AFHTTPRequestOperation *op = [rm POST:urlString parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
-        ;
-    } failure:^(NSError *error) {
-        failure(error);
-    }];
+    AFHTTPRequestOperation *op = [rm POST:urlString
+                               parameters:[RestaurantObject dictFromRestaurant:restaurant]
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(NSError *error) {
+                                      failure(error);
+                                  }];
+    
+    return op;
+}
+
+- (AFHTTPRequestOperation *)addList:(NSString *)listName
+                            success:(void (^)(id response))success
+                            failure:(void (^)(NSError *))failure;
+{
+    if  (!listName) {
+        return nil;
+    }
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (! userid) {
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists", kOOURL];
+    NSDictionary*parameters=  @{
+                                 @"name": listName,
+                                  @"type":  @"system",
+                                  @"user": userid
+                                };
+    AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(NSError *error) {
+                                      failure(error);
+                                  }];
     
     return op;
 }
