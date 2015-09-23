@@ -27,13 +27,14 @@
     return self;
 }
 
-- (AFHTTPRequestOperation*) getRestaurantsWithIDs:(NSArray *)restaurantIds success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation*) getRestaurantsWithIDs:(NSArray *)restaurantIds
+                                          success:(void(^)(NSArray *restaurants))success
+                                          failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-
     
-    return [rm GET:URL parameters:nil success:^(id responseObject) {
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
@@ -48,9 +49,13 @@
 //
 // Only one of max width or max height is heeded. Preference is given to max width
 //
-- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef maxWidth:(NSUInteger)maxWidth maxHeight:(NSUInteger)maxHeight success:(void(^)(NSString *link))success failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef
+                                                  maxWidth:(NSUInteger)maxWidth
+                                                 maxHeight:(NSUInteger)maxHeight
+                                                   success:(void(^)(NSString *link))success
+                                                   failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
@@ -65,24 +70,27 @@
         [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxHeight"];
     }
     
-    return [rm GET:URL parameters:parameters success:^(id responseObject) {
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         success([responseObject objectForKey:@"link"]);
     } failure:^(NSError *error) {
         NSLog(@"Error: %@", error);
     }];
 }
 
-
-
-- (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword andLocation:(CLLocationCoordinate2D)location success:(void(^)(NSArray *restaurants))success failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword
+                                          andLocation:(CLLocationCoordinate2D)location
+                                              success:(void(^)(NSArray *restaurants))success
+                                              failure:(void (^)(NSError *))failure
 {
     
-    NSString *URL = [NSString stringWithFormat:@"https://%@/search", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
+    
+    NSLog (@" URL=  %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:URL parameters:parameters success:^(id responseObject) {
+    return [rm GET: urlString parameters:parameters success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
@@ -94,12 +102,14 @@
     }];
 }
 
-- (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs success:(void(^)(NSArray *users))success failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs
+                                   success:(void(^)(NSArray *users))success
+                                   failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"https://%@/users", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users", kOOURL];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:URL parameters:nil success:^(id responseObject) {
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *users = [NSMutableArray array];
         for (id dict in responseObject) {
 //            NSLog(@"user: %@", dict);
@@ -111,12 +121,14 @@
     }];
 }
 
-- (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs
+                                    success:(void (^)(NSArray *dishes))success
+                                    failure:(void (^)(NSError *))failure
 {
-    NSString *URL = [NSString stringWithFormat:@"https://%@/dishes", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/dishes", kOOURL];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:URL parameters:nil success:^(id responseObject) {
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
 //        NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             NSLog(@"dish: %@", dict);
@@ -128,22 +140,38 @@
     }];
 }
 
-- (AFHTTPRequestOperation*)getUserListsWithSuccess:(void (^)(NSArray *lists))success failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation*)getUserListsWithSuccess:(void (^)(NSArray *lists))success
+                                           failure:(void (^)(NSError *))failure
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSNumber* currentUserID= userInfo.userID;
-    NSString *URL = [NSString stringWithFormat:@"https://%@/users/%@/lists", [self ooURL], currentUserID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists",
+                           kOOURL, currentUserID];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:URL parameters:nil success:success failure: failure];
+    return [rm GET:urlString parameters:nil success:success failure: failure];
 }
 
-- (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
+- (AFHTTPRequestOperation*)getRestaurantsWithListID:( long) identifier
+                                            success:(void (^)(NSArray *lists))success
+                                            failure:(void (^)(NSError *))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%ld/restaurants",
+                           kOOURL,
+                           identifier];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:success failure: failure];
+}
+
+- (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant
+                                 success:(void (^)(NSArray *dishes))success
+                                 failure:(void (^)(NSError *))failure
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", kOOURL];
     
-    AFHTTPRequestOperation *op = [rm POST:URL parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
         ;
     } failure:^(NSError *error) {
         failure(error);

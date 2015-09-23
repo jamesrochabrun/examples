@@ -2,7 +2,7 @@
 //  ProfileVC.m
 //  ooApp
 //
-//  Created by Anuj Gujar on 8/27/15.
+//  Created by Zack Smith & Anuj Gujar on 8/27/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
@@ -13,7 +13,7 @@
 #import "ListTVCell.h"
 #import "OOAPI.h"
 
-@interface ProfileVCFirstRow : UITableViewCell
+@interface ProfileTableFirstRow : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIButton *buttonFollow;
@@ -31,7 +31,7 @@
 #define GRAY UIColorRGB(kColorGray)
 #define CLEAR UIColorRGBA(kColorClear)
 
-@implementation ProfileVCFirstRow
+@implementation ProfileTableFirstRow
 - (instancetype) init
 {
     self = [super init];
@@ -87,10 +87,12 @@
     _iv.frame= CGRectMake(x, y,  kProfileImageSize,  kProfileImageSize);
     int bottomOfImage= y + kProfileImageSize;
     
+    // Place the image
     x += kProfileImageSize+ spacer;
     _labelUsername.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
     y +=kGeomProfileInformationHeight+ spacer;
     
+    // Place the labels
     if (_labelDescription.text.length ) {
         _labelDescription.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
         y += kGeomProfileInformationHeight+ spacer;
@@ -105,6 +107,7 @@
         _labelRestaurants.hidden= YES;
     }
     
+    // Place the follow button
     _buttonFollow.frame=CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
     y += kGeomHeightButton + spacer;
     
@@ -112,6 +115,7 @@
         y= bottomOfImage;
     }
     
+    // Place the new list buttons
     x = kGeomSpaceEdge;
     [_buttonNewListIcon sizeToFit];
     float iconWith= _buttonNewListIcon.frame.size.width;
@@ -121,6 +125,7 @@
     float textWidth= _buttonNewList.frame.size.width;
     _buttonNewList.frame=CGRectMake(x,y,textWidth,  kGeomHeightButton);
     y +=  kGeomHeightButton + spacer;
+    
     self.spaceNeededForFirstCell= y;
 }
 
@@ -136,7 +141,7 @@
 
 @interface ProfileVC ()
 
-@property (nonatomic, strong) ProfileVCFirstRow* headerCell;
+@property (nonatomic, strong) ProfileTableFirstRow* headerCell;
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) NSMutableArray *lists;
 
@@ -250,12 +255,17 @@
                 list = [[ListObject alloc] init];
                 list.name =  name;
                 [_lists addObject:list];
-                
             }
+            
+            
+            list = [[ListObject alloc] init];
+            list.name = @"Indian";
+            [_lists addObject:list];
         }
         
         [self.table reloadData];
-    } failure:^(NSError *e) {
+    }
+                         failure:^(NSError *e) {
         NSLog  (@" error while getting lists for user:  %@",e);
     }];
     // NOTE:  these will later be stored in user defaults.
@@ -265,7 +275,7 @@
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     
-    self.headerCell=[[ProfileVCFirstRow  alloc] init];
+    self.headerCell=[[ProfileTableFirstRow  alloc] init];
     
     self.table= [UITableView new];
     self.table.delegate= self;
@@ -351,7 +361,7 @@
     if (! row) {
         return [_headerCell neededHeight];
     }
-    return 100;
+    return kGeomHeightListRow;
 }
 
 - ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -377,29 +387,6 @@
     cell.listItem= a[indexPath.row-1];
     [cell getRestaurants];
     return cell;
-}
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-#pragma mark - Facebook delegate methods
-
-- (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error {
-    
-    
-}
-
-- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {
-    [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
-    //performSegueWithIdentifier:@"loginUISegue" sender:self];
-//    [self performSegueWithIdentifier:@"loginUISegue" sender:self];
 }
 
 @end

@@ -12,6 +12,7 @@
 
 -(instancetype)init {
     if (self) {
+        _identifier= -1;
         self.listType = KListTypeStrip;
     }
     return self;
