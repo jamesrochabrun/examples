@@ -115,10 +115,8 @@
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:URL parameters:nil success:^(id responseObject) {
-//        NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             NSLog(@"dish: %@", dict);
-//            [restaurants addObject:[self restaurantFromDict:dict]];
         }
     } failure:^(NSError *error) {
         failure(error);

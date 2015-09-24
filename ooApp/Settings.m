@@ -30,15 +30,14 @@ NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
     return sharedInstance;
 }
 
-- (instancetype) init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
         
-        [ self readUser ];
+        [self readUser];
         if (!_userObject) {
-            _userObject= [[UserObject alloc]init ];
-
+            _userObject= [[UserObject alloc] init];
         }
         
     }
@@ -53,22 +52,22 @@ NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
 {
     [self storeUser];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    [ud  synchronize ];
+    [ud  synchronize];
 }
 
 //------------------------------------------------------------------------------
 // Name:    readUser
 // Purpose: Loads the user dict.
 //------------------------------------------------------------------------------
-- ( void )readUser
+- (void)readUser
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSDictionary *d= [ud dictionaryForKey: kDefaultsCurrentUserInfo];
-    if  (! d) {
+    if (!d) {
         NSLog (@"NO USER INFO FOUND.");
         return;
     }
-    self.userObject=  [UserObject userFromDict:d];
+    self.userObject = [UserObject userFromDict:d];
 }
 
 //------------------------------------------------------------------------------
@@ -77,16 +76,16 @@ NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
 //------------------------------------------------------------------------------
 - (void)setCurrentUser:(UserObject *)user
 {
-    if  (! user) {
+    if (!user) {
         return;
     }
     self.userObject= user;
 }
 
-- (NSString*) lastKnownDateString;
+- (NSString *)lastKnownDateString;
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    return  [ud stringForKey:kDefaultsLastKnownDate ];
+    return  [ud stringForKey:kDefaultsLastKnownDate];
 }
 
 - (void)storeUser
@@ -103,16 +102,16 @@ NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
 //------------------------------------------------------------------------------
 - (NSArray *)mostRecentChoice:(NSString *)key;
 {
-    if  (! key) {
+    if  (!key) {
         return nil;
     }
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSArray *ary = [ud arrayForKey: key];
-    if (! ary || ary.count != 2) {
+    NSArray *ary = [ud arrayForKey:key];
+    if (!ary || ary.count != 2) {
         return nil;
     }
     NSDate *date = ary[0];
-    if ([date isKindOfClass: [NSDate class]]) {
+    if ([date isKindOfClass:[NSDate class]]) {
         return ary;
     }
     return nil;
@@ -146,8 +145,8 @@ NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
 - (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    [ud setDouble: coord.latitude forKey:kDefaultsUserLocationLastKnownLatitude ];
-    [ud setDouble: coord.longitude  forKey:kDefaultsUserLocationLastKnownLongitude ];
+    [ud setDouble:coord.latitude forKey:kDefaultsUserLocationLastKnownLatitude];
+    [ud setDouble:coord.longitude  forKey:kDefaultsUserLocationLastKnownLongitude];
 }
 
 @end

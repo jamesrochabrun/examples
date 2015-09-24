@@ -145,17 +145,17 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_tableView reloadData];
 }
 
-- (void) viewDidAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
     [self verifyTrackingIsOkay];
 }
 
-- (void) verifyTrackingIsOkay
+- (void)verifyTrackingIsOkay
 {
     if (0==self.currentLocation.longitude) {
-        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation ];
+        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation];
         if (TRACKING_UNKNOWN == c) {
             [[LocationManager sharedInstance] askUserWhetherToTrack];
         }
@@ -167,7 +167,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 - (void)updateLocation
 {
-    self.currentLocation= [[LocationManager sharedInstance] currentUserLocation ];
+    self.currentLocation = [[LocationManager sharedInstance] currentUserLocation];
 }
 
 //- (void)testAPI
