@@ -79,7 +79,7 @@
     self.tableView.layoutMargins = UIEdgeInsetsZero;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.scrollEnabled = NO;
-    self.tableView.separatorColor = UIColorRGBA(kColorClear);
+//    self.tableView.separatorColor = UIColorRGBA(kColorClear);
     
     NSLog(@"tableView frame=%@", NSStringFromCGRect(self.tableView.frame));
     

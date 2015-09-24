@@ -7,7 +7,7 @@
 //
 
 #import "HorizontalListVC.h"
-#import "HorizonalTVCell.h"
+#import "RestaurantHTVCell.h"
 #import "RestaurantObject.h"
 #import "OOAPI.h"
 #import "LocationManager.h"
@@ -35,8 +35,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _tableView.delegate = self;
     _tableView.dataSource = self;
 
-    [_tableView registerClass:[HorizonalTVCell class] forCellReuseIdentifier:cellIdentifier];
+    [_tableView registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:cellIdentifier];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    _tableView.rowHeight = kGeomHeightHorizontalListRow;
+    _tableView.separatorInset = UIEdgeInsetsZero;
+    _tableView.layoutMargins = UIEdgeInsetsZero;
     
     _requestOperation = nil;
     
@@ -45,7 +48,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (void)layout
 {
-    NSDictionary *metrics = @{@"height":@(kGeomHeightListRow), @"buttonY":@(kGeomHeightListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
 
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
 
@@ -108,11 +111,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    HorizonalTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    RestaurantHTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
-    
-    cell.textLabel.text = restaurant.name;
+    cell.restaurant = restaurant;
     
     return cell;
 }

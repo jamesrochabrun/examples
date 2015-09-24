@@ -8,33 +8,36 @@
 
 #import "RestaurantObject.h"
 
-NSString *const kKeyName = @"name";
-NSString *const kKeyRating = @"rating";
-NSString *const kKeyImageRef = @"image_ref";
-NSString *const kKeyLatitude = @"latitude";
-NSString *const kKeyLongitude = @"longitude";
-NSString *const kKeyPriceRange = @"price_range";
+NSString *const kKeyRestaurantName = @"name";
+NSString *const kKeyRestaurantRating = @"rating";
+NSString *const kKeyRestaurantImageRef = @"image_ref";
+NSString *const kKeyRestaurantLatitude = @"latitude";
+NSString *const kKeyRestaurantLongitude = @"longitude";
+NSString *const kKeyRestaurantPriceRange = @"price_range";
+NSString *const kKeyRestaurantOpenNow = @"open_now";
 
 @implementation RestaurantObject
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
+    NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
-    restaurant.name = [dict objectForKey:kKeyName];
-    restaurant.rating = [dict objectForKey:kKeyRating];
-    NSArray *imageRefs = [dict objectForKey:kKeyImageRef];
+    restaurant.name = [dict objectForKey:kKeyRestaurantName];
+    restaurant.rating = [dict objectForKey:kKeyRestaurantRating];
+    restaurant.isOpen = ([[dict objectForKey:kKeyRestaurantOpenNow] isKindOfClass:[NSNull class]]) ? NO : [[dict objectForKey:kKeyRestaurantOpenNow] boolValue];
+    NSArray *imageRefs = [dict objectForKey:kKeyRestaurantImageRef];
     restaurant.imageRef = (imageRefs && ![imageRefs isKindOfClass:[NSNull class]]) ? [ImageRefObject imageRefFromDict:[imageRefs objectAtIndex:0]] : nil;
     
-    restaurant.location = CLLocationCoordinate2DMake([[dict objectForKey:kKeyLatitude] doubleValue], [[dict objectForKey:kKeyLongitude] doubleValue]);
+    restaurant.location = CLLocationCoordinate2DMake([[dict objectForKey:kKeyRestaurantLatitude] doubleValue], [[dict objectForKey:kKeyRestaurantLongitude] doubleValue]);
     
-    restaurant.priceRange = [dict objectForKey:kKeyPriceRange];
+    restaurant.priceRange = [dict objectForKey:kKeyRestaurantPriceRange];
     
     return restaurant;
 }
 
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:restaurant.name forKey:kKeyName];
-    [dict setObject:restaurant.rating forKey:kKeyRating];
+    [dict setObject:restaurant.name forKey:kKeyRestaurantName];
+    [dict setObject:restaurant.rating forKey:kKeyRestaurantRating];
     return dict;
 }
 

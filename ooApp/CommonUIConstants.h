@@ -19,16 +19,17 @@
 // App colors
 static NSUInteger kColorBlack = 0x000000FF;
 static NSUInteger kColorButtonSelected = 0x0000FFFF;
-static NSUInteger kColorCellSelected = 0xD0F2FFFF;
+static NSUInteger kColorCellSelected = 0xF9FF00FF;
 static NSUInteger kColorClear = 0x00000000;
 static NSUInteger kColorGray = 0x555555FF;
 static NSUInteger kColorGrayMiddle = 0xB2B2B2FF;
 static NSUInteger kColorNavBar = 0xFFFFFFFF;
 static NSUInteger kColorNavyBlue = 0x000080FF;
-static NSUInteger kColorOffBlack = 0x222222FF;
+static NSUInteger kColorOffBlack = 0xAAAAAAFF;
 static NSUInteger kColorOffWhite = 0xDDDDDDFF;
 static NSUInteger kColorStripOverlay = 0x00000099;
 static NSUInteger kColorWhite = 0xFFFFFFFF;
+static NSUInteger kColorYellow = 0xF9FF00FF;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
@@ -39,9 +40,9 @@ static CGFloat kGeomHeightButton = 40.0;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
 static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
 static CGFloat kGeomHeightFeaturedCellHeight = 150.0;
-static CGFloat kGeomHeightListRow = 130.0;
-static CGFloat kGeomHeightListCell = 100.0;
-static CGFloat kGeomHeightListRowReveal = 240.0;
+static CGFloat kGeomHeightStripListRow = 130.0;
+static CGFloat kGeomHeightStripListCell = 100.0;
+static CGFloat kGeomHeightHorizontalListRow = 90.0;
 static NSUInteger kGeomIconSize = 25;
 static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;

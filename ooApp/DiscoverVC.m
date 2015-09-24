@@ -255,7 +255,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     if (lo.listType == kListTypeFeatured) {
         height = kGeomHeightFeaturedRow;
     } else {
-        height = kGeomHeightListRow;
+        height = kGeomHeightStripListRow;
     }
     return height;
 }
