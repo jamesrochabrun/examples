@@ -21,7 +21,7 @@
         alpha:(rgbValue >> 24)/255.0f ]
 
 // App colors
-// NOTE: Correct hex format for RGBA is AARRGGBB on little-endian systems.
+// NOTE: Correct hex format for RGBA is 0xAARRGGBB on little-endian systems.
 //
 static NSUInteger kColorBlack = 0xff000000;
 static NSUInteger kColorButtonSelected = 0xff0000FF;
@@ -58,6 +58,12 @@ static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 10.0;
 static float kGeomProfileImageSize=  100;
+static float kGeomForkImageSize =  150;
+static float kGeomEmptyTextViewWidth = 200;
+static float  kGeomEmptyTextFieldWidth=  150;
+static float kGeomLogoWidth=  200;
+static float kGeomLogoHeight=  100;
+static float kGeomLoginVerticalDisplacement=  75;
 
 // Images
 extern NSString *const kImageNoProfileImage;

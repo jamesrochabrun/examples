@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="XXf-rZ-kbU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15B17c" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="XXf-rZ-kbU">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
     </dependencies>
     <scenes>
         <!--What's New-->
@@ -15,9 +16,10 @@
                     <view key="view" contentMode="scaleToFill" id="tsR-hK-woN">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="First" image="C40FB5A7-76F8-4688-8F0A-2417F3BE5C98" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="First" image="7F05C996-DDB4-41F4-9ACE-31FAC92C5CFA" id="acW-dT-cKf"/>
                     <navigationItem key="navigationItem" id="mD4-Ex-NhB"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -31,13 +33,18 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="mTr-Mz-KWh">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="kNp-va-1vc">
+                                <rect key="frame" x="0.0" y="22" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kNp-va-1vc" id="zby-je-gPa">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <animations/>
                                 </tableViewCellContentView>
+                                <animations/>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -57,6 +64,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="LcM-xi-ReH">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
                     </navigationBar>
                     <connections>
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="rootViewController" id="vZI-Tk-Gfz"/>
@@ -77,6 +85,7 @@
                     <view key="view" contentMode="scaleToFill" id="SRY-nS-7Qq">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
@@ -89,6 +98,29 @@
             </objects>
             <point key="canvasLocation" x="821" y="-354"/>
         </scene>
+        <!--Create UsernameVC-->
+        <scene sceneID="vVT-DW-xht">
+            <objects>
+                <viewController id="NGY-d5-9fK" customClass="CreateUsernameVC" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="QDN-x7-TO9"/>
+                        <viewControllerLayoutGuide type="bottom" id="ocj-FA-Frd"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Vfp-Df-1F9">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="MbO-b8-NsW" kind="show" identifier="returnToLogin" id="eJl-xG-h6Y"/>
+                        <segue destination="1Iq-hT-Nip" kind="show" identifier="gotoDiscoverFromCreateUsername" id="eSv-Z2-37Q"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="205-uK-Eq8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="573" y="449"/>
+        </scene>
         <!--Login-->
         <scene sceneID="aSG-qy-GVl">
             <objects>
@@ -100,11 +132,13 @@
                     <view key="view" contentMode="scaleToFill" id="gmW-Wd-VSV">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                     </view>
                     <navigationItem key="navigationItem" id="Fbi-XC-4pI"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <segue destination="1Iq-hT-Nip" kind="show" identifier="mainUISegue" id="Old-qZ-n3z"/>
+                        <segue destination="NGY-d5-9fK" kind="show" identifier="gotoCreateUsername" id="Nwv-RE-w07"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UXi-wQ-9ae" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -120,6 +154,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="VEZ-U7-5ua">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -128,11 +163,11 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uzR-pm-DUc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-721" y="-344"/>
+            <point key="canvasLocation" x="-695" y="-345"/>
         </scene>
     </scenes>
     <resources>
-        <image name="C40FB5A7-76F8-4688-8F0A-2417F3BE5C98" width="30" height="30">
+        <image name="7F05C996-DDB4-41F4-9ACE-31FAC92C5CFA" width="30" height="30">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGQkNYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ERYbHCUmJygwMzY8P1UkbnVsbNQJCgsMDQ4PEFYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVwc1dOU0Nv
@@ -191,6 +226,7 @@ RgAAAAAAAAAAAAAAAAAAC5U
         </image>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ef4-jV-xDv"/>
+        <segue reference="eSv-Z2-37Q"/>
+        <segue reference="eJl-xG-h6Y"/>
     </inferredMetricsTieBreakers>
 </document>

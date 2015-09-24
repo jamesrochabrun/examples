@@ -15,29 +15,28 @@
 #import "LocationManager.h"
 #import "OONetworkManager.h"
 #import "NSString+MD5.h"
+#import "CreateUsernameVC.h"
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
-@property (nonatomic, strong) FBSDKLoginButton *facebookLogin;
-@property (nonatomic, strong) UITextField *textfieldUsername;
-@property (nonatomic, strong) UITextField *textfieldPassword;
-@property (nonatomic, strong) UIButton *forgotPassword;
+@property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *logo;
-@property (nonatomic, assign) BOOL showingKeyboard;
 @property (nonatomic, assign) BOOL wentToDiscover;
-@property (nonatomic, strong) NSArray *keyboardConstraint;
 @end
 
 @implementation LoginVC
 
-- (void)viewDidLoad
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
+- (void) viewDidLoad
 {
     [super viewDidLoad];
     
     _wentToDiscover= NO;
     
-    _backgroundImageView = [[UIImageView alloc] init];
-    _backgroundImageView.image = [UIImage imageNamed:@"background-image.jpg"];
+    _backgroundImageView = makeImageView(self.view, @"background-image.jpg");
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
     
     _logo = [[UIImageView alloc] init];
@@ -45,142 +44,44 @@
     _logo.backgroundColor = UIColorRGBA(kColorClear);
     _logo.image = [UIImage imageNamed:@"Logo.png"];
     
-    _facebookLogin = [[FBSDKLoginButton alloc] init];
-    _facebookLogin.delegate = self;
-    _facebookLogin.layer.cornerRadius = kGeomCornerRadius;
-    
-    _textfieldUsername = [[UITextField alloc] init];
-    _textfieldUsername.backgroundColor = UIColorRGBA(kColorGrayMiddle);
-    _textfieldUsername.placeholder = @"username";
-    _textfieldUsername.layer.cornerRadius = kGeomCornerRadius;
-    _textfieldUsername.delegate= self;
-    
-    _textfieldPassword = [[UITextField alloc] init];
-    _textfieldPassword.backgroundColor = UIColorRGBA(kColorGrayMiddle);
-    _textfieldPassword.placeholder = @"password";
-    _textfieldPassword.textColor = UIColorRGB(kColorWhite);
-    _textfieldPassword.layer.cornerRadius = kGeomCornerRadius;
-    _textfieldPassword.delegate = self;
-    
-    _forgotPassword = [[UIButton alloc] init];
-    [_forgotPassword withText:@"Forgot your password?" fontSize:9 width:40 height:10 backgroundColor:kColorClear target:self selector:@selector(showMainUI)];
-    
-    _forgotPassword.translatesAutoresizingMaskIntoConstraints = NO;
-    _textfieldUsername.translatesAutoresizingMaskIntoConstraints = NO;
-    _textfieldPassword.translatesAutoresizingMaskIntoConstraints = NO;
-    _backgroundImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    _facebookLogin.translatesAutoresizingMaskIntoConstraints = NO;
-    _logo.translatesAutoresizingMaskIntoConstraints = NO;
+    _facebookLoginButton = [[FBSDKLoginButton alloc] init];
+    _facebookLoginButton.delegate = self;
+    _facebookLoginButton.layer.cornerRadius = kGeomCornerRadius;
     
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_logo];
-    [self.view addSubview:_facebookLogin];
-    [self.view addSubview:_textfieldUsername];
-    [self.view addSubview:_textfieldPassword];
-    [self.view addSubview:_forgotPassword];
-    [self layout];
+    [self.view addSubview:_facebookLoginButton];
+    [self doLayout];
     
     [[LocationManager sharedInstance] askUserWhetherToTrack ];
 }
 
-- (void)dealloc
+
+//------------------------------------------------------------------------------
+// Name:    doLayout
+// Purpose: Manual placement of views.
+//------------------------------------------------------------------------------
+- (void)doLayout
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    float spacing= kGeomSpaceInter;
+    
+    float h=  self.view.bounds.size.height;
+    float w=  self.view.bounds.size.width;
+    _backgroundImageView.frame=  self.view.bounds;
+
+    float requiredHeight= kGeomLogoHeight + kGeomHeightButton + kGeomLoginVerticalDisplacement+spacing;
+    float y=  (h-requiredHeight)/2;
+    float x=  (w-kGeomLogoWidth)/2;
+    _logo.frame= CGRectMake(x, y, kGeomLogoWidth, kGeomLogoHeight);
+    y += kGeomLogoHeight+ spacing;
+    x=  (w-kGeomButtonWidth)/2;
+    _facebookLoginButton.frame=  CGRectMake(x, y, kGeomButtonWidth, kGeomHeightButton);
 }
 
-- (void)layout
-{
-    // Create the views and metrics dictionaries
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-    UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _forgotPassword, _logo, _textfieldUsername, _textfieldPassword, _facebookLogin, _backgroundImageView);
-    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(75)-[_logo(100)]-(>=20)-[_facebookLogin(height)]-(>=60)-[_textfieldUsername(height)]-spaceInter-[_textfieldPassword(height)]-(>=20)-[_forgotPassword]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    // Horizontal layout - we only need one "column" of information because of the alignment options used when creating the horizontal layout
-    
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-(>=20)-[_logo(<=275)]-(>=20)-|" options:0 metrics:metrics views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-(>=20)-[_facebookLogin(width)]-(>=20)-|" options:0 metrics:metrics views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-(>=20)-[_textfieldUsername(_facebookLogin)]-(>=20)-|" options:0 metrics:metrics views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-(>=20)-[_textfieldPassword(_facebookLogin)]-(>=20)-|" options:0 metrics:metrics views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-(>=20)-[_forgotPassword]-(>=20)-|" options:0 metrics:metrics views:views]];
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_logo
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:_logo.superview
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.f constant:0.f]];
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_facebookLogin
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:_facebookLogin.superview
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.f constant:0.f]];
-    
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_textfieldUsername
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:_textfieldUsername.superview
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.f constant:0.f]];
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_textfieldPassword
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:_textfieldPassword.superview
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.f constant:0.f]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_forgotPassword
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:_forgotPassword.superview
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.f constant:0.f]];
-    
-    [self performSelector:@selector(adjustInputFields) withObject:nil afterDelay:4];
-}
-
-- (void)adjustInputFields
-{
-    //    [self.view layoutIfNeeded];
-    //    [self adjustInputField];
-}
-
-- (void)adjustInputField
-{
-    int keyboardHeight= 140;
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(keyboardHeight+kGeomSpaceEdge), @"spaceInter": @(3)};
-    UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _forgotPassword, _logo, _textfieldUsername, _textfieldPassword, _facebookLogin, _backgroundImageView);
-    
-    NSString* s= [NSString stringWithFormat:  @"V:|-(50)-[_logo(50)]-[_facebookLogin(0)]-spaceInter-[_textfieldUsername(height)]-spaceInter-[_textfieldPassword(height)]-(>=250)-[_forgotPassword]-spaceEdge-|"
-                  ];
-    self.keyboardConstraint= [NSLayoutConstraint constraintsWithVisualFormat: s
-                                                                     options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                     metrics:metrics
-                                                                       views:views];
-    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints: self.keyboardConstraint
-     ];
-}
-
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -190,7 +91,26 @@
     [self.navigationController setNavigationBarHidden:YES];
 }
 
-- (void)updateUserID: (id) value// NOTE:  the value should be an NSNumber.
+//------------------------------------------------------------------------------
+// Name:    updateUsername
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)updateUsername: (id) value // NOTE:  the value should be an NSString.
+{
+    if (!value || ![ value isKindOfClass:[NSString class]] ) {
+        return;
+    }
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    userInfo.username= value;
+    [[Settings sharedInstance]save ];
+}
+
+//------------------------------------------------------------------------------
+// Name:    updateUserID
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)updateUserID: (id) value // NOTE:  the value should be an NSNumber.
 {
     if (!value) {
         return;
@@ -219,9 +139,12 @@
     
     userInfo.userID= value;
     [[Settings sharedInstance]save ];
-    
 }
 
+//------------------------------------------------------------------------------
+// Name:    updateEmail
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)updateEmail: (NSString*) value
 {
     if  (!value) {
@@ -233,6 +156,10 @@
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    updateAuthorizationToken
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)updateAuthorizationToken: (NSString*) value
 {
     if  (!value) {
@@ -242,6 +169,11 @@
     userInfo.backendAuthorizationToken= value;
 }
 
+
+//------------------------------------------------------------------------------
+// Name:    fetchEmailFromFacebookFor
+// Purpose:
+//------------------------------------------------------------------------------
 - (void) fetchEmailFromFacebookFor: (NSString*)identifier
 {
     __weak LoginVC *weakSelf= self;
@@ -282,6 +214,10 @@
 ];
 }
 
+//------------------------------------------------------------------------------
+// Name:    showMainUI
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)showMainUI
 {
     if ( _wentToDiscover) { // Prevent duplicate simultaneous calls.
@@ -326,7 +262,12 @@
     }
 }
 
-// Find out whether back end knows this user already.
+
+//------------------------------------------------------------------------------
+// Name:    showMainUIForUserWithEmail
+// Purpose: Find out whether back end knows this user already.
+//------------------------------------------------------------------------------
+
 - (void)showMainUIForUserWithEmail:  (NSString*) email
 {
     if  (!email) {
@@ -388,6 +329,8 @@
                                                  if (subdictionary) {
                                                      NSString* userid= subdictionary[ @"user_id"];
                                                      [weakSelf updateUserID: userid];
+                                                     NSString* username= subdictionary[ @"username"];
+                                                     [weakSelf updateUsername: username];
                                                  }                                             }
                                              else  {
                                                  NSLog  (@"result was not parsed into a dictionary.");
@@ -398,6 +341,13 @@
                                              } else {
                                                  // XX:  this is the OO log in flow
                                              }
+                                             
+                                             // RULE:  While the above is happening take the user to the Discover page regardless of whether the backend was reached.
+                                             if (userInfo.username.length ) {
+                                                 [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+                                             } else {
+                                                 [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+                                             }
                                          }
                                          failure:^void(NSError *   error) {
                                              NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.localizedDescription,requestString);
@@ -407,12 +357,16 @@
                                              } else {
                                                  // XX:  this is the OO log in flow
                                              }
+                                             
+                                             [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                          }];
     
-    // RULE:  While the above is happening take the user to the Discover page regardless of whether the backend was reached.
-    [self performSegueWithIdentifier:@"mainUISegue" sender:self];
 }
 
+//------------------------------------------------------------------------------
+// Name:    fetchDetailsAboutUserFromFacebook
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)fetchDetailsAboutUserFromFacebook: (NSArray*)parameters
 {
     if  (! parameters) {
@@ -438,7 +392,6 @@
                                            NSError *error)
      {
          if (!error) {
-             NSString* username=nil;
              NSString* firstName=nil;
              NSString* lastName=nil;
              NSString* middleName=nil;
@@ -511,6 +464,10 @@
     
 }
 
+//------------------------------------------------------------------------------
+// Name:    conveyUserInformationToBackend
+// Purpose:
+//------------------------------------------------------------------------------
 - (void) conveyUserInformationToBackend: (id)alreadyKnown_
 {
     BOOL alreadyKnown=  alreadyKnown_? YES: NO;
@@ -629,61 +586,22 @@
     }
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [super viewDidDisappear:animated ];
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
 
-    //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImageView, _logo, _facebookLogin, _textfieldUsername, _textfieldPassword]];
+    //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImageView, _logo, _facebookLoginButton, _textfieldUsername, _textfieldPassword]];
+
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (facebookToken) {
         // Transition if the user recently logged in.
         [self showMainUI];
-    } else {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
     }
-}
-
-- (void)keyboardHidden: (id) foobar
-{
-    self.showingKeyboard= NO;
-    [self.view removeConstraints: self.keyboardConstraint];
-    self.keyboardConstraint= nil;
-    [self.view setNeedsLayout ];
-}
-
-- (void)keyboardShown: (id) foobar
-{
-    self.showingKeyboard= YES;
-    [self adjustInputField];
-    [self.view setNeedsLayout ];
 }
 
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
 {
     NSLog (@"loginButtonDidLogOut: USER LOGGED OUT");
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)theTextField
-{
-    if (theTextField == _textfieldPassword) {
-        [theTextField resignFirstResponder];
-    } else if (theTextField == _textfieldUsername) {
-        theTextField.returnKeyType = UIReturnKeyGo;
-    }
-    return YES;
 }
 
 /*
@@ -696,6 +614,10 @@
  }
  */
 
+//------------------------------------------------------------------------------
+// Name:    didCompleteWithResultnil
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
 {
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email"

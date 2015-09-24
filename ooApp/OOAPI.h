@@ -61,5 +61,14 @@
                                   success:(void (^)(NSArray *dishes))success
                                   failure:(void (^)(NSError *))failure;
 
+// Users
+
++ (AFHTTPRequestOperation*)lookupUsername:(NSString*) string
+                                  success:(void (^)(NSArray *users))success
+                                  failure:(void (^)(NSError *))failure;
++ (AFHTTPRequestOperation*)fetchSampleUsernamesFor:(NSString*) emailAddressString
+                                           success:(void (^)(NSArray *names))success
+                                           failure:(void (^)(NSError *))failure;
+
 
 @end

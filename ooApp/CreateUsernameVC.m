@@ -24,6 +24,20 @@
 
 @implementation CreateUsernameVC
 
+//------------------------------------------------------------------------------
+// Name:    viewWillDisappear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super viewWillDisappear:animated];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -41,12 +55,15 @@
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
     _fieldUsername.backgroundColor= WHITE;
+    _fieldUsername.placeholder=  @"Desired username";
     _fieldUsername.borderStyle= UITextBorderStyleLine;
+    _fieldUsername.textAlignment= NSTextAlignmentCenter;
     [_scrollView addSubview: _fieldUsername];
     
     self.labelUsernameTaken= makeLabel(_scrollView,  @"status: username is taken", kGeomFontSizeDetail);
     self.labelUsernameTaken.textColor= RED;
     UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader];
+    _labelUsernameTaken.hidden= YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
@@ -63,51 +80,207 @@
     _textView.attributedText= aString;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader: self.listName ?: @"Missing list name"
+                           initWithHeader:@"Create User Name"
                            subHeader:nil];
     [self setNavTitle:  nto];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wentIntoBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
-//    [ self.view setNeedsLayout ];
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* emailAddressString= userInfo.email;
+    [OOAPI fetchSampleUsernamesFor:emailAddressString
+                           success:^(NSArray *names) {
+                               NSLog  (@"SERVER PROVIDED SAMPLE USERNAMES:  %@",names);
+                           } failure:^(NSError *e) {
+                               NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
+                           }];
 }
 
-- (void)keyboardHidden: (id) foobar
+
+//------------------------------------------------------------------------------
+// Name:    shouldChangeCharactersInRange
+// Purpose: Control what characters users can enter.
+//------------------------------------------------------------------------------
+- (BOOL) textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (!string || !string.length) {
+        return YES;
+    }
+    const char *cstring= string.UTF8String;
+    if  (!cstring) {
+        return YES;
+    }
+    
+    // RULE:  only accept letters and numbers.
+    while (*cstring) {
+        int  character= *cstring++;
+        if  (!isdigit( character)  && !isalpha( character)) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+//------------------------------------------------------------------------------
+// Name:    textFieldShouldReturn
+// Purpose: Control what characters users can enter.
+//------------------------------------------------------------------------------
+- (BOOL) textFieldShouldReturn:(UITextField *)textField
+{
+    NSString* enteredUsername= textField.text;
+    if (!enteredUsername.length) {
+        message( @"You did not enter a username.");
+        return NO;
+    }
+    [self checkWhetherUserNameIsInUse : enteredUsername];
+    return YES;
+}
+
+//------------------------------------------------------------------------------
+// Name:    checkWhetherUserNameIsInUse
+// Purpose: Submit the username to the backend for approval or not.
+//------------------------------------------------------------------------------
+- (void) checkWhetherUserNameIsInUse: (NSString*)enteredUsername
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber* userid= userInfo.userID;
+    
+    NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%@",
+                   kOOURL, userid];
+    
+    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+
+    NSDictionary* parametersDictionary=  @{
+                                            @"username": enteredUsername
+                                           };
+    
+    __weak  CreateUsernameVC *weakSelf = self;
+    [[OONetworkManager sharedRequestManager] PUT: requestString
+                                      parameters: parametersDictionary
+                                         success:^void(id   result) {
+                                             NSLog  (@"PUT OF USERNAME SUCCEEDED.");
+                                             
+                                             if ([result isKindOfClass: [NSDictionary  class] ] ) {
+                                                 NSDictionary *subdictionary= ((NSDictionary*)result) [ @"user"];
+                                                 if  (subdictionary ) {
+                                                     NSString* usernameForConfirmation= subdictionary[ @"username"];
+                                                     if  (usernameForConfirmation && [usernameForConfirmation isEqualToString:enteredUsername] ) {
+                                                         NSLog (@"SAVE OF USERNAME TO BACKEND CONFIRMED.");
+                                                         
+                                                         [weakSelf performSelectorOnMainThread:@selector(indicateNotTaken) withObject:nil waitUntilDone:YES];
+                                                         
+                                                         UserObject* userInfo= [Settings sharedInstance].userObject;
+                                                         userInfo.username= enteredUsername;
+                                                         [[Settings sharedInstance ]save ];
+                                                         
+                                                         [weakSelf performSelectorOnMainThread:@selector(goToDiscover) withObject:nil waitUntilDone:NO];
+                                                         return;
+                                                     }
+                                                 }
+                                             }
+                                             
+                                             // XX:  might want to check reachability here.
+                                             
+                                             // NOTE:  If we reach this point something went wrong.
+                                             [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
+
+                                         }
+                                         failure:^  void(NSError *error) {
+                                             NSLog (@"PUT OF USERNAME FAILED %@",error);
+                                             [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
+
+                                         }     ];
+}
+
+- (void)indicateAlreadyTaken
+{
+    _labelUsernameTaken.hidden= NO;
+}
+
+- (void)indicateNotTaken
+{
+    _labelUsernameTaken.hidden= YES;
+}
+
+//------------------------------------------------------------------------------
+// Name:    goToLoginScreen
+// Purpose: Perform segue to login screen.
+//------------------------------------------------------------------------------
+- (void) goToLoginScreen
+{
+    [self performSegueWithIdentifier:@"returnToLogin" sender:self];
+}
+- (void)wentIntoBackground: (NSNotification*) not
+{
+    [self goToLoginScreen];
+}
+
+//------------------------------------------------------------------------------
+// Name:    goToDiscover
+// Purpose: Perform segue to discover screen.
+//------------------------------------------------------------------------------
+- (void) goToDiscover
+{
+    [_fieldUsername  resignFirstResponder];
+    
+//    UserObject* userInfo= [Settings sharedInstance].userObject;
+//        NSStri6ng *expression=  [NSString stringWithFormat: @"Congratulations, your username is now  %@" ,userInfo.username];
+//        message( expression);
+    
+    [self performSegueWithIdentifier:@"gotoDiscoverFromCreateUsername" sender:self];
+}
+
+//------------------------------------------------------------------------------
+// Name:    keyboardHidden
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)keyboardHidden: (NSNotification*) not
 {
     _scrollView.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
+
+//------------------------------------------------------------------------------
+// Name:    keyboardShown
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)keyboardShown: (NSNotification*) not
 {
-    
-    _scrollView.contentInset= UIEdgeInsetsMake(0, 0, 100, 0);
-    [ self.view setNeedsLayout ];
+    NSDictionary* info = [not userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    float keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
+        ? kbSize.width : kbSize.height;
+    _scrollView.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
+    [_scrollView scrollRectToVisible:_fieldUsername.frame animated:YES];
 }
 
+//------------------------------------------------------------------------------
+// Name:    userPressedSignUpButton
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)userPressedSignUpButton: (id) sender
 {
-    BaseVC *vc= [[BaseVC  alloc] init];
-    vc.view.backgroundColor= [ UIColor redColor];
-    [self.navigationController pushViewController:vc animated:YES];
-}
-
-- (void)userPressedDiscoverButton: (id) sender
-{
+    [_fieldUsername resignFirstResponder];
     
-    BaseVC *vc= [[BaseVC  alloc] init];
-    vc.view.backgroundColor= [ UIColor yellowColor];
-    [self.navigationController pushViewController:vc animated:YES];
+    NSString* enteredUsername= _fieldUsername.text;
+    if (!enteredUsername.length) {
+        message( @"No username was entered.");
+        return;
+    }
+    [self checkWhetherUserNameIsInUse : enteredUsername];
 }
 
+//------------------------------------------------------------------------------
+// Name:    doLayout
+// Purpose:
+//------------------------------------------------------------------------------
 -(void) doLayout
 {
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
     
-#define kGeomForkImageSize 80
-#define kGeomEmptyTextViewWidth 200
-#define kGeomEmptyTextFieldWidth 150
-
     _scrollView.frame=  self.view.bounds;
     _scrollView.scrollEnabled=  YES;
     
@@ -135,37 +308,10 @@
     _scrollView.contentSize= CGSizeMake(w-1, y);
 }
 
-//-(void) layout
-//{
-//    [super layout];
-//    
-//    NSDictionary *metrics = @{@"buttonHeight":@(kGeomHeightButton),
-//                              @"width":@200.0,
-//                              @"margin":@(kGeomSpaceEdge),
-//                              @"spacing": @(kGeomSpaceInter)
-//                              };
-//    
-//    NSDictionary *views = NSDictionaryOfVariableBindings(_textView, _buttonDiscover, _buttonLists, _iv);
-//    
-//    [self.view addConstraints:
-//     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_iv]-[_textView]-[_buttonDiscover]-[_buttonLists]-|"
-//                                             options:NSLayoutFormatDirectionLeadingToTrailing
-//                                             metrics:metrics
-//                                               views:views]];
-//    
-//    [self.view addConstraints:
-//     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_textView]-|"
-//                                             options:NSLayoutFormatDirectionLeadingToTrailing
-//                                             metrics:metrics
-//                                               views:views]];
-//}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
 - (void) viewWillLayoutSubviews
 {
     [ super viewWillLayoutSubviews ];

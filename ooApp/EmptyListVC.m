@@ -16,14 +16,18 @@
 
 @interface EmptyListVC ()
 
-@property (nonatomic, strong)   UITextView *textView;
-@property (nonatomic,strong)  UIImageView* iv;
+@property (nonatomic, strong) UITextView *textView;
+@property (nonatomic,strong)  UILabel* label;
 @property (nonatomic,strong) UIButton* buttonDiscover;
 @property (nonatomic,strong) UIButton* buttonLists;
 @end
 
 @implementation EmptyListVC
 
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -42,8 +46,7 @@
                                     @selector(userPressedDiscoverButton:),
                                     1);
     
-    self.iv= makeImageView( self.view,  @"forkKnife");
-    _iv.contentMode= UIViewContentModeScaleAspectFit;
+    _label= makeIconLabel ( self.view,  @"q", kGeomForkImageSize);
     
     UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
     UIFont* lowerFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
@@ -80,12 +83,20 @@
     [ self.view setNeedsLayout ];
 }
 
+//------------------------------------------------------------------------------
+// Name:    userPressedListsButton
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)userPressedListsButton: (id) sender
 {
     CreateUsernameVC *vc= [[CreateUsernameVC  alloc] init];
     vc.view.backgroundColor= BLUE;
     [self.navigationController pushViewController:vc animated:YES];
 }
+//------------------------------------------------------------------------------
+// Name:    userPressedDiscoverButton
+// Purpose:
+//------------------------------------------------------------------------------
 
 - (void)userPressedDiscoverButton: (id) sender
 {
@@ -95,13 +106,14 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+//------------------------------------------------------------------------------
+// Name:    doLayout
+// Purpose:
+//------------------------------------------------------------------------------
 -(void) doLayout
 {
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
-    
-#define kGeomForkImageSize 80
-#define kGeomEmptyTextViewWidth 200
     
     [self.textView sizeToFit ];
     float heightForText= _textView.bounds.size.height;
@@ -111,7 +123,7 @@
     totalHeightNeeded += 3*spacer;
     
     float y= (h-totalHeightNeeded)/2;
-    _iv.frame= CGRectMake(0, y, w, kGeomForkImageSize);
+    _label.frame= CGRectMake(0, y, w, kGeomForkImageSize);
     y += kGeomForkImageSize+ spacer;
     
     _textView.frame=CGRectMake((w-kGeomEmptyTextViewWidth)/2, y, kGeomEmptyTextViewWidth, heightForText);
@@ -122,46 +134,42 @@
     
     _buttonLists.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;
-    
 }
 
-//-(void) layout
-//{
-//    [super layout];
-//    
-//    NSDictionary *metrics = @{@"buttonHeight":@(kGeomHeightButton),
-//                              @"width":@200.0,
-//                              @"margin":@(kGeomSpaceEdge),
-//                              @"spacing": @(kGeomSpaceInter)
-//                              };
-//    
-//    NSDictionary *views = NSDictionaryOfVariableBindings(_textView, _buttonDiscover, _buttonLists, _iv);
-//    
-//    [self.view addConstraints:
-//     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_iv]-[_textView]-[_buttonDiscover]-[_buttonLists]-|"
-//                                             options:NSLayoutFormatDirectionLeadingToTrailing
-//                                             metrics:metrics
-//                                               views:views]];
-//    
-//    [self.view addConstraints:
-//     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_textView]-|"
-//                                             options:NSLayoutFormatDirectionLeadingToTrailing
-//                                             metrics:metrics
-//                                               views:views]];
-//}
-
-- (void)didReceiveMemoryWarning
+-(void) layout
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [super layout];
+    
+    NSDictionary *metrics = @{@"buttonHeight":@(kGeomHeightButton),
+                              @"width":@200.0,
+                              @"margin":@(kGeomSpaceEdge),
+                              @"spacing": @(kGeomSpaceInter)
+                              };
+    
+    NSDictionary *views = NSDictionaryOfVariableBindings(_textView, _buttonDiscover, _buttonLists, _label);
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_label]-[_textView]-[_buttonDiscover]-[_buttonLists]-|"
+                                             options:NSLayoutFormatDirectionLeadingToTrailing
+                                             metrics:metrics
+                                               views:views]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_textView]-|"
+                                             options:NSLayoutFormatDirectionLeadingToTrailing
+                                             metrics:metrics
+                                               views:views]];
+    [self.view setNeedsLayout];
 }
 
 - (void) viewWillLayoutSubviews
 {
     [ super viewWillLayoutSubviews ];
-  
-//    [self layout];
+#if 0
+    [self layout];
+#else
     [self doLayout];
+#endif
 }
 
 @end

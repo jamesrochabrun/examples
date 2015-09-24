@@ -38,10 +38,12 @@
     if (revealViewController) {
         revealViewController.rearViewRevealWidth = self.view.frame.size.width - 60;
         [self.menu setTitle:kFontIconMenu];
-        [self.menu setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                           [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
-                                           [UIColor whiteColor], NSForegroundColorAttributeName,
-                                           nil] forState:UIControlStateNormal];
+        [self.menu setTitleTextAttributes: @{
+                                             NSFontAttributeName: [UIFont fontWithName:kFontIcons size:kGeomIconSize],
+                                             
+                                             NSForegroundColorAttributeName: WHITE,
+                                           }
+                                 forState:UIControlStateNormal];
         [self.menu setTarget: self.revealViewController];
         [self.menu setAction: @selector(revealToggle:)];
         [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
@@ -56,10 +58,12 @@
 
 }
 
-- (void)setNavTitle:(NavTitleObject *)navTitle {
+- (void)setNavTitle:(NavTitleObject *)navTitle
+{
     _navTitle = navTitle;
     _navTitleView.navTitle = _navTitle;
-    _navTitleView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame)-100 , 44);
+#define kMenuButtonWidth 42
+    _navTitleView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame) - kMenuButtonWidth*2, 44);
 }
 
 - (void)viewWillAppear:(BOOL)animated

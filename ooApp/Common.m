@@ -38,11 +38,21 @@ UIImageView* makeImageView (UIView *parent, NSString* imageName)
 
 UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
 {
-     UILabel* l= [ [ UILabel alloc ]init ];
+    UILabel* l= [ [ UILabel alloc ]init ];
     [ parent addSubview: l ];
     l.textAlignment= NSTextAlignmentCenter;
-   l.text=  text;
+    l.text=  text;
     l.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
+    return l;
+}
+
+UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize)
+{
+    UILabel* l= [ [ UILabel alloc ]init ];
+    [ parent addSubview: l ];
+    l.textAlignment= NSTextAlignmentCenter;
+    l.text=  text;
+    l.font= [UIFont fontWithName:@"oomami-icons" size: fontSize];
     return l;
 }
 

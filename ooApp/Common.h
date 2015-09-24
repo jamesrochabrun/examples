@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-void message (NSString *str);
+extern void message (NSString *str);
 
 extern NSString* kOOURL;
 extern NSString *getDateString();
@@ -16,3 +16,5 @@ extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  
 extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);
 extern UITextView* makeTextView (UIView*parent, UIColor *bg, BOOL editable);
+extern UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize);
+

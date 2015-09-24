@@ -27,6 +27,10 @@
     return self;
 }
 
+//------------------------------------------------------------------------------
+// Name:    getRestaurantsWithIDs
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*) getRestaurantsWithIDs:(NSArray *)restaurantIds
                                           success:(void(^)(NSArray *restaurants))success
                                           failure:(void (^)(NSError *))failure
@@ -46,6 +50,10 @@
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getRestaurantImageWithImageRef
+// Purpose:
+//------------------------------------------------------------------------------
 //
 // Only one of max width or max height is heeded. Preference is given to max width
 //
@@ -77,12 +85,15 @@
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getRestaurantsWithKeyword
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
                                               success:(void(^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure
 {
-    
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
     
@@ -102,6 +113,10 @@
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getUsersWithIDs
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs
                                    success:(void(^)(NSArray *users))success
                                    failure:(void (^)(NSError *))failure
@@ -121,6 +136,10 @@
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getDishesWithIDs
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs
                                     success:(void (^)(NSArray *dishes))success
                                     failure:(void (^)(NSError *))failure
@@ -140,6 +159,10 @@
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getListsOfUser
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getListsOfUser:(NSInteger)userid
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure
@@ -155,6 +178,50 @@
     return [rm GET:urlString parameters:nil success:success failure: failure];
 }
 
+//------------------------------------------------------------------------------
+// Name:    lookupUsername
+// Purpose: Ascertain whether a username is already in use.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation*)lookupUsername:(NSString*) string
+                                  success:(void (^)(NSArray *users))success
+                                  failure:(void (^)(NSError *))failure;
+{
+    if  (!string || !string.length) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/usernames/%@",
+                           kOOURL, string];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:success failure: failure];
+}
+
+//------------------------------------------------------------------------------
+// Name:    fetchSampleUsernames
+// Purpose: Ascertain whether a username is already in use.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation*)fetchSampleUsernamesFor:(NSString*) emailAddressString
+                                  success:(void (^)(NSArray *names))success
+                                  failure:(void (^)(NSError *))failure;
+{
+    if  (!emailAddressString || !emailAddressString.length) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/usernames?email=%@",
+                           kOOURL, emailAddressString];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:success failure: failure];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getRestaurantsWithListID
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getRestaurantsWithListID:( long) identifier
                                             success:(void (^)(NSArray *lists))success
                                             failure:(void (^)(NSError *))failure
@@ -167,6 +234,10 @@
     return [rm GET:urlString parameters:nil success:success failure: failure];
 }
 
+//------------------------------------------------------------------------------
+// Name:    addRestaurant
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant
                                  success:(void (^)(NSArray *dishes))success
                                  failure:(void (^)(NSError *))failure
@@ -185,16 +256,22 @@
     return op;
 }
 
+//------------------------------------------------------------------------------
+// Name:    addList
+// Purpose:
+//------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addList:(NSString *)listName
                             success:(void (^)(id response))success
                             failure:(void (^)(NSError *))failure;
 {
     if  (!listName) {
+        failure (nil);
         return nil;
     }
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSNumber*userid= userInfo.userID;
     if  (! userid) {
+        failure (nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];

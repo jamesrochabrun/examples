@@ -11,5 +11,4 @@
 #import "BaseVC.h"
 
 @interface CreateUsernameVC : BaseVC <UITextFieldDelegate>
-@property (nonatomic,strong) NSString* listName;
 @end

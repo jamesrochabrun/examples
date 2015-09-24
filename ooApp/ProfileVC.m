@@ -25,13 +25,22 @@
 @property (nonatomic, strong) UIButton *buttonNewListIcon;
 @property (nonatomic, assign) float spaceNeededForFirstCell;
 @property (nonatomic, assign) UINavigationController *navigationController;
+@end
+
+@interface ProfileTableFirstRow ()
 @property (nonatomic,assign) NSInteger  userID;
 @property (nonatomic,strong) UserObject* userInfo;
+@property (nonatomic,assign) BOOL viewingOwnProfile;
 @end
+
 
 @implementation ProfileTableFirstRow
 
-- (instancetype) init
+//------------------------------------------------------------------------------
+// Name:    initWithUserInfo:
+// Purpose:
+//------------------------------------------------------------------------------
+- (instancetype) initWithUserInfo: (UserObject*)u
 {
     self = [super init];
     if (self) {
@@ -41,6 +50,13 @@
         self.buttonNewList= makeButton(self,  @"NEW LIST", kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
         self.buttonNewListIcon= makeButton(self, @"b",kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
         [_buttonNewListIcon.titleLabel setFont: [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader]];
+        
+        _userInfo= u;
+        _userID= [u.userID integerValue];
+        
+        UserObject* userInfo= [Settings sharedInstance].userObject;
+        NSInteger ownUserIdentifier= [[userInfo userID ]  integerValue ];
+        _viewingOwnProfile= _userID==ownUserIdentifier;
         
         NSString* username= nil;
         if  (_userInfo.username.length ) {
@@ -65,6 +81,10 @@
     return self;
 }
 
+//------------------------------------------------------------------------------
+// Name:    userPressedNewList
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)userPressedNewList: (id) sender
 {
     if (!_navigationController) {
@@ -80,6 +100,10 @@
     [alert show];
 }
 
+//------------------------------------------------------------------------------
+// Name:    clickedButtonAtIndex
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if  (1==buttonIndex) {
@@ -100,6 +124,10 @@
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    userPressedFollow
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)userPressedFollow: (id) sender
 {
     if (!_navigationController) {
@@ -109,6 +137,10 @@
     message( @" user pressed follow");
 }
 
+//------------------------------------------------------------------------------
+// Name:    layoutsSubviews
+// Purpose:
+//------------------------------------------------------------------------------
 - ( void)layoutsSubviews
 {
     float w=  [UIScreen mainScreen].bounds.size.width;
@@ -140,10 +172,13 @@
     }
     
     // Place the follow button
-    if ( _userID >= 0) {
+    if (!_viewingOwnProfile) {
         _buttonFollow.frame=CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
         y += kGeomHeightButton + spacer;
+    } else {
+        _buttonFollow.hidden= YES;
     }
+    
     if  (y < bottomOfImage ) {
         y= bottomOfImage;
     }
@@ -162,6 +197,10 @@
     self.spaceNeededForFirstCell= y;
 }
 
+//------------------------------------------------------------------------------
+// Name:    neededHeight
+// Purpose:
+//------------------------------------------------------------------------------
 - (NSInteger)neededHeight
 {
     if  (!_spaceNeededForFirstCell) {
@@ -181,6 +220,10 @@
 @end
 
 @implementation ProfileVC
+//------------------------------------------------------------------------------
+// Name:    init
+// Purpose:
+//------------------------------------------------------------------------------
 - (instancetype) init
 {
     self = [super init];
@@ -190,6 +233,10 @@
     return self;
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -321,10 +368,8 @@
     
     self.view.backgroundColor= WHITE;
     
-    _headerCell=[[ProfileTableFirstRow  alloc] init];
+    _headerCell=[[ProfileTableFirstRow  alloc] initWithUserInfo:_profileOwner];
     _headerCell.navigationController= self.navigationController;
-    _headerCell.userID= _userID;
-    _headerCell.userInfo= _profileOwner;
     
     self.table= [UITableView new];
     self.table.delegate= self;
@@ -342,12 +387,10 @@
     [ self.view setNeedsLayout ];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
 - (void) viewWillLayoutSubviews
 {
     // NOTE:  this is just temporary
@@ -357,11 +400,19 @@
     self.table.frame=  self.view.bounds;
 }
 
+//------------------------------------------------------------------------------
+// Name:    getNumberOfLists
+// Purpose:
+//------------------------------------------------------------------------------
 - (int) getNumberOfLists
 {
     return self.lists.count;
 }
 
+//------------------------------------------------------------------------------
+// Name:    getNameOfList
+// Purpose:
+//------------------------------------------------------------------------------
 - (NSString*)getNameOfList: ( int) which
 {
     NSMutableArray* a= self.lists;
@@ -371,6 +422,10 @@
     return [a objectAtIndex: which ];
 }
 
+//------------------------------------------------------------------------------
+// Name:    heightForRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:( NSIndexPath *)indexPath
 {
     int row = indexPath.row;
@@ -381,14 +436,21 @@
     return kGeomHeightListRow;
 }
 
+//------------------------------------------------------------------------------
+// Name:    numberOfRowsInSection
+// Purpose:
+//------------------------------------------------------------------------------
 - ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return 1 + [self getNumberOfLists];
 }
 
+//------------------------------------------------------------------------------
+// Name:    cellForRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     static NSString *cellIdentifier = @"pcell";
     
     int row = indexPath.row;
