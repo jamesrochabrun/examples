@@ -40,8 +40,9 @@ UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
 {
      UILabel* l= [ [ UILabel alloc ]init ];
     [ parent addSubview: l ];
-    l.text=  text;
-    l.font= [UIFont systemFontOfSize:fontSize];
+    l.textAlignment= NSTextAlignmentCenter;
+   l.text=  text;
+    l.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
     return l;
 }
 
@@ -66,7 +67,7 @@ UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
     if  (title ) {
         [ button setTitle: title forState:UIControlStateNormal ];
-        button.titleLabel.font= [UIFont systemFontOfSize:fontSize];
+        button.titleLabel.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
     }
     if ( target && callback) {
         [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];

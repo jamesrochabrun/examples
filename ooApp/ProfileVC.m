@@ -177,7 +177,7 @@
 @property (nonatomic, strong) ProfileTableFirstRow* headerCell;
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) NSMutableArray *lists;
-@property (nonatomic,strong) UserObject *profileOwner;
+@property (nonatomic, strong) UserObject *profileOwner;
 @end
 
 @implementation ProfileVC
@@ -198,7 +198,7 @@
         UserObject* userInfo= [Settings sharedInstance].userObject;
         self.profileOwner=userInfo;
     } else {
-        
+        // NOTE: Whoever created this VC will have set the user ID.
     }
     
     _lists = [NSMutableArray array];

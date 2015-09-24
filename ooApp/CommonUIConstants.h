@@ -35,6 +35,9 @@ static NSUInteger kColorOffBlack = 0xff222222;
 static NSUInteger kColorOffWhite = 0xffDDDDDD;
 static NSUInteger kColorStripOverlay = 0x99000000;
 static NSUInteger kColorWhite = 0xffFFFFFF;
+static NSUInteger kColorRed = 0xffFF0000;
+static NSUInteger kColorGreen = 0xff00FF00;
+static NSUInteger kColorBlue = 0xff0000FF;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
@@ -83,5 +86,8 @@ extern NSString *const kFontIconWhatsNew;
 #define WHITE UIColorRGB(kColorWhite)
 #define GRAY UIColorRGB(kColorGray)
 #define CLEAR UIColorRGBA(kColorClear)
+#define RED UIColorRGB(kColorRed)
+#define GREEN UIColorRGB(kColorGreen)
+#define BLUE UIColorRGB(kColorBlue)
 
 #endif

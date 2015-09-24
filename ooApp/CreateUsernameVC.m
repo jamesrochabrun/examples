@@ -1,97 +1,101 @@
 //
-//  EmptyListVC.m
+//  CreateUsernameVC.m
 //  ooApp
 //
 //  Created by Zack Smith on 9/23/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "EmptyListVC.h"
+#import "CreateUsernameVC.h"
 #import "UserObject.h"
 #import "Settings.h"
 #import "Common.h"
 #import "ListTVCell.h"
 #import "OOAPI.h"
-#import "CreateUsernameVC.h"
 
-@interface EmptyListVC ()
+@interface CreateUsernameVC ()
 
-@property (nonatomic, strong)   UITextView *textView;
-@property (nonatomic,strong)  UIImageView* iv;
-@property (nonatomic,strong) UIButton* buttonDiscover;
-@property (nonatomic,strong) UIButton* buttonLists;
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UITextView *textView;
+@property (nonatomic,strong) UILabel* labelUsernameTaken;
+@property (nonatomic,strong) UITextField* fieldUsername;
+@property (nonatomic,strong) UIButton* buttonSignUp;
 @end
 
-@implementation EmptyListVC
+@implementation CreateUsernameVC
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-//    CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_name.font}];
-
     self.view.backgroundColor= WHITE;
     
-    self.buttonLists= makeButton( self.view,  @"LISTS", kGeomFontSizeHeader,
+    self.scrollView= [UIScrollView  new];
+    [self.view  addSubview: _scrollView ];
+    
+    self.buttonSignUp= makeButton( _scrollView,  @"SIGN UP", kGeomFontSizeHeader,
                                  BLACK, CLEAR, self,
-                                 @selector(userPressedListsButton:),
+                                 @selector(userPressedSignUpButton:),
                                  1);
     
-    self.buttonDiscover= makeButton( self.view,  @"DISCOVER", kGeomFontSizeHeader,
-                                    BLACK, CLEAR, self,
-                                    @selector(userPressedDiscoverButton:),
-                                    1);
+    self.fieldUsername= [ UITextField  new];
+    _fieldUsername.delegate= self;
+    _fieldUsername.backgroundColor= WHITE;
+    _fieldUsername.borderStyle= UITextBorderStyleLine;
+    [_scrollView addSubview: _fieldUsername];
     
-    self.iv= makeImageView( self.view,  @"forkKnife");
-    _iv.contentMode= UIViewContentModeScaleAspectFit;
-    
-    UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-    UIFont* lowerFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
+    self.labelUsernameTaken= makeLabel(_scrollView,  @"status: username is taken", kGeomFontSizeDetail);
+    self.labelUsernameTaken.textColor= RED;
+    UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader];
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
-    NSMutableAttributedString* aString= [NSMutableAttributedString  new];
-    NSAttributedString *upperString= [[NSAttributedString  alloc]
-                                      initWithString:@"This list needs some \rrestaurants.\r"
+    NSAttributedString *aString= [[NSAttributedString  alloc]
+                                      initWithString:@"We should put some introductory text here.\r"
                                       attributes: @{
                                                     NSFontAttributeName: upperFont,
                                                     NSParagraphStyleAttributeName:paragraphStyle
                                                     }];
     
-    NSAttributedString *lowerString= [[NSAttributedString  alloc]
-                                      initWithString: @"\rTap the icon next to a \rrestaurant you like, and select\rADD TO LIST."
-                                      attributes: @{
-                                                    NSFontAttributeName: lowerFont,
-                                                    NSParagraphStyleAttributeName:paragraphStyle
-                                                    }];
-    [aString appendAttributedString:upperString];
-    [aString appendAttributedString:lowerString];
-
-    self.textView=  makeTextView(self.view, CLEAR, NO);
+    self.textView=  makeTextView(_scrollView, CLEAR, NO);
     _textView.textColor= BLACK;
     _textView.attributedText= aString;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader: self.listName ?: @"Unnamed list"
+                           initWithHeader: self.listName ?: @"Missing list name"
                            subHeader:nil];
     [self setNavTitle:  nto];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+//    [ self.view setNeedsLayout ];
+}
+
+- (void)keyboardHidden: (id) foobar
+{
+    _scrollView.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+- (void)keyboardShown: (NSNotification*) not
+{
+    
+    _scrollView.contentInset= UIEdgeInsetsMake(0, 0, 100, 0);
     [ self.view setNeedsLayout ];
 }
 
-- (void)userPressedListsButton: (id) sender
+- (void)userPressedSignUpButton: (id) sender
 {
-    CreateUsernameVC *vc= [[CreateUsernameVC  alloc] init];
-    vc.view.backgroundColor= BLUE;
+    BaseVC *vc= [[BaseVC  alloc] init];
+    vc.view.backgroundColor= [ UIColor redColor];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)userPressedDiscoverButton: (id) sender
 {
     
-    CreateUsernameVC *vc= [[CreateUsernameVC  alloc] init];
-    vc.view.backgroundColor= GREEN;
+    BaseVC *vc= [[BaseVC  alloc] init];
+    vc.view.backgroundColor= [ UIColor yellowColor];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -102,27 +106,33 @@
     
 #define kGeomForkImageSize 80
 #define kGeomEmptyTextViewWidth 200
+#define kGeomEmptyTextFieldWidth 150
+
+    _scrollView.frame=  self.view.bounds;
+    _scrollView.scrollEnabled=  YES;
     
     [self.textView sizeToFit ];
     float heightForText= _textView.bounds.size.height;
     const float spacer=kGeomSpaceInter;
     
-    float totalHeightNeeded= heightForText+kGeomForkImageSize +2*kGeomHeightButton;
+    float totalHeightNeeded= heightForText+kGeomForkImageSize +3*kGeomHeightButton;
     totalHeightNeeded += 3*spacer;
     
     float y= (h-totalHeightNeeded)/2;
-    _iv.frame= CGRectMake(0, y, w, kGeomForkImageSize);
-    y += kGeomForkImageSize+ spacer;
-    
+
     _textView.frame=CGRectMake((w-kGeomEmptyTextViewWidth)/2, y, kGeomEmptyTextViewWidth, heightForText);
     y+= heightForText+ spacer;
+   
+    _fieldUsername.frame= CGRectMake((w-kGeomEmptyTextFieldWidth)/2, y, kGeomEmptyTextFieldWidth, kGeomHeightButton);
+    y += kGeomHeightButton + spacer;
     
-    _buttonDiscover.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
+    _labelUsernameTaken.frame=CGRectMake (0,y,w,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;
     
-    _buttonLists.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
+    _buttonSignUp.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;
     
+    _scrollView.contentSize= CGSizeMake(w-1, y);
 }
 
 //-(void) layout
