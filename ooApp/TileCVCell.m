@@ -28,7 +28,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = UIColorRGBA(kColorOffBlack);
+        self.backgroundColor = UIColorRGBA(kColorWhite);
         _name = [[UILabel alloc] init];
         _distance = [[UILabel alloc] init];
         _rating = [[UILabel alloc] init];

@@ -19,11 +19,11 @@
 // App colors
 static NSUInteger kColorBlack = 0x000000FF;
 static NSUInteger kColorButtonSelected = 0x0000FFFF;
-static NSUInteger kColorCellSelected = 0x330000FF;
+static NSUInteger kColorCellSelected = 0xD0F2FFFF;
 static NSUInteger kColorClear = 0x00000000;
 static NSUInteger kColorGray = 0x555555FF;
 static NSUInteger kColorGrayMiddle = 0xB2B2B2FF;
-static NSUInteger kColorNavBar = 0x000000FF;
+static NSUInteger kColorNavBar = 0xFFFFFFFF;
 static NSUInteger kColorNavyBlue = 0x000080FF;
 static NSUInteger kColorOffBlack = 0x222222FF;
 static NSUInteger kColorOffWhite = 0xDDDDDDFF;

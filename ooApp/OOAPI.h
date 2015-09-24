@@ -10,6 +10,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "OONetworkManager.h"
 #import "RestaurantObject.h"
+#import "ListObject.h"
 #import "ImageRefObject.h"
 #import "UIImageView+AFNetworking.h"
 
@@ -28,9 +29,7 @@
 - (AFHTTPRequestOperation *)getDishesWithIDs:(NSArray *)dishIDs success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 
 /* Create */
-
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
-- (AFHTTPRequestOperation *)addList:(RestaurantObject *)restaurant success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
-
+- (AFHTTPRequestOperation*)addList:(ListObject *)list success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure;
 
 @end

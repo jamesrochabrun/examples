@@ -7,7 +7,6 @@
 //
 
 #import "OOAPI.h"
-#import "RestaurantObject.h"
 #import "UserObject.h"
 #import "Common.h"
 
@@ -133,6 +132,20 @@
     NSString *URL = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     
     AFHTTPRequestOperation *op = [rm POST:URL parameters:[RestaurantObject dictFromRestaurant:restaurant] success:^(id responseObject) {
+        ;
+    } failure:^(NSError *error) {
+        failure(error);
+    }];
+    
+    return op;
+}
+
+- (AFHTTPRequestOperation*)addList:(ListObject *)list success:(void (^)(NSArray *dishes))success failure:(void (^)(NSError *))failure
+{
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *URL = [NSString stringWithFormat:@"https://%@/lists", [self ooURL]];
+    
+    AFHTTPRequestOperation *op = [rm POST:URL parameters:[ListObject dictFromList:list] success:^(id responseObject) {
         ;
     } failure:^(NSError *error) {
         failure(error);

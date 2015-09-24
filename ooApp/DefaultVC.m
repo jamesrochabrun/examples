@@ -10,6 +10,7 @@
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
+#import "ListObject.h"
 
 @interface DefaultVC ()
 
@@ -49,42 +50,43 @@
 }
 
 - (void)testAPI {
-    OOAPI *api = [[OOAPI alloc] init];
+//    OOAPI *api = [[OOAPI alloc] init];
+//
+//    [api getRestaurantsWithIDs:nil success:^(NSArray *r) {
+//        _restaurants = r;
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self printRestaurants];
+//        });
+//    } failure:^(NSError *err) {
+//        ;
+//    }];
+//    
+//    [api getUsersWithIDs:nil success:^(NSArray *r) {
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [r enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//                UserObject *user =  (UserObject *)obj;
+//                NSLog(@"id = %@ user = %@ %@ email=%@", user.userID, user.firstName, user.lastName, user.email);
+//            }];
+//        });
+//    } failure:^(NSError *err) {
+//        ;
+//    }];
+//    
+//    [api getDishesWithIDs:nil success:^(NSArray *r) {
+//        
+//    } failure:^(NSError *err) {
+//        ;
+//    }];
     
-    [api getRestaurantsWithIDs:nil success:^(NSArray *r) {
-        _restaurants = r;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self printRestaurants];
-        });
-    } failure:^(NSError *err) {
-        ;
-    }];
-    
-    [api getUsersWithIDs:nil success:^(NSArray *r) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [r enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                UserObject *user =  (UserObject *)obj;
-                NSLog(@"id = %@ user = %@ %@ email=%@", user.userID, user.firstName, user.lastName, user.email);
-            }];
-        });
-    } failure:^(NSError *err) {
-        ;
-    }];
-    
-    [api getDishesWithIDs:nil success:^(NSArray *r) {
-        
-    } failure:^(NSError *err) {
-        ;
-    }];
-    
-    RestaurantObject *restaurant = [[RestaurantObject alloc] init];
-    restaurant.name = @"Papalote";
-    //    [api addRestaurant:restaurant success:^(NSArray *dishes) {
-    //        ;
-    //    } failure:^(NSError *error) {
-    //        ;
-    //    }];
+//    ListObject *list = [[ListObject alloc] init];
+//    list.name = @"Anuj's list";
+//    list.type = @"user";
+//    [api addList:list success:^(NSArray *dishes) {
+//        ;
+//    } failure:^(NSError *error) {
+//        ;
+//    }];
 }
 
 - (void)printRestaurants {

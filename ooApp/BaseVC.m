@@ -29,7 +29,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = UIColorRGBA(kColorGray);
+    self.view.backgroundColor = UIColorRGBA(kColorWhite);
 
     _menu = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _menu;
@@ -40,7 +40,7 @@
         [self.menu setTitle:kFontIconMenu];
         [self.menu setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                            [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
-                                           [UIColor whiteColor], NSForegroundColorAttributeName,
+                                           UIColorRGB(kColorBlack), NSForegroundColorAttributeName,
                                            nil] forState:UIControlStateNormal];
         [self.menu setTarget: self.revealViewController];
         [self.menu setAction: @selector(revealToggle:)];

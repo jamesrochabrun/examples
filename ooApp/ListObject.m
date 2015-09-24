@@ -8,6 +8,9 @@
 
 #import "ListObject.h"
 
+NSString *const kKeyListName = @"name";
+NSString *const kKeyListType = @"type";
+
 @implementation ListObject
 
 -(instancetype)init {
@@ -19,14 +22,16 @@
 
 + (ListObject *)listFromDict:(NSDictionary *)dict {
     ListObject *list = [[ListObject alloc] init];
-    
+    list.name = [dict objectForKey:kKeyListName];
+    list.type = [dict objectForKey:kKeyListType];
     return list;
 }
 
 + (NSDictionary *)dictFromList:(ListObject *)list {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    
-    return dict;
+    return @{
+             kKeyListName : list.name?: @"",
+             kKeyListType : list.type ?: @""
+             };
 }
 
 @end

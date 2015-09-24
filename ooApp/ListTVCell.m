@@ -42,7 +42,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _requestOperation = nil;
         _listItem = [[ListObject alloc] init];
         _name = [[UILabel alloc] init];
-        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorBlack backgroundColor:kColorClear];
         
         _cvl = [[ListCVFL alloc] init];
         [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
@@ -56,7 +56,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _name.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = UIColorRGBA(kColorOffBlack);
+        self.backgroundColor = UIColorRGBA(kColorWhite);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
         [self layout];
@@ -193,7 +193,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     if (!_collectionView) {
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightListRow-kGeomHeightListCell, self.frame.size.width, self.frame.size.height-(kGeomHeightListRow-kGeomHeightListCell)) collectionViewLayout:_cvl];
         [_collectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
-        _collectionView.backgroundColor = UIColorRGBA(kColorOffBlack);
+        _collectionView.backgroundColor = UIColorRGBA(kColorWhite);
         [self addSubview:_collectionView];
         [self bringSubviewToFront:_name];
     }
@@ -206,7 +206,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         [_fcvl setItemSize:CGSizeMake(self.frame.size.width-2*kGeomSpaceEdge, kGeomHeightFeaturedCellHeight)];
         _featuredCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight, self.frame.size.width, self.frame.size.height-(kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight)) collectionViewLayout:_fcvl];
         [_featuredCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:FeaturedRestaurantCellIdentifier];
-        _featuredCollectionView.backgroundColor = UIColorRGBA(kColorOffBlack);
+        _featuredCollectionView.backgroundColor = UIColorRGBA(kColorWhite);
         _featuredCollectionView.pagingEnabled = YES;
         [self addSubview:_featuredCollectionView];
         [self bringSubviewToFront:_name];
