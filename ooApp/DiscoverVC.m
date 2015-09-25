@@ -7,25 +7,29 @@
 //
 
 #import "DiscoverVC.h"
+#import <GoogleMaps/GoogleMaps.h>
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
-#import "ListTVCell.h"
+#import "RestaurantHTVCell.h"
 #import "DebugUtilities.h"
 #import "Settings.h"
 #import "LocationManager.h"
 #import "HorizontalListVC.h"
 
+
 @interface DiscoverVC ()
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) NSMutableArray *lists;
+@property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) GMSMapView *mapView;
+@property (nonatomic, strong) GMSCameraPosition *camera;
 
 @end
 
-static NSString * const ListRowID = @"ListRowCell";
-static NSString * const FeaturedRowID = @"FeaturedRowCell";
+static NSString * const ListRowID = @"HLRCell";
 
 @implementation DiscoverVC
 
@@ -39,110 +43,46 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     _tableView.dataSource = self;
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableView.rowHeight = kGeomHeightHorizontalListRow;
     
-    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:ListRowID];
-    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:FeaturedRowID];
+    [_tableView registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:ListRowID];
+    
+    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:19 bearing:0 viewingAngle:1];
+
+    _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
+    _mapView.mapType = kGMSTypeNormal;
+    _mapView.myLocationEnabled = YES;
+    _mapView.settings.myLocationButton = YES;
+    _mapView.settings.scrollGestures = YES;
+    _mapView.settings.zoomGestures = YES;
+
+    [_mapView setMinZoom:3 maxZoom:15];
+    
+    _mapView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_mapView];
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
     self.navTitle = nto;
-    
-    _lists = [NSMutableArray array];
-    ListObject *list;
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Featured";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Thai";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Chinese";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Vegetarian";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Burgers";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Vietnamese";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"New";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mexican";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Peruvian";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Delivery";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Date Night";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Party";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Drinks";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mediterranean";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Steak";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Indian";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Tandoor";
-    [_lists addObject:list];
-    
     [self layout];
 }
 
--(void)layout {
+- (void)layout {
     [super layout];
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_mapView(300)]-[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    [_tableView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -168,60 +108,9 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 - (void)updateLocation
 {
     self.currentLocation = [[LocationManager sharedInstance] currentUserLocation];
+    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:_camera.zoom bearing:_camera.bearing viewingAngle:_camera.viewingAngle];
+    [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
 }
-
-//- (void)testAPI
-//{
-//    OOAPI *api = [[OOAPI alloc] init];
-//    
-//    [self updateLocation];
-//
-//    CLLocationCoordinate2D locationToUse= self.currentLocation;
-//   
-//    if (0 == locationToUse.longitude) {
-//        // RULE: 
-//        float latitude, longitude;
-//        //  San Francisco
-//        latitude=37.7833;
-//        longitude= -122.4167;
-//        locationToUse= CLLocationCoordinate2DMake(latitude, longitude);
-//    }
-//    
-//    [api getRestaurantsWithKeyword:@"thai" andLocation:locationToUse success:^(NSArray *r) {
-//        _restaurants = r;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self printRestaurants];
-//        });
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    [api getUsersWithIDs:nil success:^(NSArray *r) {
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [r enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-//                UserObject *user =  (UserObject *)obj;
-//                NSLog(@"id = %@ user = %@ %@ email=%@", user.userID, user.firstName, user.lastName, user.email);
-//            }];
-//        });
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    [api getDishesWithIDs:nil success:^(NSArray *r) {
-//        
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    RestaurantObject *restaurant = [[RestaurantObject alloc] init];
-//    restaurant.name = @"Papalote";
-//    //    [api addRestaurant:restaurant success:^(NSArray *dishes) {
-//    //        ;
-//    //    } failure:^(NSError *error) {
-//    //        ;
-//    //    }];
-//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -232,32 +121,16 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 #pragma table view delegates/datasources
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ListObject *list = [_lists objectAtIndex:indexPath.row];
+    RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
     
-    ListTVCell *cell;
+    RestaurantHTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     
-    if (list.listType == kListTypeFeatured) {
-        cell = [tableView dequeueReusableCellWithIdentifier:FeaturedRowID forIndexPath:indexPath];
-    } else {
-        cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
-    }
+    cell.restaurant = ro;
     
-    cell.navigationController = self.navigationController;
-    cell.listItem = list;
+    GMSMarker *marker = [[GMSMarker alloc] init];
+    marker.position = ro.location;
+    marker.map = _mapView;
     return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    CGFloat height = 0;
-    ListObject *lo = [_lists objectAtIndex:indexPath.row];
-    
-    if (lo.listType == kListTypeFeatured) {
-        height = kGeomHeightFeaturedRow;
-    } else {
-        height = kGeomHeightStripListRow;
-    }
-    return height;
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -265,9 +138,36 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     
 }
 
+- (void)getRestaurants
+{
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    __weak DiscoverVC *weakSelf=self;
+    _requestOperation = [api getRestaurantsWithKeyword:@"restaurant" andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
+        weakSelf.restaurants = r;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf gotRestaurants];
+        });
+    } failure:^(NSError *err) {
+        ;
+    }];
+}
+
+- (void)gotRestaurants
+{
+    NSLog(@"%tu", [_restaurants count]);
+    if (![_restaurants count]) {
+        NSLog (@"Received no restaurants.");
+    }
+    //    [self addSubview:_collectionView];
+    [_tableView reloadData];
+    
+    //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ListObject *item = [_lists objectAtIndex:indexPath.row];
+    ListObject *item = [_restaurants objectAtIndex:indexPath.row];
     
     HorizontalListVC *vc = [[HorizontalListVC alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
@@ -283,7 +183,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_lists count];
+    return [_restaurants count];
 }
 
 @end

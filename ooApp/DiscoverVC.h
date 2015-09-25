@@ -11,5 +11,7 @@
 
 @interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 
+- (void)getRestaurants;
+
 @end
 

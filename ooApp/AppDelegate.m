@@ -12,6 +12,7 @@
 #import "LoginVC.h"
 #import "Settings.h"
 #import "LocationManager.h"
+#import <GoogleMaps/GoogleMaps.h>
 
 @interface AppDelegate ()
 
@@ -38,6 +39,7 @@
 //    }
     
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
+    [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];

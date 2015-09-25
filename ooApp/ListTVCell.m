@@ -44,7 +44,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _listItem = [[ListObject alloc] init];
         
         _line = [[UIView alloc] init];
-        _line.backgroundColor = UIColorRGBA(kColorOffBlack);
+        _line.backgroundColor = UIColorRGBA(kColorOffWhite);
         
         _name = [[UILabel alloc] init];
         [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorBlack backgroundColor:kColorClear];
