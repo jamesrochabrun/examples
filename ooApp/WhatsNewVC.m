@@ -140,20 +140,19 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    [_tableView reloadData];
 }
 
-- (void) viewDidAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
     [self verifyTrackingIsOkay];
 }
 
-- (void) verifyTrackingIsOkay
+- (void)verifyTrackingIsOkay
 {
     if (0==self.currentLocation.longitude) {
         TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation ];

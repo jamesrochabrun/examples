@@ -19,7 +19,7 @@ NSString *const kKeyRestaurantOpenNow = @"open_now";
 @implementation RestaurantObject
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
-    NSLog(@"dict=%@", dict);
+//    NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
     restaurant.name = [dict objectForKey:kKeyRestaurantName];
     restaurant.rating = [dict objectForKey:kKeyRestaurantRating];

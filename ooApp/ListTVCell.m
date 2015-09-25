@@ -78,8 +78,9 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     // NOTE:  for some reason this is not been called.
     
     [super prepareForReuse];
-//    self.listItem = nil;
-//    self.name.text =  nil;
+    
+    self.listItem = nil;
+    self.name.text =  nil;
     
     // AFNetworking
     [self.requestOperation cancel];
@@ -116,7 +117,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     _listItem = listItem;
     _name.text = [listItem.name uppercaseString];
     _restaurants = nil;
-    [self getRestaurants];
+    if (listItem)
+        [self getRestaurants];
 }
 
 - (void)getRestaurants
