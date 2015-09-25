@@ -126,10 +126,8 @@ static NSString * const ListRowID = @"HLRCell";
     RestaurantHTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     
     cell.restaurant = ro;
+    cell.marker.map = _mapView;
     
-    GMSMarker *marker = [[GMSMarker alloc] init];
-    marker.position = ro.location;
-    marker.map = _mapView;
     return cell;
 }
 

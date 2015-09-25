@@ -8,9 +8,11 @@
 
 #import "HorizonalTVCell.h"
 #import "RestaurantObject.h"
+#import <GoogleMaps/GoogleMaps.h>
 
 @interface RestaurantHTVCell : HorizonalTVCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
+@property (nonatomic, strong) GMSMarker *marker;
 
 @end
