@@ -28,7 +28,10 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.    
- 
+    
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Diagnostics" subHeader: @"& Testing"];
+    self.navTitle = nto;
+    
     self.view.backgroundColor= [UIColor lightGrayColor];
     _textviewDiagnosticLog= makeTextView(self.view, WHITE, NO);
     _textviewDiagnosticLog.layer.borderColor= GRAY.CGColor;
@@ -68,6 +71,7 @@
 - (void)doClearCache: (id) sender
 {
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    message( @"Cleared.");
 }
 
 //------------------------------------------------------------------------------
