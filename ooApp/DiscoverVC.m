@@ -15,7 +15,7 @@
 #import "DebugUtilities.h"
 #import "Settings.h"
 #import "LocationManager.h"
-#import "HorizontalListVC.h"
+#import "RestaurantVC.h"
 
 
 @interface DiscoverVC ()
@@ -165,13 +165,15 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ListObject *item = [_restaurants objectAtIndex:indexPath.row];
+    RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
     
-    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
-    vc.title = item.name;
-    vc.listItem = item;
-    [vc getRestaurants];
+    vc.title = ro.name;
+    vc.restaurant = ro;
+    [vc getRestaurant];
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

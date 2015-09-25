@@ -34,6 +34,10 @@
     self.navTitle = nto;
 }
 
+- (void)getRestaurant {
+    
+}
+
 /*
 #pragma mark - Navigation
 
