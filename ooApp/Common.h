@@ -6,9 +6,15 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+#ifndef _COMMON_H
+#define _COMMON_H
+
+@class AppDelegate;
+#define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
+
 extern void message (NSString *str);
 
-extern NSString* kOOURL;
+extern NSString*const kOOURL;
 extern NSString *getDateString();
 
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
@@ -18,3 +24,4 @@ extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);
 extern UITextView* makeTextView (UIView*parent, UIColor *bg, BOOL editable);
 extern UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize);
 
+#endif

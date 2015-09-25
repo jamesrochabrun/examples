@@ -20,9 +20,17 @@
 @property (nonatomic,strong) UILabel* labelUsernameTaken;
 @property (nonatomic,strong) UITextField* fieldUsername;
 @property (nonatomic,strong) UIButton* buttonSignUp;
+@property (nonatomic,strong) NSMutableArray* arrayOfSuggestions;
+@property (nonatomic,strong) UITableView* tableOfSuggestions;
 @end
 
 @implementation CreateUsernameVC
+#define SUGGESTED_TABLE_REUSE_IDENTIFIER @"suggested"
+
+- (void)dealloc
+{
+    self.arrayOfSuggestions= nil;
+}
 
 //------------------------------------------------------------------------------
 // Name:    viewWillDisappear
@@ -42,6 +50,8 @@
 {
     [super viewDidLoad];
     
+    _arrayOfSuggestions=[NSMutableArray new];
+
     self.view.backgroundColor= WHITE;
     
     self.scrollView= [UIScrollView  new];
@@ -52,6 +62,12 @@
                                  @selector(userPressedSignUpButton:),
                                  1);
     
+    self.tableOfSuggestions=[UITableView new];
+    _tableOfSuggestions.delegate=self;
+    _tableOfSuggestions.dataSource=self;
+    [_tableOfSuggestions registerClass:[UITableViewCell class] forCellReuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER];
+    [self.view addSubview:_tableOfSuggestions];
+    
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
     _fieldUsername.backgroundColor= WHITE;
@@ -59,6 +75,7 @@
     _fieldUsername.borderStyle= UITextBorderStyleLine;
     _fieldUsername.textAlignment= NSTextAlignmentCenter;
     [_scrollView addSubview: _fieldUsername];
+    _fieldUsername.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     self.labelUsernameTaken= makeLabel(_scrollView,  @"status: username is taken", kGeomFontSizeDetail);
     self.labelUsernameTaken.textColor= RED;
@@ -90,14 +107,25 @@
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* emailAddressString= userInfo.email;
+    __weak CreateUsernameVC *weakSelf= self;
+    
     [OOAPI fetchSampleUsernamesFor:emailAddressString
                            success:^(NSArray *names) {
                                NSLog  (@"SERVER PROVIDED SAMPLE USERNAMES:  %@",names);
+                               [weakSelf.arrayOfSuggestions removeAllObjects];
+                               for (NSString* string  in  names) {
+                                   [weakSelf.arrayOfSuggestions addObject: string];
+                               }
+                               [weakSelf performSelectorOnMainThread:@selector(refreshTable) withObject:nil waitUntilDone:NO ];
                            } failure:^(NSError *e) {
                                NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
                            }];
 }
 
+- (void)refreshTable
+{
+    [self.tableOfSuggestions reloadData];
+}
 
 //------------------------------------------------------------------------------
 // Name:    shouldChangeCharactersInRange
@@ -121,6 +149,56 @@
         }
     }
     return YES;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell;
+    cell = [tableView dequeueReusableCellWithIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    if (!cell) {
+        cell=  [[UITableViewCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER ];
+    }
+    NSString* name= nil;
+    int  row= indexPath.row;
+    @synchronized(_arrayOfSuggestions) {
+        if  ( row  < _arrayOfSuggestions.count) {
+            name=  _arrayOfSuggestions[row];
+        }
+    }
+    cell.textLabel.text= name;
+    return cell;
+}
+
+- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return  @"Sample usernames";
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 44;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString* name= nil;
+    int  row= indexPath.row;
+    @synchronized(_arrayOfSuggestions) {
+        if  ( row  < _arrayOfSuggestions.count) {
+            name=  _arrayOfSuggestions[row];
+        }
+    }
+    if ( name) {
+        _fieldUsername.text= name;
+    }
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
+{
+    @synchronized(_arrayOfSuggestions) {
+        NSInteger  total=  _arrayOfSuggestions.count;
+        return  total;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -286,6 +364,8 @@
     
     [self.textView sizeToFit ];
     float heightForText= _textView.bounds.size.height;
+    
+//    const float margin=kGeomSpaceEdge;
     const float spacer=kGeomSpaceInter;
     
     float totalHeightNeeded= heightForText+kGeomForkImageSize +3*kGeomHeightButton;
@@ -298,6 +378,9 @@
    
     _fieldUsername.frame= CGRectMake((w-kGeomEmptyTextFieldWidth)/2, y, kGeomEmptyTextFieldWidth, kGeomHeightButton);
     y += kGeomHeightButton + spacer;
+    
+    _tableOfSuggestions.frame= CGRectMake( (w-kGeomSampleUsernameTableWidth )/2,y,kGeomSampleUsernameTableWidth,kGeomSampleUsernameTableHeight);
+    y += spacer + kGeomSampleUsernameTableHeight;
     
     _labelUsernameTaken.frame=CGRectMake (0,y,w,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;

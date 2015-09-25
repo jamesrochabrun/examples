@@ -21,6 +21,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#ifdef DEBUG
+    self.diagnosticLogString= [NSMutableString new ];
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString *applicationName = [infoDictionary objectForKey:@"CFBundleName"];
+    NSString *majorVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+    NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
+
+    [_diagnosticLogString appendFormat:  @"%@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
+#endif
+    
     // Override point for customization after application launch.
     NSLog(@"application finished launching");
 //    [DebugUtilities displayAllFonts];
@@ -32,11 +42,8 @@
     
     CLLocationCoordinate2D location= [[Settings sharedInstance] mostRecentLocation ];
     NSLog  (@"Last known location: %g,%g", location.latitude,location.longitude);
-    
-//    if (![[UIApplication sharedApplication] canOpenURL: [NSURL URLWithString:@"fb927463500628206://foo.com"]]) {
-//        NSLog (@"THIS APPLICATION CANNOT OPEN THE SCHEME fb927463500628206");
-//    }
-    
+    [_diagnosticLogString appendFormat: @"LAST LOCATION: %.6g,%.6g\r", location.latitude,location.longitude];
+
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
     
     return [[FBSDKApplicationDelegate sharedInstance] application:application
@@ -45,8 +52,6 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    NSLog (@"OPEN URL  %@",url);
-
     if ([[FBSDKApplicationDelegate sharedInstance] application:application
                                                           openURL:url
                                                 sourceApplication:sourceApplication
@@ -89,6 +94,13 @@
 {
     [[Settings sharedInstance]  save ];
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
+    [[Settings sharedInstance]  save ];
+
+    [_diagnosticLogString appendString: @"MEMORY WARNING\r"];
 }
 
 @end

@@ -8,6 +8,7 @@
 
 #import "MenuObject.h"
 
+NSString *const kMenuItemDiagnostic = @"diagnostic";
 NSString *const kMenuItemPlay = @"play";
 NSString *const kMenuItemConnect = @"connect";
 NSString *const kMenuItemProfile = @"profile";

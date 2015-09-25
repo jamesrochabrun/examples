@@ -197,6 +197,28 @@
 }
 
 //------------------------------------------------------------------------------
+// Name:    clearUsernameOf
+// Purpose: For testing.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
+                                   failure:(void (^)(NSError *))failure;
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber* userid= userInfo.userID;
+    
+    NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%@",
+                   kOOURL, userid];
+    
+    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+    
+    return [[OONetworkManager sharedRequestManager] PUT: requestString
+                                      parameters: @{
+                                                     @"username": @""
+                                                    }
+                                                success: success  failure: failure];
+}
+
+//------------------------------------------------------------------------------
 // Name:    fetchSampleUsernames
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
@@ -276,7 +298,7 @@
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists", kOOURL];
     NSDictionary*parameters=  @{
                                  @"name": listName,
-                                  @"type":  @"system",
+                                  @"type":  @2,
                                   @"user": userid
                                 };
     AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters

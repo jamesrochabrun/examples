@@ -118,7 +118,8 @@
                  [self.navigationController pushViewController:vc animated:YES];
              }
              failure:^(NSError * error) {
-                 message( @"response from backend to creation of list produced error.");
+                 NSString *s=[NSString stringWithFormat:@"Error from cloud: %@",error.localizedDescription];
+                 message(s);
              }
          ];
     }

@@ -16,6 +16,7 @@
 #import "DefaultVC.h"
 #import "PlayVC.h"
 #import "DiscoverVC.h"
+#import "DiagnosticVC.h"
 
 @interface MenuTVC ()
 
@@ -75,6 +76,14 @@
     menuItem.name = @"SETTINGS";
     menuItem.type = kMenuItemSettings;
     [_menuItems addObject:menuItem];
+
+#ifdef DEBUG
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconSettings;
+    menuItem.name = @"DIAGNOSTICS";
+    menuItem.type = kMenuItemDiagnostic;
+    [_menuItems addObject:menuItem];
+#endif
     
     self.tableView.layoutMargins = UIEdgeInsetsZero;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -183,6 +192,8 @@
         fvc = [[DiscoverVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
         fvc = [[PlayVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {
+        fvc = [[DiagnosticVC alloc] init];
     } else {
         //TODO AUG: fill in other cases
         fvc = [[DefaultVC alloc] init];

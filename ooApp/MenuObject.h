@@ -17,6 +17,7 @@ extern NSString *const kMenuItemEat;
 extern NSString *const kMenuItemMeet;
 extern NSString *const kMenuItemSettings;
 extern NSString *const kMenuItemSearch;
+extern NSString *const kMenuItemDiagnostic;
 
 @interface MenuObject : NSObject
 

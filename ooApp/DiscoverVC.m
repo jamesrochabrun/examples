@@ -15,6 +15,7 @@
 #import "Settings.h"
 #import "LocationManager.h"
 #import "HorizontalListVC.h"
+#import "Common.h"
 
 @interface DiscoverVC ()
 

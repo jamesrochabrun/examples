@@ -134,11 +134,13 @@
         int j= [((NSNumber*) value) intValue];
         if  (i != j ) {
             NSLog  (@"USER ID HAS CHANGED");
-        }
+            [APP.diagnosticLogString appendFormat: @"USER ID: %@\r",value ];
+       }
     }
     
     userInfo.userID= value;
     [[Settings sharedInstance]save ];
+
 }
 
 //------------------------------------------------------------------------------
@@ -166,7 +168,10 @@
         return;
     }
     UserObject* userInfo= [Settings sharedInstance].userObject;
-    userInfo.backendAuthorizationToken= value;
+    if (!userInfo.backendAuthorizationToken || ![userInfo.backendAuthorizationToken isEqualToString: value]) {
+        userInfo.backendAuthorizationToken= value;
+        [APP.diagnosticLogString appendFormat: @"TOKEN: %@\r",value ];
+    }
 }
 
 
@@ -186,32 +191,32 @@
                                            id result,
                                            NSError *error)
      {
-    if (!error) {
-        NSString* gender=nil;
-        NSString* email=nil;
-        
-        if ([result isKindOfClass: [NSDictionary  class] ] ) {
-            NSDictionary*d= (NSDictionary*)result;
-            gender= d [ @"gender"];
-            email= d [ @"email"];
-        }
-        NSLog(@"OBTAINED EMAIL FROM FACEBOOK IN ORDER TO GET AUTHORIZATION TOKEN: %@",email);
-        
-        UserObject* userInfo= [Settings sharedInstance].userObject;
-        userInfo.email= email;
-        
-        // NOTE  if the Facebook server gave us the username then use it.
-        [weakSelf performSelectorOnMainThread: @selector(showMainUIForUserWithEmail:) withObject:email waitUntilDone:NO   ];
-        
-    } else {
-        NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
-        
-        // NOTE: If we reach this point, the backend knows about the user but
-        //  the Facebook server may be down.
-        // QUESTION: What to do in that case?
-    }
-}
-];
+         if (!error) {
+             NSString* gender=nil;
+             NSString* email=nil;
+             
+             if ([result isKindOfClass: [NSDictionary  class] ] ) {
+                 NSDictionary*d= (NSDictionary*)result;
+                 gender= d [ @"gender"];
+                 email= d [ @"email"];
+             }
+             NSLog(@"OBTAINED EMAIL FROM FACEBOOK IN ORDER TO GET AUTHORIZATION TOKEN: %@",email);
+             
+             UserObject* userInfo= [Settings sharedInstance].userObject;
+             userInfo.email= email;
+             
+             // NOTE  if the Facebook server gave us the username then use it.
+             [weakSelf performSelectorOnMainThread: @selector(showMainUIForUserWithEmail:) withObject:email waitUntilDone:NO   ];
+             
+         } else {
+             NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
+             
+             // NOTE: If we reach this point, the backend knows about the user but
+             //  the Facebook server may be down.
+             // QUESTION: What to do in that case?
+         }
+     }
+     ];
 }
 
 //------------------------------------------------------------------------------

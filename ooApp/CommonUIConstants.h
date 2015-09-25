@@ -65,6 +65,8 @@ static float  kGeomEmptyTextFieldWidth=  150;
 static float kGeomLogoWidth=  200;
 static float kGeomLogoHeight=  100;
 static float kGeomLoginVerticalDisplacement=  75;
+static float kGeomSampleUsernameTableHeight=  175;
+static int kGeomSampleUsernameTableWidth=  175/.62;
 
 // Images
 extern NSString *const kImageNoProfileImage;

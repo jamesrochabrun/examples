@@ -81,6 +81,7 @@
 		962303751BB33D2700278FA6 /* forkKnife.png in Resources */ = {isa = PBXBuildFile; fileRef = 962303741BB33D2700278FA6 /* forkKnife.png */; settings = {ASSET_TAGS = (); }; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
+		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; settings = {ASSET_TAGS = (); }; };
 		96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */; settings = {ASSET_TAGS = (); }; };
 		96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D175B91BA76926000C88AC /* NSString+MD5.m */; };
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
@@ -219,6 +220,8 @@
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
+		967124941BB5E6A900F28904 /* DiagnosticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticVC.h; sourceTree = "<group>"; };
+		967124951BB5E6A900F28904 /* DiagnosticVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiagnosticVC.m; sourceTree = "<group>"; };
 		96BF31211BB36C4D002BFDD2 /* CreateUsernameVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateUsernameVC.h; sourceTree = "<group>"; };
 		96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateUsernameVC.m; sourceTree = "<group>"; };
 		96D175B91BA76926000C88AC /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
@@ -432,6 +435,8 @@
 				96E127B51BB32C6E00A8445E /* EmptyListVC.m */,
 				96BF31211BB36C4D002BFDD2 /* CreateUsernameVC.h */,
 				96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */,
+				967124941BB5E6A900F28904 /* DiagnosticVC.h */,
+				967124951BB5E6A900F28904 /* DiagnosticVC.m */,
 				366BBC8F1BA8DEB400292F80 /* SettingsVC.m */,
 				366BBC901BA8DEB400292F80 /* SettingsVC.h */,
 				964BC81C1B97935F00760C83 /* Settings.h */,
@@ -694,6 +699,7 @@
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
 				36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */,
 				36FDA6FC1B585F650029D29D /* WhatsNewVC.m in Sources */,
+				967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */,
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */,
 				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,

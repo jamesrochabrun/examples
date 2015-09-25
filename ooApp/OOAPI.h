@@ -28,7 +28,11 @@
                                           andLocation:(CLLocationCoordinate2D)location
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure;
-- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef maxWidth:(NSUInteger)maxWidth maxHeight:(NSUInteger)maxHeight success:(void (^)(NSString *imageRefs))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef
+                                                  maxWidth:(NSUInteger)maxWidth
+                                                 maxHeight:(NSUInteger)maxHeight
+                                                   success:(void (^)(NSString *imageRefs))success
+                                                   failure:(void (^)(NSError *))failure;
 
 - (AFHTTPRequestOperation *)getUsersWithIDs:(NSArray *)userIDs
                                     success:(void (^)(NSArray *))success
@@ -43,7 +47,7 @@
 //                            failure:(void (^)(NSError *))failure;
 
 // Lists
-
+//
 - (AFHTTPRequestOperation *)addList:(NSString *)listName
                                   success:(void (^)(id response))success
                                   failure:(void (^)(NSError *))failure;
@@ -62,12 +66,15 @@
                                   failure:(void (^)(NSError *))failure;
 
 // Users
-
+//
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                   success:(void (^)(NSArray *users))success
                                   failure:(void (^)(NSError *))failure;
+
 + (AFHTTPRequestOperation *)fetchSampleUsernamesFor:(NSString *)emailAddressString
                                            success:(void (^)(NSArray *names))success
                                            failure:(void (^)(NSError *))failure;
 
++ (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
+                                            failure:(void (^)(NSError *))failure;
 @end
