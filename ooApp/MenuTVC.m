@@ -29,16 +29,11 @@
     [super viewDidLoad];
     
     [self.tableView registerClass:[MenuTVCell class] forCellReuseIdentifier:@"menuCell"];
-    self.tableView.backgroundColor = UIColorRGBA(kColorGray);
+    self.tableView.backgroundColor = UIColorRGBA(kColorWhite);
     
     MenuObject *menuItem;
     _menuItems = [NSMutableArray array];
     
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = nil;
-    menuItem.name = nil;
-    [_menuItems addObject:menuItem];
-
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconSearch;
     menuItem.name = @"SEARCH";
@@ -84,7 +79,7 @@
     self.tableView.layoutMargins = UIEdgeInsetsZero;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.scrollEnabled = NO;
-    self.tableView.separatorColor = UIColorRGBA(kColorGray);
+//    self.tableView.separatorColor = UIColorRGBA(kColorClear);
     
     NSLog(@"tableView frame=%@", NSStringFromCGRect(self.tableView.frame));
     
@@ -117,15 +112,8 @@
     
     MenuTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"menuCell" forIndexPath:indexPath];
     
-    if (indexPath.row !=0)
-        cell.menuItem = [_menuItems objectAtIndex:indexPath.row];
-    else {
-        cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed: @"background-image.jpg"]];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    }
-    // Configure the cell...
+    cell.menuItem = [_menuItems objectAtIndex:indexPath.row];
     
-
     return cell;
 }
 
@@ -206,9 +194,6 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) {
-        return (self.view.frame.size.height - (60 * ([_menuItems count]-1)));
-    }
     return 60;
 }
 

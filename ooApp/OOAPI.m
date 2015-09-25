@@ -7,7 +7,6 @@
 //
 
 #import "OOAPI.h"
-#import "RestaurantObject.h"
 #import "UserObject.h"
 #import "Common.h"
 #import "Settings.h"
@@ -31,8 +30,8 @@
 // Name:    getRestaurantsWithIDs
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*) getRestaurantsWithIDs:(NSArray *)restaurantIds
-                                          success:(void(^)(NSArray *restaurants))success
+- (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIds
+                                          success:(void (^)(NSArray *restaurants))success
                                           failure:(void (^)(NSError *))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
@@ -60,7 +59,7 @@
 - (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
-                                                   success:(void(^)(NSString *link))success
+                                                   success:(void (^)(NSString *link))success
                                                    failure:(void (^)(NSError *))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
@@ -89,9 +88,9 @@
 // Name:    getRestaurantsWithKeyword
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*) getRestaurantsWithKeyword:(NSString *)keyword
+- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
-                                              success:(void(^)(NSArray *restaurants))success
+                                              success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
@@ -118,7 +117,7 @@
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs
-                                   success:(void(^)(NSArray *users))success
+                                   success:(void (^)(NSArray *users))success
                                    failure:(void (^)(NSError *))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users", kOOURL];
@@ -147,11 +146,10 @@
     NSString *urlString = [NSString stringWithFormat:@"https://%@/dishes", kOOURL];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
+
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
-//        NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             NSLog(@"dish: %@", dict);
-//            [restaurants addObject:[self restaurantFromDict:dict]];
         }
     } failure:^(NSError *error) {
         failure(error);
@@ -182,7 +180,7 @@
 // Name:    lookupUsername
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation*)lookupUsername:(NSString*) string
++ (AFHTTPRequestOperation*)lookupUsername:(NSString *)string
                                   success:(void (^)(NSArray *users))success
                                   failure:(void (^)(NSError *))failure;
 {
@@ -202,7 +200,7 @@
 // Name:    fetchSampleUsernames
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation*)fetchSampleUsernamesFor:(NSString*) emailAddressString
++ (AFHTTPRequestOperation*)fetchSampleUsernamesFor:(NSString *)emailAddressString
                                   success:(void (^)(NSArray *names))success
                                   failure:(void (^)(NSError *))failure;
 {
@@ -222,7 +220,7 @@
 // Name:    getRestaurantsWithListID
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)getRestaurantsWithListID:( long) identifier
+- (AFHTTPRequestOperation*)getRestaurantsWithListID:(long)identifier
                                             success:(void (^)(NSArray *lists))success
                                             failure:(void (^)(NSError *))failure
 {

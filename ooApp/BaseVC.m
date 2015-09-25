@@ -29,7 +29,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = UIColorRGBA(kColorGray);
+    self.view.backgroundColor = UIColorRGBA(kColorWhite);
 
     _menu = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _menu;
@@ -38,12 +38,10 @@
     if (revealViewController) {
         revealViewController.rearViewRevealWidth = self.view.frame.size.width - 60;
         [self.menu setTitle:kFontIconMenu];
-        [self.menu setTitleTextAttributes: @{
-                                             NSFontAttributeName: [UIFont fontWithName:kFontIcons size:kGeomIconSize],
-                                             
-                                             NSForegroundColorAttributeName: WHITE,
-                                           }
-                                 forState:UIControlStateNormal];
+        [self.menu setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                           [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
+                                           UIColorRGB(kColorBlack), NSForegroundColorAttributeName,
+                                           nil] forState:UIControlStateNormal];
         [self.menu setTarget: self.revealViewController];
         [self.menu setAction: @selector(revealToggle:)];
         [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
@@ -69,7 +67,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
 }
 
 - (void)didReceiveMemoryWarning

@@ -134,9 +134,9 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -145,17 +145,17 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_tableView reloadData];
 }
 
-- (void) viewDidAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
     [self verifyTrackingIsOkay];
 }
 
-- (void) verifyTrackingIsOkay
+- (void)verifyTrackingIsOkay
 {
     if (0==self.currentLocation.longitude) {
-        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation ];
+        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation];
         if (TRACKING_UNKNOWN == c) {
             [[LocationManager sharedInstance] askUserWhetherToTrack];
         }
@@ -167,7 +167,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 - (void)updateLocation
 {
-    self.currentLocation= [[LocationManager sharedInstance] currentUserLocation ];
+    self.currentLocation = [[LocationManager sharedInstance] currentUserLocation];
 }
 
 //- (void)testAPI
@@ -255,7 +255,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     if (lo.listType == kListTypeFeatured) {
         height = kGeomHeightFeaturedRow;
     } else {
-        height = kGeomHeightListRow;
+        height = kGeomHeightStripListRow;
     }
     return height;
 }

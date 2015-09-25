@@ -28,7 +28,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = UIColorRGBA(kColorOffBlack);
+        self.backgroundColor = UIColorRGBA(kColorWhite);
         _name = [[UILabel alloc] init];
         _distance = [[UILabel alloc] init];
         _rating = [[UILabel alloc] init];
@@ -51,7 +51,7 @@
         [_rating withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
 
         _overlay.backgroundColor = UIColorRGBA(kColorStripOverlay);
-        
+                
         [self addSubview:_backgroundImage];
         [self addSubview:_overlay];
         [self addSubview:_distance];
@@ -67,7 +67,7 @@
 - (void)layout {
     CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_name.font}];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightListRow), @"labelY":@((kGeomHeightListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _backgroundImage, _rating, _distance, _overlay);
@@ -99,7 +99,6 @@
     CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-    
     _distance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
     _rating.text = restaurant.rating ? [restaurant.rating stringValue] : @"";
     

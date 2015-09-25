@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong) NSString *restaurantID;
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic) BOOL isOpen;
 @property (nonatomic, strong) NSNumber *rating;
 @property (nonatomic, strong) ImageRefObject *imageRef;
 @property (nonatomic, strong) NSString *cuisine;

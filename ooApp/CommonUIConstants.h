@@ -23,21 +23,22 @@
 // App colors
 // NOTE: Correct hex format for RGBA is 0xAARRGGBB on little-endian systems.
 //
-static NSUInteger kColorBlack = 0xff000000;
-static NSUInteger kColorButtonSelected = 0xff0000FF;
-static NSUInteger kColorCellSelected = 0xff330000;
+static NSUInteger kColorBlack = 0xFF000000;
+static NSUInteger kColorButtonSelected = 0xFF0000FF;
+static NSUInteger kColorCellSelected = 0xFFF9FF00;
 static NSUInteger kColorClear = 0x00000000;
-static NSUInteger kColorGray = 0xff555555;
-static NSUInteger kColorGrayMiddle = 0xffB2B2B2;
-static NSUInteger kColorNavBar = 0xff000000;
-static NSUInteger kColorNavyBlue = 0xff000080;
-static NSUInteger kColorOffBlack = 0xff222222;
-static NSUInteger kColorOffWhite = 0xffDDDDDD;
+static NSUInteger kColorGray = 0xFF555555;
+static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
+static NSUInteger kColorNavBar = 0xFFFFFFFF;
+static NSUInteger kColorNavyBlue = 0xFF000080;
+static NSUInteger kColorOffBlack = 0xFF222222;
+static NSUInteger kColorOffWhite = 0xFFDDDDDD;
 static NSUInteger kColorStripOverlay = 0x99000000;
-static NSUInteger kColorWhite = 0xffFFFFFF;
-static NSUInteger kColorRed = 0xffFF0000;
-static NSUInteger kColorGreen = 0xff00FF00;
-static NSUInteger kColorBlue = 0xff0000FF;
+static NSUInteger kColorWhite = 0xFFFFFFFF;
+static NSUInteger kColorRed = 0xFFFF0000;
+static NSUInteger kColorGreen = 0xFF00FF00;
+static NSUInteger kColorBlue = 0xFF0000FF;
+static NSUInteger kColorYellow = 0xFFF9FF00;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
@@ -50,9 +51,9 @@ static CGFloat kGeomButtonWidth = 100;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
 static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
 static CGFloat kGeomHeightFeaturedCellHeight = 150.0;
-static CGFloat kGeomHeightListRow = 130.0;
-static CGFloat kGeomHeightListCell = 100.0;
-static CGFloat kGeomHeightListRowReveal = 240.0;
+static CGFloat kGeomHeightStripListRow = 130.0;
+static CGFloat kGeomHeightStripListCell = 100.0;
+static CGFloat kGeomHeightHorizontalListRow = 90.0;
 static NSUInteger kGeomIconSize = 25;
 static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;

@@ -7,7 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "OOAPI.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface HorizonalTVCell : UITableViewCell
+
+@property (nonatomic, strong) UIImageView *thumbnail;
+@property (nonatomic, strong) UILabel *header;
+@property (nonatomic, strong) UILabel *subHeader1;
+@property (nonatomic, strong) UILabel *subHeader2;
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
 @end

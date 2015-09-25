@@ -404,7 +404,7 @@
 // Name:    getNumberOfLists
 // Purpose:
 //------------------------------------------------------------------------------
-- (int) getNumberOfLists
+- (NSUInteger)getNumberOfLists
 {
     return self.lists.count;
 }
@@ -428,12 +428,12 @@
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:( NSIndexPath *)indexPath
 {
-    int row = indexPath.row;
+    NSInteger row = indexPath.row;
 
     if (! row) {
         return [_headerCell neededHeight];
     }
-    return kGeomHeightListRow;
+    return kGeomHeightStripListRow;
 }
 
 //------------------------------------------------------------------------------
@@ -453,14 +453,14 @@
 {
     static NSString *cellIdentifier = @"pcell";
     
-    int row = indexPath.row;
+    NSInteger row = indexPath.row;
     
     if  (!row) {
         return _headerCell;
     }
     
     ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    cell.backgroundColor= GRAY;
+    cell.backgroundColor= UIColorRGBA(kColorWhite);
     NSMutableArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
     [cell getRestaurants];

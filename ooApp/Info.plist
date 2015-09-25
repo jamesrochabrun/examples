@@ -27,32 +27,32 @@
 			</array>
 		</dict>
 	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-<string>fb-messenger-api20140430</string>
-<string>fb-messenger-api</string>
-<string>fb927463500628206</string>
-<string>fbapi20130214</string>
-<string>fbapi20130410</string>
-<string>fbapi20130702</string>
-<string>fbapi20131010</string>
-<string>fbapi20131219</string>    
-<string>fbapi20140116</string>
-<string>fbapi20140410</string>
-<string>fbapi20150313</string>
-<string>fbapi20150629</string>
-<string>fbapi</string>
-<string>fbauth2</string>
-<string>fbauth</string>
-<string>fbshareextension</string>
-	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>FacebookAppID</key>
 	<string>927463500628206</string>
 	<key>FacebookDisplayName</key>
 	<string>Oomami</string>
-    <key>LSRequiresIPhoneOS</key>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fb-messenger-api20140430</string>
+		<string>fb-messenger-api</string>
+		<string>fb927463500628206</string>
+		<string>fbapi20130214</string>
+		<string>fbapi20130410</string>
+		<string>fbapi20130702</string>
+		<string>fbapi20131010</string>
+		<string>fbapi20131219</string>
+		<string>fbapi20140116</string>
+		<string>fbapi20140410</string>
+		<string>fbapi20150313</string>
+		<string>fbapi20150629</string>
+		<string>fbapi</string>
+		<string>fbauth2</string>
+		<string>fbauth</string>
+		<string>fbshareextension</string>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
@@ -99,7 +99,7 @@
 		<string>armv7</string>
 	</array>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
 		<key>UINavigationBar</key>
@@ -125,32 +125,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSExceptionDomains</key>
-        <dict>
-            <key>facebook.com</key>
-            <dict>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <key>NSExceptionRequiresForwardSecrecy</key>
-                <false/>
-            </dict>
-            <key>fbcdn.net</key>
-            <dict>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <key>NSExceptionRequiresForwardSecrecy</key>
-                <false/>
-            </dict>
-            <key>akamaihd.net</key>
-            <dict>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <key>NSExceptionRequiresForwardSecrecy</key>
-                <false/>
-            </dict>
-        </dict>
-    </dict>
 </dict>
 </plist>
