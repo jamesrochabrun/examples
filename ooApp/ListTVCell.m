@@ -67,17 +67,17 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     return self;
 }
 
-- ( void) prepareForReuse
+- (void)prepareForReuse
 {
     // NOTE:  for some reason this is not been called.
     
     [super prepareForReuse];
-    self.listItem= nil;
-    self.name.text=  nil;
+//    self.listItem = nil;
+//    self.name.text =  nil;
     
     // AFNetworking
     [self.requestOperation cancel];
-    self.requestOperation= nil;
+    self.requestOperation = nil;
     
 }
 

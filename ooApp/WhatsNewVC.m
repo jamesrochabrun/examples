@@ -50,80 +50,80 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     _lists = [NSMutableArray array];
     ListObject *list;
     
-    list = [[ListObject alloc] init];
-    list.name = @"Featured";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Thai";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Chinese";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Vegetarian";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
+//    list = [[ListObject alloc] init];
+//    list.name = @"Featured";
+//    list.listType = kListTypeFeatured;
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Thai";
+//    list.listType = KListTypeStrip;
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Chinese";
+//    list.listType = KListTypeStrip;
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Vegetarian";
+//    list.listType = kListTypeFeatured;
+//    [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Burgers";
     list.listType = KListTypeStrip;
     [_lists addObject:list];
     
-    list = [[ListObject alloc] init];
-    list.name = @"Vietnamese";
-    list.listType = KListTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"New";
-    list.listType = kListTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mexican";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Peruvian";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Delivery";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Date Night";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Party";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Drinks";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mediterranean";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Steak";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Indian";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Tandoor";
-    [_lists addObject:list];
+//    list = [[ListObject alloc] init];
+//    list.name = @"Vietnamese";
+//    list.listType = KListTypeStrip;
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"New";
+//    list.listType = kListTypeFeatured;
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Mexican";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Peruvian";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Delivery";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Date Night";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Party";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Drinks";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Mediterranean";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Steak";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Indian";
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Tandoor";
+//    [_lists addObject:list];
     
     [self layout];
 }
