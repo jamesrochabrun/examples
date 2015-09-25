@@ -46,6 +46,11 @@
         [self addSubview:_subHeader1];
         [self addSubview:_subHeader2];
         
+        //set the selected color for the cell
+        UIView *bgColorView = [[UIView alloc] init];
+        bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
+        [self setSelectedBackgroundView:bgColorView];
+        
         _thumbnail.translatesAutoresizingMaskIntoConstraints = _header.translatesAutoresizingMaskIntoConstraints = _subHeader1.translatesAutoresizingMaskIntoConstraints = _subHeader2.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.separatorInset = UIEdgeInsetsZero;

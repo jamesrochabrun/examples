@@ -51,7 +51,7 @@
         [_rating withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
 
         _overlay.backgroundColor = UIColorRGBA(kColorStripOverlay);
-        
+                
         [self addSubview:_backgroundImage];
         [self addSubview:_overlay];
         [self addSubview:_distance];
