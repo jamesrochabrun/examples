@@ -124,8 +124,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list = [[ListObject alloc] init];
     list.name = @"Tandoor";
     [_lists addObject:list];
-    
-    [self layout];
 }
 
 -(void)layout {
@@ -144,6 +142,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
+    [self layout];
 }
 
 - (void)viewDidAppear:(BOOL)animated

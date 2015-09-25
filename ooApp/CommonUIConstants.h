@@ -58,13 +58,14 @@ static NSUInteger kGeomIconSize = 25;
 static CGFloat kGeomSpaceEdge = 5.0;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 10.0;
-static float kGeomProfileImageSize=  100;
-static float kGeomForkImageSize =  150;
-static float kGeomEmptyTextViewWidth = 200;
-static float  kGeomEmptyTextFieldWidth=  150;
-static float kGeomLogoWidth=  200;
-static float kGeomLogoHeight=  100;
-static float kGeomLoginVerticalDisplacement=  75;
+static CGFloat kGeomProfileImageSize =  100;
+static CGFloat kGeomForkImageSize =  150;
+static CGFloat kGeomEmptyTextViewWidth = 200;
+static CGFloat kGeomEmptyTextFieldWidth = 150;
+static CGFloat kGeomLogoWidth= 200;
+static CGFloat kGeomLogoHeight= 100;
+static CGFloat kGeomLoginVerticalDisplacement = 75;
+static CGFloat kGeomWidthMenuButton = 42;
 
 // Images
 extern NSString *const kImageNoProfileImage;
