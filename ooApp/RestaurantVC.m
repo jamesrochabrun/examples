@@ -17,7 +17,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    self.view.backgroundColor = UIColorRGBA(kColorWhite);
 }
 
 - (void)didReceiveMemoryWarning
@@ -32,6 +32,10 @@
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:restaurant.name subHeader:nil];
     self.navTitle = nto;
+}
+
+- (void)getRestaurant {
+    
 }
 
 /*

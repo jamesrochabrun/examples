@@ -126,6 +126,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantVC *vc = [[RestaurantVC alloc] init];
     vc.restaurant = restaurant;
     [self.navigationController pushViewController:vc animated:YES];
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 /*

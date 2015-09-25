@@ -14,4 +14,6 @@
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 
+- (void)getRestaurant;
+
 @end

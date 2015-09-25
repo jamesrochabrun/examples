@@ -18,6 +18,7 @@
 		36250BDF1B82704300F456B5 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */; };
 		36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */; };
 		3637E93B1BB439290074A01C /* RestaurantHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3637E93A1BB439290074A01C /* RestaurantHTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		3637E93D1BB5B6D10074A01C /* CommonConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3637E93C1BB5B6D10074A01C /* CommonConstants.m */; settings = {ASSET_TAGS = (); }; };
 		363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C01B6AC15400987A1B /* RestaurantObject.m */; };
 		363B60C41B6AE49F00987A1B /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C31B6AE49F00987A1B /* UserObject.m */; };
 		363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C61B6BF0CE00987A1B /* GroupObject.m */; };
@@ -120,6 +121,7 @@
 		36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKShareKit.framework"; sourceTree = "<group>"; };
 		3637E9391BB439290074A01C /* RestaurantHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantHTVCell.h; sourceTree = "<group>"; };
 		3637E93A1BB439290074A01C /* RestaurantHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantHTVCell.m; sourceTree = "<group>"; };
+		3637E93C1BB5B6D10074A01C /* CommonConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonConstants.m; sourceTree = "<group>"; };
 		363B60BF1B6AC15400987A1B /* RestaurantObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantObject.h; sourceTree = "<group>"; };
 		363B60C01B6AC15400987A1B /* RestaurantObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantObject.m; sourceTree = "<group>"; };
 		363B60C21B6AE49F00987A1B /* UserObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserObject.h; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				36C39BDF1B84C7CD00648879 /* DebugUtilities.h */,
 				36C39BE01B84C7CD00648879 /* DebugUtilities.m */,
 				363B60C91B6C22F000987A1B /* CommonConstants.h */,
+				3637E93C1BB5B6D10074A01C /* CommonConstants.m */,
 				363B60CA1B6C231900987A1B /* CommonUIConstants.h */,
 				367703FA1B86884700B594E5 /* CommonUIConstants.m */,
 				367704031B8807F600B594E5 /* UIButton+Additions.h */,
@@ -715,6 +718,7 @@
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
 				3637E93B1BB439290074A01C /* RestaurantHTVCell.m in Sources */,
 				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,
+				3637E93D1BB5B6D10074A01C /* CommonConstants.m in Sources */,
 				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
 				367112D41BA14071006FDCE7 /* HorizontalListVC.m in Sources */,
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
@@ -859,6 +863,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"Frameworks/**",
 					"$(inherited)",
@@ -907,6 +912,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"Frameworks/**",
 					"$(inherited)",

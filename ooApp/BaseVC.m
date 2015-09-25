@@ -60,8 +60,7 @@
 {
     _navTitle = navTitle;
     _navTitleView.navTitle = _navTitle;
-#define kMenuButtonWidth 42
-    _navTitleView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame) - kMenuButtonWidth*2, 44);
+    _navTitleView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame) - kGeomWidthMenuButton*2, 44);
 }
 
 - (void)viewWillAppear:(BOOL)animated

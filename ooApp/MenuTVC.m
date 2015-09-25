@@ -190,6 +190,7 @@
         fvc = [[WhatsNewVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
+        [(DiscoverVC *)fvc getRestaurants];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
         fvc = [[PlayVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {

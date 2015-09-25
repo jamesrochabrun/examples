@@ -12,6 +12,7 @@
 #import "LoginVC.h"
 #import "Settings.h"
 #import "LocationManager.h"
+#import <GoogleMaps/GoogleMaps.h>
 
 @interface AppDelegate ()
 
@@ -45,6 +46,7 @@
     [_diagnosticLogString appendFormat: @"LAST LOCATION: %.6g,%.6g\r", location.latitude,location.longitude];
 
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
+    [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
