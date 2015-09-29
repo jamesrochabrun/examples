@@ -13,6 +13,7 @@
 @interface RestaurantObject : NSObject
 
 @property (nonatomic, strong) NSString *restaurantID;
+@property (nonatomic, strong) NSString *googleID;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic) BOOL isOpen;
 @property (nonatomic, strong) NSNumber *rating;

@@ -29,7 +29,7 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) GMSMapView *mapView;
 @property (nonatomic, strong) GMSCameraPosition *camera;
-@property (nonatomic, strong) NSMutableSet *mapMarkers;
+@property (nonatomic, strong) NSMutableArray *mapMarkers;
 
 @end
 
@@ -51,7 +51,7 @@ static NSString * const ListRowID = @"HLRCell";
     
     [_tableView registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:ListRowID];
     
-    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:19 bearing:0 viewingAngle:1];
+    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:14 bearing:0 viewingAngle:1];
 
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
     _mapView.mapType = kGMSTypeNormal;
@@ -101,7 +101,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)verifyTrackingIsOkay
 {
-    if (0==self.currentLocation.longitude) {
+    if (0 == self.currentLocation.longitude) {
         TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation];
         if (TRACKING_UNKNOWN == c) {
             [[LocationManager sharedInstance] askUserWhetherToTrack];
@@ -137,9 +137,15 @@ static NSString * const ListRowID = @"HLRCell";
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
+    [marker highLight:YES];
+}
+
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
+    [marker highLight:NO];
 }
 
 - (void)getRestaurants
@@ -161,8 +167,14 @@ static NSString * const ListRowID = @"HLRCell";
     }];
 }
 
-- (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
-    
+- (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(OOMapMarker *)marker {
+    [_tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:marker.index inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+    [_mapView setSelectedMarker:marker];
+    return YES;
+}
+
+- (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(OOMapMarker *)marker {
+//    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:marker.index inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
 }
 
 -(UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {
@@ -206,10 +218,13 @@ static NSString * const ListRowID = @"HLRCell";
         NSLog (@"Received no restaurants.");
     }
     __weak DiscoverVC *weakSelf=self;
-    _mapMarkers = [NSMutableSet setWithCapacity:[_restaurants count]];
+    [_mapMarkers removeAllObjects];
+    _mapMarkers = [NSMutableArray arrayWithCapacity:[_restaurants count]];
     [_restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *marker = [[OOMapMarker alloc] init];
         RestaurantObject *ro = (RestaurantObject *)obj;
+        marker.objectID = ro.googleID;
+        marker.index = idx;
         marker.position = ro.location;
         marker.title = ro.name;
         marker.snippet = @"my snippet";

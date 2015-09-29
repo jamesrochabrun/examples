@@ -8,6 +8,7 @@
 
 #import "RestaurantObject.h"
 
+NSString *const kKeyRestaurantGoogleID = @"google_id";
 NSString *const kKeyRestaurantName = @"name";
 NSString *const kKeyRestaurantRating = @"rating";
 NSString *const kKeyRestaurantImageRef = @"image_ref";
@@ -21,6 +22,7 @@ NSString *const kKeyRestaurantOpenNow = @"open_now";
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
 //    NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
+    restaurant.googleID = [dict objectForKey:kKeyRestaurantGoogleID];
     restaurant.name = [dict objectForKey:kKeyRestaurantName];
     restaurant.rating = [dict objectForKey:kKeyRestaurantRating];
     restaurant.isOpen = ([[dict objectForKey:kKeyRestaurantOpenNow] isKindOfClass:[NSNull class]]) ? NO : [[dict objectForKey:kKeyRestaurantOpenNow] boolValue];

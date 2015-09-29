@@ -104,7 +104,7 @@
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
     float spacing= kGeomSpaceInter;
-    float y=  75;
+    float y=  0;
     
     _searchBar.frame=  CGRectMake(0,y,w,kGeomHeightButton);
     y += kGeomHeightButton;

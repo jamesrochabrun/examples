@@ -11,11 +11,12 @@
 NSString *const kMealCategoryBreakfast = @"breakfast";
 NSString *const kMealCategoryLunch = @"lunch";
 NSString *const kMealCategoryDinner = @"dinner";
+NSString *const kMealCategoryBar = @"bar+restaurant";
 
 @implementation TimeUtilities
 
 /////////////
-// Given a time determine if we are looking for breakfast, lunch or dinner places
+// Given a time determine if we are looking for breakfast, lunch, dinner or bars
 /////////////
 + (NSString *)categorySearchString:(NSDate *)date {
     NSString *category = @"restaurant";
@@ -30,11 +31,13 @@ NSString *const kMealCategoryDinner = @"dinner";
     NSDate *lunchStart = [dayStart dateByAddingTimeInterval:(10.5)*60*60];
     //dinner zone starts 3PM
     NSDate *dinnerStart = [dayStart dateByAddingTimeInterval:11*60*60];
+    //bar zone starts 10PM
+    NSDate *barStart = [dayStart dateByAddingTimeInterval:11*60*60];
     
     if (([dayStart compare:date] == NSOrderedAscending ||
         [dayStart compare:date] == NSOrderedSame) &&
         [breakfastStart compare:date] == NSOrderedDescending) {
-        category = kMealCategoryDinner;
+        category = kMealCategoryBar;
     } else if (([breakfastStart compare:date] == NSOrderedAscending ||
                [breakfastStart compare:date] == NSOrderedSame) &&
                [lunchStart compare:date] == NSOrderedDescending) {
@@ -43,8 +46,12 @@ NSString *const kMealCategoryDinner = @"dinner";
                 [lunchStart compare:date] == NSOrderedSame) &&
                [dinnerStart compare:date] == NSOrderedDescending) {
         category = kMealCategoryLunch;
-    } else {
+    } else if (([dinnerStart compare:date] == NSOrderedAscending ||
+                 [dinnerStart compare:date] == NSOrderedSame) &&
+                [barStart compare:date] == NSOrderedDescending) {
         category = kMealCategoryDinner;
+    } else {
+        category = kMealCategoryBar;
     }
     
     return category;

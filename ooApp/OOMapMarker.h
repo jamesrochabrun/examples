@@ -11,5 +11,8 @@
 @interface OOMapMarker : GMSMarker
 
 - (void)highLight:(BOOL)highlight;
-    
+
+@property (nonatomic) NSUInteger index;
+@property (nonatomic, strong) NSString *objectID;
+
 @end

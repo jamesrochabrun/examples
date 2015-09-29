@@ -22,4 +22,11 @@
     self.icon = [GMSMarker markerImageWithColor:((highlight) ? UIColorRGBA(kColorNavyBlue) : UIColorRGBA(kColorRed))];
 }
 
+- (BOOL)isEqual:(OOMapMarker *)object {
+    return [_objectID isEqual:object.objectID];
+}
+
+- (NSUInteger)hash {
+    return [self.objectID hash];
+}
 @end
