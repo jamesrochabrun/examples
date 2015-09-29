@@ -18,7 +18,7 @@
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        _marker = [[GMSMarker alloc] init];
+//        _marker = [[GMSMarker alloc] init];
     }
     return self;
 }
@@ -29,9 +29,6 @@
     self.thumbnail.image = nil;
     self.header.text = _restaurant.name;
     self.subHeader1.text = (_restaurant.isOpen) ? @"Open Now" : @"Not Open";
-
-    _marker.position = _restaurant.location;
-    _marker.title = _restaurant.name;
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     

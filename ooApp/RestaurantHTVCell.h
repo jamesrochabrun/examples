@@ -13,6 +13,6 @@
 @interface RestaurantHTVCell : HorizonalTVCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
-@property (nonatomic, strong) GMSMarker *marker;
+//@property (nonatomic, strong) GMSMarker *marker;
 
 @end

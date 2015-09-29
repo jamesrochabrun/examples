@@ -19,8 +19,9 @@
 #import "Common.h"
 #import "RestaurantVC.h"
 #import "TimeUtilities.h"
+#import "OOMapMarker.h"
 
-@interface DiscoverVC ()
+@interface DiscoverVC () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
@@ -28,6 +29,7 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) GMSMapView *mapView;
 @property (nonatomic, strong) GMSCameraPosition *camera;
+@property (nonatomic, strong) NSMutableSet *mapMarkers;
 
 @end
 
@@ -57,6 +59,7 @@ static NSString * const ListRowID = @"HLRCell";
     _mapView.settings.myLocationButton = YES;
     _mapView.settings.scrollGestures = YES;
     _mapView.settings.zoomGestures = YES;
+    _mapView.delegate = self;
 
     [_mapView setMinZoom:3 maxZoom:15];
     
@@ -130,7 +133,6 @@ static NSString * const ListRowID = @"HLRCell";
     RestaurantHTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     
     cell.restaurant = ro;
-    cell.marker.map = _mapView;
     
     return cell;
 }
@@ -159,12 +161,62 @@ static NSString * const ListRowID = @"HLRCell";
     }];
 }
 
+- (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker {
+    
+}
+
+-(UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {
+    UIView *infoWindow = [[UIView alloc] init];
+    infoWindow.backgroundColor = UIColorRGBA(kColorWhite);
+    infoWindow.layer.cornerRadius = kGeomCornerRadius;
+
+    CGRect frame;
+    
+    UILabel *title = [[UILabel alloc] init];
+    [title withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorNavyBlue backgroundColor:kColorClear];
+    title.text = marker.title;
+    [title sizeToFit];
+    frame = title.frame;
+    frame.origin.y = kGeomSpaceEdge;
+    frame.origin.x = kGeomSpaceEdge;
+    title.frame = frame;
+    
+    UILabel *snippet = [[UILabel alloc] init];
+    [snippet withFont:[UIFont fontWithName:kFontLatoThin size:kGeomFontSizeSubheader] textColor:kColorNavyBlue backgroundColor:kColorClear];
+    snippet.text = marker.snippet;
+    [snippet sizeToFit];
+    
+    frame = snippet.frame;
+    frame.origin.y = CGRectGetMaxY(title.frame);
+    frame.origin.x = kGeomSpaceEdge;
+    snippet.frame = frame;
+    
+    [infoWindow addSubview:title];
+    [infoWindow addSubview:snippet];
+    
+    infoWindow.frame = CGRectMake(0, 0, kGeomSpaceEdge + ((CGRectGetMaxX(title.frame) > CGRectGetMaxX(snippet.frame)) ? CGRectGetMaxX(title.frame) : CGRectGetMaxX(snippet.frame)), CGRectGetMaxY(snippet.frame) + kGeomSpaceEdge);
+    
+    return infoWindow;
+}
+
 - (void)gotRestaurants
 {
     NSLog(@"%tu", [_restaurants count]);
     if (![_restaurants count]) {
         NSLog (@"Received no restaurants.");
     }
+    __weak DiscoverVC *weakSelf=self;
+    _mapMarkers = [NSMutableSet setWithCapacity:[_restaurants count]];
+    [_restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OOMapMarker *marker = [[OOMapMarker alloc] init];
+        RestaurantObject *ro = (RestaurantObject *)obj;
+        marker.position = ro.location;
+        marker.title = ro.name;
+        marker.snippet = @"my snippet";
+        marker.map = _mapView;
+        [marker highLight:YES];
+        [weakSelf.mapMarkers addObject:marker];
+    }];
     //    [self addSubview:_collectionView];
     [_tableView reloadData];
     

@@ -30,7 +30,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
-
+    
     _menu = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _menu;
     
@@ -49,6 +49,11 @@
     
     _navTitleView = [[NavTitleView alloc] init];
     self.navigationItem.titleView = _navTitleView;
+
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    
+    self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorWhite);
 }
 
 - (void)layout
