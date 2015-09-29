@@ -169,8 +169,8 @@
         UserObject* userInfo= [Settings sharedInstance].userObject;
         userid= [userInfo.userID integerValue ];
     }
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld/lists",
-                           kOOURL, ( long)userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld/lists?type=%d",
+                           kOOURL, ( long)userid, kOOAPIListTypeUser];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:urlString parameters:nil success:success failure: failure];
@@ -295,7 +295,7 @@
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists", kOOURL];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists", kOOURL, userid];
     NSDictionary*parameters=  @{
                                  @"name": listName,
                                   @"type":  @2,

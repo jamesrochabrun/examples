@@ -14,25 +14,6 @@
 #import "OOAPI.h"
 #import "EmptyListVC.h"
 
-@interface ProfileTableFirstRow : UITableViewCell <UIAlertViewDelegate>
-
-@property (nonatomic, strong) UIImageView *iv;
-@property (nonatomic, strong) UIButton *buttonFollow;
-@property (nonatomic, strong) UIButton *buttonNewList;
-@property (nonatomic, strong) UILabel *labelUsername;
-@property (nonatomic, strong) UILabel *labelDescription;
-@property (nonatomic, strong) UILabel *labelRestaurants;
-@property (nonatomic, strong) UIButton *buttonNewListIcon;
-@property (nonatomic, assign) float spaceNeededForFirstCell;
-@property (nonatomic, assign) UINavigationController *navigationController;
-@end
-
-@interface ProfileTableFirstRow ()
-@property (nonatomic,assign) NSInteger  userID;
-@property (nonatomic,strong) UserObject* userInfo;
-@property (nonatomic,assign) BOOL viewingOwnProfile;
-@end
-
 
 @implementation ProfileTableFirstRow
 
@@ -44,7 +25,6 @@
 {
     self = [super init];
     if (self) {
-        
         self.iv= makeImageView (self,  kImageNoProfileImage);
         self.buttonFollow= makeButton(self,  @"FOLLOW", kGeomFontSizeHeader,BLACK, CLEAR, self, @selector (userPressedFollow:), 1);
         self.buttonNewList= makeButton(self,  @"NEW LIST", kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
@@ -108,14 +88,15 @@
 {
     if  (1==buttonIndex) {
         UITextField *textField = [alertView textFieldAtIndex: 0];
-        NSString *string = textField.text;
+        NSString *string = trimString(textField.text);
+        if  (string.length ) {
+            string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
+        }
         
         OOAPI *api = [[OOAPI alloc] init];
         [api addList:string
              success:^(id response) {
-                 EmptyListVC* vc=[[EmptyListVC  alloc] init];
-                 vc.listName=  string;
-                 [self.navigationController pushViewController:vc animated:YES];
+                 [self.vc  performSelectorOnMainThread:  @selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO ];
              }
              failure:^(NSError * error) {
                  NSString *s=[NSString stringWithFormat:@"Error from cloud: %@",error.localizedDescription];
@@ -221,6 +202,7 @@
 @end
 
 @implementation ProfileVC
+
 //------------------------------------------------------------------------------
 // Name:    init
 // Purpose:
@@ -255,84 +237,7 @@
     [api getListsOfUser: _userID
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
-                    if  (!foundLists.count) {
-                        ListObject *list;
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Featured";
-                        list.listType = kListTypeFeatured;
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Thai";
-                        list.listType = KListTypeStrip;
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Chinese";
-                        list.listType = KListTypeStrip;
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Vegetarian";
-                        list.listType = kListTypeFeatured;
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Burgers";
-                        list.listType = KListTypeStrip;
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Vietnamese";
-                        list.listType = KListTypeStrip;
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"New";
-                        list.listType = kListTypeFeatured;
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Mexican";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Peruvian";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Delivery";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Date Night";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Party";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Drinks";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Mediterranean";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Steak";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Indian";
-                        [_lists addObject:list];
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Tandoor";
-                        [_lists addObject:list];
-                    }else {
+                    if  (foundLists.count) {
                         ListObject *list;
                         
                         for (NSDictionary* item  in foundLists ) {
@@ -353,10 +258,6 @@
                             list.name =  name;
                             [_lists addObject:list];
                         }
-                        
-                        list = [[ListObject alloc] init];
-                        list.name = @"Indian";
-                        [_lists addObject:list];
                     }
                     
                     [self.table reloadData];
@@ -370,6 +271,7 @@
     self.view.backgroundColor= WHITE;
     
     _headerCell=[[ProfileTableFirstRow  alloc] initWithUserInfo:_profileOwner];
+    _headerCell.vc= self;
     _headerCell.navigationController= self.navigationController;
     
     self.table= [UITableView new];
@@ -399,6 +301,19 @@
     [ super viewWillLayoutSubviews ];
   
     self.table.frame=  self.view.bounds;
+}
+
+//------------------------------------------------------------------------------
+// Name:    goToEmptyListScreen
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)goToEmptyListScreen:(NSString *)string
+{
+//     [self performSegueWithIdentifier: @"gotoEmptyList" sender:self];
+    
+    EmptyListVC* vc=[[EmptyListVC  alloc] init];
+    vc.listName=  string;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 //------------------------------------------------------------------------------

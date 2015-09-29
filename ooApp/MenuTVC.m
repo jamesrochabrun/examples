@@ -17,6 +17,7 @@
 #import "PlayVC.h"
 #import "DiscoverVC.h"
 #import "DiagnosticVC.h"
+#import "SearchVC.h"
 
 @interface MenuTVC ()
 
@@ -188,6 +189,8 @@
         fvc = [[SettingsVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemWhatsNew]) {
         fvc = [[WhatsNewVC alloc] init];
+    }else if ([menuItem.type isEqualToString:kMenuItemSearch]) {
+        fvc = [[SearchVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
         [(DiscoverVC *)fvc getRestaurants];

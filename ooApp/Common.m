@@ -28,6 +28,14 @@ NSString *getDateString()
     return [NSString stringWithFormat: @"%04d/%02d/%02d",year,month,day];
 }
 
+NSString* trimString(NSString* s)
+{
+    if (!s) {
+        return  @"";
+    }
+    return [s stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+}
+
 UIImageView* makeImageView (UIView *parent, NSString* imageName)
 {
     UIImage* image= imageName? [ UIImage imageNamed:imageName] :nil;
@@ -46,6 +54,17 @@ UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
     return l;
 }
 
+UITableView* makeTable (UIView *parent,id  delegate)
+{
+    UITableView* tv= [ [ UITableView alloc ]init ];
+    if  (tv ) {
+        [ parent addSubview: tv ];
+    }
+    tv.delegate= delegate;
+    tv.dataSource= delegate;
+    return tv;
+}
+
 UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize)
 {
     UILabel* l= [ [ UILabel alloc ]init ];
@@ -61,6 +80,14 @@ UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
     UILabel *l= makeLabel( parent, text,fontSize);
     l.textAlignment= NSTextAlignmentLeft;
     return l;
+}
+
+UIWebView* makeWebView (UIView*parent, id  delegate)
+{
+    UIWebView *v= [ UIWebView  new];
+    v.delegate=  delegate;
+    [parent addSubview: v];
+    return v;
 }
 
 UITextView* makeTextView (UIView*parent, UIColor *bg,BOOL  editable)

@@ -16,6 +16,7 @@ extern void message (NSString *str);
 
 extern NSString*const kOOURL;
 extern NSString *getDateString();
+extern NSString* trimString(NSString* s);
 
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
 extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
@@ -23,5 +24,7 @@ extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);
 extern UITextView* makeTextView (UIView*parent, UIColor *bg, BOOL editable);
 extern UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize);
+extern UIWebView* makeWebView (UIView*parent, id  delegate);
+extern UITableView* makeTable (UIView *parent,id  delegate);
 
 #endif

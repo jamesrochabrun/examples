@@ -16,6 +16,9 @@
 
 //extern NSString *const kKeyName;
 
+static const int kOOAPIListTypeSystem = 1;
+static const int kOOAPIListTypeUser = 2;
+
 @interface OOAPI : NSObject
 
 /* Read */
