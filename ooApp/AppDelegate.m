@@ -52,6 +52,16 @@
                                     didFinishLaunchingWithOptions:launchOptions];
 }
 
+- (void)test
+{
+    NSDate *date = [NSDate date];
+    NSString *c;
+    c = [TimeUtilities categorySearchString:date];
+    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:7*60*60]];
+    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:12*60*60]];
+    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:15.5*60*60]];
+}
+
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
     if ([[FBSDKApplicationDelegate sharedInstance] application:application

@@ -131,9 +131,9 @@
     if (!cell) {
         cell=  [[UITableViewCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_TABLE_REUSE_IDENTIFIER ];
     }
-    NSString* name= nil;
-    int  row= indexPath.row;
-            name=  @[  @"testing"][0];
+    NSString *name = nil;
+    NSInteger row = indexPath.row;
+        name=  @[  @"testing"][0];
     cell.textLabel.text= name;
     return cell;
 }
@@ -145,9 +145,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString* name= nil;
-    int  row= indexPath.row;
-
+    NSString *name= nil;
+    NSInteger row= indexPath.row;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

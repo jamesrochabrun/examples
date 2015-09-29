@@ -159,9 +159,9 @@
         cell=  [[UITableViewCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER ];
     }
     NSString* name= nil;
-    int  row= indexPath.row;
+    NSInteger row= indexPath.row;
     @synchronized(_arrayOfSuggestions) {
-        if  ( row  < _arrayOfSuggestions.count) {
+        if  (row  < _arrayOfSuggestions.count) {
             name=  _arrayOfSuggestions[row];
         }
     }
@@ -182,7 +182,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString* name= nil;
-    int  row= indexPath.row;
+    NSInteger row= indexPath.row;
     @synchronized(_arrayOfSuggestions) {
         if  ( row  < _arrayOfSuggestions.count) {
             name=  _arrayOfSuggestions[row];
