@@ -17,4 +17,3 @@ extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);
 extern UITextView* makeTextView (UIView*parent, UIColor *bg, BOOL editable);
 extern UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize);
-

@@ -16,6 +16,7 @@
 #import "Settings.h"
 #import "LocationManager.h"
 #import "RestaurantVC.h"
+#import "TimeUtilities.h"
 
 
 @interface DiscoverVC ()
@@ -63,6 +64,7 @@ static NSString * const ListRowID = @"HLRCell";
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
     self.navTitle = nto;
+        
     [self layout];
 }
 
@@ -142,7 +144,11 @@ static NSString * const ListRowID = @"HLRCell";
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak DiscoverVC *weakSelf=self;
-    _requestOperation = [api getRestaurantsWithKeyword:@"restaurant" andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
+    
+    NSString *searchTerm = [TimeUtilities categorySearchString:[NSDate date]];
+    NSLog(@"category: %@", searchTerm);
+    
+    _requestOperation = [api getRestaurantsWithKeyword:searchTerm andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
         weakSelf.restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf gotRestaurants];

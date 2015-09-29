@@ -276,7 +276,7 @@
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists", kOOURL];
     NSDictionary*parameters=  @{
                                  @"name": listName,
-                                  @"type":  @"system",
+                                  @"type":  @"2",
                                   @"user": userid
                                 };
     AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters

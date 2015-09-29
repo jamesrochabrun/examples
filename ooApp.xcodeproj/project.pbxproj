@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; settings = {ASSET_TAGS = (); }; };
 		3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11A1B8E6A06004537B6 /* MenuTVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
@@ -102,6 +103,8 @@
 
 /* Begin PBXFileReference section */
 		2BB75701B92FE168B3785FD8 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		3613BE451BB9CF6000F1AF67 /* TimeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeUtilities.h; sourceTree = "<group>"; };
+		3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeUtilities.m; sourceTree = "<group>"; };
 		3621F1191B8E6A06004537B6 /* MenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVC.h; sourceTree = "<group>"; };
 		3621F11A1B8E6A06004537B6 /* MenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
@@ -385,6 +388,8 @@
 				366BBC961BA9304900292F80 /* SubBaseVC.m */,
 				366BBC891BA8B70100292F80 /* NavTitleView.h */,
 				366BBC8A1BA8B70100292F80 /* NavTitleView.m */,
+				3613BE451BB9CF6000F1AF67 /* TimeUtilities.h */,
+				3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -707,6 +712,7 @@
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
+				3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
