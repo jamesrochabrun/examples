@@ -16,6 +16,7 @@
 
 //extern NSString *const kKeyName;
 
+static const int kOOAPIListTypeFavorites = 0;
 static const int kOOAPIListTypeSystem = 1;
 static const int kOOAPIListTypeUser = 2;
 
@@ -27,6 +28,9 @@ static const int kOOAPIListTypeUser = 2;
 - (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIDs
                                           success:(void (^)(NSArray *))success
                                           failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation *)getRestaurantsWithID:(NSString *)restaurantId source:(NSUInteger)source
+                                         success:(void (^)(RestaurantObject *restaurants))success
+                                         failure:(void (^)(NSError *))failure;
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
                                               success:(void (^)(NSArray *restaurants))success
@@ -59,9 +63,13 @@ static const int kOOAPIListTypeUser = 2;
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure;
 
-- (AFHTTPRequestOperation *)getRestaurantsWithListID:(long)identifier
-                                            success:(void (^)(NSArray *lists))success
+- (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
+                                            success:(void (^)(NSArray *restaurants))success
                                             failure:(void (^)(NSError *))failure;
+
+- (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
+                                              success:(void (^)(id response))success
+                                              failure:(void (^)(NSError *))failure;
 
 /* Create */
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant

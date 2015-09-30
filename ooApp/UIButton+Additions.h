@@ -10,6 +10,6 @@
 
 @interface UIButton (Additions)
 
-- (void)withText:(NSString *)text fontSize:(NSUInteger)fontSize width:(NSUInteger)width height:(NSUInteger)height backgroundColor:(NSUInteger)backColor target:(id)target selector:(SEL)selector ;
-
+- (void)withText:(NSString *)text fontSize:(NSUInteger)fontSize width:(NSUInteger)width height:(NSUInteger)height backgroundColor:(NSUInteger)backColor target:(id)target selector:(SEL)selector;
+- (void)withIcon:(NSString *)text fontSize:(NSUInteger)fontSize width:(NSUInteger)width height:(NSUInteger)height backgroundColor:(NSUInteger)backColor target:(id)target selector:(SEL)selector;
 @end

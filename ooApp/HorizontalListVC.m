@@ -72,6 +72,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)setListItem:(ListObject *)listItem {
     if (_listItem == listItem) return;
     _listItem = listItem;
+
+    if (_listItem) {
+        [self getRestaurants];
+    }
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listItem.name subHeader:nil];
     self.navTitle = nto;

@@ -11,6 +11,7 @@
 #import "UserObject.h"
 #import "RestaurantObject.h"
 #import "ListObject.h"
+#import "TimeUtilities.h"
 
 @interface DefaultVC ()
 
@@ -41,6 +42,7 @@
     l.textColor = UIColorRGBA(kColorWhite);
     l.text = [NSString stringWithFormat:@"abcdefghi"] ;
     [self.view addSubview:l];
+    [self test];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -48,6 +50,27 @@
     [self.navigationController setNavigationBarHidden:NO];
     [self testAPI];
 }
+
+- (void)test
+{
+    NSDate *date = [NSDate date];
+    NSString *c;
+    c = [TimeUtilities categorySearchString:date];
+    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:7*60*60]];
+    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:12*60*60]];
+    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:15.5*60*60]];
+    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:-3*60*60]];
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    [api addRestaurantsToFavorites:nil
+                           success:^(id response) {
+                               ;
+                           } failure:^(NSError *error) {
+                               ;
+                           }];
+    
+}
+
 
 - (void)testAPI {
 //    OOAPI *api = [[OOAPI alloc] init];

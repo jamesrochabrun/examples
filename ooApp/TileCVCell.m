@@ -90,6 +90,7 @@
 - (void)setRestaurant:(RestaurantObject *)restaurant {
     if (_restaurant == restaurant) return;
     _restaurant = restaurant;
+//    NSLog(@"restaurant name = %@", restaurant.name);
     _name.text = _restaurant.name;
     _backgroundImage.image = nil;
     
