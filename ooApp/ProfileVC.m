@@ -94,6 +94,7 @@
         }
         
         OOAPI *api = [[OOAPI alloc] init];
+        
         [api addList:string
              success:^(id response) {
                  [self.vc  performSelectorOnMainThread:  @selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO ];

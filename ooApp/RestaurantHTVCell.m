@@ -19,6 +19,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
 //        _marker = [[GMSMarker alloc] init];
+        
     }
     return self;
 }

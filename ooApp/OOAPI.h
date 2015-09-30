@@ -31,6 +31,11 @@ static const int kOOAPIListTypeUser = 2;
                                           andLocation:(CLLocationCoordinate2D)location
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
+                                            andFilter: (NSString*)filterName
+                                          andLocation:(CLLocationCoordinate2D)location
+                                              success:(void (^)(NSArray *restaurants))success
+                                              failure:(void (^)(NSError *))failure;
 - (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight

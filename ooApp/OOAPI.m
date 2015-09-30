@@ -85,7 +85,7 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    getRestaurantsWithKeyword
+// Name:    getRestaurantsWithKeyword andLocation
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
@@ -93,10 +93,53 @@
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure
 {
+    if (!keyword ) {
+        failure (nil);
+        return nil;
+    }
+    
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
     
-    NSLog (@" URL=  %@",urlString);
+//    NSLog (@" URL=  %@",urlString);
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET: urlString parameters:parameters success:^(id responseObject) {
+        NSMutableArray *restaurants = [NSMutableArray array];
+        for (id dict in responseObject) {
+            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
+            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+        }
+        success(restaurants);
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getRestaurantsWithKeyword andFilter andLocation
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
+                                            andFilter: (NSString*)filterName
+                                          andLocation:(CLLocationCoordinate2D)location
+                                              success:(void (^)(NSArray *restaurants))success
+                                              failure:(void (^)(NSError *))failure
+{
+    if (!keyword || !filterName) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
+    NSDictionary *parameters = @{@"keyword":keyword,
+                                 @"latitude": @(location.latitude),
+                                 @"longitude":@(location.longitude),
+                                 @"filter": filterName ?:  @""
+                                 };
+    
+//    NSLog (@" URL=  %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     

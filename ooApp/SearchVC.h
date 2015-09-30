@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 
-@interface SearchVC : BaseVC
+@interface SearchVC : BaseVC <UISearchBarDelegate>
 
 @end
 

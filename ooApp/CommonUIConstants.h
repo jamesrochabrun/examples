@@ -67,7 +67,7 @@ static CGFloat kGeomEmptyTextFieldWidth = 150;
 static CGFloat kGeomLogoWidth= 200;
 static CGFloat kGeomLogoHeight= 100;
 static CGFloat kGeomLoginVerticalDisplacement = 75;
-static CGFloat kGeomWidthMenuButton = 42;
+static CGFloat kGeomWidthMenuButton = 70;
 
 // Images
 extern NSString *const kImageNoProfileImage;

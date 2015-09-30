@@ -71,6 +71,9 @@
 - (void)doClearCache: (id) sender
 {
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    
+//    [[AFImageCache sharedImageCache] removeAllObjects];
+
     message( @"Cleared.");
 }
 
@@ -109,11 +112,10 @@
     float  margin= kGeomSpaceEdge;
     float  spacing= kGeomSpaceInter;
     _textviewDiagnosticLog.frame=  CGRectMake(margin,h/2,w-2*margin,h/2-margin);
-    float x=  margin, y=  75;
+    float x=  margin, y=  margin;
     _buttonClearUsername.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _buttonClearCache.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
-    
-    
 }
+
 @end
