@@ -9,6 +9,8 @@
 #import "SubBaseVC.h"
 #import "NavTitleView.h"
 
+#import "DebugUtilities.h"
+
 @interface SubBaseVC ()
 
 @property (nonatomic, strong) NavTitleView *navTitleView;
@@ -35,8 +37,14 @@
 {
     [super viewDidLoad];
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-
     
+    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+    _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+    [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
+    
+    bbi.customView = _moreButton;
+    self.navigationItem.rightBarButtonItems = @[bbi];
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {

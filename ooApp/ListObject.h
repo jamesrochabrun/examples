@@ -7,20 +7,21 @@
 //
 
 typedef enum {
-    kListTypeFeatured,
-    KListTypeStrip,
-    KListTypeCount
-} ListType;
+    kListDisplayTypeFeatured,
+    KListDisplayTypeStrip,
+    KListDisplayTypeCount
+} ListDisplayType;
 
 #import <Foundation/Foundation.h>
 
 @interface ListObject : NSObject
 
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *type;
+@property (nonatomic, assign) NSInteger type;
 @property (nonatomic, strong) NSString *imageURL;
+@property (nonatomic, strong) NSString *listID;
 @property (nonatomic, assign) int  identifier;
-@property (nonatomic) ListType listType;
+@property (nonatomic) ListDisplayType listDisplayType;
 
 + (ListObject *)listFromDict:(NSDictionary *)dict;
 + (NSDictionary *)dictFromList:(ListObject *)list;

@@ -9,6 +9,8 @@
 #import "RestaurantObject.h"
 
 NSString *const kKeyRestaurantGoogleID = @"google_id";
+NSString *const kKeyRestaurantRestaurantID = @"restaurant_id";
+NSString *const kKeyRestaurantPlaceID = @"place_id";
 NSString *const kKeyRestaurantName = @"name";
 NSString *const kKeyRestaurantRating = @"rating";
 NSString *const kKeyRestaurantImageRef = @"image_ref";
@@ -16,15 +18,21 @@ NSString *const kKeyRestaurantLatitude = @"latitude";
 NSString *const kKeyRestaurantLongitude = @"longitude";
 NSString *const kKeyRestaurantPriceRange = @"price_range";
 NSString *const kKeyRestaurantOpenNow = @"open_now";
-
+NSString *const kKeyRestaurantAddress = @"address";
+NSString *const kKeyRestaurantPhone = @"phone";
+NSString *const kKeyRestaurantWebsite = @"website";
 @implementation RestaurantObject
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
-//    NSLog(@"dict=%@", dict);
+    NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
     restaurant.googleID = [dict objectForKey:kKeyRestaurantGoogleID];
+    restaurant.restaurantID = [dict objectForKey:kKeyRestaurantRestaurantID];
     restaurant.name = [dict objectForKey:kKeyRestaurantName];
     restaurant.rating = [dict objectForKey:kKeyRestaurantRating];
+    restaurant.website = [dict objectForKey:kKeyRestaurantWebsite];
+    restaurant.phone = [dict objectForKey:kKeyRestaurantPhone];
+    restaurant.address = [dict objectForKey:kKeyRestaurantAddress];
     restaurant.isOpen = ([[dict objectForKey:kKeyRestaurantOpenNow] isKindOfClass:[NSNull class]]) ? NO : [[dict objectForKey:kKeyRestaurantOpenNow] boolValue];
     NSArray *imageRefs = [dict objectForKey:kKeyRestaurantImageRef];
     restaurant.imageRef = (imageRefs && ![imageRefs isKindOfClass:[NSNull class]]) ? [ImageRefObject imageRefFromDict:[imageRefs objectAtIndex:0]] : nil;

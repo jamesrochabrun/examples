@@ -109,7 +109,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 {
     if (_listItem == listItem) return;
     
-    if (_listItem == kListTypeFeatured) {
+    if (_listItem == kListDisplayTypeFeatured) {
         [_featuredCollectionView reloadData];
     } else {
         [_collectionView reloadData];
@@ -126,14 +126,26 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak ListTVCell *weakSelf=self;
-    self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
-        weakSelf.restaurants = r;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf gotRestaurants];
-        });
-    } failure:^(NSError *err) {
-        ;
-    }];
+    if (_listItem.type == kOOAPIListTypeFavorites) {
+//NOTE: the server is currently not returning image refs with restaurant objects so we won't see images in the UI
+        self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
+            weakSelf.restaurants = r;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(NSError *err) {
+            ;
+        }];
+    } else {
+        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
+            weakSelf.restaurants = r;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(NSError *err) {
+            ;
+        }];
+    }
 }
 
 - (void)gotRestaurants
@@ -143,7 +155,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         NSLog (@"LIST CALLED %@ HAS ZERO RESTAURANTS",_listItem.name);
     }
     //    [self addSubview:_collectionView];
-    if (_listItem.listType == kListTypeFeatured) {
+    if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
         self.featuredCollectionView.delegate = self;
         self.featuredCollectionView.dataSource = self;
         [self.featuredCollectionView reloadData];

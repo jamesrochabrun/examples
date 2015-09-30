@@ -134,6 +134,8 @@ static NSString * const ListRowID = @"HLRCell";
     
     cell.restaurant = ro;
     
+    [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
+    
     return cell;
 }
 
@@ -229,7 +231,7 @@ static NSString * const ListRowID = @"HLRCell";
         marker.title = ro.name;
         marker.snippet = @"my snippet";
         marker.map = _mapView;
-        [marker highLight:YES];
+        [marker highLight:NO];
         [weakSelf.mapMarkers addObject:marker];
     }];
     //    [self addSubview:_collectionView];

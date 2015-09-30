@@ -19,6 +19,14 @@
 #import "RestaurantHTVCell.h"
 #import "RestaurantVC.h"
 
+typedef enum: char {
+    FILTER_NONE=  0,
+    FILTER_PLACES=  1,
+    FILTER_PEOPLE=  2,
+    FILTER_LISTS=  3,
+    FILTER_YOU=  4,
+} FilterType;
+
 @interface SearchVC ()
 @property (nonatomic,strong)  UISearchBar* searchBar;
 @property (nonatomic,strong)  UIButton* buttonList;
@@ -27,7 +35,7 @@
 @property (nonatomic,strong)  UIButton* buttonPlaces;
 @property (nonatomic,strong)  UIButton* buttonYou;
 @property (nonatomic,strong)  UITableView*  table;
-@property (nonatomic,strong) NSString* currentFilterString;
+@property (nonatomic,assign) FilterType currentFilter;
 @property (nonatomic,strong) NSArray* restaurantsArray;
 @property (atomic,assign) BOOL doingSearchNow;
 @property (nonatomic,strong) AFHTTPRequestOperation* fetchOperation;
@@ -43,7 +51,9 @@
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= WHITE;
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Search" subHeader: @"for Restaurants"];
+    _currentFilter=FILTER_NONE;
+    
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Search" subHeader: @"for restaurants"];
     self.navTitle = nto;
 
 	_searchBar= [ UISearchBar new];
@@ -51,6 +61,8 @@
     _searchBar.searchBarStyle=  UISearchBarStyleMinimal;
     _searchBar.backgroundColor= WHITE;
     _searchBar.placeholder=  @"Search";
+    _searchBar.barTintColor= WHITE;
+    _searchBar.keyboardType= UIKeyboardTypeAlphabet;
     _searchBar.delegate= self;
     _buttonCancel=makeButton(self.view,  @"Cancel", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
@@ -59,21 +71,73 @@
     _table= makeTable (self.view,self);
     [_table registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:SEARCH_TABLE_REUSE_IDENTIFIER];
 
-    _buttonList= makeButton(self.view,  @"List", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectList:), 0);
-    _buttonPeople= makeButton(self.view,  @"People", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPeople:), 0);
-    _buttonPlaces= makeButton(self.view,  @"Places", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPlaces:), 0);
-    _buttonYou= makeButton(self.view,  @"You", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectYou:), 0);
-    [_buttonPeople setTitleColor:GREEN forState:UIControlStateSelected];
-    [_buttonList setTitleColor:GREEN forState:UIControlStateSelected];
-    [_buttonPlaces setTitleColor:GREEN forState:UIControlStateSelected];
-    [_buttonYou setTitleColor:GREEN forState:UIControlStateSelected];
-    [self changeFilter:  @"places"];
+    _buttonList= makeAttributedButton(self.view,  @"List", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectList:), 0);
+    _buttonPeople= makeAttributedButton(self.view,  @"People", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPeople:), 0);
+    _buttonPlaces= makeAttributedButton(self.view,  @"Places", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPlaces:), 0);
+    _buttonYou= makeAttributedButton(self.view,  @"You", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectYou:), 0);
+    [self changeFilter: FILTER_PLACES];
 }
 
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
     [self doLayout];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillDisappear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super viewWillDisappear:animated];
+}
+
+- (NSString*)currentFilterName
+{
+    switch (_currentFilter) {
+        case FILTER_LISTS: return  @"Lists";
+        case FILTER_PEOPLE: return  @"People";
+        case FILTER_PLACES: return  @"Places";
+        case FILTER_YOU: return  @"You";
+
+        default:
+            return  @"";
+    }
+}
+//------------------------------------------------------------------------------
+// Name:    keyboardHidden
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)keyboardHidden: (NSNotification*) not
+{
+    _table.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+//------------------------------------------------------------------------------
+// Name:    keyboardShown
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)keyboardShown: (NSNotification*) not
+{
+    NSDictionary* info = [not userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    float keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
+    ? kbSize.width : kbSize.height;
+    _table.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
+//    [_scrollView scrollRectToVisible:_fieldUsername.frame animated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -99,9 +163,9 @@
     
     self.doingSearchNow= YES;
     __weak SearchVC* weakSelf= self;
-
+    
     self.fetchOperation= [api getRestaurantsWithKeyword:_searchBar.text
-                                              andFilter:_currentFilterString
+                                              andFilter:[self currentFilterName]
                                             andLocation:location
                                                 success:^(NSArray *restaurants) {
                                                     [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
@@ -109,54 +173,58 @@
                                                                             waitUntilDone:NO];
                                                     
                                                 } failure:^(NSError *e) {
-//                                                    [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
-//                                                                               withObject: @[]
-//                                                                            waitUntilDone:NO];
                                                     NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
                                                 }
                           ];
+    
 }
 
-- (void)changeFilter: (NSString*)which
+- (void)changeFilter: (FilterType)which
 {
-    if  ( ! which) {
-        _buttonList.selected= NO;
-        _buttonPeople.selected= NO;
-        _buttonPlaces.selected= NO;
-        _buttonYou.selected= NO;
-    }
-    else if ([which isEqualToString: @"list"]) {
-        _buttonList.selected=  YES;
-        _buttonPeople.selected= NO;
-        _buttonPlaces.selected= NO;
-        _buttonYou.selected= NO;
-    }
-    else if ([which isEqualToString: @"people"]) {
-        _buttonList.selected= NO;
-        _buttonPeople.selected= YES;
-        _buttonPlaces.selected= NO;
-        _buttonYou.selected= NO;
-    }
-    else if ([which isEqualToString: @"places"]) {
-        _buttonList.selected= NO;
-        _buttonPeople.selected= NO;
-        _buttonPlaces.selected= YES;
-        _buttonYou.selected= NO;
-    }
-    else if ([which isEqualToString: @"you"]) {
-        _buttonList.selected= NO;
-        _buttonPeople.selected= NO;
-        _buttonPlaces.selected= NO;
-        _buttonYou.selected= YES;
+    if  (which ==_currentFilter ) {
+        return;
     }
     
-    self.currentFilterString=  which;
+    const  float fs= kGeomFontSizeHeader;
+    switch ( which) {
+        case FILTER_LISTS:
+            [_buttonList setAttributedTitle:underlinedAttributedStringOf( @"List", fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:attributedStringOf( @"People", fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:attributedStringOf( @"Places", fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:attributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            break;
+            
+        case FILTER_PEOPLE:
+            [_buttonList setAttributedTitle:attributedStringOf( @"List", fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:underlinedAttributedStringOf( @"People", fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:attributedStringOf( @"Places", fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:attributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            break;
+            
+        case FILTER_PLACES:
+            [_buttonList setAttributedTitle:attributedStringOf( @"List", fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:attributedStringOf( @"People", fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:underlinedAttributedStringOf( @"Places", fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:attributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            break;
+            
+        case FILTER_YOU:
+            [_buttonList setAttributedTitle:attributedStringOf( @"List", fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:attributedStringOf( @"People", fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:attributedStringOf( @"Places", fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:underlinedAttributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            break;
+            
+        default: return;
+    }
+    
+    self.currentFilter=  which;
     
     // RULE: If the user was searching for "Fred" in the people category and
     //  then switched to the places category, then we should redo the search
     //  in the new category.
     //
-    if ( which && _searchBar.text.length) {
+    if (_searchBar.text.length) {
         [self doSearch];
     }
 }
@@ -214,13 +282,13 @@
 //------------------------------------------------------------------------------
 - (void)doSelectList: (id) sender
 {
-    if  ([_currentFilterString isEqualToString: @"list"] ) {
+    if  (_currentFilter==FILTER_LISTS ) {
         return;
     }
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter: @"list"];
+    [self changeFilter: FILTER_LISTS];
 }
 
 //------------------------------------------------------------------------------
@@ -229,13 +297,13 @@
 //------------------------------------------------------------------------------
 - (void)doSelectPeople: (id) sender
 {
-    if  ([_currentFilterString isEqualToString: @"people"] ) {
+    if  (_currentFilter==FILTER_PEOPLE ) {
         return;
     }
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter: @"people"];
+    [self changeFilter: FILTER_PEOPLE];
 }
 
 //------------------------------------------------------------------------------
@@ -244,13 +312,13 @@
 //------------------------------------------------------------------------------
 - (void)doSelectPlaces: (id) sender
 {
-    if  ([_currentFilterString isEqualToString: @"places"] ) {
+    if  (_currentFilter==FILTER_PLACES ) {
         return;
     }
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter: @"places"];
+    [self changeFilter:FILTER_PLACES];
 }
 
 //------------------------------------------------------------------------------
@@ -259,13 +327,13 @@
 //------------------------------------------------------------------------------
 - (void)doSelectYou: (id) sender
 {
-    if  ([_currentFilterString isEqualToString: @"you"] ) {
+    if  (_currentFilter==FILTER_YOU ) {
         return;
     }
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter: @"you"];
+    [self changeFilter: FILTER_YOU];
 }
 
 //------------------------------------------------------------------------------
@@ -281,11 +349,10 @@
 
     float x= 0;
     _searchBar.frame=  CGRectMake(0,y,w-kGeomButtonWidth,kGeomHeightButton);
-    const int buttonInteriorPadding = 5;
-    _buttonCancel.frame=  CGRectMake(buttonInteriorPadding+w-kGeomButtonWidth,
-                                     y+buttonInteriorPadding,
-                                     kGeomButtonWidth-2*buttonInteriorPadding,
-                                     kGeomHeightButton-2*buttonInteriorPadding);
+    _buttonCancel.frame=  CGRectMake( w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
+                                     y+kGeomCancelButtonInteriorPadding,
+                                     kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
+                                     kGeomHeightButton-2*kGeomCancelButtonInteriorPadding);
     y += kGeomHeightButton;
     
     int buttonWidth= w/4;

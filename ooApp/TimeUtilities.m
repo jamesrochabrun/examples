@@ -26,13 +26,13 @@ NSString *const kMealCategoryBar = @"bar+restaurant";
     //start of day
     NSDate *dayStart = [gregorian dateBySettingHour:0 minute:00 second:0 ofDate:date options:0];
     //breakfast zone starts 4AM
-    NSDate *breakfastStart = [dayStart dateByAddingTimeInterval:(4)*60*60];
+    NSDate *breakfastStart = [dayStart dateByAddingTimeInterval:4*60*60];
     //lunch zone starts 10:30AM
-    NSDate *lunchStart = [dayStart dateByAddingTimeInterval:(10.5)*60*60];
+    NSDate *lunchStart = [dayStart dateByAddingTimeInterval:10.5*60*60];
     //dinner zone starts 3PM
-    NSDate *dinnerStart = [dayStart dateByAddingTimeInterval:11*60*60];
+    NSDate *dinnerStart = [dayStart dateByAddingTimeInterval:15*60*60];
     //bar zone starts 10PM
-    NSDate *barStart = [dayStart dateByAddingTimeInterval:11*60*60];
+    NSDate *barStart = [dayStart dateByAddingTimeInterval:22*60*60];
     
     if (([dayStart compare:date] == NSOrderedAscending ||
         [dayStart compare:date] == NSOrderedSame) &&

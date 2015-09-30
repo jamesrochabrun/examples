@@ -28,7 +28,7 @@
     NSString *applicationName = [infoDictionary objectForKey:@"CFBundleName"];
     NSString *majorVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
     NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
-
+    [_diagnosticLogString appendFormat: @"%@\r",platformString()];
     [_diagnosticLogString appendFormat:  @"%@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
 #endif
     
@@ -50,17 +50,6 @@
     
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
-}
-
-- (void)test
-{
-    NSDate *date = [NSDate date];
-    NSString *c;
-    c = [TimeUtilities categorySearchString:date];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:7*60*60]];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:12*60*60]];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:15.5*60*60]];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:-3*60*60]];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation

@@ -13,6 +13,7 @@
 #import "ListTVCell.h"
 #import "OOAPI.h"
 #import "EmptyListVC.h"
+#import "HorizontalListVC.h"
 
 
 @implementation ProfileTableFirstRow
@@ -21,7 +22,7 @@
 // Name:    initWithUserInfo:
 // Purpose:
 //------------------------------------------------------------------------------
-- (instancetype) initWithUserInfo: (UserObject*)u
+- (instancetype)initWithUserInfo:(UserObject*)u
 {
     self = [super init];
     if (self) {
@@ -45,8 +46,8 @@
             username=  @"Missing username";
         }
         
-        NSString * description= _userInfo.about.length? _userInfo.about: nil;
-        NSString* restaurants=  nil;
+        NSString *description= _userInfo.about.length? _userInfo.about: nil;
+        NSString *restaurants=  nil;
         
         self.labelUsername= makeLabelLeft(self, username,kGeomFontSizeHeader);
         self.labelDescription= makeLabelLeft(self, description,kGeomFontSizeHeader);
@@ -198,7 +199,7 @@
 
 @property (nonatomic, strong) ProfileTableFirstRow* headerCell;
 @property (nonatomic, strong) UITableView *table;
-@property (nonatomic, strong) NSMutableArray *lists;
+@property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject *profileOwner;
 @end
 
@@ -232,34 +233,35 @@
         // NOTE: Whoever created this VC will have set the user ID.
     }
     
-    _lists = [NSMutableArray array];
+    _lists = [NSArray array];
     
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser: _userID
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
-                    if  (foundLists.count) {
-                        ListObject *list;
-                        
-                        for (NSDictionary* item  in foundLists ) {
-                            NSLog (@" user list:  %@", item);
-                            
-                            if (![item isKindOfClass:[NSDictionary class]]) {
-                                NSLog  (@" item is not a dictionary");
-                                continue;
-                            }
-                            
-                            NSString* name=  item[ @"name"];
-                            if (!name) {
-                                NSLog  (@" missing listing name");
-                                continue;
-                            }
-                            
-                            list = [[ListObject alloc] init];
-                            list.name =  name;
-                            [_lists addObject:list];
-                        }
-                    }
+                    _lists = foundLists;
+//                    if  (foundLists.count) {
+//                        ListObject *list;
+//                        
+//                        for (NSDictionary* item  in foundLists ) {
+//                            NSLog (@" user list:  %@", item);
+//                            
+//                            if (![item isKindOfClass:[NSDictionary class]]) {
+//                                NSLog  (@" item is not a dictionary");
+//                                continue;
+//                            }
+//                            
+//                            NSString* name=  item[ @"name"];
+//                            if (!name) {
+//                                NSLog  (@" missing listing name");
+//                                continue;
+//                            }
+//                            
+//                            list = [[ListObject alloc] init];
+//                            list.name =  name;
+//                            [_lists addObject:list];
+//                        }
+//                    }
                     
                     [self.table reloadData];
                 }
@@ -332,11 +334,11 @@
 //------------------------------------------------------------------------------
 - (NSString*)getNameOfList: ( int) which
 {
-    NSMutableArray* a= self.lists;
+    NSArray* a= self.lists;
     if  (which < 0 ||  which >= a.count) {
         return  @"";
     }
-    return [a objectAtIndex: which ];
+    return [a objectAtIndex:which];
 }
 
 //------------------------------------------------------------------------------
@@ -378,10 +380,20 @@
     
     ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     cell.backgroundColor= UIColorRGBA(kColorWhite);
-    NSMutableArray* a= self.lists;
+    NSArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
-    [cell getRestaurants];
+    cell.navigationController = self.navigationController;
+    //[cell getRestaurants]; //NOTE: setting listItem will trigger [cell getRestaurants]
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    ListObject *item = [_lists objectAtIndex:(indexPath.row - 1)];
+    
+    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+    vc.title = item.name;
+    vc.listItem = item;
 }
 
 @end

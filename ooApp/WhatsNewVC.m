@@ -52,37 +52,37 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     
     list = [[ListObject alloc] init];
     list.name = @"Featured";
-    list.listType = kListTypeFeatured;
+    list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Thai";
-    list.listType = KListTypeStrip;
+    list.listDisplayType = KListDisplayTypeStrip;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Chinese";
-    list.listType = KListTypeStrip;
+    list.listDisplayType = KListDisplayTypeStrip;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Vegetarian";
-    list.listType = kListTypeFeatured;
+    list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Burgers";
-    list.listType = KListTypeStrip;
+    list.listDisplayType = KListDisplayTypeStrip;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Vietnamese";
-    list.listType = KListTypeStrip;
+    list.listDisplayType = KListDisplayTypeStrip;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"New";
-    list.listType = kListTypeFeatured;
+    list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
@@ -169,59 +169,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     self.currentLocation= [[LocationManager sharedInstance] currentUserLocation ];
 }
 
-//- (void)testAPI
-//{
-//    OOAPI *api = [[OOAPI alloc] init];
-//    
-//    [self updateLocation];
-//
-//    CLLocationCoordinate2D locationToUse= self.currentLocation;
-//   
-//    if (0 == locationToUse.longitude) {
-//        // RULE: 
-//        float latitude, longitude;
-//        //  San Francisco
-//        latitude=37.7833;
-//        longitude= -122.4167;
-//        locationToUse= CLLocationCoordinate2DMake(latitude, longitude);
-//    }
-//    
-//    [api getRestaurantsWithKeyword:@"thai" andLocation:locationToUse success:^(NSArray *r) {
-//        _restaurants = r;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self printRestaurants];
-//        });
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    [api getUsersWithIDs:nil success:^(NSArray *r) {
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [r enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-//                UserObject *user =  (UserObject *)obj;
-//                NSLog(@"id = %@ user = %@ %@ email=%@", user.userID, user.firstName, user.lastName, user.email);
-//            }];
-//        });
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    [api getDishesWithIDs:nil success:^(NSArray *r) {
-//        
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    RestaurantObject *restaurant = [[RestaurantObject alloc] init];
-//    restaurant.name = @"Papalote";
-//    //    [api addRestaurant:restaurant success:^(NSArray *dishes) {
-//    //        ;
-//    //    } failure:^(NSError *error) {
-//    //        ;
-//    //    }];
-//}
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -235,7 +182,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     
     ListTVCell *cell;
     
-    if (list.listType == kListTypeFeatured) {
+    if (list.listDisplayType == kListDisplayTypeFeatured) {
         cell = [tableView dequeueReusableCellWithIdentifier:FeaturedRowID forIndexPath:indexPath];
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
@@ -251,7 +198,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     CGFloat height = 0;
     ListObject *lo = [_lists objectAtIndex:indexPath.row];
     
-    if (lo.listType == kListTypeFeatured) {
+    if (lo.listDisplayType == kListDisplayTypeFeatured) {
         height = kGeomHeightFeaturedRow;
     } else {
         height = kGeomHeightStripListRow;
@@ -272,7 +219,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [self.navigationController pushViewController:vc animated:YES];
     vc.title = item.name;
     vc.listItem = item;
-    [vc getRestaurants];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
