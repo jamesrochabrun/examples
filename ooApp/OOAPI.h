@@ -60,7 +60,7 @@ static const int kOOAPIListTypeUser = 2;
                                   success:(void (^)(id response))success
                                   failure:(void (^)(NSError *))failure;
 
-- (AFHTTPRequestOperation *)getListsOfUser:(NSInteger)userID withRestaurant:(NSUInteger)restaurantID
+- (AFHTTPRequestOperation *)getListsOfUser:(NSUInteger)userID withRestaurant:(NSUInteger)restaurantID
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure;
 
@@ -72,7 +72,7 @@ static const int kOOAPIListTypeUser = 2;
                                               success:(void (^)(id response))success
                                               failure:(void (^)(NSError *))failure;
 
-- (AFHTTPRequestOperation*)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
+- (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
                                     success:(void (^)(NSArray *lists))success
                                     failure:(void (^)(NSError *))failure;
 

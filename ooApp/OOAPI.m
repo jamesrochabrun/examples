@@ -188,11 +188,11 @@
 // Name:    getListsOfUser:withRestaurant
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)getListsOfUser:(NSInteger)userID withRestaurant:(NSUInteger)restaurantID
+- (AFHTTPRequestOperation*)getListsOfUser:(NSUInteger)userID withRestaurant:(NSUInteger)restaurantID
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure
 {
-    if (userID < 0) {
+    if (!userID) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
         userID= [userInfo.userID unsignedIntegerValue];
     }
@@ -221,7 +221,7 @@
 // Name:    deleteRestaurant:fromList
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
+- (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure
 {
@@ -246,7 +246,7 @@
 // Name:    lookupUsername
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation*)lookupUsername:(NSString *)string
++ (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                   success:(void (^)(NSArray *users))success
                                   failure:(void (^)(NSError *))failure;
 {
@@ -266,7 +266,7 @@
 // Name:    clearUsernameOf
 // Purpose: For testing.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
++ (AFHTTPRequestOperation *)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                    failure:(void (^)(NSError *))failure;
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
@@ -288,7 +288,7 @@
 // Name:    fetchSampleUsernames
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation*)fetchSampleUsernamesFor:(NSString *)emailAddressString
++ (AFHTTPRequestOperation *)fetchSampleUsernamesFor:(NSString *)emailAddressString
                                   success:(void (^)(NSArray *names))success
                                   failure:(void (^)(NSError *))failure;
 {
@@ -308,7 +308,7 @@
 // Name:    getRestaurantsWithListID
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)getRestaurantsWithListID:(NSUInteger)listID
+- (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
                                             success:(void (^)(NSArray *restaurants))success
                                             failure:(void (^)(NSError *))failure
 {
@@ -337,7 +337,7 @@
 // Name:    addRestaurant
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)addRestaurant:(RestaurantObject *)restaurant
+- (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
                                  success:(void (^)(NSArray *dishes))success
                                  failure:(void (^)(NSError *))failure
 {

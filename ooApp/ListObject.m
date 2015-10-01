@@ -16,7 +16,7 @@ NSString *const kKeyListType = @"type";
 
 -(instancetype)init {
     if (self) {
-        _identifier= -1;
+        _identifier = 0;
         self.listDisplayType = KListDisplayTypeStrip;
         _type = 2;
     }

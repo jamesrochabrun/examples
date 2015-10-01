@@ -210,7 +210,7 @@
 {
     self = [super init];
     if (self) {
-        _userID= -1;
+        _userID = 0;
     }
     return self;
 }
@@ -223,7 +223,7 @@
 {
     [super viewDidLoad];
     
-    if ( _userID < 0) {
+    if (!_userID) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
         self.profileOwner=userInfo;
     } else {
