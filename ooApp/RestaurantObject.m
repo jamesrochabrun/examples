@@ -27,6 +27,7 @@ NSString *const kKeyRestaurantWebsite = @"website";
     NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
     restaurant.googleID = [dict objectForKey:kKeyRestaurantGoogleID];
+    restaurant.placeID = [dict objectForKey:kKeyRestaurantPlaceID];
     restaurant.restaurantID = [dict objectForKey:kKeyRestaurantRestaurantID];
     restaurant.name = [dict objectForKey:kKeyRestaurantName];
     restaurant.rating = [dict objectForKey:kKeyRestaurantRating];

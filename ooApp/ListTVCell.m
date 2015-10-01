@@ -62,7 +62,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _name.translatesAutoresizingMaskIntoConstraints = _line.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = UIColorRGBA(kColorWhite);
+        self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"strip_gradient.png"]];
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
         [self layout];
@@ -211,9 +211,21 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     vc.restaurant = restaurant;
 }
 
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    if (collectionView == _featuredCollectionView) {
+        return 10;
+    } else {
+        return 2;
+    }
+}
+
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
     return 5;
 }
+
+
+
 
 #pragma lazy load some stuff
 
@@ -222,7 +234,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     if (!_collectionView) {
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightStripListRow-kGeomHeightStripListCell, self.frame.size.width, self.frame.size.height-(kGeomHeightStripListRow-kGeomHeightStripListCell)) collectionViewLayout:_cvl];
         [_collectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
-        _collectionView.backgroundColor = UIColorRGBA(kColorWhite);
+        _collectionView.backgroundColor = UIColorRGBA(kColorClear);
         [self addSubview:_collectionView];
         [self bringSubviewToFront:_name];
     }
@@ -235,7 +247,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         [_fcvl setItemSize:CGSizeMake(self.frame.size.width-2*kGeomSpaceEdge, kGeomHeightFeaturedCellHeight)];
         _featuredCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight, self.frame.size.width, self.frame.size.height-(kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight)) collectionViewLayout:_fcvl];
         [_featuredCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:FeaturedRestaurantCellIdentifier];
-        _featuredCollectionView.backgroundColor = UIColorRGBA(kColorWhite);
+        _featuredCollectionView.backgroundColor = UIColorRGBA(kColorClear);
         _featuredCollectionView.pagingEnabled = YES;
         [self addSubview:_featuredCollectionView];
         [self bringSubviewToFront:_name];

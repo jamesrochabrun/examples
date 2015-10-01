@@ -56,8 +56,6 @@
         self.iv.layer.borderColor= GRAY.CGColor;
         self.iv.layer.borderWidth= 1;
         self.iv.contentMode=UIViewContentModeScaleAspectFit;
-        
-        self.backgroundColor= WHITE;
     }
     return self;
 }
@@ -235,43 +233,16 @@
     _lists = [NSArray array];
     
     OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser: _userID
+    [api getListsOfUser: _userID withRestaurant:0
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;
-//                    if  (foundLists.count) {
-//                        ListObject *list;
-//                        
-//                        for (NSDictionary* item  in foundLists ) {
-//                            NSLog (@" user list:  %@", item);
-//                            
-//                            if (![item isKindOfClass:[NSDictionary class]]) {
-//                                NSLog  (@" item is not a dictionary");
-//                                continue;
-//                            }
-//                            
-//                            NSString* name=  item[ @"name"];
-//                            if (!name) {
-//                                NSLog  (@" missing listing name");
-//                                continue;
-//                            }
-//                            
-//                            list = [[ListObject alloc] init];
-//                            list.name =  name;
-//                            [_lists addObject:list];
-//                        }
-//                    }
-                    
                     [self.table reloadData];
                 }
                 failure:^(NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
                 }];
     // NOTE:  these will later be stored in user defaults.
-    
-    
-    self.view.backgroundColor= WHITE;
-    
     _headerCell=[[ProfileTableFirstRow  alloc] initWithUserInfo:_profileOwner];
     _headerCell.vc= self;
     _headerCell.navigationController= self.navigationController;
@@ -377,8 +348,8 @@
         return _headerCell;
     }
     
-    ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    cell.backgroundColor= UIColorRGBA(kColorWhite);
+    ListTVCell* cell = [[ListTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+//    cell.backgroundColor = UIColorRGBA(kColorClear);
     NSArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
     cell.navigationController = self.navigationController;

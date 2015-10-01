@@ -22,6 +22,7 @@ NSString *const kFontIconFeed = @"g";
 NSString *const kFontIconMenu = @"d";
 NSString *const kFontIconMore = @"f";
 NSString *const kFontIconProfile = @"i";
+NSString *const kFontIconRemove = @"e";
 NSString *const kFontIconSearch = @"c";
 NSString *const kFontIconSettings = @"m";
 NSString *const kFontIconWhatsNew = @"G";

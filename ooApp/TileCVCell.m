@@ -11,6 +11,7 @@
 #import "OOAPI.h"
 #import "DebugUtilities.h"
 #import "UIImageView+AFNetworking.h"
+#import "EmptyRestaurantTile.h"
 
 @interface TileCVCell ()
 
@@ -19,6 +20,7 @@
 @property (nonatomic, strong) UILabel *rating;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIView *overlay;
+@property (nonatomic, strong) UIView *emptyTile;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
 @end
@@ -34,12 +36,14 @@
         _rating = [[UILabel alloc] init];
         _backgroundImage = [[UIImageView alloc] init];
         _overlay = [[UIView alloc] init];
+        _emptyTile = [[EmptyRestaurantTile alloc] init];
         _requestOperation = nil;
         
-        _overlay.translatesAutoresizingMaskIntoConstraints = NO;
-        _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
-        _name.translatesAutoresizingMaskIntoConstraints = NO;
-        _rating.translatesAutoresizingMaskIntoConstraints = NO;
+        _overlay.translatesAutoresizingMaskIntoConstraints =
+        _backgroundImage.translatesAutoresizingMaskIntoConstraints =
+        _name.translatesAutoresizingMaskIntoConstraints =
+        _rating.translatesAutoresizingMaskIntoConstraints =
+        _emptyTile.translatesAutoresizingMaskIntoConstraints =
         _distance.translatesAutoresizingMaskIntoConstraints = NO;
 
         _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
@@ -51,7 +55,8 @@
         [_rating withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
 
         _overlay.backgroundColor = UIColorRGBA(kColorStripOverlay);
-                
+        
+        [self addSubview:_emptyTile];
         [self addSubview:_backgroundImage];
         [self addSubview:_overlay];
         [self addSubview:_distance];
@@ -70,10 +75,11 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _backgroundImage, _rating, _distance, _overlay);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _emptyTile, _backgroundImage, _rating, _distance, _overlay);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyTile]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_overlay(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_name]-(15)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_distance]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -81,6 +87,7 @@
 
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_emptyTile]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_overlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_name]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_rating]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -113,6 +120,8 @@
         } failure:^(NSError *error) {
             ;
         }];
+    } else {
+        
     }
 }
 

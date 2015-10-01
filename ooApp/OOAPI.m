@@ -53,7 +53,7 @@
 // Name:    getRestaurantsWithIDs
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation *)getRestaurantsWithID:(NSString *)restaurantId source:(NSUInteger)source
+- (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
                                           success:(void (^)(RestaurantObject *))success
                                           failure:(void (^)(NSError *))failure
 {
@@ -185,19 +185,25 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    getListsOfUser
+// Name:    getListsOfUser:withRestaurant
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)getListsOfUser:(NSInteger)userid
+- (AFHTTPRequestOperation*)getListsOfUser:(NSInteger)userID withRestaurant:(NSUInteger)restaurantID
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure
 {
-    if  (userid<0 ) {
+    if (userID < 0) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
-        userid= [userInfo.userID integerValue ];
+        userID= [userInfo.userID unsignedIntegerValue];
     }
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld/lists?type=%d",
-                           kOOURL, ( long)userid, kOOAPIListTypeUser];
+    
+    NSString *restaurantResource = @"";
+    if (restaurantID) {
+        restaurantResource = [NSString stringWithFormat:@"/restaurants/%ld", restaurantID];
+    }
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld%@/lists",
+                           kOOURL, userID, restaurantResource];
+    
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -205,6 +211,31 @@
         for (id dict in responseObject) {
             [lists addObject:[ListObject listFromDict:dict]];
         }
+        success(lists);
+    } failure:^(NSError *error) {
+        ;
+    }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    deleteRestaurant:fromList
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation*)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
+                                  success:(void (^)(NSArray *lists))success
+                                  failure:(void (^)(NSError *))failure
+{
+
+//    UserObject* userInfo= [Settings sharedInstance].userObject;
+//    NSUInteger userID = [userInfo.userID unsignedIntegerValue];
+
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu/restaurants/%tu",
+                           kOOURL, listID, restaurantID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *lists = [NSMutableArray array];
         success(lists);
     } failure:^(NSError *error) {
         ;
@@ -398,6 +429,8 @@
     
     return op;
 }
+
+
 
 - (NSString *)ooURL {
     return kOOURL;

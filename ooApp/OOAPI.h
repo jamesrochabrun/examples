@@ -28,7 +28,7 @@ static const int kOOAPIListTypeUser = 2;
 - (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIDs
                                           success:(void (^)(NSArray *))success
                                           failure:(void (^)(NSError *))failure;
-- (AFHTTPRequestOperation *)getRestaurantsWithID:(NSString *)restaurantId source:(NSUInteger)source
+- (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
                                          success:(void (^)(RestaurantObject *restaurants))success
                                          failure:(void (^)(NSError *))failure;
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
@@ -59,7 +59,7 @@ static const int kOOAPIListTypeUser = 2;
                                   success:(void (^)(id response))success
                                   failure:(void (^)(NSError *))failure;
 
-- (AFHTTPRequestOperation *)getListsOfUser:(NSInteger)userid
+- (AFHTTPRequestOperation *)getListsOfUser:(NSInteger)userID withRestaurant:(NSUInteger)restaurantID
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure;
 
@@ -70,6 +70,10 @@ static const int kOOAPIListTypeUser = 2;
 - (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
                                               success:(void (^)(id response))success
                                               failure:(void (^)(NSError *))failure;
+
+- (AFHTTPRequestOperation*)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
+                                    success:(void (^)(NSArray *lists))success
+                                    failure:(void (^)(NSError *))failure;
 
 /* Create */
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant

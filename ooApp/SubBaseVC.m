@@ -23,7 +23,11 @@
     self = [super init];
     if (self) {
         _navTitleView = [[NavTitleView alloc] init];
-        self.navigationItem.titleView = _navTitleView;    
+        self.navigationItem.titleView = _navTitleView;
+        
+        if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
+            self.edgesForExtendedLayout = UIRectEdgeNone;
+
     }
     return self;
 }
