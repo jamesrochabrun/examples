@@ -12,6 +12,7 @@
 #import "RestaurantObject.h"
 #import "ListObject.h"
 #import "ImageRefObject.h"
+#import "MediaItemObject.h"
 #import "UIImageView+AFNetworking.h"
 
 //extern NSString *const kKeyName;
@@ -35,7 +36,7 @@ static const int kOOAPIListTypeUser = 2;
                                           andLocation:(CLLocationCoordinate2D)location
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure;
-- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef
+- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(NSString *)imageRef
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
                                                    success:(void (^)(NSString *imageRefs))success

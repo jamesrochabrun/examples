@@ -40,8 +40,15 @@
 
     OOAPI *api = [[OOAPI alloc] init];
     
-    if (_restaurant.imageRef) {
-        self.requestOperation = [api getRestaurantImageWithImageRef:_restaurant.imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+    NSString *imageRef;
+    if ([restaurant.mediaItems count]) {
+        imageRef = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]).reference;
+    } else if ([restaurant.imageRefs count]) {
+        imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
+    }
+    
+    if (imageRef) {
+        self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];
             });

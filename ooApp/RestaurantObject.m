@@ -7,6 +7,8 @@
 //
 
 #import "RestaurantObject.h"
+#import "ImageRefObject.h"
+#import "MediaItemObject.h"
 
 NSString *const kKeyRestaurantGoogleID = @"google_id";
 NSString *const kKeyRestaurantRestaurantID = @"restaurant_id";
@@ -14,6 +16,7 @@ NSString *const kKeyRestaurantPlaceID = @"place_id";
 NSString *const kKeyRestaurantName = @"name";
 NSString *const kKeyRestaurantRating = @"rating";
 NSString *const kKeyRestaurantImageRef = @"image_ref";
+NSString *const kKeyRestaurantMediaItems = @"media_items";
 NSString *const kKeyRestaurantLatitude = @"latitude";
 NSString *const kKeyRestaurantLongitude = @"longitude";
 NSString *const kKeyRestaurantPriceRange = @"price_range";
@@ -35,12 +38,29 @@ NSString *const kKeyRestaurantWebsite = @"website";
     restaurant.phone = [dict objectForKey:kKeyRestaurantPhone];
     restaurant.address = [dict objectForKey:kKeyRestaurantAddress];
     restaurant.isOpen = ([[dict objectForKey:kKeyRestaurantOpenNow] isKindOfClass:[NSNull class]]) ? NO : [[dict objectForKey:kKeyRestaurantOpenNow] boolValue];
+    
     NSArray *imageRefs = [dict objectForKey:kKeyRestaurantImageRef];
-    restaurant.imageRef = (imageRefs && ![imageRefs isKindOfClass:[NSNull class]]) ? [ImageRefObject imageRefFromDict:[imageRefs objectAtIndex:0]] : nil;
+    restaurant.imageRefs = [NSMutableArray array];
+    if (imageRefs && ![imageRefs isKindOfClass:[NSNull class]] && [imageRefs count]) {
+        [imageRefs enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            ImageRefObject *iro = [ImageRefObject imageRefFromDict:obj];
+            [restaurant.imageRefs addObject:iro];
+        }];
+    }
+
+    NSArray *mediaItems = [dict objectForKey:kKeyRestaurantMediaItems];
+    restaurant.mediaItems = [NSMutableArray array];
+    if (mediaItems && ![mediaItems isKindOfClass:[NSNull class]] && [mediaItems count]) {
+        [mediaItems enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            MediaItemObject *iro = [MediaItemObject mediaItemFromDict:obj];
+            [restaurant.mediaItems addObject:iro];
+        }];
+    }
+    
     
     id lat= [dict objectForKey:kKeyRestaurantLatitude];
     id lon= [dict objectForKey:kKeyRestaurantLongitude];
-    if  (lat && lon  && [lat isKindOfClass:[NSNumber class]]  && [lon isKindOfClass:[NSNumber class]]) {
+    if  (lat && lon  && ![lat isKindOfClass:[NSNull class]]  && ![lon isKindOfClass:[NSNull class]]) {
         restaurant.location = CLLocationCoordinate2DMake([lat doubleValue ], [lon doubleValue]);
     } else {
         restaurant.location= CLLocationCoordinate2DMake(0, 0);

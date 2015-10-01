@@ -7,6 +7,7 @@
 //
 
 #import "OORemoveButton.h"
+#import "DebugUtilities.h"
 
 @interface OORemoveButton ()
 @property (nonatomic, strong) UILabel *x;
@@ -19,7 +20,7 @@
     
     if (self) {
         _x = [[UILabel alloc] init];
-        [_x withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorBlack backgroundColor:kColorClear ];
+        [_x withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorBlack backgroundColor:kColorGreen];
         _x.text = kFontIconRemove;
 
         _name = [[UILabel alloc] init];
@@ -34,6 +35,8 @@
         self.backgroundColor = UIColorRGBA(kColorOffWhite);
         self.layer.cornerRadius = kGeomCornerRadius;
         [self layout];
+        
+//        [DebugUtilities addBorderToViews:@[_name, _x]];
     }
     return self;
 }
@@ -48,7 +51,7 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_name]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-[_x]-spaceInter-[_name]-|" options:0 metrics:metrics views:views]];
+                               constraintsWithVisualFormat:@"H:|-spaceEdge-[_x]-spaceInter-[_name]-spaceEdge-|" options:0 metrics:metrics views:views]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_x
                                                      attribute:NSLayoutAttributeCenterY
@@ -64,6 +67,20 @@
                                                          multiplier:1.f constant:0.f]];
 }
 
+- (CGSize)getSuggestedSize {
+    CGRect frame;
+    CGSize s = CGSizeZero;
+    [_name sizeToFit];
+    [_x sizeToFit];
+    frame = _x.frame;
+    frame.size.width +=6;
+    frame.size.height +=6;
+    _x.frame = frame;
+    _x.layer.cornerRadius = frame.size.width/2;
+    s.width = 2*kGeomSpaceEdge + kGeomSpaceInter + CGRectGetWidth(_name.frame) + CGRectGetWidth(_x.frame);
+    s.height = 2*kGeomSpaceEdge + CGRectGetHeight(_name.frame);
+    return s;
+}
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

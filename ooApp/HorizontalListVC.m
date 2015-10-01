@@ -85,14 +85,26 @@ static NSString * const cellIdentifier = @"horizontalCell";
 {
     OOAPI *api = [[OOAPI alloc] init];
     
-    self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
-        _restaurants = r;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self gotRestaurants];
-        });
-    } failure:^(NSError *err) {
-        ;
-    }];
+    __weak HorizontalListVC *weakSelf = self;
+    if (_listItem.type == kOOAPIListTypeFavorites) {
+        self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
+            weakSelf.restaurants = r;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(NSError *err) {
+            ;
+        }];
+    } else {
+        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
+            weakSelf.restaurants = r;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(NSError *err) {
+            ;
+        }];
+    }
 }
 
 - (void)gotRestaurants

@@ -13,4 +13,5 @@
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic) NSUInteger identifier;
 
+- (CGSize)getSuggestedSize;
 @end

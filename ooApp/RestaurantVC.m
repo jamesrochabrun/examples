@@ -117,6 +117,7 @@
                         b.name.text = lo.name;
                         b.identifier = [lo.listID integerValue];
                         [b addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
+                        [b setNeedsLayout];
                         [_removeButtons addObject:b];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [weakSelf displayRemoveButtons];
@@ -131,7 +132,11 @@
 - (void)displayRemoveButtons {
     [_removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
-        b.frame = CGRectMake(0, 0, 100, 30);
+        CGRect frame = b.frame;
+        frame.size = [b getSuggestedSize];
+        frame.origin.x = 10;
+        frame.origin.y = 10;
+        b.frame = frame;
         [self.view addSubview:b];
     }];
 }

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-#import "ImageRefObject.h"
+
 
 typedef enum {
     kRestaurantSourceTypeGoogle = 1
@@ -22,7 +22,8 @@ typedef enum {
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic) BOOL isOpen;
 @property (nonatomic, strong) NSNumber *rating;
-@property (nonatomic, strong) ImageRefObject *imageRef;
+@property (nonatomic, strong) NSMutableArray *imageRefs;
+@property (nonatomic, strong) NSMutableArray *mediaItems;
 @property (nonatomic, strong) NSString *cuisine;
 @property (nonatomic) CLLocationCoordinate2D location;
 @property (nonatomic, strong) NSString *priceRange;

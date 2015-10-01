@@ -127,7 +127,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     
     __weak ListTVCell *weakSelf=self;
     if (_listItem.type == kOOAPIListTypeFavorites) {
-//NOTE: the server is currently not returning image refs with restaurant objects so we won't see images in the UI
         self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{

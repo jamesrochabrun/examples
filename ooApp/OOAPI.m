@@ -83,7 +83,7 @@
 //
 // Only one of max width or max height is heeded. Preference is given to max width
 //
-- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(ImageRefObject *)imageRef
+- (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(NSString *)imageRef
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
                                                    success:(void (^)(NSString *link))success
@@ -94,7 +94,7 @@
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    [parameters setObject:imageRef.reference forKey:@"reference"];
+    [parameters setObject:imageRef forKey:@"reference"];
     
     if (maxWidth) {
         maxWidth = (isRetinaDisplay()) ? 2*maxWidth: maxWidth;
@@ -319,8 +319,10 @@
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
-        for (id dict in responseObject) {
-            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+        if ([responseObject count]) {
+            for (id dict in responseObject) {
+                [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+            }
         }
         success(restaurants);
     } failure:^(NSError *error) {

@@ -12,6 +12,8 @@
 #import "DebugUtilities.h"
 #import "UIImageView+AFNetworking.h"
 #import "EmptyRestaurantTile.h"
+#import "ImageRefObject.h"
+#import "MediaItemObject.h"
 
 @interface TileCVCell ()
 
@@ -112,8 +114,15 @@
     
     OOAPI *api = [[OOAPI alloc] init];
     
-    if (restaurant.imageRef) {
-        _requestOperation = [api getRestaurantImageWithImageRef:restaurant.imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+    NSString *imageRef;
+    if ([restaurant.mediaItems count]) {
+        imageRef = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]).reference;
+    } else if ([restaurant.imageRefs count]) {
+        imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
+    }
+    
+    if (imageRef) {
+        _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
             });
