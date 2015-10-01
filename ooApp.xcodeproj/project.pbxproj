@@ -82,6 +82,7 @@
 		36FDA7131B585F650029D29D /* ooAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA7121B585F650029D29D /* ooAppTests.m */; };
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
 		962303751BB33D2700278FA6 /* forkKnife.png in Resources */ = {isa = PBXBuildFile; fileRef = 962303741BB33D2700278FA6 /* forkKnife.png */; settings = {ASSET_TAGS = (); }; };
+		962667471BBC8C9600D77EBE /* UserHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserHTVCell.m */; settings = {ASSET_TAGS = (); }; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		965A1A971BBA05B500727773 /* SearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965A1A961BBA05B500727773 /* SearchVC.m */; settings = {ASSET_TAGS = (); }; };
@@ -225,6 +226,8 @@
 		36FDA7121B585F650029D29D /* ooAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ooAppTests.m; sourceTree = "<group>"; };
 		46FE088B27B54BA7AAE65CC4 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		962303741BB33D2700278FA6 /* forkKnife.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = forkKnife.png; path = "Graphic Assets/forkKnife.png"; sourceTree = "<group>"; };
+		962667451BBC8C9600D77EBE /* UserHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserHTVCell.h; sourceTree = "<group>"; };
+		962667461BBC8C9600D77EBE /* UserHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserHTVCell.m; sourceTree = "<group>"; };
 		964BC81C1B97935F00760C83 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
@@ -281,6 +284,8 @@
 				36587B7A1B9423D700D01EB5 /* TileCVCell.m */,
 				367112CF1BA13E69006FDCE7 /* HorizonalTVCell.h */,
 				367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */,
+				962667451BBC8C9600D77EBE /* UserHTVCell.h */,
+				962667461BBC8C9600D77EBE /* UserHTVCell.m */,
 				3637E9391BB439290074A01C /* RestaurantHTVCell.h */,
 				3637E93A1BB439290074A01C /* RestaurantHTVCell.m */,
 			);
@@ -721,6 +726,7 @@
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */,
 				96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */,
+				962667471BBC8C9600D77EBE /* UserHTVCell.m in Sources */,
 				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,

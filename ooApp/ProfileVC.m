@@ -14,7 +14,15 @@
 #import "OOAPI.h"
 #import "EmptyListVC.h"
 #import "HorizontalListVC.h"
+#import "UIImage+Additions.h"
 
+@interface ProfileTableFirstRow ()
+@property (nonatomic,assign) NSInteger  userID;
+@property (nonatomic,strong) UserObject* userInfo;
+@property (nonatomic,assign) BOOL viewingOwnProfile;
+@property (nonatomic,assign) ProfileVC *vc;
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@end
 
 @implementation ProfileTableFirstRow
 
@@ -58,6 +66,22 @@
         self.iv.contentMode=UIViewContentModeScaleAspectFit;
         
         self.backgroundColor= WHITE;
+        
+        if (userInfo.imageIdentifier) {
+            self.requestOperation = [OOAPI getUserImageWithImageID: userInfo.imageIdentifier
+                                                         maxWidth:self.frame.size.width
+                                                        maxHeight:0 success:^(NSString *link) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_iv setImageWithURL:[NSURL URLWithString: link ]];
+                });
+            } failure:^(NSError *error) {
+                ;
+            }];
+        } else if ( userInfo.imageURLString) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_iv setImageWithURL:[NSURL URLWithString:userInfo.imageURLString]];
+            });
+        }
     }
     return self;
 }
@@ -230,7 +254,7 @@
         UserObject* userInfo= [Settings sharedInstance].userObject;
         self.profileOwner=userInfo;
     } else {
-        // NOTE: Whoever created this VC will have set the user ID.
+        // NOTE: Whoever created this VC will have set the user ID and user object.
     }
     
     _lists = [NSArray array];
@@ -240,29 +264,6 @@
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;
-//                    if  (foundLists.count) {
-//                        ListObject *list;
-//                        
-//                        for (NSDictionary* item  in foundLists ) {
-//                            NSLog (@" user list:  %@", item);
-//                            
-//                            if (![item isKindOfClass:[NSDictionary class]]) {
-//                                NSLog  (@" item is not a dictionary");
-//                                continue;
-//                            }
-//                            
-//                            NSString* name=  item[ @"name"];
-//                            if (!name) {
-//                                NSLog  (@" missing listing name");
-//                                continue;
-//                            }
-//                            
-//                            list = [[ListObject alloc] init];
-//                            list.name =  name;
-//                            [_lists addObject:list];
-//                        }
-//                    }
-                    
                     [self.table reloadData];
                 }
                 failure:^(NSError *e) {
@@ -289,8 +290,6 @@
     NSString* fullName=  [NSString stringWithFormat: @"%@ %@", first, last ];
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: fullName subHeader:nil];
     [self setNavTitle:  nto];
-    
-    [ self.view setNeedsLayout ];
 }
 
 //------------------------------------------------------------------------------
@@ -383,11 +382,16 @@
     NSArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
     cell.navigationController = self.navigationController;
-    //[cell getRestaurants]; //NOTE: setting listItem will trigger [cell getRestaurants]
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger row = indexPath.row;
+    if (!row) {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO ];
+        return;
+    }
     ListObject *item = [_lists objectAtIndex:(indexPath.row - 1)];
     
     HorizontalListVC *vc = [[HorizontalListVC alloc] init];

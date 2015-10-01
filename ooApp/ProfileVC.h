@@ -13,6 +13,7 @@
 
 @interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic,assign) NSInteger  userID;
+@property (nonatomic,strong) UserObject* userInfo;
 
 - (void) goToEmptyListScreen:(NSString*)string;
 
@@ -29,11 +30,4 @@
 @property (nonatomic, strong) UIButton *buttonNewListIcon;
 @property (nonatomic, assign) float spaceNeededForFirstCell;
 @property (nonatomic, assign) UINavigationController *navigationController;
-@end
-
-@interface ProfileTableFirstRow ()
-@property (nonatomic,assign) NSInteger  userID;
-@property (nonatomic,strong) UserObject* userInfo;
-@property (nonatomic,assign) BOOL viewingOwnProfile;
-@property (nonatomic,assign) ProfileVC *vc;
 @end

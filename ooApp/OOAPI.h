@@ -83,6 +83,16 @@ static const int kOOAPIListTypeUser = 2;
 
 // Users
 //
++ (AFHTTPRequestOperation *)getUserImageWithImageID:(NSString *)identifier
+                                                  maxWidth:(NSUInteger)maxWidth
+                                                 maxHeight:(NSUInteger)maxHeight
+                                                   success:(void (^)(NSString *imageRefs))success
+                                                   failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
+                                        success:(void (^)(NSArray *restaurants))success
+                                        failure:(void (^)(NSError *))failure;
+
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                   success:(void (^)(NSArray *users))success
                                   failure:(void (^)(NSError *))failure;

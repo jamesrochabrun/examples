@@ -18,6 +18,8 @@
 #import "Settings.h"
 #import "RestaurantHTVCell.h"
 #import "RestaurantVC.h"
+#import "UserHTVCell.h"
+#import "ProfileVC.h"
 
 typedef enum: char {
     FILTER_NONE=  0,
@@ -34,11 +36,14 @@ typedef enum: char {
 @property (nonatomic,strong)  UIButton* buttonCancel;
 @property (nonatomic,strong)  UIButton* buttonPlaces;
 @property (nonatomic,strong)  UIButton* buttonYou;
-@property (nonatomic,strong)  UITableView*  table;
+@property (nonatomic,strong)  UITableView*  tableRestaurants;
+@property (nonatomic,strong)  UITableView*  tablePeople;
 @property (nonatomic,assign) FilterType currentFilter;
 @property (nonatomic,strong) NSArray* restaurantsArray;
+@property (nonatomic,strong) NSArray* peopleArray;
 @property (atomic,assign) BOOL doingSearchNow;
 @property (nonatomic,strong) AFHTTPRequestOperation* fetchOperation;
+@property (nonatomic,strong) NSArray* arrayOfFilterNames;
 @end
 
 @implementation SearchVC
@@ -50,6 +55,10 @@ typedef enum: char {
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= WHITE;
+    
+    _arrayOfFilterNames=  @[
+                             @"None",  @"Places", @"People",@"Lists", @"You"
+                             ];
     
     _currentFilter=FILTER_NONE;
     
@@ -66,16 +75,24 @@ typedef enum: char {
     _searchBar.delegate= self;
     _buttonCancel=makeButton(self.view,  @"Cancel", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
-#define SEARCH_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
+#define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
+#define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
+    
+    self.tableRestaurants= makeTable (self.view,self);
+    [_tableRestaurants registerClass:[RestaurantHTVCell class]
+              forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
 
-    _table= makeTable (self.view,self);
-    [_table registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:SEARCH_TABLE_REUSE_IDENTIFIER];
+    self.tablePeople= makeTable (self.view,self);
+    [_tablePeople registerClass:[UserHTVCell class]
+         forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
+    _tablePeople.backgroundColor=  UIColorRGB(0xfff8f8f8);
 
-    _buttonList= makeAttributedButton(self.view,  @"List", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectList:), 0);
+    _buttonList= makeAttributedButton(self.view,  @"Lists", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectList:), 0);
     _buttonPeople= makeAttributedButton(self.view,  @"People", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPeople:), 0);
     _buttonPlaces= makeAttributedButton(self.view,  @"Places", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPlaces:), 0);
     _buttonYou= makeAttributedButton(self.view,  @"You", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectYou:), 0);
     [self changeFilter: FILTER_PLACES];
+    
 }
 
 - (void)viewWillLayoutSubviews
@@ -105,25 +122,23 @@ typedef enum: char {
     [super viewWillDisappear:animated];
 }
 
+//------------------------------------------------------------------------------
+// Name:    currentFilterName
+// Purpose:
+//------------------------------------------------------------------------------
 - (NSString*)currentFilterName
 {
-    switch (_currentFilter) {
-        case FILTER_LISTS: return  @"Lists";
-        case FILTER_PEOPLE: return  @"People";
-        case FILTER_PLACES: return  @"Places";
-        case FILTER_YOU: return  @"You";
-
-        default:
-            return  @"";
-    }
+    return _arrayOfFilterNames [_currentFilter ];
 }
+
 //------------------------------------------------------------------------------
 // Name:    keyboardHidden
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)keyboardHidden: (NSNotification*) not
 {
-    _table.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
+    _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
+    _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -136,8 +151,8 @@ typedef enum: char {
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     float keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
     ? kbSize.width : kbSize.height;
-    _table.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
-//    [_scrollView scrollRectToVisible:_fieldUsername.frame animated:YES];
+    _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
+    _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -152,30 +167,48 @@ typedef enum: char {
         NSLog (@"CANNOT SEARCH NOW");
         return;
     }
-    OOAPI *api= [[OOAPI  alloc] init];
-    CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
-    if (!location.latitude && !location.longitude) {
-        // XX
-        NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
-        location.latitude = 37.775;
-        location.longitude = -122.4183333;
-    }
     
     self.doingSearchNow= YES;
     __weak SearchVC* weakSelf= self;
     
-    self.fetchOperation= [api getRestaurantsWithKeyword:_searchBar.text
-                                              andFilter:[self currentFilterName]
-                                            andLocation:location
-                                                success:^(NSArray *restaurants) {
-                                                    [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
-                                                                               withObject:restaurants
-                                                                            waitUntilDone:NO];
-                                                    
-                                                } failure:^(NSError *e) {
-                                                    NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
-                                                }
-                          ];
+    if ( _currentFilter==FILTER_PEOPLE) {
+        NSString *searchText=_searchBar.text;
+        NSLog (@"SEARCHING FOR USER:  %@",searchText);
+        
+        self.fetchOperation= [OOAPI getUsersWithKeyword:searchText
+                                                    success:^(NSArray *users) {
+                                                        [weakSelf performSelectorOnMainThread:@selector(loadPeople:)
+                                                                                   withObject:users
+                                                                                waitUntilDone:NO];
+                                                        
+                                                    } failure:^(NSError *e) {
+                                                        NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
+                                                    }
+                              ];
+    } else {
+        CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
+        if (!location.latitude && !location.longitude) {
+            // XX
+            NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
+            location.latitude = 37.775;
+            location.longitude = -122.4183333;
+        }
+    
+        OOAPI *api= [[OOAPI  alloc] init];
+
+        self.fetchOperation= [api getRestaurantsWithKeyword:_searchBar.text
+                                                  andFilter:[self currentFilterName]
+                                                andLocation:location
+                                                    success:^(NSArray *restaurants) {
+                                                        [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
+                                                                                   withObject:restaurants
+                                                                                waitUntilDone:NO];
+                                                        
+                                                    } failure:^(NSError *e) {
+                                                        NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
+                                                    }
+                              ];
+    }
     
 }
 
@@ -185,40 +218,47 @@ typedef enum: char {
         return;
     }
     
+    NSString* listString= _arrayOfFilterNames[FILTER_LISTS];
+    NSString* peopleString= _arrayOfFilterNames[FILTER_PEOPLE];
+    NSString* placesString= _arrayOfFilterNames[FILTER_PLACES];
+    NSString* youString= _arrayOfFilterNames[FILTER_YOU];
+    
     const  float fs= kGeomFontSizeHeader;
     switch ( which) {
         case FILTER_LISTS:
-            [_buttonList setAttributedTitle:underlinedAttributedStringOf( @"List", fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:attributedStringOf( @"People", fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:attributedStringOf( @"Places", fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:attributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            [_buttonList setAttributedTitle:underlinedAttributedStringOf(listString, fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
             break;
             
         case FILTER_PEOPLE:
-            [_buttonList setAttributedTitle:attributedStringOf( @"List", fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:underlinedAttributedStringOf( @"People", fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:attributedStringOf( @"Places", fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:attributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:underlinedAttributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
             break;
             
         case FILTER_PLACES:
-            [_buttonList setAttributedTitle:attributedStringOf( @"List", fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:attributedStringOf( @"People", fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:underlinedAttributedStringOf( @"Places", fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:attributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:underlinedAttributedStringOf(placesString, fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
             break;
             
         case FILTER_YOU:
-            [_buttonList setAttributedTitle:attributedStringOf( @"List", fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:attributedStringOf( @"People", fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:attributedStringOf( @"Places", fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:underlinedAttributedStringOf( @"You", fs) forState:UIControlStateNormal];
+            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
+            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+            [_buttonPlaces setAttributedTitle:attributedStringOf(placesString, fs) forState:UIControlStateNormal];
+            [_buttonYou setAttributedTitle:underlinedAttributedStringOf(youString, fs) forState:UIControlStateNormal];
             break;
             
         default: return;
     }
     
     self.currentFilter=  which;
+    
+    [self updateWhichTableIsVisible];
     
     // RULE: If the user was searching for "Fred" in the people category and
     //  then switched to the places category, then we should redo the search
@@ -242,12 +282,45 @@ typedef enum: char {
     [self doSearch];
 }
 
+- (void) updateWhichTableIsVisible
+{
+    if  (_currentFilter==FILTER_PEOPLE ) {
+        _tablePeople.hidden= NO;
+        _tableRestaurants.hidden= YES;
+    } else {
+        _tablePeople.hidden= YES;
+        _tableRestaurants.hidden= NO;
+    }
+}
+
 - (void)loadRestaurants: (NSArray*)array
 {
     self.doingSearchNow= NO;
     self.fetchOperation= nil;
+    
     self.restaurantsArray= array;
-    [self.table reloadData];
+    [self.tableRestaurants reloadData];
+    
+    self.peopleArray= nil;
+    [self.tablePeople reloadData];
+
+    _tablePeople.hidden= YES;
+    _tableRestaurants.hidden= NO;
+}
+
+- (void)loadPeople: (NSArray*)array
+{
+    self.doingSearchNow= NO;
+    self.fetchOperation= nil;
+    
+    self.peopleArray= array;
+    [self.tablePeople reloadData];
+    
+    self.restaurantsArray= nil;
+    [self.tableRestaurants reloadData];
+
+    _tablePeople.hidden= NO;
+    _tableRestaurants.hidden= YES;
 }
 
 //------------------------------------------------------------------------------
@@ -272,8 +345,10 @@ typedef enum: char {
     [self.fetchOperation  cancel];
     self.fetchOperation= nil;
     self.restaurantsArray= nil;
+    self.peopleArray= nil;
     self.doingSearchNow= NO;
-    [self.table reloadData];
+    [self.tableRestaurants reloadData];
+    [self.tablePeople reloadData];
 }
 
 //------------------------------------------------------------------------------
@@ -338,7 +413,7 @@ typedef enum: char {
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
-// Purpose:
+// Purpose: Programmatic equivalent of constraint equations.
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
@@ -365,25 +440,43 @@ typedef enum: char {
     _buttonYou.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=kGeomHeightButton + spacing;
     
-    _table.frame=  CGRectMake(0,y,w, h-y);
+    _tableRestaurants.frame=  CGRectMake(0,y,w, h-y);
+    _tablePeople.frame=  CGRectMake(0,y,w, h-y);
+   
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantHTVCell *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-    if (!cell) {
-        cell=  [[RestaurantHTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_TABLE_REUSE_IDENTIFIER ];
+    if ( tableView==_tableRestaurants) {
+        RestaurantHTVCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+        if (!cell) {
+            cell=  [[RestaurantHTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER ];
+        }
+        NSInteger row = indexPath.row;
+        if  (!self.doingSearchNow) {
+            cell.restaurant= _restaurantsArray[row];
+            
+        }
+        return cell;
+    } else {
+        UserHTVCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+        if (!cell) {
+            cell=  [[UserHTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER ];
+        }
+        NSInteger row = indexPath.row;
+        if  (!self.doingSearchNow) {
+            cell.userInfo = _peopleArray[row];
+        }
+        return cell;
     }
-    NSString *name = nil;
-    NSInteger row = indexPath.row;
-    name=  @[  @"testing",@"foo"][1&row];
-    cell.header.text=  name;
-    if  (!self.doingSearchNow) {
-        cell.restaurant= _restaurantsArray[row];
+}
 
-    }
-    return cell;
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
+{
+    if ( UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad )
+        [_searchBar resignFirstResponder];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -393,23 +486,42 @@ typedef enum: char {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [_searchBar resignFirstResponder];
+    
     if  (self.doingSearchNow) {
         return;
     }
     
     NSInteger row= indexPath.row;
-    if  (row >= _restaurantsArray.count ) {
-        return;
+    
+    if ( tableView==_tableRestaurants) {
+        if  (row >= _restaurantsArray.count ) {
+            return;
+        }
+        
+        RestaurantObject *ro = [_restaurantsArray objectAtIndex:indexPath.row];
+        
+        RestaurantVC *vc = [[RestaurantVC alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+        vc.title = trimString (ro.name);
+        vc.restaurant = ro;
+        [vc getRestaurant];
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    } else {
+        if  (row >= _peopleArray.count ) {
+            return;
+        }
+        
+        UserObject *u = [_peopleArray objectAtIndex:indexPath.row];
+        
+        ProfileVC *vc= [[ProfileVC  alloc]   init];
+        vc.userID= u.userID.longValue;
+        vc.userInfo= u;
+        
+        [self.navigationController pushViewController:vc animated:YES];
+       
     }
-    RestaurantObject *ro = [_restaurantsArray objectAtIndex:indexPath.row];
-    
-    RestaurantVC *vc = [[RestaurantVC alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
-    vc.title = trimString (ro.name);
-    vc.restaurant = ro;
-    [vc getRestaurant];
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -417,7 +529,12 @@ typedef enum: char {
     if  (self.doingSearchNow) {
         return 0;
     }
-    return self.restaurantsArray.count;
+    
+    if ( tableView==_tableRestaurants) {
+        return self.restaurantsArray.count;
+    }  else {
+        return self.peopleArray.count;
+    }
 }
 
 @end

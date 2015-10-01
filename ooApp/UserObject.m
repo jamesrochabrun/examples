@@ -17,6 +17,8 @@ NSString *const kKeyPhoneNumber = @"phone_number";
 NSString *const kKeyUsername = @"username";
 NSString *const kKeyToken = @"backend_auth_token";
 NSString *const kKeyGender = @"gender";
+NSString *const kKeyImageURL = @"imageURL";
+NSString *const kKeyImageIdentifier = @"imageIdentifier";
 
 @interface UserObject()
 
@@ -48,6 +50,9 @@ NSString *const kKeyGender = @"gender";
     user.backendAuthorizationToken = [dict objectForKey:kKeyToken];
     user.gender = [dict objectForKey:kKeyGender];
     user.username=[dict objectForKey:kKeyUsername];
+    user.imageURLString=[dict objectForKey:kKeyImageURL];
+    user.imageIdentifier=[dict objectForKey:kKeyImageIdentifier];
+    
     return user;
 }
 
@@ -67,6 +72,8 @@ NSString *const kKeyGender = @"gender";
              kKeyToken:self.backendAuthorizationToken ?: @"",
              kKeyGender:self.gender ?: @"",
              kKeyUsername:self.username ?: @"",
+             kKeyImageIdentifier:self.imageIdentifier ?: @"",
+             kKeyImageURL:self.imageURLString ?: @"",
              };
 }
 

@@ -24,6 +24,8 @@
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *about;
 @property (nonatomic, strong) NSString *facebookIdentifier;
+@property (nonatomic, strong) NSString *imageURLString;// e.g. from FB.
+@property (nonatomic, strong) NSString *imageIdentifier;// i.e. from OO.
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryFromUser;
