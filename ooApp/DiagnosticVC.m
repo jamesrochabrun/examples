@@ -15,14 +15,19 @@
 #import "ListObject.h"
 #import "DiagnosticVC.h"
 #import "Settings.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface DiagnosticVC ()
 @property (nonatomic,strong)  UIButton* buttonClearUsername;
 @property (nonatomic,strong)  UIButton* buttonClearCache;
+@property (nonatomic,strong)  UIButton* buttonSearchRadius;
 @property (nonatomic,strong)  UITextView* textviewDiagnosticLog;
 @end
 
 @implementation DiagnosticVC
+{
+    int radius;
+}
 
 - (void)viewDidLoad
 {
@@ -49,6 +54,13 @@
     _buttonClearCache= makeButton(self.view,  @"CLEAR CACHE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doClearCache:), 1);
     _buttonClearCache.titleLabel.numberOfLines= 0;
     _buttonClearCache.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
+    radius= [[Settings sharedInstance] searchRadius] / 1000;
+    radius*= 2;
+
+    _buttonSearchRadius= makeButton(self.view, [NSString stringWithFormat:@"%dkM RADIUS", radius] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doSearchRadius:), 1);
+    _buttonSearchRadius.titleLabel.numberOfLines= 0;
+    _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
 }
 
 - (void)viewWillLayoutSubviews
@@ -71,7 +83,32 @@
 - (void)doClearCache: (id) sender
 {
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
-    message( @"Cleared.");
+    
+    if  ([UIImageView respondsToSelector:@selector(sharedImageCache)] ) {
+        id foo = [UIImageView sharedImageCache];
+        if  (foo ) {
+            if  ([foo respondsToSelector:@selector( removeAllObjects)] ) {
+                [ foo performSelector:@selector( removeAllObjects) withObject:nil];
+            }
+        }
+    }
+    
+    message( @"cache cleared.");
+}
+
+//------------------------------------------------------------------------------
+// Name:    doSearchRadius
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doSearchRadius: (id) sender
+{
+    [[Settings sharedInstance] setSearchRadius:  radius *1000];
+    radius*= 2;
+    if  (radius> 100 ) {
+        radius= 1;
+    }
+    NSString* string= [NSString stringWithFormat:@"%dkM RADIUS", radius];
+    [_buttonSearchRadius setTitle:string forState:UIControlStateNormal];
 }
 
 //------------------------------------------------------------------------------
@@ -107,13 +144,14 @@
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
-    float  spacing= kGeomSpaceInter;
+    float  spacing= 16;
     _textviewDiagnosticLog.frame=  CGRectMake(margin,h/2,w-2*margin,h/2-margin);
-    float x=  margin, y=  75;
+    float x=  margin, y=  margin;
     _buttonClearUsername.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _buttonClearCache.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
-    
-    
+    y+=  spacing +kGeomHeightButton;
+    _buttonSearchRadius.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
 }
+
 @end

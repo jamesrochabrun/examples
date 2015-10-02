@@ -59,7 +59,7 @@
 {
     if (!restaurantId) return nil;
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%@?source=%ld", [self ooURL], restaurantId, source];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%@?source=%lu", [self ooURL], restaurantId,( unsigned long) source];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -112,7 +112,7 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    getRestaurantsWithKeyword
+// Name:    getRestaurantsWithKeyword andLocation
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
@@ -120,10 +120,15 @@
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure
 {
+    if (!keyword ) {
+        failure (nil);
+        return nil;
+    }
+    
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
     
-    NSLog (@" URL=  %@",urlString);
+//    NSLog (@" URL=  %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -136,6 +141,86 @@
         success(restaurants);
     } failure:^(NSError *error) {
         NSLog(@"Error: %@", error);
+        failure(error);
+    }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getRestaurantsWithKeyword andFilter andLocation
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
+                                            andFilter: (NSString*)filterName
+                                          andLocation:(CLLocationCoordinate2D)location
+                                              success:(void (^)(NSArray *restaurants))success
+                                              failure:(void (^)(NSError *))failure
+{
+    if (!keyword || !filterName) {
+        failure (nil);
+        return nil;
+    }
+    
+    double radius= [Settings sharedInstance].searchRadius;
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
+    NSDictionary *parameters = @{@"keyword":keyword,
+                                 @"latitude": @(location.latitude),
+                                 @"longitude":@(location.longitude),
+                                 @"filter": filterName ?:  @"",
+                                 @"radius": @(radius)
+                                 };
+    
+//    NSLog (@" URL=  %@",urlString);
+    NSLog  (@" radius=   %f", radius);
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET: urlString parameters:parameters success:^(id responseObject) {
+        NSMutableArray *restaurants = [NSMutableArray array];
+        for (id dict in responseObject) {
+            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
+            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+        }
+        success(restaurants);
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+        failure(error);
+    }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getUsersWithKeyword
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
+                                        success:(void (^)(NSArray *restaurants))success
+                                        failure:(void (^)(NSError *))failure
+{
+    if (!keyword  || !keyword.length) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/search/users", kOOURL];
+    NSDictionary *parameters = @{
+                                 @"keyword":keyword,
+                                 };
+    
+    //    NSLog (@" URL=  %@",urlString);
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET: urlString parameters:parameters success:^(id responseObject) {
+        NSMutableArray *users = [NSMutableArray array];
+        for (id dict in responseObject) {
+            UserObject *u=[UserObject userFromDict:dict];
+            NSLog(@"FOUND USER: %@", u.username);
+            [users addObject:u];
+        }
+        success(users);
+    } failure:^(NSError *error) {
+//        NSLog(@"Error: %@", error);
+        failure(error);
     }];
 }
 
@@ -432,7 +517,85 @@
     return op;
 }
 
+//------------------------------------------------------------------------------
+// Name:    getRestaurantImageWithImageRef
+// Purpose:
+//------------------------------------------------------------------------------
+//
+// Only one of max width or max height is heeded. Preference is given to max width
+//
++ (AFHTTPRequestOperation *)getUserImageWithImageID:(NSString *)identifier
+                                                  maxWidth:(NSUInteger)maxWidth
+                                                 maxHeight:(NSUInteger)maxHeight
+                                                   success:(void (^)(NSString *link))success
+                                                   failure:(void (^)(NSError *))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/photos", kOOURL];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    [parameters setObject: identifier forKey:@"identifier"];
+    
+    if (maxWidth) {
+        maxWidth = (isRetinaDisplay()) ? 2*maxWidth: maxWidth;
+        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxwidth"];
+    } else if (maxHeight) {
+        maxHeight = (isRetinaDisplay()) ? 2*maxHeight: maxHeight;
+        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxHeight"];
+    }
+    
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
+        success([responseObject objectForKey:@"link"]);
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
 
+//------------------------------------------------------------------------------
+// Name:    uploadUserPhoto
+// Purpose:
+//------------------------------------------------------------------------------
++ (void)uploadUserPhoto:(UIImage *)image
+                                    success:(void (^)(void))success
+                                    failure:(void (^)(NSError *))failure;
+{
+    if  (!image) {
+        failure (nil);
+        return ;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/photo", kOOURL];
+    
+    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString: urlString]];
+    if  (!request) {
+        failure (nil);
+        return ;
+    }
+    [request setHTTPMethod:@"POST"];
+    
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+    
+    NSURLSessionUploadTask *task = [session uploadTaskWithRequest:request
+                                                         fromData:imageData
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                    if (error) {
+                                                        if (failure) failure(error);
+                                                    } else {
+                                                        NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
+                                                        if  (httpResp.statusCode == 200 ) {
+                                                            if (success) success();
+                                                        }else {
+                                                            NSLog (@"IMAGE UPLOAD FAILURE:  %ld", (long)httpResp.statusCode);
+                                                            if (failure) failure(error);
+                                                        }
+                                                        
+                                                    }
+                                                }];
+    [task resume];
+}
 
 - (NSString *)ooURL {
     return kOOURL;

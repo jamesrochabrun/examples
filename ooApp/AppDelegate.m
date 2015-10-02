@@ -28,7 +28,7 @@
     NSString *applicationName = [infoDictionary objectForKey:@"CFBundleName"];
     NSString *majorVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
     NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
-
+    [_diagnosticLogString appendFormat: @"%@\r",platformString()];
     [_diagnosticLogString appendFormat:  @"%@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
 #endif
     

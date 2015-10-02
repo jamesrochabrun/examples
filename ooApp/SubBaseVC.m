@@ -23,16 +23,22 @@
     self = [super init];
     if (self) {
         _navTitleView = [[NavTitleView alloc] init];
+
         self.navigationItem.titleView = _navTitleView;
         
         if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
             self.edgesForExtendedLayout = UIRectEdgeNone;
-
+        
+        _navTitleView.frame = CGRectMake(0, 0,
+                                         [UIScreen mainScreen].bounds.size.width - kGeomWidthMenuButton*2,
+                                         44);
+        self.navigationItem.titleView = _navTitleView;
     }
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
     
@@ -48,7 +54,6 @@
 - (void)setNavTitle:(NavTitleObject *)navTitle {
     _navTitle = navTitle;
     _navTitleView.navTitle = _navTitle;
-    _navTitleView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame)-100 , 44);
 }
 
 - (void)didReceiveMemoryWarning {

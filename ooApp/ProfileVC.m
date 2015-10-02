@@ -14,7 +14,15 @@
 #import "OOAPI.h"
 #import "EmptyListVC.h"
 #import "HorizontalListVC.h"
+#import "UIImage+Additions.h"
 
+@interface ProfileTableFirstRow ()
+@property (nonatomic,assign) NSInteger  userID;
+@property (nonatomic,strong) UserObject* userInfo;
+@property (nonatomic,assign) BOOL viewingOwnProfile;
+@property (nonatomic,assign) ProfileVC *vc;
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@end
 
 @implementation ProfileTableFirstRow
 
@@ -26,18 +34,31 @@
 {
     self = [super init];
     if (self) {
-        self.iv= makeImageView (self,  kImageNoProfileImage);
-        self.buttonFollow= makeButton(self,  @"FOLLOW", kGeomFontSizeHeader,BLACK, CLEAR, self, @selector (userPressedFollow:), 1);
-        self.buttonNewList= makeButton(self,  @"NEW LIST", kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
-        self.buttonNewListIcon= makeButton(self, @"b",kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
-        [_buttonNewListIcon.titleLabel setFont: [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader]];
+        self.buttonFollow= makeButton(self,  @"FOLLOW",
+                                      kGeomFontSizeHeader,BLACK, CLEAR,
+                                      self,
+                                      @selector (userPressedFollow:), 1);
+        self.buttonNewList= makeButton(self,  @"NEW LIST",
+                                       kGeomFontSizeHeader,BLACK, CLEAR,
+                                       self,
+                                       @selector (userPressedNewList:), 0);
+        self.buttonNewListIcon= makeButton(self,kFontIconAdd,
+                                           kGeomFontSizeHeader,BLACK, CLEAR,
+                                           self,
+                                           @selector (userPressedNewList:), 0);
+        [_buttonNewListIcon.titleLabel setFont:
+         [UIFont fontWithName:@"oomami-icons"
+                         size: kGeomFontSizeHeader]];
         
         _userInfo= u;
         _userID= [u.userID integerValue];
         
+        // Ascertain whether reviewing our own profile.
         UserObject* userInfo= [Settings sharedInstance].userObject;
         NSInteger ownUserIdentifier= [[userInfo userID ]  integerValue ];
         _viewingOwnProfile= _userID==ownUserIdentifier;
+        
+        self.iv= makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
         
         NSString* username= nil;
         if  (_userInfo.username.length ) {
@@ -56,6 +77,24 @@
         self.iv.layer.borderColor= GRAY.CGColor;
         self.iv.layer.borderWidth= 1;
         self.iv.contentMode=UIViewContentModeScaleAspectFit;
+        
+        self.backgroundColor= WHITE;
+        
+        if (userInfo.imageIdentifier) {
+            self.requestOperation = [OOAPI getUserImageWithImageID: userInfo.imageIdentifier
+                                                         maxWidth:self.frame.size.width
+                                                        maxHeight:0 success:^(NSString *link) {
+                ON_MAIN_THREAD( ^{
+                    [_iv setImageWithURL:[NSURL URLWithString: link ]];
+                });
+            } failure:^(NSError *error) {
+                ;
+            }];
+        } else if ( userInfo.imageURLString) {
+            ON_MAIN_THREAD( ^{
+                [_iv setImageWithURL:[NSURL URLWithString:userInfo.imageURLString]];
+            });
+        }
     }
     return self;
 }
@@ -70,11 +109,11 @@
         return;
     }
     
-    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle: @"New List"
-                                                     message: @"Enter a name for the new list"
+    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New List")
+                                                     message: LOCAL(@"Enter a name for the new list")
                                                     delegate:  self
-                                           cancelButtonTitle: @"Cancel"
-                                           otherButtonTitles: @"Create", nil];
+                                           cancelButtonTitle: LOCAL(@"Cancel")
+                                           otherButtonTitles: LOCAL(@"Create"), nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     [alert show];
 }
@@ -93,6 +132,7 @@
         }
         
         OOAPI *api = [[OOAPI alloc] init];
+        
         [api addList:string
              success:^(id response) {
                  [self.vc  performSelectorOnMainThread:  @selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO ];
@@ -227,7 +267,7 @@
         UserObject* userInfo= [Settings sharedInstance].userObject;
         self.profileOwner=userInfo;
     } else {
-        // NOTE: Whoever created this VC will have set the user ID.
+        // NOTE: Whoever created this VC will have set the user ID and user object.
     }
     
     _lists = [NSArray array];
@@ -259,8 +299,6 @@
     NSString* fullName=  [NSString stringWithFormat: @"%@ %@", first, last ];
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: fullName subHeader:nil];
     [self setNavTitle:  nto];
-    
-    [ self.view setNeedsLayout ];
 }
 
 //------------------------------------------------------------------------------
@@ -338,7 +376,8 @@
 // Name:    cellForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *cellIdentifier = @"pcell";
     
@@ -349,15 +388,20 @@
     }
     
     ListTVCell* cell = [[ListTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-//    cell.backgroundColor = UIColorRGBA(kColorClear);
+
     NSArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
     cell.navigationController = self.navigationController;
-    //[cell getRestaurants]; //NOTE: setting listItem will trigger [cell getRestaurants]
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger row = indexPath.row;
+    if (!row) {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO ];
+        return;
+    }
     ListObject *item = [_lists objectAtIndex:(indexPath.row - 1)];
     
     HorizontalListVC *vc = [[HorizontalListVC alloc] init];

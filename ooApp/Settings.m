@@ -13,6 +13,8 @@
 
 NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
+NSString *const kDefaultsSearchRadius = @"searchRadius";
+static const double kDefaultSearchRadius = 1000; // meters
 
 @implementation Settings
 
@@ -147,6 +149,22 @@ NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud setDouble:coord.latitude forKey:kDefaultsUserLocationLastKnownLatitude];
     [ud setDouble:coord.longitude  forKey:kDefaultsUserLocationLastKnownLongitude];
+}
+
+- (double) searchRadius
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    double r = [ud doubleForKey: kDefaultsSearchRadius];
+    if (r < 5)
+        r = kDefaultSearchRadius;
+    return r;
+}
+- (void) setSearchRadius:(double)r
+{
+    if (r < 5)
+        return;
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setDouble:r forKey:kDefaultsSearchRadius];
 }
 
 @end

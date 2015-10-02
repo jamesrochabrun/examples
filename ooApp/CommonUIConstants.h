@@ -45,9 +45,10 @@ static CGFloat kGeomCornerRadius = 3.0;
 static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
-static CGFloat kGeomHeightButton = 40.0;
+static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomProfileInformationHeight = 18;
 static CGFloat kGeomButtonWidth = 100;
+static CGFloat kGeomHeightSampleUsernameRow = 180.0;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
 static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
 static CGFloat kGeomHeightFeaturedCellHeight = 150.0;
@@ -67,7 +68,8 @@ static CGFloat kGeomEmptyTextFieldWidth = 150;
 static CGFloat kGeomLogoWidth= 200;
 static CGFloat kGeomLogoHeight= 100;
 static CGFloat kGeomLoginVerticalDisplacement = 75;
-static CGFloat kGeomWidthMenuButton = 42;
+static CGFloat kGeomWidthMenuButton = 44;
+static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 
 // Images
 extern NSString *const kImageNoProfileImage;

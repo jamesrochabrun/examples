@@ -48,6 +48,9 @@
     }
     
     _navTitleView = [[NavTitleView alloc] init];
+    _navTitleView.frame = CGRectMake(0, 0,
+                                     [UIScreen mainScreen].bounds.size.width - kGeomWidthMenuButton*2,
+                                     44);
     self.navigationItem.titleView = _navTitleView;
 
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
@@ -65,7 +68,6 @@
 {
     _navTitle = navTitle;
     _navTitleView.navTitle = _navTitle;
-    _navTitleView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame) - kGeomWidthMenuButton*2, 44);
 }
 
 - (void)viewWillAppear:(BOOL)animated

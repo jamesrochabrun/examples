@@ -12,6 +12,7 @@
 #import "Common.h"
 #import "ListTVCell.h"
 #import "OOAPI.h"
+#import "AppDelegate.h"
 
 @interface CreateUsernameVC ()
 
@@ -57,7 +58,7 @@
     self.scrollView= [UIScrollView  new];
     [self.view  addSubview: _scrollView ];
     
-    self.buttonSignUp= makeButton( _scrollView,  @"SIGN UP", kGeomFontSizeHeader,
+    self.buttonSignUp= makeButton( _scrollView, LOCAL(@"SIGN UP") , kGeomFontSizeHeader,
                                  BLACK, CLEAR, self,
                                  @selector(userPressedSignUpButton:),
                                  1);
@@ -71,13 +72,13 @@
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
     _fieldUsername.backgroundColor= WHITE;
-    _fieldUsername.placeholder=  @"Desired username";
+    _fieldUsername.placeholder=  LOCAL(@"Desired username");
     _fieldUsername.borderStyle= UITextBorderStyleLine;
     _fieldUsername.textAlignment= NSTextAlignmentCenter;
     [_scrollView addSubview: _fieldUsername];
     _fieldUsername.clearButtonMode = UITextFieldViewModeWhileEditing;
     
-    self.labelUsernameTaken= makeLabel(_scrollView,  @"status: username is taken", kGeomFontSizeDetail);
+    self.labelUsernameTaken= makeLabel(_scrollView,LOCAL(@"status: username is taken"), kGeomFontSizeDetail);
     self.labelUsernameTaken.textColor= RED;
     UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader];
     _labelUsernameTaken.hidden= YES;
@@ -86,18 +87,19 @@
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
     NSAttributedString *aString= [[NSAttributedString  alloc]
-                                      initWithString:@"We should put some introductory text here.\r"
-                                      attributes: @{
-                                                    NSFontAttributeName: upperFont,
-                                                    NSParagraphStyleAttributeName:paragraphStyle
-                                                    }];
+                                  initWithString:
+                                    LOCAL(@"We should put some introductory text here.\r")
+                                  attributes: @{
+                                                NSFontAttributeName: upperFont,
+                                                NSParagraphStyleAttributeName:paragraphStyle
+                                                }];
     
     self.textView=  makeTextView(_scrollView, CLEAR, NO);
     _textView.textColor= BLACK;
     _textView.attributedText= aString;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader:@"Create User Name"
+                           initWithHeader: LOCAL(@"Create User Name")
                            subHeader:nil];
     [self setNavTitle:  nto];
     
@@ -171,12 +173,12 @@
 
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return  @"Sample usernames";
+    return LOCAL(@"Sample usernames");
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 44;
+    return kGeomHeightSampleUsernameRow;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -209,7 +211,7 @@
 {
     NSString* enteredUsername= textField.text;
     if (!enteredUsername.length) {
-        message( @"You did not enter a username.");
+        message( LOCAL(@"You did not enter a username."));
         return NO;
     }
     [self checkWhetherUserNameIsInUse : enteredUsername];
@@ -303,10 +305,9 @@
 {
     [_fieldUsername  resignFirstResponder];
     
-//    UserObject* userInfo= [Settings sharedInstance].userObject;
-//        NSStri6ng *expression=  [NSString stringWithFormat: @"Congratulations, your username is now  %@" ,userInfo.username];
-//        message( expression);
-    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    [APP.diagnosticLogString appendFormat: @"Username set to %@" ,userInfo.username];
+
     [self performSegueWithIdentifier:@"gotoDiscoverFromCreateUsername" sender:self];
 }
 
@@ -318,7 +319,6 @@
 {
     _scrollView.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
 }
-
 
 //------------------------------------------------------------------------------
 // Name:    keyboardShown
@@ -352,7 +352,7 @@
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
-// Purpose:
+// Purpose: Programmatic equivalent of constraint equations.
 //------------------------------------------------------------------------------
 -(void) doLayout
 {
@@ -365,7 +365,6 @@
     [self.textView sizeToFit ];
     float heightForText= _textView.bounds.size.height;
     
-//    const float margin=kGeomSpaceEdge;
     const float spacer=kGeomSpaceInter;
     
     float totalHeightNeeded= heightForText+kGeomForkImageSize +3*kGeomHeightButton;
@@ -399,7 +398,6 @@
 {
     [ super viewWillLayoutSubviews ];
   
-//    [self layout];
     [self doLayout];
 }
 

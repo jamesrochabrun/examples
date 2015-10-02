@@ -7,6 +7,7 @@
 //
 
 #import "UserObject.h"
+#import "OOAPI.h"
 
 NSString *const kKeyID = @"user_id";
 NSString *const kKeyFirstName = @"first_name";
@@ -17,12 +18,17 @@ NSString *const kKeyPhoneNumber = @"phone_number";
 NSString *const kKeyUsername = @"username";
 NSString *const kKeyToken = @"backend_auth_token";
 NSString *const kKeyGender = @"gender";
+NSString *const kKeyImageURL = @"imageURL";
+NSString *const kKeyImageIdentifier = @"imageIdentifier";
 
 @interface UserObject()
 
 @end
 
 @implementation UserObject
+{
+    UIImage *profilePhoto;
+}
 
 - (instancetype) init
 {
@@ -48,6 +54,9 @@ NSString *const kKeyGender = @"gender";
     user.backendAuthorizationToken = [dict objectForKey:kKeyToken];
     user.gender = [dict objectForKey:kKeyGender];
     user.username=[dict objectForKey:kKeyUsername];
+    user.imageURLString=[dict objectForKey:kKeyImageURL];
+    user.imageIdentifier=[dict objectForKey:kKeyImageIdentifier];
+    
     return user;
 }
 
@@ -67,7 +76,30 @@ NSString *const kKeyGender = @"gender";
              kKeyToken:self.backendAuthorizationToken ?: @"",
              kKeyGender:self.gender ?: @"",
              kKeyUsername:self.username ?: @"",
+             kKeyImageIdentifier:self.imageIdentifier ?: @"",
+             kKeyImageURL:self.imageURLString ?: @"",
              };
+}
+
+- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto;
+{
+    if (!userProfilePhoto) {
+        return;
+    }
+    
+    profilePhoto= userProfilePhoto;
+    [OOAPI uploadUserPhoto:profilePhoto
+                   success:^() {
+                       
+                   }
+                   failure:^(NSError *e) {
+                       
+                   }];
+}
+
+- (UIImage*) userProfilePhoto;
+{
+    return profilePhoto;
 }
 
 @end

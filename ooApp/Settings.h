@@ -31,5 +31,8 @@ extern NSString *const kDefaultsCurrentUserInfo;
 
 - (NSString *)lastKnownDateString;
 
+- (double) searchRadius;
+- (void) setSearchRadius:(double)r;
+
 @end
 

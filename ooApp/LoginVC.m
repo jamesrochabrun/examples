@@ -56,10 +56,9 @@
     [[LocationManager sharedInstance] askUserWhetherToTrack ];
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    doLayout
-// Purpose: Manual placement of views.
+// Purpose: Programmatic equivalent of constraint equations.
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
@@ -248,7 +247,7 @@
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString *email= userInfo.email;
     if  (email.length > 1 && userInfo.userID.intValue <= 0) {
-        message( @"user has OO account already but this is their first Facebook login.");
+        NSLog ( @"user has OO account already but this is their first Facebook login.");
     }
 
     //---------------------------------------------------
@@ -267,7 +266,6 @@
     }
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    showMainUIForUserWithEmail
 // Purpose: Find out whether back end knows this user already.
@@ -278,6 +276,8 @@
     if  (!email) {
         return;
     }
+    
+    [self fetchProfilePhoto];
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* requestString= [NSString stringWithFormat:  @"https://%@/users/emails/%@", kOOURL,  email];
@@ -591,11 +591,13 @@
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewDidAppear
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-
-    //    [DebugUtilities addBorderToViews:@[self.view, _backgroundImageView, _logo, _facebookLoginButton, _textfieldUsername, _textfieldPassword]];
 
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (facebookToken) {
@@ -638,6 +640,57 @@
          }
      }];
     
+}
+
+//------------------------------------------------------------------------------
+// Name:    fetchProfilePhoto
+// Purpose: Get the user's photo URL from Facebook.
+//------------------------------------------------------------------------------
+-(void)fetchProfilePhoto
+{
+    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email,picture"
+                                       parameters:nil]
+     startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+         if (!error) {
+             NSDictionary* dictionary=  result;
+             if (![dictionary isKindOfClass:[NSDictionary class ]]) {
+                 return;
+             }
+             
+             NSLog(@"FACEBOOK USER DICTIONARY:%@",  dictionary);
+             
+             NSDictionary* pictureDictionary= dictionary[ @"picture"];
+             if ( pictureDictionary) {
+                 NSDictionary* pictureData= pictureDictionary[ @"data"];
+                 if  (pictureData ) {
+                     NSString* urlString= pictureData[ @"url"];
+                     if  ( urlString ) {
+                         UserObject* userInfo= [Settings sharedInstance].userObject;
+                         NSString* existingURL= userInfo.imageURLString;
+                         if (1|| !existingURL  ||  ![existingURL isEqualToString: urlString]) {
+                             userInfo.imageURLString=  urlString;
+                             [[Settings sharedInstance] save ];
+                             
+                             NSLog (@"NEW PROFILE PICTURE URL: %@", urlString);
+                             
+                             // NOTE: We are no longer in the main thread.
+                             
+                             NSURL *url= [ NSURL  URLWithString: urlString];
+                             if  (url ) {
+                                 NSData *data= [NSData dataWithContentsOfURL:url];
+                                 if  ( data) {
+                                     UIImage *image= [ UIImage imageWithData:data];
+                                     if  (image ) {
+                                         [userInfo setUserProfilePhoto:image];
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+     }];
 }
 
 @end
