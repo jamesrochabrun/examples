@@ -20,7 +20,7 @@
     
     if (self) {
         _x = [[UILabel alloc] init];
-        [_x withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorBlack backgroundColor:kColorGreen];
+        [_x withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorBlack backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         _x.text = kFontIconRemove;
 
         _name = [[UILabel alloc] init];
@@ -51,7 +51,7 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_name]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-spaceEdge-[_x]-spaceInter-[_name]-spaceEdge-|" options:0 metrics:metrics views:views]];
+                               constraintsWithVisualFormat:@"H:|-spaceEdge-[_x]-[_name]-spaceEdge-|" options:0 metrics:metrics views:views]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_x
                                                      attribute:NSLayoutAttributeCenterY
@@ -72,15 +72,20 @@
     CGSize s = CGSizeZero;
     [_name sizeToFit];
     [_x sizeToFit];
-    frame = _x.frame;
-    frame.size.width +=6;
-    frame.size.height +=6;
-    _x.frame = frame;
-    _x.layer.cornerRadius = frame.size.width/2;
     s.width = 2*kGeomSpaceEdge + kGeomSpaceInter + CGRectGetWidth(_name.frame) + CGRectGetWidth(_x.frame);
     s.height = 2*kGeomSpaceEdge + CGRectGetHeight(_name.frame);
     return s;
 }
+
+- (BOOL)isEqual:(id)object {
+    OORemoveButton *rb = (OORemoveButton *)object;
+    return (rb.identifier == self.identifier) ? YES : NO;
+}
+
+- (NSUInteger)hash {
+    return _identifier;
+}
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

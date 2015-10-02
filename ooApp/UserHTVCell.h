@@ -13,6 +13,5 @@
 @interface UserHTVCell : HorizonalTVCell
 
 @property (nonatomic, strong) UserObject *userInfo;
-//@property (nonatomic, strong) GMSMarker *marker;
 
 @end

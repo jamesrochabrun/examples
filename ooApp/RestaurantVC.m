@@ -17,7 +17,7 @@
 @property (nonatomic, strong) UIAlertController *alertController;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
-@property (nonatomic, strong) NSMutableArray *removeButtons;
+@property (nonatomic, strong) NSMutableSet *removeButtons;
 
 @end
 
@@ -69,7 +69,7 @@
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
-    _removeButtons = [NSMutableArray array];
+    _removeButtons = [NSMutableSet set];
 }
 
 - (void)moreButtonPressed:(id)sender {
@@ -110,7 +110,6 @@
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;
-                    [_removeButtons removeAllObjects];
                     [_lists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         ListObject *lo = (ListObject *)obj;
                         OORemoveButton *b = [[OORemoveButton alloc] init];
@@ -130,7 +129,8 @@
 }
 
 - (void)displayRemoveButtons {
-    [_removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    NSArray *removeButtons = [_removeButtons allObjects];
+    [removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
@@ -145,7 +145,8 @@
     OORemoveButton  *b = (OORemoveButton *)sender;
     OOAPI *api = [[OOAPI alloc] init];
     [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.identifier success:^(NSArray *lists) {
-        ;
+        [self getListsForRestaurant];
+        [b removeFromSuperview];
     } failure:^(NSError *error) {
         ;
     }];
@@ -154,7 +155,7 @@
 - (void)addToFavorites {
     OOAPI *api = [[OOAPI alloc] init];
     [api addRestaurantsToFavorites:@[_restaurant] success:^(id response) {
-        ;
+        [self getListsForRestaurant];
     } failure:^(NSError *error) {
         ;
     }];
