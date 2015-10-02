@@ -43,8 +43,10 @@ NSString *const kKeyRestaurantWebsite = @"website";
     restaurant.imageRefs = [NSMutableArray array];
     if (imageRefs && ![imageRefs isKindOfClass:[NSNull class]] && [imageRefs count]) {
         [imageRefs enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            ImageRefObject *iro = [ImageRefObject imageRefFromDict:obj];
-            [restaurant.imageRefs addObject:iro];
+            if (![obj isKindOfClass:[NSNull class]]) {
+                ImageRefObject *iro = [ImageRefObject imageRefFromDict:obj];
+                [restaurant.imageRefs addObject:iro];
+            }
         }];
     }
 
@@ -52,8 +54,10 @@ NSString *const kKeyRestaurantWebsite = @"website";
     restaurant.mediaItems = [NSMutableArray array];
     if (mediaItems && ![mediaItems isKindOfClass:[NSNull class]] && [mediaItems count]) {
         [mediaItems enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            MediaItemObject *iro = [MediaItemObject mediaItemFromDict:obj];
-            [restaurant.mediaItems addObject:iro];
+            if (![obj isKindOfClass:[NSNull class]]) {
+                MediaItemObject *iro = [MediaItemObject mediaItemFromDict:obj];
+                [restaurant.mediaItems addObject:iro];
+            }
         }];
     }
     
