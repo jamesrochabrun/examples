@@ -48,6 +48,7 @@ static NSUInteger kGeomFontSizeDetail = 11;
 static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomProfileInformationHeight = 18;
 static CGFloat kGeomButtonWidth = 100;
+static CGFloat kGeomHeightSampleUsernameRow = 180.0;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
 static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
 static CGFloat kGeomHeightFeaturedCellHeight = 150.0;

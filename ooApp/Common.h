@@ -12,6 +12,9 @@
 @class AppDelegate;
 #define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
 
+#define LOCAL(STR) NSLocalizedString(STR, nil)
+#define ON_MAIN_THREAD(BLK) dispatch_async(dispatch_get_main_queue(),BLK)
+
 extern void message (NSString *str);
 
 extern NSString*const kOOURL;
@@ -22,6 +25,7 @@ extern NSString *platformString();
 extern NSAttributedString* attributedStringOf(NSString*,double fontSize);
 extern NSAttributedString* underlinedAttributedStringOf(NSString* ,double fontSize);
 
+extern UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName);
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
 extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);

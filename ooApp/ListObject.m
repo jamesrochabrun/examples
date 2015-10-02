@@ -35,7 +35,7 @@ NSString *const kKeyListType = @"type";
     return @{
              kKeyListID : list.listID ? : @"",
              kKeyListName : list.name?: @"",
-             kKeyListType : [NSString stringWithFormat:@"%ld", list.type] ?: @""
+             kKeyListType : [NSString stringWithFormat:@"%ld",(long) list.type] ?: @""
              };
 }
 

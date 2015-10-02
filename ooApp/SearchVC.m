@@ -29,6 +29,9 @@ typedef enum: char {
     FILTER_YOU=  4,
 } FilterType;
 
+#define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
+#define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
+
 @interface SearchVC ()
 @property (nonatomic,strong)  UISearchBar* searchBar;
 @property (nonatomic,strong)  UIButton* buttonList;
@@ -48,6 +51,10 @@ typedef enum: char {
 
 @implementation SearchVC
 
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -57,26 +64,29 @@ typedef enum: char {
     self.view.backgroundColor= WHITE;
     
     _arrayOfFilterNames=  @[
-                             @"None",  @"Places", @"People",@"Lists", @"You"
+                             LOCAL(@"None"),
+                             LOCAL(@"Places"),
+                             LOCAL(@"People"),
+                             LOCAL(@"Lists"),
+                             LOCAL(@"You")
                              ];
     
     _currentFilter=FILTER_NONE;
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Search" subHeader: @"for restaurants"];
+    NavTitleObject *nto = [[NavTitleObject alloc]
+                           initWithHeader:LOCAL( @"Search")
+                           subHeader: LOCAL(@"for restaurants and people")];
     self.navTitle = nto;
 
 	_searchBar= [ UISearchBar new];
 	[ self.view  addSubview:_searchBar];
     _searchBar.searchBarStyle=  UISearchBarStyleMinimal;
     _searchBar.backgroundColor= WHITE;
-    _searchBar.placeholder=  @"Search";
+    _searchBar.placeholder= LOCAL( @"Type your search here");
     _searchBar.barTintColor= WHITE;
     _searchBar.keyboardType= UIKeyboardTypeAlphabet;
     _searchBar.delegate= self;
-    _buttonCancel=makeButton(self.view,  @"Cancel", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
-    
-#define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
-#define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
+    _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
     self.tableRestaurants= makeTable (self.view,self);
     [_tableRestaurants registerClass:[RestaurantHTVCell class]
@@ -87,14 +97,18 @@ typedef enum: char {
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
     _tablePeople.backgroundColor=  UIColorRGB(0xfff8f8f8);
 
-    _buttonList= makeAttributedButton(self.view,  @"Lists", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectList:), 0);
-    _buttonPeople= makeAttributedButton(self.view,  @"People", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPeople:), 0);
-    _buttonPlaces= makeAttributedButton(self.view,  @"Places", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPlaces:), 0);
-    _buttonYou= makeAttributedButton(self.view,  @"You", kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectYou:), 0);
+    _buttonList= makeAttributedButton(self.view, _arrayOfFilterNames[FILTER_LISTS], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectList:), 0);
+    _buttonPeople= makeAttributedButton(self.view, _arrayOfFilterNames[FILTER_PEOPLE], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPeople:), 0);
+    _buttonPlaces= makeAttributedButton(self.view, _arrayOfFilterNames[FILTER_PLACES], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPlaces:), 0);
+    _buttonYou= makeAttributedButton(self.view,_arrayOfFilterNames[FILTER_YOU], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectYou:), 0);
     [self changeFilter: FILTER_PLACES];
     
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -155,12 +169,20 @@ typedef enum: char {
     _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewDidAppear
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
 }
 
+//------------------------------------------------------------------------------
+// Name:    doSearch
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)doSearch
 {
     if ( self.doingSearchNow) {
@@ -212,6 +234,10 @@ typedef enum: char {
     
 }
 
+//------------------------------------------------------------------------------
+// Name:    changeFilter
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)changeFilter: (FilterType)which
 {
     if  (which ==_currentFilter ) {
@@ -268,11 +294,22 @@ typedef enum: char {
         [self doSearch];
     }
 }
+
+//------------------------------------------------------------------------------
+// Name:    textDidChange
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     NSString* text= _searchBar.text;
     if (!text.length) {
-        [self  loadRestaurants: @[]];
+        // Clear the appropriate table; no need to start a search.
+        
+        if  (_currentFilter==FILTER_PEOPLE ) {
+            [self  loadPeople: @[]];
+        } else {
+            [self  loadRestaurants: @[]];
+        }
         return;
     }
     
@@ -282,6 +319,10 @@ typedef enum: char {
     [self doSearch];
 }
 
+//------------------------------------------------------------------------------
+// Name:    updateWhichTableIsVisible
+// Purpose:
+//------------------------------------------------------------------------------
 - (void) updateWhichTableIsVisible
 {
     if  (_currentFilter==FILTER_PEOPLE ) {
@@ -293,6 +334,10 @@ typedef enum: char {
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    loadRestaurants
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)loadRestaurants: (NSArray*)array
 {
     self.doingSearchNow= NO;
@@ -308,6 +353,10 @@ typedef enum: char {
     _tableRestaurants.hidden= NO;
 }
 
+//------------------------------------------------------------------------------
+// Name:    loadPeople
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)loadPeople: (NSArray*)array
 {
     self.doingSearchNow= NO;
@@ -445,6 +494,10 @@ typedef enum: char {
    
 }
 
+//------------------------------------------------------------------------------
+// Name:    cellForRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ( tableView==_tableRestaurants) {
@@ -473,17 +526,30 @@ typedef enum: char {
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    scrollViewWillBeginDragging
+// Purpose: On smallscreen devices like iPhones, remove the keyboard so that
+//       the user can see what they're scrolling through.
+//------------------------------------------------------------------------------
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
 {
     if ( UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad )
         [_searchBar resignFirstResponder];
 }
 
+//------------------------------------------------------------------------------
+// Name:    heightForRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return kGeomHeightHorizontalListRow;
 }
 
+//------------------------------------------------------------------------------
+// Name:    didSelectRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [_searchBar resignFirstResponder];
@@ -524,6 +590,10 @@ typedef enum: char {
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    numberOfRowsInSection
+// Purpose:
+//------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if  (self.doingSearchNow) {

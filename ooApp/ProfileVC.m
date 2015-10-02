@@ -34,18 +34,31 @@
 {
     self = [super init];
     if (self) {
-        self.iv= makeImageView (self,  kImageNoProfileImage);
-        self.buttonFollow= makeButton(self,  @"FOLLOW", kGeomFontSizeHeader,BLACK, CLEAR, self, @selector (userPressedFollow:), 1);
-        self.buttonNewList= makeButton(self,  @"NEW LIST", kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
-        self.buttonNewListIcon= makeButton(self, @"b",kGeomFontSizeHeader,BLACK, CLEAR,  self, @selector (userPressedNewList:), 0);
-        [_buttonNewListIcon.titleLabel setFont: [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader]];
+        self.buttonFollow= makeButton(self,  @"FOLLOW",
+                                      kGeomFontSizeHeader,BLACK, CLEAR,
+                                      self,
+                                      @selector (userPressedFollow:), 1);
+        self.buttonNewList= makeButton(self,  @"NEW LIST",
+                                       kGeomFontSizeHeader,BLACK, CLEAR,
+                                       self,
+                                       @selector (userPressedNewList:), 0);
+        self.buttonNewListIcon= makeButton(self,kFontIconAdd,
+                                           kGeomFontSizeHeader,BLACK, CLEAR,
+                                           self,
+                                           @selector (userPressedNewList:), 0);
+        [_buttonNewListIcon.titleLabel setFont:
+         [UIFont fontWithName:@"oomami-icons"
+                         size: kGeomFontSizeHeader]];
         
         _userInfo= u;
         _userID= [u.userID integerValue];
         
+        // Ascertain whether reviewing our own profile.
         UserObject* userInfo= [Settings sharedInstance].userObject;
         NSInteger ownUserIdentifier= [[userInfo userID ]  integerValue ];
         _viewingOwnProfile= _userID==ownUserIdentifier;
+        
+        self.iv= makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
         
         NSString* username= nil;
         if  (_userInfo.username.length ) {
@@ -71,14 +84,14 @@
             self.requestOperation = [OOAPI getUserImageWithImageID: userInfo.imageIdentifier
                                                          maxWidth:self.frame.size.width
                                                         maxHeight:0 success:^(NSString *link) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                ON_MAIN_THREAD( ^{
                     [_iv setImageWithURL:[NSURL URLWithString: link ]];
                 });
             } failure:^(NSError *error) {
                 ;
             }];
         } else if ( userInfo.imageURLString) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            ON_MAIN_THREAD( ^{
                 [_iv setImageWithURL:[NSURL URLWithString:userInfo.imageURLString]];
             });
         }
@@ -96,11 +109,11 @@
         return;
     }
     
-    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle: @"New List"
-                                                     message: @"Enter a name for the new list"
+    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New List")
+                                                     message: LOCAL(@"Enter a name for the new list")
                                                     delegate:  self
-                                           cancelButtonTitle: @"Cancel"
-                                           otherButtonTitles: @"Create", nil];
+                                           cancelButtonTitle: LOCAL(@"Cancel")
+                                           otherButtonTitles: LOCAL(@"Create"), nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     [alert show];
 }
@@ -237,7 +250,7 @@
 {
     self = [super init];
     if (self) {
-        _userID= -1;
+        _userID= 0;
     }
     return self;
 }
@@ -250,7 +263,7 @@
 {
     [super viewDidLoad];
     
-    if ( _userID < 0) {
+    if ( _userID <= 0) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
         self.profileOwner=userInfo;
     } else {
@@ -367,7 +380,8 @@
 // Name:    cellForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *cellIdentifier = @"pcell";
     
@@ -377,7 +391,8 @@
         return _headerCell;
     }
     
-    ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    ListTVCell* cell = [[ListTVCell  alloc] initWithStyle: UITableViewCellStyleDefault
+                                          reuseIdentifier:cellIdentifier];
     cell.backgroundColor= UIColorRGBA(kColorWhite);
     NSArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];

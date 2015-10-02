@@ -20,6 +20,8 @@ static const int kOOAPIListTypeFavorites = 0;
 static const int kOOAPIListTypeSystem = 1;
 static const int kOOAPIListTypeUser = 2;
 
+static NSString* const kPhotoUploadPath=  @"/users/picture";
+
 @interface OOAPI : NSObject
 
 /* Read */
@@ -84,22 +86,26 @@ static const int kOOAPIListTypeUser = 2;
 // Users
 //
 + (AFHTTPRequestOperation *)getUserImageWithImageID:(NSString *)identifier
-                                                  maxWidth:(NSUInteger)maxWidth
-                                                 maxHeight:(NSUInteger)maxHeight
-                                                   success:(void (^)(NSString *imageRefs))success
-                                                   failure:(void (^)(NSError *))failure;
+                                           maxWidth:(NSUInteger)maxWidth
+                                          maxHeight:(NSUInteger)maxHeight
+                                            success:(void (^)(NSString *imageRefs))success
+                                            failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
                                         success:(void (^)(NSArray *restaurants))success
                                         failure:(void (^)(NSError *))failure;
 
++ (void)uploadUserPhoto:(UIImage *)image
+                success:(void (^)(void))success
+                failure:(void (^)(NSError *))failure;
+
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
-                                  success:(void (^)(NSArray *users))success
-                                  failure:(void (^)(NSError *))failure;
+                                   success:(void (^)(NSArray *users))success
+                                   failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)fetchSampleUsernamesFor:(NSString *)emailAddressString
-                                           success:(void (^)(NSArray *names))success
-                                           failure:(void (^)(NSError *))failure;
+                                            success:(void (^)(NSArray *names))success
+                                            failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                             failure:(void (^)(NSError *))failure;

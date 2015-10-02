@@ -483,6 +483,7 @@
     
     return op;
 }
+
 //------------------------------------------------------------------------------
 // Name:    getRestaurantImageWithImageRef
 // Purpose:
@@ -516,6 +517,51 @@
     } failure:^(NSError *error) {
         NSLog(@"Error: %@", error);
     }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    uploadUserPhoto
+// Purpose:
+//------------------------------------------------------------------------------
++ (void)uploadUserPhoto:(UIImage *)image
+                                    success:(void (^)(void))success
+                                    failure:(void (^)(NSError *))failure;
+{
+    if  (!image) {
+        failure (nil);
+        return ;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/photo", kOOURL];
+    
+    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString: urlString]];
+    if  (!request) {
+        failure (nil);
+        return ;
+    }
+    [request setHTTPMethod:@"POST"];
+    
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+    
+    NSURLSessionUploadTask *task = [session uploadTaskWithRequest:request
+                                                         fromData:imageData
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                    if (error) {
+                                                        if (failure) failure(error);
+                                                    } else {
+                                                        NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
+                                                        if  (httpResp.statusCode == 200 ) {
+                                                            if (success) success();
+                                                        }else {
+                                                            NSLog (@"IMAGE UPLOAD FAILURE:  %ld", (long)httpResp.statusCode);
+                                                            if (failure) failure(error);
+                                                        }
+                                                        
+                                                    }
+                                                }];
+    [task resume];
 }
 
 - (NSString *)ooURL {

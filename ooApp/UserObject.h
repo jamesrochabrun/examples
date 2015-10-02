@@ -30,4 +30,7 @@
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryFromUser;
 
+- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto;
+- (UIImage*) userProfilePhoto;
+
 @end

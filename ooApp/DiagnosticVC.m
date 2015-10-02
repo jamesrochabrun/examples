@@ -15,6 +15,7 @@
 #import "ListObject.h"
 #import "DiagnosticVC.h"
 #import "Settings.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface DiagnosticVC ()
 @property (nonatomic,strong)  UIButton* buttonClearUsername;
@@ -83,9 +84,16 @@
 {
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     
-    //    [[AFImageCache sharedImageCache] removeAllObjects];
+    if  ([UIImageView respondsToSelector:@selector(sharedImageCache)] ) {
+        id foo = [UIImageView sharedImageCache];
+        if  (foo ) {
+            if  ([foo respondsToSelector:@selector( removeAllObjects)] ) {
+                [ foo performSelector:@selector( removeAllObjects) withObject:nil];
+            }
+        }
+    }
     
-    message( @"Cleared.");
+    message( @"cache cleared.");
 }
 
 //------------------------------------------------------------------------------
@@ -136,7 +144,7 @@
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
-    float  spacing= kGeomSpaceInter;
+    float  spacing= 16;
     _textviewDiagnosticLog.frame=  CGRectMake(margin,h/2,w-2*margin,h/2-margin);
     float x=  margin, y=  margin;
     _buttonClearUsername.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);

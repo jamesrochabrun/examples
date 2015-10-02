@@ -7,6 +7,7 @@
 //
 
 #import "UserObject.h"
+#import "OOAPI.h"
 
 NSString *const kKeyID = @"user_id";
 NSString *const kKeyFirstName = @"first_name";
@@ -25,6 +26,9 @@ NSString *const kKeyImageIdentifier = @"imageIdentifier";
 @end
 
 @implementation UserObject
+{
+    UIImage *profilePhoto;
+}
 
 - (instancetype) init
 {
@@ -75,6 +79,27 @@ NSString *const kKeyImageIdentifier = @"imageIdentifier";
              kKeyImageIdentifier:self.imageIdentifier ?: @"",
              kKeyImageURL:self.imageURLString ?: @"",
              };
+}
+
+- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto;
+{
+    if (!userProfilePhoto) {
+        return;
+    }
+    
+    profilePhoto= userProfilePhoto;
+    [OOAPI uploadUserPhoto:profilePhoto
+                   success:^() {
+                       
+                   }
+                   failure:^(NSError *e) {
+                       
+                   }];
+}
+
+- (UIImage*) userProfilePhoto;
+{
+    return profilePhoto;
 }
 
 @end

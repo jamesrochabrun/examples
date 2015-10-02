@@ -8,6 +8,7 @@
 
 #import <sys/types.h>
 #import <sys/sysctl.h>
+#import "UIImageView+AFNetworking.h"
 
 //NSString *const kOOURL= @"www.oomamiapp.com/api/v1";
 NSString *const kOOURL= @"stage.oomamiapp.com/api/v1";
@@ -39,10 +40,39 @@ NSString* trimString(NSString* s)
     return [s stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 }
 
+UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName)
+{
+    NSURL *url= [ NSURL  URLWithString:urlString];
+    UIImageView* iv= nil;
+    UIImage* image=nil;
+    if ( !url) {
+        // RULE:  if the URL is bad just go with the placeholder.
+        image= [ UIImage imageNamed:placeholderImageName];
+        iv= [ [UIImageView alloc ]initWithImage:  image  ];
+    } else {
+        image= [ UIImage imageNamed:placeholderImageName];
+        iv= [ [UIImageView alloc ]initWithImage:image];
+        [iv setImageWithURL:url placeholderImage:image];
+    }
+
+    [ parent addSubview: iv ];
+    return iv;
+}
+
 UIImageView* makeImageView (UIView *parent, NSString* imageName)
 {
-    UIImage* image= imageName? [ UIImage imageNamed:imageName] :nil;
+    BOOL imageIsURL= [[imageName lowercaseString] hasPrefix: @"http"];
+    NSURL *url= imageIsURL? [ NSURL  URLWithString:imageName]:nil;
+    UIImage* image=nil;
+    if ( !imageIsURL) {
+        image= [ UIImage imageNamed:imageName];
+    }
     UIImageView* iv= [ [UIImageView alloc ]initWithImage:  image  ];
+    if  ( imageIsURL) {
+        if  (url ) {
+            [iv setImageWithURL:url placeholderImage:nil];
+        }
+    }
     [ parent addSubview: iv ];
     return iv;
 }
@@ -127,6 +157,7 @@ UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize
     [ parent addSubview: button ];
     return button;
 }
+
 UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
