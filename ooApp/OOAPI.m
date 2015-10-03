@@ -10,6 +10,7 @@
 #import "UserObject.h"
 #import "Common.h"
 #import "Settings.h"
+#import "EventObject.h"
 
 //NSString *const kKeyName = @"name";
 
@@ -25,7 +26,9 @@
     }
     return self;
 }
-
+- (NSString *)ooURL {
+    return kOOURL;
+}
 //------------------------------------------------------------------------------
 // Name:    getRestaurantsWithIDs
 // Purpose:
@@ -597,8 +600,36 @@
     [task resume];
 }
 
-- (NSString *)ooURL {
-    return kOOURL;
++ (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
+                                     success:(void (^)(NSArray *events))success
+                                     failure:(void (^)(NSError *))failure;
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events",kOOURL];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSDictionary *parameters =  @{
+                                  @"userid":@(identifier)
+                                  };
+    
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
+        NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
+        if ( [responseObject isKindOfClass:[NSArray class]]) {
+            NSMutableArray *events = [NSMutableArray array];
+            for (id dict in responseObject) {
+                EventObject *e=[EventObject eventFromDictionary:dict];
+                NSLog  (@"EVENT  %@",dict);
+                //NSLog(@"Event name: %@", [RestaurantObject restaurantFromDict:dict].name);
+                [events addObject:e];
+            }
+            success(events);
+        }else {
+            NSLog  (@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 @end

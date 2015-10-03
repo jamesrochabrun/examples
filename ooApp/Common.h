@@ -36,4 +36,8 @@ extern UIWebView* makeWebView (UIView*parent, id  delegate);
 extern UITableView* makeTable (UIView *parent,id  delegate);
 extern UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 
+extern NSDate* parseUTCDateFromServer(NSString *string);
+extern NSString* parseStringOrNullFromServer (id object);
+extern double parseNumberOrNullFromServer (id object);
+
 #endif

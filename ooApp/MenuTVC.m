@@ -18,6 +18,7 @@
 #import "DiscoverVC.h"
 #import "DiagnosticVC.h"
 #import "SearchVC.h"
+#import "EventsListVC.h"
 
 @interface MenuTVC ()
 
@@ -198,6 +199,8 @@
         fvc = [[PlayVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {
         fvc = [[DiagnosticVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemMeet]) {
+        fvc = [[EventsListVC alloc] init];
     } else {
         //TODO AUG: fill in other cases
         fvc = [[DefaultVC alloc] init];

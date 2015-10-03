@@ -51,9 +51,14 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                    success:(void (^)(NSString *imageRefs))success
                                                    failure:(void (^)(NSError *))failure;
 
-- (AFHTTPRequestOperation *)getUsersWithIDs:(NSArray *)userIDs
-                                    success:(void (^)(NSArray *))success
-                                    failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
+                                     success:(void (^)(NSArray *lists))success
+                                     failure:(void (^)(NSError *))failure;
+
+- (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
+                                  success:(void (^)(NSArray *dishes))success
+                                  failure:(void (^)(NSError *))failure;
+
 - (AFHTTPRequestOperation *)getDishesWithIDs:(NSArray *)dishIDs
                                      success:(void (^)(NSArray *))success
                                      failure:(void (^)(NSError *))failure;
@@ -81,14 +86,6 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                               success:(void (^)(id response))success
                                               failure:(void (^)(NSError *))failure;
 
-- (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
-                                    success:(void (^)(NSArray *lists))success
-                                    failure:(void (^)(NSError *))failure;
-
-/* Create */
-- (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
-                                  success:(void (^)(NSArray *dishes))success
-                                  failure:(void (^)(NSError *))failure;
 
 // Users
 //
@@ -98,6 +95,9 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                             success:(void (^)(NSString *imageRefs))success
                                             failure:(void (^)(NSError *))failure;
 
+- (AFHTTPRequestOperation *)getUsersWithIDs:(NSArray *)userIDs
+                                    success:(void (^)(NSArray *))success
+                                    failure:(void (^)(NSError *))failure;
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
                                         success:(void (^)(NSArray *restaurants))success
                                         failure:(void (^)(NSError *))failure;
@@ -116,4 +116,11 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 
 + (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                             failure:(void (^)(NSError *))failure;
+
+// Events
+//
+
++ (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
+                                        success:(void (^)(NSArray *events))success
+                                        failure:(void (^)(NSError *))failure;
 @end

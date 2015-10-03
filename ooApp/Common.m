@@ -221,3 +221,41 @@ NSString * platformString()
     free(machine);
     return platform;
 }
+
+NSDate* parseUTCDateFromServer(NSString *string)
+{
+    if  ([string isKindOfClass:[NSDate class]]) {
+        return  (NSDate*)string;
+    }
+    if  (![string isKindOfClass:[NSString class]]) {
+        return nil;
+    }
+    NSString* temp= [string stringByReplacingOccurrencesOfString: @"T" withString: @" "];
+    temp= [ temp stringByReplacingOccurrencesOfString: @"Z" withString: @""];
+    temp= [ temp stringByReplacingOccurrencesOfString: @"  " withString: @" "];
+    temp= [ temp stringByReplacingOccurrencesOfString: @".000" withString: @""];
+    temp= trimString( temp);
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    NSDate *date = [dateFormatter dateFromString:   temp];
+    return date;
+}
+
+double parseNumberOrNullFromServer (id object)
+{
+    if  ([ object isKindOfClass:[NSNumber class]]) {
+        return  (( NSNumber*)object).doubleValue;
+    }
+    return 0;
+}
+
+NSString* parseStringOrNullFromServer (id object)
+{
+    if  ([ object isKindOfClass:[NSString class]]) {
+        return  (NSString*)object;
+    }
+    return nil;
+}
+
+
