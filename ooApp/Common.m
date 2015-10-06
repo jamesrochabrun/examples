@@ -87,6 +87,14 @@ UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
     return l;
 }
 
+UIView* makeView (UIView *parent, UIColor* backgroundColor)
+{
+    UIView* v = [ [ UIView alloc ]init ];
+    [ parent addSubview: v];
+    v.backgroundColor= backgroundColor;
+    return v;
+}
+
 UITableView* makeTable (UIView *parent,id  delegate)
 {
     UITableView* tv= [ [ UITableView alloc ]init ];
@@ -240,6 +248,14 @@ NSDate* parseUTCDateFromServer(NSString *string)
     [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     NSDate *date = [dateFormatter dateFromString:   temp];
     return date;
+}
+
+NSInteger parseIntegerOrNullFromServer (id object)
+{
+    if  ([ object isKindOfClass:[NSNumber class]]) {
+        return  (( NSNumber*)object).integerValue;
+    }
+    return 0;
 }
 
 double parseNumberOrNullFromServer (id object)

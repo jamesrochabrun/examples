@@ -21,10 +21,11 @@
         if  ([price isKindOfClass:[NSNumber class]] ) {
             e.totalPrice= [ ( (NSNumber*)price) doubleValue];
         }
+        e.eventType= parseIntegerOrNullFromServer( dictionary[ @"event_id"]);
         e.date= parseUTCDateFromServer ( dictionary[ @"event_date"]);
         e.name= parseStringOrNullFromServer ( dictionary[ @"name"]);
         e.friendRecommendationAge = parseNumberOrNullFromServer ( dictionary[ @"friend_recommendation_age"]);
-        NSInteger nPeople = parseNumberOrNullFromServer ( dictionary[ @"num_people"]);
+        e.numberOfPeople = parseNumberOrNullFromServer ( dictionary[ @"num_people"]);
         e.reviewSite= parseStringOrNullFromServer ( dictionary[ @"review_site"]);
         e.specialEvent= parseStringOrNullFromServer ( dictionary[ @"special_event"]);
         e.comment=  parseStringOrNullFromServer(dictionary[ @"comment"]);
@@ -66,6 +67,59 @@
         
     }
     return e;
+}
+
+-(NSDictionary*) dictionaryFromEvent;
+{
+    if (!_date) {
+        NSLog  (@"EVENT LACKS DATE");
+        return nil;
+    }
+    if  (!_createdAt) {
+        _createdAt= [NSDate date];
+    }
+    if  (!_updatedAt) {
+        _updatedAt= [NSDate date];
+    }
+    
+    NSMutableArray *userDictionaries= [NSMutableArray new];
+    NSMutableArray *restaurantDictionaries= [NSMutableArray new];
+    
+    if ( _restaurants) {
+        for (RestaurantObject* o  in  _restaurants) {
+            NSDictionary* d= [ RestaurantObject dictFromRestaurant: o];
+            if  ( d) {
+                [restaurantDictionaries addObject: d];
+            }
+        }
+    }
+    
+    if ( _users) {
+        for (UserObject* u  in  _users) {
+            NSDictionary* d= [ u dictionaryFromUser];
+            if  ( d) {
+                [userDictionaries addObject: d];
+            }
+        }
+    }
+    
+    return  @{
+              @"event_id": @(_eventID),
+              @"event_type": @(_eventType),// 0= user, 1=  other
+              @"total_price": @(_totalPrice),
+              @"event_date": _date,
+              @"created_at":_createdAt,
+              @"updated_at":_updatedAt,
+              @"review_site":_reviewSite?:  @"",
+              @"friend_recommendation_age":  @(_friendRecommendationAge),
+              @"num_people":@(_numberOfPeople),
+              @"comment":_comment ?:  @"",
+              @"special_event":_specialEvent ?:  @"",
+              @"keywords": _keywords?:  @[],
+              @"users":userDictionaries,
+              @"restaurants":restaurantDictionaries,
+              
+              };
 }
 
 @end

@@ -74,7 +74,7 @@ static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 // Images
 extern NSString *const kImageNoProfileImage;
 
-// Custom Fonts
+// Custom FontsGood and yet so as
 extern NSString *const kFontIcons;
 extern NSString *const kFontSFTextRegular;
 extern NSString *const kFontSFTextLight;
@@ -94,6 +94,7 @@ extern NSString *const kFontIconRemove;
 extern NSString *const kFontIconSearch;
 extern NSString *const kFontIconSettings;
 extern NSString *const kFontIconWhatsNew;
+extern NSString *const kFontIconPerson;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

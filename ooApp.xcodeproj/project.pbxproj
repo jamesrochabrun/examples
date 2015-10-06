@@ -93,6 +93,8 @@
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		965A1A971BBA05B500727773 /* SearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965A1A961BBA05B500727773 /* SearchVC.m */; settings = {ASSET_TAGS = (); }; };
 		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; settings = {ASSET_TAGS = (); }; };
+		96ACD7871BC3331000E37DC1 /* EventHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventHTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */; settings = {ASSET_TAGS = (); }; };
 		96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */; settings = {ASSET_TAGS = (); }; };
 		96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D175B91BA76926000C88AC /* NSString+MD5.m */; };
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
@@ -253,6 +255,10 @@
 		965A1A961BBA05B500727773 /* SearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchVC.m; sourceTree = "<group>"; };
 		967124941BB5E6A900F28904 /* DiagnosticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticVC.h; sourceTree = "<group>"; };
 		967124951BB5E6A900F28904 /* DiagnosticVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiagnosticVC.m; sourceTree = "<group>"; };
+		96ACD7851BC3331000E37DC1 /* EventHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHTVCell.h; sourceTree = "<group>"; };
+		96ACD7861BC3331000E37DC1 /* EventHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventHTVCell.m; sourceTree = "<group>"; };
+		96ACD7881BC3487E00E37DC1 /* EventCoordinatorVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCoordinatorVC.h; sourceTree = "<group>"; };
+		96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventCoordinatorVC.m; sourceTree = "<group>"; };
 		96BF31211BB36C4D002BFDD2 /* CreateUsernameVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateUsernameVC.h; sourceTree = "<group>"; };
 		96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateUsernameVC.m; sourceTree = "<group>"; };
 		96D175B91BA76926000C88AC /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
@@ -305,6 +311,8 @@
 				962667461BBC8C9600D77EBE /* UserHTVCell.m */,
 				3637E9391BB439290074A01C /* RestaurantHTVCell.h */,
 				3637E93A1BB439290074A01C /* RestaurantHTVCell.m */,
+				96ACD7851BC3331000E37DC1 /* EventHTVCell.h */,
+				96ACD7861BC3331000E37DC1 /* EventHTVCell.m */,
 				3613BE561BBE278400F1AF67 /* ListHTVCell.h */,
 				3613BE571BBE278400F1AF67 /* ListHTVCell.m */,
 			);
@@ -480,6 +488,8 @@
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				9606C5631BBF08C400CB06FE /* EventsListVC.h */,
 				9606C5641BBF08C400CB06FE /* EventsListVC.m */,
+				96ACD7881BC3487E00E37DC1 /* EventCoordinatorVC.h */,
+				96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */,
 				96E127B41BB32C6E00A8445E /* EmptyListVC.h */,
 				96E127B51BB32C6E00A8445E /* EmptyListVC.m */,
 				96BF31211BB36C4D002BFDD2 /* CreateUsernameVC.h */,
@@ -738,10 +748,12 @@
 				36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */,
 				3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */,
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
+				96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */,
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
 				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
 				366BBC971BA9304900292F80 /* SubBaseVC.m in Sources */,
 				3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */,
+				96ACD7871BC3331000E37DC1 /* EventHTVCell.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
 				367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */,
 				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,

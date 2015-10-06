@@ -20,19 +20,10 @@
 #import "RestaurantVC.h"
 #import "UserHTVCell.h"
 #import "ProfileVC.h"
+#import "EventHTVCell.h"
+#import "EventCoordinatorVC.h"
 
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
-
-@implementation  EventListTableCell
-
-- (void)prepareForReuse
-{
-    [super prepareForReuse];
-    self.textLabel.text= nil;
-    self.backgroundColor= CLEAR;
-}
-@end
-
 
 @interface EventsListVC ()
 
@@ -59,9 +50,9 @@
     self.view.backgroundColor= WHITE;
     
     _tableSectionNames= @[
-                          @"YOUR EVENTS",
-                          @"INCOMPLETE EVENTS",
-                          @"OOMAMI EVENTS"
+                          @"  YOUR EVENTS",
+                          @"  INCOMPLETE EVENTS",
+                          @"  OOMAMI EVENTS"
                           ];
     NavTitleObject *nto = [[NavTitleObject alloc]
                            initWithHeader:LOCAL( @"EVENT")
@@ -69,27 +60,50 @@
     self.navTitle = nto;
 
 	self.table= makeTable( self.view, self);
-    
-    [_table registerClass:[EventListTableCell class]
+    [_table registerClass:[EventHTVCell class]
               forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
+    _table.sectionHeaderHeight= kGeomHeightButton;
+    _table.sectionFooterHeight= 10;
+    _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     
-    _buttonAdd=makeButton(self.view, kFontIconAdd, kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedAdd:), .5);
+    _buttonAdd=makeButton(self.view, kFontIconAdd, kGeomFontSizeHeader, WHITE,BLACK, self, @selector(userPressedAdd:), 0);
     _buttonAdd.titleLabel.font= [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader];
+    _buttonAdd.layer.cornerRadius=  kGeomHeightButton/2;
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSNumber* userid= userInfo.userID;
+    
+    NSDate *now= [NSDate date];
+    NSTimeInterval nowTime= [now timeIntervalSince1970];
     
     __weak EventsListVC *weakSelf = self;
     [OOAPI getEventsForUser:[userid integerValue] success:^(NSArray *events) {
         NSLog  (@"EVENT FETCHING SUCCEEDED %lu", ( unsigned long) events.count);
         
-        // XX  need to separate out different kinds of events.
+        NSMutableArray *finished= [NSMutableArray new];
+        NSMutableArray *future= [NSMutableArray new];
+        
+        for (EventObject* eo in events) {
+            if  (![eo isKindOfClass:[EventObject class]]) {
+                continue;
+            }
+            
+            NSTimeInterval startingTime= [eo.date timeIntervalSince1970];
+            if  (nowTime < startingTime ) {
+                [ future  addObject: eo];
+            } else {
+                // XX:  because of the way this is set up, events that have not yet finished will be listed as finished.
+                //    that is, there is no category for events that are transpiring now.
+                [ finished  addObject: eo];
+            }
+        }
         
         _eventsArray=  @[
-                         events,
-                          @[],
+                         future,
+                         finished,
                          @[],
                          ];
+        
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
         });
@@ -143,7 +157,17 @@
 //------------------------------------------------------------------------------
 - (void)userPressedAdd: (id) sender
 {
-    message( @"You pressed add.");
+//    if (!_navigationController) {
+//        return;
+//    }
+    
+    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Event")
+                                                     message: LOCAL(@"Enter a name for the new event")
+                                                    delegate:  self
+                                           cancelButtonTitle: LOCAL(@"Cancel")
+                                           otherButtonTitles: LOCAL(@"Create"), nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
 }
 
 //------------------------------------------------------------------------------
@@ -156,11 +180,11 @@
     float w=  self.view.bounds.size.width;
     float y=  0;
 
-    _buttonAdd.frame=  CGRectMake( w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
+    _buttonAdd.frame=  CGRectMake( w-kGeomHeightButton-kGeomCancelButtonInteriorPadding,
                                      y+kGeomCancelButtonInteriorPadding,
-                                     kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
-                                     kGeomHeightButton-2*kGeomCancelButtonInteriorPadding);
-    y += kGeomHeightButton;
+                                     kGeomHeightButton,
+                                     kGeomHeightButton);
+//    y += kGeomHeightButton;
     
     _table.frame=  CGRectMake(0,y,w, h-y);
    
@@ -172,7 +196,7 @@
 //------------------------------------------------------------------------------
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    EventListTableCell *cell;
+    EventHTVCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     
     NSInteger row= indexPath.row;
@@ -188,9 +212,10 @@
         return cell;
     }
     EventObject* e= events[row];
+    [cell setEvent: e];
+
+    cell.backgroundColor= WHITE;
     
-    cell.backgroundColor= GREEN;
-    cell.textLabel.text= e.name;
     return cell;
 }
 
@@ -203,6 +228,7 @@
     return 3;
 }
 
+#if 0
 //------------------------------------------------------------------------------
 // Name:    titleForHeaderInSection
 // Purpose:
@@ -214,6 +240,22 @@
     }
     return _tableSectionNames[section ];
 }
+#endif
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    NSString *name=  _tableSectionNames[section ];
+    UILabel * label= makeLabelLeft (nil,  name,  17);
+    label.backgroundColor= CLEAR;
+    return  label;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UILabel * label= makeLabelLeft (nil,   @"",  10);
+    label.backgroundColor= CLEAR;
+    return  label;
+}
 
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
@@ -221,7 +263,7 @@
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 44;
+    return kGeomHeightFeaturedCellHeight;
 }
 
 //------------------------------------------------------------------------------
@@ -265,4 +307,28 @@
     return  events.count;
 }
 
+//------------------------------------------------------------------------------
+// Name:    clickedButtonAtIndex
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if  (1==buttonIndex) {
+        UITextField *textField = [alertView textFieldAtIndex: 0];
+        NSString *string = trimString(textField.text);
+        if  (string.length ) {
+            string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
+        }
+        
+        [self performSelector:@selector (goToEventCoordinatorScreen:) withObject: string afterDelay: 0.5];
+        
+    }
+}
+
+- (void)goToEventCoordinatorScreen: (NSString*)name
+{
+    EventCoordinatorVC *vc= [[EventCoordinatorVC  alloc] init ];
+    vc.eventName= name;
+    [self.navigationController pushViewController:vc animated:YES];
+}
 @end

@@ -10,10 +10,18 @@
 
 @interface EventObject : NSObject
 
+typedef enum : char {
+    EVENT_TYPE_NONE= 0,
+    EVENT_TYPE_USER= 1,
+    EVENT_TYPE_SYSTEM= 2,
+} EventType;
+
 @property (nonatomic) NSInteger eventID;
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic,assign) EventType eventType;
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic,assign) double totalPrice;
+@property (nonatomic,assign) NSInteger numberOfPeople;
 @property (nonatomic, strong) NSMutableArray *keywords;
 @property (nonatomic, strong) NSMutableArray *users;
 @property (nonatomic, strong) NSMutableArray *restaurants;
@@ -25,5 +33,6 @@
 @property (nonatomic,assign) NSInteger friendRecommendationAge;
 
 + (EventObject*) eventFromDictionary: (NSDictionary*)dictionary;
+-(NSDictionary*) dictionaryFromEvent;
 
 @end
