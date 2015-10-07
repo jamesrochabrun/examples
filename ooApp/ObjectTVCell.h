@@ -1,5 +1,5 @@
 //
-//  HorizonalTVCell.h
+//  ObjectTVCell.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/9/15.
@@ -10,7 +10,7 @@
 #import "OOAPI.h"
 #import "UIImageView+AFNetworking.h"
 
-@interface HorizonalTVCell : UITableViewCell
+@interface ObjectTVCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *thumbnail;
 @property (nonatomic, strong) UILabel *header;

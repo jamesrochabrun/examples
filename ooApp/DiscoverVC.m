@@ -11,7 +11,7 @@
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
-#import "RestaurantHTVCell.h"
+#import "RestaurantTVCell.h"
 #import "DebugUtilities.h"
 #import "Settings.h"
 #import "LocationManager.h"
@@ -60,7 +60,7 @@ static NSString * const ListRowID = @"HLRCell";
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableView.rowHeight = kGeomHeightHorizontalListRow;
     
-    [_tableView registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:ListRowID];
+    [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:14 bearing:0 viewingAngle:1];
 
@@ -168,7 +168,7 @@ static NSString * const ListRowID = @"HLRCell";
 {
     RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
     
-    RestaurantHTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
+    RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     
     cell.restaurant = ro;
     

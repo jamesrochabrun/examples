@@ -1,19 +1,19 @@
 //
-//  HorizonalTVCell.m
+//  ObjectTVCell.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/9/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "HorizonalTVCell.h"
+#import "ObjectTVCell.h"
 #import "DebugUtilities.h"
 
-@interface HorizonalTVCell ()
+@interface ObjectTVCell ()
 
 @end
 
-@implementation HorizonalTVCell
+@implementation ObjectTVCell
 
 - (void)awakeFromNib {
     // Initialization code

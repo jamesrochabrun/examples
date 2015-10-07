@@ -16,9 +16,9 @@
 #import "SearchVC.h"
 #import "LocationManager.h"
 #import "Settings.h"
-#import "RestaurantHTVCell.h"
+#import "RestaurantTVCell.h"
 #import "RestaurantVC.h"
-#import "UserHTVCell.h"
+#import "UserTVCell.h"
 #import "ProfileVC.h"
 
 typedef enum: char {
@@ -89,11 +89,11 @@ typedef enum: char {
     _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
     self.tableRestaurants= makeTable (self.view,self);
-    [_tableRestaurants registerClass:[RestaurantHTVCell class]
+    [_tableRestaurants registerClass:[RestaurantTVCell class]
               forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
 
     self.tablePeople= makeTable (self.view,self);
-    [_tablePeople registerClass:[UserHTVCell class]
+    [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
     _tablePeople.backgroundColor=  UIColorRGB(0xfff8f8f8);
 
@@ -501,10 +501,10 @@ typedef enum: char {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ( tableView==_tableRestaurants) {
-        RestaurantHTVCell *cell;
+        RestaurantTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         if (!cell) {
-            cell=  [[RestaurantHTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER ];
+            cell=  [[RestaurantTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER ];
         }
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
@@ -513,10 +513,10 @@ typedef enum: char {
         }
         return cell;
     } else {
-        UserHTVCell *cell;
+        UserTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         if (!cell) {
-            cell=  [[UserHTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER ];
+            cell=  [[UserTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER ];
         }
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {

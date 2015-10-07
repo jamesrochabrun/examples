@@ -1,14 +1,14 @@
 //
-//  ListHTVCell.m
+//  ListTVCell.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 10/1/15.
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "ListHTVCell.h"
+#import "ListTVCell.h"
 
-@implementation ListHTVCell
+@implementation ListTVCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];

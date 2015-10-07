@@ -7,7 +7,7 @@
 //
 
 #import "RestaurantListVC.h"
-#import "RestaurantHTVCell.h"
+#import "RestaurantTVCell.h"
 #import "RestaurantObject.h"
 #import "OOAPI.h"
 #import "LocationManager.h"
@@ -35,7 +35,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _tableView.delegate = self;
     _tableView.dataSource = self;
 
-    [_tableView registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:cellIdentifier];
+    [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:cellIdentifier];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.rowHeight = kGeomHeightHorizontalListRow;
     _tableView.separatorInset = UIEdgeInsetsZero;
@@ -127,7 +127,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantHTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    RestaurantTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     cell.restaurant = restaurant;
