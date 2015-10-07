@@ -20,8 +20,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        _labelIndicatingAttendeeCount= makeIconLabel(self, [NSString stringWithFormat: @"%@ %@", kFontIconPerson,kFontIconPerson ], 30);
-        
+        _labelIndicatingAttendeeCount= [UILabel  new];
+        [self  addSubview: _labelIndicatingAttendeeCount];
     }
     return self;
 }
@@ -54,6 +54,8 @@
     self.subHeader1.text = dateString;
     self.subHeader2.text = primaryVenue ? primaryVenue.name :  @"Undisclosed location";
     
+    _labelIndicatingAttendeeCount.attributedText= createPeopleIconString(_eventInfo.numberOfPeople);
+
     UIImage *placeholder= [UIImage imageNamed: @"forkKnife"];
 
     if (primaryVenue && primaryVenue.imageRefs.count) {

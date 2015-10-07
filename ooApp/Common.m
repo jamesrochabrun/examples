@@ -81,9 +81,12 @@ UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
 {
     UILabel* l= [ [ UILabel alloc ]init ];
     [ parent addSubview: l ];
+    l.numberOfLines= 0;
     l.textAlignment= NSTextAlignmentCenter;
     l.text=  text;
-    l.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
+    if ( fontSize >0) {
+        l.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
+    }
     return l;
 }
 
@@ -121,6 +124,14 @@ UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
     UILabel *l= makeLabel( parent, text,fontSize);
     l.textAlignment= NSTextAlignmentLeft;
     return l;
+}
+
+UIScrollView* makeScrollView (UIView*parent, id  delegate)
+{
+    UIScrollView *v= [ UIScrollView  new];
+    v.delegate=  delegate;
+    [parent addSubview: v];
+    return v;
 }
 
 UIWebView* makeWebView (UIView*parent, id  delegate)
@@ -274,4 +285,16 @@ NSString* parseStringOrNullFromServer (id object)
     return nil;
 }
 
+NSMutableAttributedString *createPeopleIconString (NSInteger count)
+{
+    NSAttributedString *countString= attributedStringOf([NSString stringWithFormat: @"%ld ", count], kGeomFontSizeHeader);
+    NSAttributedString *iconString= [[NSAttributedString alloc]
+                                     initWithString:[NSString stringWithFormat: @"%@%@", kFontIconPerson,kFontIconPerson ]
+                                     attributes: @{
+                                                   NSFontAttributeName: [UIFont fontWithName: kFontIcons size:kGeomPeopleIconFontSize]
+                                                   }];
+    NSMutableAttributedString* a= [[NSMutableAttributedString  alloc] initWithAttributedString:countString];
+    [a appendAttributedString:iconString];
+    return a;
+}
 

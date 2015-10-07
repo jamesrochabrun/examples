@@ -31,7 +31,10 @@
 
 @property (nonatomic,strong)  UITableView*  table;
 
-@property (nonatomic,strong) NSArray* eventsArray;
+@property (nonatomic,strong) NSArray* yourEventsArray;
+@property (nonatomic,strong) NSArray* incompleteEventsArray;
+@property (nonatomic,strong) NSArray* curatedEventsArray;
+
 @property (nonatomic,strong) NSArray* tableSectionNames;
 @end
 
@@ -51,7 +54,7 @@
     
     _tableSectionNames= @[
                           @"  YOUR EVENTS",
-                          @"  INCOMPLETE EVENTS",
+                          @"  EVENTS YOU ARE CREATING",
                           @"  OOMAMI EVENTS"
                           ];
     NavTitleObject *nto = [[NavTitleObject alloc]
@@ -77,38 +80,62 @@
     NSTimeInterval nowTime= [now timeIntervalSince1970];
     
     __weak EventsListVC *weakSelf = self;
-    [OOAPI getEventsForUser:[userid integerValue] success:^(NSArray *events) {
-        NSLog  (@"EVENT FETCHING SUCCEEDED %lu", ( unsigned long) events.count);
+    
+    [OOAPI getCuratedEventsWithSuccess:^(NSArray *events) {
+        NSLog  (@"CURATED EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
         
-        NSMutableArray *finished= [NSMutableArray new];
-        NSMutableArray *future= [NSMutableArray new];
+        NSMutableArray * curated= [NSMutableArray new];
         
         for (EventObject* eo in events) {
             if  (![eo isKindOfClass:[EventObject class]]) {
                 continue;
             }
             
-            NSTimeInterval startingTime= [eo.date timeIntervalSince1970];
-            if  (nowTime < startingTime ) {
-                [ future  addObject: eo];
-            } else {
-                // XX:  because of the way this is set up, events that have not yet finished will be listed as finished.
-                //    that is, there is no category for events that are transpiring now.
-                [ finished  addObject: eo];
+            if ( eo.eventType==EVENT_TYPE_SYSTEM &&  eo.isComplete) {
+                [  curated  addObject: eo];
+            }
+            
+        }
+        self.curatedEventsArray=  curated;
+        
+        ON_MAIN_THREAD(^(){
+            [weakSelf.table  reloadData];
+        });
+        
+    }
+                               failure:^(NSError *e) {
+                                   NSLog  (@"EVENT FETCHING FAILED  %@",e);
+                               }
+     ];
+    
+    [OOAPI getEventsForUser:[userid integerValue] success:^(NSArray *events) {
+        NSLog  (@"YOUR EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
+        
+        NSMutableArray *your= [NSMutableArray new];
+        NSMutableArray * incomplete= [NSMutableArray new];
+        
+        for (EventObject* eo in events) {
+            if  (![eo isKindOfClass:[EventObject class]]) {
+                continue;
+            }
+            
+            if ( eo.eventType==EVENT_TYPE_USER) {
+                if ( eo.isComplete) {
+                    [  your  addObject: eo];
+                } else {
+                    [  incomplete  addObject: eo];
+                }
             }
         }
         
-        _eventsArray=  @[
-                         future,
-                         finished,
-                         @[],
-                         ];
+        self.yourEventsArray= your;
+        self.incompleteEventsArray= incomplete;
         
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
         });
     } failure:^(NSError *e) {
-        NSLog  (@"EVENT FETCHING FAILED  %@",e);
+        NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
     }
      ];
 }
@@ -201,16 +228,20 @@
     
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;
-    if  (section>= _eventsArray.count ) {
-        return cell;
+    
+    NSArray* events= nil;
+    switch ( section) {
+        case 0:
+            events=  _yourEventsArray;
+            break;
+        case 1:
+            events=  _incompleteEventsArray;
+            break;
+        case 2:
+            events=  _curatedEventsArray;
+            break;
     }
-    NSArray* events= _eventsArray[section];
-    if  (!events) {
-        return cell;
-    }
-    if  (row >= events.count ) {
-        return cell;
-    }
+    
     EventObject* e= events[row];
     [cell setEvent: e];
 
@@ -227,20 +258,6 @@
 {
     return 3;
 }
-
-#if 0
-//------------------------------------------------------------------------------
-// Name:    titleForHeaderInSection
-// Purpose:
-//------------------------------------------------------------------------------
-- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    if ( section>= 3) {
-        return  @"";
-    }
-    return _tableSectionNames[section ];
-}
-#endif
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
@@ -274,18 +291,21 @@
 {
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;
-    if  (section>= _eventsArray.count ) {
-        return;
-    }
-    NSArray* events= _eventsArray[section];
-    if  (!events) {
-        return;
-    }
-    if  (row >= events.count ) {
-        return;
+    
+    NSArray* events= nil;
+    switch ( section) {
+        case 0:
+            events=  _yourEventsArray;
+            break;
+        case 1:
+            events=  _incompleteEventsArray;
+            break;
+        case 2:
+            events=  _curatedEventsArray;
+            break;
     }
     
-    EventObject *eo = [events objectAtIndex:indexPath.row];
+    EventObject *eo = [events objectAtIndex: row];
     BaseVC* vc= [[BaseVC  alloc] init];
     vc.view.backgroundColor= BLUE;
     [self.navigationController pushViewController:vc animated:YES ];
@@ -299,12 +319,17 @@
 //------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if  (section>= _eventsArray.count ) {
-        return 0;
+    switch ( section) {
+        case 0:
+            return _yourEventsArray.count;
+        case 1:
+            return _incompleteEventsArray.count;
+        case 2:
+            return _curatedEventsArray.count;
+            
+        default:
+            return 0;;
     }
-    NSArray* events= _eventsArray[section];
-
-    return  events.count;
 }
 
 //------------------------------------------------------------------------------
@@ -320,7 +345,20 @@
             string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
         }
         
-        [self performSelector:@selector (goToEventCoordinatorScreen:) withObject: string afterDelay: 0.5];
+        EventObject *e= [[EventObject  alloc] init];
+        e.name=  string;
+        __weak EventsListVC* weakSelf= self;
+        [OOAPI addEvent: e
+                success:^(NSArray *events) {
+                    NSLog  (@" EVENT CREATED");
+                    
+                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+                }
+                failure:^(NSError *error) {
+                    NSLog  (@"%@", error);
+                    message( @"backend was unable to create a new event");
+                }];
+        
         
     }
 }

@@ -14,6 +14,7 @@
 #import "ImageRefObject.h"
 #import "MediaItemObject.h"
 #import "UIImageView+AFNetworking.h"
+#import "EventObject.h"
 
 //extern NSString *const kKeyName;
 
@@ -120,7 +121,12 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 // Events
 //
 
++ (AFHTTPRequestOperation *)addEvent:(EventObject* ) eo
+                                     success:(void (^)(NSArray *events))success
+                                     failure:(void (^)(NSError *))failure;
 + (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
-                                        success:(void (^)(NSArray *events))success
-                                        failure:(void (^)(NSError *))failure;
+                                     success:(void (^)(NSArray *events))success
+                                     failure:(void (^)(NSError *))failure;
++ (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
+                                     failure:(void (^)(NSError *))failure;
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "Common.h"
+#import "CommonUIConstants.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -21,6 +22,7 @@
 @property (nonatomic,strong)  UIButton* buttonClearUsername;
 @property (nonatomic,strong)  UIButton* buttonClearCache;
 @property (nonatomic,strong)  UIButton* buttonSearchRadius;
+@property (nonatomic,strong)  UIButton* buttonUploadPhoto;
 @property (nonatomic,strong)  UITextView* textviewDiagnosticLog;
 @end
 
@@ -61,6 +63,10 @@
     _buttonSearchRadius= makeButton(self.view, [NSString stringWithFormat:@"%dkM RADIUS", radius] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doSearchRadius:), 1);
     _buttonSearchRadius.titleLabel.numberOfLines= 0;
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
+    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
+    _buttonUploadPhoto.titleLabel.numberOfLines= 0;
+    _buttonUploadPhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
 }
 
 - (void)viewWillLayoutSubviews
@@ -94,6 +100,15 @@
     }
     
     message( @"cache cleared.");
+}
+
+//------------------------------------------------------------------------------
+// Name:    doPhotoUpload
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doPhotoUpload: (id) sender
+{
+    message( @"not implemented.");
 }
 
 //------------------------------------------------------------------------------
@@ -146,12 +161,19 @@
     float  margin= kGeomSpaceEdge;
     float  spacing= 16;
     _textviewDiagnosticLog.frame=  CGRectMake(margin,h/2,w-2*margin,h/2-margin);
+    
     float x=  margin, y=  margin;
     _buttonClearUsername.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _buttonClearCache.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _buttonSearchRadius.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    
+    x += kGeomButtonWidth+ spacing;
+    y= margin;
+    _buttonUploadPhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
+
 }
 
 @end

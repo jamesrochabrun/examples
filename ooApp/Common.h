@@ -24,6 +24,7 @@ extern NSString *platformString();
 
 extern NSAttributedString* attributedStringOf(NSString*,double fontSize);
 extern NSAttributedString* underlinedAttributedStringOf(NSString* ,double fontSize);
+extern NSMutableAttributedString *createPeopleIconString (NSInteger count);
 
 extern UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName);
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
@@ -36,6 +37,7 @@ extern UIWebView* makeWebView (UIView*parent, id  delegate);
 extern UITableView* makeTable (UIView *parent,id  delegate);
 extern UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UIView* makeView (UIView *parent, UIColor* backgroundColor);
+extern UIScrollView* makeScrollView (UIView*parent, id  delegate);
 
 extern NSDate* parseUTCDateFromServer(NSString *string);
 extern NSString* parseStringOrNullFromServer (id object);

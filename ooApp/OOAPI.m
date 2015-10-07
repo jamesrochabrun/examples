@@ -604,15 +604,42 @@
                                      success:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *))failure;
 {
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/events",kOOURL, (unsigned long)identifier];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:  @{
+                                            @"isComplete": @(1)
+                                            }
+           success:^(id responseObject) {
+               NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
+               if ( [responseObject isKindOfClass:[NSArray class]]) {
+                   NSMutableArray *events = [NSMutableArray array];
+                   for (id dict in responseObject) {
+                       EventObject *e=[EventObject eventFromDictionary:dict];
+                       NSLog  (@"EVENT  %@",dict);
+                       //NSLog(@"Event name: %@", [RestaurantObject restaurantFromDict:dict].name);
+                       [events addObject:e];
+                   }
+                   success(events);
+               }else {
+                   NSLog  (@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
+                   failure(nil);
+               }
+           } failure:^(NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure(nil);
+           }];
+}
+
++ (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
+                                                failure:(void (^)(NSError *))failure;
+{
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events",kOOURL];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSDictionary *parameters =  @{
-                                  @"userid":@(identifier)
-                                  };
-    
-    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
         if ( [responseObject isKindOfClass:[NSArray class]]) {
             NSMutableArray *events = [NSMutableArray array];
@@ -632,4 +659,36 @@
     }];
 }
 
++ (AFHTTPRequestOperation *)addEvent:(EventObject* ) eo
+                               success:(void (^)(NSArray *events))success
+                               failure:(void (^)(NSError *))failure;
+{
+    if  (!eo) {
+        failure (nil);
+        return nil;
+    }
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (! userid) {
+        failure (nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events", kOOURL];
+    
+    NSDictionary *parameters=  @{
+                                 @"name":eo.name ?:  @"",
+                                 @"isComplete": @0,
+                                 @"creator": userid,
+                                  @"type": @1
+                                 };
+    AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(NSError *error) {
+                                      failure(error);
+                                  }];
+    
+    return op;
+}
 @end
