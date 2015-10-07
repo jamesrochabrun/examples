@@ -15,7 +15,7 @@
 #import "DebugUtilities.h"
 #import "Settings.h"
 #import "LocationManager.h"
-#import "HorizontalListVC.h"
+#import "RestaurantListVC.h"
 #import "Common.h"
 #import "RestaurantVC.h"
 #import "TimeUtilities.h"

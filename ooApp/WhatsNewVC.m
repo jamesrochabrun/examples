@@ -14,7 +14,7 @@
 #import "DebugUtilities.h"
 #import "Settings.h"
 #import "LocationManager.h"
-#import "HorizontalListVC.h"
+#import "RestaurantListVC.h"
 #import "UserObject.h"
 
 @interface WhatsNewVC ()
@@ -215,7 +215,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 {
     ListObject *item = [_lists objectAtIndex:indexPath.row];
     
-    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
+    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
     vc.title = item.name;
     vc.listItem = item;

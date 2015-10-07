@@ -1,12 +1,12 @@
 //
-//  HorizontalListVC.m
+//  RestaurantListVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/9/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "HorizontalListVC.h"
+#import "RestaurantListVC.h"
 #import "RestaurantHTVCell.h"
 #import "RestaurantObject.h"
 #import "OOAPI.h"
@@ -15,7 +15,7 @@
 #import "ListObject.h"
 #import "RestaurantVC.h"
 
-@interface HorizontalListVC ()
+@interface RestaurantListVC ()
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
@@ -25,7 +25,7 @@
 
 static NSString * const cellIdentifier = @"horizontalCell";
 
-@implementation HorizontalListVC
+@implementation RestaurantListVC
 
 - (void)viewDidLoad
 {
@@ -85,7 +85,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 {
     OOAPI *api = [[OOAPI alloc] init];
     
-    __weak HorizontalListVC *weakSelf = self;
+    __weak RestaurantListVC *weakSelf = self;
     if (_listItem.type == kOOAPIListTypeFavorites) {
         self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
             weakSelf.restaurants = r;
@@ -96,9 +96,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
             ;
         }];
     } else {
-        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name
-                                                   andLocation:[[LocationManager sharedInstance]currentUserLocation]
-                                                   andOpenOnly:NO success:^(NSArray *r) {
+        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] andOpenOnly:NO success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];

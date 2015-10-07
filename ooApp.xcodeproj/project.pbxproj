@@ -45,7 +45,7 @@
 		366BBC971BA9304900292F80 /* SubBaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC961BA9304900292F80 /* SubBaseVC.m */; };
 		367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112CD1B9A076B006FDCE7 /* ImageRefObject.m */; };
 		367112D11BA13E69006FDCE7 /* HorizonalTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */; };
-		367112D41BA14071006FDCE7 /* HorizontalListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D31BA14071006FDCE7 /* HorizontalListVC.m */; };
+		367112D41BA14071006FDCE7 /* RestaurantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D31BA14071006FDCE7 /* RestaurantListVC.m */; };
 		367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 367703FA1B86884700B594E5 /* CommonUIConstants.m */; };
 		367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704041B8807F600B594E5 /* UIButton+Additions.m */; };
 		367704081B88103900B594E5 /* UIImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704071B88103900B594E5 /* UIImage+Additions.m */; };
@@ -184,8 +184,8 @@
 		367112CD1B9A076B006FDCE7 /* ImageRefObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageRefObject.m; sourceTree = "<group>"; };
 		367112CF1BA13E69006FDCE7 /* HorizonalTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizonalTVCell.h; sourceTree = "<group>"; };
 		367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizonalTVCell.m; sourceTree = "<group>"; };
-		367112D21BA14071006FDCE7 /* HorizontalListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalListVC.h; sourceTree = "<group>"; };
-		367112D31BA14071006FDCE7 /* HorizontalListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizontalListVC.m; sourceTree = "<group>"; };
+		367112D21BA14071006FDCE7 /* RestaurantListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantListVC.h; sourceTree = "<group>"; };
+		367112D31BA14071006FDCE7 /* RestaurantListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantListVC.m; sourceTree = "<group>"; };
 		367703FA1B86884700B594E5 /* CommonUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUIConstants.m; sourceTree = "<group>"; };
 		367704031B8807F600B594E5 /* UIButton+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Additions.h"; sourceTree = "<group>"; };
 		367704041B8807F600B594E5 /* UIButton+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Additions.m"; sourceTree = "<group>"; };
@@ -479,8 +479,8 @@
 				367703FC1B87E3A500B594E5 /* Resources */,
 				363B60BE1B6AC13900987A1B /* Models */,
 				3621F11C1B8F6DF5004537B6 /* Cells */,
-				367112D21BA14071006FDCE7 /* HorizontalListVC.h */,
-				367112D31BA14071006FDCE7 /* HorizontalListVC.m */,
+				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
+				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
 				36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */,
 				36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
@@ -782,7 +782,7 @@
 				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,
 				3637E93D1BB5B6D10074A01C /* CommonConstants.m in Sources */,
 				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
-				367112D41BA14071006FDCE7 /* HorizontalListVC.m in Sources */,
+				367112D41BA14071006FDCE7 /* RestaurantListVC.m in Sources */,
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				965A1A971BBA05B500727773 /* SearchVC.m in Sources */,

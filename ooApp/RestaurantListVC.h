@@ -1,5 +1,5 @@
 //
-//  HorizontalListVC.h
+//  RestaurantListVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/9/15.
@@ -10,7 +10,7 @@
 #import "ListObject.h"
 #import "SubBaseVC.h"
 
-@interface HorizontalListVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
+@interface RestaurantListVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) ListObject *listItem;
 

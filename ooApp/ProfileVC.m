@@ -13,7 +13,7 @@
 #import "ListTVCell.h"
 #import "OOAPI.h"
 #import "EmptyListVC.h"
-#import "HorizontalListVC.h"
+#import "RestaurantListVC.h"
 #import "UIImage+Additions.h"
 
 @interface ProfileTableFirstRow ()
@@ -404,7 +404,7 @@
     }
     ListObject *item = [_lists objectAtIndex:(indexPath.row - 1)];
     
-    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
+    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
     vc.title = item.name;
     vc.listItem = item;
