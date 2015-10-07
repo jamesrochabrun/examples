@@ -43,7 +43,7 @@ static NSString * const ListRowID = @"HLRCell";
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _openOnly = NO;
+        _openOnly = YES;
     }
     return self;
 }
@@ -79,6 +79,9 @@ static NSString * const ListRowID = @"HLRCell";
     
     _filterView = [[OOFilterView alloc] init];
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
+    [_filterView addFilter:@"now" target:self selector:@selector(selectNow)];
+    [_filterView addFilter:@"later" target:self selector:@selector(selectLater)];
+
     [self.view addSubview:_filterView];
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
@@ -89,11 +92,21 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)selectNow {
     _openOnly = YES;
+    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OOMapMarker *mm = (OOMapMarker *)obj;
+        mm.map = nil;
+    }];
+    [_mapMarkers removeAllObjects];
     [self getRestaurants];
 }
 
 - (void)selectLater {
     _openOnly = NO;
+    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OOMapMarker *mm = (OOMapMarker *)obj;
+        mm.map = nil;
+    }];
+    [_mapMarkers removeAllObjects];
     [self getRestaurants];
 }
 
@@ -114,8 +127,6 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [_filterView addFilter:@"now" target:self selector:@selector(selectNow)];
-    [_filterView addFilter:@"later" target:self selector:@selector(selectLater)];
     [self.navigationController setNavigationBarHidden:NO];
     [self layout];
 }
