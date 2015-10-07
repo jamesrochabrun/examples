@@ -1,12 +1,12 @@
 //
-//  ListTVCell.m
+//  ListStripTVCell.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 8/28/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "ListTVCell.h"
+#import "ListStripTVCell.h"
 #import "DebugUtilities.h"
 #import "OOAPI.h"
 #import "ListCVFL.h"
@@ -15,7 +15,7 @@
 #import "LocationManager.h"
 #import "RestaurantVC.h"
 
-@interface ListTVCell ()
+@interface ListStripTVCell ()
 
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UIView *line;
@@ -34,7 +34,7 @@
 static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantCell";
 
-@implementation ListTVCell
+@implementation ListStripTVCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -125,7 +125,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 {
     OOAPI *api = [[OOAPI alloc] init];
     
-    __weak ListTVCell *weakSelf=self;
+    __weak ListStripTVCell *weakSelf=self;
     if (_listItem.type == kOOAPIListTypeFavorites) {
         self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
             weakSelf.restaurants = r;

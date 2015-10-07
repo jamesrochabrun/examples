@@ -1,5 +1,5 @@
 //
-//  ListTVCell.h
+//  ListStripTVCell.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 8/28/15.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ListObject.h"
 
-@interface ListTVCell : UITableViewCell <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface ListStripTVCell : UITableViewCell <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, strong) ListObject *listItem;
 @property (nonatomic, weak) UINavigationController *navigationController;

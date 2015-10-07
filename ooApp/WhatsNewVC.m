@@ -10,7 +10,7 @@
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
-#import "ListTVCell.h"
+#import "ListStripTVCell.h"
 #import "DebugUtilities.h"
 #import "Settings.h"
 #import "LocationManager.h"
@@ -41,8 +41,8 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:ListRowID];
-    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:FeaturedRowID];
+    [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:ListRowID];
+    [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:FeaturedRowID];
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"What's New" subHeader:@"what"];
     self.navTitle = nto;
@@ -180,7 +180,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 {
     ListObject *list = [_lists objectAtIndex:indexPath.row];
     
-    ListTVCell *cell;
+    ListStripTVCell *cell;
     
     if (list.listDisplayType == kListDisplayTypeFeatured) {
         cell = [tableView dequeueReusableCellWithIdentifier:FeaturedRowID forIndexPath:indexPath];

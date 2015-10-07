@@ -10,7 +10,7 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "Common.h"
-#import "ListTVCell.h"
+#import "ListStripTVCell.h"
 #import "OOAPI.h"
 #import "EmptyListVC.h"
 #import "RestaurantListVC.h"
@@ -387,7 +387,7 @@
         return _headerCell;
     }
     
-    ListTVCell* cell = [[ListTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    ListStripTVCell* cell = [[ListStripTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 
     NSArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
