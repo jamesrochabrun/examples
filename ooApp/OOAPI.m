@@ -117,6 +117,7 @@
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
+                                           andOpenOnly:(BOOL)openOnly
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure
 {
@@ -126,7 +127,10 @@
     }
     
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
-    NSDictionary *parameters = @{@"keyword":keyword,@"latitude":[NSNumber numberWithFloat:location.latitude],@"longitude":[NSNumber numberWithFloat:location.longitude]};
+    NSDictionary *parameters = @{@"keyword":keyword,
+                                 kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
+                                 kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
+                                 kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly]};
     
 //    NSLog (@" URL=  %@",urlString);
     

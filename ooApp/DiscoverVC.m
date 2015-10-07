@@ -20,6 +20,7 @@
 #import "RestaurantVC.h"
 #import "TimeUtilities.h"
 #import "OOMapMarker.h"
+#import "OOFilterView.h"
 
 @interface DiscoverVC () <GMSMapViewDelegate>
 
@@ -30,12 +31,22 @@
 @property (nonatomic, strong) GMSMapView *mapView;
 @property (nonatomic, strong) GMSCameraPosition *camera;
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
+@property (nonatomic, strong) OOFilterView *filterView;
+@property (nonatomic) BOOL openOnly;
 
 @end
 
 static NSString * const ListRowID = @"HLRCell";
 
 @implementation DiscoverVC
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _openOnly = NO;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -66,28 +77,45 @@ static NSString * const ListRowID = @"HLRCell";
     _mapView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_mapView];
     
+    _filterView = [[OOFilterView alloc] init];
+    _filterView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_filterView];
+    
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
     self.navTitle = nto;
         
     [self layout];
 }
 
+- (void)selectNow {
+    _openOnly = YES;
+    [self getRestaurants];
+}
+
+- (void)selectLater {
+    _openOnly = NO;
+    [self getRestaurants];
+}
+
 - (void)layout {
     [super layout];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _filterView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_mapView(300)]-[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_filterView(heightFilters)][_mapView(300)]-[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [_filterView addFilter:@"now" target:self selector:@selector(selectNow)];
+    [_filterView addFilter:@"later" target:self selector:@selector(selectLater)];
     [self.navigationController setNavigationBarHidden:NO];
     [self layout];
 }
@@ -95,7 +123,6 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
     [self verifyTrackingIsOkay];
 }
 
@@ -159,7 +186,9 @@ static NSString * const ListRowID = @"HLRCell";
     NSString *searchTerm = [TimeUtilities categorySearchString:[NSDate date]];
     NSLog(@"category: %@", searchTerm);
     
-    _requestOperation = [api getRestaurantsWithKeyword:searchTerm andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
+    _requestOperation = [api getRestaurantsWithKeyword:searchTerm
+                                           andLocation:[[LocationManager sharedInstance] currentUserLocation]
+                                           andOpenOnly:_openOnly success:^(NSArray *r) {
         weakSelf.restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf gotRestaurants];

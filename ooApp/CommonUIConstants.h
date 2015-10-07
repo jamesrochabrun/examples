@@ -32,7 +32,7 @@ static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
 static NSUInteger kColorNavBar = 0xFFFFFFFF;
 static NSUInteger kColorNavyBlue = 0xFF000080;
 static NSUInteger kColorOffBlack = 0xFF222222;
-static NSUInteger kColorOffWhite = 0xFFCCCCCC;
+static NSUInteger kColorOffWhite = 0xFFE5E5E5;
 static NSUInteger kColorStripOverlay = 0x99000000;
 static NSUInteger kColorWhite = 0xFFFFFFFF;
 static NSUInteger kColorRed = 0xFFFF0000;
@@ -46,6 +46,7 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
 static CGFloat kGeomHeightButton = 44.0;
+static CGFloat kGeomHeightFilters = 30.0;
 static CGFloat kGeomProfileInformationHeight = 18;
 static CGFloat kGeomButtonWidth = 100;
 static CGFloat kGeomHeightSampleUsernameRow = 180.0;
@@ -70,6 +71,7 @@ static CGFloat kGeomLogoHeight= 100;
 static CGFloat kGeomLoginVerticalDisplacement = 75;
 static CGFloat kGeomWidthMenuButton = 44;
 static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
+static CGFloat kGeomHeightFilterSelectedLine = 3.0;
 
 // Images
 extern NSString *const kImageNoProfileImage;

@@ -14,6 +14,8 @@
 		3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE581BBE278400F1AF67 /* ListHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE571BBE278400F1AF67 /* ListHTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5A1BC445A700F1AF67 /* OOFilterView.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5D1BC46BE800F1AF67 /* FilterObject.m */; settings = {ASSET_TAGS = (); }; };
 		3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11A1B8E6A06004537B6 /* MenuTVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
@@ -125,6 +127,10 @@
 		3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaItemObject.m; sourceTree = "<group>"; };
 		3613BE561BBE278400F1AF67 /* ListHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListHTVCell.h; sourceTree = "<group>"; };
 		3613BE571BBE278400F1AF67 /* ListHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListHTVCell.m; sourceTree = "<group>"; };
+		3613BE591BC445A700F1AF67 /* OOFilterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOFilterView.h; sourceTree = "<group>"; };
+		3613BE5A1BC445A700F1AF67 /* OOFilterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOFilterView.m; sourceTree = "<group>"; };
+		3613BE5C1BC46BE800F1AF67 /* FilterObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterObject.h; sourceTree = "<group>"; };
+		3613BE5D1BC46BE800F1AF67 /* FilterObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterObject.m; sourceTree = "<group>"; };
 		3621F1191B8E6A06004537B6 /* MenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVC.h; sourceTree = "<group>"; };
 		3621F11A1B8E6A06004537B6 /* MenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
@@ -329,6 +335,8 @@
 				3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */,
 				366BBC8C1BA8B74A00292F80 /* NavTitleObject.h */,
 				366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */,
+				3613BE5C1BC46BE800F1AF67 /* FilterObject.h */,
+				3613BE5D1BC46BE800F1AF67 /* FilterObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -429,6 +437,8 @@
 				3613BE4E1BBCBDF700F1AF67 /* OORemoveButton.m */,
 				3613BE501BBCFB7000F1AF67 /* EmptyRestaurantTile.h */,
 				3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */,
+				3613BE591BC445A700F1AF67 /* OOFilterView.h */,
+				3613BE5A1BC445A700F1AF67 /* OOFilterView.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -754,6 +764,7 @@
 				3613BE4F1BBCBDF700F1AF67 /* OORemoveButton.m in Sources */,
 				962667471BBC8C9600D77EBE /* UserHTVCell.m in Sources */,
 				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,
+				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
@@ -775,6 +786,7 @@
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				965A1A971BBA05B500727773 /* SearchVC.m in Sources */,
+				3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
 				96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */,
 				366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */,
