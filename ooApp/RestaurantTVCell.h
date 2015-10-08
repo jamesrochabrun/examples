@@ -1,16 +1,16 @@
 //
-//  RestaurantHTVCell.h
+//  RestaurantTVCell.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/24/15.
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "HorizonalTVCell.h"
+#import "ObjectTVCell.h"
 #import "RestaurantObject.h"
 #import <GoogleMaps/GoogleMaps.h>
 
-@interface RestaurantHTVCell : HorizonalTVCell
+@interface RestaurantTVCell : ObjectTVCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 

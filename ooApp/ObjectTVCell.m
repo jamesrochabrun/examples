@@ -1,19 +1,19 @@
 //
-//  HorizonalTVCell.m
+//  ObjectTVCell.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/9/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "HorizonalTVCell.h"
+#import "ObjectTVCell.h"
 #import "DebugUtilities.h"
 
-@interface HorizonalTVCell ()
+@interface ObjectTVCell ()
 
 @end
 
-@implementation HorizonalTVCell
+@implementation ObjectTVCell
 
 - (void)awakeFromNib {
     // Initialization code
@@ -56,12 +56,15 @@
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-        [self layout];
         //[DebugUtilities addBorderToViews:@[_thumbnail, _header, _subHeader1, _subHeader2]];
     }
     return self;
 }
 
+- (void)updateConstraints {
+    [super updateConstraints];
+    [self layout];
+}
 
 - (void)layout {
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};

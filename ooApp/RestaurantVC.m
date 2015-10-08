@@ -11,6 +11,7 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "OORemoveButton.h"
+#import "ListsVC.h"
 
 @interface RestaurantVC ()
 
@@ -31,45 +32,48 @@
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
+    [self setupAlertController];
+    
+    _removeButtons = [NSMutableSet set];
+}
+
+- (void)setupAlertController {
     _alertController = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
-                                                                   message:@"What would you like to do with this restaurant."
-                                                        preferredStyle:UIAlertControllerStyleActionSheet]; // 1
+                                                           message:@"What would you like to do with this restaurant."
+                                                    preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
     _alertController.view.tintColor = [UIColor blackColor];
     
     UIAlertAction *a1 = [UIAlertAction actionWithTitle:@"Add to Favorites"
-                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                              NSLog(@"You pressed button one");
-                                                              [self addToFavorites];
-                                                          }]; // 2
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [self addToFavorites];
+                                                 }];
     UIAlertAction *a2 = [UIAlertAction actionWithTitle:@"Add to List"
-                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                               NSLog(@"You pressed button two");
-                                                           }]; // 3
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [self showLists];
+                                                 }];
     UIAlertAction *a3 = [UIAlertAction actionWithTitle:@"Add to Event"
-                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                               NSLog(@"You pressed button two");
-                                                           }]; // 3
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSLog(@"You pressed button two");
+                                                 }];
     UIAlertAction *a4 = [UIAlertAction actionWithTitle:@"New Event at..."
-                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                              NSLog(@"You pressed button two");
-                                                          }]; // 3
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSLog(@"You pressed button two");
+                                                 }]; // 3
     UIAlertAction *a5 = [UIAlertAction actionWithTitle:@"New List..."
-                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                              NSLog(@"You pressed button two");
-                                                          }]; // 3
-
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSLog(@"You pressed button two");
+                                                 }]; // 3
+    
     
     [_alertController addAction:a1];
     [_alertController addAction:a2];
     [_alertController addAction:a3];
     [_alertController addAction:a4];
     [_alertController addAction:a5];
-
+    
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
-    _removeButtons = [NSMutableSet set];
 }
 
 - (void)moreButtonPressed:(id)sender {
@@ -98,6 +102,7 @@
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
         [weakSelf getListsForRestaurant];
+        [weakSelf getMediaItemsForRestaurant];
     } failure:^(NSError *error) {
         ;
     }];
@@ -128,15 +133,30 @@
                 }];
 }
 
+- (void)getMediaItemsForRestaurant {
+    OOAPI *api =[[OOAPI alloc] init];
+    __weak RestaurantVC *weakSelf = self;
+    [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
+        ;
+    } failure:^(NSError *error) {
+        ;
+    }];
+
+}
+
 - (void)displayRemoveButtons {
+    __block CGPoint origin = CGPointMake(10, 10);
     NSArray *removeButtons = [_removeButtons allObjects];
     [removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
-        frame.origin.x = 10;
-        frame.origin.y = 10;
+        frame.origin.x = origin.x;
+        frame.origin.y = origin.y;
         b.frame = frame;
+        
+        origin.x = CGRectGetMaxX(frame) + kGeomSpaceInter;
+
         [self.view addSubview:b];
     }];
 }
@@ -144,9 +164,15 @@
 - (void)removeFromList:(id)sender {
     OORemoveButton  *b = (OORemoveButton *)sender;
     OOAPI *api = [[OOAPI alloc] init];
+    
+    __weak RestaurantVC *weakSelf = self;
     [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.identifier success:^(NSArray *lists) {
-        [self getListsForRestaurant];
-        [b removeFromSuperview];
+        ON_MAIN_THREAD(^{
+            [b removeFromSuperview];
+            [_removeButtons removeObject:b];
+            [weakSelf getListsForRestaurant];
+        });
+        
     } failure:^(NSError *error) {
         ;
     }];
@@ -154,11 +180,20 @@
 
 - (void)addToFavorites {
     OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantVC *weakSelf = self;
+    
     [api addRestaurantsToFavorites:@[_restaurant] success:^(id response) {
-        [self getListsForRestaurant];
+        [weakSelf getListsForRestaurant];
     } failure:^(NSError *error) {
         ;
     }];
+}
+
+- (void)showLists {
+    ListsVC *vc = [[ListsVC alloc] init];
+    vc.restaurant = _restaurant;
+    [vc getLists];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 /*

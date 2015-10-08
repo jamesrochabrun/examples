@@ -1,19 +1,19 @@
 //
-//  UserHTVCell.m
+//  UserTVCell.m
 //  ooApp
 //
 //  Created by Zack Smith on 9/30/15.
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "UserHTVCell.h"
+#import "UserTVCell.h"
 #import "LocationManager.h"
 
-@interface UserHTVCell ()
+@interface UserTVCell ()
 
 @end
 
-@implementation UserHTVCell
+@implementation UserTVCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

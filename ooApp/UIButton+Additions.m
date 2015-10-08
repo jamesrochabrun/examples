@@ -20,7 +20,7 @@
     [self addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
     [self setTitle:text forState:UIControlStateNormal];
     self.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:fontSize];
-    [self setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    [self setTitleColor:UIColorRGBA(kColorBlack) forState:UIControlStateNormal];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor)] forState:UIControlStateNormal];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor & 0xEEEEEEFF)] forState:UIControlStateHighlighted];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorGrayMiddle)] forState:UIControlStateDisabled];

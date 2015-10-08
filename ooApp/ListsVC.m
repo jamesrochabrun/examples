@@ -1,31 +1,31 @@
 //
-//  HorizontalListVC.m
+//  ListsVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/9/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "HorizontalListVC.h"
-#import "RestaurantHTVCell.h"
-#import "RestaurantObject.h"
+#import "ListsVC.h"
+#import "ListTVCell.h"
+#import "RestaurantListVC.h"
 #import "OOAPI.h"
 #import "LocationManager.h"
 #import "UIImageView+AFNetworking.h"
 #import "ListObject.h"
 #import "RestaurantVC.h"
 
-@interface HorizontalListVC ()
+@interface ListsVC ()
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) NSArray *restaurants;
+@property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
 @end
 
-static NSString * const cellIdentifier = @"horizontalCell";
+static NSString * const cellIdentifier = @"listCell";
 
-@implementation HorizontalListVC
+@implementation ListsVC
 
 - (void)viewDidLoad
 {
@@ -35,7 +35,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _tableView.delegate = self;
     _tableView.dataSource = self;
 
-    [_tableView registerClass:[RestaurantHTVCell class] forCellReuseIdentifier:cellIdentifier];
+    [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:cellIdentifier];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.rowHeight = kGeomHeightHorizontalListRow;
     _tableView.separatorInset = UIEdgeInsetsZero;
@@ -69,49 +69,27 @@ static NSString * const cellIdentifier = @"horizontalCell";
     // Dispose of any resources that can be recreated.
 }
 
-- (void)setListItem:(ListObject *)listItem {
-    if (_listItem == listItem) return;
-    _listItem = listItem;
-
-    if (_listItem) {
-        [self getRestaurants];
-    }
-    
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listItem.name subHeader:nil];
-    self.navTitle = nto;
-}
-
-- (void)getRestaurants
+- (void)getLists
 {
     OOAPI *api = [[OOAPI alloc] init];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Lists" subHeader:nil];
+    self.navTitle = nto;
     
-    __weak HorizontalListVC *weakSelf = self;
-    if (_listItem.type == kOOAPIListTypeFavorites) {
-        self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
-            weakSelf.restaurants = r;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf gotRestaurants];
-            });
-        } failure:^(NSError *err) {
-            ;
-        }];
-    } else {
-        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] success:^(NSArray *r) {
-            weakSelf.restaurants = r;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf gotRestaurants];
-            });
-        } failure:^(NSError *err) {
-            ;
-        }];
-    }
+    __weak ListsVC *weakSelf = self;
+    self.requestOperation = [api getListsOfUser:0 withRestaurant:0 success:^(NSArray *lists) {
+        weakSelf.lists = lists;
+        ON_MAIN_THREAD( ^{
+            [self gotLists];
+        });
+    } failure:^(NSError *error) {
+        ;
+    }];
 }
 
-- (void)gotRestaurants
+- (void)gotLists
 {
-    NSLog(@"%@: %tu", _listItem.name, [_restaurants count]);
+    NSLog(@"Got %tu lists.", [_lists count]);
     [_tableView reloadData];
-
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
 
@@ -122,25 +100,31 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_restaurants count];
+    return [_lists count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantHTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    ListTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+
     
-    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
-    cell.restaurant = restaurant;
+    if (_restaurant) {
+        cell.restaurant = _restaurant;
+    }
+    ListObject *list = [_lists objectAtIndex:indexPath.row];
+    cell.list = list;
+
+    [cell updateConstraintsIfNeeded];
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+    ListObject *list = [_lists objectAtIndex:indexPath.row];
     
-    RestaurantVC *vc = [[RestaurantVC alloc] init];
-    vc.restaurant = restaurant;
+    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+    vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

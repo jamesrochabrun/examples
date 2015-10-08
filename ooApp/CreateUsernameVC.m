@@ -10,7 +10,7 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "Common.h"
-#import "ListTVCell.h"
+#import "ListStripTVCell.h"
 #import "OOAPI.h"
 #import "AppDelegate.h"
 

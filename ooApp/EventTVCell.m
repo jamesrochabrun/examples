@@ -1,20 +1,20 @@
 //
-//  EventHTVCell.m
+//  EventTVCell.m
 //  ooApp
 //
 //  Created by Zack Smith on 10/5/15.
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "EventHTVCell.h"
+#import "EventTVCell.h"
 #import "LocationManager.h"
 
-@interface EventHTVCell ()
+@interface EventTVCell ()
 @property (nonatomic,strong) EventObject* eventInfo;
 @property (nonatomic,strong)  UILabel *labelIndicatingAttendeeCount;
 @end
 
-@implementation EventHTVCell
+@implementation EventTVCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

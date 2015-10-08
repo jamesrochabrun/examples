@@ -16,11 +16,11 @@
 #import "EventsListVC.h"
 #import "LocationManager.h"
 #import "Settings.h"
-#import "RestaurantHTVCell.h"
+#import "RestaurantTVCell.h"
 #import "RestaurantVC.h"
-#import "UserHTVCell.h"
+#import "UserTVCell.h"
 #import "ProfileVC.h"
-#import "EventHTVCell.h"
+#import "EventTVCell.h"
 #import "EventCoordinatorVC.h"
 
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
@@ -64,7 +64,7 @@
     self.navTitle = nto;
 
     self.table= makeTable( self.view, self);
-    [_table registerClass:[EventHTVCell class] forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
+    [_table registerClass:[EventTVCell class] forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
     [_table registerClass:[UITableViewCell class] forCellReuseIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER];
     _table.sectionHeaderHeight= kGeomHeightButton;
     _table.sectionFooterHeight= 10;
@@ -224,7 +224,7 @@
 //------------------------------------------------------------------------------
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    EventHTVCell *cell;
+    EventTVCell *cell;
     
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;

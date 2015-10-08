@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "RestaurantObject.h"
+//#import "RestaurantObject.h"
 #import "UserObject.h"
 #import "TimeUtilities.h"
 #import "EventObject.h"

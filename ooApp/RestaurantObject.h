@@ -9,6 +9,20 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
+extern NSString *const kKeyRestaurantGoogleID;
+extern NSString *const kKeyRestaurantRestaurantID;
+extern NSString *const kKeyRestaurantPlaceID;
+extern NSString *const kKeyRestaurantName;
+extern NSString *const kKeyRestaurantRating;
+extern NSString *const kKeyRestaurantImageRef;
+extern NSString *const kKeyRestaurantMediaItems;
+extern NSString *const kKeyRestaurantLatitude;
+extern NSString *const kKeyRestaurantLongitude;
+extern NSString *const kKeyRestaurantPriceRange;
+extern NSString *const kKeyRestaurantOpenNow;
+extern NSString *const kKeyRestaurantAddress;
+extern NSString *const kKeyRestaurantPhone;
+extern NSString *const kKeyRestaurantWebsite;
 
 typedef enum {
     kRestaurantSourceTypeGoogle = 1

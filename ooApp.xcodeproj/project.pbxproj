@@ -13,7 +13,10 @@
 		3613BE4F1BBCBDF700F1AF67 /* OORemoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OORemoveButton.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */; settings = {ASSET_TAGS = (); }; };
-		3613BE581BBE278400F1AF67 /* ListHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE571BBE278400F1AF67 /* ListHTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE581BBE278400F1AF67 /* ListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE571BBE278400F1AF67 /* ListTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5A1BC445A700F1AF67 /* OOFilterView.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5D1BC46BE800F1AF67 /* FilterObject.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */; settings = {ASSET_TAGS = (); }; };
 		3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11A1B8E6A06004537B6 /* MenuTVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
@@ -24,7 +27,7 @@
 		36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36250BDB1B82679A00F456B5 /* LoginVC.m */; };
 		36250BDF1B82704300F456B5 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */; };
 		36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */; };
-		3637E93B1BB439290074A01C /* RestaurantHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3637E93A1BB439290074A01C /* RestaurantHTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		3637E93B1BB439290074A01C /* RestaurantTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3637E93A1BB439290074A01C /* RestaurantTVCell.m */; settings = {ASSET_TAGS = (); }; };
 		3637E93D1BB5B6D10074A01C /* CommonConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3637E93C1BB5B6D10074A01C /* CommonConstants.m */; settings = {ASSET_TAGS = (); }; };
 		363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C01B6AC15400987A1B /* RestaurantObject.m */; };
 		363B60C41B6AE49F00987A1B /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C31B6AE49F00987A1B /* UserObject.m */; };
@@ -34,7 +37,7 @@
 		36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B741B93C7AD00D01EB5 /* ListCVFL.m */; };
 		36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B7A1B9423D700D01EB5 /* TileCVCell.m */; };
 		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
-		365F17611B9105B500015D5D /* ListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListTVCell.m */; };
+		365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListStripTVCell.m */; };
 		366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */; };
 		366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8A1BA8B70100292F80 /* NavTitleView.m */; };
 		366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */; };
@@ -42,8 +45,8 @@
 		366BBC941BA8E59F00292F80 /* DiscoverVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC921BA8E59F00292F80 /* DiscoverVC.m */; };
 		366BBC971BA9304900292F80 /* SubBaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC961BA9304900292F80 /* SubBaseVC.m */; };
 		367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112CD1B9A076B006FDCE7 /* ImageRefObject.m */; };
-		367112D11BA13E69006FDCE7 /* HorizonalTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */; };
-		367112D41BA14071006FDCE7 /* HorizontalListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D31BA14071006FDCE7 /* HorizontalListVC.m */; };
+		367112D11BA13E69006FDCE7 /* ObjectTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D01BA13E69006FDCE7 /* ObjectTVCell.m */; };
+		367112D41BA14071006FDCE7 /* RestaurantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D31BA14071006FDCE7 /* RestaurantListVC.m */; };
 		367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 367703FA1B86884700B594E5 /* CommonUIConstants.m */; };
 		367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704041B8807F600B594E5 /* UIButton+Additions.m */; };
 		367704081B88103900B594E5 /* UIImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704071B88103900B594E5 /* UIImage+Additions.m */; };
@@ -88,12 +91,12 @@
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; settings = {ASSET_TAGS = (); }; };
 		962303751BB33D2700278FA6 /* forkKnife.png in Resources */ = {isa = PBXBuildFile; fileRef = 962303741BB33D2700278FA6 /* forkKnife.png */; settings = {ASSET_TAGS = (); }; };
-		962667471BBC8C9600D77EBE /* UserHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserHTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; settings = {ASSET_TAGS = (); }; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		965A1A971BBA05B500727773 /* SearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965A1A961BBA05B500727773 /* SearchVC.m */; settings = {ASSET_TAGS = (); }; };
 		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; settings = {ASSET_TAGS = (); }; };
-		96ACD7871BC3331000E37DC1 /* EventHTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventHTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; settings = {ASSET_TAGS = (); }; };
 		96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */; settings = {ASSET_TAGS = (); }; };
 		96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */; settings = {ASSET_TAGS = (); }; };
 		96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */; settings = {ASSET_TAGS = (); }; };
@@ -128,8 +131,14 @@
 		3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmptyRestaurantTile.m; sourceTree = "<group>"; };
 		3613BE531BBDD1A600F1AF67 /* MediaItemObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaItemObject.h; sourceTree = "<group>"; };
 		3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaItemObject.m; sourceTree = "<group>"; };
-		3613BE561BBE278400F1AF67 /* ListHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListHTVCell.h; sourceTree = "<group>"; };
-		3613BE571BBE278400F1AF67 /* ListHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListHTVCell.m; sourceTree = "<group>"; };
+		3613BE561BBE278400F1AF67 /* ListTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListTVCell.h; sourceTree = "<group>"; };
+		3613BE571BBE278400F1AF67 /* ListTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTVCell.m; sourceTree = "<group>"; };
+		3613BE591BC445A700F1AF67 /* OOFilterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOFilterView.h; sourceTree = "<group>"; };
+		3613BE5A1BC445A700F1AF67 /* OOFilterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOFilterView.m; sourceTree = "<group>"; };
+		3613BE5C1BC46BE800F1AF67 /* FilterObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterObject.h; sourceTree = "<group>"; };
+		3613BE5D1BC46BE800F1AF67 /* FilterObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterObject.m; sourceTree = "<group>"; };
+		3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListsVC.m; sourceTree = "<group>"; };
+		3613BE601BC5D87E00F1AF67 /* ListsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListsVC.h; sourceTree = "<group>"; };
 		3621F1191B8E6A06004537B6 /* MenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVC.h; sourceTree = "<group>"; };
 		3621F11A1B8E6A06004537B6 /* MenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
@@ -146,8 +155,8 @@
 		36250BDB1B82679A00F456B5 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKShareKit.framework"; sourceTree = "<group>"; };
-		3637E9391BB439290074A01C /* RestaurantHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantHTVCell.h; sourceTree = "<group>"; };
-		3637E93A1BB439290074A01C /* RestaurantHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantHTVCell.m; sourceTree = "<group>"; };
+		3637E9391BB439290074A01C /* RestaurantTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantTVCell.h; sourceTree = "<group>"; };
+		3637E93A1BB439290074A01C /* RestaurantTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantTVCell.m; sourceTree = "<group>"; };
 		3637E93C1BB5B6D10074A01C /* CommonConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonConstants.m; sourceTree = "<group>"; };
 		363B60BF1B6AC15400987A1B /* RestaurantObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantObject.h; sourceTree = "<group>"; };
 		363B60C01B6AC15400987A1B /* RestaurantObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantObject.m; sourceTree = "<group>"; };
@@ -156,7 +165,6 @@
 		363B60C51B6BF0CE00987A1B /* GroupObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupObject.h; sourceTree = "<group>"; };
 		363B60C61B6BF0CE00987A1B /* GroupObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupObject.m; sourceTree = "<group>"; };
 		363B60C91B6C22F000987A1B /* CommonConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonConstants.h; sourceTree = "<group>"; };
-		363B60CA1B6C231900987A1B /* CommonUIConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonUIConstants.h; sourceTree = "<group>"; };
 		36587B6F1B93964C00D01EB5 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Graphic Assets/Icon@2x.png"; sourceTree = "<group>"; };
 		36587B701B93964C00D01EB5 /* Icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@3x.png"; path = "Graphic Assets/Icon@3x.png"; sourceTree = "<group>"; };
 		36587B731B93C7AD00D01EB5 /* ListCVFL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCVFL.h; sourceTree = "<group>"; };
@@ -165,8 +173,8 @@
 		36587B7A1B9423D700D01EB5 /* TileCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TileCVCell.m; sourceTree = "<group>"; };
 		365F175C1B91046B00015D5D /* DefaultVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultVC.m; sourceTree = "<group>"; };
 		365F175D1B91046B00015D5D /* DefaultVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultVC.h; sourceTree = "<group>"; };
-		365F175F1B9105B500015D5D /* ListTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListTVCell.h; sourceTree = "<group>"; };
-		365F17601B9105B500015D5D /* ListTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTVCell.m; sourceTree = "<group>"; };
+		365F175F1B9105B500015D5D /* ListStripTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListStripTVCell.h; sourceTree = "<group>"; };
+		365F17601B9105B500015D5D /* ListStripTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListStripTVCell.m; sourceTree = "<group>"; };
 		366B623D1B8D3ED700B9F1C5 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SWRevealViewController.h; path = External/SWRevealViewController/SWRevealViewController.h; sourceTree = "<group>"; };
 		366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SWRevealViewController.m; path = External/SWRevealViewController/SWRevealViewController.m; sourceTree = "<group>"; };
 		366BBC891BA8B70100292F80 /* NavTitleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavTitleView.h; sourceTree = "<group>"; };
@@ -181,10 +189,10 @@
 		366BBC961BA9304900292F80 /* SubBaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubBaseVC.m; sourceTree = "<group>"; };
 		367112CC1B9A076B006FDCE7 /* ImageRefObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRefObject.h; sourceTree = "<group>"; };
 		367112CD1B9A076B006FDCE7 /* ImageRefObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageRefObject.m; sourceTree = "<group>"; };
-		367112CF1BA13E69006FDCE7 /* HorizonalTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizonalTVCell.h; sourceTree = "<group>"; };
-		367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizonalTVCell.m; sourceTree = "<group>"; };
-		367112D21BA14071006FDCE7 /* HorizontalListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalListVC.h; sourceTree = "<group>"; };
-		367112D31BA14071006FDCE7 /* HorizontalListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizontalListVC.m; sourceTree = "<group>"; };
+		367112CF1BA13E69006FDCE7 /* ObjectTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectTVCell.h; sourceTree = "<group>"; };
+		367112D01BA13E69006FDCE7 /* ObjectTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectTVCell.m; sourceTree = "<group>"; };
+		367112D21BA14071006FDCE7 /* RestaurantListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantListVC.h; sourceTree = "<group>"; };
+		367112D31BA14071006FDCE7 /* RestaurantListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantListVC.m; sourceTree = "<group>"; };
 		367703FA1B86884700B594E5 /* CommonUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUIConstants.m; sourceTree = "<group>"; };
 		367704031B8807F600B594E5 /* UIButton+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Additions.h"; sourceTree = "<group>"; };
 		367704041B8807F600B594E5 /* UIButton+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Additions.m"; sourceTree = "<group>"; };
@@ -215,6 +223,7 @@
 		3677044F1B8BF05100B594E5 /* OFL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OFL.txt; path = Fonts/OFL.txt; sourceTree = "<group>"; };
 		367704501B8BF05100B594E5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Fonts/README.txt; sourceTree = "<group>"; };
 		3679D2041BAC8887004BF4DC /* oomami-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "oomami-icons.ttf"; path = "Fonts/oomami-icons.ttf"; sourceTree = "<group>"; };
+		367B45341BC6C0B600E96B69 /* CommonUIConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonUIConstants.h; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantVC.h; sourceTree = "<group>"; };
@@ -247,8 +256,8 @@
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
 		9606C5641BBF08C400CB06FE /* EventsListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventsListVC.m; sourceTree = "<group>"; };
 		962303741BB33D2700278FA6 /* forkKnife.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = forkKnife.png; path = "Graphic Assets/forkKnife.png"; sourceTree = "<group>"; };
-		962667451BBC8C9600D77EBE /* UserHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserHTVCell.h; sourceTree = "<group>"; };
-		962667461BBC8C9600D77EBE /* UserHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserHTVCell.m; sourceTree = "<group>"; };
+		962667451BBC8C9600D77EBE /* UserTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTVCell.h; sourceTree = "<group>"; };
+		962667461BBC8C9600D77EBE /* UserTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTVCell.m; sourceTree = "<group>"; };
 		964BC81C1B97935F00760C83 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
@@ -257,8 +266,8 @@
 		965A1A961BBA05B500727773 /* SearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchVC.m; sourceTree = "<group>"; };
 		967124941BB5E6A900F28904 /* DiagnosticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticVC.h; sourceTree = "<group>"; };
 		967124951BB5E6A900F28904 /* DiagnosticVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiagnosticVC.m; sourceTree = "<group>"; };
-		96ACD7851BC3331000E37DC1 /* EventHTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHTVCell.h; sourceTree = "<group>"; };
-		96ACD7861BC3331000E37DC1 /* EventHTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventHTVCell.m; sourceTree = "<group>"; };
+		96ACD7851BC3331000E37DC1 /* EventTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTVCell.h; sourceTree = "<group>"; };
+		96ACD7861BC3331000E37DC1 /* EventTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTVCell.m; sourceTree = "<group>"; };
 		96ACD7881BC3487E00E37DC1 /* EventCoordinatorVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCoordinatorVC.h; sourceTree = "<group>"; };
 		96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventCoordinatorVC.m; sourceTree = "<group>"; };
 		96BF31211BB36C4D002BFDD2 /* CreateUsernameVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateUsernameVC.h; sourceTree = "<group>"; };
@@ -305,22 +314,22 @@
 			children = (
 				3621F11D1B8F6E32004537B6 /* MenuTVCell.h */,
 				3621F11E1B8F6E32004537B6 /* MenuTVCell.m */,
-				365F175F1B9105B500015D5D /* ListTVCell.h */,
-				365F17601B9105B500015D5D /* ListTVCell.m */,
+				365F175F1B9105B500015D5D /* ListStripTVCell.h */,
+				365F17601B9105B500015D5D /* ListStripTVCell.m */,
 				36587B731B93C7AD00D01EB5 /* ListCVFL.h */,
 				36587B741B93C7AD00D01EB5 /* ListCVFL.m */,
 				36587B791B9423D700D01EB5 /* TileCVCell.h */,
 				36587B7A1B9423D700D01EB5 /* TileCVCell.m */,
-				367112CF1BA13E69006FDCE7 /* HorizonalTVCell.h */,
-				367112D01BA13E69006FDCE7 /* HorizonalTVCell.m */,
-				962667451BBC8C9600D77EBE /* UserHTVCell.h */,
-				962667461BBC8C9600D77EBE /* UserHTVCell.m */,
-				3637E9391BB439290074A01C /* RestaurantHTVCell.h */,
-				3637E93A1BB439290074A01C /* RestaurantHTVCell.m */,
-				96ACD7851BC3331000E37DC1 /* EventHTVCell.h */,
-				96ACD7861BC3331000E37DC1 /* EventHTVCell.m */,
-				3613BE561BBE278400F1AF67 /* ListHTVCell.h */,
-				3613BE571BBE278400F1AF67 /* ListHTVCell.m */,
+				96ACD7851BC3331000E37DC1 /* EventTVCell.h */,
+				96ACD7861BC3331000E37DC1 /* EventTVCell.m */,
+				367112CF1BA13E69006FDCE7 /* ObjectTVCell.h */,
+				367112D01BA13E69006FDCE7 /* ObjectTVCell.m */,
+				962667451BBC8C9600D77EBE /* UserTVCell.h */,
+				962667461BBC8C9600D77EBE /* UserTVCell.m */,
+				3637E9391BB439290074A01C /* RestaurantTVCell.h */,
+				3637E93A1BB439290074A01C /* RestaurantTVCell.m */,
+				3613BE561BBE278400F1AF67 /* ListTVCell.h */,
+				3613BE571BBE278400F1AF67 /* ListTVCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -346,6 +355,8 @@
 				3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */,
 				366BBC8C1BA8B74A00292F80 /* NavTitleObject.h */,
 				366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */,
+				3613BE5C1BC46BE800F1AF67 /* FilterObject.h */,
+				3613BE5D1BC46BE800F1AF67 /* FilterObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -424,8 +435,8 @@
 				36C39BE01B84C7CD00648879 /* DebugUtilities.m */,
 				363B60C91B6C22F000987A1B /* CommonConstants.h */,
 				3637E93C1BB5B6D10074A01C /* CommonConstants.m */,
-				363B60CA1B6C231900987A1B /* CommonUIConstants.h */,
 				367703FA1B86884700B594E5 /* CommonUIConstants.m */,
+				367B45341BC6C0B600E96B69 /* CommonUIConstants.h */,
 				367704031B8807F600B594E5 /* UIButton+Additions.h */,
 				367704041B8807F600B594E5 /* UIButton+Additions.m */,
 				367704061B88103900B594E5 /* UIImage+Additions.h */,
@@ -446,6 +457,8 @@
 				3613BE4E1BBCBDF700F1AF67 /* OORemoveButton.m */,
 				3613BE501BBCFB7000F1AF67 /* EmptyRestaurantTile.h */,
 				3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */,
+				3613BE591BC445A700F1AF67 /* OOFilterView.h */,
+				3613BE5A1BC445A700F1AF67 /* OOFilterView.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -486,8 +499,10 @@
 				367703FC1B87E3A500B594E5 /* Resources */,
 				363B60BE1B6AC13900987A1B /* Models */,
 				3621F11C1B8F6DF5004537B6 /* Cells */,
-				367112D21BA14071006FDCE7 /* HorizontalListVC.h */,
-				367112D31BA14071006FDCE7 /* HorizontalListVC.m */,
+				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
+				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
+				3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */,
+				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
 				36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */,
 				36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
@@ -756,6 +771,7 @@
 				366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */,
 				36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */,
 				36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */,
+				3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */,
 				3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */,
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
 				96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */,
@@ -763,14 +779,14 @@
 				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
 				366BBC971BA9304900292F80 /* SubBaseVC.m in Sources */,
 				3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */,
-				96ACD7871BC3331000E37DC1 /* EventHTVCell.m in Sources */,
+				96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
 				367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */,
 				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,
 				36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */,
 				367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */,
 				366BBC941BA8E59F00292F80 /* DiscoverVC.m in Sources */,
-				367112D11BA13E69006FDCE7 /* HorizonalTVCell.m in Sources */,
+				367112D11BA13E69006FDCE7 /* ObjectTVCell.m in Sources */,
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
 				36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */,
 				36FDA6FC1B585F650029D29D /* WhatsNewVC.m in Sources */,
@@ -780,29 +796,31 @@
 				3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */,
 				96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */,
 				3613BE4F1BBCBDF700F1AF67 /* OORemoveButton.m in Sources */,
-				962667471BBC8C9600D77EBE /* UserHTVCell.m in Sources */,
-				365F17611B9105B500015D5D /* ListTVCell.m in Sources */,
+				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
+				365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */,
+				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
 				3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
-				3613BE581BBE278400F1AF67 /* ListHTVCell.m in Sources */,
+				3613BE581BBE278400F1AF67 /* ListTVCell.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
 				3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
-				3637E93B1BB439290074A01C /* RestaurantHTVCell.m in Sources */,
+				3637E93B1BB439290074A01C /* RestaurantTVCell.m in Sources */,
 				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,
 				3637E93D1BB5B6D10074A01C /* CommonConstants.m in Sources */,
 				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
-				367112D41BA14071006FDCE7 /* HorizontalListVC.m in Sources */,
+				367112D41BA14071006FDCE7 /* RestaurantListVC.m in Sources */,
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				965A1A971BBA05B500727773 /* SearchVC.m in Sources */,
+				3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
 				96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */,
 				366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */,

@@ -1,19 +1,19 @@
 //
-//  RestaurantHTVCell.m
+//  RestaurantTVCell.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/24/15.
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "RestaurantHTVCell.h"
+#import "RestaurantTVCell.h"
 #import "LocationManager.h"
 
-@interface RestaurantHTVCell ()
+@interface RestaurantTVCell ()
 
 @end
 
-@implementation RestaurantHTVCell
+@implementation RestaurantTVCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];

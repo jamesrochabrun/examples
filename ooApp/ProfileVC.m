@@ -10,10 +10,10 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "Common.h"
-#import "ListTVCell.h"
+#import "ListStripTVCell.h"
 #import "OOAPI.h"
 #import "EmptyListVC.h"
-#import "HorizontalListVC.h"
+#import "RestaurantListVC.h"
 #import "UIImage+Additions.h"
 
 @interface ProfileTableFirstRow ()
@@ -387,7 +387,7 @@
         return _headerCell;
     }
     
-    ListTVCell* cell = [[ListTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    ListStripTVCell* cell = [[ListStripTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 
     NSArray* a= self.lists;
     cell.listItem= a[indexPath.row-1];
@@ -404,7 +404,7 @@
     }
     ListObject *item = [_lists objectAtIndex:(indexPath.row - 1)];
     
-    HorizontalListVC *vc = [[HorizontalListVC alloc] init];
+    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
     vc.title = item.name;
     vc.listItem = item;
