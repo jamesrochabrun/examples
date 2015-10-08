@@ -76,6 +76,10 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                             success:(void (^)(NSArray *restaurants))success
                                             failure:(void (^)(NSError *))failure;
 
+- (AFHTTPRequestOperation *)getMediaItemsForRestaurant:(RestaurantObject *)restaurant
+                                               success:(void (^)(NSArray *mediaItems))success
+                                               failure:(void (^)(NSError *))failure;
+
 - (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
                                               success:(void (^)(id response))success
                                               failure:(void (^)(NSError *))failure;

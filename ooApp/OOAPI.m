@@ -50,6 +50,29 @@
 }
 
 //------------------------------------------------------------------------------
+// Name:    getRestaurantMediaItems
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)getMediaItemsForRestaurant:(RestaurantObject *)restaurant
+                                          success:(void (^)(NSArray *mediaItems))success
+                                          failure:(void (^)(NSError *))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%@/photos", [self ooURL], restaurant.restaurantID];
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *mediaItems = [NSMutableArray array];
+        for (id dict in responseObject) {
+            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
+            [mediaItems addObject:[MediaItemObject mediaItemFromDict:dict]];
+        }
+        success(mediaItems);
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
+//------------------------------------------------------------------------------
 // Name:    getRestaurantsWithIDs
 // Purpose:
 //------------------------------------------------------------------------------
