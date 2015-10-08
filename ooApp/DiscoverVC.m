@@ -196,7 +196,7 @@ static NSString * const ListRowID = @"HLRCell";
     
     __weak DiscoverVC *weakSelf=self;
     
-    NSString *searchTerm = [TimeUtilities categorySearchString:[NSDate date]];
+    NSString *searchTerm = (_openOnly) ? [TimeUtilities categorySearchString:[NSDate date]] : @"restaurant";
     NSLog(@"category: %@", searchTerm);
     
     _requestOperation = [api getRestaurantsWithKeyword:searchTerm
