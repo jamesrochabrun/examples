@@ -56,12 +56,15 @@
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-        [self layout];
         //[DebugUtilities addBorderToViews:@[_thumbnail, _header, _subHeader1, _subHeader2]];
     }
     return self;
 }
 
+- (void)updateConstraints {
+    [super updateConstraints];
+    [self layout];
+}
 
 - (void)layout {
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};

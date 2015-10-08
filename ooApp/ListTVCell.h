@@ -12,5 +12,7 @@
 @interface ListTVCell : ObjectTVCell
 
 @property (nonatomic, strong) ListObject *list;
+@property (nonatomic) BOOL onList;
+@property (nonatomic, strong) RestaurantObject *restaurant;
 
 @end

@@ -68,7 +68,6 @@
 }
 
 - (CGSize)getSuggestedSize {
-    CGRect frame;
     CGSize s = CGSizeZero;
     [_name sizeToFit];
     [_x sizeToFit];

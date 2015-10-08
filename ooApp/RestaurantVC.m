@@ -11,6 +11,7 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "OORemoveButton.h"
+#import "ListsVC.h"
 
 @interface RestaurantVC ()
 
@@ -45,6 +46,7 @@
     UIAlertAction *a2 = [UIAlertAction actionWithTitle:@"Add to List"
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                NSLog(@"You pressed button two");
+                                                               [self showLists];
                                                            }]; // 3
     UIAlertAction *a3 = [UIAlertAction actionWithTitle:@"Add to Event"
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -129,14 +131,18 @@
 }
 
 - (void)displayRemoveButtons {
+    __block CGPoint origin = CGPointMake(10, 10);
     NSArray *removeButtons = [_removeButtons allObjects];
     [removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
-        frame.origin.x = 10;
-        frame.origin.y = 10;
+        frame.origin.x = origin.x;
+        frame.origin.y = origin.y;
         b.frame = frame;
+        
+        origin.x = CGRectGetMaxX(frame) + kGeomSpaceInter;
+
         [self.view addSubview:b];
     }];
 }
@@ -159,6 +165,13 @@
     } failure:^(NSError *error) {
         ;
     }];
+}
+
+- (void)showLists {
+    ListsVC *vc = [[ListsVC alloc] init];
+    vc.restaurant = _restaurant;
+    [vc getLists];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 /*

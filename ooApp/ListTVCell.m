@@ -8,14 +8,98 @@
 
 #import "ListTVCell.h"
 
+@interface ListTVCell()
+
+@property (nonatomic, strong) UIButton *addButton;
+@property (nonatomic, strong) NSArray *lists;
+
+@end
+
 @implementation ListTVCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
+        _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_addButton withIcon:kFontIconAdd fontSize:15 width:40 height:40 backgroundColor:kColorClear target:self selector:@selector(toggleListInclusion)];
+        _addButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:_addButton];
     }
     return self;
+}
+
+- (void)updateConstraints {
+    [super updateConstraints];
+    [self layout];
+}
+
+- (void)layout {
+    [super layout];
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    
+    UIView *superview = self;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _addButton);
+    
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_addButton]-spaceInter-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=100)-[_addButton]-spaceInter-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+}
+
+- (void)toggleListInclusion {
+    OOAPI *api =[[OOAPI alloc] init];
+    __weak ListTVCell *weakSelf = self;
+    
+    if (_onList) {
+        //remove from list
+        [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:[_list.listID integerValue] success:^(NSArray *lists) {
+            [weakSelf getListsForRestaurant];
+        } failure:^(NSError *error) {
+            ;
+        }];
+    } else {
+        //add to list
+        [api addRestaurants:@[_restaurant] toList:[_list.listID integerValue] success:^(id response) {
+            [weakSelf getListsForRestaurant];
+        } failure:^(NSError *error) {
+            ;
+        }];
+    }
+}
+
+- (void)getListsForRestaurant {
+    OOAPI *api =[[OOAPI alloc] init];
+    __weak ListTVCell *weakSelf = self;
+    [api getListsOfUser:0 withRestaurant:[_restaurant.restaurantID integerValue]
+                success:^(NSArray *foundLists) {
+                    NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
+                    _lists = foundLists;
+                    ON_MAIN_THREAD( ^{
+                        [weakSelf updateAddButton];
+                    });
+                }
+                failure:^(NSError *e) {
+                    NSLog  (@" error while getting lists for user:  %@",e);
+                }];
+}
+
+- (void)updateAddButton {
+    __block BOOL onLine = NO;
+    [_lists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        ListObject *lo = (ListObject *)obj;
+        if (lo.listID == _list.listID) {
+            onLine = YES;
+            *stop = YES;
+        }
+    }];
+    
+    [self setOnList:onLine];
+}
+
+- (void)setOnList:(BOOL)onList {
+    if (onList == _onList) return;
+    _onList = onList;
+    [_addButton setTitle:((_onList) ? kFontIconRemove : kFontIconAdd) forState:UIControlStateNormal];
 }
 
 - (void)setList:(ListObject *)list {
@@ -23,35 +107,9 @@
     _list = list;
     self.thumbnail.image = nil;
     self.header.text = _list.name;
-//    self.subHeader1.text = (_list.isOpen) ? @"Open Now" : @"Not Open";
-//    
-//    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
-//    
-//    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
-//    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];
-//    
-//    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-//    self.subHeader2.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
-//    
-//    OOAPI *api = [[OOAPI alloc] init];
-//    
-//    NSString *imageRef;
-//    if ([restaurant.mediaItems count]) {
-//        imageRef = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]).reference;
-//    } else if ([restaurant.imageRefs count]) {
-//        imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
-//    }
-//    
-//    if (imageRef) {
-//        self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];
-//            });
-//        } failure:^(NSError *error) {
-//            ;
-//        }];
-//    }
+    [self getListsForRestaurant];
 }
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

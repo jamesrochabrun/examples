@@ -59,11 +59,9 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                      success:(void (^)(NSArray *))success
                                      failure:(void (^)(NSError *))failure;
 
-//- (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
-//                                   toList: (NSInteger) listIdentifier
-//                            success:(void (^)(NSArray *dishes))success
-//                            failure:(void (^)(NSError *))failure;
-
+- (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listId
+                                   success:(void (^)(id response))success
+                                   failure:(void (^)(NSError *))failure;
 // Lists
 //
 - (AFHTTPRequestOperation *)addList:(NSString *)listName

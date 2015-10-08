@@ -172,6 +172,8 @@ static NSString * const ListRowID = @"HLRCell";
     
     cell.restaurant = ro;
     
+    [cell updateConstraintsIfNeeded];
+    
     [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
     
     return cell;

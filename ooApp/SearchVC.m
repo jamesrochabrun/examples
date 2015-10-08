@@ -511,6 +511,7 @@ typedef enum: char {
             cell.restaurant= _restaurantsArray[row];
             
         }
+        [cell updateConstraintsIfNeeded];
         return cell;
     } else {
         UserTVCell *cell;
@@ -522,6 +523,7 @@ typedef enum: char {
         if  (!self.doingSearchNow) {
             cell.userInfo = _peopleArray[row];
         }
+        [cell updateConstraintsIfNeeded];
         return cell;
     }
 }

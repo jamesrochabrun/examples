@@ -7,6 +7,7 @@
 //
 
 #import "ListObject.h"
+#import "OOAPI.h"
 
 NSString *const kKeyListID = @"list_id";
 NSString *const kKeyListName = @"name";
@@ -16,9 +17,8 @@ NSString *const kKeyListType = @"type";
 
 -(instancetype)init {
     if (self) {
-        _identifier = 0;
         self.listDisplayType = KListDisplayTypeStrip;
-        _type = 2;
+        _type = kOOAPIListTypeSystem;
     }
     return self;
 }

@@ -86,7 +86,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantListVC *weakSelf = self;
-    if (_listItem.type == kOOAPIListTypeFavorites) {
+    if (_listItem.type == kOOAPIListTypeFavorites ||
+        _listItem.type == kOOAPIListTypeUser) {
         self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -131,6 +132,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     cell.restaurant = restaurant;
+    
+    [cell updateConstraintsIfNeeded];
     
     return cell;
 }

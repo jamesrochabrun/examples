@@ -18,4 +18,6 @@
 @property (nonatomic, strong) UILabel *subHeader2;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
+- (void)layout;
+
 @end

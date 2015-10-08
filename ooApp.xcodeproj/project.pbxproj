@@ -16,6 +16,7 @@
 		3613BE581BBE278400F1AF67 /* ListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE571BBE278400F1AF67 /* ListTVCell.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5A1BC445A700F1AF67 /* OOFilterView.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5D1BC46BE800F1AF67 /* FilterObject.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */; settings = {ASSET_TAGS = (); }; };
 		3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11A1B8E6A06004537B6 /* MenuTVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
@@ -131,6 +132,8 @@
 		3613BE5A1BC445A700F1AF67 /* OOFilterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOFilterView.m; sourceTree = "<group>"; };
 		3613BE5C1BC46BE800F1AF67 /* FilterObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterObject.h; sourceTree = "<group>"; };
 		3613BE5D1BC46BE800F1AF67 /* FilterObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterObject.m; sourceTree = "<group>"; };
+		3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListsVC.m; sourceTree = "<group>"; };
+		3613BE601BC5D87E00F1AF67 /* ListsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListsVC.h; sourceTree = "<group>"; };
 		3621F1191B8E6A06004537B6 /* MenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVC.h; sourceTree = "<group>"; };
 		3621F11A1B8E6A06004537B6 /* MenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
@@ -481,6 +484,8 @@
 				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
 				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
+				3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */,
+				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
 				36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */,
 				36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
@@ -741,6 +746,7 @@
 				366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */,
 				36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */,
 				36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */,
+				3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */,
 				3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */,
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
