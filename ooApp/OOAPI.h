@@ -121,9 +121,24 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 // Events
 //
 
++ (AFHTTPRequestOperation *)addRestaurant: (NSString*)restaurantID
+                                  toEvent:(EventObject *)event
+                                  success:(void (^)(id response))success
+                                  failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject* ) eo
+                                                 to: (BOOL) participating
+                                            success:(void (^)(NSInteger eventID))success
+                                            failure:(void (^)(NSError *))failure;
+
 + (AFHTTPRequestOperation *)addEvent:(EventObject* ) eo
-                                     success:(void (^)(NSArray *events))success
+                                     success:(void (^)(NSInteger eventID))success
                                      failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)reviseEvent:(EventObject* ) eo
+                                success:(void (^)(id))success
+                                failure:(void (^)(NSError *))failure;
+
 + (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
                                      success:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *))failure;

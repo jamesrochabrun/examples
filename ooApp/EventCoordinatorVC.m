@@ -16,6 +16,8 @@
 #import "EventCoordinatorVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
+#import "ListTVCell.h"
+#import "EventWhenVC.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -33,12 +35,13 @@
 
 @property (nonatomic,strong)  UIView *viewContainer4;
 @property (nonatomic,strong)  UILabel *labelWhere;
-@property (nonatomic,strong)  UICollectionView *collectionViewWhere;
 
 @property (nonatomic,strong) UITapGestureRecognizer *tap1;
 @property (nonatomic,strong) UITapGestureRecognizer *tap2;
 @property (nonatomic,strong) UITapGestureRecognizer *tap3;
 @property (nonatomic,strong) UITapGestureRecognizer *tap4;
+
+@property (nonatomic,strong) ListTVCell *venuesRowView;
 @end
 
 @implementation EventCoordinatorVC
@@ -88,13 +91,11 @@
     _labelPersonIcon.textAlignment= NSTextAlignmentRight;
     _viewContainer2.layer.borderWidth= 1;
     _viewContainer2.layer.borderColor= GRAY.CGColor;
-    [self updateWhoBox];
     
     self.viewContainer3= makeView(self.scrollView, WHITE);
     self.labelWhen = makeLabel(self.viewContainer3, @"WHEN\rDATE\rTIME", kGeomFontSizeHeader);
     _viewContainer3.layer.borderWidth= 1;
     _viewContainer3.layer.borderColor= GRAY.CGColor;
-    [self updateWhenBox];
     
     self.viewContainer4= makeView(self.scrollView, WHITE);
     self.labelWhere = makeLabel(self.viewContainer4, @"WHERE", kGeomEventHeadingFontSize);
@@ -109,10 +110,15 @@
     [self.viewContainer3 addGestureRecognizer:tap3 ];
     UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox4:)];
     [self.viewContainer4 addGestureRecognizer:tap4 ];
+    
+    self.venuesRowView= [[ListTVCell  alloc] initWithFrame: CGRectZero];
+    [ self.viewContainer4  addSubview: _venuesRowView   ];
 }
 
 - (void) userPressedCancel: (id) sender
 {
+    APP.eventBeingEdited= nil;
+    
     [self.navigationController popViewControllerAnimated:YES ];
 }
 
@@ -120,19 +126,28 @@
 {
     NSAttributedString *title= attributedStringOf(LOCAL( @"WHEN"),  kGeomEventHeadingFontSize);
     NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
-    NSString *countsString= [NSString stringWithFormat: @"\r%@",
-                               LOCAL( @"TAP TO SELECT A DATE AND TIME")
-                             ];
-    [a appendAttributedString: attributedStringOf(countsString,  kGeomFontSizeHeader)];
+    NSString *string=nil;
+    
+    EventObject* event= APP.eventBeingEdited;
+    if  (event ) {
+        string=[NSString stringWithFormat:  @"\r%@", event.date];
+    } else {
+        string= [NSString stringWithFormat: @"\r%@",
+                 LOCAL( @"TAP TO SELECT A DATE AND TIME")
+                 ];
+    }
+    
+    [a appendAttributedString: attributedStringOf(string,  kGeomFontSizeHeader)];
     _labelWhen.attributedText= a;
 }
 
 - (void) updateWhoBox
 {
-    NSInteger totalPeople= 8;
-    NSInteger pending= 5;
-    NSInteger responded= 3;
-    NSInteger  voted=  2;
+    EventObject* e= APP.eventBeingEdited;
+    NSInteger totalPeople= e.numberOfPeople;
+    NSInteger pending= e.numberOfPeople - e.numberOfPeopleResponded;
+    NSInteger responded= e.numberOfPeopleResponded;
+    NSInteger  voted= e.numberOfPeopleVoted;
     
     _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
     
@@ -153,11 +168,14 @@
     [self doLayout];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
     
+    [self updateWhenBox];
+    [self updateWhoBox];
 }
+
 
 - (void)userTappedBox1: (id) sender
 {
@@ -171,7 +189,8 @@
 
 - (void)userTappedBox3: (id) sender
 {
-    message( @"you pressed box 3");
+    EventWhenVC* vc= [[EventWhenVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)userTappedBox4: (id) sender
@@ -228,7 +247,7 @@
 
     float labelHeight=kGeomEventCoordinatorBoxHeight - kGeomEventCoordinatorRestaurantHeight;
     _labelWhere.frame = CGRectMake(0,0,boxWidth, labelHeight);
-    _collectionViewWhere.frame = CGRectMake(0,labelHeight,boxWidth,kGeomEventCoordinatorRestaurantHeight);
+    _venuesRowView.frame = CGRectMake(0,labelHeight,boxWidth,kGeomEventCoordinatorRestaurantHeight);
     
 }
 

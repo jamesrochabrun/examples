@@ -1,5 +1,5 @@
 //
-//  DiagnosticVC.h
+//  EventWhenVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 
-@interface DiagnosticVC : BaseVC<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+@interface EventWhenVC : BaseVC
 
 @end
 

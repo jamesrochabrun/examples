@@ -10,11 +10,12 @@
 #import "RestaurantObject.h"
 #import "UserObject.h"
 #import "TimeUtilities.h"
+#import "EventObject.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic,strong) NSMutableString *diagnosticLogString;
-
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 @end
 

@@ -32,16 +32,14 @@
 {
     [super viewDidLoad];
     
-//    CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_name.font}];
-
     self.view.backgroundColor= WHITE;
     
-    self.buttonLists= makeButton( self.view,  @"LISTS", kGeomFontSizeHeader,
+    self.buttonLists= makeButton( self.view, LOCAL(@"LISTS") , kGeomFontSizeHeader,
                                  BLACK, CLEAR, self,
                                  @selector(userPressedListsButton:),
                                  1);
     
-    self.buttonDiscover= makeButton( self.view,  @"DISCOVER", kGeomFontSizeHeader,
+    self.buttonDiscover= makeButton( self.view, LOCAL(@"DISCOVER") , kGeomFontSizeHeader,
                                     BLACK, CLEAR, self,
                                     @selector(userPressedDiscoverButton:),
                                     1);
@@ -56,14 +54,14 @@
     
     NSMutableAttributedString* aString= [NSMutableAttributedString  new];
     NSAttributedString *upperString= [[NSAttributedString  alloc]
-                                      initWithString:@"This list needs some \rrestaurants.\r"
+                                      initWithString: LOCAL(@"This list needs some \rrestaurants.\r")
                                       attributes: @{
                                                     NSFontAttributeName: upperFont,
                                                     NSParagraphStyleAttributeName:paragraphStyle
                                                     }];
     
     NSAttributedString *lowerString= [[NSAttributedString  alloc]
-                                      initWithString: @"\rTap the icon next to a \rrestaurant you like, and select\rADD TO LIST."
+                                      initWithString: LOCAL (@"\rTap the icon next to a \rrestaurant you like, and select\rADD TO LIST.")
                                       attributes: @{
                                                     NSFontAttributeName: lowerFont,
                                                     NSParagraphStyleAttributeName:paragraphStyle
@@ -76,7 +74,7 @@
     _textView.attributedText= aString;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader: self.listName ?: @"Unnamed list"
+                           initWithHeader: self.listName ?: LOCAL (@"Unnamed list")
                            subHeader:nil];
     [self setNavTitle:  nto];
     
@@ -133,43 +131,40 @@
     y +=kGeomHeightButton+ spacer;
     
     _buttonLists.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
-    y +=kGeomHeightButton+ spacer;
+//    y +=kGeomHeightButton+ spacer;
 }
 
--(void) layout
-{
-    [super layout];
-    
-    NSDictionary *metrics = @{@"buttonHeight":@(kGeomHeightButton),
-                              @"width":@200.0,
-                              @"margin":@(kGeomSpaceEdge),
-                              @"spacing": @(kGeomSpaceInter)
-                              };
-    
-    NSDictionary *views = NSDictionaryOfVariableBindings(_textView, _buttonDiscover, _buttonLists, _label);
-    
-    [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_label]-[_textView]-[_buttonDiscover]-[_buttonLists]-|"
-                                             options:NSLayoutFormatDirectionLeadingToTrailing
-                                             metrics:metrics
-                                               views:views]];
-    
-    [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_textView]-|"
-                                             options:NSLayoutFormatDirectionLeadingToTrailing
-                                             metrics:metrics
-                                               views:views]];
-    [self.view setNeedsLayout];
-}
+//-(void) layout
+//{
+//    [super layout];
+//    
+//    NSDictionary *metrics = @{@"buttonHeight":@(kGeomHeightButton),
+//                              @"width":@200.0,
+//                              @"margin":@(kGeomSpaceEdge),
+//                              @"spacing": @(kGeomSpaceInter)
+//                              };
+//    
+//    NSDictionary *views = NSDictionaryOfVariableBindings(_textView, _buttonDiscover, _buttonLists, _label);
+//    
+//    [self.view addConstraints:
+//     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_label]-[_textView]-[_buttonDiscover]-[_buttonLists]-|"
+//                                             options:NSLayoutFormatDirectionLeadingToTrailing
+//                                             metrics:metrics
+//                                               views:views]];
+//    
+//    [self.view addConstraints:
+//     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_textView]-|"
+//                                             options:NSLayoutFormatDirectionLeadingToTrailing
+//                                             metrics:metrics
+//                                               views:views]];
+//    [self.view setNeedsLayout];
+//}
 
 - (void) viewWillLayoutSubviews
 {
     [ super viewWillLayoutSubviews ];
-#if 0
-    [self layout];
-#else
+
     [self doLayout];
-#endif
 }
 
 @end

@@ -29,7 +29,12 @@
 - (AFHTTPRequestOperation*) PUT:(NSString *)path parameters:(NSDictionary *)parameters
                          success:(void (^)(id responseObject))success
                         failure:(void (^)(NSError *error))failure;
+
 - (AFHTTPRequestOperation*) DELETE:(NSString *)path parameters:(NSDictionary *)parameters
                            success:(void (^)(id responseObject))success
                            failure:(void (^)(NSError *error))failure;
+
+- (AFHTTPRequestOperation*) PATCH:(NSString *)path parameters:(NSDictionary *)parameters
+                          success:(void (^)(id responseObject))success
+                          failure:(void (^)(NSError *error))failure;
 @end

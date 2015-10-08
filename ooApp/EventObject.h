@@ -23,8 +23,11 @@ typedef enum : char {
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic,assign) EventType eventType;
 @property (nonatomic, strong) NSDate *date;
+@property (nonatomic, strong) NSDate *dateWhenVotingClosed;
 @property (nonatomic,assign) double totalPrice;
 @property (nonatomic,assign) NSInteger numberOfPeople;
+@property (nonatomic,assign) NSInteger numberOfPeopleVoted;
+@property (nonatomic,assign) NSInteger numberOfPeopleResponded;
 @property (nonatomic, strong) NSMutableArray *keywords;
 @property (nonatomic, strong) NSMutableArray *users;
 @property (nonatomic, strong) NSMutableArray *restaurants;

@@ -556,6 +556,61 @@
 }
 
 //------------------------------------------------------------------------------
+// Name:    setParticipationInEvent
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject* ) eo
+                                                 to: (BOOL) participating
+                                               success:(void (^)(NSInteger eventID))success
+                                               failure:(void (^)(NSError *))failure;
+{
+    if  (!eo) {
+        failure (nil);
+        return nil;
+    }
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (! userid) {
+        failure (nil);
+        return nil;
+    }
+    NSInteger eventID= eo.eventID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@", kOOURL, (unsigned long) eventID,userid];
+    
+    AFHTTPRequestOperation *op;
+    if  (participating ) {
+        op = [rm PATCH: urlString parameters:nil
+                                       success:^(id responseObject) {
+                                           NSInteger identifier= 0;
+                                           if  ([responseObject isKindOfClass:[NSDictionary class]] ) {
+                                               NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
+                                               identifier= parseIntegerOrNullFromServer(eventID);
+                                           }
+                                           success(identifier );
+                                       } failure:^(NSError *error) {
+                                           failure(error);
+                                       }];
+    } else {
+        op = [rm DELETE: urlString parameters:nil
+                                        success:^(id responseObject) {
+                                            NSInteger identifier= 0;
+                                            if  ([responseObject isKindOfClass:[NSDictionary class]] ) {
+                                                NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
+                                                identifier= parseIntegerOrNullFromServer(eventID);
+                                            }
+                                            success(identifier );
+                                        } failure:^(NSError *error) {
+                                            failure(error);
+                                        }];
+        
+    }
+    
+    return op;
+}
+
+//------------------------------------------------------------------------------
 // Name:    uploadUserPhoto
 // Purpose:
 //------------------------------------------------------------------------------
@@ -600,6 +655,10 @@
     [task resume];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getEventsForUser
+// Purpose: Obtain a list of user events that are either complete or incomplete.
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
                                      success:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *))failure;
@@ -608,9 +667,7 @@
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters:  @{
-                                            @"isComplete": @(1)
-                                            }
+    return [rm GET:urlString parameters: nil
            success:^(id responseObject) {
                NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
                if ( [responseObject isKindOfClass:[NSArray class]]) {
@@ -632,6 +689,10 @@
            }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getCuratedEventsWithSuccess
+// Purpose: Obtain a list of curated events that are complete.
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
                                                 failure:(void (^)(NSError *))failure;
 {
@@ -659,8 +720,50 @@
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    addRestaurant toEvent
+// Purpose: Add a restaurant to an event.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)addRestaurant: (NSString*)restaurantID
+                                 toEvent:(EventObject *)event
+                                           success:(void (^)(id response))success
+                                           failure:(void (^)(NSError *))failure;
+{
+    if  (!event  || !restaurantID) {
+        failure (nil);
+        return nil;
+    }
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (! userid) {
+        failure (nil);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", kOOURL,
+                           ( unsigned long)event.eventID];
+    
+    AFHTTPRequestOperation *op = [rm POST: urlString parameters: @{
+                                                                    @"restaurant_ids": restaurantID
+                                                                   }
+                                  success:^(id responseObject) {
+                                      
+                                      success(responseObject );
+                                  } failure:^(NSError *error) {
+                                      failure(error);
+                                  }];
+    
+    return op;
+}
+
+//------------------------------------------------------------------------------
+// Name:    addEvent
+// Purpose: Create a new event and receive in return the new event's ID.
+// Note:    The event does not need to be completely described in the EventObject.
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)addEvent:(EventObject* ) eo
-                               success:(void (^)(NSArray *events))success
+                               success:(void (^)(NSInteger eventID))success
                                failure:(void (^)(NSError *))failure;
 {
     if  (!eo) {
@@ -674,15 +777,50 @@
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events", kOOURL];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/events", kOOURL, userid];
     
-    NSDictionary *parameters=  @{
-                                 @"name":eo.name ?:  @"",
-                                 @"isComplete": @0,
-                                 @"creator": userid,
-                                  @"type": @1
-                                 };
+    NSDictionary *parameters= [eo dictionaryFromEvent];
+    
     AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      NSInteger identifier= 0;
+                                      if  ([responseObject isKindOfClass:[NSDictionary class]] ) {
+                                          NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"]; 
+                                          identifier= parseIntegerOrNullFromServer(eventID);
+                                      }
+                                      success(identifier );
+                                  } failure:^(NSError *error) {
+                                      failure(error);
+                                  }];
+    
+    return op;
+}
+
+//------------------------------------------------------------------------------
+// Name:    reviseEvent
+// Purpose: Create a new event and receive in return the new event's ID.
+// Note:    The event does not need to be completely described in the EventObject.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)reviseEvent:(EventObject* ) eo
+                             success:(void (^)(id))success
+                             failure:(void (^)(NSError *))failure;
+{
+    if  (!eo) {
+        failure (nil);
+        return nil;
+    }
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (! userid) {
+        failure (nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/events", kOOURL, userid];
+    
+    NSDictionary *parameters= [eo dictionaryFromEvent];
+
+    AFHTTPRequestOperation *op = [rm PUT: urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
                                   } failure:^(NSError *error) {
@@ -691,4 +829,5 @@
     
     return op;
 }
+
 @end

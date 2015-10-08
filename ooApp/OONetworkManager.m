@@ -134,5 +134,29 @@
     }];
 }
 
+- (AFHTTPRequestOperation*) PATCH:(NSString *)path parameters:(NSDictionary *)parameters
+                        success:(void (^)(id responseObject))success
+                        failure:(void (^)(NSError *error))failure
+{
+    NSLog  (@"PATCH:  %@", path);
+    OONetworkManager *nm = [OONetworkManager sharedRequestManager];
+    nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.length ) {
+        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+        NSLog (@" authorization token %@", token.lowercaseString);
+    } else {
+        NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
+    }
+    return [nm.requestManager PATCH:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        //        NSLog(@"JSON: %@", responseObject);;
+        success(responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        failure(error);
+    }];
+}
 
 @end

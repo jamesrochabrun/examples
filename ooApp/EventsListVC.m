@@ -24,6 +24,7 @@
 #import "EventCoordinatorVC.h"
 
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
+#define EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER  @"eventListGenericCell"
 
 @interface EventsListVC ()
 
@@ -62,9 +63,9 @@
                            subHeader: nil];
     self.navTitle = nto;
 
-	self.table= makeTable( self.view, self);
-    [_table registerClass:[EventHTVCell class]
-              forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
+    self.table= makeTable( self.view, self);
+    [_table registerClass:[EventHTVCell class] forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
+    [_table registerClass:[UITableViewCell class] forCellReuseIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER];
     _table.sectionHeaderHeight= kGeomHeightButton;
     _table.sectionFooterHeight= 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
@@ -224,7 +225,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     EventHTVCell *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;
@@ -242,6 +242,14 @@
             break;
     }
     
+    if  (!events.count) {
+        UITableViewCell* genericCell=[tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER forIndexPath:indexPath];
+        genericCell.textLabel.text= LOCAL( @"None.");
+        return  genericCell;
+    }
+    
+    cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+
     EventObject* e= events[row];
     [cell setEvent: e];
 
@@ -280,6 +288,23 @@
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSInteger section= indexPath.section;
+    
+    NSArray* events= nil;
+    switch ( section) {
+        case 0:
+            events=  _yourEventsArray;
+            break;
+        case 1:
+            events=  _incompleteEventsArray;
+            break;
+        case 2:
+            events=  _curatedEventsArray;
+            break;
+    }
+    if (!events.count) {
+        return kGeomHeightButton;
+    }
     return kGeomHeightFeaturedCellHeight;
 }
 
@@ -305,7 +330,13 @@
             break;
     }
     
+    if  (!events.count) {
+        return;
+    }
+    
     EventObject *eo = [events objectAtIndex: row];
+    APP.eventBeingEdited= eo;
+    
     BaseVC* vc= [[BaseVC  alloc] init];
     vc.view.backgroundColor= BLUE;
     [self.navigationController pushViewController:vc animated:YES ];
@@ -319,17 +350,22 @@
 //------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    NSInteger n= 0;
     switch ( section) {
         case 0:
-            return _yourEventsArray.count;
+            n=  _yourEventsArray.count;
+            break;
         case 1:
-            return _incompleteEventsArray.count;
+            n=  _incompleteEventsArray.count;
+            break;
         case 2:
-            return _curatedEventsArray.count;
+            n=  _curatedEventsArray.count;
+            break;
             
         default:
-            return 0;;
+            return 0;
     }
+    return MAX(1, n );
 }
 
 //------------------------------------------------------------------------------
@@ -340,6 +376,8 @@
 {
     if  (1==buttonIndex) {
         UITextField *textField = [alertView textFieldAtIndex: 0];
+        [textField resignFirstResponder];
+        
         NSString *string = trimString(textField.text);
         if  (string.length ) {
             string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
@@ -347,18 +385,33 @@
         
         EventObject *e= [[EventObject  alloc] init];
         e.name=  string;
+        e.numberOfPeople= 1;
+        e.createdAt= [NSDate date];
+        e.updatedAt= [NSDate date];
+        e.eventType= EVENT_TYPE_USER;
+        
         __weak EventsListVC* weakSelf= self;
         [OOAPI addEvent: e
-                success:^(NSArray *events) {
+                success:^(NSInteger eventID) {
                     NSLog  (@" EVENT CREATED");
+                    APP.eventBeingEdited= e;
+                    e.eventID= eventID;
                     
-                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+                    // NOTE:  this is not implemented on the backend yet.
+                    [OOAPI addRestaurant:@"ChIJ513xa0-0j4ARmna-TypiV9w" toEvent:e  success:^(id response) {
+//                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+
+                    } failure:^(NSError *error) {
+                        NSLog (@" error=  %@", error);
+                    }];
+                    
                 }
                 failure:^(NSError *error) {
                     NSLog  (@"%@", error);
                     message( @"backend was unable to create a new event");
                 }];
         
+        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
         
     }
 }

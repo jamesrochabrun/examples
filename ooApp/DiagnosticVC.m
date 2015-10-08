@@ -24,6 +24,7 @@
 @property (nonatomic,strong)  UIButton* buttonSearchRadius;
 @property (nonatomic,strong)  UIButton* buttonUploadPhoto;
 @property (nonatomic,strong)  UITextView* textviewDiagnosticLog;
+@property (nonatomic,strong)   UIImageView* ivPhoto;
 @end
 
 @implementation DiagnosticVC
@@ -31,6 +32,10 @@
     int radius;
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -67,6 +72,9 @@
     _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
     _buttonUploadPhoto.titleLabel.numberOfLines= 0;
     _buttonUploadPhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
+    self.ivPhoto= makeImageView( self.view, nil);
+    _ivPhoto.contentMode= UIViewContentModeScaleAspectFit;
 }
 
 - (void)viewWillLayoutSubviews
@@ -108,7 +116,7 @@
 //------------------------------------------------------------------------------
 - (void)doPhotoUpload: (id) sender
 {
-    message( @"not implemented.");
+    [self presentCameraModal];
 }
 
 //------------------------------------------------------------------------------
@@ -152,7 +160,7 @@
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
-// Purpose:
+// Purpose: Programmatic equivalent of constraint equations.
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
@@ -174,6 +182,65 @@
     _buttonUploadPhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
 
+    _ivPhoto.frame = CGRectMake(0,0,w,_textviewDiagnosticLog.frame.origin.y);
+    [self.view sendSubviewToBack:_ivPhoto ];
+    
 }
 
+//------------------------------------------------------------------------------
+// Name:    presentCameraModal
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)presentCameraModal
+{
+    if (![UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera])
+    {
+        return;
+    }
+    
+    UIImagePickerController *ic = [[UIImagePickerController alloc] init];
+    [ic setAllowsEditing: YES];
+    [ic setSourceType: UIImagePickerControllerSourceTypeCamera];
+    [ic setCameraCaptureMode: UIImagePickerControllerCameraCaptureModePhoto];
+    [ic setShowsCameraControls: YES];
+    [ic setDelegate: self];
+    [ self presentViewController: ic animated: YES completion: NULL];
+}
+
+//------------------------------------------------------------------------------
+// Name:    didFinishPickingMediaWithInfo
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    UIImage *image=  info[ @"UIImagePickerControllerEditedImage"];
+    if (!image) {
+        image= info[ @"UIImagePickerControllerEditedImage"];
+    }
+    
+    if ( image && [image isKindOfClass:[UIImage class]]) {
+        _ivPhoto.image= image;
+        
+        NSString* text= [NSString stringWithFormat: @"%@", info];
+        _textviewDiagnosticLog.text=  text;
+        
+        [OOAPI uploadUserPhoto:image success:^{
+            NSLog  (@"UPLOAD SUCCESS");
+        } failure:^(NSError *e) {
+            NSLog  (@"UPLOAD FAILURE");
+        }];
+    }
+
+    [self  dismissViewControllerAnimated:YES completion:nil];
+}
+
+//------------------------------------------------------------------------------
+// Name:    imagePickerControllerDidCancel
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    message( @"you canceled taking a photo");
+    [self  dismissViewControllerAnimated:YES completion:nil];
+}
 @end

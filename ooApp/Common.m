@@ -263,7 +263,7 @@ NSDate* parseUTCDateFromServer(NSString *string)
 
 NSInteger parseIntegerOrNullFromServer (id object)
 {
-    if  ([ object isKindOfClass:[NSNumber class]]) {
+    if  (object && [ object isKindOfClass:[NSNumber class]]) {
         return  (( NSNumber*)object).integerValue;
     }
     return 0;
@@ -271,7 +271,7 @@ NSInteger parseIntegerOrNullFromServer (id object)
 
 double parseNumberOrNullFromServer (id object)
 {
-    if  ([ object isKindOfClass:[NSNumber class]]) {
+    if  (object && [ object isKindOfClass:[NSNumber class]]) {
         return  (( NSNumber*)object).doubleValue;
     }
     return 0;
@@ -279,7 +279,7 @@ double parseNumberOrNullFromServer (id object)
 
 NSString* parseStringOrNullFromServer (id object)
 {
-    if  ([ object isKindOfClass:[NSString class]]) {
+    if  (object && [ object isKindOfClass:[NSString class]]) {
         return  (NSString*)object;
     }
     return nil;
@@ -287,9 +287,12 @@ NSString* parseStringOrNullFromServer (id object)
 
 NSMutableAttributedString *createPeopleIconString (NSInteger count)
 {
+    NSString *iconicRepresentationOfNumberOfPeople= count>1
+                ? [NSString stringWithFormat: @"%@%@", kFontIconPerson,kFontIconPerson ]
+                : [NSString stringWithFormat: @"%@",kFontIconPerson ];
     NSAttributedString *countString= attributedStringOf([NSString stringWithFormat: @"%ld ", count], kGeomFontSizeHeader);
     NSAttributedString *iconString= [[NSAttributedString alloc]
-                                     initWithString:[NSString stringWithFormat: @"%@%@", kFontIconPerson,kFontIconPerson ]
+                                     initWithString: iconicRepresentationOfNumberOfPeople
                                      attributes: @{
                                                    NSFontAttributeName: [UIFont fontWithName: kFontIcons size:kGeomPeopleIconFontSize]
                                                    }];
