@@ -150,9 +150,15 @@
 - (void)removeFromList:(id)sender {
     OORemoveButton  *b = (OORemoveButton *)sender;
     OOAPI *api = [[OOAPI alloc] init];
+    
+    __weak RestaurantVC *weakSelf = self;
     [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.identifier success:^(NSArray *lists) {
-        [self getListsForRestaurant];
-        [b removeFromSuperview];
+        ON_MAIN_THREAD(^{
+            [b removeFromSuperview];
+            [_removeButtons removeObject:b];
+            [weakSelf getListsForRestaurant];
+        });
+        
     } failure:^(NSError *error) {
         ;
     }];
@@ -160,8 +166,10 @@
 
 - (void)addToFavorites {
     OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantVC *weakSelf = self;
+    
     [api addRestaurantsToFavorites:@[_restaurant] success:^(id response) {
-        [self getListsForRestaurant];
+        [weakSelf getListsForRestaurant];
     } failure:^(NSError *error) {
         ;
     }];
