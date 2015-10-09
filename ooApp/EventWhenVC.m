@@ -2,12 +2,10 @@
 //  EventWhenVC.m
 //  ooApp
 //
-//  Created by Zack S on 10/7/15.
+//  Created by Zack Smith on 10/7/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-//#import "Common.h"
-//#import "CommonUIConstants.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"

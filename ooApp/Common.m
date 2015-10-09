@@ -106,6 +106,8 @@ UITableView* makeTable (UIView *parent,id  delegate)
     }
     tv.delegate= delegate;
     tv.dataSource= delegate;
+    if([tv respondsToSelector:@selector(setCellLayoutMarginsFollowReadableWidth:)])
+        tv.cellLayoutMarginsFollowReadableWidth = NO;
     return tv;
 }
 

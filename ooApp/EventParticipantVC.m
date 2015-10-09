@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "Common.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"

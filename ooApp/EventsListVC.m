@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "Common.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -397,22 +396,29 @@
                     APP.eventBeingEdited= e;
                     e.eventID= eventID;
                     
+                    RestaurantObject *restaurant= [ [RestaurantObject  alloc] init];
+                    restaurant.googleID=@"ChIJ513xa0-0j4ARmna-TypiV9w";
+                    restaurant.restaurantID=  @"";
+                    
                     // NOTE:  this is not implemented on the backend yet.
-                    [OOAPI addRestaurant:@"ChIJ513xa0-0j4ARmna-TypiV9w" toEvent:e  success:^(id response) {
-//                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-
+                    [OOAPI addRestaurant:restaurant toEvent:e  success:^(id response) {
+                        
+                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+                        
                     } failure:^(NSError *error) {
                         NSLog (@" error=  %@", error);
-                    }];
+                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+                   }];
                     
                 }
                 failure:^(NSError *error) {
                     NSLog  (@"%@", error);
                     message( @"backend was unable to create a new event");
+                    
+                    // Temporarily in placef
+//                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+
                 }];
-        
-        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-        
     }
 }
 

@@ -11,6 +11,7 @@
 #import "Common.h"
 #import "Settings.h"
 #import "EventObject.h"
+#import "GroupObject.h"
 
 //NSString *const kKeyName = @"name";
 
@@ -798,12 +799,12 @@
 // Name:    addRestaurant toEvent
 // Purpose: Add a restaurant to an event.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)addRestaurant: (NSString*)restaurantID
++ (AFHTTPRequestOperation *)addRestaurant: (RestaurantObject*)restaurant
                                  toEvent:(EventObject *)event
                                            success:(void (^)(id response))success
                                            failure:(void (^)(NSError *))failure;
 {
-    if  (!event  || !restaurantID) {
+    if  (!event  || !restaurant) {
         failure (nil);
         return nil;
     }
@@ -813,14 +814,25 @@
         failure (nil);
         return nil;
     }
-    
+    NSString* identifier=  restaurant.restaurantID;
+    NSString* googleIdentifier= restaurant.googleID;
+    NSMutableDictionary* parameters= @{}.mutableCopy;
+    if  (identifier.length ) {
+        [parameters  setObject: identifier forKey:  @"restaurant_id"];
+    }
+    else if (googleIdentifier.length) {
+        [parameters  setObject: googleIdentifier forKey:  @"google_id"];
+    }
+    else {
+        NSLog (@"MISSING VENUE IDENTIFIER");
+        failure(nil);
+        return nil;
+    }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", kOOURL,
                            ( unsigned long)event.eventID];
     
-    AFHTTPRequestOperation *op = [rm POST: urlString parameters: @{
-                                                                    @"restaurant_ids": restaurantID
-                                                                   }
+    AFHTTPRequestOperation *op = [rm POST: urlString parameters: parameters
                                   success:^(id responseObject) {
                                       
                                       success(responseObject );
@@ -862,6 +874,11 @@
                                           NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"]; 
                                           identifier= parseIntegerOrNullFromServer(eventID);
                                       }
+                                      if (!identifier) {
+                                          message( @"event ID is zero.");
+//                                          failure(nil);
+//                                          return;
+                                      }
                                       success(identifier );
                                   } failure:^(NSError *error) {
                                       failure(error);
@@ -902,6 +919,86 @@
                                   }];
     
     return op;
+}
+
++ (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *users))success
+                                            failure:(void (^)(NSError *))failure;
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (!userid) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/user/%@/followers", kOOURL, userid];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+        NSMutableArray *users = [NSMutableArray array];
+        for (id dict in responseObject) {
+            [users addObject:[UserObject userFromDict:dict]];
+        }
+        success(users);
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+        failure (error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
+                                            failure:(void (^)(NSError *))failure;
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (!userid) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/user/%@/following", kOOURL, userid];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               NSMutableArray *users = [NSMutableArray array];
+               for (id dict in responseObject) {
+                   [users addObject:[UserObject userFromDict:dict]];
+               }
+               success(users);
+           } failure:^(NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure (error);
+           }];
+}
+
++ (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
+                                            failure:(void (^)(NSError *))failure;
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    if  (!userid) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/groups",
+                           kOOURL, userid];
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *groups = [NSMutableArray array];
+        for (id dict in responseObject) {
+//            [groups addObject:[GroupObject groupFromDictionary: dict]];
+            
+        }
+        success(groups);
+    } failure:^(NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 @end

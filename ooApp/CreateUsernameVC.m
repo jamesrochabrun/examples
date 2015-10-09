@@ -214,6 +214,7 @@
         message( LOCAL(@"You did not enter a username."));
         return NO;
     }
+    [textField resignFirstResponder];
     [self checkWhetherUserNameIsInUse : enteredUsername];
     return YES;
 }

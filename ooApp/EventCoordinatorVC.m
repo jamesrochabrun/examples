@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "Common.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -18,6 +17,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "ListTVCell.h"
 #import "EventWhenVC.h"
+#import "EventWhoVC.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -104,9 +104,9 @@
     
     UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
     [self.viewContainer1 addGestureRecognizer:tap1 ];
-    UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox2:)];
+    UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
     [self.viewContainer2 addGestureRecognizer:tap2 ];
-    UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox3:)];
+    UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhenBox:)];
     [self.viewContainer3 addGestureRecognizer:tap3 ];
     UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox4:)];
     [self.viewContainer4 addGestureRecognizer:tap4 ];
@@ -122,6 +122,11 @@
     [self.navigationController popViewControllerAnimated:YES ];
 }
 
+- (void)userTappedBox1:(id) sender
+{
+    
+}
+
 - (void) updateWhenBox
 {
     NSAttributedString *title= attributedStringOf(LOCAL( @"WHEN"),  kGeomEventHeadingFontSize);
@@ -129,7 +134,7 @@
     NSString *string=nil;
     
     EventObject* event= APP.eventBeingEdited;
-    if  (event ) {
+    if  (event.date ) {
         string=[NSString stringWithFormat:  @"\r%@", event.date];
     } else {
         string= [NSString stringWithFormat: @"\r%@",
@@ -176,18 +181,14 @@
     [self updateWhoBox];
 }
 
-
-- (void)userTappedBox1: (id) sender
+- (void)userTappedWhoBox: (id) sender
 {
-    message( @"you pressed box 1");
+    EventWhoVC* vc= [[EventWhoVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+
 }
 
-- (void)userTappedBox2: (id) sender
-{
-    message( @"you pressed box 2");
-}
-
-- (void)userTappedBox3: (id) sender
+- (void)userTappedWhenBox: (id) sender
 {
     EventWhenVC* vc= [[EventWhenVC alloc] init];
     [self.navigationController pushViewController:vc animated:YES];

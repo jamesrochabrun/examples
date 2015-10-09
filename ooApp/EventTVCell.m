@@ -28,11 +28,20 @@
 
 - (void) layoutSubviews
 {
+    [super layoutSubviews];
     float w= self.frame.size.width;
     float h= self.frame.size.height;
     
     _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton,kGeomButtonWidth,kGeomHeightButton);
     _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
+    
+    float y= 0;
+    float x= h +kGeomSpaceInter;
+    self.thumbnail.frame = CGRectMake(0,0,h,h);
+    self.header.frame = CGRectMake(x,y,w-x,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
+    self.subHeader1.frame = CGRectMake(x,y,w-x,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
+    self.subHeader2.frame = CGRectMake(x,y,w-x,kGeomFontSizeHeader);
+
 }
 
 - (void)setEvent:(EventObject *)eo
@@ -65,6 +74,10 @@
     }  else {
         [self.thumbnail setImage:placeholder];
     }
+    
+    self.header.textColor= BLACK;
+    self.subHeader1.textColor= BLACK;
+    self.subHeader2.textColor= BLACK;
 }
 
 @end

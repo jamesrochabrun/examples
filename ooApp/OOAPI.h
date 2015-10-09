@@ -106,6 +106,15 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                         success:(void (^)(NSArray *restaurants))success
                                         failure:(void (^)(NSError *))failure;
 
++ (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *restaurants))success
+                                        failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *restaurants))success
+                                                failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
+                                        success:(void (^)(NSArray *restaurants))success
+                                        failure:(void (^)(NSError *))failure;
 + (void)uploadUserPhoto:(UIImage *)image
                 success:(void (^)(void))success
                 failure:(void (^)(NSError *))failure;
@@ -121,10 +130,16 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                             failure:(void (^)(NSError *))failure;
 
+// Groups
+//
+
++ (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
+                                         failure:(void (^)(NSError *))failure;
+
 // Events
 //
 
-+ (AFHTTPRequestOperation *)addRestaurant: (NSString*)restaurantID
++ (AFHTTPRequestOperation *)addRestaurant: (RestaurantObject*)restaurantID
                                   toEvent:(EventObject *)event
                                   success:(void (^)(id response))success
                                   failure:(void (^)(NSError *))failure;

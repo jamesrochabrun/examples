@@ -64,31 +64,26 @@
         _updatedAt= [NSDate date];
     }
     
-    return  @{
-              @"event_id": @(_eventID),
-              @"name":_name ?:  @"",
+    NSMutableDictionary *dictionary=  @{
+                                        @"created_at":_createdAt,
+                                        @"updated_at":_updatedAt,
+                                        @"is_complete": @(_isComplete),
+                                        @"event_type": @(_eventType),// 1= user, 2= curated
 
-              @"is_complete": @(_isComplete),
-              @"event_type": @(_eventType),// 1= user, 2= curated
-              @"total_price": @(_totalPrice),
+                                        }.mutableCopy;
+    
+    if  (_reviewSite  && _reviewSite.length) dictionary[ @"review_site"]= _reviewSite;
+    if  (_name  && _name.length) dictionary[ @"name"]= _name;
+    if  (_comment  && _comment.length) dictionary[ @"review_site"]= _comment;
+    if  (_specialEvent  && _specialEvent.length) dictionary[ @"special_event"]= _specialEvent;
+    if  (_keywords  && _keywords.count) dictionary[ @"keywords"]= _keywords;
+    if  (_eventID>0 ) dictionary[ @"event_id"]=@(_eventID);
+    if  (_date  ) dictionary[ @"event_date"]= _date;
+    if  (_dateWhenVotingClosed  ) dictionary[ @"when_voting_closed"]= _dateWhenVotingClosed;
+    if  (_friendRecommendationAge>0 ) dictionary[ @"friend_recommendation_age"]=@(_friendRecommendationAge);
+    if  (_totalPrice>0 ) dictionary[ @"total_price"]=@(_totalPrice);
 
-              @"event_date": _date ?: [NSNull null],
-              @"when_voting_closed": _dateWhenVotingClosed?: [NSNull null],
-
-              @"created_at":_createdAt,
-              @"updated_at":_updatedAt,
-              @"review_site":_reviewSite?:  @"",
-              @"friend_recommendation_age":  @(_friendRecommendationAge),
-
-              @"num_people":@(_numberOfPeople), // Ignored by backend
-              @"num_responded":@(_numberOfPeopleResponded), // Ignored by backend
-              @"num_voted":@(_numberOfPeopleVoted), // Ignored by backend
-
-              @"comment":_comment ?:  @"",
-              @"special_event":_specialEvent ?:  @"",
-              @"keywords": _keywords?:  @[],
-              
-              };
+    return [NSDictionary dictionaryWithDictionary:dictionary];
 }
 
 @end
