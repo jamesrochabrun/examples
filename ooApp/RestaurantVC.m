@@ -151,7 +151,7 @@
 }
 
 - (void)displayRemoveButtons {
-    __block CGPoint origin = CGPointMake(10, 10);
+    __block CGPoint origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
     NSArray *removeButtons = [_removeButtons allObjects];
     [removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
@@ -159,9 +159,15 @@
         frame.size = [b getSuggestedSize];
         frame.origin.x = origin.x;
         frame.origin.y = origin.y;
+        
+        if (CGRectGetMaxX(frame) > (CGRectGetMaxX(self.view.frame)-kGeomSpaceEdge)) {
+            frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceEdge;
+            frame.origin.x = kGeomSpaceEdge;
+        }
+
         b.frame = frame;
         
-        origin.x = CGRectGetMaxX(frame) + kGeomSpaceInter;
+        origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
 
         [self.view addSubview:b];
     }];

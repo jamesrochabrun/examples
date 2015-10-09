@@ -72,7 +72,7 @@ static NSString * const cellIdentifier = @"listCell";
 - (void)getLists
 {
     OOAPI *api = [[OOAPI alloc] init];
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Lists" subHeader:nil];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"My Lists" subHeader:nil];
     self.navTitle = nto;
     
     __weak ListsVC *weakSelf = self;
