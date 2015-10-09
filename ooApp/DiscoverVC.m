@@ -62,25 +62,24 @@ static NSString * const ListRowID = @"HLRCell";
     
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
-    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:14 bearing:0 viewingAngle:1];
+    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:13 bearing:0 viewingAngle:1];
 
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
+    _mapView.translatesAutoresizingMaskIntoConstraints = NO;
     _mapView.mapType = kGMSTypeNormal;
     _mapView.myLocationEnabled = YES;
     _mapView.settings.myLocationButton = YES;
     _mapView.settings.scrollGestures = YES;
     _mapView.settings.zoomGestures = YES;
     _mapView.delegate = self;
-
     [_mapView setMinZoom:3 maxZoom:15];
     
-    _mapView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_mapView];
     
     _filterView = [[OOFilterView alloc] init];
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_filterView addFilter:@"now" target:self selector:@selector(selectNow)];
-    [_filterView addFilter:@"later" target:self selector:@selector(selectLater)];
+    [_filterView addFilter:@"Open Now" target:self selector:@selector(selectNow)];
+    [_filterView addFilter:@"All" target:self selector:@selector(selectLater)];
 
     [self.view addSubview:_filterView];
     
@@ -201,7 +200,9 @@ static NSString * const ListRowID = @"HLRCell";
     
     _requestOperation = [api getRestaurantsWithKeyword:searchTerm
                                            andLocation:[[LocationManager sharedInstance] currentUserLocation]
-                                           andOpenOnly:_openOnly success:^(NSArray *r) {
+                                           andOpenOnly:_openOnly
+                                                  andSort:kSearchSortTypeDistance
+                                               success:^(NSArray *r) {
         weakSelf.restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf gotRestaurants];

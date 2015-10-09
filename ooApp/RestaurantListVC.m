@@ -97,7 +97,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
             ;
         }];
     } else {
-        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name andLocation:[[LocationManager sharedInstance] currentUserLocation] andOpenOnly:NO success:^(NSArray *r) {
+        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name
+                                                   andLocation:[[LocationManager sharedInstance] currentUserLocation]
+                                                   andOpenOnly:NO
+                                                       andSort:kSearchSortTypeBestMatch
+                                                       success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];

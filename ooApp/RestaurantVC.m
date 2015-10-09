@@ -44,33 +44,39 @@
     
     _alertController.view.tintColor = [UIColor blackColor];
     
-    UIAlertAction *a1 = [UIAlertAction actionWithTitle:@"Add to Favorites"
+    UIAlertAction *addToFavorites = [UIAlertAction actionWithTitle:@"Add to Favorites"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self addToFavorites];
                                                  }];
-    UIAlertAction *a2 = [UIAlertAction actionWithTitle:@"Add to List"
+    
+    UIAlertAction *addToList = [UIAlertAction actionWithTitle:@"Add to List"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self showLists];
                                                  }];
-    UIAlertAction *a3 = [UIAlertAction actionWithTitle:@"Add to Event"
+    UIAlertAction *addToEvent = [UIAlertAction actionWithTitle:@"Add to Event"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"You pressed button two");
+                                                     NSLog(@"Add to Event");
                                                  }];
-    UIAlertAction *a4 = [UIAlertAction actionWithTitle:@"New Event at..."
+    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"You pressed button two");
+                                                     NSLog(@"Add to New Event");
                                                  }]; // 3
-    UIAlertAction *a5 = [UIAlertAction actionWithTitle:@"New List..."
+    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"New List..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"You pressed button two");
+                                                     NSLog(@"Add the NewList");
+                                                 }]; // 3
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                 style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     NSLog(@"Cancel");
                                                  }]; // 3
     
     
-    [_alertController addAction:a1];
-    [_alertController addAction:a2];
-    [_alertController addAction:a3];
-    [_alertController addAction:a4];
-    [_alertController addAction:a5];
+    [_alertController addAction:addToFavorites];
+    [_alertController addAction:addToList];
+    [_alertController addAction:addToNewList];
+    [_alertController addAction:addToEvent];
+    [_alertController addAction:addToNewEvent];
+    [_alertController addAction:cancel];
     
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];

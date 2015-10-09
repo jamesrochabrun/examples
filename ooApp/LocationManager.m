@@ -148,7 +148,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
         [self startTrackingLocation];
         return [[Settings sharedInstance] mostRecentLocation ];
     }
-    
+
     return self.currentLocation;
 }
 

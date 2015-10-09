@@ -12,7 +12,8 @@
 #import "Settings.h"
 #import "EventObject.h"
 
-//NSString *const kKeyName = @"name";
+NSString *const kKeySearchRadius = @"radius";
+NSString *const kKeySearchSort = @"sort";
 
 @interface OOAPI()
 - (NSString *)ooURL;
@@ -144,6 +145,7 @@
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
                                            andOpenOnly:(BOOL)openOnly
+                                           andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure
 {
@@ -152,8 +154,14 @@
         return nil;
     }
     
+    if (!sort) {
+        sort = kSearchSortTypeBestMatch;
+    }
+    
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,
+                                 kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
+                                 kKeySearchRadius:[NSNumber numberWithUnsignedInteger:10000],
                                  kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
                                  kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
                                  kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly]};
@@ -798,10 +806,10 @@
 // Name:    addRestaurant toEvent
 // Purpose: Add a restaurant to an event.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)addRestaurant: (NSString*)restaurantID
-                                 toEvent:(EventObject *)event
-                                           success:(void (^)(id response))success
-                                           failure:(void (^)(NSError *))failure;
++ (AFHTTPRequestOperation *)addRestaurant:(NSString *)restaurantID
+                                  toEvent:(EventObject *)event
+                                  success:(void (^)(id response))success
+                                  failure:(void (^)(NSError *))failure;
 {
     if  (!event  || !restaurantID) {
         failure (nil);
