@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "ListObject.h"
 
+typedef enum: int {
+    PARTICIPANT_TYPE_NONE= -1,
+    PARTICIPANT_TYPE_CREATOR=0,
+    PARTICIPANT_TYPE_ADMIN=1,
+    PARTICIPANT_TYPE_ATTENDEE=2,
+} ParticipantType;
+
 @interface UserObject : NSObject
 
 @property (nonatomic, strong) NSNumber *userID;
@@ -26,6 +33,8 @@
 @property (nonatomic, strong) NSString *facebookIdentifier;
 @property (nonatomic, strong) NSString *imageURLString;// e.g. from FB.
 @property (nonatomic, strong) NSString *imageIdentifier;// i.e. from OO.
+@property (nonatomic,assign) NSInteger participantType;
+@property (nonatomic,assign) BOOL isAttending;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryFromUser;

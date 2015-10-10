@@ -303,3 +303,28 @@ NSMutableAttributedString *createPeopleIconString (NSInteger count)
     return a;
 }
 
+BOOL isValidEmailAddress (NSString *string)
+{
+    if  (!string) {
+        return NO;
+    }
+    
+    if ([string hasPrefix: @"@"] || [string hasSuffix: @"@"] || [string hasSuffix: @"."]) {
+        return NO;
+    }
+    
+    if  (string.length < 6 ) {
+        return NO;
+    }
+
+    NSArray *a = [string componentsSeparatedByString:@"@"];
+    if (a.count != 2 ) {
+        return NO;
+    }
+    NSString *second= a[1];
+    if  (![second containsString: @"."]) {
+        return NO;
+    }
+    
+    return YES;
+}

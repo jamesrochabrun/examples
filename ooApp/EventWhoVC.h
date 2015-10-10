@@ -10,10 +10,14 @@
 #import "BaseVC.h"
 #import "ObjectTVCell.h"
 
-@interface EventWhoVC : BaseVC
+@protocol EventWhoTableCellDelegate
+- (void) radioButtonChanged: (BOOL)value name: (NSString*)name;
+@end
+
+@interface EventWhoVC : BaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
 
 @end
 
 @interface EventWhoTableCell: UITableViewCell
-
+@property (nonatomic,assign) EventWhoVC *viewController;
 @end

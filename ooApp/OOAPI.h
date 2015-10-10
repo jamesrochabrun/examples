@@ -102,9 +102,6 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 - (AFHTTPRequestOperation *)getUsersWithIDs:(NSArray *)userIDs
                                     success:(void (^)(NSArray *))success
                                     failure:(void (^)(NSError *))failure;
-+ (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
-                                        success:(void (^)(NSArray *restaurants))success
-                                        failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *restaurants))success
                                         failure:(void (^)(NSError *))failure;
@@ -113,7 +110,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                 failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
-                                        success:(void (^)(NSArray *restaurants))success
+                                        success:(void (^)(NSArray *users))success
                                         failure:(void (^)(NSError *))failure;
 + (void)uploadUserPhoto:(UIImage *)image
                 success:(void (^)(void))success
@@ -139,6 +136,10 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 // Events
 //
 
++ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject* ) event
+                                                       success:(void (^)(bool))success
+                                                       failure:(void (^)(NSError *))failure;
+
 + (AFHTTPRequestOperation *)addRestaurant: (RestaurantObject*)restaurantID
                                   toEvent:(EventObject *)event
                                   success:(void (^)(id response))success
@@ -160,6 +161,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
                                      success:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *))failure;
+
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *))failure;
 @end

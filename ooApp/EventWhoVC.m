@@ -28,9 +28,10 @@
 {
     self = [super initWithStyle:style reuseIdentifier:(NSString *)reuseIdentifier];
     if (self) {
-        _radioButton= makeButton(self,  @"NO", kGeomFontSizeDetail, BLACK, GREEN, self, @selector(userPressRadioButton:), 0);
+        _radioButton= makeButton(self,  @"NO", kGeomFontSizeDetail, RED, CLEAR, self, @selector(userPressRadioButton:), 0);
         [_radioButton setTitle:  @"YES" forState:UIControlStateSelected];
-        
+        [_radioButton setTitleColor:GREEN forState:UIControlStateSelected];
+
         _imageViewThumbnail= makeImageView(self,  @"No-Profile_Image.png");
         _imageViewThumbnail.layer.borderWidth= 1;
         _imageViewThumbnail.layer.borderColor= GRAY.CGColor;
@@ -62,6 +63,11 @@
     
 }
 
+- (void) setRadioButtonState: (BOOL)isSet
+{
+    _radioButton.selected= isSet;
+}
+
 - (void)setName: (NSString*)string
 {
     self.labelName.text= string;
@@ -69,7 +75,11 @@
 
 - (void)userPressRadioButton: (id) sender
 {
-    message( @"you pressed the radio button");
+    _radioButton.selected= !_radioButton.selected;
+    
+    if ( _viewController) {
+        [_viewController radioButtonChanged: _radioButton.selected name:_labelName.text];
+    }
 }
 
 @end
@@ -79,7 +89,10 @@
 @property (nonatomic,strong)UIButton* buttonAddEmail;
 @property (nonatomic,strong)UITableView* table;
 @property (nonatomic,strong)UIButton* buttonInvite;
-@property (nonatomic,strong) NSMutableArray *arrayOfParticipants;
+@property (nonatomic,strong) NSMutableArray *arrayOfPotentialParticipants;
+@property (nonatomic,strong)  NSMutableSet *participants;
+@property (nonatomic,strong) NSMutableArray *arrayOfGroups;
+
 @end
 
 @implementation EventWhoVC
@@ -95,14 +108,17 @@
     
     self.view.autoresizesSubviews= NO;
     
-    self.arrayOfParticipants= [NSMutableArray new];
-    [_arrayOfParticipants addObject:  @"first"];
-    [_arrayOfParticipants addObject:  @" second"];
-    [_arrayOfParticipants addObject:  @" third"];
-    [_arrayOfParticipants addObject:  @" fourth"];
-    [_arrayOfParticipants addObject:  @"someone@someplace.net"];
-    [_arrayOfParticipants addObject:  @"sjobs@Apples.com"];
+    self.arrayOfPotentialParticipants= [NSMutableArray new];
+    [_arrayOfPotentialParticipants addObject:  @"first"];
+    [_arrayOfPotentialParticipants addObject:  @" second"];
+    [_arrayOfPotentialParticipants addObject:  @" third"];
+    [_arrayOfPotentialParticipants addObject:  @" fourth"];
+    [_arrayOfPotentialParticipants addObject:  @"someone@someplace.net"];
+    [_arrayOfPotentialParticipants addObject:  @"sjobs@Apples.com"];
 
+    self.participants= [NSMutableSet new];
+    [_participants addObject:  @"first"];
+    
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
     self.navTitle = nto;
     
@@ -125,6 +141,13 @@
                                             action:@selector(userPressedBack:)];
     
     //  fetch the usernames from the backend..
+    [OOAPI getGroupsWithSuccess:^(NSArray *groups) {
+        NSLog  (@" groups for this user=  %@", groups);
+        self.arrayOfGroups= groups;
+        //  refresh table…
+    } failure:^(NSError *e) {
+        NSLog (@" cannot get list of groups for this user.");
+    }];
 }
 
 - (void)viewWillLayoutSubviews
@@ -146,6 +169,37 @@
 
 - (void)userPressedInviteByEmail: (id) sender
 {
+    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Participant")
+                                                     message: LOCAL(@"Enter and email address")
+                                                    delegate:  self
+                                           cancelButtonTitle: LOCAL(@"Cancel")
+                                           otherButtonTitles: LOCAL(@"Add"), nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
+}
+
+//------------------------------------------------------------------------------
+// Name:    clickedButtonAtIndex
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if  (1==buttonIndex) {
+        UITextField *textField = [alertView textFieldAtIndex: 0];
+        NSString *string = trimString(textField.text);
+        if  (string.length ) {
+            string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
+        }
+        
+        if (!isValidEmailAddress(string)) {
+            message( @"Not a valid email address.");
+            return;
+        }
+      
+        [_arrayOfPotentialParticipants  addObject: string];
+        [_participants  addObject: string];
+        [_table reloadData];
+    }
 }
 
 - (void)userPressedInvite: (id) sender
@@ -181,19 +235,29 @@
  
     NSString* name= nil;
     NSInteger row= indexPath.row;
-    @synchronized(_arrayOfParticipants) {
-        if  (row  < _arrayOfParticipants.count) {
-            name=  _arrayOfParticipants[row];
+    @synchronized(_arrayOfPotentialParticipants) {
+        if  (row  < _arrayOfPotentialParticipants.count) {
+            name=  _arrayOfPotentialParticipants[row];
         }
     }
     
+    cell.viewController=  self;
     [cell setName: name];
+    [ cell setRadioButtonState: [_participants containsObject: name]];
     return cell;
 }
 
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    return LOCAL(@"Choose who should attend:");
+    NSInteger numberOfSections= 1+_arrayOfGroups.count;
+    NSString *name=  @"?";
+    if  ( section==  numberOfSections-1 ) {
+        name=LOCAL(@"Test names:");
+    } else {
+        GroupObject *g= _arrayOfGroups[section];
+        name= g.name ?:  @"There is no name.";
+    }
+    return name;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -205,9 +269,9 @@
 {
     NSString* name= nil;
     NSInteger row= indexPath.row;
-    @synchronized(_arrayOfParticipants) {
-        if  ( row  < _arrayOfParticipants.count) {
-            name=  _arrayOfParticipants[row];
+    @synchronized(_arrayOfPotentialParticipants) {
+        if  ( row  < _arrayOfPotentialParticipants.count) {
+            name=  _arrayOfPotentialParticipants[row];
         }
     }
     if ( name) {
@@ -218,11 +282,20 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger  total;
-    @synchronized(_arrayOfParticipants) {
-        total= _arrayOfParticipants.count;
+    @synchronized(_arrayOfPotentialParticipants) {
+        total= _arrayOfPotentialParticipants.count;
     }
     return  total;
 }
 
-
+- (void) radioButtonChanged: (BOOL)value name: (NSString*)name;
+{
+    if ( value) {
+        [_participants  addObject: name];
+    }else {
+        [_participants  removeObject: name];
+    }
+    
+    NSLog  (@" set=  %@",_participants);
+}
 @end

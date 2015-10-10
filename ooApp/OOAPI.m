@@ -224,7 +224,7 @@
 // Purpose:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
-                                        success:(void (^)(NSArray *restaurants))success
+                                        success:(void (^)(NSArray *users))success
                                         failure:(void (^)(NSError *))failure
 {
     if (!keyword  || !keyword.length) {
@@ -697,7 +697,10 @@
         failure (nil);
         return ;
     }
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/photo", kOOURL];
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", kOOURL, userid];
     
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString: urlString]];
     if  (!request) {
@@ -705,15 +708,26 @@
         return ;
     }
     [request setHTTPMethod:@"POST"];
+//    [request setValue:@"image/jpeg" forHTTPHeaderField: @"Content-type"];
+    NSString*const boundary=  @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
+    
+    [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary] forHTTPHeaderField:@"Content-Type"];
+    
+    [request addValue:@"form-data; name=\"upload\"; filename=\"file.jpg\""
+   forHTTPHeaderField: @"Content-Disposition"];
     
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+//    config.b
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
-    
+
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-    
-    NSURLSessionUploadTask *task = [session uploadTaskWithRequest:request
-                                                         fromData:imageData
+
+    NSURLSessionUploadTask *task = [session uploadTaskWithRequest: request
+                                                         fromData: imageData
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                    NSString *stringFromData= [NSString stringWithCharacters:[data  bytes] length:[ data length]];
+                                                    NSLog  (@"stringFromData=  %@",stringFromData);
+                                                    
                                                     if (error) {
                                                         if (failure) failure(error);
                                                     } else {
@@ -760,7 +774,7 @@
                }
            } failure:^(NSError *error) {
                NSLog(@"Error: %@", error);
-               failure(nil);
+               failure(error);
            }];
 }
 
@@ -792,6 +806,7 @@
         }
     } failure:^(NSError *error) {
         NSLog(@"Error: %@", error);
+        failure (error);
     }];
 }
 
@@ -989,16 +1004,67 @@
                            kOOURL, userid];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        NSMutableArray *groups = [NSMutableArray array];
-        for (id dict in responseObject) {
-//            [groups addObject:[GroupObject groupFromDictionary: dict]];
-            
-        }
-        success(groups);
-    } failure:^(NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               NSMutableArray *groups = [NSMutableArray array];
+               for (id object in responseObject) {
+
+                   if ( [ object isKindOfClass:[NSDictionary class]]) {
+                       [groups  addObject:  [GroupObject groupFromDictionary: object]];
+                   }
+               }
+               
+               NSLog  (@"TOTAL GROUPS FOUND: %ld", groups.count);
+               success(groups);
+           }
+           failure:^(NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure (error);
+           }];
+}
+
++ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject* ) event
+                                                       success:(void (^)(bool))success
+                                                       failure:(void (^)(NSError *))failure;
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber* userNumber = userInfo.userID;
+    if  (!userNumber) {
+        failure (nil);
+        return nil;
+    }
+
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@",
+                           kOOURL,
+                           event.eventID,
+                           userNumber];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation* operation=  [rm GET: urlString parameters:nil
+           success:^(id responseObject) {
+               if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                   UserObject* user= [UserObject userFromDict: responseObject];
+                   if  (user && (user.participantType == PARTICIPANT_TYPE_ADMIN ||
+                                 user.participantType == PARTICIPANT_TYPE_CREATOR)
+                                 ) {
+                       success (YES);
+                       return;
+                   }
+               }
+               success(NO);
+           }
+           failure:^(NSError *error) {
+               NSInteger statusCode=  operation.response.statusCode;
+               if  (statusCode== 404 ) {
+                   success (NO);
+               } else {
+                   NSLog(@"Error: %@", error);
+                   failure (error);
+               }
+           }];
+    
+    return operation;
 }
 
 @end

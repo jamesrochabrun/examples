@@ -11,7 +11,5 @@
 
 @interface EventCoordinatorVC : BaseVC <UIScrollViewDelegate>
 
-@property (nonatomic,strong) NSString *eventName;
-
 @end
 

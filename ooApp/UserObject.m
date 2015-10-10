@@ -18,8 +18,10 @@ NSString *const kKeyPhoneNumber = @"phone_number";
 NSString *const kKeyUsername = @"username";
 NSString *const kKeyToken = @"backend_auth_token";
 NSString *const kKeyGender = @"gender";
-NSString *const kKeyImageURL = @"imageURL";
-NSString *const kKeyImageIdentifier = @"imageIdentifier";
+NSString *const kKeyImageURL = @"image_url";
+NSString *const kKeyImageIdentifier = @"image_identifier";
+NSString *const kKeyParticipantType = @"participant_type";
+NSString *const kKeyIsAttending = @"is_attending";
 
 @interface UserObject()
 
@@ -56,7 +58,14 @@ NSString *const kKeyImageIdentifier = @"imageIdentifier";
     user.username=[dict objectForKey:kKeyUsername];
     user.imageURLString=[dict objectForKey:kKeyImageURL];
     user.imageIdentifier=[dict objectForKey:kKeyImageIdentifier];
+    user.isAttending= parseIntegerOrNullFromServer(dict[kKeyIsAttending]);
     
+    NSNumber *participantNumber= dict [ kKeyParticipantType];
+    if (!participantNumber) {
+        user.participantType= PARTICIPANT_TYPE_NONE;
+    } else {
+        user.participantType= participantNumber.integerValue;
+    }
     return user;
 }
 

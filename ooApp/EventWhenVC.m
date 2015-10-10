@@ -157,7 +157,7 @@
     float  margin= kGeomSpaceEdge;
     float  spacing=  kGeomSpaceInter;
 
-    float x=  margin, y=  margin;
+    float y=  margin;
     float pickerHeight= _pickerEventDate.intrinsicContentSize.height;
 
     float requiredHeight= 2*kGeomHeightButton + 3* spacing  +kGeomSpaceInterMiddle;

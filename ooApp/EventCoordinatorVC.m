@@ -15,7 +15,7 @@
 #import "EventCoordinatorVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
-#import "ListTVCell.h"
+#import "ListStripTVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
 
@@ -41,7 +41,7 @@
 @property (nonatomic,strong) UITapGestureRecognizer *tap3;
 @property (nonatomic,strong) UITapGestureRecognizer *tap4;
 
-@property (nonatomic,strong) ListTVCell *venuesRowView;
+@property (nonatomic,strong) ListStripTVCell *venuesRowView;
 @end
 
 @implementation EventCoordinatorVC
@@ -59,9 +59,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.    
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: _eventName ?:  @"MISSING EVENT NAME" subHeader:  nil];
+    NSString* eventName= APP.eventBeingEdited.name;
+    
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"MISSING EVENT NAME" subHeader:  nil];
     self.navTitle = nto;
     
     self.view.backgroundColor= [UIColor lightGrayColor];
@@ -111,8 +112,13 @@
     UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox4:)];
     [self.viewContainer4 addGestureRecognizer:tap4 ];
     
-    self.venuesRowView= [[ListTVCell  alloc] initWithFrame: CGRectZero];
+    self.venuesRowView= [[ListStripTVCell alloc] initWithFrame: CGRectZero];
     [ self.viewContainer4  addSubview: _venuesRowView   ];
+    ListObject *list=[[ListObject  alloc] init];
+//    [list ];
+    _venuesRowView.listItem=list ;
+    
+    _venuesRowView.backgroundColor= GRAY;
 }
 
 - (void) userPressedCancel: (id) sender
@@ -214,7 +220,6 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
     float spacing= kGeomSpaceEdge;
