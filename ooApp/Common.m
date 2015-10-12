@@ -69,7 +69,7 @@ UIImageView* makeImageView (UIView *parent, NSString* imageName)
     }
     UIImageView* iv= [ [UIImageView alloc ]initWithImage:  image  ];
     if  ( imageIsURL) {
-        if  (url ) {
+        if  (url) {
             [iv setImageWithURL:url placeholderImage:nil];
         }
     }
@@ -101,7 +101,7 @@ UIView* makeView (UIView *parent, UIColor* backgroundColor)
 UITableView* makeTable (UIView *parent,id  delegate)
 {
     UITableView* tv= [ [ UITableView alloc ]init ];
-    if  (tv ) {
+    if  (tv) {
         [ parent addSubview: tv ];
     }
     tv.delegate= delegate;
