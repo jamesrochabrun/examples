@@ -77,12 +77,16 @@
 }
 
 - (BOOL)isEqual:(id)object {
+    if (self == object) return YES;
+    
+    if (!object || ![object isKindOfClass:[self class]]) return NO;
+
     OORemoveButton *rb = (OORemoveButton *)object;
-    return (rb.identifier == self.identifier) ? YES : NO;
+    return (rb.theId == _theId) ? YES : NO;
 }
 
 - (NSUInteger)hash {
-    return _identifier;
+    return _theId;
 }
 
 /*

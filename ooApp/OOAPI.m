@@ -317,7 +317,7 @@ NSString *const kKeySearchSort = @"sort";
 {
     if (!userID) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
-        userID= [userInfo.userID unsignedIntegerValue];
+        userID = [userInfo.userID unsignedIntegerValue];
     }
     
     NSString *restaurantResource = @"";

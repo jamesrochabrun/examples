@@ -19,6 +19,12 @@
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
 @property (nonatomic, strong) NSMutableSet *removeButtons;
+@property (nonatomic, strong) UILabel *phoneNumber;
+@property (nonatomic, strong) UILabel *website;
+@property (nonatomic, strong) UILabel *address;
+@property (nonatomic, strong) UIView *removeButtonsContainer;
+@property (nonatomic) CGFloat removeButtonsContainerHeight;
+@property (nonatomic, strong) NSArray *verticalLayoutContraints;
 
 @end
 
@@ -29,12 +35,34 @@
     [super viewDidLoad];
     
     _userInfo= [Settings sharedInstance].userObject;
+
+    _removeButtonsContainer = [[UIView alloc] init];
+    _removeButtonsContainer.translatesAutoresizingMaskIntoConstraints = NO;
+    _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
+    [self.view addSubview:_removeButtonsContainer];
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
     [self setupAlertController];
     
     _removeButtons = [NSMutableSet set];
+}
+
+-(void)updateViewConstraints {
+    [super updateViewConstraints];
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"removeContainerHeight":@(_removeButtonsContainerHeight)};
+    
+    UIView *superview = self.view;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _removeButtonsContainer);
+    
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self.view removeConstraints:_verticalLayoutContraints];
+    _verticalLayoutContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_removeButtonsContainer(removeContainerHeight)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    [self.view addConstraints:_verticalLayoutContraints];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_removeButtonsContainer]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+
 }
 
 - (void)setupAlertController {
@@ -125,14 +153,13 @@
                         ListObject *lo = (ListObject *)obj;
                         OORemoveButton *b = [[OORemoveButton alloc] init];
                         b.name.text = lo.name;
-                        b.identifier = [lo.listID integerValue];
+                        b.theId = (NSUInteger)[lo.listID integerValue];
                         [b addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
-                        [b setNeedsLayout];
                         [_removeButtons addObject:b];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [weakSelf displayRemoveButtons];
-                            });
                     }];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf displayRemoveButtons];
+                    });
                 }
                 failure:^(NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
@@ -152,9 +179,10 @@
 
 - (void)displayRemoveButtons {
     __block CGPoint origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
-    NSArray *removeButtons = [_removeButtons allObjects];
-    [removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    NSArray *removeButtonsArray = [_removeButtons allObjects];
+    [removeButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
+        [_removeButtonsContainer addSubview:b];
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
         frame.origin.x = origin.x;
@@ -168,9 +196,10 @@
         b.frame = frame;
         
         origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
-
-        [self.view addSubview:b];
+        _removeButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
+    _removeButtonsContainerHeight += kGeomSpaceEdge;
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)removeFromList:(id)sender {
@@ -178,7 +207,7 @@
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantVC *weakSelf = self;
-    [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.identifier success:^(NSArray *lists) {
+    [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.theId success:^(NSArray *lists) {
         ON_MAIN_THREAD(^{
             [b removeFromSuperview];
             [_removeButtons removeObject:b];
