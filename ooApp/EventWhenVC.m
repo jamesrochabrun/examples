@@ -2,12 +2,10 @@
 //  EventWhenVC.m
 //  ooApp
 //
-//  Created by Zack S on 10/7/15.
+//  Created by Zack Smith on 10/7/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-//#import "Common.h"
-//#import "CommonUIConstants.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -159,7 +157,7 @@
     float  margin= kGeomSpaceEdge;
     float  spacing=  kGeomSpaceInter;
 
-    float x=  margin, y=  margin;
+    float y=  margin;
     float pickerHeight= _pickerEventDate.intrinsicContentSize.height;
 
     float requiredHeight= 2*kGeomHeightButton + 3* spacing  +kGeomSpaceInterMiddle;

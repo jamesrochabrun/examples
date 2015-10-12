@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "Common.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -22,6 +21,7 @@
 #import "ProfileVC.h"
 #import "EventTVCell.h"
 #import "EventCoordinatorVC.h"
+#import "EventParticipantVC.h"
 
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
 #define EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER  @"eventListGenericCell"
@@ -76,9 +76,6 @@
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSNumber* userid= userInfo.userID;
-    
-    NSDate *now= [NSDate date];
-    NSTimeInterval nowTime= [now timeIntervalSince1970];
     
     __weak EventsListVC *weakSelf = self;
     
@@ -135,7 +132,8 @@
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
         });
-    } failure:^(NSError *e) {
+    }
+                    failure:^(NSError *e) {
         NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
     }
      ];
@@ -244,7 +242,8 @@
     
     if  (!events.count) {
         UITableViewCell* genericCell=[tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER forIndexPath:indexPath];
-        genericCell.textLabel.text= LOCAL( @"None.");
+        genericCell.textLabel.text= ! events ?  LOCAL( @"Loading...") : LOCAL( @"None.");
+        genericCell.textLabel.textColor= !events ? BLUE : BLACK;
         return  genericCell;
     }
     
@@ -316,7 +315,9 @@
 {
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;
-    
+
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
     NSArray* events= nil;
     switch ( section) {
         case 0:
@@ -334,14 +335,36 @@
         return;
     }
     
-    EventObject *eo = [events objectAtIndex: row];
-    APP.eventBeingEdited= eo;
+    EventObject *event = [events objectAtIndex: row];
     
-    BaseVC* vc= [[BaseVC  alloc] init];
-    vc.view.backgroundColor= BLUE;
-    [self.navigationController pushViewController:vc animated:YES ];
+    // RULE: Curated events are never editable.
+    if ( section==2) {
+        EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+        [self.navigationController pushViewController:vc animated:YES ];
+        return;
+    }
     
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    // Determine whether event can be edited by this user.
+    [OOAPI determineIfCurrentUserCanEditEvent:event
+                                      success:^(bool allowed) {
+                                          if  (allowed ) {
+                                              NSLog  (@"EDITING ALLOWED");
+                                              
+                                              APP.eventBeingEdited= event;
+                                              EventCoordinatorVC* vc= [[EventCoordinatorVC  alloc] init];
+                                              [self.navigationController pushViewController:vc animated:YES ];
+                                              
+                                          } else {
+                                              NSLog  (@"EDITING PROHIBITED");
+                                              APP.eventBeingEdited= event;
+                                              EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+                                              [self.navigationController pushViewController:vc animated:YES ];
+                                              
+                                          }
+                                      } failure:^(NSError *e) {
+                                          NSLog  (@" failure %@",e);
+                                      }];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -389,6 +412,9 @@
         e.createdAt= [NSDate date];
         e.updatedAt= [NSDate date];
         e.eventType= EVENT_TYPE_USER;
+        e.users= [NSMutableArray new];
+        e.restaurants= [NSMutableArray new];
+        APP.eventBeingEdited= e;
         
         __weak EventsListVC* weakSelf= self;
         [OOAPI addEvent: e
@@ -397,29 +423,35 @@
                     APP.eventBeingEdited= e;
                     e.eventID= eventID;
                     
+                    RestaurantObject *restaurant= [ [RestaurantObject  alloc] init];
+                    restaurant.googleID=@"ChIJ513xa0-0j4ARmna-TypiV9w";
+                    restaurant.restaurantID=  @"";
+                    
                     // NOTE:  this is not implemented on the backend yet.
-                    [OOAPI addRestaurant:@"ChIJ513xa0-0j4ARmna-TypiV9w" toEvent:e  success:^(id response) {
-//                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-
+                    [OOAPI addRestaurant:restaurant toEvent:e  success:^(id response) {
+                        
+                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+                        
                     } failure:^(NSError *error) {
                         NSLog (@" error=  %@", error);
-                    }];
+                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+                   }];
                     
                 }
                 failure:^(NSError *error) {
                     NSLog  (@"%@", error);
                     message( @"backend was unable to create a new event");
+                    
+                    // Temporarily in placef
+//                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+
                 }];
-        
-        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-        
     }
 }
 
 - (void)goToEventCoordinatorScreen: (NSString*)name
 {
     EventCoordinatorVC *vc= [[EventCoordinatorVC  alloc] init ];
-    vc.eventName= name;
     [self.navigationController pushViewController:vc animated:YES];
 }
 @end

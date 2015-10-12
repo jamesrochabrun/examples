@@ -9,7 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface GroupObject : NSObject
+@property (nonatomic,strong) NSString *name;
+@property (nonatomic) NSInteger groupID;
+@property (nonatomic,strong) NSDate *createdAt;
+@property (nonatomic,strong) NSDate *updatedAt;
 
-@property (nonatomic) NSInteger groupId;
++ (GroupObject*) groupFromDictionary: (NSDictionary*)dictionary;
 
 @end

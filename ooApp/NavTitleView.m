@@ -41,7 +41,7 @@
 - (void)layout
 {
     // Create the views and metrics dictionaries
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _headerLabel, _subHeaderLabel);
     

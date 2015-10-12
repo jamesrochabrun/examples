@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "Common.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -21,9 +20,8 @@
 
 @interface EventParticipantVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmitVote;
-@property (nonatomic,strong)  UIScrollView* scrollView;
-
-@property (nonatomic,strong) ListTVCell *venuesRowView;
+@property (nonatomic,strong)  UITableView * table;
+@property (nonatomic,strong)  UILabel* label;
 @end
 
 @implementation EventParticipantVC
@@ -39,15 +37,13 @@
     self.navTitle = nto;
     
     self.view.backgroundColor= [UIColor lightGrayColor];
-    _scrollView= makeScrollView(self.view, self);
+    _table= makeTable( self.view,  self);
+#define TABLE_REUSE_IDENTIFIER  @"participantsCell"  
+    [_table registerClass:[UITableViewCell class] forCellReuseIdentifier:TABLE_REUSE_IDENTIFIER];
     
     self.automaticallyAdjustsScrollViewInsets= NO;
-    
-    self.navigationItem.rightBarButtonItem= [[UIBarButtonItem  alloc] initWithTitle: @"CANCEL"
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:self
-                                                                             action: @selector(userPressedCancel:)];
-    _buttonSubmitVote= makeButton(self.view,  @"SUBMIT VOTE", kGeomEventHeadingFontSize,
+    _label= makeLabelLeft( self.view,  @"THIS IS A TEMPORARY SCREEN", 12);
+    _buttonSubmitVote= makeButton(self.view,  @"SUBMIT\rVOTE", kGeomFontSizeHeader,
                                   BLACK, CLEAR, self, @selector(doSubmitVote:), 1);
 }
 
@@ -66,6 +62,26 @@
 {
     [super viewWillAppear:animated];
     
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell;
+    cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 44;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -88,11 +104,13 @@
     float  margin= kGeomSpaceEdge;
     float spacing= kGeomSpaceEdge;
     
-    _scrollView.frame=  self.view.bounds;
+    _table.frame=  self.view.bounds;
 #define kGeomEventParticipantBoxHeight 175
 #define kGeomEventParticipantRestaurantHeight 100
     
     _buttonSubmitVote.frame=  CGRectMake((w-kGeomButtonWidth)/2,kGeomEventParticipantBoxHeight-kGeomHeightButton-margin,kGeomButtonWidth,kGeomHeightButton);
+    
+    _label.frame = CGRectMake(0,0,w, 40);
 
 }
 
