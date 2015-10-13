@@ -18,6 +18,12 @@
 
 //extern NSString *const kKeyName;
 
+typedef enum {
+    kSearchSortTypeBestMatch = 0,
+    kSearchSortTypeDistance = 1,
+    kSearchSortTypeHighestRated = 2,
+} SearchSortType;
+
 static const int kOOAPIListTypeFavorites = 0;
 static const int kOOAPIListTypeSystem = 1;
 static const int kOOAPIListTypeUser = 2;
@@ -38,6 +44,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
                                            andOpenOnly:(BOOL)openOnly
+                                                 andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure;
 

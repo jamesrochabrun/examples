@@ -13,6 +13,7 @@ typedef enum {
 } ListDisplayType;
 
 #import <Foundation/Foundation.h>
+#import "MediaItemObject.h"
 
 @interface ListObject : NSObject
 
@@ -20,7 +21,7 @@ typedef enum {
 @property (nonatomic, assign) NSInteger type;
 @property (nonatomic, strong) NSString *imageURL;
 @property (nonatomic, strong) NSString *listID;
-//@property (nonatomic, assign) int  identifier;
+@property (nonatomic, strong) MediaItemObject *mediaItem;
 @property (nonatomic) ListDisplayType listDisplayType;
 
 + (ListObject *)listFromDict:(NSDictionary *)dict;

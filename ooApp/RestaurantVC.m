@@ -19,6 +19,12 @@
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
 @property (nonatomic, strong) NSMutableSet *removeButtons;
+@property (nonatomic, strong) UILabel *phoneNumber;
+@property (nonatomic, strong) UILabel *website;
+@property (nonatomic, strong) UILabel *address;
+@property (nonatomic, strong) UIView *removeButtonsContainer;
+@property (nonatomic) CGFloat removeButtonsContainerHeight;
+@property (nonatomic, strong) NSArray *verticalLayoutContraints;
 
 @end
 
@@ -29,12 +35,34 @@
     [super viewDidLoad];
     
     _userInfo= [Settings sharedInstance].userObject;
+
+    _removeButtonsContainer = [[UIView alloc] init];
+    _removeButtonsContainer.translatesAutoresizingMaskIntoConstraints = NO;
+    _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
+    [self.view addSubview:_removeButtonsContainer];
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
     [self setupAlertController];
     
     _removeButtons = [NSMutableSet set];
+}
+
+-(void)updateViewConstraints {
+    [super updateViewConstraints];
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"removeContainerHeight":@(_removeButtonsContainerHeight)};
+    
+    UIView *superview = self.view;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _removeButtonsContainer);
+    
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self.view removeConstraints:_verticalLayoutContraints];
+    _verticalLayoutContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_removeButtonsContainer(removeContainerHeight)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    [self.view addConstraints:_verticalLayoutContraints];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_removeButtonsContainer]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+
 }
 
 - (void)setupAlertController {
@@ -44,33 +72,39 @@
     
     _alertController.view.tintColor = [UIColor blackColor];
     
-    UIAlertAction *a1 = [UIAlertAction actionWithTitle:@"Add to Favorites"
+    UIAlertAction *addToFavorites = [UIAlertAction actionWithTitle:@"Add to Favorites"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self addToFavorites];
                                                  }];
-    UIAlertAction *a2 = [UIAlertAction actionWithTitle:@"Add to List"
+    
+    UIAlertAction *addToList = [UIAlertAction actionWithTitle:@"Add to List"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self showLists];
                                                  }];
-    UIAlertAction *a3 = [UIAlertAction actionWithTitle:@"Add to Event"
+    UIAlertAction *addToEvent = [UIAlertAction actionWithTitle:@"Add to Event"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"You pressed button two");
+                                                     NSLog(@"Add to Event");
                                                  }];
-    UIAlertAction *a4 = [UIAlertAction actionWithTitle:@"New Event at..."
+    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"You pressed button two");
+                                                     NSLog(@"Add to New Event");
                                                  }]; // 3
-    UIAlertAction *a5 = [UIAlertAction actionWithTitle:@"New List..."
+    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"New List..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"You pressed button two");
+                                                     NSLog(@"Add the NewList");
+                                                 }]; // 3
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                 style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     NSLog(@"Cancel");
                                                  }]; // 3
     
     
-    [_alertController addAction:a1];
-    [_alertController addAction:a2];
-    [_alertController addAction:a3];
-    [_alertController addAction:a4];
-    [_alertController addAction:a5];
+    [_alertController addAction:addToFavorites];
+    [_alertController addAction:addToList];
+    [_alertController addAction:addToNewList];
+    [_alertController addAction:addToEvent];
+    [_alertController addAction:addToNewEvent];
+    [_alertController addAction:cancel];
     
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -119,14 +153,13 @@
                         ListObject *lo = (ListObject *)obj;
                         OORemoveButton *b = [[OORemoveButton alloc] init];
                         b.name.text = lo.name;
-                        b.identifier = [lo.listID integerValue];
+                        b.theId = (NSUInteger)[lo.listID integerValue];
                         [b addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
-                        [b setNeedsLayout];
                         [_removeButtons addObject:b];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [weakSelf displayRemoveButtons];
-                            });
                     }];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf displayRemoveButtons];
+                    });
                 }
                 failure:^(NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
@@ -145,20 +178,28 @@
 }
 
 - (void)displayRemoveButtons {
-    __block CGPoint origin = CGPointMake(10, 10);
-    NSArray *removeButtons = [_removeButtons allObjects];
-    [removeButtons enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    __block CGPoint origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
+    NSArray *removeButtonsArray = [_removeButtons allObjects];
+    [removeButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
+        [_removeButtonsContainer addSubview:b];
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
         frame.origin.x = origin.x;
         frame.origin.y = origin.y;
+        
+        if (CGRectGetMaxX(frame) > (CGRectGetMaxX(self.view.frame)-kGeomSpaceEdge)) {
+            frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceEdge;
+            frame.origin.x = kGeomSpaceEdge;
+        }
+
         b.frame = frame;
         
-        origin.x = CGRectGetMaxX(frame) + kGeomSpaceInter;
-
-        [self.view addSubview:b];
+        origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
+        _removeButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
+    _removeButtonsContainerHeight += kGeomSpaceEdge;
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)removeFromList:(id)sender {
@@ -166,7 +207,7 @@
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantVC *weakSelf = self;
-    [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.identifier success:^(NSArray *lists) {
+    [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.theId success:^(NSArray *lists) {
         ON_MAIN_THREAD(^{
             [b removeFromSuperview];
             [_removeButtons removeObject:b];

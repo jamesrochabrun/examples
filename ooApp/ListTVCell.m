@@ -7,6 +7,7 @@
 //
 
 #import "ListTVCell.h"
+#import "MediaItemObject.h"
 
 @interface ListTVCell()
 
@@ -41,9 +42,16 @@
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _addButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_addButton]-spaceInter-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_addButton]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=100)-[_addButton]-spaceInter-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_addButton
+                                                     attribute:NSLayoutAttributeCenterY
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:_addButton.superview
+                                                     attribute:NSLayoutAttributeCenterY
+                                                    multiplier:1.f constant:0.f]];
 }
 
 - (void)toggleListInclusion {
@@ -108,6 +116,19 @@
     self.thumbnail.image = nil;
     self.header.text = _list.name;
     [self getListsForRestaurant];
+    
+    OOAPI *api = [[OOAPI alloc] init];
+
+    if (_list.mediaItem) {
+        self.requestOperation = [api getRestaurantImageWithImageRef:_list.mediaItem.reference maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];
+            });
+        } failure:^(NSError *error) {
+            ;
+        }];
+    }
+
 }
 
 /*

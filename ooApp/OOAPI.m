@@ -13,7 +13,8 @@
 #import "EventObject.h"
 #import "GroupObject.h"
 
-//NSString *const kKeyName = @"name";
+NSString *const kKeySearchRadius = @"radius";
+NSString *const kKeySearchSort = @"sort";
 
 @interface OOAPI()
 - (NSString *)ooURL;
@@ -145,21 +146,28 @@
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
                                            andOpenOnly:(BOOL)openOnly
+                                           andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure
 {
-    if (!keyword ) {
+    if (!keyword) {
         failure (nil);
         return nil;
     }
     
+    if (!sort) {
+        sort = kSearchSortTypeBestMatch;
+    }
+    
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,
+                                 kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
+                                 kKeySearchRadius:[NSNumber numberWithUnsignedInteger:10000],
                                  kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
                                  kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
                                  kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly]};
     
-//    NSLog (@" URL=  %@",urlString);
+//    NSLog (@" URL= %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -201,8 +209,8 @@
                                  @"radius": @(radius)
                                  };
     
-//    NSLog (@" URL=  %@",urlString);
-    NSLog  (@" radius=   %f", radius);
+//    NSLog (@" URL = %@",urlString);
+    NSLog  (@" radius = %f", radius);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -237,7 +245,7 @@
                                  @"keyword":keyword,
                                  };
     
-    //    NSLog (@" URL=  %@",urlString);
+    //    NSLog (@" URL = %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -309,8 +317,8 @@
                                   failure:(void (^)(NSError *))failure
 {
     if (!userID) {
-        UserObject* userInfo= [Settings sharedInstance].userObject;
-        userID= [userInfo.userID unsignedIntegerValue];
+        UserObject *userInfo= [Settings sharedInstance].userObject;
+        userID = [userInfo.userID unsignedIntegerValue];
     }
     
     NSString *restaurantResource = @"";
@@ -341,10 +349,6 @@
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *))failure
 {
-
-//    UserObject* userInfo= [Settings sharedInstance].userObject;
-//    NSUInteger userID = [userInfo.userID unsignedIntegerValue];
-
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu/restaurants/%tu",
                            kOOURL, listID, restaurantID];
     
@@ -366,7 +370,7 @@
                                   success:(void (^)(NSArray *users))success
                                   failure:(void (^)(NSError *))failure;
 {
-    if  (!string || !string.length) {
+    if (!string || !string.length) {
         failure (nil);
         return nil;
     }
@@ -385,19 +389,20 @@
 + (AFHTTPRequestOperation *)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                    failure:(void (^)(NSError *))failure;
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber* userid= userInfo.userID;
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
     
     NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%@",
-                   kOOURL, userid];
+                   kOOURL, userID];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
     
-    return [[OONetworkManager sharedRequestManager] PUT: requestString
-                                      parameters: @{
+    return [[OONetworkManager sharedRequestManager] PUT:requestString
+                                             parameters: @{
                                                      @"username": @""
-                                                    }
-                                                success: success  failure: failure];
+                                                     }
+                                                success:success
+                                                failure:failure];
 }
 
 //------------------------------------------------------------------------------
@@ -408,7 +413,7 @@
                                   success:(void (^)(NSArray *names))success
                                   failure:(void (^)(NSError *))failure;
 {
-    if  (!emailAddressString || !emailAddressString.length) {
+    if (!emailAddressString || !emailAddressString.length) {
         failure (nil);
         return nil;
     }
@@ -479,22 +484,22 @@
                             success:(void (^)(id response))success
                             failure:(void (^)(NSError *))failure;
 {
-    if  (!listName) {
+    if (!listName) {
         failure (nil);
         return nil;
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (! userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
         failure (nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists", kOOURL, userid];
-    NSDictionary*parameters=  @{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists", kOOURL, userID];
+    NSDictionary*parameters = @{
                                  @"name": listName,
-                                  @"type":  @2,
-                                  @"user": userid
+                                  @"type": @2,
+                                  @"user": userID
                                 };
     AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
                                   success:^(id responseObject) {
@@ -515,7 +520,7 @@
                             failure:(void (^)(NSError *))failure;
 {
     NSMutableArray *restaurantIDs;
-    if  (!restaurants) {
+    if (!restaurants) {
         failure (nil);
         return nil;
     } else {
@@ -525,17 +530,17 @@
             [restaurantIDs addObject:ro.restaurantID];
         }];
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (! userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
         failure (nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/favorites/restaurants", kOOURL, userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/favorites/restaurants", kOOURL, userID];
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
-    NSDictionary *parameters=  @{
+    NSDictionary *parameters = @{
                                 @"restaurant_ids": IDs
                                 };
     AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
@@ -556,13 +561,13 @@
                                               success:(void (^)(id response))success
                                               failure:(void (^)(NSError *))failure;
 {
-    if  (!listId) {
+    if (!listId) {
         failure(nil);
         return nil;
     }
     
     NSMutableArray *restaurantIDs;
-    if  (!restaurants) {
+    if (!restaurants) {
         failure (nil);
         return nil;
     } else {
@@ -572,9 +577,9 @@
             [restaurantIDs addObject:ro.restaurantID];
         }];
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (! userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
         failure (nil);
         return nil;
     }
@@ -582,7 +587,7 @@
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu/restaurants", kOOURL, listId];
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
-    NSDictionary *parameters=  @{
+    NSDictionary *parameters = @{
                                  @"restaurant_ids": IDs
                                  };
     AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
@@ -634,36 +639,36 @@
 // Name:    setParticipationInEvent
 // Purpose:
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject* ) eo
++ (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject *)eo
                                                  to: (BOOL) participating
                                                success:(void (^)(NSInteger eventID))success
                                                failure:(void (^)(NSError *))failure;
 {
-    if  (!eo) {
+    if (!eo) {
         failure (nil);
         return nil;
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (! userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
         failure (nil);
         return nil;
     }
     NSInteger eventID= eo.eventID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@", kOOURL, (unsigned long) eventID,userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@", kOOURL, (unsigned long) eventID,userID];
     
     AFHTTPRequestOperation *op;
-    if  (participating ) {
+    if (participating) {
         op = [rm PATCH: urlString parameters:nil
                                        success:^(id responseObject) {
                                            NSInteger identifier= 0;
-                                           if  ([responseObject isKindOfClass:[NSDictionary class]] ) {
+                                           if ([responseObject isKindOfClass:[NSDictionary class]]) {
                                                NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
                                                identifier= parseIntegerOrNullFromServer(eventID);
                                            }
-                                           success(identifier );
+                                           success(identifier);
                                        } failure:^(NSError *error) {
                                            failure(error);
                                        }];
@@ -671,11 +676,11 @@
         op = [rm DELETE: urlString parameters:nil
                                         success:^(id responseObject) {
                                             NSInteger identifier= 0;
-                                            if  ([responseObject isKindOfClass:[NSDictionary class]] ) {
+                                            if ([responseObject isKindOfClass:[NSDictionary class]]) {
                                                 NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
                                                 identifier= parseIntegerOrNullFromServer(eventID);
                                             }
-                                            success(identifier );
+                                            success(identifier);
                                         } failure:^(NSError *error) {
                                             failure(error);
                                         }];
@@ -693,27 +698,25 @@
                                     success:(void (^)(void))success
                                     failure:(void (^)(NSError *))failure;
 {
-    if  (!image) {
+    if (!image) {
         failure (nil);
         return ;
     }
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", kOOURL, userid];
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", kOOURL, userID];
     
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString: urlString]];
-    if  (!request) {
+    if (!request) {
         failure (nil);
         return ;
     }
     [request setHTTPMethod:@"POST"];
 
-    NSString*const boundary=  @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
-    
+    NSString*const boundary = @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
     NSString*const filename=  @"file.jpg";
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
-//    config.b
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
 
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
@@ -741,13 +744,13 @@
                                                          fromData: imageData
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                     NSString *stringFromData= [NSString stringWithCharacters:[data  bytes] length:[ data length]];
-                                                    NSLog  (@"stringFromData=  %@",stringFromData);
+                                                    NSLog  (@"stringFromData = %@",stringFromData);
                                                     
                                                     if (error) {
                                                         if (failure) failure(error);
                                                     } else {
                                                         NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
-                                                        if  (httpResp.statusCode == 200 ) {
+                                                        if (httpResp.statusCode == 200) {
                                                             if (success) success();
                                                         }else {
                                                             NSLog (@"IMAGE UPLOAD FAILURE:  %ld", (long)httpResp.statusCode);
@@ -806,7 +809,7 @@
 // Name:    getEventsForUser
 // Purpose: Obtain a list of user events that are either complete or incomplete.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
++ (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger) identifier
                                      success:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *))failure;
 {
@@ -872,29 +875,29 @@
 // Name:    addRestaurant toEvent
 // Purpose: Add a restaurant to an event.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)addRestaurant: (RestaurantObject*)restaurant
++ (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
                                  toEvent:(EventObject *)event
-                                           success:(void (^)(id response))success
-                                           failure:(void (^)(NSError *))failure;
+                                  success:(void (^)(id response))success
+                                  failure:(void (^)(NSError *))failure;
 {
-    if  (!event  || !restaurant) {
+    if (!event  || !restaurant) {
         failure (nil);
         return nil;
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (! userid) {
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSNumber *userid = userInfo.userID;
+    if (!userid) {
         failure (nil);
         return nil;
     }
-    NSString* identifier=  restaurant.restaurantID;
-    NSString* googleIdentifier= restaurant.googleID;
-    NSMutableDictionary* parameters= @{}.mutableCopy;
-    if  (identifier.length ) {
-        [parameters  setObject: identifier forKey:  @"restaurant_id"];
+    NSString *identifier = restaurant.restaurantID;
+    NSString *googleIdentifier = restaurant.googleID;
+    NSMutableDictionary* parameters = @{}.mutableCopy;
+    if (identifier.length) {
+        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantID];
     }
     else if (googleIdentifier.length) {
-        [parameters  setObject: googleIdentifier forKey:  @"google_id"];
+        [parameters setObject:googleIdentifier forKey:kKeyRestaurantGoogleID];
     }
     else {
         NSLog (@"MISSING VENUE IDENTIFIER");
@@ -903,12 +906,12 @@
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", kOOURL,
-                           ( unsigned long)event.eventID];
+                           (unsigned long)event.eventID];
     
     AFHTTPRequestOperation *op = [rm POST: urlString parameters: parameters
                                   success:^(id responseObject) {
                                       
-                                      success(responseObject );
+                                      success(responseObject);
                                   } failure:^(NSError *error) {
                                       failure(error);
                                   }];
@@ -921,17 +924,17 @@
 // Purpose: Create a new event and receive in return the new event's ID.
 // Note:    The event does not need to be completely described in the EventObject.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)addEvent:(EventObject* ) eo
++ (AFHTTPRequestOperation *)addEvent:(EventObject *)eo
                                success:(void (^)(NSInteger eventID))success
                                failure:(void (^)(NSError *))failure;
 {
-    if  (!eo) {
+    if (!eo) {
         failure (nil);
         return nil;
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (! userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userid= userInfo.userID;
+    if (!userid) {
         failure (nil);
         return nil;
     }
@@ -943,7 +946,7 @@
     AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
                                   success:^(id responseObject) {
                                       NSInteger identifier= 0;
-                                      if  ([responseObject isKindOfClass:[NSDictionary class]] ) {
+                                      if ([responseObject isKindOfClass:[NSDictionary class]]) {
                                           NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"]; 
                                           identifier= parseIntegerOrNullFromServer(eventID);
                                       }
@@ -952,7 +955,7 @@
 //                                          failure(nil);
 //                                          return;
                                       }
-                                      success(identifier );
+                                      success(identifier);
                                   } failure:^(NSError *error) {
                                       failure(error);
                                   }];
@@ -965,17 +968,17 @@
 // Purpose: Create a new event and receive in return the new event's ID.
 // Note:    The event does not need to be completely described in the EventObject.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)reviseEvent:(EventObject* ) eo
++ (AFHTTPRequestOperation *)reviseEvent:(EventObject *)eo
                              success:(void (^)(id))success
                              failure:(void (^)(NSError *))failure;
 {
-    if  (!eo) {
+    if (!eo) {
         failure (nil);
         return nil;
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (! userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userid= userInfo.userID;
+    if (! userid) {
         failure (nil);
         return nil;
     }
@@ -997,9 +1000,9 @@
 + (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *users))success
                                             failure:(void (^)(NSError *))failure;
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (!userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userid= userInfo.userID;
+    if (!userid) {
         failure (nil);
         return nil;
     }
@@ -1024,9 +1027,9 @@
 + (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
                                             failure:(void (^)(NSError *))failure;
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (!userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userid= userInfo.userID;
+    if (!userid) {
         failure (nil);
         return nil;
     }
@@ -1051,9 +1054,9 @@
 + (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
                                             failure:(void (^)(NSError *))failure;
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    if  (!userid) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userid= userInfo.userID;
+    if (!userid) {
         failure (nil);
         return nil;
     }
@@ -1081,13 +1084,13 @@
            }];
 }
 
-+ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject* ) event
++ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *) event
                                                        success:(void (^)(bool))success
                                                        failure:(void (^)(NSError *))failure;
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber* userNumber = userInfo.userID;
-    if  (!userNumber) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID = userInfo.userID;
+    if (!userID) {
         failure (nil);
         return nil;
     }
@@ -1095,17 +1098,18 @@
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@",
                            kOOURL,
                            event.eventID,
-                           userNumber];
+                           userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    AFHTTPRequestOperation* operation=  [rm GET: urlString parameters:nil
+    AFHTTPRequestOperation *operation = [rm GET: urlString parameters:nil
            success:^(id responseObject) {
                if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                   UserObject* user= [UserObject userFromDict: responseObject];
-                   if  (user && (user.participantType == PARTICIPANT_TYPE_ADMIN ||
-                                 user.participantType == PARTICIPANT_TYPE_CREATOR)
-                                 ) {
+                   UserObject *user= [UserObject userFromDict: responseObject];
+                   if (user &&
+                        (user.participantType == PARTICIPANT_TYPE_ADMIN ||
+                         user.participantType == PARTICIPANT_TYPE_CREATOR)
+                       ) {
                        success (YES);
                        return;
                    }
@@ -1113,8 +1117,8 @@
                success(NO);
            }
            failure:^(NSError *error) {
-               NSInteger statusCode=  operation.response.statusCode;
-               if  (statusCode== 404 ) {
+               NSInteger statusCode = operation.response.statusCode;
+               if (statusCode == 404) {
                    success (NO);
                } else {
                    NSLog(@"Error: %@", error);

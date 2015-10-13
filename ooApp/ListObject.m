@@ -12,6 +12,7 @@
 NSString *const kKeyListID = @"list_id";
 NSString *const kKeyListName = @"name";
 NSString *const kKeyListType = @"type";
+NSString *const kKeyListMediaItem = @"media_item";
 
 @implementation ListObject
 
@@ -28,6 +29,10 @@ NSString *const kKeyListType = @"type";
     list.listID = [dict objectForKey:kKeyListID];
     list.name = [dict objectForKey:kKeyListName];
     list.type = [[dict objectForKey:kKeyListType] integerValue];
+    NSDictionary *mediaItem = [[dict objectForKey:kKeyListMediaItem] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyListMediaItem];
+    if (mediaItem && ![mediaItem isKindOfClass:[NSNull class]]) {
+        list.mediaItem = [MediaItemObject mediaItemFromDict:mediaItem];
+    }
     return list;
 }
 

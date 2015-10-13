@@ -12,6 +12,7 @@
 #import "UserObject.h"
 #import "RestaurantObject.h"
 #import "ListObject.h"
+#import "GroupObject.h"
 #import "EventWhoVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"

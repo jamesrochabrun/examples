@@ -11,7 +11,7 @@
 @interface OORemoveButton : UIControl
 
 @property (nonatomic, strong) UILabel *name;
-@property (nonatomic) NSUInteger identifier;
+@property (nonatomic) NSUInteger theId;
 
 - (CGSize)getSuggestedSize;
 @end
