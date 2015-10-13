@@ -15,6 +15,7 @@
 #import "EventWhoVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
+#import "GroupObject.h"
 
 @interface  EventWhoTableCell ()
 @property (nonatomic,strong) UIButton *radioButton;

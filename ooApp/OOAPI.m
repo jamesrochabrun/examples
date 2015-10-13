@@ -687,7 +687,7 @@
 
 //------------------------------------------------------------------------------
 // Name:    uploadUserPhoto
-// Purpose:
+// Purpose: This is the native approach.
 //------------------------------------------------------------------------------
 + (void)uploadUserPhoto:(UIImage *)image
                                     success:(void (^)(void))success
@@ -708,20 +708,35 @@
         return ;
     }
     [request setHTTPMethod:@"POST"];
-//    [request setValue:@"image/jpeg" forHTTPHeaderField: @"Content-type"];
+
     NSString*const boundary=  @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
     
-    [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary] forHTTPHeaderField:@"Content-Type"];
-    
-    [request addValue:@"form-data; name=\"upload\"; filename=\"file.jpg\""
-   forHTTPHeaderField: @"Content-Disposition"];
-    
+    NSString*const filename=  @"file.jpg";
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
 //    config.b
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
 
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-
+    
+    [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary] forHTTPHeaderField:@"Content-Type"];
+    NSString *beginLine             = [NSString stringWithFormat:@"\r\n--%@\r\n", boundary];
+    
+    NSMutableData *body             = [NSMutableData data];
+    [body appendData:[beginLine dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"upload\"; filename=\"%@\"\r\n",filename] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n\r\n",(int)[imageData length]] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:imageData];
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary]
+                      dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:body];
+    
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.length ) {
+        [request addValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+    }else {
+        NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
+    }
+    
     NSURLSessionUploadTask *task = [session uploadTaskWithRequest: request
                                                          fromData: imageData
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
@@ -737,11 +752,54 @@
                                                         }else {
                                                             NSLog (@"IMAGE UPLOAD FAILURE:  %ld", (long)httpResp.statusCode);
                                                             if (failure) failure(error);
-                                                        }
+                                                        }// NOTE:  typically error 400
                                                         
                                                     }
                                                 }];
     [task resume];
+}
+//------------------------------------------------------------------------------
+// Name:    uploadUserPhoto
+// Purpose: This is the AFNetworking approach.
+//------------------------------------------------------------------------------
++ (void)uploadUserPhoto0:(UIImage *)image
+                success:(void (^)(void))success
+                failure:(void (^)(NSError *))failure;
+{
+    if  (!image) {
+        failure (nil);
+        return ;
+    }
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", kOOURL, userid];
+    
+    OONetworkManager *nm = [OONetworkManager sharedRequestManager];
+    nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
+    
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.length ) {
+        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+    }else {
+        NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
+    }
+    
+    NSDictionary*params=  @{
+                            };
+    [nm.requestManager POST: urlString
+                 parameters:params
+  constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+      if(image){
+          [formData appendPartWithFileData:UIImageJPEGRepresentation( image, 0.5) name:@"xyz"
+                                  fileName:@"xyz.jpg" mimeType:@"image/jpeg"];
+      }
+  } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+      NSLog  (@" success");
+  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+      NSLog  (@" failure %@",error);// NOTE:  typically error 500
+  }];
 }
 
 //------------------------------------------------------------------------------
