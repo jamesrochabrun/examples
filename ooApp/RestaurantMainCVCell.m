@@ -6,11 +6,12 @@
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
+#import "OOAPI.h"
 #import "RestaurantMainCVCell.h"
-
 
 @interface RestaurantMainCVCell()
 
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UILabel *phoneNumber;
 @property (nonatomic, strong) UILabel *website;
@@ -42,7 +43,6 @@
         [_address withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorBlack backgroundColor:kColorWhite numberOfLines:3 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
         _address.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_address];
-
     }
     return self;
 }
@@ -50,14 +50,14 @@
 - (void)updateConstraints {
     [super updateConstraints];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _iv, _address, _website, _phoneNumber);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_iv]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(spaceEdge)-[_phoneNumber]-(spaceEdge)-[_website]-(spaceEdge)-[_address]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_iv(imageWidth)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(spaceEdge)-[_phoneNumber]-(spaceEdge)-[_website]-(spaceEdge)-[_address]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_iv]-[_phoneNumber]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_iv]-[_website]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -85,6 +85,26 @@
     [self updateConstraintsIfNeeded];
 }
 
+-(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
+    if (mediaItemObject == _mediaItemObject) return;
+    _mediaItemObject = mediaItemObject;
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    NSString *imageRef = mediaItemObject.reference;
+    
+    if (imageRef) {
+        _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_iv setImageWithURL:[NSURL URLWithString:link]];
+                [self setNeedsUpdateConstraints];
+            });
+        } failure:^(NSError *error) {
+            ;
+        }];
+    } else {
+        
+    }
+}
 
 
 @end

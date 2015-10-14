@@ -295,6 +295,9 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
             cvc.backgroundColor = UIColorRGBA(kColorWhite);
             cvc.restaurant = _restaurant;
+            if ([_mediaItems count]) {
+                cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
+            }
             return cvc;
             break;
         }
@@ -331,7 +334,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
             return _removeButtonsContainerHeight;
             break;
         case kSectionTypeMain:
-            return 200;
+            return 140;
             break;
         case kSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];

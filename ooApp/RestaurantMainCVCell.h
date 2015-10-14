@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "RestaurantObject.h"
+#import "MediaItemObject.h"
 
 @interface RestaurantMainCVCell : UICollectionViewCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
+@property (nonatomic, strong) MediaItemObject *mediaItemObject;
 
 @end
