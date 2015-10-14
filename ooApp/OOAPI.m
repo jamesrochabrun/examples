@@ -189,7 +189,7 @@ NSString *const kKeySearchSort = @"sort";
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
-                                            andFilter: (NSString*)filterName
+                                            andFilter:(NSString*)filterName
                                           andLocation:(CLLocationCoordinate2D)location
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure

@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
+#import "SubBaseVC.h"
 
-@interface EventCoordinatorVC : BaseVC <UIScrollViewDelegate>
+@interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate>
 
 @end
 

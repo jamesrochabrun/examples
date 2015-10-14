@@ -64,7 +64,6 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantListsCellIdentifier];
     [_collectionView registerClass:[PhotoCVCell class] forCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier];
-
     
     [self.view addSubview:_collectionView];
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -210,7 +209,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 }
 
 - (void)displayRemoveButtons {
-    __block CGPoint origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
+    __block CGPoint origin = CGPointMake(kGeomSpaceInter, kGeomSpaceInter);
     NSArray *removeButtonsArray = [_removeButtons allObjects];
     [removeButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
@@ -220,9 +219,9 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
         frame.origin.x = origin.x;
         frame.origin.y = origin.y;
         
-        if (CGRectGetMaxX(frame) > (CGRectGetMaxX(self.view.frame)-kGeomSpaceEdge)) {
-            frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceEdge;
-            frame.origin.x = kGeomSpaceEdge;
+        if (CGRectGetMaxX(frame) > (CGRectGetMaxX(self.view.frame)-kGeomSpaceInter)) {
+            frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceInter;
+            frame.origin.x = kGeomSpaceInter;
         }
 
         b.frame = frame;
@@ -230,7 +229,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
         origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
         _removeButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
-    _removeButtonsContainerHeight += (_removeButtonsContainerHeight) ? kGeomSpaceEdge : 0;
+    _removeButtonsContainerHeight += (_removeButtonsContainerHeight) ? kGeomSpaceInter : 0;
     [_collectionView reloadData];
 }
 

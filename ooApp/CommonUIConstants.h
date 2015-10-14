@@ -72,7 +72,7 @@ static CGFloat kGeomEmptyTextFieldWidth = 150;
 static CGFloat kGeomLogoWidth= 200;
 static CGFloat kGeomLogoHeight= 100;
 static CGFloat kGeomLoginVerticalDisplacement = 75;
-static CGFloat kGeomWidthMenuButton = 80;// Must accommodate any wide rights nav button.
+static CGFloat kGeomWidthMenuButton = 44;// The button should stay at 44. The titleView should shrink if required
 static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 static CGFloat kGeomHeightFilterSelectedLine = 3.0;
 
