@@ -125,10 +125,10 @@ NSString *const kKeySearchSort = @"sort";
     [parameters setObject:imageRef forKey:@"reference"];
     
     if (maxWidth) {
-        maxWidth = (isRetinaDisplay()) ? 2*maxWidth: maxWidth;
+        maxWidth = (isRetinaDisplay()) ? 2*maxWidth:maxWidth;
         [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxwidth"];
     } else if (maxHeight) {
-        maxHeight = (isRetinaDisplay()) ? 2*maxHeight: maxHeight;
+        maxHeight = (isRetinaDisplay()) ? 2*maxHeight:maxHeight;
         [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxHeight"];
     }
     
@@ -171,7 +171,7 @@ NSString *const kKeySearchSort = @"sort";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET: urlString parameters:parameters success:^(id responseObject) {
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
@@ -203,10 +203,10 @@ NSString *const kKeySearchSort = @"sort";
     
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,
-                                 @"latitude": @(location.latitude),
+                                 @"latitude":@(location.latitude),
                                  @"longitude":@(location.longitude),
-                                 @"filter": filterName ?:  @"",
-                                 @"radius": @(radius)
+                                 @"filter":filterName ?:@"",
+                                 @"radius":@(radius)
                                  };
     
 //    NSLog (@" URL = %@",urlString);
@@ -214,7 +214,7 @@ NSString *const kKeySearchSort = @"sort";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET: urlString parameters:parameters success:^(id responseObject) {
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
@@ -249,7 +249,7 @@ NSString *const kKeySearchSort = @"sort";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET: urlString parameters:parameters success:^(id responseObject) {
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         NSMutableArray *users = [NSMutableArray array];
         for (id dict in responseObject) {
             UserObject *u=[UserObject userFromDict:dict];
@@ -379,7 +379,7 @@ NSString *const kKeySearchSort = @"sort";
                            kOOURL, string];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:success failure: failure];
+    return [rm GET:urlString parameters:nil success:success failure:failure];
 }
 
 //------------------------------------------------------------------------------
@@ -392,14 +392,13 @@ NSString *const kKeySearchSort = @"sort";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSNumber *userID= userInfo.userID;
     
-    NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%@",
-                   kOOURL, userID];
+    NSString *requestString=[NSString stringWithFormat:@"https://%@/users/%@", kOOURL, userID];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
     
     return [[OONetworkManager sharedRequestManager] PUT:requestString
-                                             parameters: @{
-                                                     @"username": @""
+                                             parameters:@{
+                                                     @"username":@""
                                                      }
                                                 success:success
                                                 failure:failure];
@@ -422,7 +421,7 @@ NSString *const kKeySearchSort = @"sort";
                            kOOURL, emailAddressString];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:success failure: failure];
+    return [rm GET:urlString parameters:nil success:success failure:failure];
 }
 
 //------------------------------------------------------------------------------
@@ -451,7 +450,7 @@ NSString *const kKeySearchSort = @"sort";
     }];
 
     
-    //return [rm GET:urlString parameters:nil success:success failure: failure];
+    //return [rm GET:urlString parameters:nil success:success failure:failure];
 }
 
 //------------------------------------------------------------------------------
@@ -497,11 +496,11 @@ NSString *const kKeySearchSort = @"sort";
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists", kOOURL, userID];
     NSDictionary*parameters = @{
-                                 @"name": listName,
-                                  @"type": @2,
-                                  @"user": userID
+                                 @"name":listName,
+                                  @"type":@2,
+                                  @"user":userID
                                 };
-    AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
                                   } failure:^(NSError *error) {
@@ -541,9 +540,9 @@ NSString *const kKeySearchSort = @"sort";
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
-                                @"restaurant_ids": IDs
+                                @"restaurant_ids":IDs
                                 };
-    AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
                                   } failure:^(NSError *error) {
@@ -588,9 +587,9 @@ NSString *const kKeySearchSort = @"sort";
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
-                                 @"restaurant_ids": IDs
+                                 @"restaurant_ids":IDs
                                  };
-    AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
                                   } failure:^(NSError *error) {
@@ -618,13 +617,13 @@ NSString *const kKeySearchSort = @"sort";
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    [parameters setObject: identifier forKey:@"identifier"];
+    [parameters setObject:identifier forKey:@"identifier"];
     
     if (maxWidth) {
-        maxWidth = (isRetinaDisplay()) ? 2*maxWidth: maxWidth;
+        maxWidth = (isRetinaDisplay()) ? 2*maxWidth:maxWidth;
         [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxwidth"];
     } else if (maxHeight) {
-        maxHeight = (isRetinaDisplay()) ? 2*maxHeight: maxHeight;
+        maxHeight = (isRetinaDisplay()) ? 2*maxHeight:maxHeight;
         [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxHeight"];
     }
     
@@ -640,7 +639,7 @@ NSString *const kKeySearchSort = @"sort";
 // Purpose:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject *)eo
-                                                 to: (BOOL) participating
+                                                 to:(BOOL) participating
                                                success:(void (^)(NSInteger eventID))success
                                                failure:(void (^)(NSError *))failure;
 {
@@ -661,7 +660,7 @@ NSString *const kKeySearchSort = @"sort";
     
     AFHTTPRequestOperation *op;
     if (participating) {
-        op = [rm PATCH: urlString parameters:nil
+        op = [rm PATCH:urlString parameters:nil
                                        success:^(id responseObject) {
                                            NSInteger identifier= 0;
                                            if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -673,7 +672,7 @@ NSString *const kKeySearchSort = @"sort";
                                            failure(error);
                                        }];
     } else {
-        op = [rm DELETE: urlString parameters:nil
+        op = [rm DELETE:urlString parameters:nil
                                         success:^(id responseObject) {
                                             NSInteger identifier= 0;
                                             if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -695,11 +694,11 @@ NSString *const kKeySearchSort = @"sort";
 // Purpose:
 //------------------------------------------------------------------------------
 + (void)uploadUserPhoto:(UIImage *)image
-                                    success:(void (^)(void))success
-                                    failure:(void (^)(NSError *))failure;
+                success:(void (^)(void))success
+                failure:(void (^)(NSError *))failure;
 {
     if (!image) {
-        failure (nil);
+        failure(nil);
         return ;
     }
     
@@ -707,7 +706,7 @@ NSString *const kKeySearchSort = @"sort";
     NSNumber *userID= userInfo.userID;
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", kOOURL, userID];
     
-    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString: urlString]];
+    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString:urlString]];
     if (!request) {
         failure (nil);
         return ;
@@ -719,7 +718,7 @@ NSString *const kKeySearchSort = @"sort";
     [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary] forHTTPHeaderField:@"Content-Type"];
     
     [request addValue:@"form-data; name=\"upload\"; filename=\"file.jpg\""
-   forHTTPHeaderField: @"Content-Disposition"];
+   forHTTPHeaderField:@"Content-Disposition"];
     
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
 //    config.b
@@ -727,8 +726,8 @@ NSString *const kKeySearchSort = @"sort";
 
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
 
-    NSURLSessionUploadTask *task = [session uploadTaskWithRequest: request
-                                                         fromData: imageData
+    NSURLSessionUploadTask *task = [session uploadTaskWithRequest:request
+                                                         fromData:imageData
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                     NSString *stringFromData= [NSString stringWithCharacters:[data  bytes] length:[ data length]];
                                                     NSLog  (@"stringFromData = %@",stringFromData);
@@ -739,8 +738,8 @@ NSString *const kKeySearchSort = @"sort";
                                                         NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
                                                         if (httpResp.statusCode == 200) {
                                                             if (success) success();
-                                                        }else {
-                                                            NSLog (@"IMAGE UPLOAD FAILURE:  %ld", (long)httpResp.statusCode);
+                                                        } else {
+                                                            NSLog (@"IMAGE UPLOAD FAILURE: %ld", (long)httpResp.statusCode);
                                                             if (failure) failure(error);
                                                         }
                                                         
@@ -761,7 +760,7 @@ NSString *const kKeySearchSort = @"sort";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters: nil
+    return [rm GET:urlString parameters:nil
            success:^(id responseObject) {
                NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
                if ( [responseObject isKindOfClass:[NSArray class]]) {
@@ -852,9 +851,8 @@ NSString *const kKeySearchSort = @"sort";
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", kOOURL,
                            (unsigned long)event.eventID];
     
-    AFHTTPRequestOperation *op = [rm POST: urlString parameters: parameters
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
-                                      
                                       success(responseObject);
                                   } failure:^(NSError *error) {
                                       failure(error);
@@ -887,7 +885,7 @@ NSString *const kKeySearchSort = @"sort";
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
     
-    AFHTTPRequestOperation *op = [rm POST: urlString parameters:parameters
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       NSInteger identifier= 0;
                                       if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -931,7 +929,7 @@ NSString *const kKeySearchSort = @"sort";
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
 
-    AFHTTPRequestOperation *op = [rm PUT: urlString parameters:parameters
+    AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
                                   } failure:^(NSError *error) {
@@ -1015,7 +1013,7 @@ NSString *const kKeySearchSort = @"sort";
                for (id object in responseObject) {
 
                    if ( [ object isKindOfClass:[NSDictionary class]]) {
-                       [groups  addObject:  [GroupObject groupFromDictionary: object]];
+                       [groups  addObject:[GroupObject groupFromDictionary:object]];
                    }
                }
                
@@ -1046,10 +1044,10 @@ NSString *const kKeySearchSort = @"sort";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    AFHTTPRequestOperation *operation = [rm GET: urlString parameters:nil
+    AFHTTPRequestOperation *operation = [rm GET:urlString parameters:nil
            success:^(id responseObject) {
                if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                   UserObject *user= [UserObject userFromDict: responseObject];
+                   UserObject *user= [UserObject userFromDict:responseObject];
                    if (user &&
                         (user.participantType == PARTICIPANT_TYPE_ADMIN ||
                          user.participantType == PARTICIPANT_TYPE_CREATOR)
