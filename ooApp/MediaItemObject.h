@@ -13,6 +13,8 @@
 @property (nonatomic, strong) NSString *reference;
 @property (nonatomic, strong) NSString *type;
 @property (nonatomic, strong) NSString *mediaItemId;
+@property (nonatomic) CGFloat width;
+@property (nonatomic) CGFloat height;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
 

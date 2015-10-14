@@ -25,7 +25,7 @@ extern NSString *const kKeyRestaurantPhone;
 extern NSString *const kKeyRestaurantWebsite;
 
 typedef enum {
-    kRestaurantSourceTypeGoogle = 1
+    kRestaurantSourceTypeGoogle = 2
 } RestaurantSourceType;
 
 @interface RestaurantObject : NSObject

@@ -73,6 +73,8 @@
 		367704631B8BF05100B594E5 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3677044F1B8BF05100B594E5 /* OFL.txt */; };
 		367704641B8BF05100B594E5 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 367704501B8BF05100B594E5 /* README.txt */; };
 		3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3679D2041BAC8887004BF4DC /* oomami-icons.ttf */; settings = {ASSET_TAGS = (); }; };
+		367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */; settings = {ASSET_TAGS = (); }; };
+		367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45391BCE3A7200E96B69 /* PhotoCVCell.m */; settings = {ASSET_TAGS = (); }; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */; };
 		36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C39BE01B84C7CD00648879 /* DebugUtilities.m */; };
@@ -225,6 +227,10 @@
 		367704501B8BF05100B594E5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Fonts/README.txt; sourceTree = "<group>"; };
 		3679D2041BAC8887004BF4DC /* oomami-icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "oomami-icons.ttf"; path = "Fonts/oomami-icons.ttf"; sourceTree = "<group>"; };
 		367B45341BC6C0B600E96B69 /* CommonUIConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonUIConstants.h; sourceTree = "<group>"; };
+		367B45351BCCA9B100E96B69 /* RestaurantVCCVL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantVCCVL.h; sourceTree = "<group>"; };
+		367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantVCCVL.m; sourceTree = "<group>"; };
+		367B45381BCE3A7200E96B69 /* PhotoCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoCVCell.h; sourceTree = "<group>"; };
+		367B45391BCE3A7200E96B69 /* PhotoCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoCVCell.m; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantVC.h; sourceTree = "<group>"; };
@@ -333,6 +339,8 @@
 				3637E93A1BB439290074A01C /* RestaurantTVCell.m */,
 				3613BE561BBE278400F1AF67 /* ListTVCell.h */,
 				3613BE571BBE278400F1AF67 /* ListTVCell.m */,
+				367B45381BCE3A7200E96B69 /* PhotoCVCell.h */,
+				367B45391BCE3A7200E96B69 /* PhotoCVCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -508,6 +516,8 @@
 				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
 				36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */,
 				36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */,
+				367B45351BCCA9B100E96B69 /* RestaurantVCCVL.h */,
+				367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				9606C5631BBF08C400CB06FE /* EventsListVC.h */,
@@ -783,6 +793,7 @@
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
 				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
 				366BBC971BA9304900292F80 /* SubBaseVC.m in Sources */,
+				367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */,
 				3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */,
 				96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
@@ -807,6 +818,7 @@
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
+				367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
 				3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
