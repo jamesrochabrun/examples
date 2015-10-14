@@ -59,11 +59,7 @@
     _pickerEventDate.hidden= YES;
     _pickerEventVotingDate.hidden= YES;
     
-    self.navigationItem.leftBarButtonItem= [[UIBarButtonItem  alloc]
-                                            initWithTitle: @"BACK"
-                                            style:UIBarButtonItemStylePlain
-                                            target: self
-                                            action:@selector(userPressedBack:)];
+    self.navigationItem.leftBarButtonItem= nil;
     
     if (APP.eventBeingEdited.date ) {
         [_buttonEventDate setTitle:[NSString stringWithFormat: @"%@", APP.eventBeingEdited.date ]
@@ -74,6 +70,14 @@
                             forState:UIControlStateNormal];
     }
 
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self extractDateTimeFromUpperPicker];
+    [self extractDateTimeFromLowerPicker];
+    
+    [super viewWillDisappear:animated];
 }
 
 - (void)viewWillLayoutSubviews
@@ -102,13 +106,6 @@
     APP.eventBeingEdited.dateWhenVotingClosed= date;
     [_buttonEventVoting setTitle:[NSString stringWithFormat: @"%@",date]
                       forState:UIControlStateNormal];
-}
-
-- (void)userPressedBack: (id) sender
-{
-    [self extractDateTimeFromUpperPicker];
-    [self extractDateTimeFromLowerPicker];
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)userPressedUpperButton: (id) sender

@@ -75,6 +75,7 @@ static CGFloat kGeomLoginVerticalDisplacement = 75;
 static CGFloat kGeomWidthMenuButton = 80;// Must accommodate any wide rights nav button.
 static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 static CGFloat kGeomHeightFilterSelectedLine = 3.0;
+static CGFloat kGeomHeightSearchBar=  55;
 
 // Images
 extern NSString *const kImageNoProfileImage;

@@ -14,7 +14,7 @@
 NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
 NSString *const kDefaultsSearchRadius = @"searchRadius";
-static const double kDefaultSearchRadius = 1000; // meters
+static const double kDefaultSearchRadius = 10000; // meters
 
 @implementation Settings
 

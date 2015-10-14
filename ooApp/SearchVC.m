@@ -20,13 +20,14 @@
 #import "RestaurantVC.h"
 #import "UserTVCell.h"
 #import "ProfileVC.h"
+#import "OOFilterView.h"
 
 typedef enum: char {
-    FILTER_NONE=  0,
-    FILTER_PLACES=  1,
-    FILTER_PEOPLE=  2,
-    FILTER_LISTS=  3,
-    FILTER_YOU=  4,
+    FILTER_NONE=  -1,
+    FILTER_PLACES=  0,
+    FILTER_PEOPLE=  1,
+    FILTER_LISTS=  2,
+    FILTER_YOU=  3,
 } FilterType;
 
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
@@ -34,11 +35,12 @@ typedef enum: char {
 
 @interface SearchVC ()
 @property (nonatomic,strong)  UISearchBar* searchBar;
-@property (nonatomic,strong)  UIButton* buttonList;
-@property (nonatomic,strong)  UIButton* buttonPeople;
+@property (nonatomic,strong) OOFilterView* filterView;
+//@property (nonatomic,strong)  UIButton* buttonList;
+//@property (nonatomic,strong)  UIButton* buttonPeople;
 @property (nonatomic,strong)  UIButton* buttonCancel;
-@property (nonatomic,strong)  UIButton* buttonPlaces;
-@property (nonatomic,strong)  UIButton* buttonYou;
+//@property (nonatomic,strong)  UIButton* buttonPlaces;
+//@property (nonatomic,strong)  UIButton* buttonYou;
 @property (nonatomic,strong)  UITableView*  tableRestaurants;
 @property (nonatomic,strong)  UITableView*  tablePeople;
 @property (nonatomic,assign) FilterType currentFilter;
@@ -73,9 +75,17 @@ typedef enum: char {
     
     _currentFilter=FILTER_NONE;
     
-    NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader:LOCAL( @"Search")
-                           subHeader: LOCAL(@"for restaurants and people")];
+    NavTitleObject *nto;
+    if  (_addingRestaurantsToEvent ) {
+        nto= [[NavTitleObject alloc]
+              initWithHeader:LOCAL( @"Search")
+              subHeader: nil];
+    } else {
+        nto= [[NavTitleObject alloc]
+              initWithHeader:LOCAL( @"Search")
+              subHeader: LOCAL(@"for restaurants and people")];
+    }
+    
     self.navTitle = nto;
 
 	_searchBar= [ UISearchBar new];
@@ -88,6 +98,13 @@ typedef enum: char {
     _searchBar.delegate= self;
     _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
+    self.filterView= [[OOFilterView alloc] init];
+    [ self.view  addSubview:_filterView];
+    [_filterView addFilter:LOCAL(@"Lists") target:self selector:@selector(doSelectList:)];
+    [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];
+    [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];
+    [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];
+    
     self.tableRestaurants= makeTable (self.view,self);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
               forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
@@ -97,12 +114,11 @@ typedef enum: char {
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
     _tablePeople.backgroundColor=  UIColorRGB(0xfff8f8f8);
 
-    _buttonList= makeAttributedButton(self.view, _arrayOfFilterNames[FILTER_LISTS], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectList:), 0);
-    _buttonPeople= makeAttributedButton(self.view, _arrayOfFilterNames[FILTER_PEOPLE], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPeople:), 0);
-    _buttonPlaces= makeAttributedButton(self.view, _arrayOfFilterNames[FILTER_PLACES], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectPlaces:), 0);
-    _buttonYou= makeAttributedButton(self.view,_arrayOfFilterNames[FILTER_YOU], kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(doSelectYou:), 0);
     [self changeFilter: FILTER_PLACES];
     
+    if ( _addingRestaurantsToEvent) {
+        self.navigationItem.leftBarButtonItem=nil;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -244,43 +260,45 @@ typedef enum: char {
         return;
     }
     
-    NSString* listString= _arrayOfFilterNames[FILTER_LISTS];
-    NSString* peopleString= _arrayOfFilterNames[FILTER_PEOPLE];
-    NSString* placesString= _arrayOfFilterNames[FILTER_PLACES];
-    NSString* youString= _arrayOfFilterNames[FILTER_YOU];
+    [_filterView selectFilter:which];
     
-    const  float fs= kGeomFontSizeHeader;
-    switch ( which) {
-        case FILTER_LISTS:
-            [_buttonList setAttributedTitle:underlinedAttributedStringOf(listString, fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
-            break;
-            
-        case FILTER_PEOPLE:
-            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:underlinedAttributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
-            break;
-            
-        case FILTER_PLACES:
-            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:underlinedAttributedStringOf(placesString, fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
-            break;
-            
-        case FILTER_YOU:
-            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
-            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-            [_buttonPlaces setAttributedTitle:attributedStringOf(placesString, fs) forState:UIControlStateNormal];
-            [_buttonYou setAttributedTitle:underlinedAttributedStringOf(youString, fs) forState:UIControlStateNormal];
-            break;
-            
-        default: return;
-    }
+//    NSString* listString= _arrayOfFilterNames[FILTER_LISTS];
+//    NSString* peopleString= _arrayOfFilterNames[FILTER_PEOPLE];
+//    NSString* placesString= _arrayOfFilterNames[FILTER_PLACES];
+//    NSString* youString= _arrayOfFilterNames[FILTER_YOU];
+    
+//    const  float fs= kGeomFontSizeHeader;
+//    switch ( which) {
+//        case FILTER_LISTS:
+//            [_buttonList setAttributedTitle:underlinedAttributedStringOf(listString, fs) forState:UIControlStateNormal];
+//            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+//            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
+//            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
+//            break;
+//            
+//        case FILTER_PEOPLE:
+//            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
+//            [_buttonPeople setAttributedTitle:underlinedAttributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+//            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
+//            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
+//            break;
+//            
+//        case FILTER_PLACES:
+//            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
+//            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+//            [_buttonPlaces setAttributedTitle:underlinedAttributedStringOf(placesString, fs) forState:UIControlStateNormal];
+//            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
+//            break;
+//            
+//        case FILTER_YOU:
+//            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
+//            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
+//            [_buttonPlaces setAttributedTitle:attributedStringOf(placesString, fs) forState:UIControlStateNormal];
+//            [_buttonYou setAttributedTitle:underlinedAttributedStringOf(youString, fs) forState:UIControlStateNormal];
+//            break;
+//            
+//        default: return;
+//    }
     
     self.currentFilter=  which;
     
@@ -412,7 +430,6 @@ typedef enum: char {
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter: FILTER_LISTS];
 }
 
 //------------------------------------------------------------------------------
@@ -427,7 +444,6 @@ typedef enum: char {
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter: FILTER_PEOPLE];
 }
 
 //------------------------------------------------------------------------------
@@ -442,7 +458,6 @@ typedef enum: char {
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter:FILTER_PLACES];
 }
 
 //------------------------------------------------------------------------------
@@ -457,7 +472,6 @@ typedef enum: char {
     if  (self.doingSearchNow ) {
         [self cancelSearch];
     }
-    [self changeFilter: FILTER_YOU];
 }
 
 //------------------------------------------------------------------------------
@@ -472,22 +486,25 @@ typedef enum: char {
     float y=  0;
 
     float x= 0;
-    _searchBar.frame=  CGRectMake(0,y,w-kGeomButtonWidth,kGeomHeightButton);
+    _searchBar.frame=  CGRectMake(0,y,w-kGeomButtonWidth,kGeomHeightSearchBar);
     _buttonCancel.frame=  CGRectMake( w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
                                      y+kGeomCancelButtonInteriorPadding,
                                      kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
                                      kGeomHeightButton-2*kGeomCancelButtonInteriorPadding);
-    y += kGeomHeightButton;
+    y += kGeomHeightSearchBar;
     
-    int buttonWidth= w/4;
-    _buttonList.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-    x+=   buttonWidth;
-    _buttonPeople.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-    x+=   buttonWidth;
-    _buttonPlaces.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-    x+=   buttonWidth;
-    _buttonYou.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-    y+=kGeomHeightButton + spacing;
+    _filterView.frame=  CGRectMake(0,y,w,kGeomHeightButton);
+    y += kGeomHeightButton;
+
+//    int buttonWidth= w/4;
+//    _buttonList.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+//    x+=   buttonWidth;
+//    _buttonPeople.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+//    x+=   buttonWidth;
+//    _buttonPlaces.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+//    x+=   buttonWidth;
+//    _buttonYou.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+//    y+=kGeomHeightButton + spacing;
     
     _tableRestaurants.frame=  CGRectMake(0,y,w, h-y);
     _tablePeople.frame=  CGRectMake(0,y,w, h-y);

@@ -9,6 +9,8 @@
 #import "UserObject.h"
 #import "OOAPI.h"
 
+const NSInteger kHashUser= 0x40000000;
+
 NSString *const kKeyID = @"user_id";
 NSString *const kKeyFirstName = @"first_name";
 NSString *const kKeyLastName = @"last_name";
@@ -38,6 +40,11 @@ NSString *const kKeyIsAttending = @"is_attending";
     if (self) {
      }
     return self;
+}
+
+- (NSUInteger) hash;
+{
+    return kHashUser + (_userID.longValue & 0xffffff);
 }
 
 //------------------------------------------------------------------------------

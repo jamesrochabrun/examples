@@ -12,8 +12,8 @@
 
 typedef enum : char {
     EVENT_TYPE_NONE= 0,
-    EVENT_TYPE_USER= 1,
-    EVENT_TYPE_SYSTEM= 2,
+    EVENT_TYPE_CURATED= 1,
+    EVENT_TYPE_USER= 2,
 } EventType;
 
 @property (nonatomic) NSInteger eventID;

@@ -22,6 +22,10 @@
 @property (nonatomic,strong) UIButton *radioButton;
 @property (nonatomic,strong)  UILabel *labelName;
 @property (nonatomic,strong)  UIImageView *imageViewThumbnail;
+@property (nonatomic,strong) UserObject* user;
+@property (nonatomic,strong) GroupObject* group;
+@property (nonatomic,strong) NSString *imageIdentifierString;
+@property (nonatomic,strong) AFHTTPRequestOperation *operation;
 @end
 
 @implementation EventWhoTableCell
@@ -48,9 +52,53 @@
 
 - (void)prepareForReuse
 {
+    [_operation cancel];
+    self.operation= nil;
+    
     _labelName.text= nil;
     _imageViewThumbnail.image=  nil;
     _radioButton.selected= NO;
+    self.group= nil;
+    self.user= nil;
+    self.imageIdentifierString= nil;
+}
+
+- (void) specifyUser:  (UserObject*)user;
+{
+    self.group= nil;
+    self.user=  user;
+    
+    if  (user.firstName && [user.firstName isKindOfClass:[NSString class]]  && user.firstName.length) {
+        _labelName.text= [NSString stringWithFormat: @"%@ %@",user.firstName, user.lastName];
+    } else {
+        _labelName.text= user.email; // NOTE: This is for the email–only case.
+    }
+    
+    if ( user.imageIdentifier) {
+        self.imageIdentifierString= user.imageIdentifier;
+        self.operation= [OOAPI getUserImageWithImageID:_imageIdentifierString
+                              maxWidth:0
+                             maxHeight:self.frame.size.height
+                               success:^(NSString *imageRefs) {
+                                   ON_MAIN_THREAD( ^{
+                                       [_imageViewThumbnail setImageWithURL:[NSURL URLWithString: imageRefs ]];
+                                   });
+                               } failure:^(NSError *e) {
+                                   NSLog(@"");
+                               }];
+    }
+}
+
+- (void) specifyGroup:  (GroupObject*)group;
+{
+    self.user= nil;
+    self.group=  group;
+    
+    if  (group.name ) {
+        _labelName.text= group.name;
+    } else {
+        _labelName.text= [NSString stringWithFormat: @"Unnamed group #%ld", group.groupID];
+    }
 }
 
 - (void)layoutSubviews
@@ -70,21 +118,19 @@
     _radioButton.selected= isSet;
 }
 
-- (void)setName: (NSString*)string
-{
-    self.labelName.text= string;
-}
-
 - (void)userPressRadioButton: (id) sender
 {
     _radioButton.selected= !_radioButton.selected;
     
     if ( _viewController) {
-        [_viewController radioButtonChanged: _radioButton.selected name:_labelName.text];
+        [_viewController radioButtonChanged:  _radioButton.selected
+                                        for: _group ?: _user];
     }
 }
 
 @end
+
+//==============================================================================
 
 @interface EventWhoVC ()
 @property (nonatomic,strong)UILabel* labelEventDateHeader;
@@ -93,11 +139,17 @@
 @property (nonatomic,strong)UIButton* buttonInvite;
 @property (nonatomic,strong) NSMutableArray *arrayOfPotentialParticipants;
 @property (nonatomic,strong)  NSMutableSet *participants;
-@property (nonatomic,strong) NSMutableArray *arrayOfGroups;
 
 @end
 
 @implementation EventWhoVC
+
+UserObject* makeEmailOnlyUserObject(NSString* email)
+{
+    UserObject*user= [[UserObject alloc] init];
+    user.email= trimString(email);
+    return  user;
+}
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -111,15 +163,7 @@
     self.view.autoresizesSubviews= NO;
     
     self.arrayOfPotentialParticipants= [NSMutableArray new];
-    [_arrayOfPotentialParticipants addObject:  @"first"];
-    [_arrayOfPotentialParticipants addObject:  @" second"];
-    [_arrayOfPotentialParticipants addObject:  @" third"];
-    [_arrayOfPotentialParticipants addObject:  @" fourth"];
-    [_arrayOfPotentialParticipants addObject:  @"someone@someplace.net"];
-    [_arrayOfPotentialParticipants addObject:  @"sjobs@Apples.com"];
-
     self.participants= [NSMutableSet new];
-    [_participants addObject:  @"first"];
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
     self.navTitle = nto;
@@ -136,20 +180,73 @@
 #define PARTICIPANTS_TABLE_REUSE_IDENTIFIER  @"whomToInviteCell"
     [_table registerClass:[EventWhoTableCell class] forCellReuseIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER];
     
-    self.navigationItem.leftBarButtonItem= [[UIBarButtonItem  alloc]
-                                            initWithTitle: @"BACK"
-                                            style:UIBarButtonItemStylePlain
-                                            target: self
-                                            action:@selector(userPressedBack:)];
+    self.navigationItem.leftBarButtonItem= nil;
+
+    __weak EventWhoVC *weakSelf = self;
     
-    //  fetch the usernames from the backend..
+#if 0
     [OOAPI getGroupsWithSuccess:^(NSArray *groups) {
-        NSLog  (@" groups for this user=  %@", groups);
-        self.arrayOfGroups= groups;
-        //  refresh table…
-    } failure:^(NSError *e) {
-        NSLog (@" cannot get list of groups for this user.");
-    }];
+        //        NSLog  (@" groups for this user=  %@", groups);
+        NSLog  (@"USER HAS %lu GROUPS.",groups.count);
+        @synchronized(weakSelf.arrayOfPotentialParticipants) {
+            for (id object in groups) {
+                [self.arrayOfPotentialParticipants  addObject: object];
+                [self.participants addObject:  object ];
+            }
+        }
+        [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+    }
+                        failure:^(NSError *e) {
+                            NSLog (@"FAILED TO FETCH LIST OF GROUPS FOR USER.");
+                        }];
+#endif
+    
+    // RULE: Find out what users are already attached to this events.
+    
+    [OOAPI getParticipantsInEvent: APP.eventBeingEdited
+                          success:^(NSArray *users) {
+                              BOOL somethingChanged= NO;
+                              @synchronized(weakSelf.arrayOfPotentialParticipants) {
+                                  for (UserObject* user  in  users) {
+                                      if (![weakSelf.participants containsObject:user ]) {
+                                          [weakSelf.participants addObject: user];
+                                          somethingChanged= YES;
+                                      }
+                                      if (![weakSelf.arrayOfPotentialParticipants containsObject:user ]) {
+                                          [weakSelf.arrayOfPotentialParticipants addObject: user];
+                                          somethingChanged= YES;
+                                      }
+                                  }
+                              }
+                              if (somethingChanged ) {
+                                  [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+                              }
+                          } failure:^(NSError *e) {
+                              NSLog (@"FAILED TO GET LIST OF EVENT PARTICIPANTS.");
+                          }];
+    
+    // RULE: Find out more users we could potentially attach this event.
+    
+    [OOAPI getFollowingWithSuccess:^(NSArray *users) {
+        NSLog  (@"USER IS FOLLOWING %lu USERS.",users.count);
+        @synchronized(weakSelf.arrayOfPotentialParticipants) {
+            for (id object in users) {
+                [self.arrayOfPotentialParticipants  addObject: object];
+            }
+        }
+        [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+    }
+                           failure:^(NSError *e) {
+                               NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
+                           }];
+    
+}
+
+- (void)reloadTable
+{
+    @synchronized(_arrayOfPotentialParticipants) {
+        [_table reloadData];
+    }
 }
 
 - (void)viewWillLayoutSubviews
@@ -162,11 +259,6 @@
 {
     [super viewDidAppear:animated];
     
-}
-
-- (void)userPressedBack: (id) sender
-{
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)userPressedInviteByEmail: (id) sender
@@ -197,15 +289,37 @@
             message( @"Not a valid email address.");
             return;
         }
-      
-        [_arrayOfPotentialParticipants  addObject: string];
-        [_participants  addObject: string];
+        
+        @synchronized(_arrayOfPotentialParticipants) {
+            UserObject *user= makeEmailOnlyUserObject(string);
+            [_arrayOfPotentialParticipants  addObject: user];
+            [_participants  addObject: user];
+        }
         [_table reloadData];
     }
 }
 
+- (void) uploadParticipants
+{
+    
+    NSMutableArray *array= [NSMutableArray new];
+    for (UserObject* user  in  _participants) {
+        [array addObject: user];
+    }
+    
+    [OOAPI setParticipantsInEvent: APP.eventBeingEdited
+                               to: array
+                          success:^{
+                              NSLog  (@"ADDED USERS TO EVENT");
+                              message( @"Stored users to event.");
+                          } failure:^(NSError *e) {
+                              NSLog  (@"FAILED TO ADD USERS TO EVENT %@",e);
+                          }];
+}
+
 - (void)userPressedInvite: (id) sender
 {
+    [self uploadParticipants];
 }
 
 //------------------------------------------------------------------------------
@@ -235,32 +349,39 @@
     EventWhoTableCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
  
-    NSString* name= nil;
+    id  object= nil;
     NSInteger row= indexPath.row;
     @synchronized(_arrayOfPotentialParticipants) {
         if  (row  < _arrayOfPotentialParticipants.count) {
-            name=  _arrayOfPotentialParticipants[row];
+             object=  _arrayOfPotentialParticipants[row];
         }
     }
     
+    [ cell setRadioButtonState: [_participants containsObject:  object]];
+
     cell.viewController=  self;
-    [cell setName: name];
-    [ cell setRadioButtonState: [_participants containsObject: name]];
+    if  ([object isKindOfClass:[GroupObject class]] ) {
+        [cell specifyGroup: object];
+    } else {
+        [cell specifyUser: object];
+
+    }
+
     return cell;
 }
 
-- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    NSInteger numberOfSections= 1+_arrayOfGroups.count;
-    NSString *name=  @"?";
-    if  ( section==  numberOfSections-1 ) {
-        name=LOCAL(@"Test names:");
-    } else {
-        GroupObject *g= _arrayOfGroups[section];
-        name= g.name ?:  @"There is no name.";
-    }
-    return name;
-}
+//- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    NSInteger numberOfSections= 1+_arrayOfGroups.count;
+//    NSString *name=  @"?";
+//    if  ( section==  numberOfSections-1 ) {
+//        name=LOCAL(@"Test names:");
+//    } else {
+//        GroupObject *g= _arrayOfGroups[section];
+//        name= g.name ?:  @"There is no name.";
+//    }
+//    return name;
+//}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -277,7 +398,7 @@
         }
     }
     if ( name) {
-//        _fieldUsername.text= name;
+        //        _fieldUsername.text= name;
     }
 }
 
@@ -290,13 +411,15 @@
     return  total;
 }
 
-- (void) radioButtonChanged: (BOOL)value name: (NSString*)name;
+- (void) radioButtonChanged: (BOOL)value for: (id)object;
 {
     if ( value) {
-        [_participants  addObject: name];
+        [_participants  addObject: object];
     }else {
-        [_participants  removeObject: name];
+        [_participants  removeObject: object];
     }
+    
+    [self uploadParticipants];
     
     NSLog  (@" set=  %@",_participants);
 }

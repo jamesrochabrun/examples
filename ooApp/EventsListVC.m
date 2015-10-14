@@ -37,6 +37,8 @@
 @property (nonatomic,strong) NSArray* curatedEventsArray;
 
 @property (nonatomic,strong) NSArray* tableSectionNames;
+
+@property (nonatomic,assign) BOOL doingTransition;
 @end
 
 @implementation EventsListVC
@@ -89,7 +91,7 @@
                 continue;
             }
             
-            if ( eo.eventType==EVENT_TYPE_SYSTEM &&  eo.isComplete) {
+            if ( eo.eventType==EVENT_TYPE_CURATED &&  eo.isComplete) {
                 [  curated  addObject: eo];
             }
             
@@ -183,10 +185,6 @@
 //------------------------------------------------------------------------------
 - (void)userPressedAdd: (id) sender
 {
-//    if (!_navigationController) {
-//        return;
-//    }
-    
     UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Event")
                                                      message: LOCAL(@"Enter a name for the new event")
                                                     delegate:  self
@@ -210,7 +208,6 @@
                                      y+kGeomCancelButtonInteriorPadding,
                                      kGeomHeightButton,
                                      kGeomHeightButton);
-//    y += kGeomHeightButton;
     
     _table.frame=  CGRectMake(0,y,w, h-y);
    
@@ -263,7 +260,8 @@
 //------------------------------------------------------------------------------
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3;
+    return 2;
+//    return 3;    
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -313,9 +311,13 @@
 //------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if  (_doingTransition ) {
+        return;
+    }
+
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;
-
+    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     NSArray* events= nil;
@@ -345,24 +347,31 @@
     }
     
     // Determine whether event can be edited by this user.
+    // Then transition to the appropriate view controller.
+    //
+    __weak EventsListVC *weakSelf = self;
+    self.doingTransition= YES;
     [OOAPI determineIfCurrentUserCanEditEvent:event
                                       success:^(bool allowed) {
+                                          weakSelf.doingTransition= NO;
+                                          
                                           if  (allowed ) {
                                               NSLog  (@"EDITING ALLOWED");
                                               
                                               APP.eventBeingEdited= event;
                                               EventCoordinatorVC* vc= [[EventCoordinatorVC  alloc] init];
-                                              [self.navigationController pushViewController:vc animated:YES ];
+                                              [weakSelf.navigationController pushViewController:vc animated:YES ];
                                               
                                           } else {
                                               NSLog  (@"EDITING PROHIBITED");
                                               APP.eventBeingEdited= event;
                                               EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-                                              [self.navigationController pushViewController:vc animated:YES ];
+                                              [weakSelf.navigationController pushViewController:vc animated:YES ];
                                               
                                           }
                                       } failure:^(NSError *e) {
                                           NSLog  (@" failure %@",e);
+                                          weakSelf.doingTransition= NO;
                                       }];
     
 }
