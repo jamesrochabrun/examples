@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseVC.h"
+#import "SubBaseVC.h"
 
-@interface EventWhenVC : BaseVC
+@interface EventWhenVC : SubBaseVC
 
 @end
 

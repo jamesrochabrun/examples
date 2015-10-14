@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseVC.h"
+#import "SubBaseVC.h"
 #import "UserObject.h"
 #import "GroupObject.h"
 
@@ -15,7 +15,7 @@
 - (void) radioButtonChanged: (BOOL)value for: (id)object;
 @end
 
-@interface EventWhoVC : BaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
+@interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
 
 @end
 

@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseVC.h"
+#import "SubBaseVC.h"
 
-@interface EventParticipantVC : BaseVC <UIScrollViewDelegate>
+@interface EventParticipantVC : SubBaseVC <UIScrollViewDelegate>
 
 @property (nonatomic,strong) NSString *eventName;
 
