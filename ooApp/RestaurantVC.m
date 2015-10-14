@@ -14,6 +14,7 @@
 #import "OORemoveButton.h"
 #import "ListsVC.h"
 #import "PhotoCVCell.h"
+#import "RestaurantMainCVCell.h"
 
 #import "DebugUtilities.h"
 
@@ -23,9 +24,6 @@
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
 @property (nonatomic, strong) NSMutableSet *removeButtons;
-@property (nonatomic, strong) UILabel *phoneNumber;
-@property (nonatomic, strong) UILabel *website;
-@property (nonatomic, strong) UILabel *address;
 @property (nonatomic, strong) UIView *removeButtonsContainer;
 @property (nonatomic) CGFloat removeButtonsContainerHeight;
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
@@ -61,7 +59,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
     
-    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
+    [_collectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantListsCellIdentifier];
     [_collectionView registerClass:[PhotoCVCell class] forCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier];
     
@@ -294,21 +292,22 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     
     switch (indexPath.section) {
         case kSectionTypeMain: {
-            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorBlue);
+            RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
+            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            cvc.restaurant = _restaurant;
             return cvc;
             break;
         }
         case kSectionTypeLists: {
             UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorRed);
+            cvc.backgroundColor = UIColorRGBA(kColorWhite);
             [cvc addSubview:_removeButtonsContainer];
             return cvc;
             break;
         }
         case kSectionTypeMediaItems: {
-            PhotoCVCell *cvc = (PhotoCVCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorGray);
+            PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
+            cvc.backgroundColor = UIColorRGBA(kColorWhite);
             cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
             return cvc;
             break;

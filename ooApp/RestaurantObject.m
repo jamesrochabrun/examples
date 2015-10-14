@@ -34,9 +34,9 @@ NSString *const kKeyRestaurantWebsite = @"website";
     restaurant.restaurantID = [dict objectForKey:kKeyRestaurantRestaurantID];
     restaurant.name = [dict objectForKey:kKeyRestaurantName];
     restaurant.rating = [dict objectForKey:kKeyRestaurantRating];
-    restaurant.website = [dict objectForKey:kKeyRestaurantWebsite];
-    restaurant.phone = [dict objectForKey:kKeyRestaurantPhone];
-    restaurant.address = [dict objectForKey:kKeyRestaurantAddress];
+    restaurant.website = [[dict objectForKey:kKeyRestaurantWebsite] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantWebsite];
+    restaurant.phone = [[dict objectForKey:kKeyRestaurantPhone] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantPhone];
+    restaurant.address = [[dict objectForKey:kKeyRestaurantAddress] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantAddress];
     restaurant.isOpen = ([[dict objectForKey:kKeyRestaurantOpenNow] isKindOfClass:[NSNull class]]) ? NO : [[dict objectForKey:kKeyRestaurantOpenNow] boolValue];
     
     NSArray *imageRefs = [dict objectForKey:kKeyRestaurantImageRef];

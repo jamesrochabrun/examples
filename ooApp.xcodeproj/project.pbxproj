@@ -75,6 +75,7 @@
 		3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3679D2041BAC8887004BF4DC /* oomami-icons.ttf */; settings = {ASSET_TAGS = (); }; };
 		367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */; settings = {ASSET_TAGS = (); }; };
 		367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45391BCE3A7200E96B69 /* PhotoCVCell.m */; settings = {ASSET_TAGS = (); }; };
+		367B453D1BCE62BC00E96B69 /* RestaurantMainCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */; settings = {ASSET_TAGS = (); }; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */; };
 		36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C39BE01B84C7CD00648879 /* DebugUtilities.m */; };
@@ -231,6 +232,8 @@
 		367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantVCCVL.m; sourceTree = "<group>"; };
 		367B45381BCE3A7200E96B69 /* PhotoCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoCVCell.h; sourceTree = "<group>"; };
 		367B45391BCE3A7200E96B69 /* PhotoCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoCVCell.m; sourceTree = "<group>"; };
+		367B453B1BCE62BC00E96B69 /* RestaurantMainCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantMainCVCell.h; sourceTree = "<group>"; };
+		367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantMainCVCell.m; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantVC.h; sourceTree = "<group>"; };
@@ -341,6 +344,8 @@
 				3613BE571BBE278400F1AF67 /* ListTVCell.m */,
 				367B45381BCE3A7200E96B69 /* PhotoCVCell.h */,
 				367B45391BCE3A7200E96B69 /* PhotoCVCell.m */,
+				367B453B1BCE62BC00E96B69 /* RestaurantMainCVCell.h */,
+				367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -787,6 +792,7 @@
 				36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */,
 				36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */,
 				3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */,
+				367B453D1BCE62BC00E96B69 /* RestaurantMainCVCell.m in Sources */,
 				3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */,
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
 				96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */,
