@@ -10,8 +10,13 @@
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "Settings.h"
+#import "MediaItemObject.h"
 #import "OORemoveButton.h"
 #import "ListsVC.h"
+#import "PhotoCVCell.h"
+#import "RestaurantMainCVCell.h"
+
+#import "DebugUtilities.h"
 
 @interface RestaurantVC ()
 
@@ -19,14 +24,17 @@
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
 @property (nonatomic, strong) NSMutableSet *removeButtons;
-@property (nonatomic, strong) UILabel *phoneNumber;
-@property (nonatomic, strong) UILabel *website;
-@property (nonatomic, strong) UILabel *address;
 @property (nonatomic, strong) UIView *removeButtonsContainer;
 @property (nonatomic) CGFloat removeButtonsContainerHeight;
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
+@property (nonatomic, strong) NSArray *mediaItems;
+@property (nonatomic, strong) UICollectionView *collectionView;
 
 @end
+
+static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
+static NSString * const kRestaurantListsCellIdentifier = @"RestaurantListsCell";
+static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 
 @implementation RestaurantVC
 
@@ -37,15 +45,31 @@
     _userInfo= [Settings sharedInstance].userObject;
 
     _removeButtonsContainer = [[UIView alloc] init];
-    _removeButtonsContainer.translatesAutoresizingMaskIntoConstraints = NO;
     _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
-    [self.view addSubview:_removeButtonsContainer];
+//    [self.view addSubview:_removeButtonsContainer];
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
     [self setupAlertController];
     
+    RestaurantVCCVL *cvl = [[RestaurantVCCVL alloc] init];
+    cvl.delegate = self;
+
+    _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:cvl];
+    _collectionView.dataSource = self;
+    _collectionView.delegate = self;
+    
+    [_collectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
+    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantListsCellIdentifier];
+    [_collectionView registerClass:[PhotoCVCell class] forCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier];
+    
+    [self.view addSubview:_collectionView];
+    _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
+    _collectionView.backgroundColor = UIColorRGBA(kColorWhite);
+    
     _removeButtons = [NSMutableSet set];
+    
+//    [DebugUtilities addBorderToViews:@[_collectionView]];
 }
 
 -(void)updateViewConstraints {
@@ -53,16 +77,14 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"removeContainerHeight":@(_removeButtonsContainerHeight)};
     
     UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _removeButtonsContainer);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _removeButtonsContainer, _collectionView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view removeConstraints:_verticalLayoutContraints];
-    _verticalLayoutContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_removeButtonsContainer(removeContainerHeight)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    _verticalLayoutContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     [self.view addConstraints:_verticalLayoutContraints];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_removeButtonsContainer]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)setupAlertController {
@@ -170,15 +192,22 @@
     OOAPI *api =[[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
     [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
-        ;
+        _mediaItems = mediaItems;
+        ON_MAIN_THREAD(^{
+            [weakSelf gotMediaItems];
+        });
     } failure:^(NSError *error) {
         ;
     }];
 
 }
+     
+- (void)gotMediaItems {
+    [_collectionView reloadData];
+}
 
 - (void)displayRemoveButtons {
-    __block CGPoint origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
+    __block CGPoint origin = CGPointMake(kGeomSpaceInter, kGeomSpaceInter);
     NSArray *removeButtonsArray = [_removeButtons allObjects];
     [removeButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OORemoveButton *b = (OORemoveButton *)obj;
@@ -188,9 +217,9 @@
         frame.origin.x = origin.x;
         frame.origin.y = origin.y;
         
-        if (CGRectGetMaxX(frame) > (CGRectGetMaxX(self.view.frame)-kGeomSpaceEdge)) {
-            frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceEdge;
-            frame.origin.x = kGeomSpaceEdge;
+        if (CGRectGetMaxX(frame) > (CGRectGetMaxX(self.view.frame)-kGeomSpaceInter)) {
+            frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceInter;
+            frame.origin.x = kGeomSpaceInter;
         }
 
         b.frame = frame;
@@ -198,8 +227,12 @@
         origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
         _removeButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
-    _removeButtonsContainerHeight += kGeomSpaceEdge;
-    [self.view setNeedsUpdateConstraints];
+    _removeButtonsContainerHeight += (_removeButtonsContainerHeight) ? kGeomSpaceInter : 0;
+    [_collectionView reloadData];
+}
+
+- (void)viewDidLayoutSubviews {
+    _removeButtonsContainer.frame = CGRectMake(0, 0, width(self.view), _removeButtonsContainerHeight);
 }
 
 - (void)removeFromList:(id)sender {
@@ -235,6 +268,99 @@
     vc.restaurant = _restaurant;
     [vc getLists];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - Collection View stuff
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    switch (section) {
+        case kSectionTypeMain:
+            return 1;
+            break;
+        case kSectionTypeLists:
+            return 1;
+            break;
+        case kSectionTypeMediaItems:
+            return [_mediaItems count];
+            break;
+    }
+    return 0;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+
+    
+    switch (indexPath.section) {
+        case kSectionTypeMain: {
+            RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
+            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            cvc.restaurant = _restaurant;
+            if ([_mediaItems count]) {
+                cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
+            }
+            return cvc;
+            break;
+        }
+        case kSectionTypeLists: {
+            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
+            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            [cvc addSubview:_removeButtonsContainer];
+            return cvc;
+            break;
+        }
+        case kSectionTypeMediaItems: {
+            PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
+            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
+            return cvc;
+            break;
+        }
+        default:
+            break;
+    }
+
+//    [DebugUtilities addBorderToViews:@[cvc]];
+    return nil;
+}
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return kSectionTypeNumberOfSections;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(RestaurantVCCVL *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath {
+
+    switch (indexPath.section) {
+        case kSectionTypeLists:
+            return _removeButtonsContainerHeight;
+            break;
+        case kSectionTypeMain:
+            return 140;
+            break;
+        case kSectionTypeMediaItems: {
+            MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
+            if (!mio.width || !mio.height) return width(collectionView)/4; //NOTE: this should not happen
+            return width(_collectionView)/4*mio.height/mio.width;
+            break;
+        }
+        default:
+            return 0;
+            break;
+    }
+    return 0;
+}
+
+/* not sure we need to add any supplementatry views
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+ {
+ return [[UICollectionReusableView alloc] init];
+ }*/
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    // TODO: Select Item
+}
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    // TODO: Deselect item
 }
 
 /*

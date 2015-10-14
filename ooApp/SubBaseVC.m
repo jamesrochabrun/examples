@@ -50,6 +50,8 @@
 
     bbi.customView = _moreButton;
     self.navigationItem.rightBarButtonItems = @[bbi];
+    
+//    [DebugUtilities addBorderToViews:@[_moreButton, self.navTitleView]];
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {

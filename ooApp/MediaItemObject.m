@@ -11,15 +11,19 @@
 NSString *const kKeyMediaItemReference = @"reference";
 NSString *const kKeyMediaItemType = @"type";
 NSString *const kKeyMediaItemID = @"media_item_id";
+NSString *const kKeyMediaItemHeight = @"height";
+NSString *const kKeyMediaItemWidth = @"width";
 
 @implementation MediaItemObject
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict {
-    MediaItemObject *iro = [[MediaItemObject alloc] init];
-    iro.mediaItemId = [dict objectForKey:kKeyMediaItemID];
-    iro.type = [dict objectForKey:kKeyMediaItemType];
-    iro.reference = [dict objectForKey:kKeyMediaItemReference];
-    return iro;
+    MediaItemObject *mio = [[MediaItemObject alloc] init];
+    mio.mediaItemId = [dict objectForKey:kKeyMediaItemID];
+    mio.type = [dict objectForKey:kKeyMediaItemType];
+    mio.reference = [dict objectForKey:kKeyMediaItemReference];
+    mio.height = [dict[kKeyMediaItemHeight] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemHeight] floatValue];
+    mio.width = [dict[kKeyMediaItemWidth] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemWidth] floatValue]; 
+    return mio;
 }
 
 @end

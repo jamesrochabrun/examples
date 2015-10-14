@@ -25,9 +25,9 @@ typedef enum {
     kSearchSortTypeHighestRated = 2,
 } SearchSortType;
 
-static const int kOOAPIListTypeFavorites = 0;
 static const int kOOAPIListTypeSystem = 1;
 static const int kOOAPIListTypeUser = 2;
+static const int kOOAPIListTypeFavorites = 3;
 
 static NSString* const kPhotoUploadPath=  @"/users/picture";
 
@@ -50,7 +50,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                               failure:(void (^)(NSError *))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
-                                            andFilter: (NSString*)filterName
+                                            andFilter:(NSString *)filterName
                                           andLocation:(CLLocationCoordinate2D)location
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure;
@@ -159,7 +159,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 // Events
 //
 
-+ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject* ) event
++ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *)event
                                                        success:(void (^)(bool))success
                                                        failure:(void (^)(NSError *))failure;
 
@@ -182,15 +182,15 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                             success:(void (^)(NSInteger eventID))success
                                             failure:(void (^)(NSError *))failure;
 
-+ (AFHTTPRequestOperation *)addEvent:(EventObject* ) eo
++ (AFHTTPRequestOperation *)addEvent:(EventObject *)eo
                                      success:(void (^)(NSInteger eventID))success
                                      failure:(void (^)(NSError *))failure;
 
-+ (AFHTTPRequestOperation *)reviseEvent:(EventObject* ) eo
++ (AFHTTPRequestOperation *)reviseEvent:(EventObject *)eo
                                 success:(void (^)(id))success
                                 failure:(void (^)(NSError *))failure;
 
-+ (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger ) identifier
++ (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger)identifier
                                      success:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *))failure;
 

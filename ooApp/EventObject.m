@@ -32,20 +32,20 @@ NSString *const kKeyMediaURL = @"media_url";
 
 @implementation EventObject
 
-+ (EventObject*) eventFromDictionary: (NSDictionary*)dictionary;
++ (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 {
     EventObject* e= [[EventObject  alloc] init];
     if  ([dictionary isKindOfClass:[NSDictionary class]] ) {
-        e.eventID= [dictionary[ kKeyEventID] intValue];
-        e.creatorID= [dictionary[ kKeyCreatorID] intValue];
+        e.eventID = [dictionary [kKeyEventID] intValue];
+        e.creatorID = [dictionary [kKeyCreatorID] intValue];
         
         id price=dictionary[ kKeyTotalPrice ];
         if  ([price isKindOfClass:[NSNumber class]] ) {
             e.totalPrice= [ ( (NSNumber*)price) doubleValue];
         }
         
-        e.isComplete= parseIntegerOrNullFromServer( dictionary[kKeyIsComplete ]) ? YES : NO;
-        e.eventType= parseIntegerOrNullFromServer( dictionary[ kKeyEventType]);
+        e.isComplete = parseIntegerOrNullFromServer(dictionary[kKeyIsComplete ]) ? YES : NO;
+        e.eventType = parseIntegerOrNullFromServer(dictionary[kKeyEventType]);
         e.date= parseUTCDateFromServer ( dictionary[ kKeyEventDate]);
         e.dateWhenVotingClosed=parseUTCDateFromServer ( dictionary[ kKeyWhenVotingCloses]);
         e.name= parseStringOrNullFromServer ( dictionary[ kKeyName]);

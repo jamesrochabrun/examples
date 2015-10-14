@@ -172,7 +172,7 @@ static NSString * const ListRowID = @"HLRCell";
     cell.restaurant = ro;
     
     [cell updateConstraintsIfNeeded];
-    
+
     [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
     
     return cell;
@@ -276,9 +276,10 @@ static NSString * const ListRowID = @"HLRCell";
         marker.map = _mapView;
         [marker highLight:NO];
         [weakSelf.mapMarkers addObject:marker];
+        ON_MAIN_THREAD(^{
+            [_tableView reloadData];}
+                       );
     }];
-    //    [self addSubview:_collectionView];
-    [_tableView reloadData];
     
     //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
