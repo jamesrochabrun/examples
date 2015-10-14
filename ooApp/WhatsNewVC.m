@@ -51,7 +51,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     ListObject *list;
     
     list = [[ListObject alloc] init];
-    list.name = @"Featured";
+    list.name = @"Drinks";
     list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
     
@@ -103,10 +103,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     
     list = [[ListObject alloc] init];
     list.name = @"Party";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Drinks";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];

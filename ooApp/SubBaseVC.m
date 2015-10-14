@@ -44,9 +44,9 @@
     
     UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
     _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _moreButton.frame = CGRectMake(0, 0, 35, kGeomWidthMenuButton);
+    _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
     _moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
-    [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton/2 height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
+    [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
 
     bbi.customView = _moreButton;
     self.navigationItem.rightBarButtonItems = @[bbi];
