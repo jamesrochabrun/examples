@@ -15,6 +15,7 @@
 #import "MediaItemObject.h"
 #import "UIImageView+AFNetworking.h"
 #import "EventObject.h"
+#import "UserObject.h"
 
 //extern NSString *const kKeyName;
 
@@ -32,9 +33,9 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 
 @interface OOAPI : NSObject
 
-/* Read */
+//------------------------------------------------------------------------------
+// Restaurants
 
-//Restaurants
 - (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIDs
                                           success:(void (^)(NSArray *))success
                                           failure:(void (^)(NSError *))failure;
@@ -75,6 +76,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 - (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listId
                                    success:(void (^)(id response))success
                                    failure:(void (^)(NSError *))failure;
+//------------------------------------------------------------------------------
 // Lists
 //
 - (AFHTTPRequestOperation *)addList:(NSString *)listName
@@ -97,7 +99,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                               success:(void (^)(id response))success
                                               failure:(void (^)(NSError *))failure;
 
-
+//------------------------------------------------------------------------------
 // Users
 //
 + (AFHTTPRequestOperation *)getUserImageWithImageID:(NSString *)identifier
@@ -106,14 +108,23 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                             success:(void (^)(NSString *imageRefs))success
                                             failure:(void (^)(NSError *))failure;
 
++ (AFHTTPRequestOperation *)setFollowingUser:(UserObject *) user
+                                          to: (BOOL) following
+                                     success:(void (^)(id ))success
+                                     failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)isFollowingUser:(UserObject *) user
+                                     success:(void (^)(BOOL ))success
+                                     failure:(void (^)(NSError *))failure;
+
 - (AFHTTPRequestOperation *)getUsersWithIDs:(NSArray *)userIDs
                                     success:(void (^)(NSArray *))success
                                     failure:(void (^)(NSError *))failure;
 
-+ (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *restaurants))success
++ (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *users))success
                                         failure:(void (^)(NSError *))failure;
 
-+ (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *restaurants))success
++ (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
                                                 failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
@@ -134,12 +145,17 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                             failure:(void (^)(NSError *))failure;
 
+//------------------------------------------------------------------------------
 // Groups
 //
++ (AFHTTPRequestOperation *)getUsersOfGroup: (NSInteger)groupID
+                                    success:(void (^)(NSArray *groups))success
+                                    failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
                                          failure:(void (^)(NSError *))failure;
 
+//------------------------------------------------------------------------------
 // Events
 //
 
@@ -147,13 +163,22 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                        success:(void (^)(bool))success
                                                        failure:(void (^)(NSError *))failure;
 
-+ (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurantID
++ (AFHTTPRequestOperation *)getParticipantsInEvent:(EventObject *)eo
+                                           success:(void (^)(NSArray*))success
+                                           failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)addRestaurant: (RestaurantObject*)restaurantID
                                   toEvent:(EventObject *)event
                                   success:(void (^)(id response))success
                                   failure:(void (^)(NSError *))failure;
 
-+ (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject *)eo
-                                                 to:(BOOL)participating
++ (AFHTTPRequestOperation *)setParticipantsInEvent:(EventObject *)eo
+                                                to: (NSArray*) participants
+                                           success:(void (^)())success
+                                           failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject* ) eo
+                                                 to: (BOOL) participating
                                             success:(void (^)(NSInteger eventID))success
                                             failure:(void (^)(NSError *))failure;
 

@@ -600,7 +600,7 @@ NSString *const kKeySearchSort = @"sort";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getRestaurantImageWithImageRef
+// Name:    getUserImageWithImageID
 // Purpose:
 //------------------------------------------------------------------------------
 //
@@ -632,6 +632,106 @@ NSString *const kKeySearchSort = @"sort";
     } failure:^(NSError *error) {
         NSLog(@"Error: %@", error);
     }];
+}
+
+
++ (AFHTTPRequestOperation *)isFollowingUser:(UserObject *) user
+                                    success:(void (^)(BOOL ))success
+                                    failure:(void (^)(NSError *))failure;
+{
+    if (!user) {
+        failure (nil);
+        return nil;
+    }
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *selfUserID= userInfo.userID;
+    if (!selfUserID) {
+        failure (nil);
+        return nil;
+    }
+    NSNumber *otherUserID= user.userID;
+    if (!otherUserID) {
+        failure (nil);
+        return nil;
+    }
+    if  ([selfUserID isEqualToNumber: otherUserID ] ) {
+        NSLog  (@"CANNOT FOLLOW ONESELF.");
+        success (NO);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/follow/%@", kOOURL, selfUserID,otherUserID];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               for (id dict in responseObject) {
+                   UserObject *followee = [UserObject userFromDict:dict];
+                   if ([followee.userID isEqualToNumber: otherUserID ] ) {
+                       success (YES);
+                       return;
+                   }
+               }
+               success(NO);
+           } failure:^(NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure (error);
+           }];
+}
+
+
+//------------------------------------------------------------------------------
+// Name:    setFollowingUser
+// Purpose: Specify whether the current user is following a specific other user.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)setFollowingUser:(UserObject *) user
+                                                 to: (BOOL) following
+                                            success:(void (^)(id responseObject))success
+                                            failure:(void (^)(NSError *))failure;
+{
+    if (!user) {
+        failure (nil);
+        return nil;
+    }
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *selfUserID= userInfo.userID;
+    if (!selfUserID) {
+        failure (nil);
+        return nil;
+    }
+    NSNumber *otherUserID= user.userID;
+    if (!otherUserID) {
+        failure (nil);
+        return nil;
+    }
+    if  ([selfUserID isEqualToNumber: otherUserID ] ) {
+        NSLog  (@"CANNOT FOLLOW ONESELF.");
+        failure (nil);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/following/%@", kOOURL, selfUserID,otherUserID];
+    
+    AFHTTPRequestOperation *op;
+    if (following) {
+        op = [rm PUT: urlString parameters:nil
+               success:^(id responseObject) {
+	   success(responseObject);
+               } failure:^(NSError *error) {
+                   failure(error);
+               }];
+    } else {
+        op = [rm DELETE: urlString parameters:nil
+                success:^(id responseObject) {
+                    success(responseObject);
+                } failure:^(NSError *error) {
+                    failure(error);
+                }];
+        
+    }
+    
+    return op;
 }
 
 //------------------------------------------------------------------------------
@@ -690,8 +790,102 @@ NSString *const kKeySearchSort = @"sort";
 }
 
 //------------------------------------------------------------------------------
-// Name:    uploadUserPhoto
+// Name:    setParticipantsInEvent
 // Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)setParticipantsInEvent:(EventObject *)eo
+                                                 to: (NSArray*) participants
+                                               success:(void (^)())success
+                                               failure:(void (^)(NSError *))failure;
+{
+    if (!eo) {
+        failure (nil);
+        return nil;
+    }
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
+        failure (nil);
+        return nil;
+    }
+    NSInteger eventID= eo.eventID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", kOOURL, (unsigned long) eventID];
+    
+    AFHTTPRequestOperation *op;
+    
+    NSMutableArray *userids= [NSMutableArray new];
+    for (UserObject* participant  in participants) {
+        NSNumber *value=  participant.userID;
+        if  (value ) {
+            [userids addObject: value];
+        }
+    }
+    
+    op = [rm POST : urlString parameters: @{
+                                          @"user_ids": userids
+                                          }
+         success:^(id responseObject) {
+             NSInteger identifier= 0;
+             if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                 NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
+                 identifier= parseIntegerOrNullFromServer(eventID);
+             }
+             success();
+         } failure:^(NSError *error) {
+             failure(error);
+         }];
+    
+    return op;
+}
+//------------------------------------------------------------------------------
+// Name:    getParticipantsInEvent
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getParticipantsInEvent:(EventObject *)eo
+                                           success:(void (^)(NSArray*))success
+                                           failure:(void (^)(NSError *))failure;
+{
+    if (!eo) {
+        failure (nil);
+        return nil;
+    }
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
+        failure (nil);
+        return nil;
+    }
+    NSInteger eventID= eo.eventID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", kOOURL, (unsigned long) eventID];
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET : urlString parameters:nil
+           success:^(id responseObject) {
+               NSArray *array= responseObject;
+               NSMutableArray *users= [NSMutableArray new];
+               for (NSDictionary* d  in  array) {
+                   UserObject* user= [UserObject userFromDict:d];
+                   if  (user ) {
+                       [users  addObject: user];
+                   }
+               }
+               success(users);
+           } failure:^(NSError *error) {
+               failure(error);
+           }];
+    
+    return op;
+}
+
+
+//------------------------------------------------------------------------------
+// Name:    uploadUserPhoto
+// Purpose: This is the native approach.
 //------------------------------------------------------------------------------
 + (void)uploadUserPhoto:(UIImage *)image
                 success:(void (^)(void))success
@@ -712,22 +906,54 @@ NSString *const kKeySearchSort = @"sort";
         return ;
     }
     [request setHTTPMethod:@"POST"];
-//    [request setValue:@"image/jpeg" forHTTPHeaderField: @"Content-type"];
-    NSString*const boundary = @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
+
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    [request setHTTPShouldHandleCookies:NO];
+    [request setTimeoutInterval:60];
     
-    [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary] forHTTPHeaderField:@"Content-Type"];
-    
-    [request addValue:@"form-data; name=\"upload\"; filename=\"file.jpg\""
-   forHTTPHeaderField:@"Content-Disposition"];
-    
+    NSString*const boundary = @"WebKitFormBoundaryPnHdnY89ti1wsHcj";
+    NSString*const filename=  @"file.jpg";
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
-//    config.b
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
 
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-
-    NSURLSessionUploadTask *task = [session uploadTaskWithRequest:request
-                                                         fromData:imageData
+    
+    //    [body appendData: [@"Accept-Language: en-US\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    //    [body appendData: [@"Accept-Encoding: text/html\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary]
+        forHTTPHeaderField:@"Content-Type"];
+    
+    NSMutableData *body = [NSMutableData new];
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"upload\"; filename=\"%@\"\r\n",filename] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.length ) {
+        [body appendData: [[NSString stringWithFormat: @"Authorization: %@", token.lowercaseString ] dataUsingEncoding:NSUTF8StringEncoding]];
+    }else {
+        NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
+    }
+    
+     [body appendData:[[NSString stringWithFormat:@"%@\r\n", @"Some Caption"] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    if (imageData) {
+        [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=%@; filename=file.jpg\r\n", @"upload"] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n",(int)[imageData length]] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:imageData];
+        [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary]
+                      dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setHTTPBody:body];
+//    NSLog  (@" body=  %s", [body bytes]);
+    
+    NSURLSessionUploadTask *task = [session uploadTaskWithRequest: request
+                                                         fromData: imageData
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                     NSString *stringFromData= [NSString stringWithCharacters:[data  bytes] length:[ data length]];
                                                     NSLog  (@"stringFromData = %@",stringFromData);
@@ -736,16 +962,60 @@ NSString *const kKeySearchSort = @"sort";
                                                         if (failure) failure(error);
                                                     } else {
                                                         NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
+                                                        NSLog (@"IMAGE UPLOAD RESPONSE:  %ld", (long)httpResp.statusCode);
                                                         if (httpResp.statusCode == 200) {
                                                             if (success) success();
-                                                        } else {
-                                                            NSLog (@"IMAGE UPLOAD FAILURE: %ld", (long)httpResp.statusCode);
+                                                        }else {
                                                             if (failure) failure(error);
-                                                        }
+                                                        }// NOTE:  typically error 400
                                                         
                                                     }
                                                 }];
     [task resume];
+}
+
+//------------------------------------------------------------------------------
+// Name:    uploadUserPhoto
+// Purpose: This is the AFNetworking approach.
+//------------------------------------------------------------------------------
++ (void)uploadUserPhoto_AFNetworking:(UIImage *)image
+                success:(void (^)(void))success
+                failure:(void (^)(NSError *))failure;
+{
+    if  (!image) {
+        failure (nil);
+        return ;
+    }
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSNumber*userid= userInfo.userID;
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", kOOURL, userid];
+    
+    OONetworkManager *nm = [OONetworkManager sharedRequestManager];
+    nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
+    
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.length ) {
+        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+    }else {
+        NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
+    }
+    
+    NSDictionary*params=  @{
+                            };
+    [nm.requestManager POST: urlString
+                 parameters:params
+  constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+      if(image){
+          [formData appendPartWithFileData:UIImageJPEGRepresentation( image, 0.5) name:@"files"
+                                  fileName:@"xyz.jpg" mimeType:@"image/jpeg"];
+      }
+  } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+      NSLog  (@" success");
+  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+      NSLog  (@" failure %@",error);// NOTE:  typically error 500
+  }];
 }
 
 //------------------------------------------------------------------------------
@@ -939,6 +1209,10 @@ NSString *const kKeySearchSort = @"sort";
     return op;
 }
 
+//------------------------------------------------------------------------------
+// Name:    getFollowersWithSuccess
+// Purpose: Fetch an array of users that are following the current user.
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *users))success
                                             failure:(void (^)(NSError *))failure;
 {
@@ -949,7 +1223,7 @@ NSString *const kKeySearchSort = @"sort";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/user/%@/followers", kOOURL, userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/followers", kOOURL, userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -966,6 +1240,10 @@ NSString *const kKeySearchSort = @"sort";
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getFollowingWithSuccess
+// Purpose: Fetch an array of users that the current user is following.
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
                                             failure:(void (^)(NSError *))failure;
 {
@@ -976,7 +1254,7 @@ NSString *const kKeySearchSort = @"sort";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/user/%@/following", kOOURL, userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/following", kOOURL, userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -993,6 +1271,10 @@ NSString *const kKeySearchSort = @"sort";
            }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getGroupsWithSuccess
+// Purpose: Fetch an array of groups of which the current user is a member .
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
                                             failure:(void (^)(NSError *))failure;
 {
@@ -1026,6 +1308,48 @@ NSString *const kKeySearchSort = @"sort";
            }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getUsersOfGroup
+// Purpose: Fetch an array of users who belong to a specified group.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getUsersOfGroup: (NSInteger)groupID
+                                    success:(void (^)(NSArray *groups))success
+                                    failure:(void (^)(NSError *))failure;
+{
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userid= userInfo.userID;
+    if (!userid) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/groups/%ld/users",
+                           kOOURL, groupID];
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               NSMutableArray *users = [NSMutableArray array];
+               for (id object in responseObject) {
+                   
+                   if ( [ object isKindOfClass:[NSDictionary class]]) {
+                       [users  addObject:  [UserObject userFromDict: object]];
+                   }
+               }
+               
+               NSLog  (@"TOTAL USERS FOUND: %ld", users.count);
+               success(users);
+           }
+           failure:^(NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure (error);
+           }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    determineIfCurrentUserCanEditEvent
+// Purpose:
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *) event
                                                        success:(void (^)(bool))success
                                                        failure:(void (^)(NSError *))failure;

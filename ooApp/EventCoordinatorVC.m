@@ -18,6 +18,7 @@
 #import "ListStripTVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
+#import "SearchVC.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -109,16 +110,16 @@
     [self.viewContainer2 addGestureRecognizer:tap2 ];
     UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhenBox:)];
     [self.viewContainer3 addGestureRecognizer:tap3 ];
-    UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox4:)];
+    UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhereBox:)];
     [self.viewContainer4 addGestureRecognizer:tap4 ];
     
     self.venuesRowView= [[ListStripTVCell alloc] initWithFrame: CGRectZero];
     [ self.viewContainer4  addSubview: _venuesRowView   ];
     ListObject *list=[[ListObject  alloc] init];
-//    [list ];
+    list.name=  @"Where";
+    list.listDisplayType = KListDisplayTypeStrip;
     _venuesRowView.listItem=list ;
     
-    _venuesRowView.backgroundColor= GRAY;
 }
 
 - (void) userPressedCancel: (id) sender
@@ -173,6 +174,14 @@
     _labelWho.attributedText= a;
 }
 
+- (void) updateWhereBox
+{
+    [_venuesRowView getRestaurants];
+    
+    // RULE: Check whether the backend has new information every 30 seconds.
+    [self  performSelector: @selector(updateWhereBox) withObject:nil afterDelay:30];
+}
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -185,6 +194,13 @@
     
     [self updateWhenBox];
     [self updateWhoBox];
+    [self updateWhereBox];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget: self selector:@selector(updateWhereBox) object:nil];
+    [super viewDidDisappear:animated];
 }
 
 - (void)userTappedWhoBox: (id) sender
@@ -200,9 +216,11 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)userTappedBox4: (id) sender
+- (void)userTappedWhereBox: (id) sender
 {
-    message( @"you pressed box 4");
+    SearchVC* vc= [[SearchVC alloc] init];
+    vc.addingRestaurantsToEvent= YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 //------------------------------------------------------------------------------
@@ -211,7 +229,14 @@
 //------------------------------------------------------------------------------
 - (void)doSubmit: (id) sender
 {
-    message( @"you pressed submit.");
+    EventObject* event= APP.eventBeingEdited;
+    event.isComplete= YES;
+    [OOAPI reviseEvent: event
+               success:^(id responseObject) {
+                   NSLog (@"REVISION SUCCESSFUL");
+               } failure:^(NSError *e) {
+                   NSLog (@"REVISION FAILED %@",e);
+               }];
 }
 
 //------------------------------------------------------------------------------

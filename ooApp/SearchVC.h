@@ -10,6 +10,6 @@
 #import "BaseVC.h"
 
 @interface SearchVC : BaseVC <UISearchBarDelegate>
-
+@property (nonatomic,assign) BOOL addingRestaurantsToEvent;
 @end
 

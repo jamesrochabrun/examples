@@ -42,4 +42,6 @@ typedef enum: int {
 - (void) setUserProfilePhoto:(UIImage *)userProfilePhoto;
 - (UIImage*) userProfilePhoto;
 
+- (NSUInteger) hash;
+
 @end

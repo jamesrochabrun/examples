@@ -7,17 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseVC.h"
-#import "ObjectTVCell.h"
+#import "SubBaseVC.h"
+#import "UserObject.h"
+#import "GroupObject.h"
 
 @protocol EventWhoTableCellDelegate
-- (void) radioButtonChanged: (BOOL)value name: (NSString*)name;
+- (void) radioButtonChanged: (BOOL)value for: (id)object;
 @end
 
-@interface EventWhoVC : BaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
+@interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
 
 @end
 
 @interface EventWhoTableCell: UITableViewCell
 @property (nonatomic,assign) EventWhoVC *viewController;
+- (void) specifyUser:  (UserObject*)user;
+- (void) specifyGroup:  (GroupObject*)group;
+
 @end

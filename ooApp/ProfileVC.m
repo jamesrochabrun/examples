@@ -155,7 +155,13 @@
         return;
     }
     
-    message( @" user pressed follow");
+    [OOAPI setFollowingUser:_userInfo
+                         to:YES
+                    success:^(id responseObject) {
+                        NSLog (@"SUCCESSFULLY FOLLOWED USER");
+                    } failure:^(NSError *e) {
+                        NSLog (@"FAILED TO FOLLOW USER");
+                    }];
 }
 
 //------------------------------------------------------------------------------

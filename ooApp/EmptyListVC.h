@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-#import "BaseVC.h"
+#import "SubBaseVC.h"
 
-@interface EmptyListVC : BaseVC 
+@interface EmptyListVC : SubBaseVC
 @property (nonatomic,strong) NSString* listName;
 @end
