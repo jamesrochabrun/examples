@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+#import "AppDelegate.h"
 #import "RestaurantVC.h"
 #import "OOAPI.h"
 #import "UserObject.h"
@@ -29,7 +30,7 @@
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
 @property (nonatomic, strong) NSArray *mediaItems;
 @property (nonatomic, strong) UICollectionView *collectionView;
-
+@property (nonatomic,strong) RestaurantObject* selectedRestaurant;
 @end
 
 static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
@@ -94,6 +95,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     
     _alertController.view.tintColor = [UIColor blackColor];
     
+    __weak RestaurantVC *weakSelf = self;
     UIAlertAction *addToFavorites = [UIAlertAction actionWithTitle:@"Add to Favorites"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self addToFavorites];
@@ -103,9 +105,10 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self showLists];
                                                  }];
-    UIAlertAction *addToEvent = [UIAlertAction actionWithTitle:@"Add to Event"
+    UIAlertAction *addToEvent = [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      NSLog(@"Add to Event");
+                                                     [weakSelf addToEvent ];
                                                  }];
     UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -130,6 +133,16 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)addToEvent
+{
+    [APP.eventBeingEdited addVenue: self.selectedRestaurant];
+}
+
+- (void)removeFromEvent
+{
+    [APP.eventBeingEdited removeVenue: self.selectedRestaurant];
 }
 
 - (void)moreButtonPressed:(id)sender {

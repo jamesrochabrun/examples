@@ -135,7 +135,11 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                 failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
-                                   success:(void (^)(NSArray *users))success
+                                   success:(void (^)(BOOL))success
+                                   failure:(void (^)(NSError *))failure;
+
++ (AFHTTPRequestOperation *)lookupUserByEmail:(NSString *)emailString
+                                   success:(void (^)(UserObject *))success
                                    failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)fetchSampleUsernamesFor:(NSString *)emailAddressString

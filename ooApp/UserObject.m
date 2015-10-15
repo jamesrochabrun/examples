@@ -69,7 +69,7 @@ NSString *const kKeyIsAttending = @"is_attending";
     
     NSNumber *participantNumber= dict [ kKeyParticipantType];
     if (!participantNumber) {
-        user.participantType= PARTICIPANT_TYPE_NONE;
+        user.participantType= PARTICIPANT_TYPE_UNDECIDED; // The same as a null on the database side.
     } else {
         user.participantType= participantNumber.integerValue;
     }

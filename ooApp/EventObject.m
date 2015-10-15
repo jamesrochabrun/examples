@@ -31,6 +31,15 @@ NSString *const kKeyNumberOfPeopleVoted = @"num_voted";
 NSString *const kKeyMediaURL = @"media_url";
 
 @implementation EventObject
+- (instancetype) init
+{
+    self = [super init];
+    if (self) {
+        _venues= [NSMutableOrderedSet new];
+        _users= [NSMutableOrderedSet new];
+    }
+    return self;
+}
 
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 {
@@ -104,6 +113,53 @@ NSString *const kKeyMediaURL = @"media_url";
     if  (_totalPrice>0 ) dictionary[ kKeyTotalPrice]=@(_totalPrice);
 
     return [NSDictionary dictionaryWithDictionary:dictionary];
+}
+
+- (NSUInteger) totalVenues
+{
+    return _venues.count;
+}
+
+- (RestaurantObject*)firstVenue
+{
+    if  (!_venues || !_venues.count) {
+        return nil;
+    }
+    return _venues[0];
+}
+
+- (void) addVenue: (RestaurantObject*)venue;
+{
+    if (!venue) {
+        return;
+    }
+    if  (!_venues) {
+    }
+    
+    if (![_venues containsObject: venue]) {
+        [_venues addObject: venue];
+    }
+}
+
+- (void) removeVenue: (RestaurantObject*)venue;
+{
+    if (!venue) {
+        return;
+    }
+    if  (!_venues) {
+        return;
+    }
+    if ([_venues containsObject: venue]) {
+        [_venues removeObject: venue];
+    }
+}
+
+- (RestaurantObject*) getNthVenue: (NSInteger)index;
+{
+    if  (index <0 || index>= _venues.count ) {
+        return nil;
+    }
+    return _venues[index];
 }
 
 @end

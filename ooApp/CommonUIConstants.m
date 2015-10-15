@@ -27,5 +27,6 @@ NSString *const kFontIconSearch = @"c";
 NSString *const kFontIconSettings = @"m";
 NSString *const kFontIconWhatsNew = @"G";
 NSString *const kFontIconPerson=  @"y";
+NSString *const kFontIconCheckmark = @"n";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";

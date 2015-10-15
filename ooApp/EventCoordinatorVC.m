@@ -1,8 +1,8 @@
 //
-//  EventCoordinatorVC.m
+//  EventCoordinatorVC.m E3
 //  ooApp
 //
-//  Created by Zack S on 7/16/15.
+//  Created by Zack Smith on 9/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
@@ -15,7 +15,7 @@
 #import "EventCoordinatorVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
-#import "ListStripTVCell.h"
+#import "RestaurantMainCVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
 #import "SearchVC.h"
@@ -42,7 +42,8 @@
 @property (nonatomic,strong) UITapGestureRecognizer *tap3;
 @property (nonatomic,strong) UITapGestureRecognizer *tap4;
 
-@property (nonatomic,strong) ListStripTVCell *venuesRowView;
+@property (nonatomic,strong) UICollectionView *venuesCollectionView;
+@property (nonatomic,strong) UICollectionViewFlowLayout *cvLayout;
 @end
 
 @implementation EventCoordinatorVC
@@ -75,9 +76,9 @@
                                                                               style:UIBarButtonItemStylePlain
                                                                              target:self
                                                                              action: @selector(userPressedCancel:)];
-    
+
     self.viewContainer1= makeView(self.scrollView, WHITE);
-    self.labelEventCover= makeLabel(self.viewContainer1, @"EVENT COVER", kGeomEventHeadingFontSize);
+   self.labelEventCover= makeAttributedLabel(self.viewContainer1, @"EVENT COVER", kGeomEventHeadingFontSize);
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
     
@@ -86,7 +87,7 @@
     _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     self.viewContainer2= makeView(self.scrollView, WHITE);
-    self.labelWho = makeLabel(self.viewContainer2, @"WHO", kGeomFontSizeHeader);
+    self.labelWho = makeAttributedLabel(self.viewContainer2, @"WHO", kGeomFontSizeHeader);
     self.labelPersonIcon= [UILabel new];
     [ self.viewContainer2  addSubview: _labelPersonIcon];
     _labelPersonIcon.attributedText= createPeopleIconString (1);
@@ -95,12 +96,12 @@
     _viewContainer2.layer.borderColor= GRAY.CGColor;
     
     self.viewContainer3= makeView(self.scrollView, WHITE);
-    self.labelWhen = makeLabel(self.viewContainer3, @"WHEN\rDATE\rTIME", kGeomFontSizeHeader);
+    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"WHEN\rDATE\rTIME", kGeomFontSizeHeader);
     _viewContainer3.layer.borderWidth= 1;
     _viewContainer3.layer.borderColor= GRAY.CGColor;
     
     self.viewContainer4= makeView(self.scrollView, WHITE);
-    self.labelWhere = makeLabel(self.viewContainer4, @"WHERE", kGeomEventHeadingFontSize);
+    self.labelWhere = makeAttributedLabel(self.viewContainer4, @"WHERE", kGeomEventHeadingFontSize);
     _viewContainer4.layer.borderWidth= 1;
     _viewContainer4.layer.borderColor= GRAY.CGColor;
     
@@ -113,13 +114,24 @@
     UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhereBox:)];
     [self.viewContainer4 addGestureRecognizer:tap4 ];
     
-    self.venuesRowView= [[ListStripTVCell alloc] initWithFrame: CGRectZero];
-    [ self.viewContainer4  addSubview: _venuesRowView   ];
-    ListObject *list=[[ListObject  alloc] init];
-    list.name=  @"Where";
-    list.listDisplayType = KListDisplayTypeStrip;
-    _venuesRowView.listItem=list ;
+    self.cvLayout= [[UICollectionViewFlowLayout alloc] init];
+    self.cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
+    CGRect r = self.view.window.bounds;
+    r.size.height=200;
+    self.venuesCollectionView = [[UICollectionView alloc] initWithFrame: r collectionViewLayout: _cvLayout];
+    _venuesCollectionView.delegate = self;
+    _venuesCollectionView.dataSource = self;
+    _venuesCollectionView.showsHorizontalScrollIndicator = NO;
+    _venuesCollectionView.showsVerticalScrollIndicator = NO;
+    _venuesCollectionView.alwaysBounceHorizontal = YES;
+    _venuesCollectionView.allowsSelection = YES;
+    _venuesCollectionView.backgroundColor= CLEAR;
+    [_viewContainer4 addSubview: _venuesCollectionView];
+#define CV_CELL_REUSE_IDENTIFER @"E3_CV"
+    [_venuesCollectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
+    
+    [self updateBoxes];
 }
 
 - (void) userPressedCancel: (id) sender
@@ -132,6 +144,16 @@
 - (void)userTappedBox1:(id) sender
 {
     
+}
+
+- (void)updateBoxes
+{
+    [self updateWhenBox];
+    [self updateWhoBox];
+    [self updateWhereBox];
+    
+    // RULE: Check whether the backend has new information every 30 seconds.
+    [self  performSelector: @selector(updateBoxes) withObject:nil afterDelay:30];
 }
 
 - (void) updateWhenBox
@@ -176,10 +198,20 @@
 
 - (void) updateWhereBox
 {
-    [_venuesRowView getRestaurants];
+    if  ([APP.eventBeingEdited totalVenues ] ) {
+        NSAttributedString *title= attributedStringOf(LOCAL( @"WHERE"),  kGeomEventHeadingFontSize);
+        _labelWhen.attributedText= title;
+    } else {
+        NSAttributedString *title= attributedStringOf(LOCAL( @"WHERE"),  kGeomEventHeadingFontSize);
+        NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
+        NSString *string= [NSString stringWithFormat: @"\r%@",
+                     LOCAL( @"TAP TO ADD RESTAURANTS")
+                     ];
+        [a appendAttributedString: attributedStringOf(string,  kGeomFontSizeHeader)];
+
+        _labelWhere.attributedText= a;
+    }
     
-    // RULE: Check whether the backend has new information every 30 seconds.
-    [self  performSelector: @selector(updateWhereBox) withObject:nil afterDelay:30];
 }
 
 - (void)viewWillLayoutSubviews
@@ -192,14 +224,12 @@
 {
     [super viewWillAppear:animated];
     
-    [self updateWhenBox];
-    [self updateWhoBox];
-    [self updateWhereBox];
+    [self updateBoxes];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [NSObject cancelPreviousPerformRequestsWithTarget: self selector:@selector(updateWhereBox) object:nil];
+    [NSObject cancelPreviousPerformRequestsWithTarget: self selector:@selector(updateBoxes) object:nil];
     [super viewDidDisappear:animated];
 }
 
@@ -276,10 +306,68 @@
     
     _labelWhen.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
 
-    float labelHeight=kGeomEventCoordinatorBoxHeight - kGeomEventCoordinatorRestaurantHeight;
-    _labelWhere.frame = CGRectMake(0,0,boxWidth, labelHeight);
-    _venuesRowView.frame = CGRectMake(0,labelHeight,boxWidth,kGeomEventCoordinatorRestaurantHeight);
-    
+    // RULE: If no restaurants have been added then did label should take up the entire height.
+    if  ([APP.eventBeingEdited totalVenues ] ) {
+        float labelHeight=kGeomEventCoordinatorBoxHeight - kGeomEventCoordinatorRestaurantHeight;
+        _venuesCollectionView.hidden= NO;
+        _labelWhere.frame = CGRectMake(0,0,boxWidth, labelHeight);
+        _venuesCollectionView.frame = CGRectMake(0,labelHeight,boxWidth,kGeomEventCoordinatorRestaurantHeight);
+    } else {
+        _venuesCollectionView.hidden= YES;
+        _labelWhere.frame = CGRectMake(0,0,boxWidth, kGeomEventCoordinatorBoxHeight);
+    }
 }
+#pragma mark - Collection View stuff
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView;
+{
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return 4;
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
+                                                                          forIndexPath:indexPath];
+    cvc.backgroundColor = UIColorRGBA(kColorWhite);
+    NSInteger  row= indexPath.row;
+    RestaurantObject *venue= [APP.eventBeingEdited getNthVenue:row];
+    cvc.restaurant = venue;
+    CGRect r= cvc.frame;
+    r.size=  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
+    cvc.frame= r;
+    
+    switch (row) {
+        case 0:cvc.backgroundColor= BLUE;break;
+        case 1:cvc.backgroundColor= GREEN;break;
+        case 2:cvc.backgroundColor= RED;break;
+        case 3:cvc.backgroundColor= GRAY;break;
+
+        default:
+            break;
+    }
+    //            if ([_mediaItems count]) {
+    //                cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
+    //            }
+    return cvc;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    // TODO: Select Item
+}
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    // TODO: Deselect item
+}
+
 
 @end

@@ -1,5 +1,5 @@
 //
-//  EventsListVC.m
+//  EventsListVC.m E1
 //  ooApp
 //
 //  Created by Zack Smith on 9/28/15.
@@ -39,6 +39,7 @@
 @property (nonatomic,strong) NSArray* tableSectionNames;
 
 @property (nonatomic,assign) BOOL doingTransition;
+
 @end
 
 @implementation EventsListVC
@@ -372,6 +373,8 @@
                                       } failure:^(NSError *e) {
                                           NSLog  (@" failure %@",e);
                                           weakSelf.doingTransition= NO;
+                                          [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
+                                          message( @"Unable to contact the cloud.");
                                       }];
     
 }
@@ -421,8 +424,6 @@
         e.createdAt= [NSDate date];
         e.updatedAt= [NSDate date];
         e.eventType= EVENT_TYPE_USER;
-        e.users= [NSMutableArray new];
-        e.restaurants= [NSMutableArray new];
         APP.eventBeingEdited= e;
         
         __weak EventsListVC* weakSelf= self;

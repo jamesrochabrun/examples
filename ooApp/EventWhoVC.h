@@ -1,5 +1,5 @@
 //
-//  EventWhoVC.h
+//  EventWhoVC.h E6, E6A, E6B
 //  ooApp
 //
 //  Created by Zack Smith on 10/8/15.

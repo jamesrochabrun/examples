@@ -1,5 +1,5 @@
 //
-//  EventWhoVC.m
+//  EventWhoVC.m E6, E6A, E6B
 //  ooApp
 //
 //  Created by Zack Smith on 10/8/15.
@@ -34,10 +34,10 @@
 {
     self = [super initWithStyle:style reuseIdentifier:(NSString *)reuseIdentifier];
     if (self) {
-        _radioButton= makeButton(self,  @"NO", kGeomFontSizeDetail, RED, CLEAR, self, @selector(userPressRadioButton:), 0);
-        [_radioButton setTitle:  @"YES" forState:UIControlStateSelected];
-        [_radioButton setTitleColor:GREEN forState:UIControlStateSelected];
-
+        _radioButton= makeButton(self, kFontIconRemove, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressRadioButton:), 0);
+        [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
+        _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
+        
         _imageViewThumbnail= makeImageView(self,  @"No-Profile_Image.png");
         _imageViewThumbnail.layer.borderWidth= 1;
         _imageViewThumbnail.layer.borderColor= GRAY.CGColor;
@@ -106,10 +106,21 @@
     [super layoutSubviews];
     float w= self.frame.size.width;
     float h= self.frame.size.height;
-    float x= 0;
-    _imageViewThumbnail.frame = CGRectMake(x,0,h,h); x += h;
-    _labelName.frame = CGRectMake(x,0,w-x-kGeomButtonWidth,h);
-    _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,h);
+    
+    // RULE: If this row will simply be an email address, then we completely hide the image.
+    if  (!self.group && self.user && !self.user.firstName ) {
+        _imageViewThumbnail.hidden= YES;
+        _labelName.frame = CGRectMake(kGeomSpaceEdge,0,w-kGeomSpaceEdge-kGeomButtonWidth,h);
+        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,h);
+    } else {
+        float x= kGeomSpaceEdge;
+        _imageViewThumbnail.hidden= NO;
+        float imageDimension= h-2*kGeomSpaceEdge;
+        _imageViewThumbnail.frame = CGRectMake(x,kGeomSpaceEdge,imageDimension,imageDimension);
+        x += imageDimension+kGeomSpaceInter ;
+        _labelName.frame = CGRectMake(x,0,w-x-kGeomButtonWidth,h);
+        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,h);
+    }
     
 }
 
@@ -136,7 +147,6 @@
 @property (nonatomic,strong)UILabel* labelEventDateHeader;
 @property (nonatomic,strong)UIButton* buttonAddEmail;
 @property (nonatomic,strong)UITableView* table;
-@property (nonatomic,strong)UIButton* buttonInvite;
 @property (nonatomic,strong) NSMutableArray *arrayOfPotentialParticipants;
 @property (nonatomic,strong)  NSMutableSet *participants;
 
@@ -173,8 +183,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
     self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  BLACK, CLEAR,
                                     self, @selector(userPressedInviteByEmail:), 1);
-    self.buttonInvite=makeButton(self.view, @"INVITE", kGeomFontSizeHeader,  BLACK, CLEAR,
-                                    self, @selector(userPressedInvite:), 2);
     
     self.table= makeTable( self.view,  self);
 #define PARTICIPANTS_TABLE_REUSE_IDENTIFIER  @"whomToInviteCell"
@@ -191,7 +199,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         @synchronized(weakSelf.arrayOfPotentialParticipants) {
             for (id object in groups) {
                 [self.arrayOfPotentialParticipants  addObject: object];
-                [self.participants addObject:  object ];
             }
         }
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
@@ -225,7 +232,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                               NSLog (@"FAILED TO GET LIST OF EVENT PARTICIPANTS.");
                           }];
     
-    // RULE: Find out more users we could potentially attach this event.
+    // RULE: Identify more users we could potentially attach this event.
     
     [OOAPI getFollowingWithSuccess:^(NSArray *users) {
         NSLog  (@"USER IS FOLLOWING %lu USERS.",users.count);
@@ -240,6 +247,21 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                                NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
                            }];
     
+}
+
+- (BOOL)emailAlreadyInArray: (NSString*)emailString
+{
+    if  (!emailString) {
+        return NO;
+    }
+    emailString= [ emailString lowercaseString];
+    
+    for (UserObject* user  in  _arrayOfPotentialParticipants) {
+        if ( [[user.email lowercaseString] isEqualToString: emailString ]) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)reloadTable
@@ -263,12 +285,14 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)userPressedInviteByEmail: (id) sender
 {
-    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Participant")
-                                                     message: LOCAL(@"Enter and email address")
+    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle: LOCAL(@"EMAIL ADDRESS")
+                                                     message:nil
                                                     delegate:  self
                                            cancelButtonTitle: LOCAL(@"Cancel")
-                                           otherButtonTitles: LOCAL(@"Add"), nil];
+                                           otherButtonTitles: LOCAL(@"ADD"), nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [[alert textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeEmailAddress];
+    [[alert textFieldAtIndex:0]  becomeFirstResponder];
     [alert show];
 }
 
@@ -281,46 +305,68 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     if  (1==buttonIndex) {
         UITextField *textField = [alertView textFieldAtIndex: 0];
         NSString *string = trimString(textField.text);
-        if  (string.length ) {
-            string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
-        }
         
         if (!isValidEmailAddress(string)) {
             message( @"Not a valid email address.");
             return;
         }
         
-        @synchronized(_arrayOfPotentialParticipants) {
-            UserObject *user= makeEmailOnlyUserObject(string);
-            [_arrayOfPotentialParticipants  addObject: user];
-            [_participants  addObject: user];
+        if  ([self emailAlreadyInArray: string] ) {
+            RUN_AFTER(250,^{
+                message(LOCAL( @"That user is already in the list."));
+            })
+            return;
         }
-        [_table reloadData];
+        
+        __weak EventWhoVC *weakSelf = self;
+        [OOAPI lookupUserByEmail:string
+                         success:^(UserObject *user) {
+                             if  (user) {
+                                 [weakSelf addUser: user];
+                             } else {
+                                 [weakSelf addTheirEmailAddress: string];
+                             }
+                         } failure:^(NSError *e) {
+                             [weakSelf addTheirEmailAddress: string];
+                         }];
     }
 }
 
-- (void) uploadParticipants
+- (void)addUser: (UserObject*)user
 {
-    
-    NSMutableArray *array= [NSMutableArray new];
-    for (UserObject* user  in  _participants) {
-        [array addObject: user];
+    @synchronized(_arrayOfPotentialParticipants) {
+        [_arrayOfPotentialParticipants  addObject: user];
+        [_participants  addObject: user];
     }
-    
-    [OOAPI setParticipantsInEvent: APP.eventBeingEdited
-                               to: array
-                          success:^{
-                              NSLog  (@"ADDED USERS TO EVENT");
-                              message( @"Stored users to event.");
-                          } failure:^(NSError *e) {
-                              NSLog  (@"FAILED TO ADD USERS TO EVENT %@",e);
-                          }];
+    [_table reloadData];
 }
 
-- (void)userPressedInvite: (id) sender
+- (void)addTheirEmailAddress: (NSString*)emailAddress
 {
-    [self uploadParticipants];
+    @synchronized(_arrayOfPotentialParticipants) {
+        UserObject *user= makeEmailOnlyUserObject(emailAddress);
+        [_arrayOfPotentialParticipants  addObject: user];
+        [_participants  addObject: user];
+    }
+    [_table reloadData];
 }
+
+//- (void) uploadParticipants
+//{
+//    NSMutableArray *array= [NSMutableArray new];
+//    for (UserObject* user  in  _participants) {
+//        [array addObject: user];
+//    }
+//    
+//    [OOAPI setParticipantsInEvent: APP.eventBeingEdited
+//                               to: array
+//                          success:^{
+//                              NSLog  (@"ADDED USERS TO EVENT");
+//                              message( @"Stored users to event.");
+//                          } failure:^(NSError *e) {
+//                              NSLog  (@"FAILED TO ADD USERS TO EVENT %@",e);
+//                          }];
+//}
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
@@ -335,13 +381,11 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
     float  y=  0;
 
-    float tableHeight= h-2*kGeomHeightButton- 2*spacing;
+    float tableHeight= h-kGeomHeightButton-2*spacing;
     _table.frame = CGRectMake(0,y,w,tableHeight);
     y+= tableHeight+ spacing;
     _buttonAddEmail.frame = CGRectMake(margin,y,w-2*margin, kGeomHeightButton);
     y += kGeomHeightButton+ spacing;
-    _buttonInvite.frame = CGRectMake((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
-    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -369,19 +413,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
     return cell;
 }
-
-//- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    NSInteger numberOfSections= 1+_arrayOfGroups.count;
-//    NSString *name=  @"?";
-//    if  ( section==  numberOfSections-1 ) {
-//        name=LOCAL(@"Test names:");
-//    } else {
-//        GroupObject *g= _arrayOfGroups[section];
-//        name= g.name ?:  @"There is no name.";
-//    }
-//    return name;
-//}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -415,12 +446,19 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 {
     if ( value) {
         [_participants  addObject: object];
-    }else {
+      }else {
         [_participants  removeObject: object];
     }
     
-    [self uploadParticipants];
-    
     NSLog  (@" set=  %@",_participants);
+    
+    [OOAPI setParticipationInEvent:APP.eventBeingEdited
+                                to:value
+                           success:^(NSInteger eventID) {
+                               NSLog  (@"SUCCESS");
+                           } failure:^(NSError *e) {
+                               NSLog  (@"FAILURE  %@",e);
+                           }];
+
 }
 @end

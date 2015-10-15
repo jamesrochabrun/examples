@@ -363,11 +363,42 @@ NSString *const kKeySearchSort = @"sort";
 }
 
 //------------------------------------------------------------------------------
+// Name:    lookupUserByEmail
+// Purpose: Ascertain what existing user have a given email address.
+// NOTE:    The backend guarantees there is only one account per email address.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)lookupUserByEmail:(NSString *)emailString
+                                      success:(void (^)(UserObject *users))success
+                                      failure:(void (^)(NSError *))failure;
+{
+    if (!emailString || !emailString.length) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/emails/%@",
+                           kOOURL, emailString];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        if ( [responseObject isKindOfClass:[NSDictionary class]]) {
+            UserObject* user= [UserObject userFromDict: responseObject];
+            if  (user ) {
+                success ( user);
+            } else {
+                success ( nil);
+            }
+        }
+    }
+           failure:failure];
+}
+
+//------------------------------------------------------------------------------
 // Name:    lookupUsername
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
-                                  success:(void (^)(NSArray *users))success
+                                  success:(void (^)(bool exists))success
                                   failure:(void (^)(NSError *))failure;
 {
     if (!string || !string.length) {
@@ -379,7 +410,18 @@ NSString *const kKeySearchSort = @"sort";
                            kOOURL, string];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:success failure:failure];
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSArray *array= responseObject;
+        NSMutableArray *users= [NSMutableArray new];
+        for (NSDictionary* d  in  array) {
+            UserObject* user= [UserObject userFromDict:d];
+            if  (user ) {
+                [users  addObject: user];
+            }
+        }
+        success ( users.count>0);
+    }
+           failure:failure];
 }
 
 //------------------------------------------------------------------------------
@@ -760,6 +802,7 @@ NSString *const kKeySearchSort = @"sort";
     
     AFHTTPRequestOperation *op;
     if (participating) {
+        NSLog (@"PATCH %@", urlString);
         op = [rm PATCH:urlString parameters:nil
                                        success:^(id responseObject) {
                                            NSInteger identifier= 0;
@@ -772,7 +815,8 @@ NSString *const kKeySearchSort = @"sort";
                                            failure(error);
                                        }];
     } else {
-        op = [rm DELETE:urlString parameters:nil
+        NSLog (@"DELETE %@", urlString);
+       op = [rm DELETE:urlString parameters:nil
                                         success:^(id responseObject) {
                                             NSInteger identifier= 0;
                                             if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -793,6 +837,7 @@ NSString *const kKeySearchSort = @"sort";
 // Name:    setParticipantsInEvent
 // Purpose:
 //------------------------------------------------------------------------------
+#if 0
 + (AFHTTPRequestOperation *)setParticipantsInEvent:(EventObject *)eo
                                                  to: (NSArray*) participants
                                                success:(void (^)())success
@@ -839,6 +884,8 @@ NSString *const kKeySearchSort = @"sort";
     
     return op;
 }
+#endif
+
 //------------------------------------------------------------------------------
 // Name:    getParticipantsInEvent
 // Purpose:

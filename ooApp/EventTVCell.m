@@ -48,7 +48,8 @@
 {
     // NOTE:  the contents of the user object may have changed, therefore set user always.
     
-    RestaurantObject* primaryVenue= _eventInfo.restaurants.count ? (RestaurantObject*)_eventInfo.restaurants[0] :nil;
+    RestaurantObject* primaryVenue= [_eventInfo totalVenues ] ?
+            (RestaurantObject*)[_eventInfo firstVenue ] :nil;
     self.eventInfo = eo;
     self.thumbnail.image = nil;
     self.header.text = eo.name;

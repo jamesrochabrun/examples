@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class RestaurantObject;
+
 @interface EventObject : NSObject
 
 typedef enum : char {
@@ -29,8 +31,8 @@ typedef enum : char {
 @property (nonatomic,assign) NSInteger numberOfPeopleVoted;
 @property (nonatomic,assign) NSInteger numberOfPeopleResponded;
 @property (nonatomic, strong) NSMutableArray *keywords;
-@property (nonatomic, strong) NSMutableArray *users;
-@property (nonatomic, strong) NSMutableArray *restaurants;
+@property (nonatomic, strong) NSMutableOrderedSet *users;
+@property (nonatomic, strong) NSMutableOrderedSet *venues;
 @property (nonatomic, strong) NSString *reviewSite;
 @property (nonatomic, strong) NSString *specialEvent;
 @property (nonatomic, strong) NSString *comment;
@@ -40,5 +42,11 @@ typedef enum : char {
 
 + (EventObject*) eventFromDictionary: (NSDictionary*)dictionary;
 -(NSDictionary*) dictionaryFromEvent;
+
+- (void) addVenue: (RestaurantObject*)venue;
+- (void) removeVenue: (RestaurantObject*)venue;
+- (RestaurantObject*) getNthVenue: (NSInteger)index;
+- (NSUInteger) totalVenues;
+- (RestaurantObject*)firstVenue;
 
 @end

@@ -14,6 +14,7 @@
 
 #define LOCAL(STR) NSLocalizedString(STR, nil)
 #define ON_MAIN_THREAD(BLK) dispatch_async(dispatch_get_main_queue(),BLK)
+#define RUN_AFTER(MS,BLK) {dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW,MS * 1000000);dispatch_after(delayTime, dispatch_get_main_queue(), BLK); }
 
 extern void message (NSString *str);
 
@@ -30,6 +31,7 @@ extern UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NS
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
 extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
+extern UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);
 extern UITextView* makeTextView (UIView*parent, UIColor *bg, BOOL editable);
 extern UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize);

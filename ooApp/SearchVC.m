@@ -24,9 +24,9 @@
 
 typedef enum: char {
     FILTER_NONE=  -1,
-    FILTER_PLACES=  0,
+    FILTER_PLACES=  2,
     FILTER_PEOPLE=  1,
-    FILTER_LISTS=  2,
+    FILTER_LISTS=  0,
     FILTER_YOU=  3,
 } FilterType;
 
@@ -36,11 +36,7 @@ typedef enum: char {
 @interface SearchVC ()
 @property (nonatomic,strong)  UISearchBar* searchBar;
 @property (nonatomic,strong) OOFilterView* filterView;
-//@property (nonatomic,strong)  UIButton* buttonList;
-//@property (nonatomic,strong)  UIButton* buttonPeople;
 @property (nonatomic,strong)  UIButton* buttonCancel;
-//@property (nonatomic,strong)  UIButton* buttonPlaces;
-//@property (nonatomic,strong)  UIButton* buttonYou;
 @property (nonatomic,strong)  UITableView*  tableRestaurants;
 @property (nonatomic,strong)  UITableView*  tablePeople;
 @property (nonatomic,assign) FilterType currentFilter;
@@ -113,8 +109,6 @@ typedef enum: char {
     [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
     _tablePeople.backgroundColor=  UIColorRGB(0xfff8f8f8);
-
-    [self changeFilter: FILTER_PLACES];
     
     if ( _addingRestaurantsToEvent) {
         self.navigationItem.leftBarButtonItem=nil;
@@ -140,6 +134,7 @@ typedef enum: char {
     [super viewWillAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -193,6 +188,7 @@ typedef enum: char {
 {
     [super viewDidAppear:animated];
     
+    [self changeFilter: FILTER_PLACES];
 }
 
 //------------------------------------------------------------------------------

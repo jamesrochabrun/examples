@@ -1,5 +1,5 @@
 //
-//  EventCoordinatorVC.h
+//  EventCoordinatorVC.h E3
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
 
-@interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate>
+@interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 
 @end
 
