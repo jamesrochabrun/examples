@@ -44,6 +44,15 @@ static NSString * const ListRowID = @"HLRCell";
     self = [super init];
     if (self) {
         _openOnly = YES;
+        _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
+        _mapView.translatesAutoresizingMaskIntoConstraints = NO;
+        _mapView.mapType = kGMSTypeNormal;
+        _mapView.myLocationEnabled = YES;
+        _mapView.settings.myLocationButton = YES;
+        _mapView.settings.scrollGestures = YES;
+        _mapView.settings.zoomGestures = YES;
+        _mapView.delegate = self;
+        [_mapView setMinZoom:3 maxZoom:15];
     }
     return self;
 }
@@ -63,16 +72,6 @@ static NSString * const ListRowID = @"HLRCell";
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:13 bearing:0 viewingAngle:1];
-
-    _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
-    _mapView.translatesAutoresizingMaskIntoConstraints = NO;
-    _mapView.mapType = kGMSTypeNormal;
-    _mapView.myLocationEnabled = YES;
-    _mapView.settings.myLocationButton = YES;
-    _mapView.settings.scrollGestures = YES;
-    _mapView.settings.zoomGestures = YES;
-    _mapView.delegate = self;
-    [_mapView setMinZoom:3 maxZoom:15];
     
     [self.view addSubview:_mapView];
     
@@ -264,6 +263,10 @@ static NSString * const ListRowID = @"HLRCell";
         NSLog (@"Received no restaurants.");
     }
     __weak DiscoverVC *weakSelf=self;
+    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OOMapMarker *mm = (OOMapMarker *)obj;
+        mm.map = nil;
+    }];
     [_mapMarkers removeAllObjects];
     _mapMarkers = [NSMutableArray arrayWithCapacity:[_restaurants count]];
     [_restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -276,11 +279,9 @@ static NSString * const ListRowID = @"HLRCell";
         marker.snippet = @"my snippet";
         marker.map = _mapView;
         [marker highLight:NO];
-        [weakSelf.mapMarkers addObject:marker];
-        ON_MAIN_THREAD(^{
-            [_tableView reloadData];}
-                       );
+        [_mapMarkers addObject:marker];
     }];
+    [_tableView reloadData];
     
     //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
