@@ -24,6 +24,7 @@ NSString *const kKeyRestaurantOpenNow = @"open_now";
 NSString *const kKeyRestaurantAddress = @"address";
 NSString *const kKeyRestaurantPhone = @"phone";
 NSString *const kKeyRestaurantWebsite = @"website";
+
 @implementation RestaurantObject
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
@@ -62,8 +63,8 @@ NSString *const kKeyRestaurantWebsite = @"website";
     }
     
     
-    id lat= [dict objectForKey:kKeyRestaurantLatitude];
-    id lon= [dict objectForKey:kKeyRestaurantLongitude];
+    id lat = [dict objectForKey:kKeyRestaurantLatitude];
+    id lon = [dict objectForKey:kKeyRestaurantLongitude];
     if  (lat && lon  && ![lat isKindOfClass:[NSNull class]]  && ![lon isKindOfClass:[NSNull class]]) {
         restaurant.location = CLLocationCoordinate2DMake([lat doubleValue ], [lon doubleValue]);
     } else {

@@ -39,19 +39,16 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 - (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIDs
                                           success:(void (^)(NSArray *))success
                                           failure:(void (^)(NSError *))failure;
+
 - (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
                                          success:(void (^)(RestaurantObject *restaurants))success
                                          failure:(void (^)(NSError *))failure;
-- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
-                                          andLocation:(CLLocationCoordinate2D)location
-                                           andOpenOnly:(BOOL)openOnly
-                                                 andSort:(SearchSortType)sort
-                                              success:(void (^)(NSArray *restaurants))success
-                                              failure:(void (^)(NSError *))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
-                                            andFilter:(NSString *)filterName
                                           andLocation:(CLLocationCoordinate2D)location
+                                            andFilter:(NSString *)filterName
+                                          andOpenOnly:(BOOL)openOnly
+                                                 andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(NSError *))failure;
 
@@ -133,6 +130,10 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (void)uploadUserPhoto:(UIImage *)image
                 success:(void (^)(void))success
                 failure:(void (^)(NSError *))failure;
+
++ (void)uploadUserPhoto_AFNetworking:(UIImage *)image
+                             success:(void (^)(void))success
+                             failure:(void (^)(NSError *))failure;
 
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                    success:(void (^)(NSArray *users))success
