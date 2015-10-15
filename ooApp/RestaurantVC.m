@@ -233,6 +233,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 
 - (void)viewDidLayoutSubviews {
     _removeButtonsContainer.frame = CGRectMake(0, 0, width(self.view), _removeButtonsContainerHeight);
+    NSLog(@"_removeButtonsContainer=%@", _removeButtonsContainer);
 }
 
 - (void)removeFromList:(id)sender {
@@ -312,6 +313,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
             PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
             cvc.backgroundColor = UIColorRGBA(kColorWhite);
             cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
+//            [DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
         }
@@ -319,7 +321,6 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
             break;
     }
 
-//    [DebugUtilities addBorderToViews:@[cvc]];
     return nil;
 }
 
@@ -339,7 +340,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
         case kSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/4; //NOTE: this should not happen
-            return width(_collectionView)/4*mio.height/mio.width;
+            return (width(_collectionView)- 5*kGeomSpaceEdge)/4*mio.height/mio.width;
             break;
         }
         default:
