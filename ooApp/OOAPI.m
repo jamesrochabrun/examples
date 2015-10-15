@@ -38,7 +38,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIds
                                           success:(void (^)(NSArray *restaurants))success
-                                          failure:(void (^)(NSError *))failure
+                                          failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -61,7 +61,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getMediaItemsForRestaurant:(RestaurantObject *)restaurant
                                           success:(void (^)(NSArray *mediaItems))success
-                                          failure:(void (^)(NSError *))failure
+                                          failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%@/photos", [self ooURL], restaurant.restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -84,7 +84,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
                                           success:(void (^)(RestaurantObject *))success
-                                          failure:(void (^)(NSError *))failure
+                                          failure:(void (^)(NSError *error))failure
 {
     if (!restaurantId) return nil;
     
@@ -116,7 +116,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
                                                    success:(void (^)(NSString *link))success
-                                                   failure:(void (^)(NSError *))failure
+                                                   failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
     
@@ -150,7 +150,7 @@ NSString *const kKeySearchFilter = @"filter";
                                            andOpenOnly:(BOOL)openOnly
                                            andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
-                                              failure:(void (^)(NSError *))failure
+                                              failure:(void (^)(NSError *error))failure
 {
     if (!keyword) {
         failure (nil);
@@ -199,7 +199,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
                                         success:(void (^)(NSArray *users))success
-                                        failure:(void (^)(NSError *))failure
+                                        failure:(void (^)(NSError *error))failure
 {
     if (!keyword  || !keyword.length) {
         failure (nil);
@@ -235,7 +235,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs
                                    success:(void (^)(NSArray *users))success
-                                   failure:(void (^)(NSError *))failure
+                                   failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users", kOOURL];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -258,7 +258,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs
                                     success:(void (^)(NSArray *dishes))success
-                                    failure:(void (^)(NSError *))failure
+                                    failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/dishes", kOOURL];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -280,7 +280,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getListsOfUser:(NSUInteger)userID withRestaurant:(NSUInteger)restaurantID
                                   success:(void (^)(NSArray *lists))success
-                                  failure:(void (^)(NSError *))failure
+                                  failure:(void (^)(NSError *error))failure
 {
     if (!userID) {
         UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -313,7 +313,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
                                   success:(void (^)(NSArray *lists))success
-                                  failure:(void (^)(NSError *))failure
+                                  failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu/restaurants/%tu",
                            kOOURL, listID, restaurantID];
@@ -334,7 +334,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                   success:(void (^)(NSArray *users))success
-                                  failure:(void (^)(NSError *))failure;
+                                  failure:(void (^)(NSError *error))failure;
 {
     if (!string || !string.length) {
         failure (nil);
@@ -353,7 +353,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: For testing.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)clearUsernameWithSuccess:(void (^)(NSArray *names))success
-                                   failure:(void (^)(NSError *))failure;
+                                   failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSNumber *userID = userInfo.userID;
@@ -376,7 +376,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)fetchSampleUsernamesFor:(NSString *)emailAddressString
                                   success:(void (^)(NSArray *names))success
-                                  failure:(void (^)(NSError *))failure;
+                                  failure:(void (^)(NSError *error))failure;
 {
     if (!emailAddressString || !emailAddressString.length) {
         failure (nil);
@@ -396,7 +396,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
                                             success:(void (^)(NSArray *restaurants))success
-                                            failure:(void (^)(NSError *))failure
+                                            failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%ld/restaurants",
                            kOOURL,
@@ -425,7 +425,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
                                  success:(void (^)(NSArray *dishes))success
-                                 failure:(void (^)(NSError *))failure
+                                 failure:(void (^)(NSError *error))failure
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", kOOURL];
@@ -447,7 +447,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addList:(NSString *)listName
                             success:(void (^)(id response))success
-                            failure:(void (^)(NSError *))failure;
+                            failure:(void (^)(NSError *error))failure;
 {
     if (!listName) {
         failure (nil);
@@ -461,7 +461,7 @@ NSString *const kKeySearchFilter = @"filter";
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists", kOOURL, userID];
-    NSDictionary*parameters = @{
+    NSDictionary *parameters = @{
                                  @"name":listName,
                                   @"type":@2,
                                   @"user":userID
@@ -482,7 +482,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
                             success:(void (^)(id response))success
-                            failure:(void (^)(NSError *))failure;
+                            failure:(void (^)(NSError *error))failure;
 {
     NSMutableArray *restaurantIDs;
     if (!restaurants) {
@@ -524,7 +524,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listId
                                               success:(void (^)(id response))success
-                                              failure:(void (^)(NSError *))failure;
+                                              failure:(void (^)(NSError *error))failure;
 {
     if (!listId) {
         failure(nil);
@@ -576,7 +576,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
                                                    success:(void (^)(NSString *link))success
-                                                   failure:(void (^)(NSError *))failure
+                                                   failure:(void (^)(NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/photos", kOOURL];
     
@@ -603,7 +603,7 @@ NSString *const kKeySearchFilter = @"filter";
 
 + (AFHTTPRequestOperation *)isFollowingUser:(UserObject *) user
                                     success:(void (^)(BOOL ))success
-                                    failure:(void (^)(NSError *))failure;
+                                    failure:(void (^)(NSError *error))failure;
 {
     if (!user) {
         failure (nil);
@@ -653,7 +653,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)setFollowingUser:(UserObject *) user
                                                  to: (BOOL) following
                                             success:(void (^)(id responseObject))success
-                                            failure:(void (^)(NSError *))failure;
+                                            failure:(void (^)(NSError *error))failure;
 {
     if (!user) {
         failure (nil);
@@ -707,7 +707,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject *)eo
                                                  to:(BOOL) participating
                                                success:(void (^)(NSInteger eventID))success
-                                               failure:(void (^)(NSError *))failure;
+                                               failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
         failure (nil);
@@ -762,7 +762,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)setParticipantsInEvent:(EventObject *)eo
                                                  to:(NSArray *)participants
                                                success:(void (^)())success
-                                               failure:(void (^)(NSError *))failure;
+                                               failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
         failure(nil);
@@ -810,8 +810,8 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getParticipantsInEvent:(EventObject *)eo
-                                           success:(void (^)(NSArray*))success
-                                           failure:(void (^)(NSError *))failure;
+                                           success:(void (^)(NSArray *users))success
+                                           failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
         failure (nil);
@@ -855,7 +855,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (void)uploadUserPhoto:(UIImage *)image
                 success:(void (^)(void))success
-                failure:(void (^)(NSError *))failure;
+                failure:(void (^)(NSError *error))failure;
 {
     if (!image) {
         failure(nil);
@@ -946,7 +946,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (void)uploadUserPhoto_AFNetworking:(UIImage *)image
                 success:(void (^)(void))success
-                failure:(void (^)(NSError *))failure;
+                failure:(void (^)(NSError *error))failure;
 {
     if  (!image) {
         failure (nil);
@@ -968,7 +968,7 @@ NSString *const kKeySearchFilter = @"filter";
         NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
     }
     
-    NSDictionary*params=  @{
+    NSDictionary *params=  @{
                             };
     [nm.requestManager POST: urlString
                  parameters:params
@@ -990,7 +990,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger) identifier
                                      success:(void (^)(NSArray *events))success
-                                     failure:(void (^)(NSError *))failure;
+                                     failure:(void (^)(NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/events",kOOURL, (unsigned long)identifier];
     
@@ -1023,7 +1023,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: Obtain a list of curated events that are complete.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
-                                                failure:(void (^)(NSError *))failure;
+                                                failure:(void (^)(NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events",kOOURL];
     
@@ -1057,7 +1057,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
                                  toEvent:(EventObject *)event
                                   success:(void (^)(id response))success
-                                  failure:(void (^)(NSError *))failure;
+                                  failure:(void (^)(NSError *error))failure;
 {
     if (!event  || !restaurant) {
         failure (nil);
@@ -1104,7 +1104,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)addEvent:(EventObject *)eo
                                success:(void (^)(NSInteger eventID))success
-                               failure:(void (^)(NSError *))failure;
+                               failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
         failure (nil);
@@ -1125,7 +1125,7 @@ NSString *const kKeySearchFilter = @"filter";
                                   success:^(id responseObject) {
                                       NSInteger identifier= 0;
                                       if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                                          NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"]; 
+                                          NSNumber *eventID= ((NSDictionary *)responseObject)[@"event_id"];
                                           identifier= parseIntegerOrNullFromServer(eventID);
                                       }
                                       if (!identifier) {
@@ -1148,7 +1148,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)reviseEvent:(EventObject *)eo
                              success:(void (^)(id))success
-                             failure:(void (^)(NSError *))failure;
+                             failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
         failure (nil);
@@ -1180,7 +1180,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: Fetch an array of users that are following the current user.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *users))success
-                                            failure:(void (^)(NSError *))failure;
+                                            failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSNumber *userid= userInfo.userID;
@@ -1211,7 +1211,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: Fetch an array of users that the current user is following.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
-                                            failure:(void (^)(NSError *))failure;
+                                            failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSNumber *userid= userInfo.userID;
@@ -1242,7 +1242,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: Fetch an array of groups of which the current user is a member .
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
-                                            failure:(void (^)(NSError *))failure;
+                                            failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSNumber *userid= userInfo.userID;
@@ -1280,7 +1280,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getUsersOfGroup: (NSInteger)groupID
                                     success:(void (^)(NSArray *groups))success
-                                    failure:(void (^)(NSError *))failure;
+                                    failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSNumber *userid= userInfo.userID;
@@ -1318,12 +1318,12 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *) event
                                                        success:(void (^)(bool))success
-                                                       failure:(void (^)(NSError *))failure;
+                                                       failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSNumber *userID = userInfo.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
 

@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSMutableArray *filters;
 @property (nonatomic) NSUInteger current;
 @property (nonatomic, strong) UIView *currentLine;
+@property (nonatomic) NSUInteger currentFilter;
 
 @end
 
@@ -45,11 +46,9 @@
     [UIView animateWithDuration:0.2 animations:^{
         _currentLine.frame = frame;
     }];
-
 }
 
 - (void)addFilter:(NSString *)name target:(id)target selector:(SEL)selector {
-
     //NOTE: not sure we need filter objects
     FilterObject *fo = [[FilterObject alloc] init];
     fo.name = name;
@@ -65,26 +64,32 @@
     [self addSubview:filterControl];
 }
 
+- (void)setCurrent:(NSUInteger)current {
+    if (current == _current) return;
+    _current = current;
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     CGRect frame = self.frame;
-    __block CGRect bFrame;
+    __block CGRect currentFrame = CGRectZero;
 
     CGSize filterSize = CGSizeMake(CGRectGetWidth(frame)/[_filterControls count], CGRectGetHeight(frame));
     [_filterControls enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         UIButton *b = (UIButton *)obj;
-        bFrame = b.frame;
+        CGRect bFrame = b.frame;
         bFrame.size = filterSize;
         bFrame.origin.y = (CGRectGetHeight(frame) - filterSize.height)/2;
         bFrame.origin.x = idx*filterSize.width;
         b.frame = bFrame;
+        if (idx == _current) currentFrame = bFrame;
     }];
     
     CGRect lineFrame = _currentLine.frame;
     lineFrame.size.height = 2;
     lineFrame.size.width = filterSize.width *0.7;
     lineFrame.origin.y = CGRectGetHeight(frame) - 5;
-    lineFrame.origin.x = (CGRectGetWidth(bFrame) - CGRectGetWidth(lineFrame))/2;
+    lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
     _currentLine.frame = lineFrame;
 }
 

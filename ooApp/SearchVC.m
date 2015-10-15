@@ -98,12 +98,15 @@ typedef enum: char {
     _searchBar.delegate= self;
     _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
-    self.filterView= [[OOFilterView alloc] init];
-    [ self.view  addSubview:_filterView];
+    self.filterView = [[OOFilterView alloc] init];
+    [ self.view addSubview:_filterView];
     [_filterView addFilter:LOCAL(@"Lists") target:self selector:@selector(doSelectList:)];
     [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];
     [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];
     [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];
+    _currentFilter = FILTER_PLACES;
+    [_filterView setCurrent:2];
+
     
     self.tableRestaurants= makeTable (self.view,self);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
@@ -156,7 +159,7 @@ typedef enum: char {
 // Name:    currentFilterName
 // Purpose:
 //------------------------------------------------------------------------------
-- (NSString*)currentFilterName
+- (NSString *)currentFilterName
 {
     return _arrayOfFilterNames [_currentFilter ];
 }
@@ -165,7 +168,7 @@ typedef enum: char {
 // Name:    keyboardHidden
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)keyboardHidden: (NSNotification*) not
+- (void)keyboardHidden:(NSNotification *)not
 {
     _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
     _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
@@ -175,9 +178,9 @@ typedef enum: char {
 // Name:    keyboardShown
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)keyboardShown: (NSNotification*) not
+- (void)keyboardShown:(NSNotification *)not
 {
-    NSDictionary* info = [not userInfo];
+    NSDictionary *info = [not userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     float keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
     ? kbSize.width : kbSize.height;

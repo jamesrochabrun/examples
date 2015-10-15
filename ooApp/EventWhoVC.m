@@ -201,9 +201,8 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                         }];
 #endif
     
-    // RULE: Find out what users are already attached to this events.
-    
-    [OOAPI getParticipantsInEvent: APP.eventBeingEdited
+    // RULE: Find out what users are already attached to this events.         
+    [OOAPI getParticipantsInEvent:APP.eventBeingEdited
                           success:^(NSArray *users) {
                               BOOL somethingChanged= NO;
                               @synchronized(weakSelf.arrayOfPotentialParticipants) {

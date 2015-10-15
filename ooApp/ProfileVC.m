@@ -17,10 +17,10 @@
 #import "UIImage+Additions.h"
 
 @interface ProfileTableFirstRow ()
-@property (nonatomic,assign) NSInteger  userID;
-@property (nonatomic,strong) UserObject* userInfo;
-@property (nonatomic,assign) BOOL viewingOwnProfile;
-@property (nonatomic,assign) ProfileVC *vc;
+@property (nonatomic, assign) NSInteger userID;
+@property (nonatomic, strong) UserObject *userInfo;
+@property (nonatomic, assign) BOOL viewingOwnProfile;
+@property (nonatomic, assign) ProfileVC *vc;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @end
 
@@ -30,7 +30,7 @@
 // Name:    initWithUserInfo:
 // Purpose:
 //------------------------------------------------------------------------------
-- (instancetype)initWithUserInfo:(UserObject*)u
+- (instancetype)initWithUserInfo:(UserObject *)u
 {
     self = [super init];
     if (self) {
@@ -47,50 +47,49 @@
                                            self,
                                            @selector (userPressedNewList:), 0);
         [_buttonNewListIcon.titleLabel setFont:
-         [UIFont fontWithName:@"oomami-icons"
-                         size: kGeomFontSizeHeader]];
+         [UIFont fontWithName:kFontIcons size:kGeomFontSizeHeader]];
         
-        _userInfo= u;
-        _userID= [u.userID integerValue];
+        _userInfo = u;
+        _userID = [u.userID integerValue];
         
         // Ascertain whether reviewing our own profile.
-        UserObject* userInfo= [Settings sharedInstance].userObject;
-        NSInteger ownUserIdentifier= [[userInfo userID ]  integerValue ];
-        _viewingOwnProfile= _userID==ownUserIdentifier;
+        UserObject *userInfo= [Settings sharedInstance].userObject;
+        NSInteger ownUserIdentifier= [[userInfo userID] integerValue];
+        _viewingOwnProfile = _userID == ownUserIdentifier;
         
-        self.iv= makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
+        self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
         
-        NSString* username= nil;
-        if  (_userInfo.username.length ) {
-            username= _userInfo.username;
+        NSString *username= nil;
+        if  (_userInfo.username.length) {
+            username = _userInfo.username;
         } else {
-            username=  @"Missing username";
+            username = @"Missing username";
         }
         
-        NSString *description= _userInfo.about.length? _userInfo.about: nil;
-        NSString *restaurants=  nil;
+        NSString *description = _userInfo.about.length? _userInfo.about: nil;
+        NSString *restaurants =  nil;
         
-        self.labelUsername= makeLabelLeft(self, username,kGeomFontSizeHeader);
-        self.labelDescription= makeLabelLeft(self, description,kGeomFontSizeHeader);
-        self.labelRestaurants= makeLabelLeft(self, restaurants,kGeomFontSizeHeader);
+        self.labelUsername = makeLabelLeft(self, username,kGeomFontSizeHeader);
+        self.labelDescription = makeLabelLeft(self, description,kGeomFontSizeHeader);
+        self.labelRestaurants = makeLabelLeft(self, restaurants,kGeomFontSizeHeader);
         
-        self.iv.layer.borderColor= GRAY.CGColor;
-        self.iv.layer.borderWidth= 1;
-        self.iv.contentMode=UIViewContentModeScaleAspectFit;
+        self.iv.layer.borderColor = GRAY.CGColor;
+        self.iv.layer.borderWidth = 1;
+        self.iv.contentMode = UIViewContentModeScaleAspectFit;
         
-        self.backgroundColor= WHITE;
+        self.backgroundColor = WHITE;
         
         if (userInfo.imageIdentifier) {
-            self.requestOperation = [OOAPI getUserImageWithImageID: userInfo.imageIdentifier
+            self.requestOperation = [OOAPI getUserImageWithImageID:userInfo.imageIdentifier
                                                          maxWidth:self.frame.size.width
                                                         maxHeight:0 success:^(NSString *link) {
                 ON_MAIN_THREAD( ^{
-                    [_iv setImageWithURL:[NSURL URLWithString: link ]];
+                    [_iv setImageWithURL:[NSURL URLWithString:link]];
                 });
             } failure:^(NSError *error) {
                 ;
             }];
-        } else if ( userInfo.imageURLString) {
+        } else if (userInfo.imageURLString) {
             ON_MAIN_THREAD( ^{
                 [_iv setImageWithURL:[NSURL URLWithString:userInfo.imageURLString]];
             });
@@ -103,17 +102,17 @@
 // Name:    userPressedNewList
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)userPressedNewList: (id) sender
+- (void)userPressedNewList:(id)sender
 {
     if (!_navigationController) {
         return;
     }
     
-    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New List")
-                                                     message: LOCAL(@"Enter a name for the new list")
-                                                    delegate:  self
-                                           cancelButtonTitle: LOCAL(@"Cancel")
-                                           otherButtonTitles: LOCAL(@"Create"), nil];
+    UIAlertView *alert= [[UIAlertView alloc] initWithTitle:LOCAL(@"New List")
+                                                   message:LOCAL(@"Enter a name for the new list")
+                                                  delegate:self
+                                         cancelButtonTitle:LOCAL(@"Cancel")
+                                         otherButtonTitles:LOCAL(@"Create"), nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     [alert show];
 }
@@ -124,8 +123,8 @@
 //------------------------------------------------------------------------------
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if  (1==buttonIndex) {
-        UITextField *textField = [alertView textFieldAtIndex: 0];
+    if  (1 == buttonIndex) {
+        UITextField *textField = [alertView textFieldAtIndex:0];
         NSString *string = trimString(textField.text);
         if  (string.length ) {
             string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
@@ -135,10 +134,10 @@
         
         [api addList:string
              success:^(id response) {
-                 [self.vc  performSelectorOnMainThread:  @selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO ];
+                 [self.vc  performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO];
              }
              failure:^(NSError * error) {
-                 NSString *s=[NSString stringWithFormat:@"Error from cloud: %@",error.localizedDescription];
+                 NSString *s = [NSString stringWithFormat:@"Error from cloud: %@", error.localizedDescription];
                  message(s);
              }
          ];
@@ -149,7 +148,7 @@
 // Name:    userPressedFollow
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)userPressedFollow: (id) sender
+- (void)userPressedFollow:(id)sender
 {
     if (!_navigationController) {
         return;
@@ -168,31 +167,31 @@
 // Name:    layoutsSubviews
 // Purpose:
 //------------------------------------------------------------------------------
-- ( void)layoutsSubviews
+- (void)layoutsSubviews
 {
-    float w=  [UIScreen mainScreen].bounds.size.width;
+    float w = [UIScreen mainScreen].bounds.size.width;
     
-    const int spacer=  kGeomSpaceInter;
-    int x=  kGeomSpaceEdge;
-    int y=  kGeomSpaceEdge;
-    _iv.frame= CGRectMake(x, y,  kGeomProfileImageSize,  kGeomProfileImageSize);
-    int bottomOfImage= y + kGeomProfileImageSize;
+    const int spacer = kGeomSpaceInter;
+    int x = kGeomSpaceEdge;
+    int y = kGeomSpaceEdge;
+    _iv.frame = CGRectMake(x, y, kGeomProfileImageSize, kGeomProfileImageSize);
+    int bottomOfImage = y + kGeomProfileImageSize;
     
     // Place the image
     x += kGeomProfileImageSize + spacer;
     _labelUsername.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
-    y +=kGeomProfileInformationHeight+ spacer;
+    y += kGeomProfileInformationHeight + spacer;
     
     // Place the labels
-    if (_labelDescription.text.length ) {
+    if (_labelDescription.text.length) {
         _labelDescription.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
-        y += kGeomProfileInformationHeight+ spacer;
+        y += kGeomProfileInformationHeight + spacer;
     } else {
-        _labelDescription.hidden= YES;
+        _labelDescription.hidden = YES;
     }
     
-    if (_labelRestaurants.text.length ) {
-        _labelRestaurants.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
+    if (_labelRestaurants.text.length) {
+        _labelRestaurants.frame = CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
         y += kGeomProfileInformationHeight + spacer;
     } else {
         _labelRestaurants.hidden= YES;
@@ -206,7 +205,7 @@
         _buttonFollow.hidden= YES;
     }
     
-    if  (y < bottomOfImage ) {
+    if  (y < bottomOfImage) {
         y= bottomOfImage;
     }
     
@@ -214,14 +213,14 @@
     x = kGeomSpaceEdge;
     [_buttonNewListIcon sizeToFit];
     float iconWith= _buttonNewListIcon.frame.size.width;
-    _buttonNewListIcon.frame=CGRectMake(x,y, iconWith,  kGeomHeightButton);
+    _buttonNewListIcon.frame=CGRectMake(x,y, iconWith, kGeomHeightButton);
     x += iconWith + spacer;
     [_buttonNewList sizeToFit];
     float textWidth= _buttonNewList.frame.size.width;
-    _buttonNewList.frame=CGRectMake(x,y,textWidth,  kGeomHeightButton);
+    _buttonNewList.frame=CGRectMake(x,y,textWidth, kGeomHeightButton);
     y +=  kGeomHeightButton + spacer;
     
-    self.spaceNeededForFirstCell= y;
+    self.spaceNeededForFirstCell = y;
 }
 
 //------------------------------------------------------------------------------
@@ -230,7 +229,7 @@
 //------------------------------------------------------------------------------
 - (NSInteger)neededHeight
 {
-    if  (!_spaceNeededForFirstCell) {
+    if (!_spaceNeededForFirstCell) {
         [self layoutsSubviews];
     }
     return self.spaceNeededForFirstCell;
