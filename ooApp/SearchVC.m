@@ -34,17 +34,18 @@ typedef enum: char {
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 
 @interface SearchVC ()
-@property (nonatomic,strong)  UISearchBar* searchBar;
+@property (nonatomic,strong) UISearchBar* searchBar;
 @property (nonatomic,strong) OOFilterView* filterView;
-@property (nonatomic,strong)  UIButton* buttonCancel;
-@property (nonatomic,strong)  UITableView*  tableRestaurants;
-@property (nonatomic,strong)  UITableView*  tablePeople;
+@property (nonatomic,strong) UIButton* buttonCancel;
+@property (nonatomic,strong) UITableView*  tableRestaurants;
+@property (nonatomic,strong) UITableView*  tablePeople;
 @property (nonatomic,assign) FilterType currentFilter;
 @property (nonatomic,strong) NSArray* restaurantsArray;
 @property (nonatomic,strong) NSArray* peopleArray;
 @property (atomic,assign) BOOL doingSearchNow;
 @property (nonatomic,strong) AFHTTPRequestOperation* fetchOperation;
 @property (nonatomic,strong) NSArray* arrayOfFilterNames;
+@property (nonatomic,strong) UIActivityIndicatorView *activityView;
 @end
 
 @implementation SearchVC
@@ -94,12 +95,15 @@ typedef enum: char {
     _searchBar.delegate= self;
     _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
-    self.filterView= [[OOFilterView alloc] init];
-    [ self.view  addSubview:_filterView];
+    self.filterView = [[OOFilterView alloc] init];
+    [ self.view addSubview:_filterView];
     [_filterView addFilter:LOCAL(@"Lists") target:self selector:@selector(doSelectList:)];
     [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];
     [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];
     [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];
+    _currentFilter = FILTER_PLACES;
+    [_filterView setCurrent:2];
+
     
     self.tableRestaurants= makeTable (self.view,self);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
@@ -113,6 +117,11 @@ typedef enum: char {
     if ( _addingRestaurantsToEvent) {
         self.navigationItem.leftBarButtonItem=nil;
     }
+    
+    self.activityView=[UIActivityIndicatorView new];
+    [self.view addSubview: _activityView ];
+    _activityView.hidden= YES;
+    [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +160,7 @@ typedef enum: char {
 // Name:    currentFilterName
 // Purpose:
 //------------------------------------------------------------------------------
-- (NSString*)currentFilterName
+- (NSString *)currentFilterName
 {
     return _arrayOfFilterNames [_currentFilter ];
 }
@@ -160,7 +169,7 @@ typedef enum: char {
 // Name:    keyboardHidden
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)keyboardHidden: (NSNotification*) not
+- (void)keyboardHidden:(NSNotification *)not
 {
     _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
     _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
@@ -170,9 +179,9 @@ typedef enum: char {
 // Name:    keyboardShown
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)keyboardShown: (NSNotification*) not
+- (void)keyboardShown:(NSNotification *)not
 {
-    NSDictionary* info = [not userInfo];
+    NSDictionary *info = [not userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     float keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
     ? kbSize.width : kbSize.height;
@@ -192,6 +201,25 @@ typedef enum: char {
 }
 
 //------------------------------------------------------------------------------
+// Name:    showSpinner
+// Purpose: Mechanism to give me diagnostic feedback.
+//------------------------------------------------------------------------------
+- (void)showSpinner: (id)show
+{
+    float h=  self.view.bounds.size.height;
+    float w=  self.view.bounds.size.width;
+    CGRect r= CGRectMake(w/2-50,h/3,100,100);
+    _activityView.frame= r;
+    _activityView.hidden=  show ? NO:YES;
+    if ( show) {
+        [_activityView startAnimating];
+    } else {
+        [_activityView stopAnimating];
+    }
+    [self.view bringSubviewToFront:_activityView];
+}
+
+//------------------------------------------------------------------------------
 // Name:    doSearch
 // Purpose:
 //------------------------------------------------------------------------------
@@ -201,15 +229,20 @@ typedef enum: char {
         NSLog (@"CANNOT SEARCH NOW");
         return;
     }
-    
     self.doingSearchNow= YES;
     __weak SearchVC* weakSelf= self;
     
-    if ( _currentFilter==FILTER_PEOPLE) {
-        NSString *searchText=_searchBar.text;
-        NSLog (@"SEARCHING FOR USER:  %@",searchText);
-        
-        self.fetchOperation= [OOAPI getUsersWithKeyword:searchText
+    switch (_currentFilter) {
+        case  FILTER_NONE:
+            break;
+            
+        case FILTER_PEOPLE:  {
+            [self showSpinner: @""];
+            
+            NSString *searchText=_searchBar.text;
+            NSLog (@"SEARCHING FOR USER:  %@",searchText);
+            
+            self.fetchOperation= [OOAPI getUsersWithKeyword:searchText
                                                     success:^(NSArray *users) {
                                                         [weakSelf performSelectorOnMainThread:@selector(loadPeople:)
                                                                                    withObject:users
@@ -217,33 +250,54 @@ typedef enum: char {
                                                         
                                                     } failure:^(NSError *e) {
                                                         NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
-                                                    }
-                              ];
-    } else {
-        CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
-        if (!location.latitude && !location.longitude) {
-            // XX
-            NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
-            location.latitude = 37.775;
-            location.longitude = -122.4183333;
-        }
-    
-        OOAPI *api= [[OOAPI  alloc] init];
-
-        self.fetchOperation= [api getRestaurantsWithKeyword:_searchBar.text
-                                                andLocation:location
-                                                  andFilter:[self currentFilterName]
-                                                andOpenOnly:NO
-                                                    andSort:kSearchSortTypeBestMatch
-                                                    success:^(NSArray *restaurants) {
-                                                        [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
-                                                                                   withObject:restaurants
-                                                                                waitUntilDone:NO];
                                                         
-                                                    } failure:^(NSError *e) {
-                                                        NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
+                                                        [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
+                                                                                   withObject:nil
+                                                                                waitUntilDone:NO];
                                                     }
-                              ];
+                                  ];
+        }break;
+            
+        case FILTER_LISTS: {
+
+        } break;
+            
+        case FILTER_YOU: {
+
+        }break;
+            
+        case  FILTER_PLACES: {
+            [self showSpinner: @""];
+    
+            CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
+            if (!location.latitude && !location.longitude) {
+                // XX
+                NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
+                location.latitude = 37.775;
+                location.longitude = -122.4183333;
+            }
+            
+            OOAPI *api= [[OOAPI  alloc] init];
+            
+            self.fetchOperation= [api getRestaurantsWithKeyword:_searchBar.text
+                                                    andLocation:location
+                                                      andFilter:[self currentFilterName]
+                                                    andOpenOnly:NO
+                                                        andSort:kSearchSortTypeBestMatch
+                                                        success:^(NSArray *restaurants) {
+                                                            [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
+                                                                                       withObject:restaurants
+                                                                                    waitUntilDone:NO];
+                                                            
+                                                        } failure:^(NSError *e) {
+                                                            NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
+                                                            
+                                                            [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
+                                                                                       withObject:nil
+                                                                                    waitUntilDone:NO];
+                                                        }
+                                  ];
+        } break;
     }
     
 }
@@ -259,44 +313,6 @@ typedef enum: char {
     }
     
     [_filterView selectFilter:which];
-    
-//    NSString* listString= _arrayOfFilterNames[FILTER_LISTS];
-//    NSString* peopleString= _arrayOfFilterNames[FILTER_PEOPLE];
-//    NSString* placesString= _arrayOfFilterNames[FILTER_PLACES];
-//    NSString* youString= _arrayOfFilterNames[FILTER_YOU];
-    
-//    const  float fs= kGeomFontSizeHeader;
-//    switch ( which) {
-//        case FILTER_LISTS:
-//            [_buttonList setAttributedTitle:underlinedAttributedStringOf(listString, fs) forState:UIControlStateNormal];
-//            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-//            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
-//            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
-//            break;
-//            
-//        case FILTER_PEOPLE:
-//            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
-//            [_buttonPeople setAttributedTitle:underlinedAttributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-//            [_buttonPlaces setAttributedTitle:attributedStringOf( placesString, fs) forState:UIControlStateNormal];
-//            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
-//            break;
-//            
-//        case FILTER_PLACES:
-//            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
-//            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-//            [_buttonPlaces setAttributedTitle:underlinedAttributedStringOf(placesString, fs) forState:UIControlStateNormal];
-//            [_buttonYou setAttributedTitle:attributedStringOf(youString, fs) forState:UIControlStateNormal];
-//            break;
-//            
-//        case FILTER_YOU:
-//            [_buttonList setAttributedTitle:attributedStringOf(listString, fs) forState:UIControlStateNormal];
-//            [_buttonPeople setAttributedTitle:attributedStringOf(peopleString, fs) forState:UIControlStateNormal];
-//            [_buttonPlaces setAttributedTitle:attributedStringOf(placesString, fs) forState:UIControlStateNormal];
-//            [_buttonYou setAttributedTitle:underlinedAttributedStringOf(youString, fs) forState:UIControlStateNormal];
-//            break;
-//            
-//        default: return;
-//    }
     
     self.currentFilter=  which;
     
@@ -350,12 +366,22 @@ typedef enum: char {
     }
 }
 
+- (void)clearResultsTables
+{
+    self.restaurantsArray= nil;
+    [self.tableRestaurants reloadData];
+    
+    self.peopleArray= nil;
+    [self.tablePeople reloadData];
+}
+
 //------------------------------------------------------------------------------
 // Name:    loadRestaurants
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)loadRestaurants: (NSArray*)array
 {
+    [ self showSpinner:nil];
     self.doingSearchNow= NO;
     self.fetchOperation= nil;
     
@@ -375,7 +401,8 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)loadPeople: (NSArray*)array
 {
-    self.doingSearchNow= NO;
+    [ self showSpinner:nil];
+   self.doingSearchNow= NO;
     self.fetchOperation= nil;
     
     self.peopleArray= array;
@@ -394,7 +421,8 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)cancelSearch
 {
-    [self.fetchOperation  cancel];
+    [ self showSpinner:nil];
+   [self.fetchOperation  cancel];
     self.fetchOperation= nil;
     self.doingSearchNow= NO;
 }
@@ -405,7 +433,8 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)userPressedCancel: (id) sender
 {
-    _searchBar.text=@"";
+    [ self showSpinner:nil];
+   _searchBar.text=@"";
     [_searchBar resignFirstResponder];
     [self.fetchOperation  cancel];
     self.fetchOperation= nil;
@@ -425,8 +454,15 @@ typedef enum: char {
     if  (_currentFilter==FILTER_LISTS ) {
         return;
     }
-    if  (self.doingSearchNow ) {
+    _currentFilter= FILTER_LISTS;
+   if  (self.doingSearchNow ) {
         [self cancelSearch];
+    }
+    
+    // RULE: If there is a search string then redo the current search for the new context.
+    if ( _searchBar.text.length) {
+        [self clearResultsTables];
+        [self doSearch];
     }
 }
 
@@ -439,8 +475,15 @@ typedef enum: char {
     if  (_currentFilter==FILTER_PEOPLE ) {
         return;
     }
-    if  (self.doingSearchNow ) {
+    _currentFilter= FILTER_PEOPLE;
+   if  (self.doingSearchNow ) {
         [self cancelSearch];
+   }
+    
+    // RULE: If there is a search string then redo the current search for the new context.
+    if ( _searchBar.text.length) {
+        [self clearResultsTables];
+        [self doSearch];
     }
 }
 
@@ -453,8 +496,15 @@ typedef enum: char {
     if  (_currentFilter==FILTER_PLACES ) {
         return;
     }
-    if  (self.doingSearchNow ) {
+    _currentFilter= FILTER_PLACES;
+   if  (self.doingSearchNow ) {
         [self cancelSearch];
+    }
+    
+    // RULE: If there is a search string then redo the current search for the new context.
+    if ( _searchBar.text.length) {
+        [self clearResultsTables];
+        [self doSearch];
     }
 }
 
@@ -467,8 +517,15 @@ typedef enum: char {
     if  (_currentFilter==FILTER_YOU ) {
         return;
     }
+    _currentFilter= FILTER_YOU;
     if  (self.doingSearchNow ) {
         [self cancelSearch];
+    }
+    
+    // RULE: If there is a search string then redo the current search for the new context.
+    if ( _searchBar.text.length) {
+        [self clearResultsTables];
+        [self doSearch];
     }
 }
 
