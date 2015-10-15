@@ -56,8 +56,8 @@
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _iv, _address, _website, _phoneNumber);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_iv(imageWidth)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(spaceEdge)-[_phoneNumber]-(spaceEdge)-[_website]-(spaceEdge)-[_address]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_iv]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_phoneNumber]-spaceEdge-[_website]-spaceEdge-[_address]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_iv]-[_phoneNumber]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_iv]-[_website]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];

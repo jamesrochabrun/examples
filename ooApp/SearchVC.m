@@ -231,8 +231,10 @@ typedef enum: char {
         OOAPI *api= [[OOAPI  alloc] init];
 
         self.fetchOperation= [api getRestaurantsWithKeyword:_searchBar.text
-                                                  andFilter:[self currentFilterName]
                                                 andLocation:location
+                                                  andFilter:[self currentFilterName]
+                                                andOpenOnly:NO
+                                                    andSort:kSearchSortTypeBestMatch
                                                     success:^(NSArray *restaurants) {
                                                         [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
                                                                                    withObject:restaurants

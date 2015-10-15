@@ -34,7 +34,7 @@ NSString *const kKeyIsAttending = @"is_attending";
     UIImage *profilePhoto;
 }
 
-- (instancetype) init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
@@ -42,7 +42,7 @@ NSString *const kKeyIsAttending = @"is_attending";
     return self;
 }
 
-- (NSUInteger) hash;
+- (NSUInteger)hash;
 {
     return kHashUser + (_userID.longValue & 0xffffff);
 }
@@ -67,11 +67,11 @@ NSString *const kKeyIsAttending = @"is_attending";
     user.imageIdentifier=[dict objectForKey:kKeyImageIdentifier];
     user.isAttending= parseIntegerOrNullFromServer(dict[kKeyIsAttending]);
     
-    NSNumber *participantNumber= dict [ kKeyParticipantType];
+    NSNumber *participantNumber= dict [kKeyParticipantType];
     if (!participantNumber) {
-        user.participantType= PARTICIPANT_TYPE_UNDECIDED; // The same as a null on the database side.
+        user.participantType = PARTICIPANT_TYPE_NONE;
     } else {
-        user.participantType= participantNumber.integerValue;
+        user.participantType = participantNumber.integerValue;
     }
     return user;
 }
@@ -80,7 +80,7 @@ NSString *const kKeyIsAttending = @"is_attending";
 // Name:    dictionaryFromUser
 // Purpose: Provides dict from user object.
 //------------------------------------------------------------------------------
-- (NSDictionary*) dictionaryFromUser;
+- (NSDictionary *)dictionaryFromUser;
 {
     return @{
              kKeyID : self.userID ?: @"",
@@ -113,7 +113,7 @@ NSString *const kKeyIsAttending = @"is_attending";
                    }];
 }
 
-- (UIImage*) userProfilePhoto;
+- (UIImage *)userProfilePhoto;
 {
     return profilePhoto;
 }

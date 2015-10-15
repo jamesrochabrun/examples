@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-#import "SubBaseVC.h"
+#import "BaseVC.h"
 #import "UserObject.h"
 
-@interface ProfileVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
+@interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic,assign) NSInteger  userID;
 @property (nonatomic,strong) UserObject* userInfo;
 

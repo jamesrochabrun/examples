@@ -99,6 +99,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     } else {
         self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name
                                                    andLocation:[[LocationManager sharedInstance] currentUserLocation]
+                                                     andFilter:@""
                                                    andOpenOnly:NO
                                                        andSort:kSearchSortTypeBestMatch
                                                        success:^(NSArray *r) {

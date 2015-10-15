@@ -15,6 +15,7 @@
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
+NSString *const kKeySearchFilter = @"filter";
 
 @interface OOAPI()
 - (NSString *)ooURL;
@@ -145,6 +146,7 @@ NSString *const kKeySearchSort = @"sort";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
                                           andLocation:(CLLocationCoordinate2D)location
+                                            andFilter:(NSString*)filterName
                                            andOpenOnly:(BOOL)openOnly
                                            andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
@@ -155,62 +157,26 @@ NSString *const kKeySearchSort = @"sort";
         return nil;
     }
     
-    if (!sort) {
-        sort = kSearchSortTypeBestMatch;
+    if (!filterName) {
+        filterName = @"";
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
-    NSDictionary *parameters = @{@"keyword":keyword,
-                                 kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
-                                 kKeySearchRadius:[NSNumber numberWithUnsignedInteger:10000],
-                                 kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
-                                 kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
-                                 kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly]};
-    
-//    NSLog (@" URL= %@",urlString);
-    
-    OONetworkManager *rm = [[OONetworkManager alloc] init];
-    
-    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
-        NSMutableArray *restaurants = [NSMutableArray array];
-        for (id dict in responseObject) {
-            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
-            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
-        }
-        success(restaurants);
-    } failure:^(NSError *error) {
-        NSLog(@"Error: %@", error);
-        failure(error);
-    }];
-}
-
-//------------------------------------------------------------------------------
-// Name:    getRestaurantsWithKeyword andFilter andLocation
-// Purpose:
-//------------------------------------------------------------------------------
-- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
-                                            andFilter:(NSString*)filterName
-                                          andLocation:(CLLocationCoordinate2D)location
-                                              success:(void (^)(NSArray *restaurants))success
-                                              failure:(void (^)(NSError *))failure
-{
-    if (!keyword || !filterName) {
-        failure (nil);
-        return nil;
+    if (!sort) {
+        sort = kSearchSortTypeBestMatch;
     }
     
     double radius= [Settings sharedInstance].searchRadius;
     
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", kOOURL];
     NSDictionary *parameters = @{@"keyword":keyword,
-                                 @"latitude":@(location.latitude),
-                                 @"longitude":@(location.longitude),
-                                 @"filter":filterName ?:@"",
-                                 @"radius":@(radius)
-                                 };
+                                 kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
+                                 kKeySearchRadius:[NSNumber numberWithUnsignedInteger:radius],
+                                 kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
+                                 kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
+                                 kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly],
+                                 kKeySearchFilter:filterName};
     
-//    NSLog (@" URL = %@",urlString);
-    NSLog  (@" radius = %f", radius);
+//    NSLog (@" URL= %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -431,12 +397,12 @@ NSString *const kKeySearchSort = @"sort";
 + (AFHTTPRequestOperation *)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                    failure:(void (^)(NSError *))failure;
 {
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSNumber *userID = userInfo.userID;
     
-    NSString *requestString=[NSString stringWithFormat:@"https://%@/users/%@", kOOURL, userID];
+    NSString *requestString =[NSString stringWithFormat:@"https://%@/users/%@", kOOURL, userID];
     
-    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+    requestString = [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
     
     return [[OONetworkManager sharedRequestManager] PUT:requestString
                                              parameters:@{
@@ -807,7 +773,7 @@ NSString *const kKeySearchSort = @"sort";
                                        success:^(id responseObject) {
                                            NSInteger identifier= 0;
                                            if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                                               NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
+                                               NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
                                                identifier= parseIntegerOrNullFromServer(eventID);
                                            }
                                            success(identifier);
@@ -820,7 +786,7 @@ NSString *const kKeySearchSort = @"sort";
                                         success:^(id responseObject) {
                                             NSInteger identifier= 0;
                                             if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                                                NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
+                                                NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
                                                 identifier= parseIntegerOrNullFromServer(eventID);
                                             }
                                             success(identifier);
@@ -839,31 +805,31 @@ NSString *const kKeySearchSort = @"sort";
 //------------------------------------------------------------------------------
 #if 0
 + (AFHTTPRequestOperation *)setParticipantsInEvent:(EventObject *)eo
-                                                 to: (NSArray*) participants
+                                                 to:(NSArray *)participants
                                                success:(void (^)())success
                                                failure:(void (^)(NSError *))failure;
 {
     if (!eo) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSNumber *userID = userInfo.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
-    NSInteger eventID= eo.eventID;
+    NSInteger eventID = eo.eventID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", kOOURL, (unsigned long) eventID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", kOOURL, (unsigned long)eventID];
     
     AFHTTPRequestOperation *op;
     
-    NSMutableArray *userids= [NSMutableArray new];
-    for (UserObject* participant  in participants) {
-        NSNumber *value=  participant.userID;
-        if  (value ) {
+    NSMutableArray *userids = [NSMutableArray new];
+    for (UserObject* participant in participants) {
+        NSNumber *value = participant.userID;
+        if (value) {
             [userids addObject: value];
         }
     }
@@ -874,7 +840,7 @@ NSString *const kKeySearchSort = @"sort";
          success:^(id responseObject) {
              NSInteger identifier= 0;
              if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                 NSNumber *eventID= ( (NSDictionary*)responseObject)[ @"event_id"];
+                 NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
                  identifier= parseIntegerOrNullFromServer(eventID);
              }
              success();
@@ -898,16 +864,16 @@ NSString *const kKeySearchSort = @"sort";
         failure (nil);
         return nil;
     }
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSNumber *userID = userInfo.userID;
     if (!userID) {
         failure (nil);
         return nil;
     }
-    NSInteger eventID= eo.eventID;
+    NSInteger eventID = eo.eventID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", kOOURL, (unsigned long) eventID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", kOOURL, (unsigned long)eventID];
     
     AFHTTPRequestOperation *op;
     
@@ -915,10 +881,10 @@ NSString *const kKeySearchSort = @"sort";
            success:^(id responseObject) {
                NSArray *array= responseObject;
                NSMutableArray *users= [NSMutableArray new];
-               for (NSDictionary* d  in  array) {
-                   UserObject* user= [UserObject userFromDict:d];
-                   if  (user ) {
-                       [users  addObject: user];
+               for (NSDictionary *d in array) {
+                   UserObject *user = [UserObject userFromDict:d];
+                   if (user) {
+                       [users addObject:user];
                    }
                }
                success(users);

@@ -200,6 +200,7 @@ static NSString * const ListRowID = @"HLRCell";
     
     _requestOperation = [api getRestaurantsWithKeyword:searchTerm
                                            andLocation:[[LocationManager sharedInstance] currentUserLocation]
+                                             andFilter:@""
                                            andOpenOnly:_openOnly
                                                   andSort:kSearchSortTypeDistance
                                                success:^(NSArray *r) {

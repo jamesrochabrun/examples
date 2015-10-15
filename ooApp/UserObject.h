@@ -10,10 +10,10 @@
 #import "ListObject.h"
 
 typedef enum: int {
-    PARTICIPANT_TYPE_UNDECIDED= -1,
-    PARTICIPANT_TYPE_CREATOR=0,
-    PARTICIPANT_TYPE_ADMIN=1,
-    PARTICIPANT_TYPE_ATTENDEE=2,
+    PARTICIPANT_TYPE_NONE = -1,
+    PARTICIPANT_TYPE_CREATOR = 0,
+    PARTICIPANT_TYPE_ADMIN = 1,
+    PARTICIPANT_TYPE_ATTENDEE = 2,
 } ParticipantType;
 
 @interface UserObject : NSObject
@@ -33,15 +33,15 @@ typedef enum: int {
 @property (nonatomic, strong) NSString *facebookIdentifier;
 @property (nonatomic, strong) NSString *imageURLString;// e.g. from FB.
 @property (nonatomic, strong) NSString *imageIdentifier;// i.e. from OO.
-@property (nonatomic,assign) NSInteger participantType;
-@property (nonatomic,assign) BOOL isAttending;
+@property (nonatomic, assign) NSInteger participantType;
+@property (nonatomic, assign) BOOL isAttending;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
-- (NSDictionary*) dictionaryFromUser;
+- (NSDictionary *)dictionaryFromUser;
 
-- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto;
-- (UIImage*) userProfilePhoto;
+- (void)setUserProfilePhoto:(UIImage *)userProfilePhoto;
+- (UIImage *)userProfilePhoto;
 
-- (NSUInteger) hash;
+- (NSUInteger)hash;
 
 @end

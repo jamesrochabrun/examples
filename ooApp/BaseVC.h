@@ -13,7 +13,6 @@
 @interface BaseVC : UIViewController
 
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *menu;
-
 @property (nonatomic, strong) NavTitleObject *navTitle;
 
 - (void)layout;
