@@ -45,8 +45,9 @@ static CGFloat kGeomCornerRadius = 3.0;
 static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
-static NSInteger kGeomPeopleIconFontSize=  30;
-static NSInteger kGeomEventHeadingFontSize=  30;
+static NSUInteger kGeomFontSizeStripHeader = 13;
+static NSInteger kGeomPeopleIconFontSize = 30;
+static NSInteger kGeomEventHeadingFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
 static CGFloat kGeomHeightFilters = 40.0;
@@ -62,7 +63,7 @@ static CGFloat kGeomHeightHorizontalListRow = 90.0;
 static NSUInteger kGeomIconSize = 25;
 static CGFloat kGeomSpaceEdge = 8.0;
 static CGFloat kGeomSpaceIcon = 5.0;
-static CGFloat kGeomSpaceInter = 10.0;
+static CGFloat kGeomSpaceInter = 8.0;
 static CGFloat kGeomSampleUsernameTableHeight=  175;
 static NSUInteger kGeomSampleUsernameTableWidth=  175/.62;
 static CGFloat kGeomProfileImageSize =  100;
@@ -87,6 +88,7 @@ extern NSString *const kFontSFTextLight;
 extern NSString *const kFontLatoThin;
 extern NSString *const kFontLatoRegular;
 extern NSString *const kFontLatoBold;
+extern NSString *const kFontLatoMedium;
 
 // Icon font mappings
 extern NSString *const kFontIconAdd;
