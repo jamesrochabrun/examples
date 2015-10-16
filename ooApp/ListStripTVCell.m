@@ -20,7 +20,6 @@
 
 //@property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) OOStripHeader *nameHeader;
-@property (nonatomic, strong) UIView *line;
 @property (nonatomic, strong) NSArray *restaurants;
 
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -45,9 +44,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _requestOperation = nil;
         _listItem = [[ListObject alloc] init];
         
-        _line = [[UIView alloc] init];
-        _line.backgroundColor = UIColorRGBA(kColorBlack);
-
         _nameHeader = [[OOStripHeader alloc] init];
         
         _cvl = [[ListCVFL alloc] init];
@@ -58,9 +54,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         [_fcvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
 
         [self addSubview:_nameHeader];
-        [self addSubview:_line];
         
-        _nameHeader.translatesAutoresizingMaskIntoConstraints = _line.translatesAutoresizingMaskIntoConstraints = NO;
+        _nameHeader.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"strip_gradient.png"]];
@@ -94,18 +89,15 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     
 //    CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_nameHeader.font}];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)/2-2), @"lineY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)-5), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)/2), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameHeader, _line);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameHeader);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(labelY)-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-lineY-[_line(5)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[_nameHeader]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_line]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameHeader
                                                      attribute:NSLayoutAttributeCenterX

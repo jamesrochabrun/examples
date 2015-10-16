@@ -35,7 +35,8 @@
     _name = newName;
     _nameLabel.text = _name;
     
-    [self bringSubviewToFront:_nameLabel];
+//    [self bringSubviewToFront:_nameLabel];
+    [self setNeedsDisplay];
 }
 
 - (void)updateConstraints {
@@ -45,37 +46,47 @@
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameLabel);
 
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-5-[_nameLabel]-5-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-20-[_nameLabel]-20-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=5)-[_nameLabel]-(>=5)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=5)-[_nameLabel]-(>=5)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_icon
-//                                                     attribute:NSLayoutAttributeCenterX
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_icon.superview
-//                                                     attribute:NSLayoutAttributeCenterX
-//                                                    multiplier:1.f constant:0.f]];
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_icon
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_icon.superview
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                    multiplier:1.f constant:0.f]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
+                                                     attribute:NSLayoutAttributeCenterX
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:_nameLabel.superview
+                                                     attribute:NSLayoutAttributeCenterX
+                                                    multiplier:1.f constant:0.f]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
+                                                     attribute:NSLayoutAttributeCenterY
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:_nameLabel.superview
+                                                     attribute:NSLayoutAttributeCenterY
+                                                    multiplier:1.f constant:0.f]];
 }
 
 - (void)drawRect:(CGRect)rect {
+    CGSize s = [_nameLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                        _nameLabel.font, NSFontAttributeName,
+                                                         nil]];
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 1.25, UIColorRGBA(kColorStripHeaderShadow).CGColor);
+    
     CGContextBeginPath(ctx);
-    CGContextMoveToPoint   (ctx, CGRectGetMinX(rect), (CGRectGetMinY(rect) + CGRectGetMaxY(rect))/2);  // mid left
-    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect) + 15, CGRectGetMinY(rect));  // top left
-    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect) - 15, CGRectGetMinY(rect));  // top right
-    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), (CGRectGetMinY(rect) + CGRectGetMaxY(rect))/2);  // mid right
-    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect) - 15, CGRectGetMaxY(rect));  // bottom right
-    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect) + 15, CGRectGetMaxY(rect));  // bottom left
-    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect), (CGRectGetMinY(rect) + CGRectGetMaxY(rect))/2);  // mid left
+    CGContextMoveToPoint   (ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) - 2);  // upper mid left
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2 - 12, CGRectGetMidY(rect) - 2);  // upper inner left
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2, CGRectGetMinY(rect));  // top left
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2, CGRectGetMinY(rect));  // top right
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2 + 12, CGRectGetMidY(rect) - 2);  // upper inner right
+    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), CGRectGetMidY(rect) - 2);  // upper mid right
+    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), CGRectGetMidY(rect) + 2);  // lower mid right
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2 + 12, CGRectGetMidY(rect) + 2);  // lower inner right
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2, CGRectGetMaxY(rect));  // bottom right
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2, CGRectGetMaxY(rect));  // bottom left
+    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2 - 12, CGRectGetMidY(rect) + 2);  // lower inner left
+    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) + 2);  // lower mid left
+    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) - 2);  // back to upper mid left
     CGContextClosePath(ctx);
     
-    //(0xDC2763FF)
     CGContextSetRGBFillColor(ctx, 0x00/255.f, 0x00/255.f, 0x00/255.f, 1);
     CGContextFillPath(ctx);
 }
