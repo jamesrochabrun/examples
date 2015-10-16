@@ -12,6 +12,20 @@ typedef enum {
     KListDisplayTypeCount
 } ListDisplayType;
 
+typedef enum {
+    kListTypeSystem = 1,
+    kListTypeUser = 2,
+    kListTypeFavorites = 3,
+    kListTypeToTry = 4
+} ListType;
+
+extern NSString *const kKeyListID;
+extern NSString *const kKeyListName;
+extern NSString *const kKeyListType;
+extern NSString *const kKeyListMediaItem;
+extern NSString *const kKeyListNumRestaurants;
+
+
 #import <Foundation/Foundation.h>
 #import "MediaItemObject.h"
 

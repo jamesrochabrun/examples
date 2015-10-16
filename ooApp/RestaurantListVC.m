@@ -44,7 +44,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
     _requestOperation = nil;
     
-    [self setupAlertController];
+    if (_listItem.type == kListTypeUser) {
+        [self setupAlertController];
+    }
     
     [self layout];
 }
@@ -126,8 +128,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantListVC *weakSelf = self;
-    if (_listItem.type == kOOAPIListTypeFavorites ||
-        _listItem.type == kOOAPIListTypeUser) {
+    if (_listItem.type == kListTypeFavorites ||
+        _listItem.type == kListTypeUser) {
         self.requestOperation = [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{

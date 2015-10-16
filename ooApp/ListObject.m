@@ -20,7 +20,7 @@ NSString *const kKeyListNumRestaurants = @"num_restaurants";
 -(instancetype)init {
     if (self) {
         self.listDisplayType = KListDisplayTypeStrip;
-        _type = kOOAPIListTypeSystem;
+        _type = kListTypeSystem;
     }
     return self;
 }

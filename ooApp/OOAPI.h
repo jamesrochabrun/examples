@@ -25,10 +25,6 @@ typedef enum {
     kSearchSortTypeHighestRated = 2,
 } SearchSortType;
 
-static const int kOOAPIListTypeSystem = 1;
-static const int kOOAPIListTypeUser = 2;
-static const int kOOAPIListTypeFavorites = 3;
-
 static NSString* const kPhotoUploadPath=  @"/users/picture";
 
 @interface OOAPI : NSObject
