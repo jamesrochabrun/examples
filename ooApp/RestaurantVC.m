@@ -98,6 +98,11 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
                                                      [self addToFavorites];
                                                  }];
     
+    UIAlertAction *addToTryList = [UIAlertAction actionWithTitle:@"Add to Try List"
+                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                 [self addToTryList];
+                                                             }];
+
     UIAlertAction *addToList = [UIAlertAction actionWithTitle:@"Add to List"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self showLists];
@@ -121,6 +126,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     
     
     [_alertController addAction:addToFavorites];
+    [_alertController addAction:addToTryList];
     [_alertController addAction:addToList];
     [_alertController addAction:addToNewList];
     [_alertController addAction:addToEvent];
@@ -255,8 +261,18 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 - (void)addToFavorites {
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
+    [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeFavorites success:^(id response) {
+        [weakSelf getListsForRestaurant];
+    } failure:^(NSError *error) {
+        ;
+    }];
+}
+
+- (void)addToTryList {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantVC *weakSelf = self;
     
-    [api addRestaurantsToFavorites:@[_restaurant] success:^(id response) {
+    [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeToTry success:^(id response) {
         [weakSelf getListsForRestaurant];
     } failure:^(NSError *error) {
         ;

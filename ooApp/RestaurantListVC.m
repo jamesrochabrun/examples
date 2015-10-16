@@ -128,7 +128,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantListVC *weakSelf = self;
-    if (_listItem.type == kListTypeFavorites ||
+    if (_listItem.type == kListTypeToTry ||
+        _listItem.type == kListTypeFavorites ||
         _listItem.type == kListTypeUser) {
         self.requestOperation = [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *r) {
             weakSelf.restaurants = r;

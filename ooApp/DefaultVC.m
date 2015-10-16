@@ -42,7 +42,6 @@
     l.textColor = UIColorRGBA(kColorWhite);
     l.text = [NSString stringWithFormat:@"abcdefghi"] ;
     [self.view addSubview:l];
-    [self test];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -51,65 +50,8 @@
     [self testAPI];
 }
 
-- (void)test
-{
-    NSDate *date = [NSDate date];
-    NSString *c;
-    c = [TimeUtilities categorySearchString:date];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:7*60*60]];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:12*60*60]];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:15.5*60*60]];
-    c = [TimeUtilities categorySearchString:[date dateByAddingTimeInterval:-3*60*60]];
-    
-    OOAPI *api = [[OOAPI alloc] init];
-    [api addRestaurantsToFavorites:nil
-                           success:^(id response) {
-                               ;
-                           } failure:^(NSError *error) {
-                               ;
-                           }];
-    
-}
-
-
 - (void)testAPI {
-//    OOAPI *api = [[OOAPI alloc] init];
-//
-//    [api getRestaurantsWithIDs:nil success:^(NSArray *r) {
-//        _restaurants = r;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [self printRestaurants];
-//        });
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    [api getUsersWithIDs:nil success:^(NSArray *r) {
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [r enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-//                UserObject *user =  (UserObject *)obj;
-//                NSLog(@"id = %@ user = %@ %@ email=%@", user.userID, user.firstName, user.lastName, user.email);
-//            }];
-//        });
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
-//    
-//    [api getDishesWithIDs:nil success:^(NSArray *r) {
-//        
-//    } failure:^(NSError *err) {
-//        ;
-//    }];
     
-//    ListObject *list = [[ListObject alloc] init];
-//    list.name = @"Anuj's list";
-//    list.type = @"user";
-//    [api addList:list success:^(NSArray *dishes) {
-//        ;
-//    } failure:^(NSError *error) {
-//        ;
-//    }];
 }
 
 - (void)printRestaurants {

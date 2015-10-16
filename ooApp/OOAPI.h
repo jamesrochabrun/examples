@@ -70,6 +70,11 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                    success:(void (^)(id response))success
                                    failure:(void (^)(NSError *error))failure;
 
+- (AFHTTPRequestOperation *)addRestaurantsToSpecialList:(NSArray *)restaurants listType:(ListType)listType
+                                                success:(void (^)(id response))success
+                                                failure:(void (^)(NSError *error))failure;
+
+
 //------------------------------------------------------------------------------
 // Lists
 //
@@ -89,9 +94,9 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                success:(void (^)(NSArray *mediaItems))success
                                                failure:(void (^)(NSError *error))failure;
 
-- (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
-                                              success:(void (^)(id response))success
-                                              failure:(void (^)(NSError *error))failure;
+//- (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
+//                                              success:(void (^)(id response))success
+//                                              failure:(void (^)(NSError *error))failure;
 
 
 - (AFHTTPRequestOperation *)deleteList:(NSUInteger)listID
