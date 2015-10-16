@@ -17,6 +17,7 @@
 
 @interface RestaurantListVC ()
 
+@property (nonatomic, strong) UIAlertController *alertController;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
@@ -43,6 +44,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
     _requestOperation = nil;
     
+    [self setupAlertController];
+    
     [self layout];
 }
 
@@ -56,6 +59,43 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+}
+
+- (void)setupAlertController {
+    _alertController = [UIAlertController alertControllerWithTitle:@"List Options"
+                                                           message:@"What would you like to do with this list."
+                                                    preferredStyle:UIAlertControllerStyleActionSheet]; // 1
+    
+    _alertController.view.tintColor = [UIColor blackColor];
+    
+    UIAlertAction *deleteList = [UIAlertAction actionWithTitle:@"Delete List"
+                                                         style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+                                                             [self deleteList];
+                                                         }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                         NSLog(@"Cancel");
+                                                     }]; // 3
+    
+    
+    [_alertController addAction:deleteList];
+    [_alertController addAction:cancel];
+    
+    [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)moreButtonPressed:(id)sender {
+    [self presentViewController:_alertController animated:YES completion:nil]; // 6
+}
+
+- (void)deleteList {
+    OOAPI *api = [[OOAPI alloc] init];
+    [api deleteList:_listItem.listID success:^(NSArray *lists) {
+        ;
+    } failure:^(NSError *error) {
+        ;
+    }];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -88,7 +128,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     __weak RestaurantListVC *weakSelf = self;
     if (_listItem.type == kOOAPIListTypeFavorites ||
         _listItem.type == kOOAPIListTypeUser) {
-        self.requestOperation = [api getRestaurantsWithListID:[_listItem.listID integerValue] success:^(NSArray *r) {
+        self.requestOperation = [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];

@@ -17,10 +17,10 @@ typedef enum {
 
 @interface ListObject : NSObject
 
+@property (nonatomic) NSUInteger listID;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) NSInteger type;
 @property (nonatomic, strong) NSString *imageURL;
-@property (nonatomic, strong) NSString *listID;
 @property (nonatomic) NSUInteger numRestaurants;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
 @property (nonatomic) ListDisplayType listDisplayType;

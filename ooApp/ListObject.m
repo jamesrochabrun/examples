@@ -27,7 +27,7 @@ NSString *const kKeyListNumRestaurants = @"num_restaurants";
 
 + (ListObject *)listFromDict:(NSDictionary *)dict {
     ListObject *list = [[ListObject alloc] init];
-    list.listID = [dict objectForKey:kKeyListID];
+    list.listID = [[dict objectForKey:kKeyListID] unsignedIntegerValue];
     list.name = [dict objectForKey:kKeyListName];
     list.type = [[dict objectForKey:kKeyListType] integerValue];
     list.numRestaurants = (NSUInteger)[dict[kKeyListNumRestaurants] integerValue];
@@ -40,7 +40,7 @@ NSString *const kKeyListNumRestaurants = @"num_restaurants";
 
 + (NSDictionary *)dictFromList:(ListObject *)list {
     return @{
-             kKeyListID : list.listID ? : @"",
+             kKeyListID : [NSString stringWithFormat:@"%ld",(long) list.listID] ? : @"",
              kKeyListName : list.name?: @"",
              kKeyListType : [NSString stringWithFormat:@"%ld",(long) list.type] ?: @""
              };

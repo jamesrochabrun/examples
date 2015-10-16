@@ -153,6 +153,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 - (void)getRestaurant {
     __weak RestaurantVC *weakSelf= self;
     OOAPI *api = [[OOAPI alloc] init];
+    
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
         [weakSelf getListsForRestaurant];
@@ -173,7 +174,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
                         ListObject *lo = (ListObject *)obj;
                         OORemoveButton *b = [[OORemoveButton alloc] init];
                         b.name.text = lo.name;
-                        b.theId = (NSUInteger)[lo.listID integerValue];
+                        b.theId = lo.listID;// (NSUInteger)[lo.listID integerValue];
                         [b addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
                         [_removeButtons addObject:b];
                     }];

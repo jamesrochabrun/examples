@@ -60,14 +60,14 @@
     
     if (_onList) {
         //remove from list
-        [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:[_list.listID integerValue] success:^(NSArray *lists) {
+        [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:_list.listID success:^(NSArray *lists) {
             [weakSelf getListsForRestaurant];
         } failure:^(NSError *error) {
             ;
         }];
     } else {
         //add to list
-        [api addRestaurants:@[_restaurant] toList:[_list.listID integerValue] success:^(id response) {
+        [api addRestaurants:@[_restaurant] toList:_list.listID success:^(id response) {
             [weakSelf getListsForRestaurant];
         } failure:^(NSError *error) {
             ;

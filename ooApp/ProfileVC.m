@@ -395,7 +395,7 @@
     ListStripTVCell* cell = [[ListStripTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 
     NSArray* a= self.lists;
-    cell.listItem= a[indexPath.row-1];
+    cell.listItem = a[indexPath.row-1];
     cell.navigationController = self.navigationController;
     return cell;
 }

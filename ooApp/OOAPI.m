@@ -329,6 +329,27 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 //------------------------------------------------------------------------------
+// Name:    deleteList
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)deleteList:(NSUInteger)listID
+                               success:(void (^)(NSArray *))success
+                               failure:(void (^)(NSError *))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu",
+                           kOOURL, listID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *lists = [NSMutableArray array];
+        success(lists);
+    } failure:^(NSError *error) {
+        ;
+    }];
+}
+
+//------------------------------------------------------------------------------
 // Name:    lookupUsername
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
