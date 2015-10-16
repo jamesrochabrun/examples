@@ -31,6 +31,8 @@ typedef enum {
 
 @end
 
+static NSUInteger kNumColumnsForMediaItems = 3;
+
 @interface RestaurantVCCVL : UICollectionViewLayout
 
 @property (nonatomic, weak) id<RestaurantVCCollectionViewDelegate> delegate;

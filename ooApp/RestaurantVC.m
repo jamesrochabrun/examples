@@ -114,15 +114,15 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      NSLog(@"Add to New Event");
-                                                 }]; // 3
+                                                 }];
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"New List..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      NSLog(@"Add the NewList");
-                                                 }]; // 3
+                                                 }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                  style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
                                                      NSLog(@"Cancel");
-                                                 }]; // 3
+                                                 }];
     
     
     [_alertController addAction:addToFavorites];
@@ -354,8 +354,8 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
             break;
         case kSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
-            if (!mio.width || !mio.height) return width(collectionView)/4; //NOTE: this should not happen
-            return (width(_collectionView)- 5*kGeomSpaceEdge)/4*mio.height/mio.width;
+            if (!mio.width || !mio.height) return width(collectionView)/kNumColumnsForMediaItems; //NOTE: this should not happen
+            return (width(_collectionView)- 5*kGeomSpaceEdge)/kNumColumnsForMediaItems*mio.height/mio.width;
             break;
         }
         default:

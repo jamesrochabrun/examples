@@ -62,7 +62,7 @@
     for (NSUInteger section = 0; section < [self.collectionView numberOfSections]; section++) {
 
         if (section == kSectionTypeMediaItems) {
-            numberOfColumnsInRow = 4;
+            numberOfColumnsInRow = kNumColumnsForMediaItems;
             itemSize = CGSizeMake((width(self.collectionView) - (numberOfColumnsInRow+1)*kGeomSpaceEdge)/numberOfColumnsInRow, 0);
             xOffset = kGeomSpaceEdge;
         } else {
