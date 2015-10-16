@@ -164,6 +164,14 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 // Events
 //
 
++ (AFHTTPRequestOperation *) getVenuesForEvent:(EventObject *)eo
+                                       success:(void (^)(NSArray *venues))success
+                                       failure:(void (^)(NSError *error))failure;
+
++ (AFHTTPRequestOperation *)addEvent:(EventObject *)eo
+                             success:(void (^)(NSInteger eventID))success
+                             failure:(void (^)(NSError *error))failure;
+
 + (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *)event
                                                        success:(void (^)(bool))success
                                                        failure:(void (^)(NSError *error))failure;
@@ -177,6 +185,11 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                   success:(void (^)(id response))success
                                   failure:(void (^)(NSError *error))failure;
 
++ (AFHTTPRequestOperation *)removeRestaurant:(RestaurantObject *)restaurant
+                                   fromEvent:(EventObject *)event
+                                     success:(void (^)(id response))success
+                                     failure:(void (^)(NSError *error))failure;
+
 + (AFHTTPRequestOperation *)setParticipantsInEvent:(EventObject *)eo
                                                 to:(NSArray *)participants
                                            success:(void (^)())success
@@ -186,10 +199,6 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                  to:(BOOL)participating
                                             success:(void (^)(NSInteger eventID))success
                                             failure:(void (^)(NSError *error))failure;
-
-+ (AFHTTPRequestOperation *)addEvent:(EventObject *)eo
-                                     success:(void (^)(NSInteger eventID))success
-                                     failure:(void (^)(NSError *error))failure;
 
 + (AFHTTPRequestOperation *)reviseEvent:(EventObject *)eo
                                 success:(void (^)(id))success

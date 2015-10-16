@@ -9,6 +9,7 @@
 #import "EventObject.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
+#import "OOAPI.h"
 
 NSString *const kKeyEventID = @"event_id";
 NSString *const kKeyIsComplete = @"is_complete";
@@ -29,6 +30,7 @@ NSString *const kKeyNumberOfPeople = @"num_people";
 NSString *const kKeyNumberOfPeopleResponded = @"num_responded";
 NSString *const kKeyNumberOfPeopleVoted = @"num_voted";
 NSString *const kKeyMediaURL = @"media_url";
+NSString*const kKeyNumberOfVenues=  @"num_restaurants";
 
 @implementation EventObject
 - (instancetype) init
@@ -65,11 +67,12 @@ NSString *const kKeyMediaURL = @"media_url";
         e.createdAt= parseUTCDateFromServer ( dictionary[ kKeyCreatedAt]);
         e.updatedAt= parseUTCDateFromServer( dictionary[ kKeyUpdatedAt]);
         
-        e.numberOfPeople = parseNumberOrNullFromServer ( kKeyNumberOfPeople);
-        e.numberOfPeopleResponded = parseNumberOrNullFromServer ( dictionary[ kKeyNumberOfPeopleResponded]);
-        e.numberOfPeopleVoted = parseNumberOrNullFromServer ( dictionary[ kKeyNumberOfPeopleVoted]);
+        e.numberOfVenues= parseIntegerOrNullFromServer( dictionary[kKeyNumberOfVenues ]);
+        e.numberOfPeople = parseIntegerOrNullFromServer (  dictionary[kKeyNumberOfPeople ]);
+        e.numberOfPeopleResponded = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleResponded]);
+        e.numberOfPeopleVoted = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleVoted]);
 
-        e.eventCoverImageURL = parseStringOrNullFromServer ( kKeyMediaURL);
+        e.eventCoverImageURL = parseStringOrNullFromServer (  dictionary[kKeyMediaURL ]);
 
         NSMutableArray* results=[NSMutableArray new];
         e.keywords= results;
@@ -138,6 +141,15 @@ NSString *const kKeyMediaURL = @"media_url";
     
     if (![_venues containsObject: venue]) {
         [_venues addObject: venue];
+        
+        [OOAPI addRestaurant:venue
+                     toEvent:self
+                     success:^(id response) {
+                         NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
+                         message( @"Added.");
+                     } failure:^(NSError *error) {
+                         NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
+                     }];
     }
 }
 
@@ -151,6 +163,15 @@ NSString *const kKeyMediaURL = @"media_url";
     }
     if ([_venues containsObject: venue]) {
         [_venues removeObject: venue];
+        
+        [OOAPI removeRestaurant:venue
+                     fromEvent:self
+                     success:^(id response) {
+                         NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
+                         message( @"Removed.");
+                     } failure:^(NSError *error) {
+                         NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
+                     }];
     }
 }
 
@@ -160,6 +181,21 @@ NSString *const kKeyMediaURL = @"media_url";
         return nil;
     }
     return _venues[index];
+}
+
+- (void) refreshVenuesFromServerWithSuccess:(void (^)())success
+                                    failure:(void (^)())failure;
+{
+    [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
+        
+        [self.venues removeAllObjects];
+        for (RestaurantObject* venue  in  venues) {
+            [_venues addObject: venue];
+        }
+        success ();
+    } failure:^(NSError *error) {
+        failure ();
+    }];
 }
 
 @end

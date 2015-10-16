@@ -10,11 +10,19 @@
 #import "ListObject.h"
 
 typedef enum: int {
-    PARTICIPANT_TYPE_NONE = -1,
-    PARTICIPANT_TYPE_CREATOR = 0,
-    PARTICIPANT_TYPE_ADMIN = 1,
-    PARTICIPANT_TYPE_ATTENDEE = 2,
+    PARTICIPANT_TYPE_NONE = 0,
+    PARTICIPANT_TYPE_CREATOR = 1,
+    PARTICIPANT_TYPE_ORGANIZER = 2,
+    PARTICIPANT_TYPE_ATTENDEE = 3,
 } ParticipantType;
+
+typedef enum: int {
+    PARTICIPANT_STATE_NONE = 0,
+    PARTICIPANT_STATE_ATTENDING  = 1, // accepted
+    PARTICIPANT_STATE_NOT_ATTENDING = 2,// declined
+    PARTICIPANT_STATE_NO_RESPONSE= 3,
+    PARTICIPANT_STATE_MAYBE = 4,
+} ParticipantState;
 
 @interface UserObject : NSObject
 

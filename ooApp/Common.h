@@ -30,6 +30,7 @@ extern NSMutableAttributedString *createPeopleIconString (NSInteger count);
 extern UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName);
 extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
 extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
+extern UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);

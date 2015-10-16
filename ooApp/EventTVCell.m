@@ -22,6 +22,19 @@
     if (self) {
         _labelIndicatingAttendeeCount= [UILabel  new];
         [self  addSubview: _labelIndicatingAttendeeCount];
+        _labelIndicatingAttendeeCount.textColor= WHITE;
+
+        self.header.textAlignment= NSTextAlignmentCenter;
+        self.subHeader1.textAlignment= NSTextAlignmentCenter;
+        self.subHeader2.textAlignment= NSTextAlignmentCenter;
+        self.header.textColor= WHITE;
+        self.subHeader1.textColor= WHITE;
+        self.subHeader2.textColor= WHITE;
+
+        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
+        self.thumbnail.alpha= .6;
+        self.thumbnail.clipsToBounds= YES;
+
     }
     return self;
 }
@@ -31,42 +44,44 @@
     [super layoutSubviews];
     float w= self.frame.size.width;
     float h= self.frame.size.height;
+    const float lowerGradientHeight=  15;
     
-    _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton,kGeomButtonWidth,kGeomHeightButton);
+    _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton-lowerGradientHeight,kGeomButtonWidth,kGeomHeightButton);
     _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
     
-    float y= 0;
-    float x= h +kGeomSpaceInter;
-    self.thumbnail.frame = CGRectMake(0,0,h,h);
-    self.header.frame = CGRectMake(x,y,w-x,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
-    self.subHeader1.frame = CGRectMake(x,y,w-x,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
-    self.subHeader2.frame = CGRectMake(x,y,w-x,kGeomFontSizeHeader);
+    self.thumbnail.frame = CGRectMake(0,0,w,h-lowerGradientHeight);
+    
+    float y= (h-lowerGradientHeight-2*kGeomFontSizeHeader)/2;
+    self.header.frame = CGRectMake(0,y,w,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
+    self.subHeader1.frame = CGRectMake(0,y,w,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
+//    self.subHeader2.frame = CGRectMake(0,y,w,kGeomFontSizeHeader);
 
+    
 }
 
 - (void)setEvent:(EventObject *)eo
 {
-    // NOTE:  the contents of the user object may have changed, therefore set user always.
+    // NOTE: The contents of the user object may have changed, therefore set user always.
     
     RestaurantObject* primaryVenue= [_eventInfo totalVenues ] ?
             (RestaurantObject*)[_eventInfo firstVenue ] :nil;
     self.eventInfo = eo;
     self.thumbnail.image = nil;
-    self.header.text = eo.name;
+    self.header.text = eo.name.length ? eo.name :  @"Unnamed event.";
     
-//    NSDate *localDate= [_eventInfo.date
+    // NOTE:  need to localize the date and time expression.
     
-    NSString* dateString= [NSString stringWithFormat: @"%@",_eventInfo.date];
-    if ( dateString.length  == 25) {
-        dateString= [dateString substringToIndex:16];
-    }
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    [df setDateFormat:@"MMMM dd, hh:mm"];
+    NSString*dateString = [df stringFromDate:[NSDate date]];
     
     self.subHeader1.text = dateString;
-    self.subHeader2.text = primaryVenue ? primaryVenue.name :  @"Undisclosed location";
+//    self.subHeader2.text = primaryVenue ? primaryVenue.name :  @"Undisclosed location";
     
-    _labelIndicatingAttendeeCount.attributedText= createPeopleIconString(_eventInfo.numberOfPeople);
+    NSInteger numberOfPeople=_eventInfo.numberOfPeople;
+    _labelIndicatingAttendeeCount.attributedText= createPeopleIconString(numberOfPeople );
 
-    UIImage *placeholder= [UIImage imageNamed: @"forkKnife"];
+    UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
 
     if (primaryVenue && primaryVenue.imageRefs.count) {
         NSString *str= primaryVenue.imageRefs[0];
@@ -75,10 +90,6 @@
     }  else {
         [self.thumbnail setImage:placeholder];
     }
-    
-    self.header.textColor= BLACK;
-    self.subHeader1.textColor= BLACK;
-    self.subHeader2.textColor= BLACK;
 }
 
 @end

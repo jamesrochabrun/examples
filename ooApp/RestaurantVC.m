@@ -30,7 +30,6 @@
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
 @property (nonatomic, strong) NSArray *mediaItems;
 @property (nonatomic, strong) UICollectionView *collectionView;
-@property (nonatomic,strong) RestaurantObject* selectedRestaurant;
 @end
 
 static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
@@ -137,12 +136,12 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 
 - (void)addToEvent
 {
-    [APP.eventBeingEdited addVenue: self.selectedRestaurant];
+    [APP.eventBeingEdited addVenue: _restaurant];
 }
 
 - (void)removeFromEvent
 {
-    [APP.eventBeingEdited removeVenue: self.selectedRestaurant];
+    [APP.eventBeingEdited removeVenue:  _restaurant];
 }
 
 - (void)moreButtonPressed:(id)sender {
@@ -370,7 +369,6 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    // TODO: Select Item
 }
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     // TODO: Deselect item

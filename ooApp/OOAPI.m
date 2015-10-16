@@ -852,6 +852,40 @@ NSString *const kKeySearchFilter = @"filter";
 }
 #endif
 
++ (AFHTTPRequestOperation *) getVenuesForEvent:(EventObject *)eo
+                                           success:(void (^)(NSArray *venues))success
+                                           failure:(void (^)(NSError *error))failure;
+{
+    if (!eo) {
+        failure (nil);
+        return nil;
+    }
+    NSInteger eventID = eo.eventID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", kOOURL, (unsigned long)eventID];
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET : urlString parameters:nil
+          success:^(id responseObject) {
+              NSArray *array= responseObject;
+              NSMutableArray *venues= [NSMutableArray new];
+              for (NSDictionary *d in array) {
+                  RestaurantObject *venue = [RestaurantObject restaurantFromDict:d];
+                  if (venue) {
+                      [venues addObject:venue];
+                  }
+              }
+              success(venues);
+          } failure:^(NSError *error) {
+              // RULE: Leave the venues unchanged.
+              failure(error);
+          }];
+    
+    return op;
+}
+
 //------------------------------------------------------------------------------
 // Name:    getParticipantsInEvent
 // Purpose:
@@ -1145,6 +1179,52 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 //------------------------------------------------------------------------------
+// Name:    removeRestaurant fromEvent
+// Purpose: Add a restaurant to an event.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)removeRestaurant:(RestaurantObject *)restaurant
+                                  fromEvent:(EventObject *)event
+                                  success:(void (^)(id response))success
+                                  failure:(void (^)(NSError *error))failure;
+{
+    if (!event  || !restaurant) {
+        failure (nil);
+        return nil;
+    }
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSNumber *userid = userInfo.userID;
+    if (!userid) {
+        failure (nil);
+        return nil;
+    }
+    NSString *identifier = restaurant.restaurantID;
+    NSString *googleIdentifier = restaurant.googleID;
+    NSMutableDictionary* parameters = @{}.mutableCopy;
+    if (identifier.length) {
+        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantID];
+    }
+    else if (googleIdentifier.length) {
+        [parameters setObject:googleIdentifier forKey:kKeyRestaurantGoogleID];
+    }
+    else {
+        NSLog (@"MISSING VENUE IDENTIFIER");
+        failure(nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", kOOURL,
+                           (unsigned long)event.eventID];
+    
+    AFHTTPRequestOperation *op = [rm DELETE: urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(NSError *error) {
+                                      failure(error);
+                                  }];
+    return op;
+}
+
+//------------------------------------------------------------------------------
 // Name:    addEvent
 // Purpose: Create a new event and receive in return the new event's ID.
 // Note:    The event does not need to be completely described in the EventObject.
@@ -1386,7 +1466,7 @@ NSString *const kKeySearchFilter = @"filter";
                if ([responseObject isKindOfClass:[NSDictionary class]]) {
                    UserObject *user= [UserObject userFromDict:responseObject];
                    if (user &&
-                        (user.participantType == PARTICIPANT_TYPE_ADMIN ||
+                        (user.participantType == PARTICIPANT_TYPE_ORGANIZER ||
                          user.participantType == PARTICIPANT_TYPE_CREATOR)
                        ) {
                        success (YES);

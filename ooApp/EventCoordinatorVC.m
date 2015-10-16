@@ -19,6 +19,7 @@
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
 #import "SearchVC.h"
+#import "RestaurantVC.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -69,6 +70,7 @@
     
     self.view.backgroundColor= [UIColor lightGrayColor];
     _scrollView= makeScrollView(self.view, self);
+    [_scrollView setCanCancelContentTouches:YES];
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     
@@ -104,6 +106,7 @@
     self.labelWhere = makeAttributedLabel(self.viewContainer4, @"WHERE", kGeomEventHeadingFontSize);
     _viewContainer4.layer.borderWidth= 1;
     _viewContainer4.layer.borderColor= GRAY.CGColor;
+    _viewContainer4.tag=4;
     
     UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
     [self.viewContainer1 addGestureRecognizer:tap1 ];
@@ -127,7 +130,7 @@
     _venuesCollectionView.alwaysBounceHorizontal = YES;
     _venuesCollectionView.allowsSelection = YES;
     _venuesCollectionView.backgroundColor= CLEAR;
-    [_viewContainer4 addSubview: _venuesCollectionView];
+    [_scrollView addSubview: _venuesCollectionView];
 #define CV_CELL_REUSE_IDENTIFER @"E3_CV"
     [_venuesCollectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
     
@@ -150,7 +153,7 @@
 {
     [self updateWhenBox];
     [self updateWhoBox];
-    [self updateWhereBox];
+    [self updateWhereBoxAnimated:NO];
     
     // RULE: Check whether the backend has new information every 30 seconds.
     [self  performSelector: @selector(updateBoxes) withObject:nil afterDelay:30];
@@ -196,11 +199,11 @@
     _labelWho.attributedText= a;
 }
 
-- (void) updateWhereBox
+- (void) updateWhereBoxAnimated:(BOOL)animated
 {
     if  ([APP.eventBeingEdited totalVenues ] ) {
         NSAttributedString *title= attributedStringOf(LOCAL( @"WHERE"),  kGeomEventHeadingFontSize);
-        _labelWhen.attributedText= title;
+        _labelWhere.attributedText= title;
     } else {
         NSAttributedString *title= attributedStringOf(LOCAL( @"WHERE"),  kGeomEventHeadingFontSize);
         NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
@@ -212,6 +215,19 @@
         _labelWhere.attributedText= a;
     }
     
+    [self.venuesCollectionView reloadData ];
+    if  (animated ) {
+        __weak EventCoordinatorVC *weakSelf = self;
+        [UIView animateWithDuration:.4
+                         animations:^{
+                             [weakSelf doLayout];
+                         }
+                         completion:^(BOOL finished) {
+                         }];
+    }else {
+        [self doLayout];
+
+    }
 }
 
 - (void)viewWillLayoutSubviews
@@ -224,7 +240,19 @@
 {
     [super viewWillAppear:animated];
     
+    // RULE: Initially just display the basic information.
     [self updateBoxes];
+    
+    // RULE: After basic info is displayed to fetch what's on the backend.
+    __weak EventCoordinatorVC *weakSelf = self;
+    [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+        NSLog  (@"VENUES FOR EVENT DID CHANGE.  (total=  %ld)",[APP.eventBeingEdited totalVenues ]);
+        ON_MAIN_THREAD(^(){
+            [weakSelf updateWhereBoxAnimated:YES];
+        });
+    } failure:^{
+        NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
+    }];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -246,8 +274,10 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)userTappedWhereBox: (id) sender
+- (void)userTappedWhereBox: (UITapGestureRecognizer*) sender
 {
+    UIView *v=sender.view;
+    
     SearchVC* vc= [[SearchVC alloc] init];
     vc.addingRestaurantsToEvent= YES;
     [self.navigationController pushViewController:vc animated:YES];
@@ -307,14 +337,17 @@
     _labelWhen.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
 
     // RULE: If no restaurants have been added then did label should take up the entire height.
+    float x2=_viewContainer4.frame.origin.x;
+    float y2=_viewContainer4.frame.origin.y;
     if  ([APP.eventBeingEdited totalVenues ] ) {
         float labelHeight=kGeomEventCoordinatorBoxHeight - kGeomEventCoordinatorRestaurantHeight;
         _venuesCollectionView.hidden= NO;
         _labelWhere.frame = CGRectMake(0,0,boxWidth, labelHeight);
-        _venuesCollectionView.frame = CGRectMake(0,labelHeight,boxWidth,kGeomEventCoordinatorRestaurantHeight);
+        _venuesCollectionView.frame = CGRectMake(x2,y2 +labelHeight,boxWidth,kGeomEventCoordinatorRestaurantHeight);
     } else {
         _venuesCollectionView.hidden= YES;
         _labelWhere.frame = CGRectMake(0,0,boxWidth, kGeomEventCoordinatorBoxHeight);
+        _venuesCollectionView.frame = CGRectMake(x2,y2+kGeomEventCoordinatorRestaurantHeight-1,boxWidth,0);
     }
 }
 #pragma mark - Collection View stuff
@@ -326,7 +359,7 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 4;
+    return [APP.eventBeingEdited totalVenues ];
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -338,7 +371,7 @@
 {
     RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
                                                                           forIndexPath:indexPath];
-    cvc.backgroundColor = UIColorRGBA(kColorWhite);
+    cvc.backgroundColor = GRAY;
     NSInteger  row= indexPath.row;
     RestaurantObject *venue= [APP.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
@@ -346,25 +379,18 @@
     r.size=  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
     cvc.frame= r;
     
-    switch (row) {
-        case 0:cvc.backgroundColor= BLUE;break;
-        case 1:cvc.backgroundColor= GREEN;break;
-        case 2:cvc.backgroundColor= RED;break;
-        case 3:cvc.backgroundColor= GRAY;break;
-
-        default:
-            break;
-    }
-    //            if ([_mediaItems count]) {
-    //                cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
-    //            }
     return cvc;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    // TODO: Select Item
+    NSInteger  row= indexPath.row;
+    RestaurantObject *venue= [APP.eventBeingEdited getNthVenue:row];
+    RestaurantVC*vc= [[RestaurantVC alloc] init];
+    vc.restaurant= venue;
+    [self.navigationController pushViewController:vc animated:YES ];
 }
+
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     // TODO: Deselect item
 }

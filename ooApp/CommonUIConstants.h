@@ -60,9 +60,9 @@ static CGFloat kGeomHeightStripListRow = 130.0;
 static CGFloat kGeomHeightStripListCell = 100.0;
 static CGFloat kGeomHeightHorizontalListRow = 90.0;
 static NSUInteger kGeomIconSize = 25;
-static CGFloat kGeomSpaceEdge = 5.0;
+static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceIcon = 5.0;
-static CGFloat kGeomSpaceInter = 10.0;
+static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight=  175;
 static NSUInteger kGeomSampleUsernameTableWidth=  175/.62;
 static CGFloat kGeomProfileImageSize =  100;
@@ -110,5 +110,6 @@ extern NSString *const kFontIconCheckmark;
 #define RED UIColorRGB(kColorRed)
 #define GREEN UIColorRGB(kColorGreen)
 #define BLUE UIColorRGB(kColorBlue)
+#define YELLOW UIColorRGB(kColorYellow)
 
 #endif

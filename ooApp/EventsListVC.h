@@ -12,3 +12,8 @@
 @interface EventsListVC : BaseVC <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 
 @end
+
+@interface EventListTableTitleView: UIView
+- (void) setTitle: (NSString*)string;
+
+@end

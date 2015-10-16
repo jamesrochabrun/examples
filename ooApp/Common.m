@@ -190,6 +190,31 @@ UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize
     return button;
 }
 
+UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
+{
+    UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
+    if  (title ) {
+        [ button setTitle: title forState:UIControlStateNormal ];
+        button.titleLabel.font= [UIFont fontWithName: kFontIcons size:fontSize];
+    }
+    if ( target && callback) {
+        [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
+    }
+    if  (fg ) {
+        [button setTitleColor:fg forState:UIControlStateNormal];
+        if (borderWidth > 0 ) {
+            button.layer.borderColor=fg.CGColor;
+            button.layer.borderWidth= borderWidth;
+            button.layer.cornerRadius= kGeomCornerRadius;
+        }
+    }
+    if  (bg ) {
+        button.layer.backgroundColor= bg.CGColor;
+    }
+    [ parent addSubview: button ];
+    return button;
+}
+
 UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];

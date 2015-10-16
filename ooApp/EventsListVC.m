@@ -26,6 +26,82 @@
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
 #define EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER  @"eventListGenericCell"
 
+@implementation EventListTableTitleView
+{
+    NSString*title;
+    UIView* horizontalLineView;
+    UILabel* labelTitle;
+    UIButton* buttonAddEvent;
+}
+
+- (instancetype) init
+{
+    self = [super init];
+    if (self) {
+        title=  @"Untitled";
+        self.opaque= NO;
+        self.backgroundColor= CLEAR;
+        labelTitle= makeLabel(self, title, kGeomFontSizeHeader);
+        labelTitle.opaque= NO;
+        labelTitle.clipsToBounds= YES;
+        labelTitle.backgroundColor= BLACK;
+        labelTitle.textColor= WHITE;
+        labelTitle.layer.borderColor= GRAY.CGColor;
+        labelTitle.layer.borderWidth= .5;
+        
+        horizontalLineView= makeView( self, BLACK);
+        horizontalLineView.layer.borderColor= GRAY.CGColor;
+        horizontalLineView.layer.borderWidth= .5;
+    }
+    return self;
+}
+
+- (void)enableButtonWithTarget:(id) target action: (SEL) action
+{
+    if  ( buttonAddEvent) {
+        return;
+    }
+    buttonAddEvent= makeIconButton(self, kFontIconAdd, kGeomFontSizeHeader, YELLOW, BLACK, target, action, 0);
+}
+
+- (void) setTitle: (NSString*)string;
+{
+    title=  string;
+    labelTitle.text=  string;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    float w= self.frame.size.width;
+    float h= self.frame.size.height;
+    float lineHeight= 7;
+    
+    if ( buttonAddEvent) {
+        horizontalLineView.frame = CGRectMake(0,h/2-lineHeight/2,w-kGeomHeightButton/2,lineHeight);
+
+        buttonAddEvent.frame=  CGRectMake( w-kGeomHeightButton,
+                                          0,
+                                          kGeomHeightButton,
+                                          kGeomHeightButton);
+        buttonAddEvent.layer.cornerRadius=kGeomHeightButton/2;
+        
+    } else {
+        horizontalLineView.frame = CGRectMake(0,h/2-lineHeight/2,w,lineHeight);
+    }
+    
+    [labelTitle sizeToFit];
+    float labelWidth= labelTitle.frame.size.width + 33;
+    labelTitle.frame = CGRectMake( (w-labelWidth)/2,5,labelWidth,h-10);
+    labelTitle.layer.cornerRadius=h/2;
+    
+    [self bringSubviewToFront:labelTitle];
+}
+@end
+
+//==============================================================================
+
 @interface EventsListVC ()
 
 @property (nonatomic,strong)  UIButton* buttonAdd;
@@ -57,25 +133,25 @@
     self.view.backgroundColor= WHITE;
     
     _tableSectionNames= @[
-                          @"  YOUR EVENTS",
-                          @"  EVENTS YOU ARE CREATING",
-                          @"  OOMAMI EVENTS"
+                          @"YOUR EVENTS",
+                          @"EVENTS YOU ARE CREATING",
+                          @"OOMAMI EVENTS"
                           ];
     NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader:LOCAL( @"EVENT")
+                           initWithHeader:LOCAL( @"EVENTS")
                            subHeader: nil];
     self.navTitle = nto;
 
     self.table= makeTable( self.view, self);
     [_table registerClass:[EventTVCell class] forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
     [_table registerClass:[UITableViewCell class] forCellReuseIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER];
-    _table.sectionHeaderHeight= kGeomHeightButton;
+    _table.sectionHeaderHeight= 55;
     _table.sectionFooterHeight= 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     
-    _buttonAdd=makeButton(self.view, kFontIconAdd, kGeomFontSizeHeader, WHITE,BLACK, self, @selector(userPressedAdd:), 0);
-    _buttonAdd.titleLabel.font= [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader];
-    _buttonAdd.layer.cornerRadius=  kGeomHeightButton/2;
+//    _buttonAdd=makeButton(self.view, kFontIconAdd, kGeomFontSizeHeader, WHITE,BLACK, self, @selector(userPressedAdd:), 0);
+//    _buttonAdd.titleLabel.font= [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader];
+//    _buttonAdd.layer.cornerRadius=  kGeomHeightButton/2;
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSNumber* userid= userInfo.userID;
@@ -188,7 +264,7 @@
 {
     UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Event")
                                                      message: LOCAL(@"Enter a name for the new event")
-                                                    delegate:  self
+                                                    delegate: self
                                            cancelButtonTitle: LOCAL(@"Cancel")
                                            otherButtonTitles: LOCAL(@"Create"), nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
@@ -203,14 +279,14 @@
 {
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
-    float y=  0;
+    float y=  kGeomSpaceEdge;
 
-    _buttonAdd.frame=  CGRectMake( w-kGeomHeightButton-kGeomCancelButtonInteriorPadding,
-                                     y+kGeomCancelButtonInteriorPadding,
-                                     kGeomHeightButton,
-                                     kGeomHeightButton);
+//    _buttonAdd.frame=  CGRectMake( w-kGeomHeightButton-kGeomCancelButtonInteriorPadding,
+//                                     y+kGeomCancelButtonInteriorPadding,
+//                                     kGeomHeightButton,
+//                                     kGeomHeightButton);
     
-    _table.frame=  CGRectMake(0,y,w, h-y);
+    _table.frame=  CGRectMake(kGeomSpaceEdge,y,w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
    
 }
 
@@ -262,15 +338,19 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 2;
-//    return 3;    
+//    return 3;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    NSString *name=  _tableSectionNames[section ];
-    UILabel * label= makeLabelLeft (nil,  name,  17);
-    label.backgroundColor= CLEAR;
-    return  label;
+    NSString* title= _tableSectionNames[section];
+    
+    EventListTableTitleView* v= [[EventListTableTitleView alloc] init];
+    [v  setTitle: title];
+    if  (!section ) {
+        [v enableButtonWithTarget:self action:@selector(userPressedAdd:)];
+    }
+    return v;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
@@ -452,9 +532,7 @@
                     NSLog  (@"%@", error);
                     message( @"backend was unable to create a new event");
                     
-                    // Temporarily in placef
 //                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-
                 }];
     }
 }

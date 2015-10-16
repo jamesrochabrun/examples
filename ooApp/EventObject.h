@@ -27,6 +27,7 @@ typedef enum : char {
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSDate *dateWhenVotingClosed;
 @property (nonatomic,assign) double totalPrice;
+@property (nonatomic,assign) NSInteger numberOfVenues;
 @property (nonatomic,assign) NSInteger numberOfPeople;
 @property (nonatomic,assign) NSInteger numberOfPeopleVoted;
 @property (nonatomic,assign) NSInteger numberOfPeopleResponded;
@@ -48,5 +49,8 @@ typedef enum : char {
 - (RestaurantObject*) getNthVenue: (NSInteger)index;
 - (NSUInteger) totalVenues;
 - (RestaurantObject*)firstVenue;
+
+- (void) refreshVenuesFromServerWithSuccess:(void (^)())success
+                                    failure:(void (^)())failure;
 
 @end
