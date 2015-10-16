@@ -35,10 +35,6 @@
     }
     
     return attributesArray;
-    
-//    return [_sectionAttributes filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UICollectionViewLayoutAttributes *evaluatedObject, NSDictionary *bindings) {
-//        return CGRectIntersectsRect(rect, [evaluatedObject frame]);
-//    }]];
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -66,11 +62,13 @@
     for (NSUInteger section = 0; section < [self.collectionView numberOfSections]; section++) {
 
         if (section == kSectionTypeMediaItems) {
-            numberOfColumnsInRow = 4;
-            itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
+            numberOfColumnsInRow = kNumColumnsForMediaItems;
+            itemSize = CGSizeMake((width(self.collectionView) - (numberOfColumnsInRow+1)*kGeomSpaceEdge)/numberOfColumnsInRow, 0);
+            xOffset = kGeomSpaceEdge;
         } else {
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
+            xOffset = 0;
         }
         itemAttributes = [NSMutableArray array];
         [_sectionAttributes addObject:itemAttributes];
@@ -91,11 +89,13 @@
             
             if ([lastRowAttributes count] > index%numberOfColumnsInRow) {
                 UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
-                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height;
+                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + kGeomSpaceEdge;
             }
                 
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
             [itemAttributes addObject:attributes];
+            
+            NSLog(@"attributes = %@ maxX=%f", attributes,CGRectGetMaxX(attributes.frame));
 
             if ([lastRowAttributes count] > index%numberOfColumnsInRow &&
                 [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow]) {
@@ -104,23 +104,23 @@
                 [lastRowAttributes addObject:attributes];
             }
             
-            xOffset = xOffset+itemSize.width;
+            xOffset = xOffset+itemSize.width+kGeomSpaceEdge;
             column++;
             
             // Create a new row if this was the last column
             if (column == numberOfColumnsInRow)
             {
-                if (xOffset > contentWidth)
-                    contentWidth = xOffset;
+                if (CGRectGetMaxX(attributes.frame) > contentWidth)
+                    contentWidth = CGRectGetMaxX(attributes.frame);
                 
                 // Reset values
                 column = 0;
-                xOffset = 0;
+                xOffset = kGeomSpaceEdge;
                 yOffset += itemSize.height+kGeomSpaceEdge;
             }
         }
         //done with section, set the x & y offsets for the new section appropriately
-        xOffset = 0;
+        xOffset = kGeomSpaceEdge;
         UICollectionViewLayoutAttributes *theLastAttributes = [itemAttributes lastObject];
         yOffset = theLastAttributes.frame.origin.y+theLastAttributes.frame.size.height;
     }

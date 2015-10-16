@@ -14,7 +14,7 @@
 {
     self = [super init];
     if (self) {
-        self.sectionInset = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
+        self.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
     }
     return self;
 }

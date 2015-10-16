@@ -39,17 +39,19 @@ static NSUInteger kColorRed = 0xFFFF0000;
 static NSUInteger kColorGreen = 0xFF00FF00;
 static NSUInteger kColorBlue = 0xFF0000FF;
 static NSUInteger kColorYellow = 0xFFF9FF00;
+static NSUInteger kColorStripHeaderShadow = 0x88898989;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
 static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeDetail = 11;
-static NSInteger kGeomPeopleIconFontSize=  30;
-static NSInteger kGeomEventHeadingFontSize=  30;
+static NSUInteger kGeomFontSizeStripHeader = 13;
+static NSInteger kGeomPeopleIconFontSize = 30;
+static NSInteger kGeomEventHeadingFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
-static CGFloat kGeomHeightFilters = 30.0;
+static CGFloat kGeomHeightFilters = 40.0;
 static CGFloat kGeomProfileInformationHeight = 18;
 static CGFloat kGeomButtonWidth = 100;
 static CGFloat kGeomHeightSampleUsernameRow = 180.0;
@@ -87,6 +89,7 @@ extern NSString *const kFontSFTextLight;
 extern NSString *const kFontLatoThin;
 extern NSString *const kFontLatoRegular;
 extern NSString *const kFontLatoBold;
+extern NSString *const kFontLatoMedium;
 
 // Icon font mappings
 extern NSString *const kFontIconAdd;

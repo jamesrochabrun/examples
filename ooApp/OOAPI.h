@@ -25,10 +25,6 @@ typedef enum {
     kSearchSortTypeHighestRated = 2,
 } SearchSortType;
 
-static const int kOOAPIListTypeSystem = 1;
-static const int kOOAPIListTypeUser = 2;
-static const int kOOAPIListTypeFavorites = 3;
-
 static NSString* const kPhotoUploadPath=  @"/users/picture";
 
 @interface OOAPI : NSObject
@@ -73,6 +69,12 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 - (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listId
                                    success:(void (^)(id response))success
                                    failure:(void (^)(NSError *error))failure;
+
+- (AFHTTPRequestOperation *)addRestaurantsToSpecialList:(NSArray *)restaurants listType:(ListType)listType
+                                                success:(void (^)(id response))success
+                                                failure:(void (^)(NSError *error))failure;
+
+
 //------------------------------------------------------------------------------
 // Lists
 //
@@ -92,9 +94,15 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                success:(void (^)(NSArray *mediaItems))success
                                                failure:(void (^)(NSError *error))failure;
 
-- (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
-                                              success:(void (^)(id response))success
-                                              failure:(void (^)(NSError *error))failure;
+//- (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
+//                                              success:(void (^)(id response))success
+//                                              failure:(void (^)(NSError *error))failure;
+
+
+- (AFHTTPRequestOperation *)deleteList:(NSUInteger)listID
+                                     success:(void (^)(NSArray *lists))success
+                                     failure:(void (^)(NSError *error))failure;
+
 
 //------------------------------------------------------------------------------
 // Users

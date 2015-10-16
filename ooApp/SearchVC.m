@@ -87,11 +87,11 @@ typedef enum: char {
 
 	_searchBar= [ UISearchBar new];
 	[ self.view  addSubview:_searchBar];
-    _searchBar.searchBarStyle=  UISearchBarStyleMinimal;
-    _searchBar.backgroundColor= WHITE;
-    _searchBar.placeholder= LOCAL( @"Type your search here");
-    _searchBar.barTintColor= WHITE;
-    _searchBar.keyboardType= UIKeyboardTypeAlphabet;
+    _searchBar.searchBarStyle = UISearchBarStyleMinimal;
+    _searchBar.backgroundColor = WHITE;
+    _searchBar.placeholder = LOCAL( @"Type your search here");
+    _searchBar.barTintColor = WHITE;
+    _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.delegate= self;
     _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
@@ -535,12 +535,12 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float h=  self.view.bounds.size.height;
-    float w=  self.view.bounds.size.width;
-    float spacing= kGeomSpaceInter;
-    float y=  0;
-
-    float x= 0;
+    float h = self.view.bounds.size.height;
+    float w = self.view.bounds.size.width;
+    float spacing = kGeomSpaceInter;
+    float y = 0;
+    float x = 0;
+    
     _searchBar.frame=  CGRectMake(0,y,w-kGeomButtonWidth,kGeomHeightSearchBar);
     _buttonCancel.frame=  CGRectMake( w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
                                      y+kGeomCancelButtonInteriorPadding,
@@ -548,7 +548,7 @@ typedef enum: char {
                                      kGeomHeightButton-2*kGeomCancelButtonInteriorPadding);
     y += kGeomHeightSearchBar;
     
-    _filterView.frame=  CGRectMake(0,y,w,kGeomHeightButton);
+    _filterView.frame=  CGRectMake(0,  y,w,kGeomHeightFilters);
     y += kGeomHeightButton;
 
 //    int buttonWidth= w/4;
@@ -642,10 +642,9 @@ typedef enum: char {
         RestaurantObject *ro = [_restaurantsArray objectAtIndex:indexPath.row];
         
         RestaurantVC *vc = [[RestaurantVC alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
-        vc.title = trimString (ro.name);
+        vc.title = trimString(ro.name);
         vc.restaurant = ro;
-        [vc getRestaurant];
+        [self.navigationController pushViewController:vc animated:YES];
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     } else {
