@@ -85,11 +85,11 @@
         if (idx == _current) currentFrame = bFrame;
     }];
     
-    CGRect lineFrame = _currentLine.frame;
-    lineFrame.size.height = 2;
-    lineFrame.size.width = filterSize.width *0.7;
-    lineFrame.origin.y = CGRectGetHeight(frame) - 5;
-    lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
+//    CGRect lineFrame = _currentLine.frame;
+//    lineFrame.size.height = 2;
+//    lineFrame.size.width = filterSize.width *0.7;
+//    lineFrame.origin.y = CGRectGetHeight(frame) - 5;
+//    lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
     _currentLine.frame = currentFrame;
 }
 
