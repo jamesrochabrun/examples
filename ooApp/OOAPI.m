@@ -497,47 +497,48 @@ NSString *const kKeySearchFilter = @"filter";
     return op;
 }
 
-////------------------------------------------------------------------------------
-//// Name:    addRestaurantsToSpecialList
-//// Purpose: Add restaurants to a user's favorites list
-////------------------------------------------------------------------------------
-//- (AFHTTPRequestOperation *)addRestaurantsToFavorites:(NSArray *)restaurants
-//                                              success:(void (^)(id response))success
-//                                              failure:(void (^)(NSError *error))failure;
-//{
-//    NSMutableArray *restaurantIDs;
-//    if (!restaurants) {
-//        failure (nil);
-//        return nil;
-//    } else {
-//        restaurantIDs = [NSMutableArray array];
-//        [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//            RestaurantObject *ro = (RestaurantObject *)obj;
-//            [restaurantIDs addObject:ro.restaurantID];
-//        }];
-//    }
-//    UserObject *userInfo= [Settings sharedInstance].userObject;
-//    NSNumber *userID= userInfo.userID;
-//    if (!userID) {
-//        failure (nil);
-//        return nil;
-//    }
-//    OONetworkManager *rm = [[OONetworkManager alloc] init];
-//    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/favorites/restaurants", kOOURL, userID];
-//    
-//    NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
-//    NSDictionary *parameters = @{
-//                                 @"restaurant_ids":IDs
-//                                 };
-//    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
-//                                  success:^(id responseObject) {
-//                                      success(responseObject);
-//                                  } failure:^(NSError *error) {
-//                                      failure(error);
-//                                  }];
-//    
-//    return op;
-//}
+//------------------------------------------------------------------------------
+// Name:    addRestaurants:ToList
+// Purpose: Add restaurants to a user's favorites list
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listID
+                                   success:(void (^)(id response))success
+                                   failure:(void (^)(NSError *error))failure {
+    NSMutableArray *restaurantIDs;
+    if (!restaurants || !listID) {
+        failure (nil);
+        return nil;
+    } else {
+        restaurantIDs = [NSMutableArray array];
+        [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            RestaurantObject *ro = (RestaurantObject *)obj;
+            [restaurantIDs addObject:ro.restaurantID];
+        }];
+    }
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
+        failure (nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu/restaurants", kOOURL, listID];
+    
+    NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
+    NSDictionary *parameters = @{
+                                 @"restaurant_ids":IDs
+                                 };
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(NSError *error) {
+                                      failure(error);
+                                  }];
+    
+    return op;
+}
+
 
 //------------------------------------------------------------------------------
 // Name:    addRestaurantsToSpecialList:listType
