@@ -90,7 +90,7 @@
     lineFrame.size.width = filterSize.width *0.7;
     lineFrame.origin.y = CGRectGetHeight(frame) - 5;
     lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
-    _currentLine.frame = lineFrame;
+    _currentLine.frame = currentFrame;
 }
 
 - (void)selectFilter:(NSUInteger)which {
