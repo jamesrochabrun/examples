@@ -592,10 +592,9 @@ typedef enum: char {
         RestaurantObject *ro = [_restaurantsArray objectAtIndex:indexPath.row];
         
         RestaurantVC *vc = [[RestaurantVC alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
-        vc.title = trimString (ro.name);
+        vc.title = trimString(ro.name);
         vc.restaurant = ro;
-        [vc getRestaurant];
+        [self.navigationController pushViewController:vc animated:YES];
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     } else {

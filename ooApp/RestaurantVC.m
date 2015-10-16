@@ -42,11 +42,10 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 {
     [super viewDidLoad];
     
-    _userInfo= [Settings sharedInstance].userObject;
+    _userInfo = [Settings sharedInstance].userObject;
 
     _removeButtonsContainer = [[UIView alloc] init];
     _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
-//    [self.view addSubview:_removeButtonsContainer];
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
@@ -127,7 +126,6 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     [_alertController addAction:addToEvent];
     [_alertController addAction:addToNewEvent];
     [_alertController addAction:cancel];
-    
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
