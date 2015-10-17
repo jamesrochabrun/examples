@@ -12,6 +12,7 @@
 @interface EventTVCell ()
 @property (nonatomic,strong) EventObject* eventInfo;
 @property (nonatomic,strong)  UILabel *labelIndicatingAttendeeCount;
+@property (nonatomic,strong)  AFHTTPRequestOperation *operation;
 @end
 
 @implementation EventTVCell
@@ -39,32 +40,63 @@
     return self;
 }
 
+- (void)prepareForReuse
+{
+    [  super prepareForReuse];
+    [self.operation cancel ];
+    self.clipsToBounds= NO;
+    [_nameHeader removeFromSuperview];
+    _nameHeader = nil;
+    self.header.text= nil;
+    self.subHeader1.text= nil;
+    self.subHeader2.text= nil;
+    self.thumbnail.image= nil;
+    _labelIndicatingAttendeeCount.text= nil;
+}
+
+- (void)setNameHeader: (OOStripHeader*)header
+{
+    if (!header || _nameHeader) {
+        return;
+    }
+    _nameHeader= header;
+    [self  addSubview: header];
+}
+
 - (void) layoutSubviews
 {
     [super layoutSubviews];
     float w= self.frame.size.width;
     float h= self.frame.size.height;
-    const float lowerGradientHeight=  15;
+    const float lowerGradientHeight=  5;
+    _nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);
     
     _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton-lowerGradientHeight,kGeomButtonWidth,kGeomHeightButton);
     _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
     
-    self.thumbnail.frame = CGRectMake(0,0,w,h-lowerGradientHeight);
+    float thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
+    self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
     
-    float y= (h-lowerGradientHeight-2*kGeomFontSizeHeader)/2;
+    float y= kGeomHeightButton/2+ (thumbHeight-2*kGeomFontSizeHeader)/2;
     self.header.frame = CGRectMake(0,y,w,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
     self.subHeader1.frame = CGRectMake(0,y,w,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
-//    self.subHeader2.frame = CGRectMake(0,y,w,kGeomFontSizeHeader);
-
-    
+    //    self.subHeader2.frame = CGRectMake(0,y,w,kGeomFontSizeHeader);
 }
 
 - (void)setEvent:(EventObject *)eo
 {
-    // NOTE: The contents of the user object may have changed, therefore set user always.
-    
     RestaurantObject* primaryVenue= [_eventInfo totalVenues ] ?
-            (RestaurantObject*)[_eventInfo firstVenue ] :nil;
+    (RestaurantObject*)[_eventInfo firstVenue ] :nil;
+    
+    if (!primaryVenue && _eventInfo.numberOfVenues) {
+        __weak EventTVCell *weakSelf = self;
+        self.operation= [_eventInfo refreshVenuesFromServerWithSuccess:^{
+            NSLog (@"DID REFRESH OF %@",[weakSelf.eventInfo asString]);
+        } failure:^{
+            NSLog  (@" failed to refresh");
+        }];
+    }
+    
     self.eventInfo = eo;
     self.thumbnail.image = nil;
     self.header.text = eo.name.length ? eo.name :  @"Unnamed event.";
@@ -90,6 +122,7 @@
     }  else {
         [self.thumbnail setImage:placeholder];
     }
+    
 }
 
 @end

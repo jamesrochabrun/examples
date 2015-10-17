@@ -183,19 +183,42 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return _venues[index];
 }
 
-- (void) refreshVenuesFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation*) refreshVenuesFromServerWithSuccess:(void (^)())success
                                     failure:(void (^)())failure;
 {
-    [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
+    return [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
         
         [self.venues removeAllObjects];
         for (RestaurantObject* venue  in  venues) {
             [_venues addObject: venue];
         }
+        
+        if (_venues.count ) {
+            // XX: Need to find the first venue that has an image…
+            
+            RestaurantObject*first=_venues[0];
+            if  ( first.imageRefs.count ) {
+                ImageRefObject*firstMedia=first.imageRefs[0];
+                if  ( firstMedia) {
+                    self.primaryVenueImageURL=firstMedia.reference;
+                }
+            }
+        }
+
         success ();
     } failure:^(NSError *error) {
         failure ();
     }];
+}
+
+- (NSString*) asString;
+{
+    return [NSString stringWithFormat: @"EVENT %ld %@ venues=%ld media=%@",
+            ( long)_eventID,
+            _name,
+            ( long)[ self totalVenues],
+            _primaryVenueImageURL
+            ];
 }
 
 @end

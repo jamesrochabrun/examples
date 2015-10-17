@@ -12,7 +12,6 @@
 #import "Common.h"
 #import "ListStripTVCell.h"
 #import "OOAPI.h"
-#import "CreateUsernameVC.h"
 
 @interface EmptyListVC ()
 
@@ -87,7 +86,7 @@
 //------------------------------------------------------------------------------
 - (void)userPressedListsButton: (id) sender
 {
-    CreateUsernameVC *vc= [[CreateUsernameVC  alloc] init];
+    UIViewController *vc= [[UIViewController  alloc] init];
     vc.view.backgroundColor= BLUE;
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -98,8 +97,7 @@
 
 - (void)userPressedDiscoverButton: (id) sender
 {
-    
-    CreateUsernameVC *vc= [[CreateUsernameVC  alloc] init];
+    UIViewController *vc= [[UIViewController  alloc] init];
     vc.view.backgroundColor= GREEN;
     [self.navigationController pushViewController:vc animated:YES];
 }

@@ -9,9 +9,12 @@
 #import "ObjectTVCell.h"
 #import "EventObject.h"
 #import <GoogleMaps/GoogleMaps.h>
+#import "OOStripHeader.h"
 
 @interface EventTVCell : ObjectTVCell
 
 - (void)setEvent:(EventObject *)eo;
+- (void) setTitle: (NSString*)string;
+@property (nonatomic,strong) OOStripHeader *nameHeader;
 
 @end

@@ -240,6 +240,20 @@ UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor
     return button;
 }
 
+UIButton* makeRoundButton(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius)
+{
+    UIButton*b= makeButton(parent, title, fontSize, fg, bg, target, callback, borderWidth);
+    b.layer.cornerRadius=  radius;
+    return b;
+}
+
+UIButton* makeRoundIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius)
+{
+    UIButton*b= makeIconButton(parent, title, fontSize, fg, bg, target, callback, borderWidth);
+    b.layer.cornerRadius=  radius;
+    return b;
+}
+
 NSAttributedString* attributedStringOf(NSString* string,double fontSize)
 {
     NSAttributedString* a= [[NSAttributedString alloc]

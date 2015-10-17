@@ -22,85 +22,10 @@
 #import "EventTVCell.h"
 #import "EventCoordinatorVC.h"
 #import "EventParticipantVC.h"
+#import "OOStripHeader.h"
 
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
 #define EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER  @"eventListGenericCell"
-
-@implementation EventListTableTitleView
-{
-    NSString*title;
-    UIView* horizontalLineView;
-    UILabel* labelTitle;
-    UIButton* buttonAddEvent;
-}
-
-- (instancetype) init
-{
-    self = [super init];
-    if (self) {
-        title=  @"Untitled";
-        self.opaque= NO;
-        self.backgroundColor= CLEAR;
-        labelTitle= makeLabel(self, title, kGeomFontSizeHeader);
-        labelTitle.opaque= NO;
-        labelTitle.clipsToBounds= YES;
-        labelTitle.backgroundColor= BLACK;
-        labelTitle.textColor= WHITE;
-        labelTitle.layer.borderColor= GRAY.CGColor;
-        labelTitle.layer.borderWidth= .5;
-        
-        horizontalLineView= makeView( self, BLACK);
-        horizontalLineView.layer.borderColor= GRAY.CGColor;
-        horizontalLineView.layer.borderWidth= .5;
-    }
-    return self;
-}
-
-- (void)enableButtonWithTarget:(id) target action: (SEL) action
-{
-    if  ( buttonAddEvent) {
-        return;
-    }
-    buttonAddEvent= makeIconButton(self, kFontIconAdd, kGeomFontSizeHeader, YELLOW, BLACK, target, action, 0);
-}
-
-- (void) setTitle: (NSString*)string;
-{
-    title=  string;
-    labelTitle.text=  string;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    float w= self.frame.size.width;
-    float h= self.frame.size.height;
-    float lineHeight= 7;
-    
-    if ( buttonAddEvent) {
-        horizontalLineView.frame = CGRectMake(0,h/2-lineHeight/2,w-kGeomHeightButton/2,lineHeight);
-
-        buttonAddEvent.frame=  CGRectMake( w-kGeomHeightButton,
-                                          0,
-                                          kGeomHeightButton,
-                                          kGeomHeightButton);
-        buttonAddEvent.layer.cornerRadius=kGeomHeightButton/2;
-        
-    } else {
-        horizontalLineView.frame = CGRectMake(0,h/2-lineHeight/2,w,lineHeight);
-    }
-    
-    [labelTitle sizeToFit];
-    float labelWidth= labelTitle.frame.size.width + 33;
-    labelTitle.frame = CGRectMake( (w-labelWidth)/2,5,labelWidth,h-10);
-    labelTitle.layer.cornerRadius=h/2;
-    
-    [self bringSubviewToFront:labelTitle];
-}
-@end
-
-//==============================================================================
 
 @interface EventsListVC ()
 
@@ -148,10 +73,6 @@
     _table.sectionHeaderHeight= 55;
     _table.sectionFooterHeight= 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
-    
-//    _buttonAdd=makeButton(self.view, kFontIconAdd, kGeomFontSizeHeader, WHITE,BLACK, self, @selector(userPressedAdd:), 0);
-//    _buttonAdd.titleLabel.font= [UIFont fontWithName:@"oomami-icons" size: kGeomFontSizeHeader];
-//    _buttonAdd.layer.cornerRadius=  kGeomHeightButton/2;
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSNumber* userid= userInfo.userID;
@@ -316,13 +237,29 @@
     
     if  (!events.count) {
         UITableViewCell* genericCell=[tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER forIndexPath:indexPath];
-        genericCell.textLabel.text= ! events ?  LOCAL( @"Loading...") : LOCAL( @"None.");
-        genericCell.textLabel.textColor= !events ? BLUE : BLACK;
+//        genericCell.textLabel.text= ! events ?  LOCAL( @"Loading...") : LOCAL( @"None.");
+//        genericCell.textLabel.textColor= !events ? BLUE : BLACK;
+        
+        OOStripHeader *nameHeader= [[OOStripHeader  alloc] init];
+        [nameHeader setName: _tableSectionNames[section]];
+        [genericCell  addSubview: nameHeader];
+        
+        float w=  self.table.bounds.size.width;
+        nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);
+
         return  genericCell;
     }
     
     cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
 
+    if (!row ) {
+        cell.nameHeader= [[OOStripHeader  alloc] init];
+        [cell.nameHeader setName: _tableSectionNames[section]];
+        if ( section ==1) {
+            [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
+        }
+    }
+    
     EventObject* e= events[row];
     [cell setEvent: e];
 
@@ -341,22 +278,20 @@
 //    return 3;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+- (float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    NSString* title= _tableSectionNames[section];
-    
-    EventListTableTitleView* v= [[EventListTableTitleView alloc] init];
-    [v  setTitle: title];
-    if  (!section ) {
-        [v enableButtonWithTarget:self action:@selector(userPressedAdd:)];
-    }
-    return v;
+    return 30;
+}
+
+- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 30;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     UILabel * label= makeLabelLeft (nil,   @"",  10);
-    label.backgroundColor= CLEAR;
+//    label.backgroundColor= RED;
     return  label;
 }
 

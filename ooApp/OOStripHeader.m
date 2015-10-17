@@ -11,7 +11,7 @@
 @interface OOStripHeader()
 
 @property (nonatomic, strong) UILabel *nameLabel;
-
+@property (nonatomic,strong) UIButton* buttonAdd;
 @end
 
 @implementation OOStripHeader
@@ -29,23 +29,46 @@
     return self;
 }
 
+- (void)enableAddButtonWithTarget:(id) target action: (SEL) action
+{
+    if  ( _buttonAdd) {
+        return;
+    }
+    self.buttonAdd= makeRoundIconButton(self, kFontIconAdd, kGeomFontSizeHeader,
+                                        YELLOW, BLACK, target, action,
+                                        0, kGeomHeightButton/2.);
+    [self setNeedsLayout];
+}
+
 - (void)setName:(NSString *)name {
     NSString *newName = [name uppercaseString];
     if ([_name isEqualToString:newName]) return;
     _name = newName;
     _nameLabel.text = _name;
     
-//    [self bringSubviewToFront:_nameLabel];
+    [self bringSubviewToFront:_nameLabel];
     [self setNeedsDisplay];
+}
+
+- (void)addConstraintsForButton
+{
+    UIView *superview = self;
+    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+
+    NSDictionary *views;
+    views= NSDictionaryOfVariableBindings(superview, _buttonAdd);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_buttonAdd]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=5)-[_buttonAdd]-(2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
 }
 
 - (void)updateConstraints {
     [super updateConstraints];
     UIView *superview = self;
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameLabel);
-
+    NSDictionary *views;
     
+    views= NSDictionaryOfVariableBindings(superview, _nameLabel);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=5)-[_nameLabel]-(>=5)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=5)-[_nameLabel]-(>=5)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
@@ -61,9 +84,22 @@
                                                         toItem:_nameLabel.superview
                                                      attribute:NSLayoutAttributeCenterY
                                                     multiplier:1.f constant:0.f]];
+    if ( _buttonAdd) {
+//        [self addConstraintsForButton];
+    }
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    float w=self.frame.size.width;
+    float h=self.frame.size.height;
+    [self updateConstraints];
+    _buttonAdd.frame = CGRectMake(w-kGeomHeightButton, (h-kGeomHeightButton)/2,kGeomHeightButton,kGeomHeightButton);
 }
 
 - (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
     CGSize s = [_nameLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                                         _nameLabel.font, NSFontAttributeName,
                                                          nil]];

@@ -41,8 +41,7 @@ typedef enum: int {
 @property (nonatomic, strong) NSString *facebookIdentifier;
 @property (nonatomic, strong) NSString *imageURLString;// e.g. from FB.
 @property (nonatomic, strong) NSString *imageIdentifier;// i.e. from OO.
-@property (nonatomic, assign) NSInteger participantType;
-@property (nonatomic, assign) BOOL isAttending;
+@property (nonatomic, assign) NSInteger participantType, participantState;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary *)dictionaryFromUser;

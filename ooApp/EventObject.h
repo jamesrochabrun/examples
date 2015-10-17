@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OONetworkManager.h"
 
 @class RestaurantObject;
 
@@ -40,6 +41,7 @@ typedef enum : char {
 @property (nonatomic, strong) NSDate *createdAt;
 @property (nonatomic, strong) NSDate *updatedAt;
 @property (nonatomic,assign) NSInteger friendRecommendationAge;
+@property (nonatomic, strong) NSString *primaryVenueImageURL;
 
 + (EventObject*) eventFromDictionary: (NSDictionary*)dictionary;
 -(NSDictionary*) dictionaryFromEvent;
@@ -50,7 +52,8 @@ typedef enum : char {
 - (NSUInteger) totalVenues;
 - (RestaurantObject*)firstVenue;
 
-- (void) refreshVenuesFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation*) refreshVenuesFromServerWithSuccess:(void (^)())success
                                     failure:(void (^)())failure;
+- (NSString*) asString;
 
 @end

@@ -23,7 +23,7 @@ NSString *const kKeyGender = @"gender";
 NSString *const kKeyImageURL = @"image_url";
 NSString *const kKeyImageIdentifier = @"image_identifier";
 NSString *const kKeyParticipantType = @"participant_type";
-NSString *const kKeyIsAttending = @"is_attending";
+NSString *const kKeyParticipantState = @"participant_state";
 
 @interface UserObject()
 
@@ -55,24 +55,19 @@ NSString *const kKeyIsAttending = @"is_attending";
 {
     UserObject *user =[[UserObject alloc] init];
     user.userID = [dict objectForKey:kKeyID];
-    user.firstName = [dict objectForKey:kKeyFirstName];
-    user.middleName = [dict objectForKey:kKeyMiddleName];
-    user.lastName = [dict objectForKey:kKeyLastName];
-    user.email = [dict objectForKey:kKeyEmail];
-    user.phoneNumber = [dict objectForKey:kKeyPhoneNumber];
-    user.backendAuthorizationToken = [dict objectForKey:kKeyToken];
-    user.gender = [dict objectForKey:kKeyGender];
-    user.username=[dict objectForKey:kKeyUsername];
-    user.imageURLString=[dict objectForKey:kKeyImageURL];
-    user.imageIdentifier=[dict objectForKey:kKeyImageIdentifier];
-    user.isAttending= parseIntegerOrNullFromServer(dict[kKeyIsAttending]);
+    user.firstName = parseStringOrNullFromServer( [dict objectForKey:kKeyFirstName] );
+    user.middleName = parseStringOrNullFromServer( [dict objectForKey:kKeyMiddleName] );
+    user.lastName = parseStringOrNullFromServer( [dict objectForKey:kKeyLastName] );
+    user.email = parseStringOrNullFromServer( [dict objectForKey:kKeyEmail] );
+    user.phoneNumber = parseStringOrNullFromServer( [dict objectForKey:kKeyPhoneNumber]);
+    user.backendAuthorizationToken = parseStringOrNullFromServer( [dict objectForKey:kKeyToken]);
+    user.gender =parseStringOrNullFromServer( [dict objectForKey:kKeyGender] );
+    user.username= parseStringOrNullFromServer( [dict objectForKey:kKeyUsername] );
+    user.imageURLString= parseStringOrNullFromServer( [dict objectForKey:kKeyImageURL] );
+    user.imageIdentifier= parseStringOrNullFromServer( [dict objectForKey:kKeyImageIdentifier] );
+    user.participantType = parseIntegerOrNullFromServer(dict [kKeyParticipantType]);
+    user.participantState =parseIntegerOrNullFromServer(dict [kKeyParticipantState]);
     
-    NSNumber *participantNumber= dict [kKeyParticipantType];
-    if (!participantNumber) {
-        user.participantType = PARTICIPANT_TYPE_NONE;
-    } else {
-        user.participantType = participantNumber.integerValue;
-    }
     return user;
 }
 
@@ -94,6 +89,11 @@ NSString *const kKeyIsAttending = @"is_attending";
              kKeyUsername:self.username ?: @"",
              kKeyImageIdentifier:self.imageIdentifier ?: @"",
              kKeyImageURL:self.imageURLString ?: @"",
+             kKeyParticipantType: @(self.participantType),
+             kKeyParticipantState: @(self.participantState)
+             
+             // Some data are not uploaded.
+             
              };
 }
 

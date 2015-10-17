@@ -355,7 +355,7 @@
                                              }
                                          }
                                          failure:^void(NSError *   error) {
-                                             NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.localizedDescription,requestString);
+                                             NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.description,requestString);
                                              
                                              if (facebookID ) {
                                                  [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @NO] ];

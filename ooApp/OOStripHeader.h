@@ -12,4 +12,6 @@
 
 @property (nonatomic, strong) NSString *name;
 
+- (void)enableAddButtonWithTarget:(id) target action: (SEL) action;
+
 @end
