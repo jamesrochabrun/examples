@@ -41,7 +41,7 @@ typedef enum : char {
 @property (nonatomic, strong) NSDate *createdAt;
 @property (nonatomic, strong) NSDate *updatedAt;
 @property (nonatomic,assign) NSInteger friendRecommendationAge;
-@property (nonatomic, strong) NSString *primaryVenueImageURL;
+@property (nonatomic, strong) NSString *primaryVenueImageIdentifier;
 
 + (EventObject*) eventFromDictionary: (NSDictionary*)dictionary;
 -(NSDictionary*) dictionaryFromEvent;

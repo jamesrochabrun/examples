@@ -243,13 +243,17 @@
     // RULE: Initially just display the basic information.
     [self updateBoxes];
     
-    // RULE: After basic info is displayed to fetch what's on the backend.
+    // RULE: After basic info is displayed, fetch what's on the backend.
     __weak EventCoordinatorVC *weakSelf = self;
     [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-        NSLog  (@"VENUES FOR EVENT DID CHANGE.  (total=  %ld)",[APP.eventBeingEdited totalVenues ]);
-        ON_MAIN_THREAD(^(){
-            [weakSelf updateWhereBoxAnimated:YES];
-        });
+        NSInteger numberOfVenues= APP.eventBeingEdited.numberOfVenues;
+        if (numberOfVenues != [APP.eventBeingEdited totalVenues ] ) {
+            
+            NSLog  (@"VENUES FOR EVENT DID CHANGE.  (total=  %ld)", ( unsigned long)[APP.eventBeingEdited totalVenues ]);
+            ON_MAIN_THREAD(^(){
+                [weakSelf updateWhereBoxAnimated:YES];
+            });
+        }
     } failure:^{
         NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
     }];
@@ -375,6 +379,7 @@
     NSInteger  row= indexPath.row;
     RestaurantObject *venue= [APP.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
+    cvc.mediaItemObject= venue.mediaItems.count ?  venue.mediaItems[0] :nil;
     CGRect r= cvc.frame;
     r.size=  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
     cvc.frame= r;

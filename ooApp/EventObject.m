@@ -196,11 +196,15 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
         if (_venues.count ) {
             // XX: Need to find the first venue that has an image…
             
-            RestaurantObject*first=_venues[0];
-            if  ( first.imageRefs.count ) {
-                ImageRefObject*firstMedia=first.imageRefs[0];
-                if  ( firstMedia) {
-                    self.primaryVenueImageURL=firstMedia.reference;
+            int n= _venues.count;
+            for (int i=0; i < n; i++) {
+                RestaurantObject* venue=_venues[i];
+                if  ( venue.imageRefs.count ) {
+                    ImageRefObject* media=venue.imageRefs[0];
+                    if  ( media) {
+                        self.primaryVenueImageIdentifier=media.reference;
+                        break;
+                    }
                 }
             }
         }
@@ -213,11 +217,11 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
 
 - (NSString*) asString;
 {
-    return [NSString stringWithFormat: @"EVENT %ld %@ venues=%ld media=%@",
+    return [NSString stringWithFormat: @"EVENT %ld %@ #venues=%ld media=%@",
             ( long)_eventID,
             _name,
             ( long)[ self totalVenues],
-            _primaryVenueImageURL
+            _primaryVenueImageIdentifier
             ];
 }
 

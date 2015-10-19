@@ -28,6 +28,12 @@ NSString *const kKeyRestaurantWebsite = @"website";
 @implementation RestaurantObject
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
+    if (!dict) {
+        return nil;
+    }
+    if  (![dict isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
     NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
     restaurant.googleID = [dict objectForKey:kKeyRestaurantGoogleID];
