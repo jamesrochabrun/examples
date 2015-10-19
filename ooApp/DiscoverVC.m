@@ -27,6 +27,7 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
+@property (nonatomic, assign) CLLocationCoordinate2D desiredLocation;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) GMSMapView *mapView;
 @property (nonatomic, strong) GMSCameraPosition *camera;
@@ -137,7 +138,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)verifyTrackingIsOkay
 {
-    if (0 == self.currentLocation.longitude) {
+    if (_currentLocation.longitude == 0) {
         TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation];
         if (TRACKING_UNKNOWN == c) {
             [[LocationManager sharedInstance] askUserWhetherToTrack];
@@ -146,6 +147,12 @@ static NSString * const ListRowID = @"HLRCell";
             [self updateLocation];
         }
     }
+}
+
+- (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
+    NSLog(@"You tapped at %f,%f", coordinate.latitude, coordinate.longitude);
+    _desiredLocation = coordinate;
+    [self getRestaurants];
 }
 
 - (void)updateLocation
@@ -198,7 +205,7 @@ static NSString * const ListRowID = @"HLRCell";
     NSLog(@"category: %@", searchTerm);
     
     _requestOperation = [api getRestaurantsWithKeyword:searchTerm
-                                           andLocation:[[LocationManager sharedInstance] currentUserLocation]
+                                           andLocation:_desiredLocation
                                              andFilter:@""
                                            andOpenOnly:_openOnly
                                                   andSort:kSearchSortTypeDistance

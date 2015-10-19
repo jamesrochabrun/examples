@@ -377,11 +377,11 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     return 0;
 }
 
-/* not sure we need to add any supplementatry views
+// supplementatry views
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
  {
  return [[UICollectionReusableView alloc] init];
- }*/
+ }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {

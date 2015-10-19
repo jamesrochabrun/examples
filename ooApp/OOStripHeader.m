@@ -105,7 +105,7 @@
                                                          nil]];
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 1.25, UIColorRGBA(kColorStripHeaderShadow).CGColor);
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 3, UIColorRGBA(kColorStripHeaderShadow).CGColor);
     
     CGContextBeginPath(ctx);
     CGContextMoveToPoint   (ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) - 2);  // upper mid left
