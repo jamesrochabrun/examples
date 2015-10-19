@@ -237,9 +237,7 @@
     
     if  (!events.count) {
         UITableViewCell* genericCell=[tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER forIndexPath:indexPath];
-//        genericCell.textLabel.text= ! events ?  LOCAL( @"Loading...") : LOCAL( @"None.");
-//        genericCell.textLabel.textColor= !events ? BLUE : BLACK;
-        
+
         OOStripHeader *nameHeader= [[OOStripHeader  alloc] init];
         [nameHeader setName: _tableSectionNames[section]];
         [genericCell  addSubview: nameHeader];
@@ -448,26 +446,12 @@
                     APP.eventBeingEdited= e;
                     e.eventID= eventID;
                     
-                    RestaurantObject *restaurant= [ [RestaurantObject  alloc] init];
-                    restaurant.googleID=@"ChIJ513xa0-0j4ARmna-TypiV9w";
-                    restaurant.restaurantID=  @"";
-                    
-                    // NOTE:  this is not implemented on the backend yet.
-                    [OOAPI addRestaurant:restaurant toEvent:e  success:^(id response) {
-                        
-                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-                        
-                    } failure:^(NSError *error) {
-                        NSLog (@" error=  %@", error);
-                        [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-                   }];
+                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
                     
                 }
                 failure:^(NSError *error) {
                     NSLog  (@"%@", error);
                     message( @"backend was unable to create a new event");
-                    
-//                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
                 }];
     }
 }

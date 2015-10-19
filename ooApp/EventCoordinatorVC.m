@@ -45,6 +45,8 @@
 
 @property (nonatomic,strong) UICollectionView *venuesCollectionView;
 @property (nonatomic,strong) UICollectionViewFlowLayout *cvLayout;
+
+@property (nonatomic,strong) NSTimer *timerForUpdating;
 @end
 
 @implementation EventCoordinatorVC
@@ -53,6 +55,9 @@
 
 - (void)dealloc
 {
+    if  (_timerForUpdating ) {
+        [_timerForUpdating invalidate];
+    }
     [_viewContainer1 removeGestureRecognizer:_tap1];
     [_viewContainer2 removeGestureRecognizer:_tap2];
     [_viewContainer3 removeGestureRecognizer:_tap3];
@@ -156,7 +161,7 @@
     [self updateWhereBoxAnimated:NO];
     
     // RULE: Check whether the backend has new information every 30 seconds.
-    [self  performSelector: @selector(updateBoxes) withObject:nil afterDelay:30];
+//    [self  performSelector: @selector(updateBoxes) withObject:nil afterDelay:30];
 }
 
 - (void) updateWhenBox
@@ -241,7 +246,9 @@
     [super viewWillAppear:animated];
     
     // RULE: Initially just display the basic information.
-    [self updateBoxes];
+    self.timerForUpdating= [NSTimer scheduledTimerWithTimeInterval:30 target: self
+                                                          selector: @selector (updateBoxes)
+                                                          userInfo:nil repeats:YES];
     
     // RULE: After basic info is displayed, fetch what's on the backend.
     __weak EventCoordinatorVC *weakSelf = self;
@@ -261,7 +268,10 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [NSObject cancelPreviousPerformRequestsWithTarget: self selector:@selector(updateBoxes) object:nil];
+    if  (_timerForUpdating ) {
+        [_timerForUpdating invalidate];
+        self.timerForUpdating= nil;
+    }
     [super viewDidDisappear:animated];
 }
 
@@ -314,7 +324,6 @@
     float spacing= kGeomSpaceEdge;
     
     _scrollView.frame=  self.view.bounds;
-#define kGeomEventCoordinatorBoxHeight 175
 #define kGeomEventCoordinatorRestaurantHeight 100
     
     float boxWidth=w-2*margin;
@@ -395,10 +404,5 @@
     vc.restaurant= venue;
     [self.navigationController pushViewController:vc animated:YES ];
 }
-
-- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
-    // TODO: Deselect item
-}
-
 
 @end

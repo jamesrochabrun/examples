@@ -215,6 +215,33 @@ UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIC
     return button;
 }
 
+UIButton* makeButtonForAutolayout (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
+{
+    UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
+    button.translatesAutoresizingMaskIntoConstraints = NO;
+
+    if  (title ) {
+        [ button setTitle: title forState:UIControlStateNormal ];
+        button.titleLabel.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
+    }
+    if ( target && callback) {
+        [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
+    }
+    if  (fg ) {
+        [button setTitleColor:fg forState:UIControlStateNormal];
+        if (borderWidth > 0 ) {
+            button.layer.borderColor=fg.CGColor;
+            button.layer.borderWidth= borderWidth;
+            button.layer.cornerRadius= kGeomCornerRadius;
+        }
+    }
+    if  (bg ) {
+        button.layer.backgroundColor= bg.CGColor;
+    }
+    [ parent addSubview: button ];
+    return button;
+}
+
 UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
@@ -250,6 +277,14 @@ UIButton* makeRoundButton(UIView *parent, NSString*  title, float fontSize,  UIC
 UIButton* makeRoundIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius)
 {
     UIButton*b= makeIconButton(parent, title, fontSize, fg, bg, target, callback, borderWidth);
+    b.layer.cornerRadius=  radius;
+    return b;
+}
+
+UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius)
+{
+    UIButton*b= makeButtonForAutolayout(parent, title, fontSize, fg, bg, target, callback, borderWidth);
+    b.titleLabel.font= [UIFont fontWithName: kFontIcons size:fontSize];
     b.layer.cornerRadius=  radius;
     return b;
 }

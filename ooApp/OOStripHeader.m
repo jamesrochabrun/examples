@@ -12,6 +12,9 @@
 
 @property (nonatomic, strong) UILabel *nameLabel;
 @property (nonatomic,strong) UIButton* buttonAdd;
+@property (nonatomic, strong) UIView *spacerLeft;
+@property (nonatomic, strong) UIView *spacerRight;
+
 @end
 
 @implementation OOStripHeader
@@ -25,6 +28,11 @@
         [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [self addSubview:_nameLabel];
         self.backgroundColor = UIColorRGBA(kColorClear);
+        
+        _spacerLeft= makeView(self, CLEAR);
+        _spacerRight=  makeView(self, CLEAR);
+        _spacerLeft.translatesAutoresizingMaskIntoConstraints = NO ;
+        _spacerRight.translatesAutoresizingMaskIntoConstraints = NO ;
     }
     return self;
 }
@@ -34,9 +42,10 @@
     if  ( _buttonAdd) {
         return;
     }
-    self.buttonAdd= makeRoundIconButton(self, kFontIconAdd, kGeomFontSizeHeader,
+    self.buttonAdd= makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
                                         YELLOW, BLACK, target, action,
-                                        0, kGeomHeightButton/2.);
+                                        0, kGeomFontSizeHeader/2.);
+    
     [self setNeedsLayout];
 }
 
@@ -50,52 +59,116 @@
     [self setNeedsDisplay];
 }
 
-- (void)addConstraintsForButton
-{
-    UIView *superview = self;
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-
-    NSDictionary *views;
-    views= NSDictionaryOfVariableBindings(superview, _buttonAdd);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_buttonAdd]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=5)-[_buttonAdd]-(2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-}
-
 - (void)updateConstraints {
     [super updateConstraints];
     UIView *superview = self;
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@(self.frame.size.width), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     NSDictionary *views;
     
-    views= NSDictionaryOfVariableBindings(superview, _nameLabel);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=5)-[_nameLabel]-(>=5)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=5)-[_nameLabel]-(>=5)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
-                                                     attribute:NSLayoutAttributeCenterX
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:_nameLabel.superview
-                                                     attribute:NSLayoutAttributeCenterX
-                                                    multiplier:1.f constant:0.f]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
-                                                     attribute:NSLayoutAttributeCenterY
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:_nameLabel.superview
-                                                     attribute:NSLayoutAttributeCenterY
-                                                    multiplier:1.f constant:0.f]];
-    if ( _buttonAdd) {
-//        [self addConstraintsForButton];
+    if (!_buttonAdd) {
+        views= NSDictionaryOfVariableBindings(superview, _nameLabel);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=5)-[_nameLabel]-(>=5)-|"
+                                                                     options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=5)-[_nameLabel]-(>=5)-|"
+//                                                                     options:0 metrics:metrics views:views]];
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
+                                                         attribute:NSLayoutAttributeCenterX
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem: self
+                                                         attribute:NSLayoutAttributeCenterX
+                                                        multiplier:1.f constant:0.f]];
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem: self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.f constant:0.f]];
+    } else {
+        float w=self.frame.size.width;
+        float h=self.frame.size.height;
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerLeft
+                                                          attribute:NSLayoutAttributeWidth
+                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                             toItem: nil
+                                                          attribute:NSLayoutAttributeWidth
+                                                         multiplier:1.f constant:5]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerRight
+                                                          attribute:NSLayoutAttributeWidth
+                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                             toItem: nil
+                                                          attribute:NSLayoutAttributeWidth
+                                                         multiplier:1.f constant:5]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerLeft
+                                                          attribute:NSLayoutAttributeLeft
+                                                          relatedBy:NSLayoutRelationLessThanOrEqual
+                                                             toItem: superview
+                                                          attribute:NSLayoutAttributeLeftMargin
+                                                         multiplier:1.f constant:5.f]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerLeft
+                                                          attribute:NSLayoutAttributeRight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: _nameLabel
+                                                          attribute:NSLayoutAttributeLeft
+                                                         multiplier:1.f constant:5.f]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
+                                                          attribute:NSLayoutAttributeRight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: _buttonAdd
+                                                          attribute:NSLayoutAttributeLeft
+                                                         multiplier:1.f constant:6.f]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
+                                                          attribute:NSLayoutAttributeRight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: _spacerRight
+                                                          attribute:NSLayoutAttributeLeft
+                                                         multiplier:1.f constant:5.f]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerRight
+                                                          attribute:NSLayoutAttributeRight
+                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                             toItem: superview
+                                                          attribute:NSLayoutAttributeRight
+                                                         multiplier:1.f constant:5.f]
+         ];
+        
+        // Vertical
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem: self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.f constant:0.f]
+         ];
+        
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_buttonAdd
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem: self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.f constant:0.f]
+         ];
+        
     }
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    float w=self.frame.size.width;
-    float h=self.frame.size.height;
     [self updateConstraints];
-    _buttonAdd.frame = CGRectMake(w-kGeomHeightButton, (h-kGeomHeightButton)/2,kGeomHeightButton,kGeomHeightButton);
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -103,6 +176,9 @@
     CGSize s = [_nameLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                                         _nameLabel.font, NSFontAttributeName,
                                                          nil]];
+    if ( _buttonAdd) {
+        s.width +=kGeomHeightButton;
+    }
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
     CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 3, UIColorRGBA(kColorStripHeaderShadow).CGColor);

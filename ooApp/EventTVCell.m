@@ -21,6 +21,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+
         _labelIndicatingAttendeeCount= [UILabel  new];
         [self  addSubview: _labelIndicatingAttendeeCount];
         _labelIndicatingAttendeeCount.textColor= WHITE;
@@ -45,6 +46,7 @@
     [  super prepareForReuse];
     [self.operation cancel ];
     self.clipsToBounds= NO;
+    self.eventInfo= nil;    
     [_nameHeader removeFromSuperview];
     _nameHeader = nil;
     self.header.text= nil;
