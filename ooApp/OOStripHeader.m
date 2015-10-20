@@ -102,21 +102,29 @@
                                                           attribute:NSLayoutAttributeWidth
                                                          multiplier:1.f constant:0]
          ];
-        
-        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
-                                                          attribute:NSLayoutAttributeWidth
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem: nil
-                                                          attribute:NSLayoutAttributeNotAnAttribute
-                                                         multiplier:1.f constant:100]
-         ];
-        
+//        
+//        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
+//                                                          attribute:NSLayoutAttributeWidth
+//                                                          relatedBy:NSLayoutRelationEqual
+//                                                             toItem: nil
+//                                                          attribute:NSLayoutAttributeNotAnAttribute
+//                                                         multiplier:1.f constant:100]
+//         ];
+        //
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem: nil
                                                           attribute:NSLayoutAttributeNotAnAttribute
-                                                         multiplier:1.f constant: kGeomButtonWidth]
+                                                         multiplier:1.f constant: 44]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: self
+                                                          attribute:NSLayoutAttributeHeight
+                                                         multiplier:1.f constant: 0]
          ];
         
         // left-right sequence
