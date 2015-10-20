@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
+#import "EventWhenVC.h"
 
-@interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
+@interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,EventWhenVCDelegate>
 
 @end
 

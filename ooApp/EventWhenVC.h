@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
 
-@interface EventWhenVC : SubBaseVC
-
+@protocol EventWhenVCDelegate <NSObject>
+- (void) datesChanged;
 @end
-
+@interface EventWhenVC : SubBaseVC
+@property (nonatomic,assign) id<EventWhenVCDelegate> delegate;
+@end

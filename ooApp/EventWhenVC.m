@@ -53,6 +53,9 @@
     [self.view addSubview: _pickerEventDate ];
     [self.view addSubview: _pickerEventVotingDate];
     
+    _pickerEventDate.timeZone= [NSTimeZone systemTimeZone];
+    _pickerEventVotingDate.timeZone= [NSTimeZone systemTimeZone];
+
     _pickerEventDate.datePickerMode= UIDatePickerModeDateAndTime;
     _pickerEventVotingDate.datePickerMode= UIDatePickerModeDateAndTime;
     
@@ -62,20 +65,38 @@
     self.navigationItem.leftBarButtonItem= nil;
     
     if (APP.eventBeingEdited.date ) {
-        [_buttonEventDate setTitle:[NSString stringWithFormat: @"%@", APP.eventBeingEdited.date ]
-                                                      forState:UIControlStateNormal];
+        [self expressUpperDate];
     }
     if ( APP.eventBeingEdited.dateWhenVotingClosed) {
-        [_buttonEventVoting setTitle:[NSString stringWithFormat: @"%@",APP.eventBeingEdited.dateWhenVotingClosed]
-                            forState:UIControlStateNormal];
+        [self expressLowerDate];
     }
 
+}
+
+- (void)expressUpperDate
+{
+    NSDate* gmtTime= APP.eventBeingEdited.date;
+
+    [_buttonEventDate setTitle: expressLocalDateTime(gmtTime)
+                      forState:UIControlStateNormal];
+}
+
+- (void)expressLowerDate
+{
+    NSDate* gmtTime= APP.eventBeingEdited.dateWhenVotingClosed;
+    
+    [_buttonEventVoting setTitle:expressLocalDateTime (gmtTime)
+                        forState:UIControlStateNormal];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [self extractDateTimeFromUpperPicker];
     [self extractDateTimeFromLowerPicker];
+    
+    if ( self.delegate) {
+        [self.delegate datesChanged];
+    }
     
     [super viewWillDisappear:animated];
 }
@@ -94,18 +115,17 @@
 
 - (void)extractDateTimeFromUpperPicker
 {
-    NSDate *date= _pickerEventDate.date;
-    APP.eventBeingEdited.date= date;
-    [_buttonEventDate setTitle:[NSString stringWithFormat: @"%@",date]
-                      forState:UIControlStateNormal];
+    NSDate *gmtTime= _pickerEventDate.date;
+    APP.eventBeingEdited.date= gmtTime;
+    [self expressUpperDate];
 }
 
 - (void)extractDateTimeFromLowerPicker
 {
-    NSDate *date= _pickerEventVotingDate.date;
-    APP.eventBeingEdited.dateWhenVotingClosed= date;
-    [_buttonEventVoting setTitle:[NSString stringWithFormat: @"%@",date]
-                      forState:UIControlStateNormal];
+    NSDate *gmtTime= _pickerEventVotingDate.date;
+    APP.eventBeingEdited.dateWhenVotingClosed= gmtTime;
+
+    [self expressLowerDate];
 }
 
 - (void)userPressedUpperButton: (id) sender

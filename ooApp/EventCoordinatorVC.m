@@ -156,12 +156,20 @@
 
 - (void)updateBoxes
 {
+    if  (!_timerForUpdating) {
+        // RULE: Initially just display the basic information.
+        self.timerForUpdating= [NSTimer scheduledTimerWithTimeInterval:30 target: self
+                                                              selector: @selector (updateBoxes)
+                                                              userInfo:nil repeats:YES];
+    }
     [self updateWhenBox];
     [self updateWhoBox];
     [self updateWhereBoxAnimated:NO];
-    
-    // RULE: Check whether the backend has new information every 30 seconds.
-//    [self  performSelector: @selector(updateBoxes) withObject:nil afterDelay:30];
+}
+
+- (void)datesChanged
+{
+    [APP.eventBeingEdited sendDatesToServer];
 }
 
 - (void) updateWhenBox
@@ -172,7 +180,7 @@
     
     EventObject* event= APP.eventBeingEdited;
     if  (event.date ) {
-        string=[NSString stringWithFormat:  @"\r%@", event.date];
+        string=[NSString stringWithFormat:  @"\r%@", expressLocalDateTime(event.date)];
     } else {
         string= [NSString stringWithFormat: @"\r%@",
                  LOCAL( @"TAP TO SELECT A DATE AND TIME")
@@ -245,10 +253,7 @@
 {
     [super viewWillAppear:animated];
     
-    // RULE: Initially just display the basic information.
-    self.timerForUpdating= [NSTimer scheduledTimerWithTimeInterval:30 target: self
-                                                          selector: @selector (updateBoxes)
-                                                          userInfo:nil repeats:YES];
+    [self updateBoxes];
     
     // RULE: After basic info is displayed, fetch what's on the backend.
     __weak EventCoordinatorVC *weakSelf = self;
@@ -285,6 +290,7 @@
 - (void)userTappedWhenBox: (id) sender
 {
     EventWhenVC* vc= [[EventWhenVC alloc] init];
+    vc.delegate= self;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

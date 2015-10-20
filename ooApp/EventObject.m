@@ -10,6 +10,7 @@
 #import "UserObject.h"
 #import "RestaurantObject.h"
 #import "OOAPI.h"
+#import "AppDelegate.h"
 
 NSString *const kKeyEventID = @"event_id";
 NSString *const kKeyIsComplete = @"is_complete";
@@ -223,6 +224,16 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
             ( long)[ self totalVenues],
             _primaryVenueImageIdentifier
             ];
+}
+
+- (void) sendDatesToServer;
+{
+    [OOAPI reviseEvent: APP.eventBeingEdited
+               success:^(id foo) {
+                   NSLog  (@"UPDATED BACKEND WITH NEW DATES.");
+               } failure:^(NSError *error) {
+                   NSLog  (@"UNABLE TO UPDATE BACKEND WITH NEW DATES.");
+               }];
 }
 
 @end

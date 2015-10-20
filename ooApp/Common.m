@@ -388,6 +388,16 @@ NSMutableAttributedString *createPeopleIconString (NSInteger count)
     return a;
 }
 
+NSString* expressLocalDateTime(NSDate* date)
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"MMM dd, h:mmaa";
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    [dateFormatter setTimeZone:gmt];
+    NSString *string = [dateFormatter stringFromDate: date];
+    return string;
+}
+
 BOOL isValidEmailAddress (NSString *string)
 {
     if  (!string) {

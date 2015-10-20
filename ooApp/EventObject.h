@@ -56,4 +56,6 @@ typedef enum : char {
                                     failure:(void (^)())failure;
 - (NSString*) asString;
 
+- (void) sendDatesToServer;
+
 @end
