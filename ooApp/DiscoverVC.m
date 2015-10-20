@@ -160,6 +160,8 @@ static NSString * const ListRowID = @"HLRCell";
     self.currentLocation = [[LocationManager sharedInstance] currentUserLocation];
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:_camera.zoom bearing:_camera.bearing viewingAngle:_camera.viewingAngle];
     [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
+    _desiredLocation = _currentLocation;
+    [self getRestaurants];
 }
 
 - (void)didReceiveMemoryWarning
