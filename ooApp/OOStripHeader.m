@@ -43,7 +43,7 @@
         return;
     }
     self.buttonAdd= makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
-                                        YELLOW, BLACK, target, action,
+                                        YELLOW, CLEAR, target, action,
                                         0, kGeomFontSizeHeader/2.);
     
     [self setNeedsLayout];
@@ -69,8 +69,6 @@
         views= NSDictionaryOfVariableBindings(superview, _nameLabel);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=5)-[_nameLabel]-(>=5)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=5)-[_nameLabel]-(>=5)-|"
-//                                                                     options:0 metrics:metrics views:views]];
         
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
                                                          attribute:NSLayoutAttributeCenterX
@@ -86,7 +84,7 @@
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
     } else {
-        // sizes
+        // widths
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerLeft
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -102,21 +100,22 @@
                                                           attribute:NSLayoutAttributeWidth
                                                          multiplier:1.f constant:0]
          ];
-//        
-//        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
-//                                                          attribute:NSLayoutAttributeWidth
-//                                                          relatedBy:NSLayoutRelationEqual
-//                                                             toItem: nil
-//                                                          attribute:NSLayoutAttributeNotAnAttribute
-//                                                         multiplier:1.f constant:100]
-//         ];
-        //
+        
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem: nil
                                                           attribute:NSLayoutAttributeNotAnAttribute
                                                          multiplier:1.f constant: 44]
+         ];
+
+        // heights
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: self
+                                                          attribute:NSLayoutAttributeHeight
+                                                         multiplier:1.f constant: 0]
          ];
         
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd

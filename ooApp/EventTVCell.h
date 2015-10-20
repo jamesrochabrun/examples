@@ -15,6 +15,8 @@
 
 - (void)setEvent:(EventObject *)eo;
 - (void) setTitle: (NSString*)string;
+- (void) updateHighlighting: (BOOL)highlighted;
+
 @property (nonatomic,strong) OOStripHeader *nameHeader;
 
 @end

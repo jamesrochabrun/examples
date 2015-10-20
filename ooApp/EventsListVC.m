@@ -59,7 +59,7 @@
     
     _tableSectionNames= @[
                           @"YOUR EVENTS",
-                          @"EVENTS YOU ARE CREATING",
+                          @"INCOMPLETE EVENTS",
                           @"OOMAMI EVENTS"
                           ];
     NavTitleObject *nto = [[NavTitleObject alloc]
@@ -249,7 +249,8 @@
     }
     
     cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-
+    cell.selectedBackgroundView= [UIView new];
+    
     if (!row ) {
         cell.nameHeader= [[OOStripHeader  alloc] init];
         [cell.nameHeader setName: _tableSectionNames[section]];
@@ -278,7 +279,7 @@
 
 - (float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 30;
+    return 0;
 }
 
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -359,6 +360,12 @@
         [self.navigationController pushViewController:vc animated:YES ];
         return;
     }
+    
+    EventTVCell* cell= [tableView cellForRowAtIndexPath: indexPath];
+    [cell updateHighlighting:YES];
+    RUN_AFTER(400, ^{
+        [cell updateHighlighting:NO];
+    });
     
     // Determine whether event can be edited by this user.
     // Then transition to the appropriate view controller.

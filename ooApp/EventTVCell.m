@@ -45,6 +45,7 @@
 {
     [  super prepareForReuse];
     [self.operation cancel ];
+    [self updateHighlighting:NO];
     self.clipsToBounds= NO;
     self.eventInfo= nil;    
     [_nameHeader removeFromSuperview];
@@ -54,6 +55,15 @@
     self.subHeader2.text= nil;
     self.thumbnail.image= nil;
     _labelIndicatingAttendeeCount.text= nil;
+}
+
+- (void) updateHighlighting: (BOOL)highlighted;
+{
+    if  (highlighted ) {
+        self.thumbnail.alpha=  .5;
+    } else {
+        self.thumbnail.alpha=  1;
+    }
 }
 
 - (void)setNameHeader: (OOStripHeader*)header
