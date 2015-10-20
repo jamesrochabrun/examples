@@ -97,10 +97,10 @@
         
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerRight
                                                           attribute:NSLayoutAttributeWidth
-                                                          relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                             toItem: nil
-                                                          attribute:NSLayoutAttributeNotAnAttribute
-                                                         multiplier:1.f constant:5]
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: _spacerLeft
+                                                          attribute:NSLayoutAttributeWidth
+                                                         multiplier:1.f constant:0]
          ];
         
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
