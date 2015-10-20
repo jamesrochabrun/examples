@@ -86,14 +86,12 @@
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
     } else {
-        float w=self.frame.size.width;
-        float h=self.frame.size.height;
-        
+        // sizes
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerLeft
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationGreaterThanOrEqual
                                                              toItem: nil
-                                                          attribute:NSLayoutAttributeWidth
+                                                          attribute:NSLayoutAttributeNotAnAttribute
                                                          multiplier:1.f constant:5]
          ];
         
@@ -101,15 +99,32 @@
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationGreaterThanOrEqual
                                                              toItem: nil
-                                                          attribute:NSLayoutAttributeWidth
+                                                          attribute:NSLayoutAttributeNotAnAttribute
                                                          multiplier:1.f constant:5]
          ];
         
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
+                                                          attribute:NSLayoutAttributeWidth
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: nil
+                                                          attribute:NSLayoutAttributeNotAnAttribute
+                                                         multiplier:1.f constant:100]
+         ];
+        
+        [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
+                                                          attribute:NSLayoutAttributeWidth
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: nil
+                                                          attribute:NSLayoutAttributeNotAnAttribute
+                                                         multiplier:1.f constant: kGeomButtonWidth]
+         ];
+        
+        // left-right sequence
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_spacerLeft
                                                           attribute:NSLayoutAttributeLeft
-                                                          relatedBy:NSLayoutRelationLessThanOrEqual
-                                                             toItem: superview
-                                                          attribute:NSLayoutAttributeLeftMargin
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem: self
+                                                          attribute:NSLayoutAttributeLeft
                                                          multiplier:1.f constant:5.f]
          ];
         
