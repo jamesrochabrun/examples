@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <HockeySDK/HockeySDK.h>
 #import "AppDelegate.h"
 #import "OOAPI.h"
 #import "DebugUtilities.h"
@@ -48,6 +49,12 @@
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
+    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4be2767211390447c381617f13fc2437"];
+    // Do some additional configuration if needed here
+    [[BITHockeyManager sharedHockeyManager] startManager];
+    [[BITHockeyManager sharedHockeyManager].authenticator
+     authenticateInstallation];
+
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }
@@ -74,7 +81,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [[Settings sharedInstance]  save ];
+    [[Settings sharedInstance] save];
     
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
@@ -94,13 +101,13 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [[Settings sharedInstance]  save ];
+    [[Settings sharedInstance] save];
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
-    [[Settings sharedInstance]  save ];
+    [[Settings sharedInstance] save];
 
     [_diagnosticLogString appendString: @"MEMORY WARNING\r"];
 }

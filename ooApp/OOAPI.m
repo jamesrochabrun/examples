@@ -526,7 +526,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists", kOOURL, userID];
     NSDictionary *parameters = @{
                                  @"name":listName,
-                                  @"type":@2,
+                                  @"type":[NSString stringWithFormat:@"%tu", kListTypeUser],
                                   @"user":userID
                                 };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
@@ -592,7 +592,7 @@ NSString *const kKeySearchFilter = @"filter";
 {
     NSMutableArray *restaurantIDs;
     if (!restaurants) {
-        failure (nil);
+        failure(nil);
         return nil;
     } else {
         restaurantIDs = [NSMutableArray array];
@@ -604,7 +604,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSNumber *userID= userInfo.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -669,26 +669,26 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 
-+ (AFHTTPRequestOperation *)isFollowingUser:(UserObject *) user
-                                    success:(void (^)(BOOL ))success
++ (AFHTTPRequestOperation *)isFollowingUser:(UserObject *)user
+                                    success:(void (^)(BOOL))success
                                     failure:(void (^)(NSError *error))failure;
 {
     if (!user) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *selfUserID= userInfo.userID;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSNumber *selfUserID = userInfo.userID;
     if (!selfUserID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
-    NSNumber *otherUserID= user.userID;
+    NSNumber *otherUserID = user.userID;
     if (!otherUserID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
-    if  ([selfUserID isEqualToNumber: otherUserID ] ) {
+    if  ([selfUserID isEqualToNumber: otherUserID] ) {
         NSLog  (@"CANNOT FOLLOW ONESELF.");
         success (NO);
         return nil;
@@ -702,7 +702,7 @@ NSString *const kKeySearchFilter = @"filter";
                for (id dict in responseObject) {
                    UserObject *followee = [UserObject userFromDict:dict];
                    if ([followee.userID isEqualToNumber: otherUserID ] ) {
-                       success (YES);
+                       success(YES);
                        return;
                    }
                }
@@ -712,7 +712,6 @@ NSString *const kKeySearchFilter = @"filter";
                failure (error);
            }];
 }
-
 
 //------------------------------------------------------------------------------
 // Name:    setFollowingUser
