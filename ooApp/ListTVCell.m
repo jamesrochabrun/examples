@@ -8,6 +8,7 @@
 
 #import "ListTVCell.h"
 #import "MediaItemObject.h"
+#import "DebugUtilities.h"
 
 @interface ListTVCell()
 
@@ -25,6 +26,7 @@
         [_addButton withIcon:kFontIconAdd fontSize:15 width:40 height:40 backgroundColor:kColorClear target:self selector:@selector(toggleListInclusion)];
         _addButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_addButton];
+        [DebugUtilities addBorderToViews:@[_addButton]];
     }
     return self;
 }
@@ -36,15 +38,15 @@
 
 - (void)layout {
     [super layout];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonHeight":@(kGeomHeightButton)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _addButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_addButton]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_addButton(buttonHeight)]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=100)-[_addButton]-spaceInter-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=100)-[_addButton(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_addButton
                                                      attribute:NSLayoutAttributeCenterY

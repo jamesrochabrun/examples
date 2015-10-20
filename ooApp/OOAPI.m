@@ -509,7 +509,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addList:(NSString *)listName
-                            success:(void (^)(id response))success
+                            success:(void (^)(ListObject *listObject))success
                             failure:(void (^)(NSError *error))failure;
 {
     if (!listName) {
@@ -531,7 +531,8 @@ NSString *const kKeySearchFilter = @"filter";
                                 };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
-                                      success(responseObject);
+                                      ListObject *l = [ListObject listFromDict:responseObject];
+                                      success(l);
                                   } failure:^(NSError *error) {
                                       failure(error);
                                   }];

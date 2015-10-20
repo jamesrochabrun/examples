@@ -21,7 +21,8 @@
 
 @interface RestaurantVC ()
 
-@property (nonatomic, strong) UIAlertController *alertController;
+@property (nonatomic, strong) UIAlertController *styleSheetAC;
+@property (nonatomic, strong) UIAlertController *createListAC;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
 @property (nonatomic, strong) NSMutableSet *removeButtons;
@@ -49,7 +50,8 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
-    [self setupAlertController];
+    [self setupStyleSheetAC];
+    [self setupCreateListAC];
     
     RestaurantVCCVL *cvl = [[RestaurantVCCVL alloc] init];
     cvl.delegate = self;
@@ -86,12 +88,61 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
-- (void)setupAlertController {
-    _alertController = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
+- (void)setupCreateListAC {
+    _createListAC = [UIAlertController alertControllerWithTitle:@"Create List"
+                                                        message:nil
+                                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    [_createListAC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Enter new list name";
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                        }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [self createListNamed:_createListAC.textFields[0].text];
+                                                 }];
+    
+    [_createListAC addAction:cancel];
+    [_createListAC addAction:ok];
+}
+
+- (void)createListPressed {
+    [self presentViewController:_createListAC animated:YES completion:nil];
+}
+
+- (void)createListNamed:(NSString *)name {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantVC *weakSelf = self;
+    [api addList:name success:^(ListObject *listObject) {
+        if (listObject.listID) {
+            [weakSelf addRestaurantToList:listObject];
+        }
+    } failure:^(NSError *error) {
+        NSLog(@"Could not create list: %@", error);
+    }];
+}
+
+- (void)addRestaurantToList:(ListObject *)list {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantVC *weakSelf = self;
+    [api addRestaurants:@[_restaurant] toList:list.listID success:^(id response) {
+        ON_MAIN_THREAD(^{
+            [weakSelf getListsForRestaurant];
+        });
+    } failure:^(NSError *error) {
+        NSLog(@"Could add restaurant to list: %@", error);
+    }];
+}
+
+- (void)setupStyleSheetAC {
+    _styleSheetAC = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
                                                            message:@"What would you like to do with this restaurant."
                                                     preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
-    _alertController.view.tintColor = [UIColor blackColor];
+    _styleSheetAC.view.tintColor = [UIColor blackColor];
     
     __weak RestaurantVC *weakSelf = self;
     UIAlertAction *addToFavorites = [UIAlertAction actionWithTitle:@"Add to Favorites"
@@ -111,7 +162,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     UIAlertAction *addToEvent = [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      NSLog(@"Add to Event");
-                                                     [weakSelf addToEvent ];
+                                                     [weakSelf addToEvent];
                                                  }];
     UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -119,7 +170,8 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
                                                  }];
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"New List..."
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"Add the NewList");
+                                                     NSLog(@"Add to New List");
+                                                     [weakSelf createListPressed];
                                                  }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                  style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
@@ -127,16 +179,17 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
                                                  }];
     
     
-    [_alertController addAction:addToFavorites];
-    [_alertController addAction:addToTryList];
-    [_alertController addAction:addToList];
-    [_alertController addAction:addToNewList];
-    [_alertController addAction:addToEvent];
-    [_alertController addAction:addToNewEvent];
-    [_alertController addAction:cancel];
+    [_styleSheetAC addAction:addToFavorites];
+    [_styleSheetAC addAction:addToTryList];
+    [_styleSheetAC addAction:addToList];
+    [_styleSheetAC addAction:addToNewList];
+    [_styleSheetAC addAction:addToEvent];
+    [_styleSheetAC addAction:addToNewEvent];
+    [_styleSheetAC addAction:cancel];
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
+
 
 - (void)addToEvent
 {
@@ -149,7 +202,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 }
 
 - (void)moreButtonPressed:(id)sender {
-    [self presentViewController:_alertController animated:YES completion:nil]; // 6
+    [self presentViewController:_styleSheetAC animated:YES completion:nil]; // 6
 }
 
 - (void)didReceiveMemoryWarning

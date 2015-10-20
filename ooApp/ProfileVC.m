@@ -134,7 +134,7 @@
         
         [api addList:string
              success:^(id response) {
-                 [self.vc  performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO];
+                 [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO];
              }
              failure:^(NSError * error) {
                  NSString *s = [NSString stringWithFormat:@"Error from cloud: %@", error.localizedDescription];
