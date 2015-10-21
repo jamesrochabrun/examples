@@ -47,6 +47,7 @@
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
     _facebookLoginButton.delegate = self;
     _facebookLoginButton.layer.cornerRadius = kGeomCornerRadius;
+    _facebookLoginButton.readPermissions = @[@"public_profile", @"email"];
     
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_logo];

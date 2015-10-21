@@ -42,8 +42,8 @@
                                            [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
                                            UIColorRGB(kColorBlack), NSForegroundColorAttributeName,
                                            nil] forState:UIControlStateNormal];
-        [self.menu setTarget: self.revealViewController];
-        [self.menu setAction: @selector(revealToggle:)];
+        [self.menu setTarget:self.revealViewController];
+        [self.menu setAction:@selector(revealToggle:)];
         [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
     }
     

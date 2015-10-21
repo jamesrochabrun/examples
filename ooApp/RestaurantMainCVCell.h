@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TTTAttributedLabel.h"
 #import "RestaurantObject.h"
 #import "MediaItemObject.h"
 
-@interface RestaurantMainCVCell : UICollectionViewCell
+@interface RestaurantMainCVCell : UICollectionViewCell <TTTAttributedLabelDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;

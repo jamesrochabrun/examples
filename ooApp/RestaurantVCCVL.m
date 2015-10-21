@@ -63,7 +63,7 @@
 
         if (section == kSectionTypeMediaItems) {
             numberOfColumnsInRow = kNumColumnsForMediaItems;
-            itemSize = CGSizeMake((width(self.collectionView) - (numberOfColumnsInRow+1)*kGeomSpaceEdge)/numberOfColumnsInRow, 0);
+            itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
             xOffset = kGeomSpaceEdge;
         } else {
             numberOfColumnsInRow = 1;
@@ -89,7 +89,7 @@
             
             if ([lastRowAttributes count] > index%numberOfColumnsInRow) {
                 UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
-                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + kGeomSpaceEdge;
+                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + 2;
             }
                 
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
@@ -104,7 +104,7 @@
                 [lastRowAttributes addObject:attributes];
             }
             
-            xOffset = xOffset+itemSize.width+kGeomSpaceEdge;
+            xOffset = xOffset+itemSize.width + 2;
             column++;
             
             // Create a new row if this was the last column
