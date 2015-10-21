@@ -304,7 +304,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 
 - (void)viewDidLayoutSubviews {
     _removeButtonsContainer.frame = CGRectMake(0, 0, width(self.view), _removeButtonsContainerHeight);
-    NSLog(@"_removeButtonsContainer=%@", _removeButtonsContainer);
+//    NSLog(@"_removeButtonsContainer=%@", _removeButtonsContainer);
 }
 
 - (void)removeFromList:(id)sender {

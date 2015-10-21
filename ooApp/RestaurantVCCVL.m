@@ -95,7 +95,7 @@
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
             [itemAttributes addObject:attributes];
             
-            NSLog(@"attributes = %@ maxX=%f", attributes,CGRectGetMaxX(attributes.frame));
+//            NSLog(@"attributes = %@ maxX=%f", attributes,CGRectGetMaxX(attributes.frame));
 
             if ([lastRowAttributes count] > index%numberOfColumnsInRow &&
                 [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow]) {
@@ -122,7 +122,7 @@
         //done with section, set the x & y offsets for the new section appropriately
         xOffset = kGeomSpaceEdge;
         UICollectionViewLayoutAttributes *theLastAttributes = [itemAttributes lastObject];
-        yOffset = theLastAttributes.frame.origin.y+theLastAttributes.frame.size.height;
+        yOffset = theLastAttributes.frame.origin.y+theLastAttributes.frame.size.height + kGeomSpaceEdge;
     }
     
     // Get the last item to calculate the total height of the content
