@@ -110,6 +110,11 @@ extern NSString *const kFontIconSettings;
 extern NSString *const kFontIconWhatsNew;
 extern NSString *const kFontIconPerson;
 extern NSString *const kFontIconCheckmark;
+extern NSString *const kFontIconFavorite;
+extern NSString *const kFontIconPhoto;
+extern NSString *const kFontIconUpload;
+extern NSString *const kFontIconLocation;
+extern NSString *const kFontIconToTry;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

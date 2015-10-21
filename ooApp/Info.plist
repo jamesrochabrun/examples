@@ -81,10 +81,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationUsageDescription</key>
-	<string>Hey Kevin et al, what do we want to have here?</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Hey Kevin et al, what do we want to express here?</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Hey Kevin et al, what do we want to have here?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Hey Kevin et al, what do we want to say here?</string>
 	<key>UIAppFonts</key>

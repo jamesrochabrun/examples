@@ -31,5 +31,10 @@ NSString *const kFontIconSettings = @"m";
 NSString *const kFontIconWhatsNew = @"G";
 NSString *const kFontIconPerson=  @"y";
 NSString *const kFontIconCheckmark = @"n";
+NSString *const kFontIconFavorite = @"o";
+NSString *const kFontIconPhoto = @"x";
+NSString *const kFontIconUpload = @"F";
+NSString *const kFontIconLocation = @"w";
+NSString *const kFontIconToTry = @"w";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
