@@ -316,10 +316,10 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSString *restaurantResource = @"";
     if (restaurantID) {
-        restaurantResource = [NSString stringWithFormat:@"/restaurants/%ld", restaurantID];
+        restaurantResource = [NSString stringWithFormat:@"/restaurants/%ld", (long)restaurantID];
     }
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld%@/lists",
-                           [OOAPI URL], userID, restaurantResource];
+                           [OOAPI URL], (long)userID, restaurantResource];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -490,7 +490,7 @@ NSString *const kKeySearchFilter = @"filter";
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%ld/restaurants",
                            [OOAPI URL],
-                           listID];
+                           (long)listID];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {

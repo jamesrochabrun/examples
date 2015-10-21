@@ -101,11 +101,7 @@
     self.thumbnail.image = nil;
     self.header.text = eo.name.length ? eo.name :  @"Unnamed event.";
     
-    // NOTE:  need to localize the date and time expression.
-    
-    NSDateFormatter *df = [[NSDateFormatter alloc] init];
-    [df setDateFormat:@"MMMM dd, hh:mm"];
-    NSString*dateString = [df stringFromDate:[NSDate date]];
+    NSString*dateString = expressLocalDateTime(eo.date);
     
     self.subHeader1.text = dateString;
     //    self.subHeader2.text = primaryVenue ? primaryVenue.name :  @"Undisclosed location";
@@ -156,7 +152,7 @@
         return;
     }
     else
-    if (primaryVenue && primaryVenue.imageRefs.count) {
+    if (primaryVenue && primaryVenue.mediaItems.count) {
         
         MediaItemObject *media= primaryVenue.mediaItems[0];
         NSString *imageReference= media.reference;
