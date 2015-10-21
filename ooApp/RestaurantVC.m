@@ -238,7 +238,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 - (void)getListsForRestaurant {
     OOAPI *api =[[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
-    [api getListsOfUser:[_userInfo.userID integerValue] withRestaurant:[_restaurant.restaurantID integerValue]
+    [api getListsOfUser:[_userInfo.userID integerValue] withRestaurant:_restaurant.restaurantID
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;
@@ -312,7 +312,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantVC *weakSelf = self;
-    [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.theId success:^(NSArray *lists) {
+    [api deleteRestaurant:_restaurant.restaurantID fromList:b.theId success:^(NSArray *lists) {
         ON_MAIN_THREAD(^{
             [b removeFromSuperview];
             [_removeButtons removeObject:b];
@@ -385,7 +385,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
         }
         case kSectionTypeLists: {
             UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            cvc.backgroundColor = UIColorRGBA(kColorStripOverlay);
             [cvc addSubview:_removeButtonsContainer];
             return cvc;
             break;

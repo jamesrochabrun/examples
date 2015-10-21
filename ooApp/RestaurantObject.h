@@ -30,7 +30,7 @@ typedef enum {
 
 @interface RestaurantObject : NSObject
 
-@property (nonatomic, strong) NSString *restaurantID;
+@property (nonatomic) NSUInteger restaurantID;
 @property (nonatomic, strong) NSString *googleID;
 @property (nonatomic, strong) NSString *placeID;
 @property (nonatomic, strong) NSString *name;
