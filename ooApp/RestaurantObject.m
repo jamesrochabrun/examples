@@ -12,6 +12,7 @@
 
 NSString *const kKeyRestaurantGoogleID = @"google_id";
 NSString *const kKeyRestaurantRestaurantID = @"restaurant_id";
+NSString *const kKeyRestaurantRestaurantIDPlural = @"restaurant_ids";
 NSString *const kKeyRestaurantPlaceID = @"place_id";
 NSString *const kKeyRestaurantName = @"name";
 NSString *const kKeyRestaurantRating = @"rating";

@@ -1021,10 +1021,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSURLSessionUploadTask *task = [session uploadTaskWithRequest: request
                                                          fromData: imageData
-                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                    NSString *stringFromData= [NSString stringWithCharacters:[data  bytes] length:[ data length]];
-                                                    NSLog  (@"stringFromData = %@",stringFromData);
-                                                    
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {                                                    
                                                     if (error) {
                                                         if (failure) failure(error);
                                                     } else {
@@ -1205,7 +1202,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
     if (identifier) {
-        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantID];
+        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantIDPlural];
     }
     else if (googleIdentifier.length) {
         [parameters setObject:googleIdentifier forKey:kKeyRestaurantGoogleID];

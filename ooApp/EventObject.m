@@ -137,8 +137,6 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     if (!venue) {
         return;
     }
-    if  (!_venues) {
-    }
     
     if (![_venues containsObject: venue]) {
         [_venues addObject: venue];
@@ -150,6 +148,8 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                          message( @"Added.");
                      } failure:^(NSError *error) {
                          NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
+                         [_venues removeObject: venue];
+
                      }];
     }
 }
@@ -171,6 +171,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                          NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
                          message( @"Removed.");
                      } failure:^(NSError *error) {
+                         [_venues addObject: venue];
                          NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
                      }];
     }
