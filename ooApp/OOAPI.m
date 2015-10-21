@@ -1202,7 +1202,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSString *identifier = restaurant.restaurantID;
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
-    if (identifier.length) {
+    if (identifier) {
         [parameters setObject:identifier forKey:kKeyRestaurantRestaurantID];
     }
     else if (googleIdentifier.length) {
@@ -1337,7 +1337,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/events", [OOAPI URL], userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld", [OOAPI URL],(long) eo.eventID];
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
 

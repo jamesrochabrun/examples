@@ -20,6 +20,7 @@
 #import "EventWhoVC.h"
 #import "SearchVC.h"
 #import "RestaurantVC.h"
+#import "OOStripHeader.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -37,6 +38,10 @@
 
 @property (nonatomic,strong)  UIView *viewContainer4;
 @property (nonatomic,strong)  UILabel *labelWhere;
+
+@property (nonatomic,strong) OOStripHeader *headerWhere;
+@property (nonatomic,strong) OOStripHeader *headerWho;
+@property (nonatomic,strong) OOStripHeader *headerWhen;
 
 @property (nonatomic,strong) UITapGestureRecognizer *tap1;
 @property (nonatomic,strong) UITapGestureRecognizer *tap2;
@@ -86,7 +91,7 @@
                                                                              action: @selector(userPressedCancel:)];
 
     self.viewContainer1= makeView(self.scrollView, WHITE);
-   self.labelEventCover= makeAttributedLabel(self.viewContainer1, @"EVENT COVER", kGeomEventHeadingFontSize);
+    self.labelEventCover= makeAttributedLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"EVENT NAME", kGeomEventHeadingFontSize);
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
     
@@ -95,7 +100,7 @@
     _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     self.viewContainer2= makeView(self.scrollView, WHITE);
-    self.labelWho = makeAttributedLabel(self.viewContainer2, @"WHO", kGeomFontSizeHeader);
+    self.labelWho = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
     self.labelPersonIcon= [UILabel new];
     [ self.viewContainer2  addSubview: _labelPersonIcon];
     _labelPersonIcon.attributedText= createPeopleIconString (1);
@@ -104,16 +109,27 @@
     _viewContainer2.layer.borderColor= GRAY.CGColor;
     
     self.viewContainer3= makeView(self.scrollView, WHITE);
-    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"WHEN\rDATE\rTIME", kGeomFontSizeHeader);
+    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
     _viewContainer3.layer.borderWidth= 1;
     _viewContainer3.layer.borderColor= GRAY.CGColor;
     
     self.viewContainer4= makeView(self.scrollView, WHITE);
-    self.labelWhere = makeAttributedLabel(self.viewContainer4, @"WHERE", kGeomEventHeadingFontSize);
+    self.labelWhere = makeAttributedLabel(self.viewContainer4, @"", kGeomEventHeadingFontSize);
     _viewContainer4.layer.borderWidth= 1;
     _viewContainer4.layer.borderColor= GRAY.CGColor;
     _viewContainer4.tag=4;
     
+    self.headerWho= [[OOStripHeader alloc] init];
+    self.headerWhen= [[OOStripHeader alloc] init];
+    self.headerWhere= [[OOStripHeader alloc] init];
+    
+    [self.headerWho setName: @"WHO" ];
+    [self.headerWhen setName: @"WHEN" ];
+    [self.headerWhere setName: @"WHERE" ];
+    [_scrollView addSubview: self.headerWho];
+    [_scrollView addSubview: self.headerWhen];
+    [_scrollView addSubview: self.headerWhere];
+
     UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
     [self.viewContainer1 addGestureRecognizer:tap1 ];
     UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
@@ -165,7 +181,7 @@
     }
     [self updateWhenBox];
     [self initiateUpdateOfWhoBox];
-    [self updateWhereBoxAnimated:NO];
+    [self initiateUpdateOfWhereBox];
 }
 
 - (void)datesChanged
@@ -175,33 +191,41 @@
 
 - (void) updateWhenBox
 {
-    NSAttributedString *title= attributedStringOf(LOCAL( @"WHEN"),  kGeomEventHeadingFontSize);
-    NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
+//    NSAttributedString *title= attributedStringOf(LOCAL( @"WHEN"),  kGeomEventHeadingFontSize);
+//    NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
     NSString *string=nil;
     
     EventObject* event= APP.eventBeingEdited;
     if  (event.date ) {
-        string=[NSString stringWithFormat:  @"\r%@", expressLocalDateTime(event.date)];
+        string=[NSString stringWithFormat:  @"%@", expressLocalDateTime(event.date)];
     } else {
-        string= [NSString stringWithFormat: @"\r%@",
+        string= [NSString stringWithFormat: @"%@",
                  LOCAL( @"TAP TO SELECT A DATE AND TIME")
                  ];
     }
     
-    [a appendAttributedString: attributedStringOf(string,  kGeomFontSizeHeader)];
-    _labelWhen.attributedText= a;
+    _labelWhen.attributedText= attributedStringOf(string,  kGeomFontSizeHeader);
 }
 
 - (void) initiateUpdateOfWhoBox
 {
     EventObject* e= APP.eventBeingEdited;
     [e refreshParticipantStatsFromServerWithSuccess:^{
-        [self updateWhoBox];
+        [self performSelectorOnMainThread:@selector(updateWhoBox) withObject:nil waitUntilDone:NO];
+
     }
                                             failure:^{
-                                                NSAttributedString *title= attributedStringOf(LOCAL( @"WHO"),  kGeomEventHeadingFontSize);
-                                                _labelWho.attributedText= title;
                                             }];
+}
+
+- (void)initiateUpdateOfWhereBox
+{
+    EventObject* e= APP.eventBeingEdited;
+    [e refreshVenuesFromServerWithSuccess:^{
+        [self performSelectorOnMainThread:@selector(updateWhereBoxAnimated:) withObject:@1 waitUntilDone:NO];
+    } failure:^{
+    }];
+    
 }
 
 - (void)updateWhoBox
@@ -214,31 +238,26 @@
     
     _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
     
-    NSAttributedString *title= attributedStringOf(LOCAL( @"WHO"),  kGeomEventHeadingFontSize);
-    NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
     NSString *countsString= [NSString stringWithFormat: @"\r%lu %@\r%lu %@\r%lu %@",
                              responded,  LOCAL( @"RESPONDED"),
                              pending,  LOCAL( @"PENDING"),
                              voted,  LOCAL( @"VOTED")
                              ];
-    [a appendAttributedString: attributedStringOf(countsString,  kGeomFontSizeHeader)];
-    _labelWho.attributedText= a;
+    _labelWho.attributedText= attributedStringOf(countsString,  kGeomFontSizeHeader);
 }
 
-- (void) updateWhereBoxAnimated:(BOOL)animated
+- (void) updateWhereBoxAnimated:(id)animated
 {
-    if  ([APP.eventBeingEdited totalVenues ] ) {
-        NSAttributedString *title= attributedStringOf(LOCAL( @"WHERE"),  kGeomEventHeadingFontSize);
-        _labelWhere.attributedText= title;
+    EventObject *event=APP.eventBeingEdited;
+    if  ([event totalVenues ] ) {
+        NSString*s= [NSString stringWithFormat: @"# urestaurants %ld",[event totalVenues ] ];
+        _labelWhere.attributedText= attributedStringOf(s,  kGeomFontSizeHeader);
     } else {
-        NSAttributedString *title= attributedStringOf(LOCAL( @"WHERE"),  kGeomEventHeadingFontSize);
-        NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
-        NSString *string= [NSString stringWithFormat: @"\r%@",
+        NSString *string= [NSString stringWithFormat: @"%@",
                      LOCAL( @"TAP TO ADD RESTAURANTS")
                      ];
-        [a appendAttributedString: attributedStringOf(string,  kGeomFontSizeHeader)];
 
-        _labelWhere.attributedText= a;
+        _labelWhere.attributedText= attributedStringOf(string,  kGeomFontSizeHeader);
     }
     
     [self.venuesCollectionView reloadData ];
@@ -276,7 +295,7 @@
             
             NSLog  (@"VENUES FOR EVENT DID CHANGE.  (total=  %ld)", ( unsigned long)[APP.eventBeingEdited totalVenues ]);
             ON_MAIN_THREAD(^(){
-                [weakSelf updateWhereBoxAnimated:YES];
+                [weakSelf updateWhereBoxAnimated: @""];
             });
         }
     } failure:^{
@@ -358,7 +377,8 @@
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
     float spacing= kGeomSpaceEdge;
-    
+    float vspacing= 25;
+
     _scrollView.frame=  self.view.bounds;
 #define kGeomEventCoordinatorRestaurantHeight 100
     
@@ -366,13 +386,19 @@
     
     float x=  margin, y=  margin;
     _viewContainer1.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    y += kGeomEventCoordinatorBoxHeight + spacing;
+    y += kGeomEventCoordinatorBoxHeight + vspacing;
+    
     _viewContainer2.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    y += kGeomEventCoordinatorBoxHeight + spacing;
+    self.headerWho.frame= CGRectMake(x, y-13, boxWidth, 27);
+    y += kGeomEventCoordinatorBoxHeight + vspacing;
+    
     _viewContainer3.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    y += kGeomEventCoordinatorBoxHeight + spacing;
+    self.headerWhen.frame= CGRectMake(x, y-13, boxWidth, 27);
+    y += kGeomEventCoordinatorBoxHeight + vspacing;
+    
     _viewContainer4.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    y += kGeomEventCoordinatorBoxHeight + spacing;
+    self.headerWhere.frame= CGRectMake(x, y-13, boxWidth, 27);
+    y += kGeomEventCoordinatorBoxHeight + vspacing;
     
     _scrollView.contentSize= CGSizeMake(w-1, y);
     
