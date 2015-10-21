@@ -24,15 +24,18 @@ PODS:
   - HockeySDK (3.8.2):
     - HockeySDK/AllFeaturesLib (= 3.8.2)
   - HockeySDK/AllFeaturesLib (3.8.2)
+  - TTTAttributedLabel (1.13.4)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.0)
   - GoogleMaps
   - HockeySDK (~> 3.8.2)
+  - TTTAttributedLabel
 
 SPEC CHECKSUMS:
   AFNetworking: 79f7eb1a0fcfa7beb409332b2ca49afe9ce53b05
   GoogleMaps: 945e4ac3b74bcca3ddada51df256eb7beddb474d
   HockeySDK: 9f4ac41263acf9d8a4d59491a7f17af16529b935
+  TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
 
 COCOAPODS: 0.38.2

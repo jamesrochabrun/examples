@@ -24,7 +24,7 @@
         _x.text = kFontIconRemove;
 
         _name = [[UILabel alloc] init];
-        [_name withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorBlack backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoMediumItalic size:kGeomFontSizeRemoveButton] textColor:kColorBlack backgroundColor:kColorClear];
         
         [self addSubview:_name];
         [self addSubview:_x];
@@ -34,14 +34,15 @@
         
         self.backgroundColor = UIColorRGBA(kColorOffWhite);
         self.layer.cornerRadius = kGeomCornerRadius;
-        [self layout];
+//      [self layout];
         
 //        [DebugUtilities addBorderToViews:@[_name, _x]];
     }
     return self;
 }
 
-- (void)layout {
+- (void)updateConstraints {
+    [super updateConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _x);
@@ -67,12 +68,21 @@
                                                          multiplier:1.f constant:0.f]];
 }
 
+- (void)setName:(UILabel *)name {
+    [_name sizeToFit];
+}
+
+- (void)setX:(UILabel *)x {
+    [_x sizeToFit];
+}
+
 - (CGSize)getSuggestedSize {
     CGSize s = CGSizeZero;
     [_name sizeToFit];
     [_x sizeToFit];
     s.width = 2*kGeomSpaceEdge + kGeomSpaceInter + CGRectGetWidth(_name.frame) + CGRectGetWidth(_x.frame);
     s.height = 2*kGeomSpaceEdge + CGRectGetHeight(_name.frame);
+    [self updateConstraintsIfNeeded];
     return s;
 }
 

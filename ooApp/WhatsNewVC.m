@@ -98,10 +98,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
-    list.name = @"Date Night";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
     list.name = @"Party";
     [_lists addObject:list];
     

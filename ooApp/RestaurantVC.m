@@ -31,6 +31,7 @@
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
 @property (nonatomic, strong) NSArray *mediaItems;
 @property (nonatomic, strong) UICollectionView *collectionView;
+
 @end
 
 static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
@@ -374,7 +375,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     switch (indexPath.section) {
         case kSectionTypeMain: {
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            //cvc.backgroundColor = UIColorRGBA(kColorGrayMiddle);
             cvc.restaurant = _restaurant;
             if ([_mediaItems count]) {
                 cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
@@ -420,7 +421,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
         case kSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/kNumColumnsForMediaItems; //NOTE: this should not happen
-            return (width(_collectionView)- 5*kGeomSpaceEdge)/kNumColumnsForMediaItems*mio.height/mio.width;
+            return floorf((width(self.collectionView) - (kNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kNumColumnsForMediaItems  /*width(_collectionView)- 5*kGeomSpaceEdge)/kNumColumnsForMediaItems*/*mio.height/mio.width);
             break;
         }
         default:

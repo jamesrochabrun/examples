@@ -31,7 +31,7 @@ typedef enum {
 
 @end
 
-static NSUInteger kNumColumnsForMediaItems = 3;
+static NSUInteger kNumColumnsForMediaItems = 2;
 
 @interface RestaurantVCCVL : UICollectionViewLayout
 

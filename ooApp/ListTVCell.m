@@ -26,7 +26,7 @@
         [_addButton withIcon:kFontIconAdd fontSize:15 width:40 height:40 backgroundColor:kColorClear target:self selector:@selector(toggleListInclusion)];
         _addButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_addButton];
-        [DebugUtilities addBorderToViews:@[_addButton]];
+//        [DebugUtilities addBorderToViews:@[_addButton]];
     }
     return self;
 }

@@ -226,7 +226,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     if (collectionView == _featuredCollectionView) {
         return 0;
     } else {
-        return kGeomSpaceInter;
+        return 1;
     }
 }
 
