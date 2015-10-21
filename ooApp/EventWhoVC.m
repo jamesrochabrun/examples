@@ -97,7 +97,7 @@
     if  (group.name ) {
         _labelName.text= group.name;
     } else {
-        _labelName.text= [NSString stringWithFormat: @"Unnamed group #%ld", group.groupID];
+        _labelName.text= [NSString stringWithFormat: @"Unnamed group #%ld",(long) group.groupID];
     }
 }
 
@@ -208,33 +208,19 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                         }];
 #endif
     
-    // RULE: Find out what users are already attached to this events.         
-    [OOAPI getParticipantsInEvent:APP.eventBeingEdited
-                          success:^(NSArray *users) {
-                              BOOL somethingChanged= NO;
-                              @synchronized(weakSelf.arrayOfPotentialParticipants) {
-                                  for (UserObject* user  in  users) {
-                                      if (![weakSelf.participants containsObject:user ]) {
-                                          [weakSelf.participants addObject: user];
-                                          somethingChanged= YES;
-                                      }
-                                      if (![weakSelf.arrayOfPotentialParticipants containsObject:user ]) {
-                                          [weakSelf.arrayOfPotentialParticipants addObject: user];
-                                          somethingChanged= YES;
-                                      }
-                                  }
-                              }
-                              if (somethingChanged ) {
-                                  [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
-                              }
-                          } failure:^(NSError *e) {
-                              NSLog (@"FAILED TO GET LIST OF EVENT PARTICIPANTS.");
-                          }];
-    
-    // RULE: Identify more users we could potentially attach this event.
-    
+    // RULE: Find out what users are already attached to this events.
+    [APP.eventBeingEdited refreshUsersFromServerWithSuccess:^{
+        [_participants removeAllObjects];
+        self.participants= [[ NSMutableOrderedSet alloc] initWithSet:APP.eventBeingEdited.users.set];
+        [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+        
+    } failure:^{
+        NSLog (@"FAILED TO DETERMINE USERS ALREADY ATTACHED TO6 EVENT");
+    }];
+
+    // RULE: Identify follower users we could potentially attach this event.
     [OOAPI getFollowingWithSuccess:^(NSArray *users) {
-        NSLog  (@"USER IS FOLLOWING %lu USERS.",users.count);
+        NSLog  (@"USER IS FOLLOWING %lu USERS.", ( unsigned long)users.count);
         @synchronized(weakSelf.arrayOfPotentialParticipants) {
             for (id object in users) {
                 [self.arrayOfPotentialParticipants  addObject: object];
@@ -246,6 +232,22 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                                NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
                            }];
     
+    // XX:  just at all the users
+    [  OOAPI getAllUsersWithSuccess:^(NSArray *users) {
+        @synchronized(weakSelf.arrayOfPotentialParticipants) {
+            for (UserObject* user  in  users) {
+                if (![weakSelf.arrayOfPotentialParticipants containsObject:user ]) {
+                    [weakSelf.arrayOfPotentialParticipants addObject: user];
+                }
+            }
+            [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+            
+        }
+        
+    }
+                            failure:^(NSError *error) {
+                                NSLog  (@"CANNOT GET USER LISTING.  %@",error);
+                            }];
 }
 
 - (BOOL)emailAlreadyInArray: (NSString*)emailString
@@ -325,6 +327,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                              } else {
                                  [weakSelf addTheirEmailAddress: string];
                              }
+                             
                          } failure:^(NSError *e) {
                              [weakSelf addTheirEmailAddress: string];
                          }];
@@ -335,9 +338,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 {
     @synchronized(_arrayOfPotentialParticipants) {
         [_arrayOfPotentialParticipants  addObject: user];
-        [_participants  addObject: user];
     }
     [_table reloadData];
+    [_table scrollToRowAtIndexPath:
+        [NSIndexPath indexPathForRow:_arrayOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 - (void)addTheirEmailAddress: (NSString*)emailAddress
@@ -345,27 +349,12 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     @synchronized(_arrayOfPotentialParticipants) {
         UserObject *user= makeEmailOnlyUserObject(emailAddress);
         [_arrayOfPotentialParticipants  addObject: user];
-        [_participants  addObject: user];
     }
     [_table reloadData];
+    
+    [_table scrollToRowAtIndexPath:
+     [NSIndexPath indexPathForRow:_arrayOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
-
-//- (void) uploadParticipants
-//{
-//    NSMutableArray *array= [NSMutableArray new];
-//    for (UserObject* user  in  _participants) {
-//        [array addObject: user];
-//    }
-//    
-//    [OOAPI setParticipantsInEvent: APP.eventBeingEdited
-//                               to: array
-//                          success:^{
-//                              NSLog  (@"ADDED USERS TO EVENT");
-//                              message( @"Stored users to event.");
-//                          } failure:^(NSError *e) {
-//                              NSLog  (@"FAILED TO ADD USERS TO EVENT %@",e);
-//                          }];
-//}
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
@@ -392,7 +381,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     EventWhoTableCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
  
-    id  object= nil;
+    UserObject* object= nil;
     NSInteger row= indexPath.row;
     @synchronized(_arrayOfPotentialParticipants) {
         if  (row  < _arrayOfPotentialParticipants.count) {
@@ -400,11 +389,23 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         }
     }
     
-    [ cell setRadioButtonState: [_participants containsObject:  object]];
+    BOOL inList= NO;
+    for (UserObject* user  in  _participants) {
+        if (object.userID.intValue>0 &&  user.userID.intValue == object.userID.intValue) {
+            inList= YES;
+            break;
+        }
+        if ( [user.email isEqualToString:object.email ]) {
+            inList= YES;
+            break;
+        }
+    }
+//    inList= [_participants containsObject: object];
+    [ cell setRadioButtonState: inList];
 
     cell.viewController=  self;
     if  ([object isKindOfClass:[GroupObject class]] ) {
-        [cell specifyGroup: object];
+//        [cell specifyGroup: object];
     } else {
         [cell specifyUser: object];
 
@@ -450,13 +451,19 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }
     
     NSLog  (@" set=  %@",_participants);
+    NSLog (@"OBJ %@", object);
     
-    [OOAPI setParticipationInEvent:APP.eventBeingEdited
+    [OOAPI setParticipationOf:object
+                      inEvent:APP.eventBeingEdited
                                 to:value
                            success:^(NSInteger eventID) {
                                NSLog  (@"SUCCESS");
                            } failure:^(NSError *e) {
                                NSLog  (@"FAILURE  %@",e);
+                               if ( value) {
+                                   [_participants  removeObject: object];
+                                   // XX:  need to update radio button is well
+                               }
                            }];
 
 }

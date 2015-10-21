@@ -323,7 +323,8 @@
                                       parameters:nil
                                          success:^void(id   result) {
                                              NSLog  (@"PRE-EXISTING OO USER %@, %@",  facebookID , result);
-                                             
+                                             [APP.diagnosticLogString appendFormat: @"PRE-EXISTING OO USER %@, %@",  facebookID , result];
+
                                              if ([result isKindOfClass: [NSDictionary  class] ] ) {
                                                  NSDictionary* d=  (NSDictionary*)result;
                                                  
@@ -355,6 +356,8 @@
                                              }
                                          }
                                          failure:^void(NSError *   error) {
+                                             [APP.diagnosticLogString appendFormat: @"AS YET UNKNOWN OO USER  %@, %@,  %@\r",  facebookID, error.description,requestString];
+
                                              NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.description,requestString);
                                              
                                              if (facebookID ) {
@@ -639,7 +642,6 @@
              NSLog(@"fetched user:%@", result);
          }
      }];
-    
 }
 
 //------------------------------------------------------------------------------

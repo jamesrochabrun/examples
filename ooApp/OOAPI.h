@@ -153,6 +153,9 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
                                             failure:(void (^)(NSError *error))failure;
 
++ (AFHTTPRequestOperation *)getAllUsersWithSuccess:(void (^)(NSArray *users))success
+                                           failure:(void (^)(NSError *error))failure;
+
 //------------------------------------------------------------------------------
 // Groups
 //
@@ -166,6 +169,10 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 //------------------------------------------------------------------------------
 // Events
 //
+
++ (AFHTTPRequestOperation *)getEventByID:(NSUInteger) identifier
+                                 success:(void (^)(EventObject *event))success
+                                 failure:(void (^)(NSError *error))failure;
 
 + (AFHTTPRequestOperation *) getVenuesForEvent:(EventObject *)eo
                                        success:(void (^)(NSArray *venues))success
@@ -198,10 +205,11 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                            success:(void (^)())success
                                            failure:(void (^)(NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)setParticipationInEvent:(EventObject *)eo
-                                                 to:(BOOL)participating
-                                            success:(void (^)(NSInteger eventID))success
-                                            failure:(void (^)(NSError *error))failure;
++ (AFHTTPRequestOperation *)setParticipationOf:(UserObject*) user
+                                       inEvent:(EventObject *)eo
+                                            to:(BOOL) participating
+                                       success:(void (^)(NSInteger eventID))success
+                                       failure:(void (^)(NSError *error))failure;
 
 + (AFHTTPRequestOperation *)reviseEvent:(EventObject *)eo
                                 success:(void (^)(id))success

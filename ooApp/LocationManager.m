@@ -72,23 +72,9 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 //------------------------------------------------------------------------------
 - (void) askUserWhetherToTrack
 {
-    // RULE:  if the user previously said no, give them the chance to say yes.
+    // RULE: Only show the one Apple pop-up.
     
-    if ([self dontTrackLocation] == TRACKING_YES) {
-        return;
-    }
-    
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Do you want to have your location tracked?" message:nil
-                                                    delegate: self
-                                           cancelButtonTitle: @"No" otherButtonTitles: @"Yes", nil ];
-    [alert show];
-}
-
-- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    // 0 == No, don't track
-    
-    [self setUserLocationTrackingChoice: 0==buttonIndex ? TRACKING_NO : TRACKING_YES];
+    [self startTrackingLocation];
 }
 
 //------------------------------------------------------------------------------
@@ -121,6 +107,11 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
         [self.locationManager requestWhenInUseAuthorization];
     }
     [_locationManager startUpdatingLocation];
+}
+
+- (void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    [self setUserLocationTrackingChoice: status==kCLAuthorizationStatusDenied ? TRACKING_NO : TRACKING_YES];
 }
 
 //------------------------------------------------------------------------------

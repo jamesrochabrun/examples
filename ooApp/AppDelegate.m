@@ -24,6 +24,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 #ifdef DEBUG
+    _usingStage= YES;
     self.diagnosticLogString= [NSMutableString new ];
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString *applicationName = [infoDictionary objectForKey:@"CFBundleName"];
@@ -31,6 +32,8 @@
     NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
     [_diagnosticLogString appendFormat: @"%@\r",platformString()];
     [_diagnosticLogString appendFormat:  @"%@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
+#else
+    _usingStage= NO;
 #endif
     
     // Override point for customization after application launch.

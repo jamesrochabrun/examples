@@ -184,6 +184,39 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return _venues[index];
 }
 
+- (AFHTTPRequestOperation*) refreshParticipantStatsFromServerWithSuccess:(void (^)())success
+                                                                 failure:(void (^)())failure;
+{
+    return [OOAPI getEventByID:self.eventID
+                       success:^(EventObject *event) {
+                           self.numberOfPeople= event.numberOfPeople;
+                           self.numberOfPeopleResponded= event.numberOfPeopleResponded;
+                           self.numberOfPeopleVoted= event.numberOfPeopleVoted;
+                           success();
+                       } failure:^(NSError *error) {
+                           failure ();
+                       }
+            ];
+}
+
+- (AFHTTPRequestOperation*) refreshUsersFromServerWithSuccess:(void (^)())success
+                                                      failure:(void (^)())failure;
+{
+    return [OOAPI getParticipantsInEvent: self
+                                 success:^(NSArray *users) {
+                                     
+                                     [self.users removeAllObjects];
+                                     for (UserObject* user  in  users) {
+                                         [self.users addObject: user];
+                                     }
+                                     
+                                     success ();
+                                 } failure:^(NSError *error) {
+                                     failure ();
+                                 }];
+    
+}
+
 - (AFHTTPRequestOperation*) refreshVenuesFromServerWithSuccess:(void (^)())success
                                     failure:(void (^)())failure;
 {

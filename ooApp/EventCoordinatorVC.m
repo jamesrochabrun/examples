@@ -47,6 +47,7 @@
 @property (nonatomic,strong) UICollectionViewFlowLayout *cvLayout;
 
 @property (nonatomic,strong) NSTimer *timerForUpdating;
+@property (nonatomic,assign) BOOL transitioning;
 @end
 
 @implementation EventCoordinatorVC
@@ -70,7 +71,7 @@
     
     NSString* eventName= APP.eventBeingEdited.name;
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"MISSING EVENT NAME" subHeader:  nil];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
     
     self.view.backgroundColor= [UIColor lightGrayColor];
@@ -163,7 +164,7 @@
                                                               userInfo:nil repeats:YES];
     }
     [self updateWhenBox];
-    [self updateWhoBox];
+    [self initiateUpdateOfWhoBox];
     [self updateWhereBoxAnimated:NO];
 }
 
@@ -191,7 +192,19 @@
     _labelWhen.attributedText= a;
 }
 
-- (void) updateWhoBox
+- (void) initiateUpdateOfWhoBox
+{
+    EventObject* e= APP.eventBeingEdited;
+    [e refreshParticipantStatsFromServerWithSuccess:^{
+        [self updateWhoBox];
+    }
+                                            failure:^{
+                                                NSAttributedString *title= attributedStringOf(LOCAL( @"WHO"),  kGeomEventHeadingFontSize);
+                                                _labelWho.attributedText= title;
+                                            }];
+}
+
+- (void)updateWhoBox
 {
     EventObject* e= APP.eventBeingEdited;
     NSInteger totalPeople= e.numberOfPeople;
@@ -273,6 +286,8 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    _transitioning= NO;
+
     if  (_timerForUpdating ) {
         [_timerForUpdating invalidate];
         self.timerForUpdating= nil;
@@ -282,6 +297,11 @@
 
 - (void)userTappedWhoBox: (id) sender
 {
+    if  (_transitioning ) {
+        return;
+    }
+    _transitioning= YES;
+    
     EventWhoVC* vc= [[EventWhoVC alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
 
@@ -289,6 +309,11 @@
 
 - (void)userTappedWhenBox: (id) sender
 {
+    if  (_transitioning ) {
+        return;
+    }
+    _transitioning= YES;
+    
     EventWhenVC* vc= [[EventWhenVC alloc] init];
     vc.delegate= self;
     [self.navigationController pushViewController:vc animated:YES];
@@ -296,6 +321,11 @@
 
 - (void)userTappedWhereBox: (UITapGestureRecognizer*) sender
 {
+    if  (_transitioning ) {
+        return;
+    }
+    _transitioning= YES;
+    
     UIView *v=sender.view;
     
     SearchVC* vc= [[SearchVC alloc] init];

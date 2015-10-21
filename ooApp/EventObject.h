@@ -52,8 +52,13 @@ typedef enum : char {
 - (NSUInteger) totalVenues;
 - (RestaurantObject*)firstVenue;
 
+- (AFHTTPRequestOperation*) refreshUsersFromServerWithSuccess:(void (^)())success
+                                                       failure:(void (^)())failure;
 - (AFHTTPRequestOperation*) refreshVenuesFromServerWithSuccess:(void (^)())success
-                                    failure:(void (^)())failure;
+                                                       failure:(void (^)())failure;
+- (AFHTTPRequestOperation*) refreshParticipantStatsFromServerWithSuccess:(void (^)())success
+                                                                 failure:(void (^)())failure;
+
 - (NSString*) asString;
 
 - (void) sendDatesToServer;
