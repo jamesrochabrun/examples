@@ -27,6 +27,7 @@
 @property (nonatomic,strong)  UIScrollView* scrollView;
 
 @property (nonatomic,strong)  UIView *viewContainer1;
+@property (nonatomic,strong)  UIImageView *imageViewContainer1;
 @property (nonatomic,strong)  UILabel *labelEventCover;
 
 @property (nonatomic,strong)  UIView *viewContainer2;
@@ -91,10 +92,11 @@
                                                                              action: @selector(userPressedCancel:)];
 
     self.viewContainer1= makeView(self.scrollView, WHITE);
-    self.labelEventCover= makeAttributedLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"EVENT NAME", kGeomEventHeadingFontSize);
+    _imageViewContainer1= makeImageView(_viewContainer1,  @"background-image.jpg");
+    self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"EVENT NAME", kGeomEventHeadingFontSize);
+    _labelEventCover.textColor= WHITE;
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
-    
     _buttonSubmit= makeButton(self.viewContainer1,  @"SUBMIT EVENT", kGeomFontSizeHeader, RED, CLEAR, self, @selector(doSubmit:), 1);
     _buttonSubmit.titleLabel.numberOfLines= 0;
     _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
@@ -157,6 +159,8 @@
     [_venuesCollectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
     
     [self updateBoxes];
+    
+    
 }
 
 - (void) userPressedCancel: (id) sender
@@ -380,13 +384,14 @@
     float vspacing= 25;
 
     _scrollView.frame=  self.view.bounds;
-#define kGeomEventCoordinatorRestaurantHeight 100
-    
+#define kGeomEventCoordinatorRestaurantHeight 114
+#define kGeomEventCoordinatorBoxHeight0 230
     float boxWidth=w-2*margin;
     
     float x=  margin, y=  margin;
-    _viewContainer1.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    y += kGeomEventCoordinatorBoxHeight + vspacing;
+    _viewContainer1.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight0);
+    _imageViewContainer1.frame= CGRectMake(0, 0, boxWidth, kGeomEventCoordinatorBoxHeight0);
+    y += kGeomEventCoordinatorBoxHeight0 + vspacing;
     
     _viewContainer2.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
     self.headerWho.frame= CGRectMake(x, y-13, boxWidth, 27);
@@ -403,7 +408,7 @@
     _scrollView.contentSize= CGSizeMake(w-1, y);
     
     y=  0;
-    _buttonSubmit.frame=  CGRectMake((boxWidth-kGeomButtonWidth)/2,kGeomEventCoordinatorBoxHeight-kGeomHeightButton-margin,kGeomButtonWidth,kGeomHeightButton);
+    _buttonSubmit.frame=  CGRectMake((boxWidth-kGeomButtonWidth)/2,_viewContainer1.frame.size.height-kGeomHeightButton-margin,kGeomButtonWidth,kGeomHeightButton);
     _labelEventCover.frame = CGRectMake(0,0,boxWidth,_buttonSubmit.frame.origin.y);
     
     _labelWho.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
