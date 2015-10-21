@@ -828,12 +828,12 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", [OOAPI URL], (unsigned long) eventID];
     
 //    NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
 
     AFHTTPRequestOperation *op;
     if (participating) {
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", [OOAPI URL], (unsigned long) eventID];
         NSLog (@"POST %@", urlString);
         op = [rm POST:urlString parameters: @{
                                               @"user_ids":  user.userID
@@ -850,10 +850,12 @@ NSString *const kKeySearchFilter = @"filter";
                                            failure(error);
                                        }];
     } else {
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@",
+                               [OOAPI URL],
+                               (unsigned long) eventID, user.userID];
+        
         NSLog (@"DELETE %@", urlString);
-        op = [rm DELETE:urlString parameters: @{
-                                                @"user_ids": user.userID
-                                                }
+        op = [rm DELETE:urlString parameters: nil
                                         success:^(id responseObject) {
                                             NSInteger identifier= 0;
                                             if ([responseObject isKindOfClass:[NSDictionary class]]) {

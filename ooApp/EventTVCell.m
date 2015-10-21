@@ -13,6 +13,7 @@
 @property (nonatomic,strong) EventObject* eventInfo;
 @property (nonatomic,strong)  UILabel *labelIndicatingAttendeeCount;
 @property (nonatomic,strong)  AFHTTPRequestOperation *operation;
+@property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
 @end
 
 @implementation EventTVCell
@@ -45,6 +46,7 @@
 {
     [  super prepareForReuse];
     [self.operation cancel ];
+    [_imageOperation cancel];
     [self updateHighlighting:NO];
     self.clipsToBounds= NO;
     self.eventInfo= nil;    
@@ -132,34 +134,8 @@
                 NSString *imageReference= media.reference;
                 
                 __weak EventTVCell *weakSelf = self;
-                /*_requestOperation =*/ [api getRestaurantImageWithImageRef:imageReference
-                                                                   maxWidth:self.frame.size.width// XX:
-                                                                  maxHeight:0
-                                                                    success:^(NSString *link) {
-                                                                        ON_MAIN_THREAD(  ^{
-                                                                            [weakSelf.thumbnail
-                                                                             setImageWithURL:[NSURL URLWithString:link]
-                                                                             placeholderImage:placeholder];
-                                                                        });
-                                                                    } failure:^(NSError *error) {
-                                                                        [weakSelf.thumbnail setImage:placeholder];
-                                                                    }];
-            }
-        } failure:^{
-            NSLog  (@" failed to refresh");
-        }];
-        
-        return;
-    }
-    else
-    if (primaryVenue && primaryVenue.mediaItems.count) {
-        
-        MediaItemObject *media= primaryVenue.mediaItems[0];
-        NSString *imageReference= media.reference;
-        
-        __weak EventTVCell *weakSelf = self;
-        /*_requestOperation =*/ [api getRestaurantImageWithImageRef:imageReference
-                                                           maxWidth:self.frame.size.width
+                _imageOperation=[api getRestaurantImageWithImageRef:imageReference
+                                                           maxWidth:self.frame.size.width// XX:
                                                           maxHeight:0
                                                             success:^(NSString *link) {
                                                                 ON_MAIN_THREAD(  ^{
@@ -170,12 +146,37 @@
                                                             } failure:^(NSError *error) {
                                                                 [weakSelf.thumbnail setImage:placeholder];
                                                             }];
-//        [self.thumbnail setImageWithURL:[NSURL URLWithString: str] placeholderImage:placeholder];
+            }
+        } failure:^{
+            NSLog  (@" failed to refresh");
+        }];
         
-    }  else {
-        NSLog (@"EVENT %ld HAS NO PRIMARY VENUE",_eventInfo.eventID);
-        [self.thumbnail setImage:placeholder];
+        return;
     }
+    else
+        if (primaryVenue && primaryVenue.mediaItems.count) {
+            
+            MediaItemObject *media= primaryVenue.mediaItems[0];
+            NSString *imageReference= media.reference;
+            
+            __weak EventTVCell *weakSelf = self;
+            _imageOperation=  [api getRestaurantImageWithImageRef:imageReference
+                                                         maxWidth:self.frame.size.width
+                                                        maxHeight:0
+                                                          success:^(NSString *link) {
+                                                              ON_MAIN_THREAD(  ^{
+                                                                  [weakSelf.thumbnail
+                                                                   setImageWithURL:[NSURL URLWithString:link]
+                                                                   placeholderImage:placeholder];
+                                                              });
+                                                          } failure:^(NSError *error) {
+                                                              [weakSelf.thumbnail setImage:placeholder];
+                                                          }];
+            
+        }  else {
+            NSLog (@"EVENT %ld HAS NO PRIMARY VENUE",_eventInfo.eventID);
+            [self.thumbnail setImage:placeholder];
+        }
     
 }
 
