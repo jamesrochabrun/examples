@@ -37,7 +37,7 @@
         self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
         self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
         _backgroundImageView.clipsToBounds= YES;
-        self.labelTimeLeft= makeLabel( self,  @"REMAINING TIME 00:15", 17);
+        self.labelTimeLeft= makeLabel( self,  @"REMAINING TIME 00:??", 17);
         _labelTimeLeft.textColor= WHITE;
         _labelTimeLeft.layer.borderWidth= 1;
         _labelTimeLeft.layer.borderColor= WHITE.CGColor;
@@ -87,6 +87,7 @@
                                                               });
                                                           } failure:^(NSError *error) {
                                                           }];
+
     }
 }
 
@@ -101,8 +102,119 @@
 
 @end
 
-@implementation EventParticipantVotingCell
+//==============================================================================
+
+@interface EventParticipantVotingCell ()
+@property (nonatomic,strong)  UISwitch *voteSwitch;
+@property (nonatomic,strong)  UIImageView *thumbnail;
+@property (nonatomic,strong)   UILabel *labelName;
+@property (nonatomic,strong) EventObject* event;
+@property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
+
 @end
+
+@implementation EventParticipantVotingCell
+- (instancetype)  initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle: style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        _thumbnail= makeImageView(self, nil);
+        _voteSwitch= [UISwitch new];
+        [self addSubview: _voteSwitch];
+        _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
+        self.textLabel.hidden= YES;
+        self.imageView.hidden= YES;
+        _thumbnail.layer.borderColor= WHITE.CGColor;
+        _thumbnail.layer.borderWidth= 1;
+    }
+    return self;
+}
+
+- (void) layoutSubviews
+{
+    CGSize switchSize= _voteSwitch.intrinsicContentSize;
+    float w= self.frame.size.width;
+    float h= self.frame.size.height;
+    float x= kGeomSpaceEdge;
+    _thumbnail.frame = CGRectMake(x,0,h,h);
+    x += h+kGeomSpaceInter;
+    _labelName.frame = CGRectMake(x,0,w-x-switchSize.width-2*kGeomSpaceInter,h);
+    x += _labelName.frame.size.width;
+    _voteSwitch.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
+}
+
+- (void)provideVote: (VoteObject*)vote
+{
+    self.vote= vote;
+    
+}
+
+- (void)prepareForReuse
+{
+    [_imageOperation cancel];
+    self.imageOperation= nil;
+    self.voteSwitch.on= NO;
+    self.labelName.text= nil;
+    self.thumbnail.image= nil;
+    self.vote= nil;
+    self.event= nil;
+}
+
+- (void)indicateMissingVoteFor: (RestaurantObject*)venue
+{
+    self.vote= [[VoteObject alloc] init];
+    self.vote.venueID= [venue.restaurantID integerValue];
+}
+
+- (void) provideEvent: (EventObject*)event
+{
+    if  (!event) {
+        return;
+    }
+    
+    if  (!self.vote) {
+        NSLog (@"MISSING VOTE INFORMATION");
+        return;
+    }
+    
+    self.event= event;
+    NSInteger venueID= self.vote.venueID;
+    RestaurantObject* venue = [event lookupVenueByID: venueID];
+    
+    if  (!venue) {
+        NSLog (@"VENUE ID %ld APPEARS TO BE BOGUS.",venueID);
+        self.labelName.text=  @"Unknown restaurant.";
+        self.thumbnail.image= nil;
+    }
+    else {
+        self.labelName.text= venue.name;
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
+        float h= self.frame.size.height;
+
+        if  (event.primaryVenueImageIdentifier ) {
+            __weak EventParticipantVotingCell *weakSelf = self;
+            self.imageOperation= [api getRestaurantImageWithImageRef: event.primaryVenueImageIdentifier
+                                                       maxWidth:0
+                                                      maxHeight:h
+                                                        success:^(NSString *link) {
+                                                            ON_MAIN_THREAD(  ^{
+                                                                [weakSelf.thumbnail
+                                                                 setImageWithURL:[NSURL URLWithString:link]
+                                                                 placeholderImage:placeholder];
+                                                            });
+                                                        } failure:^(NSError *error) {
+                                                            [weakSelf.thumbnail setImage:placeholder];
+                                                        }];
+        }
+    }
+}
+
+
+@end
+
+//==============================================================================
 
 @interface EventParticipantVC ()
 @property (nonatomic,strong)  UITableView * table;
@@ -131,6 +243,20 @@
     [_table registerClass:[EventParticipantFirstCell class] forCellReuseIdentifier:TABLE_REUSE_FIRST_IDENTIFIER];
     
     self.automaticallyAdjustsScrollViewInsets= NO;
+    
+    if (! [APP.eventBeingEdited totalVenues ]) {
+        /* _venueOperation=*/ [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+            [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+        } failure:^{
+            
+        }];
+    }
+    
+    /* _voteOperation=*/ [APP.eventBeingEdited refreshVotesFromServerWithSuccess:^{
+        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+    } failure:^{
+        
+    }];
 }
 
 - (void) userPressedCancel: (id) sender
@@ -151,12 +277,14 @@
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    EventObject* event=APP.eventBeingEdited;
+    
     NSInteger row=  indexPath.row;
     if  (!row) {
         EventParticipantFirstCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_FIRST_IDENTIFIER forIndexPath:indexPath];
         cell.delegate= self;
-        [cell provideEvent: APP.eventBeingEdited];
+        [cell provideEvent: event];
         return cell;
     }
     
@@ -166,6 +294,16 @@
     cell.backgroundColor= UIColorRGB(rgb);
     cell.delegate= self;
 
+    RestaurantObject* venue= [event getNthVenue:row];
+    NSInteger venueID= [venue.restaurantID integerValue];
+    VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];
+
+    if (voteForRow ) {
+        [cell provideVote:voteForRow  ];
+    } else {
+        [cell indicateMissingVoteFor:venue ];
+    }
+    [cell provideEvent:event ];
     return cell;
 }
 
@@ -184,7 +322,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 11;
+    EventObject* event=APP.eventBeingEdited;
+    return [event totalVenues];
 }
 
 //------------------------------------------------------------------------------

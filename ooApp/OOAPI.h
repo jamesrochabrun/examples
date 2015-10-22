@@ -221,4 +221,15 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
                                      failure:(void (^)(NSError *error))failure;
+
++ (AFHTTPRequestOperation *)getVoteForEvent:(EventObject*)event
+                                    success:(void (^)(NSArray *votes))success
+                                    failure:(void (^)(NSError *error))failure;
+
++ (AFHTTPRequestOperation *)setVoteTo:(NSInteger)  vote
+                             forEvent:(EventObject *)eo
+                        andRestaurant: (RestaurantObject*)restaurant
+                              success:(void (^)(NSInteger eventID))success
+                              failure:(void (^)(NSError *error))failure;
+
 @end

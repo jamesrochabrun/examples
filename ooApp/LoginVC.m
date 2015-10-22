@@ -319,8 +319,15 @@
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
-
-    [[OONetworkManager sharedRequestManager] GET:requestString
+    
+    if (![[AFNetworkReachabilityManager sharedManager] isReachable]) {
+        message(@"The Internet is not reachable.");
+        return ;
+        
+        // XX: Need to retry after Internet becomes accessible.
+    }
+    
+    AFHTTPRequestOperation* operation= [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
                                          success:^void(id   result) {
                                              NSLog  (@"PRE-EXISTING OO USER %@, %@",  facebookID , result);
@@ -357,17 +364,25 @@
                                              }
                                          }
                                          failure:^void(NSError *   error) {
-                                             [APP.diagnosticLogString appendFormat: @"AS YET UNKNOWN OO USER  %@, %@,  %@\r",  facebookID, error.description,requestString];
-
-                                             NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.description,requestString);
+                                             NSInteger statusCode= operation.response.statusCode;
                                              
-                                             if (facebookID ) {
-                                                 [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @NO] ];
+                                             if  ( statusCode== 404) {
+                                                 
+                                                 [APP.diagnosticLogString appendFormat: @"AS YET UNKNOWN OO USER  %@, %@,  %@\r",  facebookID, error.description,requestString];
+                                                 
+                                                 NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.description,requestString);
+                                                 
+                                                 if (facebookID ) {
+                                                     [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @NO] ];
+                                                 } else {
+                                                     // XX:  this is the OO log in flow
+                                                 }
+                                                 
+                                                 [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                              } else {
-                                                 // XX:  this is the OO log in flow
+                                                 message ( @"A network error has occurred.");
+                                                 NSLog  (@"OTHER NETWORK ERROR: %ld", (long)statusCode);
                                              }
-                                             
-                                             [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                          }];
     
 }

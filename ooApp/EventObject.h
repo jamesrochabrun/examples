@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "OONetworkManager.h"
+#import "VoteObject.h"
 
 @class RestaurantObject;
 
@@ -35,6 +36,7 @@ typedef enum : char {
 @property (nonatomic, strong) NSMutableArray *keywords;
 @property (nonatomic, strong) NSMutableOrderedSet *users;
 @property (nonatomic, strong) NSMutableOrderedSet *venues;
+@property (nonatomic, strong) NSMutableArray *votes;
 @property (nonatomic, strong) NSString *reviewSite;
 @property (nonatomic, strong) NSString *specialEvent;
 @property (nonatomic, strong) NSString *comment;
@@ -58,10 +60,14 @@ typedef enum : char {
                                                        failure:(void (^)())failure;
 - (AFHTTPRequestOperation*) refreshParticipantStatsFromServerWithSuccess:(void (^)())success
                                                                  failure:(void (^)())failure;
-
+- (AFHTTPRequestOperation*) refreshVotesFromServerWithSuccess:(void (^)())success
+                                                      failure:(void (^)())failure;
 - (NSString*) asString;
 
 - (void) sendDatesToServer;
 - (void) establishPrimaryImage;
+
+- (RestaurantObject*)lookupVenueByID: (NSInteger) identifier;
+- (VoteObject*)lookupVoteByVenueID: (NSInteger) identifier;
 
 @end

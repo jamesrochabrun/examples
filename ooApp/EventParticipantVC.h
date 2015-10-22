@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
+#import "VoteObject.h"
 
 @protocol EventParticipantFirstCellDelegate
 - (void) userRequestToSubmit;
@@ -26,8 +27,11 @@
 @interface EventParticipantFirstCell: UITableViewCell
 @property (nonatomic,assign) id <EventParticipantFirstCellDelegate> delegate;
 - (void) provideEvent: (EventObject*)event;
+- (void)indicateMissingVoteFor: (RestaurantObject*)venue;
+- (void)provideVote: (VoteObject*)vote;
 @end
 
 @interface EventParticipantVotingCell: UITableViewCell
+@property (nonatomic,strong) VoteObject  *vote;
 @property (nonatomic,assign) id <EventParticipantVotingCellDelegate> delegate;
 @end

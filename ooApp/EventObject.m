@@ -11,6 +11,8 @@
 #import "RestaurantObject.h"
 #import "OOAPI.h"
 #import "AppDelegate.h"
+#import "UserObject.h"
+#import "Settings.h"
 
 NSString *const kKeyEventID = @"event_id";
 NSString *const kKeyIsComplete = @"is_complete";
@@ -269,6 +271,59 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
             }
         }
     }
+}
+
+- (RestaurantObject*)lookupVenueByID: (NSInteger) identifier;
+{
+    if  (!_venues.count  ||  identifier<0) {
+        return nil;
+    }
+    
+    for (RestaurantObject* venue  in  _venues) {
+        if (venue.restaurantID) {
+            if ([venue.restaurantID isKindOfClass:[NSString class]]
+                && identifier == [venue.restaurantID integerValue ])
+            {
+                return venue;
+            }
+            else if ( [venue.restaurantID isKindOfClass:[NSNumber class]]
+                     && identifier == [((NSNumber*)venue.restaurantID) integerValue ])
+            {
+                return venue;
+            }
+        }
+    }
+    return nil;
+}
+
+- (AFHTTPRequestOperation*) refreshVotesFromServerWithSuccess:(void (^)())success
+                                                      failure:(void (^)())failure;
+{
+    return [OOAPI getVoteForEvent:self
+                          success:^(NSArray *votes) {
+                              [self.votes removeAllObjects];
+                              [self.votes addObjectsFromArray: votes ];
+                              NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
+                              success ();
+                          }
+                          failure:^(NSError *error) {
+                              NSLog  (@"UNABLE TO GET VOTES FOR EVENT.");
+                              failure ();
+                          }];
+
+}
+
+- (VoteObject*)lookupVoteByVenueID: (NSInteger) identifier;
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSInteger userid= [userInfo.userID integerValue];
+
+    for (VoteObject* vote  in  _votes) {
+        if ( vote.eventID ==  _eventID && vote.userID==userid  && identifier == vote.venueID) {
+            return  vote;
+        }
+    }
+    return nil;
 }
 
 @end

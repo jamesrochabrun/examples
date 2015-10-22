@@ -96,6 +96,7 @@
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; settings = {ASSET_TAGS = (); }; };
 		962303751BB33D2700278FA6 /* forkKnife.png in Resources */ = {isa = PBXBuildFile; fileRef = 962303741BB33D2700278FA6 /* forkKnife.png */; settings = {ASSET_TAGS = (); }; };
 		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; settings = {ASSET_TAGS = (); }; };
+		962B00C31BD95D22008790FD /* VoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 962B00C21BD95D22008790FD /* VoteObject.m */; settings = {ASSET_TAGS = (); }; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		965A1A971BBA05B500727773 /* SearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965A1A961BBA05B500727773 /* SearchVC.m */; settings = {ASSET_TAGS = (); }; };
@@ -271,6 +272,8 @@
 		962303741BB33D2700278FA6 /* forkKnife.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = forkKnife.png; path = "Graphic Assets/forkKnife.png"; sourceTree = "<group>"; };
 		962667451BBC8C9600D77EBE /* UserTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTVCell.h; sourceTree = "<group>"; };
 		962667461BBC8C9600D77EBE /* UserTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTVCell.m; sourceTree = "<group>"; };
+		962B00C11BD95D22008790FD /* VoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteObject.h; sourceTree = "<group>"; };
+		962B00C21BD95D22008790FD /* VoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteObject.m; sourceTree = "<group>"; };
 		964BC81C1B97935F00760C83 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
@@ -364,6 +367,8 @@
 				363B60C61B6BF0CE00987A1B /* GroupObject.m */,
 				36DD24241B7C88E800C6348F /* EventObject.h */,
 				36DD24251B7C88E800C6348F /* EventObject.m */,
+				962B00C11BD95D22008790FD /* VoteObject.h */,
+				962B00C21BD95D22008790FD /* VoteObject.m */,
 				3621F1201B8F7E7A004537B6 /* MenuObject.h */,
 				3621F1211B8F7E7A004537B6 /* MenuObject.m */,
 				36F872D71B919BC200006C29 /* ListObject.h */,
@@ -880,6 +885,7 @@
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				965A1A971BBA05B500727773 /* SearchVC.m in Sources */,
+				962B00C31BD95D22008790FD /* VoteObject.m in Sources */,
 				3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
 				96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */,
