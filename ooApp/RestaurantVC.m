@@ -47,7 +47,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     _userInfo = [Settings sharedInstance].userObject;
 
     _removeButtonsContainer = [[UIView alloc] init];
-    _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
+    _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorOffBlack);
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
@@ -191,7 +191,6 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
 
-
 - (void)addToEvent
 {
     [APP.eventBeingEdited addVenue: _restaurant];
@@ -303,7 +302,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 }
 
 - (void)viewDidLayoutSubviews {
-    _removeButtonsContainer.frame = CGRectMake(0, 0, width(self.view), _removeButtonsContainerHeight);
+    _removeButtonsContainer.frame = CGRectMake(kGeomSpaceEdge, 0, width(self.view)-2*kGeomSpaceEdge, _removeButtonsContainerHeight);
 //    NSLog(@"_removeButtonsContainer=%@", _removeButtonsContainer);
 }
 
@@ -385,7 +384,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
         }
         case kSectionTypeLists: {
             UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorStripOverlay);
+            cvc.backgroundColor = UIColorRGBA(kColorWhite);
             [cvc addSubview:_removeButtonsContainer];
             return cvc;
             break;

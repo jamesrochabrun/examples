@@ -128,8 +128,18 @@
     // Get the last item to calculate the total height of the content
     NSArray *lastSectionAttributes = [_sectionAttributes lastObject];
     
-    UICollectionViewLayoutAttributes *attributes = [lastSectionAttributes lastObject];
-    contentHeight = attributes.frame.origin.y+attributes.frame.size.height;
+    UICollectionViewLayoutAttributes *a;
+    CGFloat y = 0, lastY;
+    for (int i=0; i<kNumColumnsForMediaItems; i++) {
+        NSInteger idx = [lastSectionAttributes count] - 1 - i;
+        if (idx >= 0) {
+            a = [lastSectionAttributes objectAtIndex:idx];
+            lastY = a.frame.origin.y + a.frame.size.height;
+            if (lastY > y) y = lastY;
+        }
+    }
+    
+    contentHeight = y;//attributes.frame.origin.y+attributes.frame.size.height;
     
     // Return this in collectionViewContentSize
     _contentSize = CGSizeMake(contentWidth, contentHeight);
