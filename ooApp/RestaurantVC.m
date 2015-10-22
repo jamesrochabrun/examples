@@ -15,8 +15,8 @@
 #import "OORemoveButton.h"
 #import "ListsVC.h"
 #import "PhotoCVCell.h"
-#import "RestaurantMainCVCell.h"
 #import "OOStripHeader.h"
+#import <SafariServices/SafariServices.h>
 
 #import "DebugUtilities.h"
 
@@ -378,6 +378,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeMain: {
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
             cvc.restaurant = _restaurant;
+            cvc.delegate = self;
             return cvc;
             break;
         }
@@ -402,6 +403,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }
 
     return nil;
+}
+
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {
+    SFSafariViewController *svc  = [[SFSafariViewController alloc] initWithURL:url];
+    [self.navigationController pushViewController:svc animated:YES];
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {

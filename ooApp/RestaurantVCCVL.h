@@ -23,12 +23,6 @@ typedef enum {
                    layout:(RestaurantVCCVL *)collectionViewLayout
  heightForItemAtIndexPath:(NSIndexPath *)indexPath;
 
-//@optional
-//
-//- (CGFloat) collectionView:(UICollectionView *)collectionView
-//                    layout:(RestaurantVCCVL *)collectionViewLayout
-//heightForHeaderAtIndexPath:(NSIndexPath *)indexPath;
-
 @end
 
 static NSUInteger kNumColumnsForMediaItems = 2;

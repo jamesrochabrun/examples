@@ -65,6 +65,10 @@
 }
 
 - (void)prepareForReuse {
+    [super prepareForReuse];
+    
+    [_requestOperation cancel];
+    _requestOperation = nil;
 }
 
 

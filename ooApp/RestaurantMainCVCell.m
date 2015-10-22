@@ -26,6 +26,9 @@
 @property (nonatomic, strong) UIView *verticalLine2;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 
+@property (nonatomic, strong) UIButton *favoriteButton;
+@property (nonatomic, strong) UIButton *toTryButton;
+
 @end
 
 @implementation RestaurantMainCVCell
@@ -75,6 +78,7 @@
         _website = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
         [_website withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
         _website.translatesAutoresizingMaskIntoConstraints = NO;
+        _website.delegate = self;
         [self addSubview:_website];
         
         _address = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
@@ -102,6 +106,10 @@
         UIAlertView *notPermitted=[[UIAlertView alloc] initWithTitle:@"Alert" message:@"Your device doesn't support this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [notPermitted show];
     }
+}
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    [_delegate restaurantMainCVCell:self gotoURL:url];
 }
 
 - (void)updateConstraints {
