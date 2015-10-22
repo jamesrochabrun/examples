@@ -61,6 +61,10 @@
     }
 }
 
+- (void)prepareForReuse {
+    _backgroundImage.image = nil;
+}
+
 
 
 
