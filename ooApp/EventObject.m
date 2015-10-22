@@ -228,22 +228,8 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
             [_venues addObject: venue];
         }
         
-        if (_venues.count ) {
-            // XX: Need to find the first venue that has an image…
-            
-            int n= _venues.count;
-            for (int i=0; i < n; i++) {
-                RestaurantObject* venue=_venues[i];
-                if  ( venue.imageRefs.count ) {
-                    ImageRefObject* media=venue.imageRefs[0];
-                    if  ( media) {
-                        self.primaryVenueImageIdentifier=media.reference;
-                        break;
-                    }
-                }
-            }
-        }
-
+        [self establishPrimaryImage];
+        
         success ();
     } failure:^(NSError *error) {
         failure ();
@@ -268,6 +254,21 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                } failure:^(NSError *error) {
                    NSLog  (@"UNABLE TO UPDATE BACKEND WITH NEW DATES.");
                }];
+}
+
+- (void) establishPrimaryImage;
+{
+    self.primaryVenueImageIdentifier= nil;
+    for (RestaurantObject* r  in  self.venues) {
+        if  (r.mediaItems.count ) {
+            MediaItemObject *media= r.mediaItems[0];
+            NSString *imageReference= media.reference;
+            if  (imageReference ) {
+                self.primaryVenueImageIdentifier= imageReference;
+                break;
+            }
+        }
+    }
 }
 
 @end

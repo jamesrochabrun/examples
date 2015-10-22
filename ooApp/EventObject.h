@@ -62,5 +62,6 @@ typedef enum : char {
 - (NSString*) asString;
 
 - (void) sendDatesToServer;
+- (void) establishPrimaryImage;
 
 @end

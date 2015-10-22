@@ -114,6 +114,9 @@
     
     self.viewContainer1= makeView(self.scrollView, WHITE);
     _imageViewContainer1= makeImageView(_viewContainer1,  @"background-image.jpg");
+    _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
+    _viewContainer1.clipsToBounds= YES;
+    
     self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"EVENT NAME", kGeomEventHeadingFontSize);
     _labelEventCover.textColor= WHITE;
     _viewContainer1.layer.borderWidth= 1;
@@ -121,6 +124,12 @@
     _buttonSubmit= makeButton(self.viewContainer1,  @"SUBMIT EVENT", kGeomFontSizeHeader, RED, CLEAR, self, @selector(doSubmit:), 1);
     _buttonSubmit.titleLabel.numberOfLines= 0;
     _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
+    _buttonSubmit.layer.shadowColor= WHITE.CGColor;
+    _buttonSubmit.layer.shadowRadius= 1;
+    _buttonSubmit.layer.shadowOffset=  CGSizeMake (1,1);
+   _buttonSubmit.titleLabel.layer.shadowColor= WHITE.CGColor;
+    _buttonSubmit.titleLabel.layer.shadowRadius= 1;
+    _buttonSubmit.titleLabel.layer.shadowOffset=  CGSizeMake (1,1);
     
     self.viewContainer2= makeView(self.scrollView, WHITE);
     self.labelWho = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
@@ -160,7 +169,23 @@
     
     [self updateBoxes];
     
-    
+    EventObject* e= APP.eventBeingEdited;
+    if  (e.primaryVenueImageIdentifier ) {
+        __weak EventCoordinatorVC *weakSelf = self;
+        OOAPI *api = [[OOAPI alloc] init];
+       /* _imageOperation=*/ [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
+                                                   maxWidth:self.view.frame.size.width
+                                                  maxHeight:0
+                                                    success:^(NSString *link) {
+                                                        UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
+                                                        ON_MAIN_THREAD(  ^{
+                                                            [weakSelf.imageViewContainer1
+                                                             setImageWithURL:[NSURL URLWithString:link]
+                                                             placeholderImage:placeholder];
+                                                        });
+                                                    } failure:^(NSError *error) {
+                                                    }];
+    }
 }
 
 - (void) userPressedCancel: (id) sender
@@ -373,7 +398,6 @@
 {
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
-    float spacing= kGeomSpaceEdge;
     float vspacing= 25;
 
     _scrollView.frame=  self.view.bounds;
