@@ -49,7 +49,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _userInfo = [Settings sharedInstance].userObject;
 
     _removeButtonsContainer = [[UIView alloc] init];
-    _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorOffBlack);
+    _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
