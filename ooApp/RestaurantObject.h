@@ -40,7 +40,7 @@ typedef enum {
 @property (nonatomic, strong) NSMutableArray *mediaItems;
 @property (nonatomic, strong) NSString *cuisine;
 @property (nonatomic) CLLocationCoordinate2D location;
-@property (nonatomic, strong) NSString *priceRange;
+@property (nonatomic) CGFloat priceRange;
 @property (nonatomic, strong) NSString *website;
 @property (nonatomic, strong) NSString *phone;
 @property (nonatomic, strong) NSString *address;

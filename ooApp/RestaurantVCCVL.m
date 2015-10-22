@@ -7,6 +7,7 @@
 //
 
 #import "RestaurantVCCVL.h"
+#import "OOStripHeader.h"
 
 @interface RestaurantVCCVL ()
 
@@ -60,18 +61,22 @@
     
     // Loop through all sections in the collectionview and set each item's attributes
     for (NSUInteger section = 0; section < [self.collectionView numberOfSections]; section++) {
-
+        itemAttributes = [NSMutableArray array];
+        [_sectionAttributes addObject:itemAttributes];
+        
         if (section == kSectionTypeMediaItems) {
             numberOfColumnsInRow = kNumColumnsForMediaItems;
             itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
             xOffset = kGeomSpaceEdge;
+            UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+            suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
+            yOffset +=13;
+            [itemAttributes addObject:suppattributes];
         } else {
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
             xOffset = 0;
         }
-        itemAttributes = [NSMutableArray array];
-        [_sectionAttributes addObject:itemAttributes];
         
         NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
 
@@ -139,7 +144,7 @@
         }
     }
     
-    contentHeight = y;//attributes.frame.origin.y+attributes.frame.size.height;
+    contentHeight = y + kGeomSpaceEdge;
     
     // Return this in collectionViewContentSize
     _contentSize = CGSizeMake(contentWidth, contentHeight);

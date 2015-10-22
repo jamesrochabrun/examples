@@ -47,6 +47,7 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeRemoveButton = 13;
 static NSUInteger kGeomFontSizeStripHeader = 13;
+static NSUInteger kGeomFontSizeBannerMain = 12;
 static NSUInteger kGeomFontSizeDetail = 11;
 static NSInteger kGeomPeopleIconFontSize = 30;
 static NSInteger kGeomEventHeadingFontSize = 30;
@@ -95,6 +96,7 @@ extern NSString *const kFontLatoBold;
 extern NSString *const kFontLatoMedium;
 extern NSString *const kFontLatoMediumItalic;
 extern NSString *const kFontLatoSemiboldItalic;
+extern NSString *const kFontLatoHeavyItalic;
 
 // Icon font mappings
 extern NSString *const kFontIconAdd;

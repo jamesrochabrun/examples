@@ -22,6 +22,7 @@
 @property (nonatomic, strong) UILabel *rating;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIView *overlay;
+@property (nonatomic, strong) CAGradientLayer *gradient;
 @property (nonatomic, strong) UIView *emptyTile;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
@@ -52,12 +53,15 @@
         _backgroundImage.clipsToBounds = YES;
         _backgroundImage.image = [UIImage imageNamed:@"Logo2.png"];
 
-        [_name withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
+        [_name withFont:[UIFont fontWithName:kFontLatoHeavyItalic size:kGeomFontSizeBannerMain] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
         [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
-        [_rating withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
+        [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeDetail] textColor:kColorYellow backgroundColor:kColorClear];
 
-        _overlay.backgroundColor = UIColorRGBA(kColorStripOverlay);
-        
+//        _overlay.backgroundColor = UIColorRGBA(kColorStripOverlay);
+
+        _gradient = [CAGradientLayer layer];
+        _gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor clearColor] CGColor], (id)[[UIColor blackColor] CGColor], nil];
+
         [self addSubview:_emptyTile];
         [self addSubview:_backgroundImage];
         [self addSubview:_overlay];
@@ -65,14 +69,28 @@
         [self addSubview:_rating];
         [self addSubview:_name];
         
+        _gradient = [CAGradientLayer layer];
+        NSMutableDictionary *newActions = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                           [NSNull null], @"bounds",
+                                           [NSNull null], @"position",
+                                           nil];
+        _gradient.actions = newActions;
+        
+        [_overlay.layer addSublayer:_gradient];
+        _gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor clearColor] CGColor], (id)[[UIColor blackColor] CGColor], nil];
+    
 //        [DebugUtilities addBorderToViews:@[self]];
-        [self layout];
     }
     return self;
 }
 
-- (void)layout
+- (void)layoutSubviews {
+    _gradient.frame = _overlay.bounds;
+}
+
+- (void)updateConstraints
 {
+    [super updateConstraints];
     CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_name.font}];
     
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
@@ -83,10 +101,9 @@
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyTile]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_overlay(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_name]-(15)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_distance]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_rating]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_overlay(50)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_name][_distance]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_rating]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -111,7 +128,7 @@
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
     _distance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
-    _rating.text = restaurant.rating ? [restaurant.rating stringValue] : @"";
+    _rating.text = (restaurant.rating && ([restaurant.rating floatValue] > 3.5)) ? kFontIconWhatsNew : @"";
     
     OOAPI *api = [[OOAPI alloc] init];
     
