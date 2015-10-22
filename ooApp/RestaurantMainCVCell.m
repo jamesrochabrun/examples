@@ -26,6 +26,9 @@
 @property (nonatomic, strong) UIView *verticalLine2;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 
+@property (nonatomic, strong) UIButton *favoriteButton;
+@property (nonatomic, strong) UIButton *toTryButton;
+
 @end
 
 @implementation RestaurantMainCVCell
@@ -52,17 +55,17 @@
         
         _name = [[UILabel alloc] init];
         _name.translatesAutoresizingMaskIntoConstraints = NO;
-        [_name withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoHeavyItalic size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
         [self addSubview:_name];
         
         _priceRange = [[UILabel alloc] init];
         _priceRange.translatesAutoresizingMaskIntoConstraints = NO;
-        [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         [self addSubview:_priceRange];
         
         _distance = [[UILabel alloc] init];
         _distance.translatesAutoresizingMaskIntoConstraints = NO;
-        [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         [self addSubview:_distance];
         
         _phoneNumber = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
@@ -75,13 +78,14 @@
         _website = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
         [_website withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
         _website.translatesAutoresizingMaskIntoConstraints = NO;
+        _website.delegate = self;
         [self addSubview:_website];
         
         _address = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
         [_address withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
         _address.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_address];
-        self.backgroundColor = UIColorRGBA(kColorStripOverlay);
+        self.backgroundColor = UIColorRGBA(kColorWhite);
         
 //        [DebugUtilities addBorderToViews:@[_verticalLine1, _verticalLine2, _priceRange, _name, _address, _website, _phoneNumber, _distance]];
     }
@@ -104,38 +108,33 @@
     }
 }
 
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    [_delegate restaurantMainCVCell:self gotoURL:url];
+}
+
 - (void)updateConstraints {
     [super updateConstraints];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _priceRange, _name, _address, _website, _phoneNumber, _distance, _backgroundImage);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_name]-[_phoneNumber]-[_website]-[_address]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_name]-[_distance]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_name]-spaceInter-[_verticalLine1(1)]-spaceInter-[_priceRange]-spaceInter-[_verticalLine2(1)]-spaceInter-[_distance]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_phoneNumber]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_website]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_address]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_distance]-spaceInter-[_verticalLine2(1)]-spaceInter-[_priceRange]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_phoneNumber]-[_verticalLine1(1)]-[_website]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_address]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_priceRange
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_name
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
-
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_distance
                          attribute:NSLayoutAttributeCenterY
                          relatedBy:NSLayoutRelationEqual
-                         toItem:_name
+                         toItem:_priceRange
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
                          constant:0]];
@@ -144,7 +143,7 @@
                          constraintWithItem:_verticalLine1
                          attribute:NSLayoutAttributeCenterY
                          relatedBy:NSLayoutRelationEqual
-                         toItem:_name
+                         toItem:_phoneNumber
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
                          constant:0]];
@@ -153,7 +152,7 @@
                          constraintWithItem:_verticalLine2
                          attribute:NSLayoutAttributeCenterY
                          relatedBy:NSLayoutRelationEqual
-                         toItem:_name
+                         toItem:_priceRange
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
                          constant:0]];
@@ -162,16 +161,25 @@
                          constraintWithItem:_verticalLine1
                          attribute:NSLayoutAttributeHeight
                          relatedBy:NSLayoutRelationEqual
-                         toItem:_name
+                         toItem:_phoneNumber
                          attribute:NSLayoutAttributeHeight
                          multiplier:1
                          constant:0]];
-
+    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_website
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_phoneNumber
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
+    
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_verticalLine2
                          attribute:NSLayoutAttributeHeight
                          relatedBy:NSLayoutRelationEqual
-                         toItem:_name
+                         toItem:_priceRange
                          attribute:NSLayoutAttributeHeight
                          multiplier:1
                          constant:0]];
@@ -185,7 +193,18 @@
     _address.text = _restaurant.address;
     _website.text = @"Website";
     _phoneNumber.text = _restaurant.phone;
-    _priceRange.text = @"$$$";
+    
+    if (_restaurant.priceRange >= 4) {
+        _priceRange.text = @"$$$$$";
+    } else if (_restaurant.priceRange >= 3) {
+        _priceRange.text = @"$$$$";
+    } else if (_restaurant.priceRange >= 2) {
+        _priceRange.text = @"$$$";
+    } else if (_restaurant.priceRange > 1) {
+        _priceRange.text = @"$$";
+    } else {
+        _priceRange.text = @"$";
+    }
     
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
@@ -224,13 +243,14 @@
     [self updateConstraintsIfNeeded];
 }
 
+
 -(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) return;
     _mediaItemObject = mediaItemObject;
     OOAPI *api = [[OOAPI alloc] init];
     
 //    NSString *imageRef = mediaItemObject.reference;
-//    
+//
 //    if (imageRef) {
 //        _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
 //            dispatch_async(dispatch_get_main_queue(), ^{
@@ -244,6 +264,7 @@
 //        
 //    }
 }
+
 
 
 @end

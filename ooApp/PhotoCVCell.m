@@ -43,6 +43,9 @@
 -(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) return;
     _mediaItemObject = mediaItemObject;
+    
+    _backgroundImage.image = nil;
+    
     OOAPI *api = [[OOAPI alloc] init];
     
     NSString *imageRef = mediaItemObject.reference;
@@ -59,6 +62,13 @@
     } else {
         
     }
+}
+
+- (void)prepareForReuse {
+    [super prepareForReuse];
+    
+    [_requestOperation cancel];
+    _requestOperation = nil;
 }
 
 

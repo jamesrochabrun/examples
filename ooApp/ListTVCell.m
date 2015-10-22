@@ -62,7 +62,7 @@
     
     if (_onList) {
         //remove from list
-        [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:_list.listID success:^(NSArray *lists) {
+        [api deleteRestaurant:_restaurant.restaurantID fromList:_list.listID success:^(NSArray *lists) {
             [weakSelf getListsForRestaurant];
         } failure:^(NSError *error) {
             ;
@@ -80,7 +80,7 @@
 - (void)getListsForRestaurant {
     OOAPI *api =[[OOAPI alloc] init];
     __weak ListTVCell *weakSelf = self;
-    [api getListsOfUser:0 withRestaurant:[_restaurant.restaurantID integerValue]
+    [api getListsOfUser:0 withRestaurant:_restaurant.restaurantID
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;

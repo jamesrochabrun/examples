@@ -20,9 +20,8 @@
 //extern NSString *const kKeyName;
 
 typedef enum {
-    kSearchSortTypeBestMatch = 0,
     kSearchSortTypeDistance = 1,
-    kSearchSortTypeHighestRated = 2,
+    kSearchSortTypeBestMatch = 2,
 } SearchSortType;
 
 static NSString* const kPhotoUploadPath=  @"/users/picture";

@@ -39,7 +39,7 @@ NSString *const kKeyRestaurantWebsite = @"website";
     RestaurantObject *restaurant =[[RestaurantObject alloc] init];
     restaurant.googleID = [dict objectForKey:kKeyRestaurantGoogleID];
     restaurant.placeID = [dict objectForKey:kKeyRestaurantPlaceID];
-    restaurant.restaurantID = [dict objectForKey:kKeyRestaurantRestaurantID];
+    restaurant.restaurantID = [[dict objectForKey:kKeyRestaurantRestaurantID] unsignedIntegerValue];
     restaurant.name = [dict objectForKey:kKeyRestaurantName];
     restaurant.rating = [dict objectForKey:kKeyRestaurantRating];
     restaurant.website = [[dict objectForKey:kKeyRestaurantWebsite] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantWebsite];
@@ -69,7 +69,6 @@ NSString *const kKeyRestaurantWebsite = @"website";
         }];
     }
     
-    
     id lat = [dict objectForKey:kKeyRestaurantLatitude];
     id lon = [dict objectForKey:kKeyRestaurantLongitude];
     if  (lat && lon  && ![lat isKindOfClass:[NSNull class]]  && ![lon isKindOfClass:[NSNull class]]) {
@@ -78,7 +77,7 @@ NSString *const kKeyRestaurantWebsite = @"website";
         restaurant.location= CLLocationCoordinate2DMake(0, 0);
     }
     
-    restaurant.priceRange = [dict objectForKey:kKeyRestaurantPriceRange];
+    restaurant.priceRange = [[dict objectForKey:kKeyRestaurantPriceRange] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyRestaurantPriceRange] floatValue];
     
     return restaurant;
 }

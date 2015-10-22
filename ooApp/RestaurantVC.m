@@ -15,7 +15,8 @@
 #import "OORemoveButton.h"
 #import "ListsVC.h"
 #import "PhotoCVCell.h"
-#import "RestaurantMainCVCell.h"
+#import "OOStripHeader.h"
+#import <SafariServices/SafariServices.h>
 
 #import "DebugUtilities.h"
 
@@ -37,6 +38,7 @@
 static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
 static NSString * const kRestaurantListsCellIdentifier = @"RestaurantListsCell";
 static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
+static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHeader";
 
 @implementation RestaurantVC
 
@@ -60,10 +62,12 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:cvl];
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
+
     
     [_collectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantListsCellIdentifier];
     [_collectionView registerClass:[PhotoCVCell class] forCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier];
+    [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:@"header" withReuseIdentifier:kRestaurantPhotosHeaderIdentifier];
     
     [self.view addSubview:_collectionView];
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -191,7 +195,6 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
 
-
 - (void)addToEvent
 {
     [APP.eventBeingEdited addVenue: _restaurant];
@@ -238,15 +241,15 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 - (void)getListsForRestaurant {
     OOAPI *api =[[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
-    [api getListsOfUser:[_userInfo.userID integerValue] withRestaurant:[_restaurant.restaurantID integerValue]
+    [api getListsOfUser:[_userInfo.userID integerValue] withRestaurant:_restaurant.restaurantID
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;
                     [_lists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         ListObject *lo = (ListObject *)obj;
                         OORemoveButton *b = [[OORemoveButton alloc] init];
-                        b.name.text = lo.name;
-                        b.theId = lo.listID;// (NSUInteger)[lo.listID integerValue];
+                        b.name.text = [lo.name uppercaseString];
+                        b.theId = lo.listID;
                         [b addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
                         [_removeButtons addObject:b];
                     }];
@@ -303,7 +306,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 }
 
 - (void)viewDidLayoutSubviews {
-    _removeButtonsContainer.frame = CGRectMake(0, 0, width(self.view), _removeButtonsContainerHeight);
+    _removeButtonsContainer.frame = CGRectMake(kGeomSpaceEdge, 0, width(self.view)-2*kGeomSpaceEdge, _removeButtonsContainerHeight);
 //    NSLog(@"_removeButtonsContainer=%@", _removeButtonsContainer);
 }
 
@@ -312,7 +315,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantVC *weakSelf = self;
-    [api deleteRestaurant:[_restaurant.restaurantID integerValue] fromList:b.theId success:^(NSArray *lists) {
+    [api deleteRestaurant:_restaurant.restaurantID fromList:b.theId success:^(NSArray *lists) {
         ON_MAIN_THREAD(^{
             [b removeFromSuperview];
             [_removeButtons removeObject:b];
@@ -370,16 +373,12 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-
     
     switch (indexPath.section) {
         case kSectionTypeMain: {
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
-            //cvc.backgroundColor = UIColorRGBA(kColorGrayMiddle);
             cvc.restaurant = _restaurant;
-            if ([_mediaItems count]) {
-                cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
-            }
+            cvc.delegate = self;
             return cvc;
             break;
         }
@@ -392,6 +391,7 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
         }
         case kSectionTypeMediaItems: {
             PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
+            
             cvc.backgroundColor = UIColorRGBA(kColorWhite);
             cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
 //            [DebugUtilities addBorderToViews:@[cvc]];
@@ -405,6 +405,11 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
     return nil;
 }
 
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {
+    SFSafariViewController *svc  = [[SFSafariViewController alloc] initWithURL:url];
+    [self.navigationController pushViewController:svc animated:YES];
+}
+
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return kSectionTypeNumberOfSections;
 }
@@ -416,12 +421,12 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
             return _removeButtonsContainerHeight;
             break;
         case kSectionTypeMain:
-            return 140;
+            return 160;
             break;
         case kSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/kNumColumnsForMediaItems; //NOTE: this should not happen
-            return floorf((width(self.collectionView) - (kNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kNumColumnsForMediaItems  /*width(_collectionView)- 5*kGeomSpaceEdge)/kNumColumnsForMediaItems*/*mio.height/mio.width);
+            return floorf((width(self.collectionView) - (kNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kNumColumnsForMediaItems*mio.height/mio.width);
             break;
         }
         default:
@@ -433,13 +438,19 @@ static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 
 // supplementatry views
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
- {
- return [[UICollectionReusableView alloc] init];
- }
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    UICollectionReusableView *reuseView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:kRestaurantPhotosHeaderIdentifier forIndexPath:indexPath];
+    
+    if (indexPath.section == kSectionTypeMediaItems) {
+         OOStripHeader *header = [[OOStripHeader alloc] init];
+         header.frame = CGRectMake(0, 0, width(self.view), 27);
+         header.name = @"PHOTOS";
+         [reuseView addSubview:header];
+        [collectionView bringSubviewToFront:reuseView];
+     }
+    return reuseView;
 }
+
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     // TODO: Deselect item
 }

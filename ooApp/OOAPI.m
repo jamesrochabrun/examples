@@ -63,7 +63,7 @@ NSString *const kKeySearchFilter = @"filter";
                                           success:(void (^)(NSArray *mediaItems))success
                                           failure:(void (^)(NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%@/photos", [self ooURL], restaurant.restaurantID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%tu/photos", [self ooURL], restaurant.restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -582,7 +582,7 @@ NSString *const kKeySearchFilter = @"filter";
         restaurantIDs = [NSMutableArray array];
         [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             RestaurantObject *ro = (RestaurantObject *)obj;
-            [restaurantIDs addObject:ro.restaurantID];
+            [restaurantIDs addObject:[NSString stringWithFormat:@"%tu",ro.restaurantID]];
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -626,7 +626,7 @@ NSString *const kKeySearchFilter = @"filter";
         restaurantIDs = [NSMutableArray array];
         [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             RestaurantObject *ro = (RestaurantObject *)obj;
-            [restaurantIDs addObject:ro.restaurantID];
+            [restaurantIDs addObject:[NSString stringWithFormat:@"%tu",ro.restaurantID]];
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -1197,7 +1197,7 @@ NSString *const kKeySearchFilter = @"filter";
         failure (nil);
         return nil;
     }
-    NSString *identifier = restaurant.restaurantID;
+    NSString *identifier = [NSString stringWithFormat:@"%tu", restaurant.restaurantID];
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
     if (identifier) {
@@ -1244,7 +1244,7 @@ NSString *const kKeySearchFilter = @"filter";
         failure (nil);
         return nil;
     }
-    NSString *identifier = restaurant.restaurantID;
+    NSString *identifier = [NSString stringWithFormat:@"%tu", restaurant.restaurantID];
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
     if (identifier.length) {

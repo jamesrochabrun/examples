@@ -70,6 +70,7 @@
 
 - (void)setName:(UILabel *)name {
     [_name sizeToFit];
+    
 }
 
 - (void)setX:(UILabel *)x {

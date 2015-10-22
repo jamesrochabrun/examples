@@ -31,7 +31,7 @@ static NSUInteger kColorGray = 0xFFE5E5E5;
 static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
 static NSUInteger kColorNavBar = 0xFFFFFFFF;
 static NSUInteger kColorNavyBlue = 0xFF000080;
-static NSUInteger kColorOffBlack = 0xFF222222;
+static NSUInteger kColorOffBlack = 0xFF212121;
 static NSUInteger kColorOffWhite = 0xFFE5E5E5;
 static NSUInteger kColorStripOverlay = 0x99000000;
 static NSUInteger kColorWhite = 0xFFFFFFFF;
@@ -47,6 +47,7 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 14;
 static NSUInteger kGeomFontSizeRemoveButton = 13;
 static NSUInteger kGeomFontSizeStripHeader = 13;
+static NSUInteger kGeomFontSizeBannerMain = 12;
 static NSUInteger kGeomFontSizeDetail = 11;
 static NSInteger kGeomPeopleIconFontSize = 30;
 static NSInteger kGeomEventHeadingFontSize = 30;
@@ -95,6 +96,7 @@ extern NSString *const kFontLatoBold;
 extern NSString *const kFontLatoMedium;
 extern NSString *const kFontLatoMediumItalic;
 extern NSString *const kFontLatoSemiboldItalic;
+extern NSString *const kFontLatoHeavyItalic;
 
 // Icon font mappings
 extern NSString *const kFontIconAdd;
@@ -110,6 +112,11 @@ extern NSString *const kFontIconSettings;
 extern NSString *const kFontIconWhatsNew;
 extern NSString *const kFontIconPerson;
 extern NSString *const kFontIconCheckmark;
+extern NSString *const kFontIconFavorite;
+extern NSString *const kFontIconPhoto;
+extern NSString *const kFontIconUpload;
+extern NSString *const kFontIconLocation;
+extern NSString *const kFontIconToTry;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)
