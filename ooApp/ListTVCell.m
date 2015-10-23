@@ -122,9 +122,9 @@
     self.thumbnail.image = nil;
     self.header.text = _list.name;
     if (_list.numRestaurants == 1) {
-        self.subHeader1.text = [NSString stringWithFormat:@"%tu restaurant", _list.numRestaurants];
+        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurant", _list.numRestaurants];
     } else if (_list.numRestaurants) {
-        self.subHeader1.text = [NSString stringWithFormat:@"%tu restaurants", _list.numRestaurants];
+        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurants", _list.numRestaurants];
     } else {
         self.subHeader1.text = @"";
     }
