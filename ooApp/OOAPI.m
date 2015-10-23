@@ -1601,7 +1601,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     op = [rm POST:urlString parameters: @{
                                           @"user_id":  userID,
-                                           @"restaurant_id":restaurant.restaurantID,
+                                           @"restaurant_id":[NSString stringWithFormat:@"%tu", restaurant.restaurantID],
                                            @"event_id": @(eo.eventID),
                                            @"vote": @(vote)
                                           }

@@ -273,21 +273,19 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     }
 }
 
-- (RestaurantObject*)lookupVenueByID: (NSInteger) identifier;
+- (RestaurantObject*)lookupVenueByID:(NSUInteger)identifier;
 {
-    if  (!_venues.count  ||  identifier<0) {
+    if  (!_venues.count || identifier) {
         return nil;
     }
     
     for (RestaurantObject* venue  in  _venues) {
         if (venue.restaurantID) {
-            if ([venue.restaurantID isKindOfClass:[NSString class]]
-                && identifier == [venue.restaurantID integerValue ])
+            if (identifier == venue.restaurantID)
             {
                 return venue;
             }
-            else if ( [venue.restaurantID isKindOfClass:[NSNumber class]]
-                     && identifier == [((NSNumber*)venue.restaurantID) integerValue ])
+            else if (identifier == venue.restaurantID)
             {
                 return venue;
             }

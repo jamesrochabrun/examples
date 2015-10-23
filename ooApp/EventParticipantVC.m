@@ -163,7 +163,7 @@
 - (void)indicateMissingVoteFor: (RestaurantObject*)venue
 {
     self.vote= [[VoteObject alloc] init];
-    self.vote.venueID= [venue.restaurantID integerValue];
+    self.vote.venueID= venue.restaurantID;
 }
 
 - (void) provideEvent: (EventObject*)event
@@ -295,7 +295,7 @@
     cell.delegate= self;
 
     RestaurantObject* venue= [event getNthVenue:row];
-    NSInteger venueID= [venue.restaurantID integerValue];
+    NSUInteger venueID = venue.restaurantID;
     VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];
 
     if (voteForRow ) {
