@@ -340,12 +340,19 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)removeFromList:(NSUInteger)listID {
     OOAPI *api = [[OOAPI alloc] init];
     
+    OOTagButton *buttonToRemove;
+    for (OOTagButton *b in [_listButtons allObjects]) {
+        if (b.theId == listID) buttonToRemove = b;
+    }
+    
+    [buttonToRemove removeFromSuperview];
+    [_listButtons removeObject:buttonToRemove];
+    
     __weak RestaurantVC *weakSelf = self;
     [api deleteRestaurant:_restaurant.restaurantID fromList:listID success:^(NSArray *lists) {
         ON_MAIN_THREAD(^{
             [weakSelf getListsForRestaurant];
         });
-        
     } failure:^(NSError *error) {
         ;
     }];
