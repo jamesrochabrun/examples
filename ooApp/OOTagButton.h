@@ -1,5 +1,5 @@
 //
-//  OORemoveButton.h
+//  OOTagButton.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 9/30/15.
@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OORemoveButton : UIControl
+@interface OOTagButton : UIControl
 
-@property (nonatomic, strong) UILabel *name;
+@property (nonatomic, strong) NSString *icon;
+@property (nonatomic, strong) NSString *name;
 @property (nonatomic) NSUInteger theId;
 
 - (CGSize)getSuggestedSize;

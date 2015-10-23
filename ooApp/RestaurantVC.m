@@ -12,10 +12,11 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "MediaItemObject.h"
-#import "OORemoveButton.h"
+#import "OOTagButton.h"
 #import "ListsVC.h"
 #import "PhotoCVCell.h"
 #import "OOStripHeader.h"
+#import "RestaurantListVC.h"
 #import <SafariServices/SafariServices.h>
 
 #import "DebugUtilities.h"
@@ -32,6 +33,8 @@
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
 @property (nonatomic, strong) NSArray *mediaItems;
 @property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic) NSUInteger favoriteID;
+@property (nonatomic) NSUInteger toTryID;
 
 @end
 
@@ -45,6 +48,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _toTryID = 0;
+    _favoriteID = 0;
     
     _userInfo = [Settings sharedInstance].userObject;
 
@@ -150,15 +156,15 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _styleSheetAC.view.tintColor = [UIColor blackColor];
     
     __weak RestaurantVC *weakSelf = self;
-    UIAlertAction *addToFavorites = [UIAlertAction actionWithTitle:@"Add to Favorites"
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     [self addToFavorites];
-                                                 }];
-    
-    UIAlertAction *addToTryList = [UIAlertAction actionWithTitle:@"Add to Try List"
-                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                 [self addToTryList];
-                                                             }];
+//    UIAlertAction *addToFavorites = [UIAlertAction actionWithTitle:@"Add to Favorites"
+//                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//                                                     [self addToFavorites];
+//                                                 }];
+//    
+//    UIAlertAction *addToTryList = [UIAlertAction actionWithTitle:@"Add to Try List"
+//                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//                                                                 [self addToTryList];
+//                                                             }];
 
     UIAlertAction *addToList = [UIAlertAction actionWithTitle:@"Add to List"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -184,8 +190,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                  }];
     
     
-    [_styleSheetAC addAction:addToFavorites];
-    [_styleSheetAC addAction:addToTryList];
+//    [_styleSheetAC addAction:addToFavorites];
+//    [_styleSheetAC addAction:addToTryList];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
     [_styleSheetAC addAction:addToEvent];
@@ -245,12 +251,19 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;
+                    _toTryID = _favoriteID = 0;
                     [_lists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         ListObject *lo = (ListObject *)obj;
-                        OORemoveButton *b = [[OORemoveButton alloc] init];
-                        b.name.text = [lo.name uppercaseString];
+                        if (lo.type == kListTypeFavorites) {
+                            _favoriteID = lo.listID;
+                        } else if (lo.type == kListTypeToTry) {
+                            _toTryID = lo.listID;
+                        }
+                        OOTagButton *b = [[OOTagButton alloc] init];
+                        b.icon = kFontIconList;
+                        b.name = [lo.name uppercaseString];
                         b.theId = lo.listID;
-                        [b addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
+                        [b addTarget:self action:@selector(showList:) forControlEvents:UIControlEventTouchUpInside];
                         [_removeButtons addObject:b];
                     }];
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -283,8 +296,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)displayRemoveButtons {
     __block CGPoint origin = CGPointMake(kGeomSpaceInter, kGeomSpaceInter);
     NSArray *removeButtonsArray = [_removeButtons allObjects];
+    _removeButtonsContainerHeight = 0;
     [removeButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OORemoveButton *b = (OORemoveButton *)obj;
+        OOTagButton *b = (OOTagButton *)obj;
         [_removeButtonsContainer addSubview:b];
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
@@ -310,15 +324,25 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 //    NSLog(@"_removeButtonsContainer=%@", _removeButtonsContainer);
 }
 
-- (void)removeFromList:(id)sender {
-    OORemoveButton  *b = (OORemoveButton *)sender;
+- (void)showList:(id)sender {
+    OOTagButton *rb = (OOTagButton *)sender;
+    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+    [_lists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        ListObject *lo = (ListObject *)obj;
+        if (lo.listID == rb.theId) {
+            vc.listItem = lo;
+            *stop = YES;
+        }
+    }];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)removeFromList:(NSUInteger)listID {
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak RestaurantVC *weakSelf = self;
-    [api deleteRestaurant:_restaurant.restaurantID fromList:b.theId success:^(NSArray *lists) {
+    [api deleteRestaurant:_restaurant.restaurantID fromList:listID success:^(NSArray *lists) {
         ON_MAIN_THREAD(^{
-            [b removeFromSuperview];
-            [_removeButtons removeObject:b];
             [weakSelf getListsForRestaurant];
         });
         
@@ -330,6 +354,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)addToFavorites {
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
+    
     [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeFavorites success:^(id response) {
         [weakSelf getListsForRestaurant];
     } failure:^(NSError *error) {
@@ -379,6 +404,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
             cvc.restaurant = _restaurant;
             cvc.delegate = self;
+            [cvc setToTry:(_toTryID) ? YES: NO];
+            [cvc setFavorite:(_favoriteID) ? YES: NO];
             return cvc;
             break;
         }
@@ -403,11 +430,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }
 
     return nil;
-}
-
-- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {
-    SFSafariViewController *svc  = [[SFSafariViewController alloc] initWithURL:url];
-    [self.navigationController pushViewController:svc animated:YES];
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -464,5 +486,27 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     // Pass the selected object to the new view controller.
 }
 */
+
+#pragma mark -
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {
+    SFSafariViewController *svc  = [[SFSafariViewController alloc] initWithURL:url];
+    [self.navigationController pushViewController:svc animated:YES];
+}
+
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell listButtonTapped:(ListType)listType {
+    if (listType == kListTypeFavorites) {
+        if (_favoriteID) {
+            [self removeFromList:_favoriteID];
+        } else {
+            [self addToFavorites];
+        }
+    } else if (listType == kListTypeToTry) {
+        if (_toTryID) {
+            [self removeFromList:_toTryID];
+        } else {
+            [self addToTryList];
+        }
+    }
+}
 
 @end

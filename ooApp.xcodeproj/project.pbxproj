@@ -10,7 +10,7 @@
 		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE491BBA330000F1AF67 /* OOMapMarker.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE4C1BBC641C00F1AF67 /* strip_gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 3613BE4B1BBC641C00F1AF67 /* strip_gradient.png */; settings = {ASSET_TAGS = (); }; };
-		3613BE4F1BBCBDF700F1AF67 /* OORemoveButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OORemoveButton.m */; settings = {ASSET_TAGS = (); }; };
+		3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE581BBE278400F1AF67 /* ListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE571BBE278400F1AF67 /* ListTVCell.m */; settings = {ASSET_TAGS = (); }; };
@@ -130,8 +130,8 @@
 		3613BE481BBA330000F1AF67 /* OOMapMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOMapMarker.h; sourceTree = "<group>"; };
 		3613BE491BBA330000F1AF67 /* OOMapMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOMapMarker.m; sourceTree = "<group>"; };
 		3613BE4B1BBC641C00F1AF67 /* strip_gradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = strip_gradient.png; path = "Graphic Assets/strip_gradient.png"; sourceTree = "<group>"; };
-		3613BE4D1BBCBDF700F1AF67 /* OORemoveButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OORemoveButton.h; sourceTree = "<group>"; };
-		3613BE4E1BBCBDF700F1AF67 /* OORemoveButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OORemoveButton.m; sourceTree = "<group>"; };
+		3613BE4D1BBCBDF700F1AF67 /* OOTagButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOTagButton.h; sourceTree = "<group>"; };
+		3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOTagButton.m; sourceTree = "<group>"; };
 		3613BE501BBCFB7000F1AF67 /* EmptyRestaurantTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyRestaurantTile.h; sourceTree = "<group>"; };
 		3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmptyRestaurantTile.m; sourceTree = "<group>"; };
 		3613BE531BBDD1A600F1AF67 /* MediaItemObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaItemObject.h; sourceTree = "<group>"; };
@@ -472,8 +472,8 @@
 				3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */,
 				3613BE481BBA330000F1AF67 /* OOMapMarker.h */,
 				3613BE491BBA330000F1AF67 /* OOMapMarker.m */,
-				3613BE4D1BBCBDF700F1AF67 /* OORemoveButton.h */,
-				3613BE4E1BBCBDF700F1AF67 /* OORemoveButton.m */,
+				3613BE4D1BBCBDF700F1AF67 /* OOTagButton.h */,
+				3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */,
 				3613BE501BBCFB7000F1AF67 /* EmptyRestaurantTile.h */,
 				3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */,
 				3613BE591BC445A700F1AF67 /* OOFilterView.h */,
@@ -838,7 +838,7 @@
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */,
 				96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */,
-				3613BE4F1BBCBDF700F1AF67 /* OORemoveButton.m in Sources */,
+				3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */,
 				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
 				365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,

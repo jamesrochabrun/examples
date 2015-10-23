@@ -128,7 +128,7 @@
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
     _distance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
-    _rating.text = (restaurant.rating && ([restaurant.rating floatValue] > 3.5)) ? kFontIconWhatsNew : @"";
+    _rating.text = (restaurant.rating && ([restaurant.rating floatValue] > 3.5)) ? kFontIconWhatsNewFilled : @"";
     
     OOAPI *api = [[OOAPI alloc] init];
     
