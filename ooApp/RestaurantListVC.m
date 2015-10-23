@@ -197,6 +197,36 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return UITableViewCellEditingStyleDelete;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        //add code here for when you hit delete
+        RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+        __weak RestaurantListVC *weakSelf = self;
+        OOAPI *api = [[OOAPI alloc] init];
+        
+        [api deleteRestaurant:restaurant.restaurantID fromList:_listItem.listID success:^(NSArray *lists) {
+            [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *restaurants) {
+                _restaurants = restaurants;
+                ON_MAIN_THREAD(^{
+                    [weakSelf.tableView reloadData];
+                });
+            } failure:^(NSError *error) {
+                ;
+            }];
+        } failure:^(NSError *error) {
+            ;
+        }];
+    }
+}
 /*
 #pragma mark - Navigation
 

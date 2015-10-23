@@ -9,6 +9,7 @@
 #import "ListTVCell.h"
 #import "MediaItemObject.h"
 #import "DebugUtilities.h"
+#import "Settings.h"
 
 @interface ListTVCell()
 
@@ -80,7 +81,10 @@
 - (void)getListsForRestaurant {
     OOAPI *api =[[OOAPI alloc] init];
     __weak ListTVCell *weakSelf = self;
-    [api getListsOfUser:0 withRestaurant:_restaurant.restaurantID
+    
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+
+    [api getListsOfUser:userInfo.userID withRestaurant:_restaurant.restaurantID
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;

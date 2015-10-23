@@ -109,7 +109,6 @@ static NSString * const cellIdentifier = @"listCell";
 {
     ListTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 
-    
     if (_restaurant) {
         cell.restaurant = _restaurant;
     }
