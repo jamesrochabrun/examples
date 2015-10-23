@@ -20,9 +20,9 @@ typedef enum : char {
     EVENT_TYPE_USER= 2,
 } EventType;
 
-@property (nonatomic) NSInteger eventID;
+@property (nonatomic) NSUInteger eventID;
 @property (nonatomic,assign) BOOL isComplete;
-@property (nonatomic) NSInteger creatorID; // Participant type 0.
+@property (nonatomic) NSUInteger creatorID; // Participant type 0.
 @property (nonatomic, strong) NSString *eventCoverImageURL;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic,assign) EventType eventType;

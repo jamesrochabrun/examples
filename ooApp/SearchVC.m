@@ -655,7 +655,7 @@ typedef enum: char {
         UserObject *u = [_peopleArray objectAtIndex:indexPath.row];
         
         ProfileVC *vc= [[ProfileVC  alloc]   init];
-        vc.userID= u.userID.longValue;
+        vc.userID= u.userID;
         vc.userInfo= u;
         
         [self.navigationController pushViewController:vc animated:YES];

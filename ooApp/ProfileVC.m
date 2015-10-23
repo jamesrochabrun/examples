@@ -50,11 +50,11 @@
          [UIFont fontWithName:kFontIcons size:kGeomFontSizeHeader]];
         
         _userInfo = u;
-        _userID = [u.userID integerValue];
+        _userID = u.userID ;
         
         // Ascertain whether reviewing our own profile.
         UserObject *userInfo= [Settings sharedInstance].userObject;
-        NSInteger ownUserIdentifier= [[userInfo userID] integerValue];
+        NSUInteger ownUserIdentifier= [userInfo userID];
         _viewingOwnProfile = _userID == ownUserIdentifier;
         
         self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);

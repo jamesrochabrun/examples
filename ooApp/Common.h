@@ -50,6 +50,7 @@ extern NSDate* parseUTCDateFromServer(NSString *string);
 extern NSString* parseStringOrNullFromServer (id object);
 extern double parseNumberOrNullFromServer (id object);
 extern NSInteger parseIntegerOrNullFromServer (id object);
+extern NSUInteger parseUnsignedIntegerOrNullFromServer (id object);
 
 extern BOOL isValidEmailAddress (NSString *string);
 

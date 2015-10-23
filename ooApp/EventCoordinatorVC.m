@@ -278,7 +278,7 @@
 
 - (void) updateWhereBoxAnimated:(id)animated
 {
-    EventObject *event=APP.eventBeingEdited;
+//    EventObject *event=APP.eventBeingEdited;
     
     [self.venuesCollectionView reloadData ];
     if  (animated ) {

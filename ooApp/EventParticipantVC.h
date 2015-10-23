@@ -15,6 +15,7 @@
 @end
 
 @protocol EventParticipantVotingCellDelegate
+- (void) voteChanged:(VoteObject*) object;
 @end
 
 @interface EventParticipantVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate,
@@ -31,7 +32,7 @@
 - (void)provideVote: (VoteObject*)vote;
 @end
 
-@interface EventParticipantVotingCell: UITableViewCell
+@interface EventParticipantVotingCell: UITableViewCell 
 @property (nonatomic,strong) VoteObject  *vote;
 @property (nonatomic,assign) id <EventParticipantVotingCellDelegate> delegate;
 @end

@@ -26,7 +26,7 @@ typedef enum: int {
 
 @interface UserObject : NSObject
 
-@property (nonatomic, strong) NSNumber *userID;
+@property (nonatomic, assign) NSUInteger userID;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;

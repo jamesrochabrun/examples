@@ -35,7 +35,7 @@
     self.subHeader1.text = [NSString stringWithFormat: @"%@ %@", _userInfo.firstName,_userInfo.lastName];
     self.subHeader2.text = nil;
     
-    OOAPI *api = [[OOAPI alloc] init];
+//    OOAPI *api = [[OOAPI alloc] init];
     
     if (_userInfo.imageURLString) {
 //        self.requestOperation = [api getUserImageWithImageRef:_userInfo.imageURLString

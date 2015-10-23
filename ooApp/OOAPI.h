@@ -199,11 +199,6 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                      success:(void (^)(id response))success
                                      failure:(void (^)(NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)setParticipantsInEvent:(EventObject *)eo
-                                                to:(NSArray *)participants
-                                           success:(void (^)())success
-                                           failure:(void (^)(NSError *error))failure;
-
 + (AFHTTPRequestOperation *)setParticipationOf:(UserObject*) user
                                        inEvent:(EventObject *)eo
                                             to:(BOOL) participating
@@ -226,9 +221,8 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                     failure:(void (^)(NSError *error))failure;
 
 + (AFHTTPRequestOperation *)setVoteTo:(NSInteger)  vote
-                             forEvent:(EventObject *)eo
-                        andRestaurant: (RestaurantObject*)restaurant
+                             forEvent:(NSUInteger) eventID
+                        andRestaurant: (NSUInteger) venueID
                               success:(void (^)(NSInteger eventID))success
                               failure:(void (^)(NSError *error))failure;
-
 @end

@@ -348,10 +348,24 @@ NSDate* parseUTCDateFromServer(NSString *string)
     return date;
 }
 
+NSUInteger parseUnsignedIntegerOrNullFromServer (id object)
+{
+    if  (object && [ object isKindOfClass:[NSNumber class]]) {
+        return  (( NSNumber*)object).unsignedIntegerValue;
+    }
+    if  (object && [ object isKindOfClass:[NSString class]]) {
+        return (NSUInteger) (( NSString*)object).integerValue;
+    }
+    return 0;
+}
+
 NSInteger parseIntegerOrNullFromServer (id object)
 {
     if  (object && [ object isKindOfClass:[NSNumber class]]) {
         return  (( NSNumber*)object).integerValue;
+    }
+    if  (object && [ object isKindOfClass:[NSString class]]) {
+        return  (( NSString*)object).integerValue;
     }
     return 0;
 }
@@ -360,6 +374,9 @@ double parseNumberOrNullFromServer (id object)
 {
     if  (object && [ object isKindOfClass:[NSNumber class]]) {
         return  (( NSNumber*)object).doubleValue;
+    }
+    if  (object && [ object isKindOfClass:[NSString class]]) {
+        return  (( NSString*)object).doubleValue;
     }
     return 0;
 }

@@ -126,6 +126,8 @@
         self.imageView.hidden= YES;
         _thumbnail.layer.borderColor= WHITE.CGColor;
         _thumbnail.layer.borderWidth= 1;
+        
+        [_voteSwitch addTarget: self action:@selector(switchChanged:)  forControlEvents:UIControlEventValueChanged];
     }
     return self;
 }
@@ -143,10 +145,18 @@
     _voteSwitch.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
 }
 
+- (void)switchChanged: (UISwitch*)theSwitch
+{
+    self.vote.vote= theSwitch.on? 1:0;
+    if  ( self.delegate) {
+        [self.delegate voteChanged:self.vote  ];
+
+    }
+}
 - (void)provideVote: (VoteObject*)vote
 {
     self.vote= vote;
-    
+    _voteSwitch.on= vote.vote != 0;
 }
 
 - (void)prepareForReuse
@@ -163,7 +173,7 @@
 - (void)indicateMissingVoteFor: (RestaurantObject*)venue
 {
     self.vote= [[VoteObject alloc] init];
-    self.vote.venueID= [venue.restaurantID integerValue];
+    self.vote.venueID= venue.restaurantID;
 }
 
 - (void) provideEvent: (EventObject*)event
@@ -180,7 +190,9 @@
     self.event= event;
     NSInteger venueID= self.vote.venueID;
     RestaurantObject* venue = [event lookupVenueByID: venueID];
-    
+
+    self.vote.eventID= event.eventID;
+
     if  (!venue) {
         NSLog (@"VENUE ID %ld APPEARS TO BE BOGUS.",venueID);
         self.labelName.text=  @"Unknown restaurant.";
@@ -248,14 +260,14 @@
         /* _venueOperation=*/ [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
             [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
         } failure:^{
-            
+            NSLog (@"FAILED TO FETCH VENUES");
         }];
     }
     
     /* _voteOperation=*/ [APP.eventBeingEdited refreshVotesFromServerWithSuccess:^{
         [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
     } failure:^{
-        
+        NSLog  (@"FAILED TO FETCH VOTES");
     }];
 }
 
@@ -295,7 +307,7 @@
     cell.delegate= self;
 
     RestaurantObject* venue= [event getNthVenue:row];
-    NSInteger venueID= [venue.restaurantID integerValue];
+    NSUInteger venueID= venue.restaurantID;
     VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];
 
     if (voteForRow ) {
@@ -324,6 +336,23 @@
 {
     EventObject* event=APP.eventBeingEdited;
     return [event totalVenues];
+}
+
+- (void) voteChanged:(VoteObject*) object;
+{
+    if  (!object) {
+        return;
+    }
+    
+    [OOAPI setVoteTo: object.vote
+            forEvent: object.eventID
+       andRestaurant: object.venueID
+             success:^(NSInteger eventID) {
+                 NSLog  (@"DID SAVE VOTE.");
+             } failure:^(NSError *error) {
+                 NSLog  (@"CANNOT SAVE VOTE.");
+             }
+     ];
 }
 
 //------------------------------------------------------------------------------

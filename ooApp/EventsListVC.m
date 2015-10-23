@@ -75,7 +75,7 @@
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber* userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     
     __weak EventsListVC *weakSelf = self;
     
@@ -106,7 +106,7 @@
                                }
      ];
     
-    [OOAPI getEventsForUser:[userid integerValue] success:^(NSArray *events) {
+    [OOAPI getEventsForUser:userid  success:^(NSArray *events) {
         NSLog  (@"YOUR EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
         
         NSMutableArray *your= [NSMutableArray new];

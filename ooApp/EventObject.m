@@ -281,13 +281,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     
     for (RestaurantObject* venue  in  _venues) {
         if (venue.restaurantID) {
-            if ([venue.restaurantID isKindOfClass:[NSString class]]
-                && identifier == [venue.restaurantID integerValue ])
-            {
-                return venue;
-            }
-            else if ( [venue.restaurantID isKindOfClass:[NSNumber class]]
-                     && identifier == [((NSNumber*)venue.restaurantID) integerValue ])
+            if (venue.restaurantID ==identifier )
             {
                 return venue;
             }
@@ -316,7 +310,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
 - (VoteObject*)lookupVoteByVenueID: (NSInteger) identifier;
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSInteger userid= [userInfo.userID integerValue];
+    NSUInteger userid= userInfo.userID;
 
     for (VoteObject* vote  in  _votes) {
         if ( vote.eventID ==  _eventID && vote.userID==userid  && identifier == vote.venueID) {

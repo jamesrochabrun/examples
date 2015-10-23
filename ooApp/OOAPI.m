@@ -305,13 +305,14 @@ NSString *const kKeySearchFilter = @"filter";
 // Name:    getListsOfUser:withRestaurant
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)getListsOfUser:(NSUInteger)userID withRestaurant:(NSUInteger)restaurantID
+- (AFHTTPRequestOperation*)getListsOfUser:(NSUInteger)userID
+                           withRestaurant:(NSUInteger)restaurantID
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *error))failure
 {
-    if (!userID) {
-        UserObject *userInfo= [Settings sharedInstance].userObject;
-        userID = [userInfo.userID unsignedIntegerValue];
+    if (!userID || !restaurantID) {
+        failure(nil);
+        return nil;
     }
     
     NSString *restaurantResource = @"";
@@ -446,9 +447,9 @@ NSString *const kKeySearchFilter = @"filter";
                                    failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSNumber *userID = userInfo.userID;
+    NSUInteger userID = userInfo.userID;
     
-    NSString *requestString =[NSString stringWithFormat:@"https://%@/users/%@", [OOAPI URL], userID];
+    NSString *requestString =[NSString stringWithFormat:@"https://%@/users/%lu", [OOAPI URL], userID];
     
     requestString = [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
     
@@ -544,17 +545,17 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
+    NSUInteger userID= userInfo.userID;
     if (!userID) {
         failure (nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/lists", [OOAPI URL], userID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/lists", [OOAPI URL], userID];
     NSDictionary *parameters = @{
                                  @"name":listName,
                                   @"type":[NSString stringWithFormat:@"%tu", kListTypeUser],
-                                  @"user":userID
+                                  @"user": @(userID)
                                 };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
@@ -586,14 +587,14 @@ NSString *const kKeySearchFilter = @"filter";
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
+    NSUInteger userID= userInfo.userID;
     if (!userID) {
         failure (nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu/restaurants", [OOAPI URL], listID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu/restaurants", [OOAPI URL], listID];
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
@@ -630,7 +631,7 @@ NSString *const kKeySearchFilter = @"filter";
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
+    NSUInteger userID= userInfo.userID;
     if (!userID) {
         failure(nil);
         return nil;
@@ -639,9 +640,9 @@ NSString *const kKeySearchFilter = @"filter";
 
     NSString *urlString;
     if (listType == kListTypeFavorites) {
-        urlString = [NSString stringWithFormat:@"https://%@/users/%@/favorites/restaurants", [OOAPI URL], userID];
+        urlString = [NSString stringWithFormat:@"https://%@/users/%lu/favorites/restaurants", [OOAPI URL], userID];
     } else if (listType == kListTypeToTry) {
-        urlString = [NSString stringWithFormat:@"https://%@/users/%@/totry/restaurants", [OOAPI URL], userID];
+        urlString = [NSString stringWithFormat:@"https://%@/users/%lu/totry/restaurants", [OOAPI URL], userID];
     } else {
         failure(nil);
         return nil;
@@ -706,30 +707,30 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSNumber *selfUserID = userInfo.userID;
+    NSUInteger selfUserID = userInfo.userID;
     if (!selfUserID) {
         failure(nil);
         return nil;
     }
-    NSNumber *otherUserID = user.userID;
+    NSUInteger otherUserID = user.userID;
     if (!otherUserID) {
         failure(nil);
         return nil;
     }
-    if  ([selfUserID isEqualToNumber: otherUserID] ) {
+    if  (selfUserID ==otherUserID ) {
         NSLog  (@"CANNOT FOLLOW ONESELF.");
         success (NO);
         return nil;
     }
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/follow/%@", [OOAPI URL], selfUserID,otherUserID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/follow/%lu", [OOAPI URL], selfUserID,otherUserID];
     
     return [rm GET:urlString parameters:nil
            success:^(id responseObject) {
                for (id dict in responseObject) {
                    UserObject *followee = [UserObject userFromDict:dict];
-                   if ([followee.userID isEqualToNumber: otherUserID ] ) {
+                   if (followee.userID  == otherUserID ) {
                        success(YES);
                        return;
                    }
@@ -755,24 +756,24 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *selfUserID= userInfo.userID;
+    NSUInteger selfUserID= userInfo.userID;
     if (!selfUserID) {
         failure (nil);
         return nil;
     }
-    NSNumber *otherUserID= user.userID;
+    NSUInteger otherUserID= user.userID;
     if (!otherUserID) {
         failure (nil);
         return nil;
     }
-    if  ([selfUserID isEqualToNumber: otherUserID ] ) {
+    if  (selfUserID == otherUserID  ) {
         NSLog  (@"CANNOT FOLLOW ONESELF.");
         failure (nil);
         return nil;
     }
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/following/%@", [OOAPI URL], selfUserID,otherUserID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following/%lu", [OOAPI URL], selfUserID,otherUserID];
     
     AFHTTPRequestOperation *op;
     if (following) {
@@ -801,31 +802,27 @@ NSString *const kKeySearchFilter = @"filter";
 // Note:    If user is nil then it is the current user.h
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)setParticipationOf:(UserObject*) user
-                                       inEvent:(EventObject *)eo
+                                       inEvent:(EventObject *)event
                                                  to:(BOOL) participating
                                                success:(void (^)(NSInteger eventID))success
                                                failure:(void (^)(NSError *error))failure;
 {
-    if (!eo) {
+    if (!event ) {
         failure (nil);
         return nil;
     }
-    UserObject *userInfo= [Settings sharedInstance].userObject;
     
-    NSNumber *userID= userInfo.userID;
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    if (!user) {
+        user= userInfo;
+    }
+    NSUInteger userID= user.userID;
     if (!userID) {
         failure (nil);
         return nil;
     }
-    NSInteger eventID= eo.eventID;
     
-    if (!user) {
-        user= userInfo;
-    }
-    
-    if (!user.userID) {
-        user.userID = @(-1);
-    }
+    NSUInteger eventID= event.eventID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -833,11 +830,10 @@ NSString *const kKeySearchFilter = @"filter";
 
     AFHTTPRequestOperation *op;
     if (participating) {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", [OOAPI URL], (unsigned long) eventID];
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users", [OOAPI URL],  eventID];
         NSLog (@"POST %@", urlString);
         op = [rm POST:urlString parameters: @{
-                                              @"user_ids":  user.userID
-
+                                              @"user_ids":  @(user.userID)
                                               }
                                        success:^(id responseObject) {
                                            NSInteger identifier= 0;
@@ -850,9 +846,9 @@ NSString *const kKeySearchFilter = @"filter";
                                            failure(error);
                                        }];
     } else {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@",
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users/%lu",
                                [OOAPI URL],
-                               (unsigned long) eventID, user.userID];
+                                eventID, user.userID];
         
         NSLog (@"DELETE %@", urlString);
         op = [rm DELETE:urlString parameters: nil
@@ -919,7 +915,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSNumber *userID = userInfo.userID;
+    NSUInteger userID = userInfo.userID;
     if (!userID) {
         failure (nil);
         return nil;
@@ -927,7 +923,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSInteger eventID = eo.eventID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", [OOAPI URL], (unsigned long)eventID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users", [OOAPI URL], eventID];
     
     AFHTTPRequestOperation *op;
     
@@ -964,8 +960,8 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", [OOAPI URL], userID];
+    NSUInteger userID= userInfo.userID;
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], userID];
     
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString:urlString]];
     if (!request) {
@@ -1052,8 +1048,8 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber*userid= userInfo.userID;
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/photos", [OOAPI URL], userid];
+    NSUInteger userid= userInfo.userID;
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], userid];
     
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
@@ -1192,12 +1188,12 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSNumber *userid = userInfo.userID;
+    NSUInteger userid = userInfo.userID;
     if (!userid) {
         failure (nil);
         return nil;
     }
-    NSString *identifier = [NSString stringWithFormat:@"%tu", restaurant.restaurantID];
+    NSString *identifier = [NSString stringWithFormat:@"%lu", restaurant.restaurantID];
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
     if (identifier) {
@@ -1212,8 +1208,8 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", [OOAPI URL],
-                           (unsigned long)event.eventID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/restaurants", [OOAPI URL],
+                           event.eventID];
     
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
@@ -1239,12 +1235,12 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSNumber *userid = userInfo.userID;
+    NSUInteger userid = userInfo.userID;
     if (!userid) {
         failure (nil);
         return nil;
     }
-    NSString *identifier = [NSString stringWithFormat:@"%tu", restaurant.restaurantID];
+    NSString *identifier = [NSString stringWithFormat:@"%lu", restaurant.restaurantID];
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
     if (identifier.length) {
@@ -1259,8 +1255,8 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", [OOAPI URL],
-                           (unsigned long)event.eventID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/restaurants", [OOAPI URL],
+                            event.eventID];
     
     AFHTTPRequestOperation *op = [rm DELETE: urlString parameters:parameters
                                   success:^(id responseObject) {
@@ -1285,13 +1281,13 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     if (!userid) {
         failure (nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/events", [OOAPI URL], userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/events", [OOAPI URL], userid];
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
     
@@ -1329,13 +1325,13 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     if (! userid) {
         failure (nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld", [OOAPI URL],(long) eo.eventID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu", [OOAPI URL],  eo.eventID];
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
 
@@ -1357,13 +1353,13 @@ NSString *const kKeySearchFilter = @"filter";
                                             failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     if (!userid) {
         failure (nil);
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/followers", [OOAPI URL], userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/followers", [OOAPI URL], userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1388,13 +1384,13 @@ NSString *const kKeySearchFilter = @"filter";
                                             failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     if (!userid) {
         failure (nil);
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/following", [OOAPI URL], userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following", [OOAPI URL], userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1419,13 +1415,13 @@ NSString *const kKeySearchFilter = @"filter";
                                             failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     if (!userid) {
         failure (nil);
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%@/groups",
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/groups",
                            [OOAPI URL], userid];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1457,13 +1453,13 @@ NSString *const kKeySearchFilter = @"filter";
                                     failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     if (!userid) {
         failure (nil);
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/groups/%ld/users",
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/groups/%lu/users",
                            [OOAPI URL], groupID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1495,13 +1491,13 @@ NSString *const kKeySearchFilter = @"filter";
                                                        failure:(void (^)(NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID = userInfo.userID;
+    NSUInteger userID = userInfo.userID;
     if (!userID) {
         failure(nil);
         return nil;
     }
 
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@",
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users/%lu",
                            [OOAPI URL],
                            event.eventID,
                            userID];
@@ -1570,12 +1566,12 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)setVoteTo:(NSInteger)  vote
-                                       forEvent:(EventObject *)eo
-                        andRestaurant: (RestaurantObject*)restaurant
-                                       success:(void (^)(NSInteger eventID))success
-                                       failure:(void (^)(NSError *error))failure;
+                             forEvent:(NSUInteger) eventID
+                        andRestaurant: (NSUInteger) venueID
+                              success:(void (^)(NSInteger eventID))success
+                              failure:(void (^)(NSError *error))failure;
 {
-    if (!eo  || !restaurant || !restaurant.restaurantID) {
+    if (!eventID  || !venueID ) {
         failure (nil);
         return nil;
     }
@@ -1585,24 +1581,21 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSNumber *userID= userInfo.userID;
+    NSUInteger userID= userInfo.userID;
     if (!userID) {
         failure (nil);
         return nil;
     }
     
-    NSInteger eventID= eo.eventID;
-    
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     AFHTTPRequestOperation *op;
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes", [OOAPI URL], (unsigned long) eventID];
-    NSLog (@"POST %@", urlString);
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/votes", [OOAPI URL]];
     
     op = [rm POST:urlString parameters: @{
-                                          @"user_id":  userID,
-                                           @"restaurant_id":restaurant.restaurantID,
-                                           @"event_id": @(eo.eventID),
+                                          @"user_id":  @(userID),
+                                           @"restaurant_id": @(venueID),
+                                           @"event_id": @(eventID),
                                            @"vote": @(vote)
                                           }
           success:^(id responseObject) {

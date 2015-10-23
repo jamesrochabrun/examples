@@ -226,9 +226,9 @@
 - (void) checkWhetherUserNameIsInUse: (NSString*)enteredUsername
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSNumber* userid= userInfo.userID;
+    NSUInteger userid= userInfo.userID;
     
-    NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%@",
+    NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%lu",
                    kOOURL, userid];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];

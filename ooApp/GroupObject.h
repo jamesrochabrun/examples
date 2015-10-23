@@ -10,7 +10,7 @@
 
 @interface GroupObject : NSObject
 @property (nonatomic,strong) NSString *name;
-@property (nonatomic) NSInteger groupID;
+@property (nonatomic) NSUInteger groupID;
 @property (nonatomic,strong) NSDate *createdAt;
 @property (nonatomic,strong) NSDate *updatedAt;
 

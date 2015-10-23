@@ -148,7 +148,7 @@
 @property (nonatomic,strong)UIButton* buttonAddEmail;
 @property (nonatomic,strong)UITableView* table;
 @property (nonatomic,strong) NSMutableArray *arrayOfPotentialParticipants;
-@property (nonatomic,strong)  NSMutableSet *participants;
+@property (nonatomic,strong)  NSMutableOrderedSet *participants;
 
 @end
 
@@ -173,7 +173,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     self.view.autoresizesSubviews= NO;
     
     self.arrayOfPotentialParticipants= [NSMutableArray new];
-    self.participants= [NSMutableSet new];
+    self.participants= [NSMutableOrderedSet new];
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
     self.navTitle = nto;
@@ -211,7 +211,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     // RULE: Find out what users are already attached to this events.
     [APP.eventBeingEdited refreshUsersFromServerWithSuccess:^{
         [_participants removeAllObjects];
-        self.participants= [[ NSMutableOrderedSet alloc] initWithSet:APP.eventBeingEdited.users.set];
+        self.participants= [[ NSMutableOrderedSet alloc] initWithSet: APP.eventBeingEdited.users.set];
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
         
     } failure:^{
@@ -391,7 +391,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     BOOL inList= NO;
     for (UserObject* user  in  _participants) {
-        if (object.userID.intValue>0 &&  user.userID.intValue == object.userID.intValue) {
+        if (object.userID>0 &&  user.userID == object.userID) {
             inList= YES;
             break;
         }

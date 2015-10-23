@@ -53,8 +53,6 @@
     [self.view addSubview:_logo];
     [self.view addSubview:_facebookLoginButton];
     [self doLayout];
-    
-    [[LocationManager sharedInstance] askUserWhetherToTrack ];
 }
 
 //------------------------------------------------------------------------------
@@ -116,29 +114,8 @@
         return;
     }
     
-    if  ([ value isKindOfClass:[NSString class]] ) {
-        NSString* s= value;
-        int i = atoi( s.UTF8String);
-        if  (!i) {
-            return;
-        }
-        value= [NSNumber numberWithInt: i ];
-    }
-    
     UserObject* userInfo= [Settings sharedInstance].userObject;
-    id currentUserID= userInfo.userID;
-    BOOL isANumber = [currentUserID isKindOfClass:[NSNumber class]];
-    if  (currentUserID && isANumber ) {
-        NSNumber *n= currentUserID;
-        int i= [n intValue];
-        int j= [((NSNumber*) value) intValue];
-        if  (i != j ) {
-            NSLog  (@"USER ID HAS CHANGED");
-            [APP.diagnosticLogString appendFormat: @"USER ID: %@\r",value ];
-       }
-    }
-    
-    userInfo.userID= value;
+    userInfo.userID= parseIntegerOrNullFromServer(value);
     [[Settings sharedInstance]save ];
 
 }
@@ -247,7 +224,7 @@
     //
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString *email= userInfo.email;
-    if  (email.length > 1 && userInfo.userID.intValue <= 0) {
+    if  (email.length > 1 && !userInfo.userID) {
         NSLog ( @"user has OO account already but this is their first Facebook login.");
     }
 
@@ -280,6 +257,8 @@
     
     [self fetchProfilePhoto];
     
+    [[LocationManager sharedInstance] askUserWhetherToTrack ];
+
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* requestString= [NSString stringWithFormat:  @"https://%@/users/emails/%@", kOOURL,  email];
    
@@ -320,12 +299,12 @@
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
     
-    if (![[AFNetworkReachabilityManager sharedManager] isReachable]) {
-        message(@"The Internet is not reachable.");
-        return ;
-        
-        // XX: Need to retry after Internet becomes accessible.
-    }
+//    if (![[AFNetworkReachabilityManager sharedManager] isReachable]) {
+//        message(@"The Internet is not reachable.");
+//        return ;
+//        
+//        // XX: Need to retry after Internet becomes accessible.
+//    }
     
     AFHTTPRequestOperation* operation= [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
@@ -544,9 +523,9 @@
  
     if  (alreadyKnown ) {
         UserObject* userInfo= [Settings sharedInstance].userObject;
-        NSNumber* userid= userInfo.userID;
+        NSUInteger userid= userInfo.userID;
         
-        requestString=[NSString stringWithFormat: @"https://%@/users/%@",
+        requestString=[NSString stringWithFormat: @"https://%@/users/%lu",
                        kOOURL, userid];
         
         requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];

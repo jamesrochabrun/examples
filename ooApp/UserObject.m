@@ -44,7 +44,7 @@ NSString *const kKeyParticipantState = @"participant_state";
 
 - (NSUInteger)hash;
 {
-    return kHashUser + (_userID.longValue & 0xffffff);
+    return kHashUser + (_userID & 0xffffff);
 }
 
 //------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ NSString *const kKeyParticipantState = @"participant_state";
 + (UserObject *)userFromDict:(NSDictionary *)dict
 {
     UserObject *user =[[UserObject alloc] init];
-    user.userID = [dict objectForKey:kKeyID];
+    user.userID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyID] );
     user.firstName = parseStringOrNullFromServer( [dict objectForKey:kKeyFirstName] );
     user.middleName = parseStringOrNullFromServer( [dict objectForKey:kKeyMiddleName] );
     user.lastName = parseStringOrNullFromServer( [dict objectForKey:kKeyLastName] );
@@ -78,7 +78,7 @@ NSString *const kKeyParticipantState = @"participant_state";
 - (NSDictionary *)dictionaryFromUser;
 {
     return @{
-             kKeyID : self.userID ?: @"",
+             kKeyID : @(self.userID ),
              kKeyMiddleName:self.middleName ?: @"",
              kKeyFirstName:self.firstName ?: @"",
              kKeyLastName:self.lastName ?: @"",
