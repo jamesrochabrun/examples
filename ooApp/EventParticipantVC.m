@@ -287,6 +287,7 @@
     [super viewWillAppear:animated];
     
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     EventObject* event=APP.eventBeingEdited;
