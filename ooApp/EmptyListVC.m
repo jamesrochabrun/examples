@@ -12,6 +12,7 @@
 #import "Common.h"
 #import "ListStripTVCell.h"
 #import "OOAPI.h"
+#import "ListsVC.h"
 
 @interface EmptyListVC ()
 
@@ -84,10 +85,10 @@
 // Name:    userPressedListsButton
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)userPressedListsButton: (id) sender
+- (void)userPressedListsButton:(id)sender
 {
-    UIViewController *vc= [[UIViewController  alloc] init];
-    vc.view.backgroundColor= BLUE;
+    ListsVC *vc= [[ListsVC alloc] init];
+    [vc getLists];
     [self.navigationController pushViewController:vc animated:YES];
 }
 //------------------------------------------------------------------------------

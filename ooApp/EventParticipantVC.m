@@ -20,12 +20,13 @@
 
 @interface EventParticipantFirstCell ()
 
-@property (nonatomic,strong)  UIButton* buttonSubmitVote;
-@property (nonatomic,strong)  UIButton* buttonGears;
-@property (nonatomic,strong)  UILabel* labelTimeLeft;
-@property (nonatomic,strong)  UILabel* labelPersonIcon;
-@property (nonatomic,strong)  UIImageView* backgroundImageView;
-@property (nonatomic,strong)  EventObject* event;
+@property (nonatomic, strong) UIButton *buttonSubmitVote;
+@property (nonatomic, strong) UIButton *buttonGears;
+@property (nonatomic, strong) UILabel *labelTimeLeft;
+@property (nonatomic, strong) UILabel *labelPersonIcon;
+@property (nonatomic, strong) UIImageView *backgroundImageView;
+@property (nonatomic, strong) EventObject *event;
+
 @end
 
 @implementation  EventParticipantFirstCell
@@ -308,11 +309,12 @@
     cell.delegate= self;
 
     RestaurantObject* venue= [event getNthVenue:row];
-    NSUInteger venueID= venue.restaurantID;
+
+    NSUInteger venueID = venue.restaurantID;
     VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];
 
     if (voteForRow ) {
-        [cell provideVote:voteForRow  ];
+        [cell provideVote:voteForRow];
     } else {
         [cell indicateMissingVoteFor:venue ];
     }
@@ -322,7 +324,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row=  indexPath.row;
+    NSInteger row = indexPath.row;
     if  (!row) {
         return  120;
     }

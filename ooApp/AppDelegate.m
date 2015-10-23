@@ -35,6 +35,8 @@
 #else
     _usingStagingServer= NO;
 #endif
+
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     
     // Override point for customization after application launch.
     NSLog(@"application finished launching");
@@ -74,6 +76,10 @@
     } else {
         return NO;
     }
+}
+
+- (BOOL)connected {
+    return [AFNetworkReachabilityManager sharedManager].reachable;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -24,10 +24,12 @@
 @property (nonatomic, strong) UILabel *distance;
 @property (nonatomic, strong) UIView *verticalLine1;
 @property (nonatomic, strong) UIView *verticalLine2;
+@property (nonatomic, strong) UIView *verticalLine3;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 
 @property (nonatomic, strong) UIButton *favoriteButton;
 @property (nonatomic, strong) UIButton *toTryButton;
+@property (nonatomic, strong) UILabel *rating;
 
 @end
 
@@ -36,22 +38,35 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        
         _backgroundImage = [[UIImageView alloc] init];
         _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
         [self addSubview:_backgroundImage];
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         
         _verticalLine1 = [[UIView alloc] init];
-        [self addSubview:_verticalLine1];
-        
         _verticalLine2 = [[UIView alloc] init];
+        _verticalLine3 = [[UIView alloc] init];
+        [self addSubview:_verticalLine1];
         [self addSubview:_verticalLine2];
+        [self addSubview:_verticalLine3];
         
-        _verticalLine1.backgroundColor = UIColorRGBA(kColorWhite);
-        _verticalLine2.backgroundColor = UIColorRGBA(kColorWhite);
-        _verticalLine1.translatesAutoresizingMaskIntoConstraints = NO;
-        _verticalLine2.translatesAutoresizingMaskIntoConstraints = NO;
+        _verticalLine1.backgroundColor = _verticalLine2.backgroundColor = _verticalLine3.backgroundColor = UIColorRGBA(kColorWhite);
+        _verticalLine1.translatesAutoresizingMaskIntoConstraints = _verticalLine2.translatesAutoresizingMaskIntoConstraints = _verticalLine3.translatesAutoresizingMaskIntoConstraints = NO;
+
+        _favoriteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSize width:kGeomWidthMenuButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
+        
+        _toTryButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_toTryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomWidthMenuButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
+        
+        [_toTryButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        [_favoriteButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        [_toTryButton setTitle:kFontIconToTryFilled forState:UIControlStateSelected];
+        [_favoriteButton setTitle:kFontIconFavoriteFilled forState:UIControlStateSelected];
+        
+        _favoriteButton.translatesAutoresizingMaskIntoConstraints = _toTryButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:_favoriteButton];
+        [self addSubview:_toTryButton];
         
         _name = [[UILabel alloc] init];
         _name.translatesAutoresizingMaskIntoConstraints = NO;
@@ -92,6 +107,14 @@
     return self;
 }
 
+- (void)listButtonTapped:(id)sender {
+    if (sender == _favoriteButton) {
+        [_delegate restaurantMainCVCell:self listButtonTapped:kListTypeFavorites];
+    } else if (sender == _toTryButton) {
+        [_delegate restaurantMainCVCell:self listButtonTapped:kListTypeToTry];
+    }
+}
+
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithPhoneNumber:(NSString *)phoneNumber {
     UIDevice *device = [UIDevice currentDevice];
     if ([[device model] isEqualToString:@"iPhone"] ) {
@@ -118,14 +141,14 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _priceRange, _name, _address, _website, _phoneNumber, _distance, _backgroundImage);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _priceRange, _name, _address, _website, _phoneNumber, _distance, _toTryButton, _favoriteButton, _backgroundImage);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_name]-[_distance]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_name]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_name]-(>=0)-[_toTryButton]-[_favoriteButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_distance]-spaceInter-[_verticalLine2(1)]-spaceInter-[_priceRange]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_phoneNumber]-[_verticalLine1(1)]-[_website]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_address]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -183,6 +206,24 @@
                          attribute:NSLayoutAttributeHeight
                          multiplier:1
                          constant:0]];
+    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_favoriteButton
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_name
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
+    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_toTryButton
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_name
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
 }
 
 - (void)setRestaurant:(RestaurantObject *)restaurant {
@@ -200,12 +241,11 @@
         _priceRange.text = @"$$$$";
     } else if (_restaurant.priceRange >= 2) {
         _priceRange.text = @"$$$";
-    } else if (_restaurant.priceRange > 1) {
+    } else if (_restaurant.priceRange >= 1) {
         _priceRange.text = @"$$";
     } else {
         _priceRange.text = @"$";
     }
-    
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     
@@ -243,6 +283,13 @@
     [self updateConstraintsIfNeeded];
 }
 
+- (void)setToTry:(BOOL)on {
+    [_toTryButton setSelected:on];
+}
+
+- (void)setFavorite:(BOOL)on {
+    [_favoriteButton setSelected:on];
+}
 
 -(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) return;

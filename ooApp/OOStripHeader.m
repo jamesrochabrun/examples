@@ -37,13 +37,13 @@
     return self;
 }
 
-- (void)enableAddButtonWithTarget:(id) target action: (SEL) action
+- (void)enableAddButtonWithTarget:(id)target action:(SEL)action
 {
-    if  ( _buttonAdd) {
+    if  (_buttonAdd) {
         return;
     }
-    self.buttonAdd= makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
-                                        YELLOW, CLEAR, target, action,
+    self.buttonAdd = makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
+                                        UIColorRGBA(kColorYellow), UIColorRGBA(kColorClear), target, action,
                                         0, kGeomFontSizeHeader/2.);
     
     [self setNeedsLayout];

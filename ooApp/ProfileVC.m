@@ -79,7 +79,7 @@
         
         self.backgroundColor = WHITE;
         
-        if (userInfo.imageIdentifier) {
+        if (userInfo.imageIdentifier && [userInfo.imageIdentifier length]) {
             self.requestOperation = [OOAPI getUserImageWithImageID:userInfo.imageIdentifier
                                                          maxWidth:self.frame.size.width
                                                         maxHeight:0 success:^(NSString *link) {
@@ -269,8 +269,8 @@
     [super viewDidLoad];
     
     if (!_userID) {
-        UserObject* userInfo= [Settings sharedInstance].userObject;
-        self.profileOwner=userInfo;
+        UserObject *userInfo = [Settings sharedInstance].userObject;
+        self.profileOwner = userInfo;
     } else {
         // NOTE: Whoever created this VC will have set the user ID and user object.
     }
@@ -278,30 +278,30 @@
     _lists = [NSArray array];
     
     OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser: _userID withRestaurant:0
+    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
                 success:^(NSArray *foundLists) {
-                    NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
+                    NSLog (@" number of lists for this user:  %ld", (long)foundLists.count);
                     _lists = foundLists;
                     [self.table reloadData];
                 }
                 failure:^(NSError *e) {
-                    NSLog  (@" error while getting lists for user:  %@",e);
+                    NSLog  (@" error while getting lists for user: %@",e);
                 }];
     // NOTE:  these will later be stored in user defaults.
-    _headerCell=[[ProfileTableFirstRow  alloc] initWithUserInfo:_profileOwner];
-    _headerCell.vc= self;
-    _headerCell.navigationController= self.navigationController;
+    _headerCell = [[ProfileTableFirstRow alloc] initWithUserInfo:_profileOwner];
+    _headerCell.vc = self;
+    _headerCell.navigationController = self.navigationController;
     
-    self.table= [UITableView new];
+    self.table = [UITableView new];
     self.table.delegate= self;
     self.table.dataSource= self;
-    [ self.view addSubview:_table];
+    [self.view addSubview:_table];
     self.table.backgroundColor=[UIColor clearColor];
     self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
     
-    NSString* first= _profileOwner.firstName ?:  @"";
-    NSString* last= _profileOwner.lastName ?:  @"";
-    NSString* fullName=  [NSString stringWithFormat: @"%@ %@", first, last ];
+    NSString *first = _profileOwner.firstName ?:  @"";
+    NSString *last = _profileOwner.lastName ?:  @"";
+    NSString *fullName =  [NSString stringWithFormat: @"%@ %@", first, last ];
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: fullName subHeader:nil];
     [self setNavTitle:  nto];
 }
@@ -310,13 +310,13 @@
 // Name:    viewWillLayoutSubviews
 // Purpose:
 //------------------------------------------------------------------------------
-- (void) viewWillLayoutSubviews
+- (void)viewWillLayoutSubviews
 {
     // NOTE:  this is just temporary
     
-    [ super viewWillLayoutSubviews ];
+    [super viewWillLayoutSubviews];
   
-    self.table.frame=  self.view.bounds;
+    self.table.frame = self.view.bounds;
 }
 
 //------------------------------------------------------------------------------
@@ -327,8 +327,8 @@
 {
 //     [self performSegueWithIdentifier: @"gotoEmptyList" sender:self];
     
-    EmptyListVC* vc=[[EmptyListVC  alloc] init];
-    vc.listName=  string;
+    EmptyListVC *vc= [[EmptyListVC alloc] init];
+    vc.listName = string;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -345,9 +345,9 @@
 // Name:    getNameOfList
 // Purpose:
 //------------------------------------------------------------------------------
-- (NSString*)getNameOfList: ( int) which
+- (NSString *)getNameOfList:(NSInteger)which
 {
-    NSArray* a= self.lists;
+    NSArray *a= self.lists;
     if  (which < 0 ||  which >= a.count) {
         return  @"";
     }
@@ -358,7 +358,7 @@
 // Name:    heightForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:( NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row = indexPath.row;
 

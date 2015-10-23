@@ -223,7 +223,7 @@
 // Name:    checkWhetherUserNameIsInUse
 // Purpose: Submit the username to the backend for approval or not.
 //------------------------------------------------------------------------------
-- (void) checkWhetherUserNameIsInUse: (NSString*)enteredUsername
+- (void)checkWhetherUserNameIsInUse:(NSString*)enteredUsername
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
@@ -293,7 +293,8 @@
 {
     [self performSegueWithIdentifier:@"returnToLogin" sender:self];
 }
-- (void)wentIntoBackground: (NSNotification*) not
+
+- (void)wentIntoBackground:(NSNotification*) not
 {
     [self goToLoginScreen];
 }
@@ -316,7 +317,7 @@
 // Name:    keyboardHidden
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)keyboardHidden: (NSNotification*) not
+- (void)keyboardHidden:(NSNotification*) not
 {
     _scrollView.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
 }

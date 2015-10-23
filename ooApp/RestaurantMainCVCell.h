@@ -10,6 +10,7 @@
 #import "TTTAttributedLabel.h"
 #import "RestaurantObject.h"
 #import "MediaItemObject.h"
+#import "ListObject.h"
 
 @class RestaurantMainCVCell;
 
@@ -17,7 +18,8 @@
 
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
                        gotoURL:(NSURL *)url;
-
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
+                listButtonTapped:(ListType)listType;
 @end
 
 @interface RestaurantMainCVCell : UICollectionViewCell <TTTAttributedLabelDelegate>
@@ -25,5 +27,8 @@
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;
 @property (nonatomic, strong) id<RestaurantMainCVCellDelegate>delegate;
+
+- (void)setToTry:(BOOL)on;
+- (void)setFavorite:(BOOL)on;
 
 @end

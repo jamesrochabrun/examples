@@ -21,18 +21,18 @@ typedef enum : char {
 } EventType;
 
 @property (nonatomic) NSUInteger eventID;
-@property (nonatomic,assign) BOOL isComplete;
+@property (nonatomic, assign) BOOL isComplete;
 @property (nonatomic) NSUInteger creatorID; // Participant type 0.
 @property (nonatomic, strong) NSString *eventCoverImageURL;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic,assign) EventType eventType;
+@property (nonatomic, assign) EventType eventType;
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSDate *dateWhenVotingClosed;
-@property (nonatomic,assign) double totalPrice;
-@property (nonatomic,assign) NSInteger numberOfVenues;
-@property (nonatomic,assign) NSInteger numberOfPeople;
-@property (nonatomic,assign) NSInteger numberOfPeopleVoted;
-@property (nonatomic,assign) NSInteger numberOfPeopleResponded;
+@property (nonatomic, assign) double totalPrice;
+@property (nonatomic, assign) NSInteger numberOfVenues;
+@property (nonatomic, assign) NSInteger numberOfPeople;
+@property (nonatomic, assign) NSInteger numberOfPeopleVoted;
+@property (nonatomic, assign) NSInteger numberOfPeopleResponded;
 @property (nonatomic, strong) NSMutableArray *keywords;
 @property (nonatomic, strong) NSMutableOrderedSet *users;
 @property (nonatomic, strong) NSMutableOrderedSet *venues;
@@ -42,32 +42,32 @@ typedef enum : char {
 @property (nonatomic, strong) NSString *comment;
 @property (nonatomic, strong) NSDate *createdAt;
 @property (nonatomic, strong) NSDate *updatedAt;
-@property (nonatomic,assign) NSInteger friendRecommendationAge;
+@property (nonatomic, assign) NSInteger friendRecommendationAge;
 @property (nonatomic, strong) NSString *primaryVenueImageIdentifier;
 
-+ (EventObject*) eventFromDictionary: (NSDictionary*)dictionary;
--(NSDictionary*) dictionaryFromEvent;
++ (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
+- (NSDictionary *)dictionaryFromEvent;
 
-- (void) addVenue: (RestaurantObject*)venue;
-- (void) removeVenue: (RestaurantObject*)venue;
-- (RestaurantObject*) getNthVenue: (NSInteger)index;
-- (NSUInteger) totalVenues;
-- (RestaurantObject*)firstVenue;
+- (void)addVenue:(RestaurantObject *)venue;
+- (void)removeVenue:(RestaurantObject *)venue;
+- (RestaurantObject *)getNthVenue:(NSInteger)index;
+- (NSUInteger)totalVenues;
+- (RestaurantObject *)firstVenue;
 
-- (AFHTTPRequestOperation*) refreshUsersFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshUsersFromServerWithSuccess:(void (^)())success
                                                        failure:(void (^)())failure;
-- (AFHTTPRequestOperation*) refreshVenuesFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshVenuesFromServerWithSuccess:(void (^)())success
                                                        failure:(void (^)())failure;
-- (AFHTTPRequestOperation*) refreshParticipantStatsFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshParticipantStatsFromServerWithSuccess:(void (^)())success
                                                                  failure:(void (^)())failure;
-- (AFHTTPRequestOperation*) refreshVotesFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshVotesFromServerWithSuccess:(void (^)())success
                                                       failure:(void (^)())failure;
-- (NSString*) asString;
+- (NSString *)asString;
 
-- (void) sendDatesToServer;
-- (void) establishPrimaryImage;
+- (void)sendDatesToServer;
+- (void)establishPrimaryImage;
 
-- (RestaurantObject*)lookupVenueByID: (NSInteger) identifier;
-- (VoteObject*)lookupVoteByVenueID: (NSInteger) identifier;
+- (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
+- (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
 
 @end

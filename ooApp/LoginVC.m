@@ -299,6 +299,11 @@
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
     
+    if ([APP connected]) {
+        message(@"The Internet is not reachable.");
+        return ;
+    }
+    
 //    if (![[AFNetworkReachabilityManager sharedManager] isReachable]) {
 //        message(@"The Internet is not reachable.");
 //        return ;
