@@ -27,9 +27,9 @@
 @property (nonatomic, strong) UIAlertController *createListAC;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
-@property (nonatomic, strong) NSMutableSet *removeButtons;
-@property (nonatomic, strong) UIView *removeButtonsContainer;
-@property (nonatomic) CGFloat removeButtonsContainerHeight;
+@property (nonatomic, strong) NSMutableSet *listButtons;
+@property (nonatomic, strong) UIView *listButtonsContainer;
+@property (nonatomic) CGFloat listButtonsContainerHeight;
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
 @property (nonatomic, strong) NSArray *mediaItems;
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -54,8 +54,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     _userInfo = [Settings sharedInstance].userObject;
 
-    _removeButtonsContainer = [[UIView alloc] init];
-    _removeButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
+    _listButtonsContainer = [[UIView alloc] init];
+    _listButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
     
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
@@ -79,17 +79,17 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     _collectionView.backgroundColor = UIColorRGBA(kColorWhite);
     
-    _removeButtons = [NSMutableSet set];
+    _listButtons = [NSMutableSet set];
     
 //    [DebugUtilities addBorderToViews:@[_collectionView]];
 }
 
 -(void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"removeContainerHeight":@(_removeButtonsContainerHeight)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"listContainerHeight":@(_listButtonsContainerHeight)};
     
     UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _removeButtonsContainer, _collectionView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view removeConstraints:_verticalLayoutContraints];
@@ -203,12 +203,12 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)addToEvent
 {
-    [APP.eventBeingEdited addVenue: _restaurant];
+    [APP.eventBeingEdited addVenue:_restaurant];
 }
 
 - (void)removeFromEvent
 {
-    [APP.eventBeingEdited removeVenue:  _restaurant];
+    [APP.eventBeingEdited removeVenue:_restaurant];
 }
 
 - (void)moreButtonPressed:(id)sender {
@@ -264,10 +264,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                         b.name = [lo.name uppercaseString];
                         b.theId = lo.listID;
                         [b addTarget:self action:@selector(showList:) forControlEvents:UIControlEventTouchUpInside];
-                        [_removeButtons addObject:b];
+                        [_listButtons addObject:b];
                     }];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [weakSelf displayRemoveButtons];
+                        [weakSelf displayListButtons];
                     });
                 }
                 failure:^(NSError *e) {
@@ -293,13 +293,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [_collectionView reloadData];
 }
 
-- (void)displayRemoveButtons {
+- (void)displayListButtons {
     __block CGPoint origin = CGPointMake(kGeomSpaceInter, kGeomSpaceInter);
-    NSArray *removeButtonsArray = [_removeButtons allObjects];
-    _removeButtonsContainerHeight = 0;
-    [removeButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    NSArray *listButtonsArray = [_listButtons allObjects];
+    _listButtonsContainerHeight = 0;
+    [listButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOTagButton *b = (OOTagButton *)obj;
-        [_removeButtonsContainer addSubview:b];
+        [_listButtonsContainer addSubview:b];
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
         frame.origin.x = origin.x;
@@ -313,15 +313,15 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         b.frame = frame;
         
         origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
-        _removeButtonsContainerHeight = CGRectGetMaxY(b.frame);
+        _listButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
-    _removeButtonsContainerHeight += (_removeButtonsContainerHeight) ? kGeomSpaceInter : 0;
+    _listButtonsContainerHeight += (_listButtonsContainerHeight) ? kGeomSpaceInter : 0;
     [_collectionView reloadData];
 }
 
 - (void)viewDidLayoutSubviews {
-    _removeButtonsContainer.frame = CGRectMake(kGeomSpaceEdge, 0, width(self.view)-2*kGeomSpaceEdge, _removeButtonsContainerHeight);
-//    NSLog(@"_removeButtonsContainer=%@", _removeButtonsContainer);
+    _listButtonsContainer.frame = CGRectMake(kGeomSpaceEdge, 0, width(self.view)-2*kGeomSpaceEdge, _listButtonsContainerHeight);
+//    NSLog(@"_listButtonsContainer=%@", _listButtonsContainer);
 }
 
 - (void)showList:(id)sender {
@@ -412,7 +412,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeLists: {
             UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
             cvc.backgroundColor = UIColorRGBA(kColorWhite);
-            [cvc addSubview:_removeButtonsContainer];
+            [cvc addSubview:_listButtonsContainer];
             return cvc;
             break;
         }
@@ -440,7 +440,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
     switch (indexPath.section) {
         case kSectionTypeLists:
-            return _removeButtonsContainerHeight;
+            return _listButtonsContainerHeight;
             break;
         case kSectionTypeMain:
             return 160;

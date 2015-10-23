@@ -76,7 +76,9 @@ static NSString * const cellIdentifier = @"listCell";
     self.navTitle = nto;
     
     __weak ListsVC *weakSelf = self;
-    self.requestOperation = [api getListsOfUser:0 withRestaurant:0 success:^(NSArray *lists) {
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    
+    self.requestOperation = [api getListsOfUser:userInfo.userID withRestaurant:0 success:^(NSArray *lists) {
         weakSelf.lists = lists;
         ON_MAIN_THREAD( ^{
             [self gotLists];

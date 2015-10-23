@@ -310,7 +310,7 @@ NSString *const kKeySearchFilter = @"filter";
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *error))failure
 {
-    if (!userID || !restaurantID) {
+    if (!userID) {
         failure(nil);
         return nil;
     }

@@ -33,10 +33,11 @@ NSString *const kKeyNumberOfPeople = @"num_people";
 NSString *const kKeyNumberOfPeopleResponded = @"num_responded";
 NSString *const kKeyNumberOfPeopleVoted = @"num_voted";
 NSString *const kKeyMediaURL = @"media_url";
-NSString*const kKeyNumberOfVenues=  @"num_restaurants";
+NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 
 @implementation EventObject
-- (instancetype) init
+
+- (instancetype)init
 {
     self = [super init];
     if (self) {
@@ -48,7 +49,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
 
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 {
-    EventObject* e= [[EventObject  alloc] init];
+    EventObject *e= [[EventObject  alloc] init];
     if  ([dictionary isKindOfClass:[NSDictionary class]] ) {
         e.eventID = [dictionary [kKeyEventID] intValue];
         e.creatorID = [dictionary [kKeyCreatorID] intValue];
@@ -90,33 +91,32 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return e;
 }
 
--(NSDictionary*) dictionaryFromEvent;
+- (NSDictionary *)dictionaryFromEvent;
 {
-    if  (!_createdAt) {
+    if (!_createdAt) {
         _createdAt= [NSDate date];
     }
-    if  (!_updatedAt) {
+    if (!_updatedAt) {
         _updatedAt= [NSDate date];
     }
     
     NSMutableDictionary *dictionary=  @{
                                         kKeyCreatedAt:_createdAt,
                                         kKeyUpdatedAt:_updatedAt,
-                                        kKeyIsComplete: @(_isComplete),
-                                        kKeyEventType: @(_eventType),// 1= user, 2= curated
-
+                                        kKeyIsComplete:@(_isComplete),
+                                        kKeyEventType:@(_eventType),// 1= user, 2= curated
                                         }.mutableCopy;
     
-    if  (_reviewSite  && _reviewSite.length) dictionary[ kKeyReviewSite]= _reviewSite;
-    if  (_name  && _name.length) dictionary[kKeyName]= _name;
-    if  (_comment  && _comment.length) dictionary[ kKeyComment]= _comment;
-    if  (_specialEvent  && _specialEvent.length) dictionary[kKeySpecialEvent]= _specialEvent;
-    if  (_keywords  && _keywords.count) dictionary[ kKeyKeywords]= _keywords;
-    if  (_eventID>0 ) dictionary[ kKeyEventID ]=@(_eventID);
-    if  (_date  ) dictionary[ kKeyEventDate]= _date;
-    if  (_dateWhenVotingClosed  ) dictionary[ kKeyWhenVotingCloses]= _dateWhenVotingClosed;
-    if  (_friendRecommendationAge>0 ) dictionary[ kKeyFriendRecommendationAge]=@(_friendRecommendationAge);
-    if  (_totalPrice>0 ) dictionary[ kKeyTotalPrice]=@(_totalPrice);
+    if (_reviewSite && _reviewSite.length) dictionary[kKeyReviewSite] = _reviewSite;
+    if (_name && _name.length) dictionary[kKeyName] = _name;
+    if (_comment && _comment.length) dictionary[kKeyComment] = _comment;
+    if (_specialEvent && _specialEvent.length) dictionary[kKeySpecialEvent] = _specialEvent;
+    if (_keywords && _keywords.count) dictionary[ kKeyKeywords] = _keywords;
+    if (_eventID > 0) dictionary[kKeyEventID] = @(_eventID);
+    if (_date) dictionary[kKeyEventDate] = _date;
+    if (_dateWhenVotingClosed) dictionary[kKeyWhenVotingCloses] = _dateWhenVotingClosed;
+    if (_friendRecommendationAge > 0) dictionary[kKeyFriendRecommendationAge] = @(_friendRecommendationAge);
+    if (_totalPrice > 0) dictionary[kKeyTotalPrice] = @(_totalPrice);
 
     return [NSDictionary dictionaryWithDictionary:dictionary];
 }
@@ -126,7 +126,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return _venues.count;
 }
 
-- (RestaurantObject*)firstVenue
+- (RestaurantObject *)firstVenue
 {
     if  (!_venues || !_venues.count) {
         return nil;
@@ -134,7 +134,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return _venues[0];
 }
 
-- (void) addVenue: (RestaurantObject*)venue;
+- (void)addVenue:(RestaurantObject *)venue;
 {
     if (!venue) {
         return;
@@ -156,7 +156,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     }
 }
 
-- (void) removeVenue: (RestaurantObject*)venue;
+- (void)removeVenue:(RestaurantObject *)venue;
 {
     if (!venue) {
         return;
@@ -179,7 +179,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     }
 }
 
-- (RestaurantObject*) getNthVenue: (NSInteger)index;
+- (RestaurantObject *)getNthVenue:(NSInteger)index;
 {
     if  (index <0 || index>= _venues.count ) {
         return nil;
@@ -187,7 +187,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return _venues[index];
 }
 
-- (AFHTTPRequestOperation*) refreshParticipantStatsFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshParticipantStatsFromServerWithSuccess:(void (^)())success
                                                                  failure:(void (^)())failure;
 {
     return [OOAPI getEventByID:self.eventID
@@ -202,10 +202,10 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
             ];
 }
 
-- (AFHTTPRequestOperation*) refreshUsersFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshUsersFromServerWithSuccess:(void (^)())success
                                                       failure:(void (^)())failure;
 {
-    return [OOAPI getParticipantsInEvent: self
+    return [OOAPI getParticipantsInEvent:self
                                  success:^(NSArray *users) {
                                      
                                      [self.users removeAllObjects];
@@ -220,7 +220,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     
 }
 
-- (AFHTTPRequestOperation*) refreshVenuesFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshVenuesFromServerWithSuccess:(void (^)())success
                                     failure:(void (^)())failure;
 {
     return [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
@@ -238,19 +238,19 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     }];
 }
 
-- (NSString*) asString;
+- (NSString *)asString;
 {
-    return [NSString stringWithFormat: @"EVENT %ld %@ #venues=%ld media=%@",
-            ( long)_eventID,
+    return [NSString stringWithFormat:@"EVENT %ld %@ #venues=%ld media=%@",
+            (long)_eventID,
             _name,
-            ( long)[ self totalVenues],
+            (long)[self totalVenues],
             _primaryVenueImageIdentifier
             ];
 }
 
-- (void) sendDatesToServer;
+- (void)sendDatesToServer;
 {
-    [OOAPI reviseEvent: APP.eventBeingEdited
+    [OOAPI reviseEvent:APP.eventBeingEdited
                success:^(id foo) {
                    NSLog  (@"UPDATED BACKEND WITH NEW DATES.");
                } failure:^(NSError *error) {
@@ -258,7 +258,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                }];
 }
 
-- (void) establishPrimaryImage;
+- (void)establishPrimaryImage;
 {
     self.primaryVenueImageIdentifier= nil;
     for (RestaurantObject* r  in  self.venues) {
@@ -273,7 +273,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     }
 }
 
-- (RestaurantObject*)lookupVenueByID:(NSUInteger)identifier;
+- (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
 {
     if  (!_venues.count || identifier) {
         return nil;
@@ -289,7 +289,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return nil;
 }
 
-- (AFHTTPRequestOperation*) refreshVotesFromServerWithSuccess:(void (^)())success
+- (AFHTTPRequestOperation *)refreshVotesFromServerWithSuccess:(void (^)())success
                                                       failure:(void (^)())failure;
 {
     return [OOAPI getVoteForEvent:self
@@ -306,7 +306,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
 
 }
 
-- (VoteObject*)lookupVoteByVenueID: (NSInteger) identifier;
+- (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;

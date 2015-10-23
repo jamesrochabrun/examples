@@ -269,8 +269,8 @@
     [super viewDidLoad];
     
     if (!_userID) {
-        UserObject* userInfo= [Settings sharedInstance].userObject;
-        self.profileOwner=userInfo;
+        UserObject *userInfo = [Settings sharedInstance].userObject;
+        self.profileOwner = userInfo;
     } else {
         // NOTE: Whoever created this VC will have set the user ID and user object.
     }
@@ -278,14 +278,14 @@
     _lists = [NSArray array];
     
     OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser: _userID withRestaurant:0
+    [api getListsOfUser:_userID withRestaurant:0
                 success:^(NSArray *foundLists) {
-                    NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
+                    NSLog (@" number of lists for this user:  %ld", (long)foundLists.count);
                     _lists = foundLists;
                     [self.table reloadData];
                 }
                 failure:^(NSError *e) {
-                    NSLog  (@" error while getting lists for user:  %@",e);
+                    NSLog  (@" error while getting lists for user: %@",e);
                 }];
     // NOTE:  these will later be stored in user defaults.
     _headerCell=[[ProfileTableFirstRow  alloc] initWithUserInfo:_profileOwner];
