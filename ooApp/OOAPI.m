@@ -316,10 +316,10 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSString *restaurantResource = @"";
     if (restaurantID) {
-        restaurantResource = [NSString stringWithFormat:@"/restaurants/%ld", restaurantID];
+        restaurantResource = [NSString stringWithFormat:@"/restaurants/%ld", (long)restaurantID];
     }
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld%@/lists",
-                           [OOAPI URL], userID, restaurantResource];
+                           [OOAPI URL], (long)userID, restaurantResource];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -490,7 +490,7 @@ NSString *const kKeySearchFilter = @"filter";
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%ld/restaurants",
                            [OOAPI URL],
-                           listID];
+                           (long)listID];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -828,12 +828,12 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", [OOAPI URL], (unsigned long) eventID];
     
 //    NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
 
     AFHTTPRequestOperation *op;
     if (participating) {
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users", [OOAPI URL], (unsigned long) eventID];
         NSLog (@"POST %@", urlString);
         op = [rm POST:urlString parameters: @{
                                               @"user_ids":  user.userID
@@ -850,10 +850,12 @@ NSString *const kKeySearchFilter = @"filter";
                                            failure(error);
                                        }];
     } else {
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/users/%@",
+                               [OOAPI URL],
+                               (unsigned long) eventID, user.userID];
+        
         NSLog (@"DELETE %@", urlString);
-        op = [rm DELETE:urlString parameters: @{
-                                                @"user_ids": user.userID
-                                                }
+        op = [rm DELETE:urlString parameters: nil
                                         success:^(id responseObject) {
                                             NSInteger identifier= 0;
                                             if ([responseObject isKindOfClass:[NSDictionary class]]) {
@@ -1019,10 +1021,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSURLSessionUploadTask *task = [session uploadTaskWithRequest: request
                                                          fromData: imageData
-                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                    NSString *stringFromData= [NSString stringWithCharacters:[data  bytes] length:[ data length]];
-                                                    NSLog  (@"stringFromData = %@",stringFromData);
-                                                    
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {                                                    
                                                     if (error) {
                                                         if (failure) failure(error);
                                                     } else {
@@ -1147,7 +1146,6 @@ NSString *const kKeySearchFilter = @"filter";
            }];
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    getCuratedEventsWithSuccess
 // Purpose: Obtain a list of curated events that are complete.
@@ -1203,7 +1201,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
     if (identifier) {
-        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantID];
+        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantIDPlural];
     }
     else if (googleIdentifier.length) {
         [parameters setObject:googleIdentifier forKey:kKeyRestaurantGoogleID];
@@ -1537,7 +1535,92 @@ NSString *const kKeySearchFilter = @"filter";
     return operation;
 }
 
+//------------------------------------------------------------------------------
+// Name:    getVotesForEvent
+// Purpose: Fetch an array of users that are following the current user.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getVoteForEvent:(EventObject*)event
+                                    success:(void (^)(NSArray *votes))success
+                                    failure:(void (^)(NSError *error))failure;
+{
+
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes", [OOAPI URL], event.eventID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters: nil
+           success:^(id responseObject) {
+               NSMutableArray *votes = [NSMutableArray array];
+               for (id dict in responseObject) {
+                   VoteObject* object=[VoteObject voteFromDictionary:dict];
+                   if  (object ) {
+                       [votes addObject: object];
+                   }
+               }
+               success(votes);
+           }
+           failure:^(NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure (error);
+           }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    setVoteTo forEvent andRestaurant
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)setVoteTo:(NSInteger)  vote
+                                       forEvent:(EventObject *)eo
+                        andRestaurant: (RestaurantObject*)restaurant
+                                       success:(void (^)(NSInteger eventID))success
+                                       failure:(void (^)(NSError *error))failure;
+{
+    if (!eo  || !restaurant || !restaurant.restaurantID) {
+        failure (nil);
+        return nil;
+    }
+    
+    if  (vote != 1 ) {
+        vote= 0;
+    }
+    
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSNumber *userID= userInfo.userID;
+    if (!userID) {
+        failure (nil);
+        return nil;
+    }
+    
+    NSInteger eventID= eo.eventID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    AFHTTPRequestOperation *op;
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes", [OOAPI URL], (unsigned long) eventID];
+    NSLog (@"POST %@", urlString);
+    
+    op = [rm POST:urlString parameters: @{
+                                          @"user_id":  userID,
+                                           @"restaurant_id":restaurant.restaurantID,
+                                           @"event_id": @(eo.eventID),
+                                           @"vote": @(vote)
+                                          }
+          success:^(id responseObject) {
+              NSInteger identifier= 0;
+              if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                  NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                  identifier= parseIntegerOrNullFromServer(eventID);
+              }
+              success(identifier);
+          } failure:^(NSError *error) {
+              failure(error);
+          }];
+    
+    return op;
+}
+
 + (NSString *) URL {
+    // XX If not I want hello are you yeah that sounds good cool thanks Sia!using staging server, use production URL.
     return kOOURL;
 }
 @end

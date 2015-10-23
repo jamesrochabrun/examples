@@ -23,6 +23,7 @@ extern NSString *const kKeyRestaurantOpenNow;
 extern NSString *const kKeyRestaurantAddress;
 extern NSString *const kKeyRestaurantPhone;
 extern NSString *const kKeyRestaurantWebsite;
+extern NSString *const kKeyRestaurantRestaurantIDPlural;
 
 typedef enum {
     kRestaurantSourceTypeGoogle = 2

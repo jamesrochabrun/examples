@@ -11,6 +11,8 @@
 #import "RestaurantObject.h"
 #import "OOAPI.h"
 #import "AppDelegate.h"
+#import "UserObject.h"
+#import "Settings.h"
 
 NSString *const kKeyEventID = @"event_id";
 NSString *const kKeyIsComplete = @"is_complete";
@@ -137,8 +139,6 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     if (!venue) {
         return;
     }
-    if  (!_venues) {
-    }
     
     if (![_venues containsObject: venue]) {
         [_venues addObject: venue];
@@ -150,6 +150,8 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                          message( @"Added.");
                      } failure:^(NSError *error) {
                          NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
+                         [_venues removeObject: venue];
+
                      }];
     }
 }
@@ -171,6 +173,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                          NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
                          message( @"Removed.");
                      } failure:^(NSError *error) {
+                         [_venues addObject: venue];
                          NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
                      }];
     }
@@ -227,22 +230,8 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
             [_venues addObject: venue];
         }
         
-        if (_venues.count ) {
-            // XX: Need to find the first venue that has an image…
-            
-            int n= _venues.count;
-            for (int i=0; i < n; i++) {
-                RestaurantObject* venue=_venues[i];
-                if  ( venue.imageRefs.count ) {
-                    ImageRefObject* media=venue.imageRefs[0];
-                    if  ( media) {
-                        self.primaryVenueImageIdentifier=media.reference;
-                        break;
-                    }
-                }
-            }
-        }
-
+        [self establishPrimaryImage];
+        
         success ();
     } failure:^(NSError *error) {
         failure ();
@@ -267,6 +256,74 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                } failure:^(NSError *error) {
                    NSLog  (@"UNABLE TO UPDATE BACKEND WITH NEW DATES.");
                }];
+}
+
+- (void) establishPrimaryImage;
+{
+    self.primaryVenueImageIdentifier= nil;
+    for (RestaurantObject* r  in  self.venues) {
+        if  (r.mediaItems.count ) {
+            MediaItemObject *media= r.mediaItems[0];
+            NSString *imageReference= media.reference;
+            if  (imageReference ) {
+                self.primaryVenueImageIdentifier= imageReference;
+                break;
+            }
+        }
+    }
+}
+
+- (RestaurantObject*)lookupVenueByID: (NSInteger) identifier;
+{
+    if  (!_venues.count  ||  identifier<0) {
+        return nil;
+    }
+    
+    for (RestaurantObject* venue  in  _venues) {
+        if (venue.restaurantID) {
+            if ([venue.restaurantID isKindOfClass:[NSString class]]
+                && identifier == [venue.restaurantID integerValue ])
+            {
+                return venue;
+            }
+            else if ( [venue.restaurantID isKindOfClass:[NSNumber class]]
+                     && identifier == [((NSNumber*)venue.restaurantID) integerValue ])
+            {
+                return venue;
+            }
+        }
+    }
+    return nil;
+}
+
+- (AFHTTPRequestOperation*) refreshVotesFromServerWithSuccess:(void (^)())success
+                                                      failure:(void (^)())failure;
+{
+    return [OOAPI getVoteForEvent:self
+                          success:^(NSArray *votes) {
+                              [self.votes removeAllObjects];
+                              [self.votes addObjectsFromArray: votes ];
+                              NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
+                              success ();
+                          }
+                          failure:^(NSError *error) {
+                              NSLog  (@"UNABLE TO GET VOTES FOR EVENT.");
+                              failure ();
+                          }];
+
+}
+
+- (VoteObject*)lookupVoteByVenueID: (NSInteger) identifier;
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSInteger userid= [userInfo.userID integerValue];
+
+    for (VoteObject* vote  in  _votes) {
+        if ( vote.eventID ==  _eventID && vote.userID==userid  && identifier == vote.venueID) {
+            return  vote;
+        }
+    }
+    return nil;
 }
 
 @end

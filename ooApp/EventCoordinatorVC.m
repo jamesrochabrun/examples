@@ -38,7 +38,6 @@
 @property (nonatomic,strong)  UILabel *labelWhen;
 
 @property (nonatomic,strong)  UIView *viewContainer4;
-@property (nonatomic,strong)  UILabel *labelWhere;
 
 @property (nonatomic,strong) OOStripHeader *headerWhere;
 @property (nonatomic,strong) OOStripHeader *headerWho;
@@ -90,56 +89,11 @@
                                                                               style:UIBarButtonItemStylePlain
                                                                              target:self
                                                                              action: @selector(userPressedCancel:)];
-
-    self.viewContainer1= makeView(self.scrollView, WHITE);
-    _imageViewContainer1= makeImageView(_viewContainer1,  @"background-image.jpg");
-    self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"EVENT NAME", kGeomEventHeadingFontSize);
-    _labelEventCover.textColor= WHITE;
-    _viewContainer1.layer.borderWidth= 1;
-    _viewContainer1.layer.borderColor= GRAY.CGColor;
-    _buttonSubmit= makeButton(self.viewContainer1,  @"SUBMIT EVENT", kGeomFontSizeHeader, RED, CLEAR, self, @selector(doSubmit:), 1);
-    _buttonSubmit.titleLabel.numberOfLines= 0;
-    _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
-    
-    self.viewContainer2= makeView(self.scrollView, WHITE);
-    self.labelWho = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
-    self.labelPersonIcon= [UILabel new];
-    [ self.viewContainer2  addSubview: _labelPersonIcon];
-    _labelPersonIcon.attributedText= createPeopleIconString (1);
-    _labelPersonIcon.textAlignment= NSTextAlignmentRight;
-    _viewContainer2.layer.borderWidth= 1;
-    _viewContainer2.layer.borderColor= GRAY.CGColor;
-    
-    self.viewContainer3= makeView(self.scrollView, WHITE);
-    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
-    _viewContainer3.layer.borderWidth= 1;
-    _viewContainer3.layer.borderColor= GRAY.CGColor;
     
     self.viewContainer4= makeView(self.scrollView, WHITE);
-    self.labelWhere = makeAttributedLabel(self.viewContainer4, @"", kGeomEventHeadingFontSize);
     _viewContainer4.layer.borderWidth= 1;
     _viewContainer4.layer.borderColor= GRAY.CGColor;
     _viewContainer4.tag=4;
-    
-    self.headerWho= [[OOStripHeader alloc] init];
-    self.headerWhen= [[OOStripHeader alloc] init];
-    self.headerWhere= [[OOStripHeader alloc] init];
-    
-    [self.headerWho setName: @"WHO" ];
-    [self.headerWhen setName: @"WHEN" ];
-    [self.headerWhere setName: @"WHERE" ];
-    [_scrollView addSubview: self.headerWho];
-    [_scrollView addSubview: self.headerWhen];
-    [_scrollView addSubview: self.headerWhere];
-
-    UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
-    [self.viewContainer1 addGestureRecognizer:tap1 ];
-    UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
-    [self.viewContainer2 addGestureRecognizer:tap2 ];
-    UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhenBox:)];
-    [self.viewContainer3 addGestureRecognizer:tap3 ];
-    UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhereBox:)];
-    [self.viewContainer4 addGestureRecognizer:tap4 ];
     
     self.cvLayout= [[UICollectionViewFlowLayout alloc] init];
     self.cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
@@ -158,9 +112,80 @@
 #define CV_CELL_REUSE_IDENTIFER @"E3_CV"
     [_venuesCollectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
     
+    self.viewContainer1= makeView(self.scrollView, WHITE);
+    _imageViewContainer1= makeImageView(_viewContainer1,  @"background-image.jpg");
+    _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
+    _viewContainer1.clipsToBounds= YES;
+    
+    self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"EVENT NAME", kGeomEventHeadingFontSize);
+    _labelEventCover.textColor= WHITE;
+    _viewContainer1.layer.borderWidth= 1;
+    _viewContainer1.layer.borderColor= GRAY.CGColor;
+    _buttonSubmit= makeButton(self.viewContainer1,  @"SUBMIT EVENT", kGeomFontSizeHeader, RED, CLEAR, self, @selector(doSubmit:), 1);
+    _buttonSubmit.titleLabel.numberOfLines= 0;
+    _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
+    _buttonSubmit.layer.shadowColor= WHITE.CGColor;
+    _buttonSubmit.layer.shadowRadius= 1;
+    _buttonSubmit.layer.shadowOffset=  CGSizeMake (1,1);
+   _buttonSubmit.titleLabel.layer.shadowColor= WHITE.CGColor;
+    _buttonSubmit.titleLabel.layer.shadowRadius= 1;
+    _buttonSubmit.titleLabel.layer.shadowOffset=  CGSizeMake (1,1);
+    
+    self.viewContainer2= makeView(self.scrollView, WHITE);
+    self.labelWho = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
+    self.labelPersonIcon= [UILabel new];
+    [ self.viewContainer2  addSubview: _labelPersonIcon];
+    _labelPersonIcon.attributedText= createPeopleIconString (1);
+    _labelPersonIcon.textAlignment= NSTextAlignmentRight;
+    _viewContainer2.layer.borderWidth= 1;
+    _viewContainer2.layer.borderColor= GRAY.CGColor;
+    
+    self.viewContainer3= makeView(self.scrollView, WHITE);
+    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
+    _viewContainer3.layer.borderWidth= 1;
+    _viewContainer3.layer.borderColor= GRAY.CGColor;
+    
+    self.headerWho= [[OOStripHeader alloc] init];
+    self.headerWhen= [[OOStripHeader alloc] init];
+    self.headerWhere= [[OOStripHeader alloc] init];
+    
+    [self.headerWho setName: @"WHO" ];
+    [self.headerWhen setName: @"WHEN" ];
+    [self.headerWhere setName: @"WHERE" ];
+    [_scrollView addSubview: self.headerWho];
+    [_scrollView addSubview: self.headerWhen];
+    [_scrollView addSubview: self.headerWhere];
+    [self.headerWho enableAddButtonWithTarget: self action:@selector(userTappedWhoBox:)];
+    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
+    
+    UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
+    [self.viewContainer1 addGestureRecognizer:tap1 ];
+    UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
+    [self.viewContainer2 addGestureRecognizer:tap2 ];
+    UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhenBox:)];
+    [self.viewContainer3 addGestureRecognizer:tap3 ];
+    UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhereBox:)];
+    [self.viewContainer4 addGestureRecognizer:tap4 ];
+    
     [self updateBoxes];
     
-    
+    EventObject* e= APP.eventBeingEdited;
+    if  (e.primaryVenueImageIdentifier ) {
+        __weak EventCoordinatorVC *weakSelf = self;
+        OOAPI *api = [[OOAPI alloc] init];
+       /* _imageOperation=*/ [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
+                                                   maxWidth:self.view.frame.size.width
+                                                  maxHeight:0
+                                                    success:^(NSString *link) {
+                                                        UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
+                                                        ON_MAIN_THREAD(  ^{
+                                                            [weakSelf.imageViewContainer1
+                                                             setImageWithURL:[NSURL URLWithString:link]
+                                                             placeholderImage:placeholder];
+                                                        });
+                                                    } failure:^(NSError *error) {
+                                                    }];
+    }
 }
 
 - (void) userPressedCancel: (id) sender
@@ -228,6 +253,7 @@
     [e refreshVenuesFromServerWithSuccess:^{
         [self performSelectorOnMainThread:@selector(updateWhereBoxAnimated:) withObject:@1 waitUntilDone:NO];
     } failure:^{
+        NSLog (@"UNABLE TO REFRESH VENUES");
     }];
     
 }
@@ -243,9 +269,9 @@
     _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
     
     NSString *countsString= [NSString stringWithFormat: @"\r%lu %@\r%lu %@\r%lu %@",
-                             responded,  LOCAL( @"RESPONDED"),
-                             pending,  LOCAL( @"PENDING"),
-                             voted,  LOCAL( @"VOTED")
+                            (unsigned long) responded,  LOCAL( @"RESPONDED"),
+                            (unsigned long) pending,  LOCAL( @"PENDING"),
+                             (unsigned long)voted,  LOCAL( @"VOTED")
                              ];
     _labelWho.attributedText= attributedStringOf(countsString,  kGeomFontSizeHeader);
 }
@@ -253,16 +279,6 @@
 - (void) updateWhereBoxAnimated:(id)animated
 {
     EventObject *event=APP.eventBeingEdited;
-    if  ([event totalVenues ] ) {
-        NSString*s= [NSString stringWithFormat: @"# urestaurants %ld",[event totalVenues ] ];
-        _labelWhere.attributedText= attributedStringOf(s,  kGeomFontSizeHeader);
-    } else {
-        NSString *string= [NSString stringWithFormat: @"%@",
-                     LOCAL( @"TAP TO ADD RESTAURANTS")
-                     ];
-
-        _labelWhere.attributedText= attributedStringOf(string,  kGeomFontSizeHeader);
-    }
     
     [self.venuesCollectionView reloadData ];
     if  (animated ) {
@@ -275,8 +291,12 @@
                          }];
     }else {
         [self doLayout];
-
     }
+    
+    [self.view bringSubviewToFront:self.headerWho];
+    [self.view bringSubviewToFront:self.headerWhere];
+    [self.view bringSubviewToFront:self.headerWhen];
+
 }
 
 - (void)viewWillLayoutSubviews
@@ -349,8 +369,6 @@
     }
     _transitioning= YES;
     
-    UIView *v=sender.view;
-    
     SearchVC* vc= [[SearchVC alloc] init];
     vc.addingRestaurantsToEvent= YES;
     [self.navigationController pushViewController:vc animated:YES];
@@ -380,7 +398,6 @@
 {
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
-    float spacing= kGeomSpaceEdge;
     float vspacing= 25;
 
     _scrollView.frame=  self.view.bounds;
@@ -405,6 +422,10 @@
     self.headerWhere.frame= CGRectMake(x, y-13, boxWidth, 27);
     y += kGeomEventCoordinatorBoxHeight + vspacing;
     
+    [self.view bringSubviewToFront:self.headerWho];
+    [self.view bringSubviewToFront:self.headerWhere];
+    [self.view bringSubviewToFront:self.headerWhen];
+
     _scrollView.contentSize= CGSizeMake(w-1, y);
     
     y=  0;
@@ -419,17 +440,9 @@
     // RULE: If no restaurants have been added then did label should take up the entire height.
     float x2=_viewContainer4.frame.origin.x;
     float y2=_viewContainer4.frame.origin.y;
-    if  ([APP.eventBeingEdited totalVenues ] ) {
-        float labelHeight=kGeomEventCoordinatorBoxHeight - kGeomEventCoordinatorRestaurantHeight;
-        _venuesCollectionView.hidden= NO;
-        _labelWhere.frame = CGRectMake(0,0,boxWidth, labelHeight);
-        _venuesCollectionView.frame = CGRectMake(x2,y2 +labelHeight,boxWidth,kGeomEventCoordinatorRestaurantHeight);
-    } else {
-        _venuesCollectionView.hidden= YES;
-        _labelWhere.frame = CGRectMake(0,0,boxWidth, kGeomEventCoordinatorBoxHeight);
-        _venuesCollectionView.frame = CGRectMake(x2,y2+kGeomEventCoordinatorRestaurantHeight-1,boxWidth,0);
-    }
+    _venuesCollectionView.frame = CGRectMake(x2,y2 ,boxWidth,kGeomEventCoordinatorBoxHeight);
 }
+
 #pragma mark - Collection View stuff
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView;
@@ -439,7 +452,8 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [APP.eventBeingEdited totalVenues ];
+    NSInteger total= [APP.eventBeingEdited totalVenues ];
+    return total ;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath

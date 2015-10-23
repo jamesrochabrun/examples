@@ -257,6 +257,8 @@
         if ( section ==1) {
             [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
         }
+    }else {
+        cell.nameHeader= nil;
     }
     
     EventObject* e= events[row];
@@ -277,12 +279,12 @@
 //    return 3;
 }
 
-- (float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     return 0;
 }
 
-- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 30;
 }
@@ -290,7 +292,6 @@
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     UILabel * label= makeLabelLeft (nil,   @"",  10);
-//    label.backgroundColor= RED;
     return  label;
 }
 
