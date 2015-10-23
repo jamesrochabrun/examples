@@ -79,7 +79,7 @@
         
         self.backgroundColor = WHITE;
         
-        if (userInfo.imageIdentifier) {
+        if (userInfo.imageIdentifier && [userInfo.imageIdentifier length]) {
             self.requestOperation = [OOAPI getUserImageWithImageID:userInfo.imageIdentifier
                                                          maxWidth:self.frame.size.width
                                                         maxHeight:0 success:^(NSString *link) {
@@ -278,7 +278,7 @@
     _lists = [NSArray array];
     
     OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:_userID withRestaurant:0
+    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID)  withRestaurant:0
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", (long)foundLists.count);
                     _lists = foundLists;
@@ -299,9 +299,9 @@
     self.table.backgroundColor=[UIColor clearColor];
     self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
     
-    NSString *first= _profileOwner.firstName ?:  @"";
-    NSString *last= _profileOwner.lastName ?:  @"";
-    NSString *fullName=  [NSString stringWithFormat: @"%@ %@", first, last ];
+    NSString *first = _profileOwner.firstName ?:  @"";
+    NSString *last = _profileOwner.lastName ?:  @"";
+    NSString *fullName =  [NSString stringWithFormat: @"%@ %@", first, last ];
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: fullName subHeader:nil];
     [self setNavTitle:  nto];
 }

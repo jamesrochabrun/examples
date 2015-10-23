@@ -18,5 +18,8 @@
 @property (nonatomic,strong) NSMutableString *diagnosticLogString;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
 @property (nonatomic,assign) BOOL usingStagingServer;
+
+- (BOOL)connected;
+
 @end
 
