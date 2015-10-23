@@ -130,7 +130,7 @@
     if  (radius> 100 ) {
         radius= 1;
     }
-    NSString* string= [NSString stringWithFormat:@"%dkM RADIUS", radius];
+    NSString *string= [NSString stringWithFormat:@"%dkM RADIUS", radius];
     [_buttonSearchRadius setTitle:string forState:UIControlStateNormal];
 }
 
@@ -150,8 +150,8 @@
     [OOAPI clearUsernameWithSuccess:^(NSArray *names) {
         message( @"success");
     } failure:^(NSError *e) {
-        NSString *s= [NSString stringWithFormat: @"error %@",e.localizedDescription];
-        message( s);
+        NSString *s = [NSString stringWithFormat: @"error %@",e.localizedDescription];
+        message(s);
     } ];
     
     userInfo.username= nil;

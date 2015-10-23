@@ -153,7 +153,7 @@ NSString *const kKeySearchFilter = @"filter";
                                               failure:(void (^)(NSError *error))failure
 {
     if (!keyword) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -229,7 +229,7 @@ NSString *const kKeySearchFilter = @"filter";
                                         failure:(void (^)(NSError *error))failure
 {
     if (!keyword  || !keyword.length) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -366,7 +366,7 @@ NSString *const kKeySearchFilter = @"filter";
                                       failure:(void (^)(NSError *))failure;
 {
     if (!emailString || !emailString.length) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -378,9 +378,9 @@ NSString *const kKeySearchFilter = @"filter";
         if ( [responseObject isKindOfClass:[NSDictionary class]]) {
             UserObject* user= [UserObject userFromDict: responseObject];
             if  (user ) {
-                success ( user);
+                success( user);
             } else {
-                success ( nil);
+                success( nil);
             }
         }
     }
@@ -417,7 +417,7 @@ NSString *const kKeySearchFilter = @"filter";
                                   failure:(void (^)(NSError *))failure;
 {
     if (!string || !string.length) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -434,7 +434,7 @@ NSString *const kKeySearchFilter = @"filter";
                 [users  addObject: user];
             }
         }
-        success ( users.count>0);
+        success( users.count>0);
     }
            failure:failure];
 }
@@ -470,7 +470,7 @@ NSString *const kKeySearchFilter = @"filter";
                                   failure:(void (^)(NSError *error))failure;
 {
     if (!emailAddressString || !emailAddressString.length) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -541,13 +541,13 @@ NSString *const kKeySearchFilter = @"filter";
                             failure:(void (^)(NSError *error))failure;
 {
     if (!listName) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userID= userInfo.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -577,7 +577,7 @@ NSString *const kKeySearchFilter = @"filter";
                                    failure:(void (^)(NSError *error))failure {
     NSMutableArray *restaurantIDs;
     if (!restaurants || !listID) {
-        failure (nil);
+        failure(nil);
         return nil;
     } else {
         restaurantIDs = [NSMutableArray array];
@@ -589,7 +589,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userID= userInfo.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -719,7 +719,7 @@ NSString *const kKeySearchFilter = @"filter";
     }
     if  (selfUserID ==otherUserID ) {
         NSLog  (@"CANNOT FOLLOW ONESELF.");
-        success (NO);
+        success(NO);
         return nil;
     }
     
@@ -738,7 +738,7 @@ NSString *const kKeySearchFilter = @"filter";
                success(NO);
            } failure:^(NSError *error) {
                NSLog(@"Error: %@", error);
-               failure (error);
+               failure(error);
            }];
 }
 
@@ -752,23 +752,23 @@ NSString *const kKeySearchFilter = @"filter";
                                             failure:(void (^)(NSError *error))failure;
 {
     if (!user) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger selfUserID= userInfo.userID;
     if (!selfUserID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     NSUInteger otherUserID= user.userID;
     if (!otherUserID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     if  (selfUserID == otherUserID  ) {
         NSLog  (@"CANNOT FOLLOW ONESELF.");
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -808,7 +808,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                failure:(void (^)(NSError *error))failure;
 {
     if (!event ) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -818,7 +818,7 @@ NSString *const kKeySearchFilter = @"filter";
     }
     NSUInteger userID= user.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -873,7 +873,7 @@ NSString *const kKeySearchFilter = @"filter";
                                            failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     NSInteger eventID = eo.eventID;
@@ -911,13 +911,13 @@ NSString *const kKeySearchFilter = @"filter";
                                            failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     NSInteger eventID = eo.eventID;
@@ -965,7 +965,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString:urlString]];
     if (!request) {
-        failure (nil);
+        failure(nil);
         return ;
     }
     [request setHTTPMethod:@"POST"];
@@ -1043,7 +1043,7 @@ NSString *const kKeySearchFilter = @"filter";
                 failure:(void (^)(NSError *error))failure;
 {
     if  (!image) {
-        failure (nil);
+        failure(nil);
         return ;
     }
     
@@ -1102,7 +1102,7 @@ NSString *const kKeySearchFilter = @"filter";
                        [events addObject:e];
                    }
                    success(events);
-               }else {
+               } else {
                    NSLog  (@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
                    failure(nil);
                }
@@ -1115,7 +1115,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Name:    getEventByID
 // Purpose: Obtain a list of user events that are either complete or incomplete.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getEventByID:(NSUInteger) identifier
++ (AFHTTPRequestOperation *)getEventByID:(NSUInteger)identifier
                                  success:(void (^)(EventObject *event))success
                                  failure:(void (^)(NSError *error))failure;
 {
@@ -1165,12 +1165,12 @@ NSString *const kKeySearchFilter = @"filter";
             }
             success(events);
         }else {
-            NSLog  (@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
+            NSLog(@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
             failure(nil);
         }
     } failure:^(NSError *error) {
         NSLog(@"Error: %@", error);
-        failure (error);
+        failure(error);
     }];
 }
 
@@ -1183,19 +1183,22 @@ NSString *const kKeySearchFilter = @"filter";
                                   success:(void (^)(id response))success
                                   failure:(void (^)(NSError *error))failure;
 {
-    if (!event  || !restaurant) {
-        failure (nil);
+    if (!event || !restaurant) {
+        failure(nil);
         return nil;
     }
+    
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userid = userInfo.userID;
     if (!userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
+    
     NSString *identifier = [NSString stringWithFormat:@"%lu", restaurant.restaurantID];
     NSString *googleIdentifier = restaurant.googleID;
     NSMutableDictionary* parameters = @{}.mutableCopy;
+    
     if (identifier) {
         [parameters setObject:identifier forKey:kKeyRestaurantRestaurantIDPlural];
     }
@@ -1207,6 +1210,7 @@ NSString *const kKeySearchFilter = @"filter";
         failure(nil);
         return nil;
     }
+    
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/restaurants", [OOAPI URL],
                            event.eventID];
@@ -1231,13 +1235,13 @@ NSString *const kKeySearchFilter = @"filter";
                                   failure:(void (^)(NSError *error))failure;
 {
     if (!event  || !restaurant) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userid = userInfo.userID;
     if (!userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     NSString *identifier = [NSString stringWithFormat:@"%lu", restaurant.restaurantID];
@@ -1277,13 +1281,13 @@ NSString *const kKeySearchFilter = @"filter";
                                failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     if (!userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -1321,13 +1325,13 @@ NSString *const kKeySearchFilter = @"filter";
                              failure:(void (^)(NSError *error))failure;
 {
     if (!eo) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     if (! userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -1355,7 +1359,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     if (!userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -1372,7 +1376,7 @@ NSString *const kKeySearchFilter = @"filter";
         success(users);
     } failure:^(NSError *error) {
         NSLog(@"Error: %@", error);
-        failure (error);
+        failure(error);
     }];
 }
 
@@ -1386,7 +1390,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     if (!userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -1403,7 +1407,7 @@ NSString *const kKeySearchFilter = @"filter";
                success(users);
            } failure:^(NSError *error) {
                NSLog(@"Error: %@", error);
-               failure (error);
+               failure(error);
            }];
 }
 
@@ -1417,7 +1421,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     if (!userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -1440,7 +1444,7 @@ NSString *const kKeySearchFilter = @"filter";
            }
            failure:^(NSError *error) {
                NSLog(@"Error: %@", error);
-               failure (error);
+               failure(error);
            }];
 }
 
@@ -1455,7 +1459,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     if (!userid) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -1478,7 +1482,7 @@ NSString *const kKeySearchFilter = @"filter";
            }
            failure:^(NSError *error) {
                NSLog(@"Error: %@", error);
-               failure (error);
+               failure(error);
            }];
 }
 
@@ -1512,7 +1516,7 @@ NSString *const kKeySearchFilter = @"filter";
                         (user.participantType == PARTICIPANT_TYPE_ORGANIZER ||
                          user.participantType == PARTICIPANT_TYPE_CREATOR)
                        ) {
-                       success (YES);
+                       success(YES);
                        return;
                    }
                }
@@ -1521,10 +1525,10 @@ NSString *const kKeySearchFilter = @"filter";
            failure:^(NSError *error) {
                NSInteger statusCode = operation.response.statusCode;
                if (statusCode == 404) {
-                   success (NO);
+                   success(NO);
                } else {
                    NSLog(@"Error: %@", error);
-                   failure (error);
+                   failure(error);
                }
            }];
     
@@ -1557,7 +1561,7 @@ NSString *const kKeySearchFilter = @"filter";
            }
            failure:^(NSError *error) {
                NSLog(@"Error: %@", error);
-               failure (error);
+               failure(error);
            }];
 }
 
@@ -1572,7 +1576,7 @@ NSString *const kKeySearchFilter = @"filter";
                               failure:(void (^)(NSError *error))failure;
 {
     if (!eventID  || !venueID ) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -1583,7 +1587,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userID= userInfo.userID;
     if (!userID) {
-        failure (nil);
+        failure(nil);
         return nil;
     }
     
@@ -1593,7 +1597,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSString *urlString = [NSString stringWithFormat:@"https://%@/votes", [OOAPI URL]];
     
     op = [rm POST:urlString parameters: @{
-                                          @"user_id":  @(userID),
+                                          @"user_id": @(userID),
                                            @"restaurant_id": @(venueID),
                                            @"event_id": @(eventID),
                                            @"vote": @(vote)

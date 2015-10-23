@@ -197,7 +197,7 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                            self.numberOfPeopleVoted= event.numberOfPeopleVoted;
                            success();
                        } failure:^(NSError *error) {
-                           failure ();
+                           failure();
                        }
             ];
 }
@@ -209,13 +209,13 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                                  success:^(NSArray *users) {
                                      
                                      [self.users removeAllObjects];
-                                     for (UserObject* user  in  users) {
-                                         [self.users addObject: user];
+                                     for (UserObject *user in users) {
+                                         [self.users addObject:user];
                                      }
                                      
-                                     success ();
+                                     success();
                                  } failure:^(NSError *error) {
-                                     failure ();
+                                     failure();
                                  }];
     
 }
@@ -226,15 +226,15 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     return [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
         
         [self.venues removeAllObjects];
-        for (RestaurantObject* venue  in  venues) {
-            [_venues addObject: venue];
+        for (RestaurantObject *venue in venues) {
+            [_venues addObject:venue];
         }
         
         [self establishPrimaryImage];
         
-        success ();
+        success();
     } failure:^(NSError *error) {
-        failure ();
+        failure();
     }];
 }
 
@@ -273,16 +273,15 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
     }
 }
 
-- (RestaurantObject*)lookupVenueByID: (NSInteger) identifier;
+- (RestaurantObject*)lookupVenueByID:(NSUInteger)identifier;
 {
-    if  (!_venues.count  ||  identifier<0) {
+    if  (!_venues.count || identifier) {
         return nil;
     }
     
-    for (RestaurantObject* venue  in  _venues) {
+    for (RestaurantObject *venue in _venues) {
         if (venue.restaurantID) {
-            if (venue.restaurantID ==identifier )
-            {
+            if (venue.restaurantID == identifier) {
                 return venue;
             }
         }
@@ -298,11 +297,11 @@ NSString*const kKeyNumberOfVenues=  @"num_restaurants";
                               [self.votes removeAllObjects];
                               [self.votes addObjectsFromArray: votes ];
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
-                              success ();
+                              success();
                           }
                           failure:^(NSError *error) {
                               NSLog  (@"UNABLE TO GET VOTES FOR EVENT.");
-                              failure ();
+                              failure();
                           }];
 
 }

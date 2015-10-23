@@ -11,17 +11,17 @@
 @implementation VoteObject
 
 
-+ (instancetype) voteFromDictionary: (NSDictionary*)dictionary;
++ (instancetype)voteFromDictionary:(NSDictionary *)dictionary;
 {
     if  (!dictionary) {
         return nil;
     }
     
-    VoteObject* object= [[VoteObject alloc] init];
-    object.venueID= parseIntegerOrNullFromServer( dictionary[ @"restaurant_id"]);
-    object.userID= parseIntegerOrNullFromServer( dictionary[ @"user_id"]);
-    object.vote= parseIntegerOrNullFromServer( dictionary[ @"vote"]);
-    object.eventID= parseIntegerOrNullFromServer( dictionary[ @"event_id"]);
+    VoteObject *object = [[VoteObject alloc] init];
+    object.venueID = parseIntegerOrNullFromServer( dictionary[@"restaurant_id"]);
+    object.userID = parseIntegerOrNullFromServer( dictionary[@"user_id"]);
+    object.vote = parseIntegerOrNullFromServer( dictionary[@"vote"]);
+    object.eventID = parseIntegerOrNullFromServer( dictionary[@"event_id"]);
     
     // XX: Need more validation here.
     if  (object.vote != 1) {

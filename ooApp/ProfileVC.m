@@ -292,16 +292,16 @@
     _headerCell.vc= self;
     _headerCell.navigationController= self.navigationController;
     
-    self.table= [UITableView new];
+    self.table = [UITableView new];
     self.table.delegate= self;
     self.table.dataSource= self;
-    [ self.view addSubview:_table];
+    [self.view addSubview:_table];
     self.table.backgroundColor=[UIColor clearColor];
     self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
     
-    NSString* first= _profileOwner.firstName ?:  @"";
-    NSString* last= _profileOwner.lastName ?:  @"";
-    NSString* fullName=  [NSString stringWithFormat: @"%@ %@", first, last ];
+    NSString *first= _profileOwner.firstName ?:  @"";
+    NSString *last= _profileOwner.lastName ?:  @"";
+    NSString *fullName=  [NSString stringWithFormat: @"%@ %@", first, last ];
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: fullName subHeader:nil];
     [self setNavTitle:  nto];
 }
@@ -310,13 +310,13 @@
 // Name:    viewWillLayoutSubviews
 // Purpose:
 //------------------------------------------------------------------------------
-- (void) viewWillLayoutSubviews
+- (void)viewWillLayoutSubviews
 {
     // NOTE:  this is just temporary
     
-    [ super viewWillLayoutSubviews ];
+    [super viewWillLayoutSubviews];
   
-    self.table.frame=  self.view.bounds;
+    self.table.frame = self.view.bounds;
 }
 
 //------------------------------------------------------------------------------
@@ -327,8 +327,8 @@
 {
 //     [self performSegueWithIdentifier: @"gotoEmptyList" sender:self];
     
-    EmptyListVC* vc=[[EmptyListVC  alloc] init];
-    vc.listName=  string;
+    EmptyListVC *vc= [[EmptyListVC alloc] init];
+    vc.listName = string;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -345,9 +345,9 @@
 // Name:    getNameOfList
 // Purpose:
 //------------------------------------------------------------------------------
-- (NSString*)getNameOfList: ( int) which
+- (NSString *)getNameOfList:(NSInteger)which
 {
-    NSArray* a= self.lists;
+    NSArray *a= self.lists;
     if  (which < 0 ||  which >= a.count) {
         return  @"";
     }
@@ -358,7 +358,7 @@
 // Name:    heightForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:( NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row = indexPath.row;
 

@@ -399,10 +399,10 @@ typedef enum: char {
 // Name:    loadPeople
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)loadPeople: (NSArray*)array
+- (void)loadPeople:(NSArray *)array
 {
-    [ self showSpinner:nil];
-   self.doingSearchNow= NO;
+    [self showSpinner:nil];
+    self.doingSearchNow= NO;
     self.fetchOperation= nil;
     
     self.peopleArray= array;
@@ -431,10 +431,10 @@ typedef enum: char {
 // Name:    userPressedCancel
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)userPressedCancel: (id) sender
+- (void)userPressedCancel:(id)sender
 {
-    [ self showSpinner:nil];
-   _searchBar.text=@"";
+    [self showSpinner:nil];
+    _searchBar.text=@"";
     [_searchBar resignFirstResponder];
     [self.fetchOperation  cancel];
     self.fetchOperation= nil;
@@ -449,18 +449,19 @@ typedef enum: char {
 // Name:    doSelectList
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectList: (id) sender
+- (void)doSelectList:(id)sender
 {
-    if  (_currentFilter==FILTER_LISTS ) {
+    if (_currentFilter == FILTER_LISTS ) {
         return;
     }
-    _currentFilter= FILTER_LISTS;
-   if  (self.doingSearchNow ) {
+    _currentFilter = FILTER_LISTS;
+   
+    if (self.doingSearchNow) {
         [self cancelSearch];
     }
     
     // RULE: If there is a search string then redo the current search for the new context.
-    if ( _searchBar.text.length) {
+    if (_searchBar.text.length) {
         [self clearResultsTables];
         [self doSearch];
     }
@@ -470,18 +471,19 @@ typedef enum: char {
 // Name:    doSelectPeople
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectPeople: (id) sender
+- (void)doSelectPeople:(id)sender
 {
-    if  (_currentFilter==FILTER_PEOPLE ) {
+    if (_currentFilter == FILTER_PEOPLE) {
         return;
     }
-    _currentFilter= FILTER_PEOPLE;
-   if  (self.doingSearchNow ) {
+    _currentFilter = FILTER_PEOPLE;
+
+    if (self.doingSearchNow) {
         [self cancelSearch];
-   }
+    }
     
     // RULE: If there is a search string then redo the current search for the new context.
-    if ( _searchBar.text.length) {
+    if (_searchBar.text.length) {
         [self clearResultsTables];
         [self doSearch];
     }
@@ -491,18 +493,19 @@ typedef enum: char {
 // Name:    doSelectPlaces
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectPlaces: (id) sender
+- (void)doSelectPlaces:(id)sender
 {
-    if  (_currentFilter==FILTER_PLACES ) {
+    if (_currentFilter == FILTER_PLACES) {
         return;
     }
-    _currentFilter= FILTER_PLACES;
-   if  (self.doingSearchNow ) {
+    _currentFilter = FILTER_PLACES;
+    
+    if (self.doingSearchNow) {
         [self cancelSearch];
     }
     
     // RULE: If there is a search string then redo the current search for the new context.
-    if ( _searchBar.text.length) {
+    if (_searchBar.text.length) {
         [self clearResultsTables];
         [self doSearch];
     }
@@ -512,13 +515,13 @@ typedef enum: char {
 // Name:    doSelectYou
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectYou: (id) sender
+- (void)doSelectYou:(id)sender
 {
-    if  (_currentFilter==FILTER_YOU ) {
+    if  (_currentFilter == FILTER_YOU ) {
         return;
     }
-    _currentFilter= FILTER_YOU;
-    if  (self.doingSearchNow ) {
+    _currentFilter = FILTER_YOU;
+    if  (self.doingSearchNow) {
         [self cancelSearch];
     }
     
@@ -589,7 +592,7 @@ typedef enum: char {
         UserTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         if (!cell) {
-            cell=  [[UserTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER ];
+            cell = [[UserTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER ];
         }
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
