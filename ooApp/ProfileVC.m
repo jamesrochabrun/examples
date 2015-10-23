@@ -278,7 +278,7 @@
     _lists = [NSArray array];
     
     OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID)  withRestaurant:0
+    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", (long)foundLists.count);
                     _lists = foundLists;
@@ -288,9 +288,9 @@
                     NSLog  (@" error while getting lists for user: %@",e);
                 }];
     // NOTE:  these will later be stored in user defaults.
-    _headerCell=[[ProfileTableFirstRow  alloc] initWithUserInfo:_profileOwner];
-    _headerCell.vc= self;
-    _headerCell.navigationController= self.navigationController;
+    _headerCell = [[ProfileTableFirstRow alloc] initWithUserInfo:_profileOwner];
+    _headerCell.vc = self;
+    _headerCell.navigationController = self.navigationController;
     
     self.table = [UITableView new];
     self.table.delegate= self;
