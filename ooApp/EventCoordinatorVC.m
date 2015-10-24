@@ -85,10 +85,14 @@
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     
-    self.navigationItem.rightBarButtonItem= [[UIBarButtonItem  alloc] initWithTitle: @"CANCEL"
-                                                                              style:UIBarButtonItemStylePlain
-                                                                             target:self
-                                                                             action: @selector(userPressedCancel:)];
+    
+    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:self selector:@selector(userPressedMenuButton:)];
+    bbi.customView = moreButton;
+    self.navigationItem.rightBarButtonItems = @[bbi];
     
     self.viewContainer4= makeView(self.scrollView, WHITE);
     _viewContainer4.layer.borderWidth= 1;
@@ -121,15 +125,23 @@
     _labelEventCover.textColor= WHITE;
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
-    _buttonSubmit= makeButton(self.viewContainer1,  @"SUBMIT EVENT", kGeomFontSizeHeader, RED, CLEAR, self, @selector(doSubmit:), 1);
+    NSString* submitButtonMessage;
+    if  (APP.eventBeingEdited.isComplete) {
+        submitButtonMessage=@"EVENT SUBMITTED";
+    } else {
+        submitButtonMessage=@"SUBMIT EVENT";
+    }
+    _buttonSubmit= makeButton(self.viewContainer1, submitButtonMessage,
+                              kGeomFontSizeHeader, RED, CLEAR, self, @selector(doSubmit:), 1);
     _buttonSubmit.titleLabel.numberOfLines= 0;
     _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
     _buttonSubmit.layer.shadowColor= WHITE.CGColor;
     _buttonSubmit.layer.shadowRadius= 1;
     _buttonSubmit.layer.shadowOffset=  CGSizeMake (1,1);
-   _buttonSubmit.titleLabel.layer.shadowColor= WHITE.CGColor;
+    _buttonSubmit.titleLabel.layer.shadowColor= WHITE.CGColor;
     _buttonSubmit.titleLabel.layer.shadowRadius= 1;
     _buttonSubmit.titleLabel.layer.shadowOffset=  CGSizeMake (1,1);
+    _buttonSubmit.enabled= NO;
     
     self.viewContainer2= makeView(self.scrollView, WHITE);
     self.labelWho = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
@@ -188,13 +200,42 @@
     }
 }
 
-- (void) userPressedCancel: (id) sender
+- (void) userPressedMenuButton: (id) sender
 {
-    APP.eventBeingEdited= nil;
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:@"Delete Eventt?"
+                                                              message:nil
+                                                       preferredStyle:UIAlertControllerStyleAlert];
     
-    [self.navigationController popViewControllerAnimated:YES ];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [self deleteEvent];
+                                                 }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [self presentViewController:a animated:YES completion:nil];
+    
 }
 
+- (void)deleteEvent
+{
+    [OOAPI deleteEvent:APP.eventBeingEdited.eventID
+               success:^{
+                    [self dismissViewControllerAnimated:YES
+                                              completion:^{
+                                                  // XX:  need to force event list to reload
+                                              }];
+                    }
+                    failure:^(NSError *error) {
+                        message( @"Failed to delete event.");
+                    }];
+                   
+}
+     
 - (void)userTappedBox1:(id) sender
 {
     
@@ -297,6 +338,9 @@
     [self.view bringSubviewToFront:self.headerWhere];
     [self.view bringSubviewToFront:self.headerWhen];
 
+    // RULE: Do not allow submitting before we have all the restaurant information.
+    _buttonSubmit.enabled= YES;
+
 }
 
 - (void)viewWillLayoutSubviews
@@ -381,6 +425,34 @@
 - (void)doSubmit: (id) sender
 {
     EventObject* event= APP.eventBeingEdited;
+
+    if (!event.date) {
+        message( @"You need to specify a date and time when the event should take place.");
+        return;
+    }
+    if  (!event.venues.count ) {
+        message( @"You have not specified any restaurants.");
+        return;
+    }
+    BOOL votingIsMandatory=  event.venues.count>1;
+    if (!event.dateWhenVotingClosed  && votingIsMandatory) {
+        message( @"You need to specify a date and time when voting should end (or a duration).");
+        return;
+    }
+    NSDate* now= [NSDate date];
+    if ( event.date.timeIntervalSince1970 < now.timeIntervalSince1970) {
+        message( @"The event date and time is in the past.");
+        return;
+    }
+    if (votingIsMandatory &&  event.dateWhenVotingClosed.timeIntervalSince1970 < now.timeIntervalSince1970) {
+        message( @"The time when voting ends is in the past.");
+        return;
+    }
+    if (votingIsMandatory &&  event.dateWhenVotingClosed.timeIntervalSince1970 >=  event.date.timeIntervalSince1970) {
+        message( @"The time when voting ends is after the time when the event begins.");
+        return;
+    }
+    
     event.isComplete= YES;
     [OOAPI reviseEvent: event
                success:^(id responseObject) {

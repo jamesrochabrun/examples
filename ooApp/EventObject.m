@@ -24,7 +24,7 @@ NSString *const kKeyTotalPrice = @"total_price";
 NSString *const kKeyCreatedAt = @"created_at";
 NSString *const kKeyUpdatedAt = @"updated_at";
 NSString *const kKeyEventDate = @"event_date";
-NSString *const kKeyWhenVotingCloses = @"when_voting_closed";
+NSString *const kKeyWhenVotingCloses = @"voting_closed_at";
 NSString *const kKeyEventType = @"type";
 NSString *const kKeyKeywords = @"keywords";
 NSString *const kKeyFriendRecommendationAge = @"friend_recommendation_age";
@@ -43,6 +43,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     if (self) {
         _venues= [NSMutableOrderedSet new];
         _users= [NSMutableOrderedSet new];
+        _votes= [NSMutableArray new];
     }
     return self;
 }
@@ -275,7 +276,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 
 - (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
 {
-    if  (!_venues.count || identifier) {
+    if  (!_venues.count || !identifier) {
         return nil;
     }
     
@@ -294,8 +295,10 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 {
     return [OOAPI getVoteForEvent:self
                           success:^(NSArray *votes) {
-                              [self.votes removeAllObjects];
-                              [self.votes addObjectsFromArray: votes ];
+                              @synchronized(_votes) {
+                                  [self.votes removeAllObjects];
+                                  [self.votes addObjectsFromArray: votes ];
+                              }
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
                               success();
                           }
@@ -303,17 +306,19 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                               NSLog  (@"UNABLE TO GET VOTES FOR EVENT.");
                               failure();
                           }];
-
+    
 }
 
 - (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
-
-    for (VoteObject* vote  in  _votes) {
-        if ( vote.eventID ==  _eventID && vote.userID==userid  && identifier == vote.venueID) {
-            return  vote;
+    
+    @synchronized(_votes) {
+        for (VoteObject* vote  in  _votes) {
+            if ( vote.eventID ==  _eventID && vote.userID==userid  && identifier == vote.venueID) {
+                return  vote;
+            }
         }
     }
     return nil;

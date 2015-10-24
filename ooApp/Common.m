@@ -330,6 +330,9 @@ NSString * platformString()
 
 NSDate* parseUTCDateFromServer(NSString *string)
 {
+    if  (!string) {
+        return nil;
+    }
     if  ([string isKindOfClass:[NSDate class]]) {
         return  (NSDate*)string;
     }

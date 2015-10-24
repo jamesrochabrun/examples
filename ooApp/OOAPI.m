@@ -1079,6 +1079,30 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 //------------------------------------------------------------------------------
+// Name:    deleteEvent
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)deleteEvent:(NSUInteger)eventID
+                                success:(void (^)())success
+                                failure:(void (^)(NSError *error))failure
+{
+    if  (!eventID) {
+        failure (nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/",
+                           [OOAPI URL], eventID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        success();
+    } failure:^(NSError *error) {
+        failure (error);
+    }];
+}
+
+//------------------------------------------------------------------------------
 // Name:    getEventsForUser
 // Purpose: Obtain a list of user events that are either complete or incomplete.
 //------------------------------------------------------------------------------
@@ -1537,7 +1561,7 @@ NSString *const kKeySearchFilter = @"filter";
 
 //------------------------------------------------------------------------------
 // Name:    getVotesForEvent
-// Purpose: Fetch an array of users that are following the current user.
+// Purpose:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getVoteForEvent:(EventObject*)event
                                     success:(void (^)(NSArray *votes))success
@@ -1558,6 +1582,35 @@ NSString *const kKeySearchFilter = @"filter";
                    }
                }
                success(votes);
+           }
+           failure:^(NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure(error);
+           }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getVoteTalliesForEvent
+// Purpose: Fetch an array of restaurants.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getVoteTalliesForEvent:(NSUInteger)eventID
+                                    success:(void (^)(NSArray *venues))success
+                                    failure:(void (^)(NSError *error))failure;
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes/results", [OOAPI URL], eventID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters: nil
+           success:^(id responseObject) {
+               NSMutableArray *venues = [NSMutableArray array];
+               for (NSDictionary* d in responseObject) {
+                   RestaurantObject* object=[RestaurantObject restaurantFromDict:d];
+                   if  (object ) {
+                       [venues addObject: object];
+                   }
+               }
+               success(venues);
            }
            failure:^(NSError *error) {
                NSLog(@"Error: %@", error);

@@ -304,12 +304,7 @@
         return ;
     }
     
-//    if (![[AFNetworkReachabilityManager sharedManager] isReachable]) {
-//        message(@"The Internet is not reachable.");
-//        return ;
-//        
-//        // XX: Need to retry after Internet becomes accessible.
-//    }
+// XX: Need to retryOperation after Internet becomes accessible.
     
     AFHTTPRequestOperation* operation= [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
