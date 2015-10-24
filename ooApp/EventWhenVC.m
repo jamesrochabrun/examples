@@ -78,6 +78,11 @@
 
 }
 
+- (void)userPressDurationButton1: (id) sender
+{
+    
+    
+}
 - (void)expressUpperDate
 {
     NSDate* gmtTime= APP.eventBeingEdited.date;
