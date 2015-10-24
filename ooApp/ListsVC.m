@@ -90,7 +90,7 @@ static NSString * const cellIdentifier = @"listCell";
 
 - (void)gotLists
 {
-    NSLog(@"Got %tu lists.", [_lists count]);
+    NSLog(@"Got %lu lists.", [_lists count]);
     [_tableView reloadData];
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }

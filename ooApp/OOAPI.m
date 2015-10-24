@@ -63,7 +63,7 @@ NSString *const kKeySearchFilter = @"filter";
                                           success:(void (^)(NSArray *mediaItems))success
                                           failure:(void (^)(NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%tu/photos", [self ooURL], restaurant.restaurantID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%lu/photos", [self ooURL], restaurant.restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -127,10 +127,10 @@ NSString *const kKeySearchFilter = @"filter";
     
     if (maxWidth) {
         maxWidth = (isRetinaDisplay()) ? 2*maxWidth:maxWidth;
-        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxwidth"];
+        [parameters setObject:[NSString stringWithFormat:@"%lu", maxWidth] forKey:@"maxwidth"];
     } else if (maxHeight) {
         maxHeight = (isRetinaDisplay()) ? 2*maxHeight:maxHeight;
-        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxHeight"];
+        [parameters setObject:[NSString stringWithFormat:@"%lu", maxWidth] forKey:@"maxHeight"];
     }
     
     return [rm GET:urlString parameters:parameters success:^(id responseObject) {
@@ -343,7 +343,7 @@ NSString *const kKeySearchFilter = @"filter";
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu/restaurants/%tu",
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu/restaurants/%lu",
                            [OOAPI URL], listID, restaurantID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -395,7 +395,7 @@ NSString *const kKeySearchFilter = @"filter";
                                success:(void (^)(NSArray *))success
                                failure:(void (^)(NSError *))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%tu",
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu",
                            [OOAPI URL], listID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -554,7 +554,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/lists", [OOAPI URL], userID];
     NSDictionary *parameters = @{
                                  @"name":listName,
-                                  @"type":[NSString stringWithFormat:@"%tu", kListTypeUser],
+                                  @"type":[NSString stringWithFormat:@"%lu", kListTypeUser],
                                   @"user": @(userID)
                                 };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
@@ -583,7 +583,7 @@ NSString *const kKeySearchFilter = @"filter";
         restaurantIDs = [NSMutableArray array];
         [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             RestaurantObject *ro = (RestaurantObject *)obj;
-            [restaurantIDs addObject:[NSString stringWithFormat:@"%tu",ro.restaurantID]];
+            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu",ro.restaurantID]];
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -627,7 +627,7 @@ NSString *const kKeySearchFilter = @"filter";
         restaurantIDs = [NSMutableArray array];
         [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             RestaurantObject *ro = (RestaurantObject *)obj;
-            [restaurantIDs addObject:[NSString stringWithFormat:@"%tu",ro.restaurantID]];
+            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu",ro.restaurantID]];
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -684,10 +684,10 @@ NSString *const kKeySearchFilter = @"filter";
     
     if (maxWidth) {
         maxWidth = (isRetinaDisplay()) ? 2*maxWidth:maxWidth;
-        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxwidth"];
+        [parameters setObject:[NSString stringWithFormat:@"%lu", maxWidth] forKey:@"maxwidth"];
     } else if (maxHeight) {
         maxHeight = (isRetinaDisplay()) ? 2*maxHeight:maxHeight;
-        [parameters setObject:[NSString stringWithFormat:@"%tu", maxWidth] forKey:@"maxHeight"];
+        [parameters setObject:[NSString stringWithFormat:@"%lu", maxWidth] forKey:@"maxHeight"];
     }
     
     return [rm GET:urlString parameters:parameters success:^(id responseObject) {
