@@ -17,13 +17,17 @@
 #import "UIImageView+AFNetworking.h"
 #import "ListTVCell.h"
 #import "EventWhenVC.h"
+#import  <QuartzCore/CALayer.h>
 
 @interface EventParticipantFirstCell ()
 
 @property (nonatomic, strong) UIButton *buttonSubmitVote;
 @property (nonatomic, strong) UIButton *buttonGears;
 @property (nonatomic, strong) UILabel *labelTimeLeft;
+@property (nonatomic, strong) UILabel *labelTitle;
+@property (nonatomic, strong) UILabel *labelDateTime;
 @property (nonatomic, strong) UILabel *labelPersonIcon;
+@property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) EventObject *event;
 
@@ -34,18 +38,41 @@
 {
     self = [super  initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.backgroundColor= GRAY;
+        self.viewShadow= makeView( self, WHITE);
+        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
+        _viewShadow.layer.shadowColor= BLACK.CGColor;
+        _viewShadow.layer.shadowOpacity= .5;
+        _viewShadow.layer.shadowRadius= 4;
+        _viewShadow.clipsToBounds= NO;
+        
+        self.clipsToBounds= NO;
+        self.backgroundColor= CLEAR;
+        
         self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
         self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
         _backgroundImageView.clipsToBounds= YES;
-        self.labelTimeLeft= makeLabel( self,  @"REMAINING TIME 00:??", 17);
-        _labelTimeLeft.textColor= WHITE;
-        _labelTimeLeft.layer.borderWidth= 1;
-        _labelTimeLeft.layer.borderColor= WHITE.CGColor;
-        self.labelPersonIcon= makeIconLabel ( self,  kFontIconPerson, 25);
+
+        self.labelDateTime= makeLabel( self, expressLocalDateTime( APP.eventBeingEdited.date), kGeomFontSizeSubheader);
+        _labelDateTime.textColor= WHITE;
+        _labelDateTime.font= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
         
-        _buttonSubmitVote= makeButton(self,  @"SUBMIT VOTE", kGeomFontSizeHeader,
-                                      WHITE, CLEAR, self, @selector(doSubmitVote:), 1);
+        self.labelTitle= makeLabel( self, APP.eventBeingEdited.name,
+                                   kGeomEventHeadingFontSize);
+        _labelTitle.textColor= WHITE;
+        _labelTitle.font= [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomEventHeadingFontSize];
+        
+        self.labelTimeLeft= makeLabel( self,  @"00:00:??\rUNTIL VOTING CLOSES", kGeomFontSizeSubheader);
+        _labelTimeLeft.textColor= WHITE;
+        _labelTimeLeft.backgroundColor= UIColorRGBA(0x80000000);
+        
+        self.labelPersonIcon= makeIconLabel( self,  kFontIconPerson, kGeomFontSizeSubheader);
+        _labelPersonIcon.textColor= GREEN;
+
+        _buttonSubmitVote= makeButton(self,  @"SUBMIT VOTE", kGeomFontSizeSubheader,
+                                      YELLOW,  UIColorRGBA(0x80000000), self, @selector(doSubmitVote:), 0);
+        _buttonSubmitVote.titleLabel.font= [UIFont fontWithName:kFontLatoBold
+                                                           size:kGeomFontSizeSubheader];
+        
     }
     return self;
 }
@@ -55,19 +82,28 @@
     float h=  self.bounds.size.height;
     float w=  self.bounds.size.width;
     float  margin= kGeomSpaceEdge;
+    float spacing= 9;
+    h-= kGeomEventParticipantSeparatorHeight;
     
-    _backgroundImageView.frame= self.bounds;
-    
-#define kGeomEventParticipantBoxHeight 175
-#define kGeomEventParticipantRestaurantHeight 100
-    float biggerButtonWidth=w/2-3*margin/2;
+    _backgroundImageView.frame = CGRectMake(margin,0,w-2*margin,h);
+    _viewShadow.frame=  _backgroundImageView.frame;
 
-    _buttonSubmitVote.frame=  CGRectMake( margin,h-kGeomHeightButton-margin, biggerButtonWidth,kGeomHeightButton);
+#define kGeomEventParticipantButtonHeight 33
     
-    float x=  _buttonSubmitVote.frame.origin.x  + _buttonSubmitVote.frame.size.width;
-    x += kGeomSpaceInter;
-    _labelTimeLeft.frame = CGRectMake(w/2+ margin/2,h-kGeomHeightButton- margin, biggerButtonWidth, kGeomHeightButton);
-    _labelPersonIcon.frame = CGRectMake(w-kGeomButtonWidth- margin,h-kGeomHeightButton-margin, kGeomButtonWidth, kGeomHeightButton);
+    float y= kGeomEventParticipantFirstBoxHeight- kGeomEventParticipantButtonHeight
+        - kGeomEventHeadingFontSize-kGeomFontSizeSubheader-kGeomHeightButton - 3*spacing;
+    _labelTitle.frame = CGRectMake(0,y,w,kGeomEventHeadingFontSize);
+    y += kGeomEventHeadingFontSize +spacing;
+    _labelDateTime.frame = CGRectMake(0,y,w,kGeomFontSizeSubheader);
+    y+= kGeomFontSizeSubheader +spacing;
+    _labelPersonIcon.frame = CGRectMake(0,y, w, kGeomHeightButton);
+    
+    float distanceBetweenButtons= 4;
+    float biggerButtonWidth= (w-2*margin-distanceBetweenButtons)/2;
+
+    _buttonSubmitVote.frame=  CGRectMake(  margin, h-kGeomEventParticipantButtonHeight, biggerButtonWidth,kGeomEventParticipantButtonHeight);
+    
+    _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
 }
 
 - (void) provideEvent: (EventObject*)event;
@@ -107,7 +143,9 @@
 
 @interface EventParticipantVotingCell ()
 @property (nonatomic,strong)  UISwitch *voteSwitch;
+@property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong)  UIImageView *thumbnail;
+@property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic,strong)   UILabel *labelName;
 @property (nonatomic,strong) EventObject* event;
 @property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
@@ -119,9 +157,27 @@
 {
     self = [super initWithStyle: style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.viewShadow= makeView( self, WHITE);
+        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
+        _viewShadow.layer.shadowColor= BLACK.CGColor;
+        _viewShadow.layer.shadowOpacity= .5;
+        _viewShadow.layer.shadowRadius= 4;
+        _viewShadow.clipsToBounds= NO;
+        _viewShadow.layer.borderColor= GRAY.CGColor;
+        _viewShadow.layer.borderWidth= .5;
+        
+        self.clipsToBounds= NO;
+        self.backgroundColor= CLEAR;
+        
+        _radioButton= makeButton(self, kFontIconRemove, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressedRadioButton:), 0);
+        [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
+        _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
+        
         _thumbnail= makeImageView(self, nil);
-        _voteSwitch= [UISwitch new];
-        [self addSubview: _voteSwitch];
+        
+//        _voteSwitch= [UISwitch new];
+//        [self addSubview: _voteSwitch];
+        
         _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
         self.textLabel.hidden= YES;
         self.imageView.hidden= YES;
@@ -133,17 +189,34 @@
     return self;
 }
 
+- (void)userPressedRadioButton: (id) sender
+{
+    _radioButton.selected= !_radioButton.selected;
+    self.vote.vote= _radioButton.selected  ? 1:0;
+    if  ( self.delegate) {
+        [self.delegate voteChanged:self.vote  ];
+        
+    }
+    
+}
+
 - (void) layoutSubviews
 {
-    CGSize switchSize= _voteSwitch.intrinsicContentSize;
+//    CGSize switchSize= _voteSwitch.intrinsicContentSize;
+    CGSize switchSize= CGSizeMake(kGeomHeightButton, kGeomHeightButton);
     float w= self.frame.size.width;
     float h= self.frame.size.height;
     float x= kGeomSpaceEdge;
+    h-= kGeomEventParticipantSeparatorHeight;
+
+    _viewShadow.frame = CGRectMake(x,0,w-2*kGeomSpaceEdge,h);
+    
     _thumbnail.frame = CGRectMake(x,0,h,h);
     x += h+kGeomSpaceInter;
     _labelName.frame = CGRectMake(x,0,w-x-switchSize.width-2*kGeomSpaceInter,h);
     x += _labelName.frame.size.width;
-    _voteSwitch.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
+    _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
+//    _voteSwitch.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
 }
 
 - (void)switchChanged: (UISwitch*)theSwitch
@@ -157,14 +230,16 @@
 - (void)provideVote: (VoteObject*)vote
 {
     self.vote= vote;
-    _voteSwitch.on= vote.vote != 0;
+//    _voteSwitch.on= vote.vote != 0;
+    _radioButton.selected= vote.vote != 0;
 }
 
 - (void)prepareForReuse
 {
     [_imageOperation cancel];
     self.imageOperation= nil;
-    self.voteSwitch.on= NO;
+//    self.voteSwitch.on= NO;
+    self.radioButton.selected= NO;
     self.labelName.text= nil;
     self.thumbnail.image= nil;
     self.vote= nil;
@@ -239,11 +314,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.    
     
     NSString* eventName= APP.eventBeingEdited.name;
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
+    
+    self.navigationController.navigationItem.rightBarButtonItem= nil;
     
     self.view.backgroundColor= [UIColor lightGrayColor];
     _table= makeTable( self.view,  self);
@@ -292,13 +368,15 @@
         EventParticipantFirstCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_FIRST_IDENTIFIER forIndexPath:indexPath];
         cell.delegate= self;
-        [cell provideEvent: event];
+        cell.selectionStyle= UITableViewCellSelectionStyleNone;
+       [cell provideEvent: event];
         return cell;
     }
     
     EventParticipantVotingCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     cell.delegate= self;
+    cell.selectionStyle= UITableViewCellSelectionStyleNone;
 
     RestaurantObject* venue= [event getNthVenue:row];
 
@@ -318,9 +396,9 @@
 {
     NSInteger row = indexPath.row;
     if  (!row) {
-        return  120;
+        return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight;
     }
-    return 44;
+    return kGeomEventParticipantRestaurantHeight +kGeomEventParticipantSeparatorHeight;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

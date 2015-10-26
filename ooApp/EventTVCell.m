@@ -164,7 +164,7 @@
                                                       }];
         
     }  else {
-        NSLog (@"EVENT %ld HAS NO PRIMARY VENUE",_eventInfo.eventID);
+        NSLog (@"EVENT %lu HAS NO PRIMARY VENUE",(unsigned long)_eventInfo.eventID);
         [self.thumbnail setImage:placeholder];
     }
 }

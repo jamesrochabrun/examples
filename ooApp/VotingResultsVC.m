@@ -149,7 +149,7 @@
 - (void)provideVote: (VoteObject*)vote
 {
     self.vote= vote;
-    _labelResult.text= [NSString stringWithFormat: @"%ld",vote. vote];
+    _labelResult.text= [NSString stringWithFormat: @"%lu",(unsigned long)vote. vote];
 }
 
 - (void)prepareForReuse
@@ -187,7 +187,7 @@
     self.vote.eventID= event.eventID;
 
     if  (!venue) {
-        NSLog (@"VENUE ID %ld APPEARS TO BE BOGUS.",venueID);
+        NSLog (@"VENUE ID %lu APPEARS TO BE BOGUS.",( unsigned long)venueID);
         self.labelName.text=  @"Unknown restaurant.";
         self.thumbnail.image= nil;
     }

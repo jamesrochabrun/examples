@@ -81,8 +81,10 @@ static CGFloat kGeomWidthMenuButton = 44;// The button should stay at 44. The ti
 static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 static CGFloat kGeomHeightFilterSelectedLine = 3.0;
 static CGFloat kGeomHeightSearchBar=  55;
-static CGFloat kGeomEventCoordinatorBoxHeight=  114
-;
+static CGFloat kGeomEventCoordinatorBoxHeight=  114;
+static CGFloat  kGeomEventParticipantFirstBoxHeight=  170;
+static CGFloat  kGeomEventParticipantRestaurantHeight=  92;
+static CGFloat  kGeomEventParticipantSeparatorHeight=  6;
 
 // Images
 extern NSString *const kImageNoProfileImage;
