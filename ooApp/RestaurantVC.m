@@ -18,6 +18,7 @@
 #import "OOStripHeader.h"
 #import "RestaurantListVC.h"
 #import <SafariServices/SafariServices.h>
+#import "HoursOpen.h"
 
 #import "DebugUtilities.h"
 
@@ -345,8 +346,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         if (b.theId == listID) buttonToRemove = b;
     }
     
-    [buttonToRemove removeFromSuperview];
-    [_listButtons removeObject:buttonToRemove];
+    if (buttonToRemove) {
+        [buttonToRemove removeFromSuperview];
+        [_listButtons removeObject:buttonToRemove];
+    }
     
     __weak RestaurantVC *weakSelf = self;
     [api deleteRestaurant:_restaurant.restaurantID fromList:listID success:^(NSArray *lists) {

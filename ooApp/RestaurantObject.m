@@ -9,6 +9,7 @@
 #import "RestaurantObject.h"
 #import "ImageRefObject.h"
 #import "MediaItemObject.h"
+#import "HoursOpen.h"
 
 NSString *const kKeyRestaurantGoogleID = @"google_id";
 NSString *const kKeyRestaurantRestaurantID = @"restaurant_id";
@@ -25,6 +26,7 @@ NSString *const kKeyRestaurantOpenNow = @"open_now";
 NSString *const kKeyRestaurantAddress = @"address";
 NSString *const kKeyRestaurantPhone = @"phone";
 NSString *const kKeyRestaurantWebsite = @"website";
+NSString *const kKeyRestaurantHours = @"hours";
 
 @implementation RestaurantObject
 
@@ -78,6 +80,18 @@ NSString *const kKeyRestaurantWebsite = @"website";
     }
     
     restaurant.priceRange = [[dict objectForKey:kKeyRestaurantPriceRange] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyRestaurantPriceRange] floatValue];
+    
+    NSDictionary *hours = [dict objectForKey:kKeyRestaurantHours];
+
+    if (hours) {
+        NSMutableArray *restaurantHours = [NSMutableArray array];
+        HoursOpen *ho;
+        for (NSDictionary *dict in hours) {
+            ho = [HoursOpen hoursOpenFromDict:dict];
+            [restaurantHours addObject:ho];
+        }
+        restaurant.hours = restaurantHours;
+    }
     
     return restaurant;
 }

@@ -29,60 +29,40 @@
         [self addSubview:_nameLabel];
         [self addSubview:_xLabel];
         
-        _nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        _xLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        
         self.backgroundColor = UIColorRGBA(kColorOffWhite);
         self.layer.cornerRadius = kGeomCornerRadius;
-//      [self layout];
-        
+                
 //        [DebugUtilities addBorderToViews:@[_nameLabel, _xLabel]];
     }
     return self;
-}
-
-- (void)updateConstraints {
-    [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-    UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameLabel, _xLabel);
-    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_xLabel]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_nameLabel]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    if (_icon.length) {
-        [self addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:|-spaceEdge-[_xLabel]-spaceInter-[_nameLabel]-spaceEdge-|" options:0 metrics:metrics views:views]];
-    } else {
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameLabel]-spaceEdge-|" options:0 metrics:metrics views:views]];
-    }
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_xLabel
-                                                     attribute:NSLayoutAttributeCenterY
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:_xLabel.superview
-                                                     attribute:NSLayoutAttributeCenterY
-                                                    multiplier:1.f constant:0.f]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
-                                                          attribute:NSLayoutAttributeCenterY
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:_nameLabel.superview
-                                                          attribute:NSLayoutAttributeCenterY
-                                                         multiplier:1.f constant:0.f]];
 }
 
 - (void)setName:(NSString *)name {
     _name = name;
     _nameLabel.text = _name;
     [_nameLabel sizeToFit];
+    [self setNeedsLayout];
 }
 
 - (void)setIcon:(NSString *)icon {
     _icon = icon;
     _xLabel.text = icon;
     [_xLabel sizeToFit];
+    [self setNeedsLayout];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGRect frame;
+    frame = _xLabel.frame;
+    frame.origin = CGPointMake(kGeomSpaceEdge, (CGRectGetHeight(self.frame) - CGRectGetHeight(_xLabel.frame))/2);
+    _xLabel.frame = frame;
+    
+    frame = _nameLabel.frame;
+    frame.origin.x = CGRectGetMaxX(_xLabel.frame) + kGeomSpaceInter;
+    frame.origin.y = kGeomSpaceEdge;
+    _nameLabel.frame = frame;
+
 }
 
 - (CGSize)getSuggestedSize {
@@ -91,7 +71,6 @@
     [_xLabel sizeToFit];
     s.width = 2*kGeomSpaceEdge + width(_nameLabel) + width(_xLabel) + (width(_xLabel) ? kGeomSpaceInter : 0);
     s.height = 2*kGeomSpaceEdge + height(_nameLabel);
-    [self updateConstraintsIfNeeded];
     return s;
 }
 
