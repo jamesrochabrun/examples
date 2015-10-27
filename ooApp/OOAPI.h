@@ -169,6 +169,10 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 // Events
 //
 
++ (AFHTTPRequestOperation *)deleteEvent:(NSUInteger)eventID
+                                success:(void (^)())success
+                                failure:(void (^)(NSError *error))failure;
+
 + (AFHTTPRequestOperation *)getEventByID:(NSUInteger) identifier
                                  success:(void (^)(EventObject *event))success
                                  failure:(void (^)(NSError *error))failure;
@@ -225,4 +229,8 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                         andRestaurant: (NSUInteger) venueID
                               success:(void (^)(NSInteger eventID))success
                               failure:(void (^)(NSError *error))failure;
+
++ (AFHTTPRequestOperation *)getVoteTalliesForEvent:(NSUInteger)eventID
+                                           success:(void (^)(NSArray *venues))success
+                                           failure:(void (^)(NSError *error))failure;
 @end

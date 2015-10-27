@@ -299,17 +299,13 @@
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
     
-    if ([APP connected]) {
-        message(@"The Internet is not reachable.");
-        return ;
-    }
-    
-//    if (![[AFNetworkReachabilityManager sharedManager] isReachable]) {
+    // This is giving a false positive
+//    if ([APP connected]) {
 //        message(@"The Internet is not reachable.");
 //        return ;
-//        
-//        // XX: Need to retry after Internet becomes accessible.
 //    }
+//    
+// XX: Need to retryOperation after Internet becomes accessible.
     
     AFHTTPRequestOperation* operation= [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
@@ -531,7 +527,7 @@
         NSUInteger userid= userInfo.userID;
         
         requestString=[NSString stringWithFormat: @"https://%@/users/%lu",
-                       kOOURL, userid];
+                       kOOURL,( unsigned long) userid];
         
         requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
 

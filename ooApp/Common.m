@@ -330,6 +330,9 @@ NSString * platformString()
 
 NSDate* parseUTCDateFromServer(NSString *string)
 {
+    if  (!string) {
+        return nil;
+    }
     if  ([string isKindOfClass:[NSDate class]]) {
         return  (NSDate*)string;
     }
@@ -394,7 +397,8 @@ NSMutableAttributedString *createPeopleIconString (NSInteger count)
     NSString *iconicRepresentationOfNumberOfPeople= count>1
                 ? [NSString stringWithFormat: @"%@%@", kFontIconPerson,kFontIconPerson ]
                 : [NSString stringWithFormat: @"%@",kFontIconPerson ];
-    NSAttributedString *countString= attributedStringOf([NSString stringWithFormat: @"%ld ", count], kGeomFontSizeHeader);
+    NSAttributedString *countString= attributedStringOf([NSString stringWithFormat: @"%lu ",
+                                                         ( unsigned long)  count], kGeomFontSizeHeader);
     NSAttributedString *iconString= [[NSAttributedString alloc]
                                      initWithString: iconicRepresentationOfNumberOfPeople
                                      attributes: @{

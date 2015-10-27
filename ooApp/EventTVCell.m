@@ -35,9 +35,7 @@
         self.subHeader2.textColor= WHITE;
 
         self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
-        self.thumbnail.alpha= .6;
         self.thumbnail.clipsToBounds= YES;
-
     }
     return self;
 }
@@ -80,6 +78,7 @@
 - (void) layoutSubviews
 {
     [super layoutSubviews];
+    
     float w= self.frame.size.width;
     float h= self.frame.size.height;
     const float lowerGradientHeight=  5;
@@ -148,13 +147,10 @@
         
         return;
     }
-    else if (primaryVenue && primaryVenue.mediaItems.count) {
-        
-        MediaItemObject *media= primaryVenue.mediaItems[0];
-        NSString *imageReference= media.reference;
+    else if (_eventInfo.primaryVenueImageIdentifier) {
         
         __weak EventTVCell *weakSelf = self;
-        _imageOperation=  [api getRestaurantImageWithImageRef:imageReference
+        _imageOperation=  [api getRestaurantImageWithImageRef: _eventInfo.primaryVenueImageIdentifier
                                                      maxWidth:self.frame.size.width
                                                     maxHeight:0
                                                       success:^(NSString *link) {
@@ -168,10 +164,9 @@
                                                       }];
         
     }  else {
-        NSLog (@"EVENT %ld HAS NO PRIMARY VENUE",_eventInfo.eventID);
+        NSLog (@"EVENT %lu HAS NO PRIMARY VENUE",(unsigned long)_eventInfo.eventID);
         [self.thumbnail setImage:placeholder];
     }
-    
 }
 
 @end

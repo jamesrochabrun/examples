@@ -444,6 +444,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void) radioButtonChanged: (BOOL)value for: (id)object;
 {
+    if (!object) {
+        return;
+    }
+    
     if ( value) {
         [_participants  addObject: object];
       }else {

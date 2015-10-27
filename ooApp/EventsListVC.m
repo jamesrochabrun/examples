@@ -23,9 +23,9 @@
 #import "EventCoordinatorVC.h"
 #import "EventParticipantVC.h"
 #import "OOStripHeader.h"
+#import "VotingResultsVC.h"
 
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
-#define EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER  @"eventListGenericCell"
 
 @interface EventsListVC ()
 
@@ -69,7 +69,6 @@
 
     self.table= makeTable( self.view, self);
     [_table registerClass:[EventTVCell class] forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
-    [_table registerClass:[UITableViewCell class] forCellReuseIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER];
     _table.sectionHeaderHeight= 55;
     _table.sectionFooterHeight= 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
@@ -126,8 +125,10 @@
             }
         }
         
-        self.yourEventsArray= your;
-        self.incompleteEventsArray= incomplete;
+        @synchronized(weakSelf.yourEventsArray) {
+            self.yourEventsArray= your;
+            self.incompleteEventsArray= incomplete;
+        }
         
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
@@ -222,49 +223,39 @@
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;
     
-    NSArray* events= nil;
-    switch ( section) {
-        case 0:
-            events=  _yourEventsArray;
-            break;
-        case 1:
-            events=  _incompleteEventsArray;
-            break;
-        case 2:
-            events=  _curatedEventsArray;
-            break;
-    }
-    
-    if  (!events.count) {
-        UITableViewCell* genericCell=[tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_GENERIC_REUSE_IDENTIFIER forIndexPath:indexPath];
-
-        OOStripHeader *nameHeader= [[OOStripHeader  alloc] init];
-        [nameHeader setName: _tableSectionNames[section]];
-        [genericCell  addSubview: nameHeader];
+    @synchronized(_yourEventsArray) {
         
-        float w=  self.table.bounds.size.width;
-        nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);
-
-        return  genericCell;
-    }
-    
-    cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-    cell.selectedBackgroundView= [UIView new];
-    
-    if (!row ) {
-        cell.nameHeader= [[OOStripHeader  alloc] init];
-        [cell.nameHeader setName: _tableSectionNames[section]];
-        if ( section ==1) {
-            [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
+        NSArray* events= nil;
+        switch ( section) {
+            case 0:
+                events=  _yourEventsArray;
+                break;
+            case 1:
+                events=  _incompleteEventsArray;
+                break;
+            case 2:
+                events=  _curatedEventsArray;
+                break;
         }
-    }else {
-        cell.nameHeader= nil;
+        
+        cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+        cell.selectedBackgroundView= [UIView new];
+        
+        if (!row ) {
+            cell.nameHeader= [[OOStripHeader  alloc] init];
+            [cell.nameHeader setName: _tableSectionNames[section]];
+            if ( section ==1) {
+                [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
+            }
+        }else {
+            cell.nameHeader= nil;
+        }
+        
+        EventObject* e= events[row];
+        [cell setEvent: e];
+        
+        cell.backgroundColor= WHITE;
     }
-    
-    EventObject* e= events[row];
-    [cell setEvent: e];
-
-    cell.backgroundColor= WHITE;
     
     return cell;
 }
@@ -303,21 +294,25 @@
 {
     NSInteger section= indexPath.section;
     
-    NSArray* events= nil;
-    switch ( section) {
-        case 0:
-            events=  _yourEventsArray;
-            break;
-        case 1:
-            events=  _incompleteEventsArray;
-            break;
-        case 2:
-            events=  _curatedEventsArray;
-            break;
+    @synchronized(_yourEventsArray) {
+        
+        NSArray* events= nil;
+        switch ( section) {
+            case 0:
+                events=  _yourEventsArray;
+                break;
+            case 1:
+                events=  _incompleteEventsArray;
+                break;
+            case 2:
+                events=  _curatedEventsArray;
+                break;
+        }
+        if (!events.count) {
+            return kGeomHeightButton;
+        }
     }
-    if (!events.count) {
-        return kGeomHeightButton;
-    }
+    
     return kGeomHeightFeaturedCellHeight;
 }
 
@@ -330,74 +325,87 @@
     if  (_doingTransition ) {
         return;
     }
-
+    
     NSInteger row= indexPath.row;
     NSInteger section= indexPath.section;
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    @synchronized(_yourEventsArray) {
+        
+        NSArray* events= nil;
+        switch ( section) {
+            case 0:
+                events=  _yourEventsArray;
+                break;
+            case 1:
+                events=  _incompleteEventsArray;
+                break;
+            case 2:
+                events=  _curatedEventsArray;
+                break;
+        }
+        
+        if  (!events.count) {
+            return;
+        }
+        
+        EventObject *event = [events objectAtIndex: row];
+        
+        // RULE: Curated events are never editable.
+        if ( section==2) {
+            EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+            [self.navigationController pushViewController:vc animated:YES ];
+            return;
+        }
+        
+        EventTVCell* cell= [tableView cellForRowAtIndexPath: indexPath];
+        [cell updateHighlighting:YES];
+        RUN_AFTER(400, ^{
+            [cell updateHighlighting:NO];
+        });
+        
+        // Determine whether event can be edited by this user.
+        // Then transition to the appropriate view controller.
+        //
+        __weak EventsListVC *weakSelf = self;
+        _doingTransition= YES;
+        [OOAPI determineIfCurrentUserCanEditEvent:event
+                                          success:^(bool allowed) {
+                                              weakSelf.doingTransition= NO;
+                                            
+                                              NSDate* now= [NSDate date];
+                                              NSDate* end= event.dateWhenVotingClosed;
+//                                              allowed=0;
+                                              if  (allowed ) {
+                                                  NSLog  (@"EDITING ALLOWED");
+                                                  
+                                                  APP.eventBeingEdited= event;
+                                                  EventCoordinatorVC* vc= [[EventCoordinatorVC  alloc] init];
+                                                  [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                  
+                                              } else {
+                                                  NSLog  (@"EDITING PROHIBITED");
+                                                  
+                                                  if  (end &&  now.timeIntervalSince1970>end.timeIntervalSince1970 ) {
+                                                      APP.eventBeingEdited= event;
+                                                      VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
+                                                      [weakSelf.navigationController pushViewController:vc animated:YES ];
 
-    NSArray* events= nil;
-    switch ( section) {
-        case 0:
-            events=  _yourEventsArray;
-            break;
-        case 1:
-            events=  _incompleteEventsArray;
-            break;
-        case 2:
-            events=  _curatedEventsArray;
-            break;
+                                                  } else {
+                                                      
+                                                      APP.eventBeingEdited= event;
+                                                      EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+                                                      [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                      
+                                                  }
+                                              }
+                                          } failure:^(NSError *e) {
+                                              weakSelf.doingTransition= NO;
+                                              [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
+                                              message( @"Unable to contact the cloud.");
+                                          }];
     }
-    
-    if  (!events.count) {
-        return;
-    }
-    
-    EventObject *event = [events objectAtIndex: row];
-    
-    // RULE: Curated events are never editable.
-    if ( section==2) {
-        EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-        [self.navigationController pushViewController:vc animated:YES ];
-        return;
-    }
-    
-    EventTVCell* cell= [tableView cellForRowAtIndexPath: indexPath];
-    [cell updateHighlighting:YES];
-    RUN_AFTER(400, ^{
-        [cell updateHighlighting:NO];
-    });
-    
-    // Determine whether event can be edited by this user.
-    // Then transition to the appropriate view controller.
-    //
-    __weak EventsListVC *weakSelf = self;
-    self.doingTransition= YES;
-    [OOAPI determineIfCurrentUserCanEditEvent:event
-                                      success:^(bool allowed) {
-                                          weakSelf.doingTransition= NO;
-                                          
-                                          if  (allowed ) {
-                                              NSLog  (@"EDITING ALLOWED");
-                                              
-                                              APP.eventBeingEdited= event;
-                                              EventCoordinatorVC* vc= [[EventCoordinatorVC  alloc] init];
-                                              [weakSelf.navigationController pushViewController:vc animated:YES ];
-                                              
-                                          } else {
-                                              NSLog  (@"EDITING PROHIBITED");
-                                              APP.eventBeingEdited= event;
-                                              EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-                                              [weakSelf.navigationController pushViewController:vc animated:YES ];
-                                              
-                                          }
-                                      } failure:^(NSError *e) {
-                                          NSLog  (@" failure %@",e);
-                                          weakSelf.doingTransition= NO;
-                                          [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
-                                          message( @"Unable to contact the cloud.");
-                                      }];
-    
 }
 
 //------------------------------------------------------------------------------
@@ -407,21 +415,25 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger n= 0;
-    switch ( section) {
-        case 0:
-            n=  _yourEventsArray.count;
-            break;
-        case 1:
-            n=  _incompleteEventsArray.count;
-            break;
-        case 2:
-            n=  _curatedEventsArray.count;
-            break;
-            
-        default:
-            return 0;
+    
+    @synchronized(_yourEventsArray) {
+        
+        switch ( section) {
+            case 0:
+                n=  _yourEventsArray.count;
+                break;
+            case 1:
+                n=  _incompleteEventsArray.count;
+                break;
+            case 2:
+                n=  _curatedEventsArray.count;
+                break;
+                
+            default:
+                return 0;
+        }
     }
-    return MAX(1, n );
+    return n ;
 }
 
 //------------------------------------------------------------------------------

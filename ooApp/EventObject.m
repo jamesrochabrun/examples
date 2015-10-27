@@ -24,7 +24,7 @@ NSString *const kKeyTotalPrice = @"total_price";
 NSString *const kKeyCreatedAt = @"created_at";
 NSString *const kKeyUpdatedAt = @"updated_at";
 NSString *const kKeyEventDate = @"event_date";
-NSString *const kKeyWhenVotingCloses = @"when_voting_closed";
+NSString *const kKeyWhenVotingCloses = @"voting_closed_at";
 NSString *const kKeyEventType = @"type";
 NSString *const kKeyKeywords = @"keywords";
 NSString *const kKeyFriendRecommendationAge = @"friend_recommendation_age";
@@ -43,6 +43,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     if (self) {
         _venues= [NSMutableOrderedSet new];
         _users= [NSMutableOrderedSet new];
+        _votes= [NSMutableArray new];
     }
     return self;
 }
@@ -117,21 +118,25 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     if (_dateWhenVotingClosed) dictionary[kKeyWhenVotingCloses] = _dateWhenVotingClosed;
     if (_friendRecommendationAge > 0) dictionary[kKeyFriendRecommendationAge] = @(_friendRecommendationAge);
     if (_totalPrice > 0) dictionary[kKeyTotalPrice] = @(_totalPrice);
-
+    
     return [NSDictionary dictionaryWithDictionary:dictionary];
 }
 
 - (NSUInteger) totalVenues
 {
-    return _venues.count;
+    @synchronized(_venues)  {
+        return _venues.count;
+    }
 }
 
 - (RestaurantObject *)firstVenue
 {
-    if  (!_venues || !_venues.count) {
-        return nil;
+    @synchronized(_venues)  {
+        if  (!_venues || !_venues.count) {
+            return nil;
+        }
+        return _venues[0];
     }
-    return _venues[0];
 }
 
 - (void)addVenue:(RestaurantObject *)venue;
@@ -140,19 +145,21 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
         return;
     }
     
-    if (![_venues containsObject: venue]) {
-        [_venues addObject: venue];
-        
-        [OOAPI addRestaurant:venue
-                     toEvent:self
-                     success:^(id response) {
-                         NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
-                         message( @"Added.");
-                     } failure:^(NSError *error) {
-                         NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
-                         [_venues removeObject: venue];
-
-                     }];
+    @synchronized(_venues)  {
+        if (![_venues containsObject: venue]) {
+            [_venues addObject: venue];
+            
+            [OOAPI addRestaurant:venue
+                         toEvent:self
+                         success:^(id response) {
+                             NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
+                             message( @"Added.");
+                         } failure:^(NSError *error) {
+                             NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
+                             [_venues removeObject: venue];
+                             
+                         }];
+        }
     }
 }
 
@@ -161,30 +168,36 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     if (!venue) {
         return;
     }
-    if  (!_venues) {
-        return;
-    }
-    if ([_venues containsObject: venue]) {
-        [_venues removeObject: venue];
-        
-        [OOAPI removeRestaurant:venue
-                     fromEvent:self
-                     success:^(id response) {
-                         NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
-                         message( @"Removed.");
-                     } failure:^(NSError *error) {
-                         [_venues addObject: venue];
-                         NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
-                     }];
+    
+    @synchronized(_venues)  {
+        if ([_venues containsObject: venue]) {
+            [_venues removeObject: venue];
+            
+            [OOAPI removeRestaurant:venue
+                          fromEvent:self
+                            success:^(id response) {
+                                NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
+                                message( @"Removed.");
+                            } failure:^(NSError *error) {
+                                [_venues addObject: venue];
+                                NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
+                            }];
+        }
     }
 }
 
 - (RestaurantObject *)getNthVenue:(NSInteger)index;
 {
-    if  (index <0 || index>= _venues.count ) {
+    if  (index <0 )
         return nil;
+    
+    @synchronized(_venues)  {
+        
+        if  (index>= _venues.count ) {
+            return nil;
+        }
+        return _venues[index];
     }
-    return _venues[index];
 }
 
 - (AFHTTPRequestOperation *)refreshParticipantStatsFromServerWithSuccess:(void (^)())success
@@ -221,15 +234,15 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 }
 
 - (AFHTTPRequestOperation *)refreshVenuesFromServerWithSuccess:(void (^)())success
-                                    failure:(void (^)())failure;
+                                                       failure:(void (^)())failure;
 {
     return [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
-        
-        [self.venues removeAllObjects];
-        for (RestaurantObject *venue in venues) {
-            [_venues addObject:venue];
+        @synchronized(_venues)  {
+            [self.venues removeAllObjects];
+            for (RestaurantObject *venue in venues) {
+                [_venues addObject:venue];
+            }
         }
-        
         [self establishPrimaryImage];
         
         success();
@@ -261,13 +274,16 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 - (void)establishPrimaryImage;
 {
     self.primaryVenueImageIdentifier= nil;
-    for (RestaurantObject* r  in  self.venues) {
-        if  (r.mediaItems.count ) {
-            MediaItemObject *media= r.mediaItems[0];
-            NSString *imageReference= media.reference;
-            if  (imageReference ) {
-                self.primaryVenueImageIdentifier= imageReference;
-                break;
+    
+    @synchronized(_venues)  {
+        for (RestaurantObject* r  in  self.venues) {
+            if  (r.mediaItems.count ) {
+                MediaItemObject *media= r.mediaItems[0];
+                NSString *imageReference= media.reference;
+                if  (imageReference ) {
+                    self.primaryVenueImageIdentifier= imageReference;
+                    break;
+                }
             }
         }
     }
@@ -275,14 +291,21 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 
 - (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
 {
-    if  (!_venues.count || identifier) {
+    if  ( !identifier) {
         return nil;
     }
     
-    for (RestaurantObject *venue in _venues) {
-        if (venue.restaurantID) {
-            if (venue.restaurantID == identifier) {
-                return venue;
+    @synchronized(_venues)  {
+        if  (!_venues.count || !identifier) {
+            return nil;
+        }
+        
+        
+        for (RestaurantObject *venue in _venues) {
+            if (venue.restaurantID) {
+                if (venue.restaurantID == identifier) {
+                    return venue;
+                }
             }
         }
     }
@@ -294,8 +317,10 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 {
     return [OOAPI getVoteForEvent:self
                           success:^(NSArray *votes) {
-                              [self.votes removeAllObjects];
-                              [self.votes addObjectsFromArray: votes ];
+                              @synchronized(_votes) {
+                                  [self.votes removeAllObjects];
+                                  [self.votes addObjectsFromArray: votes ];
+                              }
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
                               success();
                           }
@@ -303,17 +328,19 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                               NSLog  (@"UNABLE TO GET VOTES FOR EVENT.");
                               failure();
                           }];
-
+    
 }
 
 - (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
 {
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
-
-    for (VoteObject* vote  in  _votes) {
-        if ( vote.eventID ==  _eventID && vote.userID==userid  && identifier == vote.venueID) {
-            return  vote;
+    
+    @synchronized(_votes) {
+        for (VoteObject* vote  in  _votes) {
+            if ( vote.eventID ==  _eventID && vote.userID==userid  && identifier == vote.venueID) {
+                return  vote;
+            }
         }
     }
     return nil;

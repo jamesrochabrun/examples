@@ -21,6 +21,7 @@
 @property (nonatomic,strong)   UILabel* labelEventVotingHeader;
 @property (nonatomic,strong)   UIButton* buttonEventDate;
 @property (nonatomic,strong)   UIButton* buttonEventVoting;
+@property (nonatomic,strong) UIButton* buttonDuration1;
 @property (nonatomic,strong)  UIDatePicker* pickerEventDate;
 @property (nonatomic,strong)   UIDatePicker* pickerEventVotingDate;
 @end
@@ -48,6 +49,10 @@
     self.buttonEventVoting=makeButton(self.view, @"Press here to set.", kGeomFontSizeHeader,  BLACK, CLEAR,
                                     self, @selector(userPressedLowerButton:), 0);
     
+    self.buttonDuration1= makeButton(self.view,  @"1 HOUR FOR VOTING",
+                                     kGeomFontSizeHeader,
+                                     BLACK, CLEAR, self, @selector(userPressDurationButton1:) , 1);
+    
     self.pickerEventDate= [[UIDatePicker  alloc] init];
     self.pickerEventVotingDate= [[UIDatePicker  alloc] init];
     [self.view addSubview: _pickerEventDate ];
@@ -73,6 +78,11 @@
 
 }
 
+- (void)userPressDurationButton1: (id) sender
+{
+    
+    
+}
 - (void)expressUpperDate
 {
     NSDate* gmtTime= APP.eventBeingEdited.date;
@@ -225,6 +235,7 @@
         y += pickerHeight+ spacing;
     }
     
+    _buttonDuration1.frame = CGRectMake(margin,h-kGeomHeightButton- margin,w-2*margin, kGeomHeightButton);
 }
 
 @end
