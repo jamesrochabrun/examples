@@ -969,55 +969,44 @@ NSString *const kKeySearchFilter = @"filter";
         return ;
     }
     [request setHTTPMethod:@"POST"];
-
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setHTTPShouldHandleCookies:NO];
     [request setTimeoutInterval:60];
     
-    NSString*const boundary = @"WebKitFormBoundaryPnHdnY89ti1wsHcj";
-    NSString*const filename=  @"file.jpg";
+    NSString*const boundary = @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
 
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
     
-    //    [body appendData: [@"Accept-Language: en-US\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    //    [body appendData: [@"Accept-Encoding: text/html\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    
     [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary]
         forHTTPHeaderField:@"Content-Type"];
     
     NSMutableData *body = [NSMutableData new];
-    [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"upload\"; filename=\"%@\"\r\n",filename] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    NSString* token= userInfo.backendAuthorizationToken;
-    if  (token  &&  token.length ) {
-        [body appendData: [[NSString stringWithFormat: @"Authorization: %@", token.lowercaseString ] dataUsingEncoding:NSUTF8StringEncoding]];
-    }else {
-        NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
-    }
-    
-     [body appendData:[[NSString stringWithFormat:@"%@\r\n", @"Some Caption"] dataUsingEncoding:NSUTF8StringEncoding]];
     
     if (imageData) {
         [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=%@; filename=file.jpg\r\n", @"upload"] dataUsingEncoding:NSUTF8StringEncoding]];
-            [body appendData:[[NSString stringWithFormat:@"Content-Length: %d\r\n",(int)[imageData length]] dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"file.jpg\"\r\n", @"upload"] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"Content-Type: image/jpeg, image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         [body appendData:imageData];
-        [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
     }
     
-    [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", boundary]
+    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary]
                       dataUsingEncoding:NSUTF8StringEncoding]];
     [request setHTTPBody:body];
-//    NSLog  (@" body=  %s", [body bytes]);
+    NSLog  (@" body=  %s", [body bytes]);
     
-    NSURLSessionUploadTask *task = [session uploadTaskWithRequest: request
-                                                         fromData: imageData
-                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {                                                    
+    NSString *postLength = [NSString stringWithFormat:@"%d", [body length]];
+    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+
+//    NSURLResponse*r= nil;
+//    NSURLConnection*c=  [[NSURLConnection  alloc] initWithRequest:request delegate:nil startImmediately:YES];
+//    NSData*d= [NSURLConnection sendSynchronousRequest:request returningResponse:&r error:nil];
+//    NSLog  (@" response=  %s", [d bytes]);
+//    return ;
+    NSURLSessionDataTask *task = [session dataTaskWithRequest: request
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                     if (error) {
                                                         if (failure) failure(error);
                                                     } else {
@@ -1027,7 +1016,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                             if (success) success();
                                                         }else {
                                                             if (failure) failure(error);
-                                                        }// NOTE:  typically error 400
+                                                        }
                                                         
                                                     }
                                                 }];

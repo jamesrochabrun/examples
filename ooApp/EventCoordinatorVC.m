@@ -85,7 +85,6 @@
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     
-    
     UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
     UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
@@ -167,8 +166,8 @@
     [_scrollView addSubview: self.headerWho];
     [_scrollView addSubview: self.headerWhen];
     [_scrollView addSubview: self.headerWhere];
-    [self.headerWho enableAddButtonWithTarget: self action:@selector(userTappedWhoBox:)];
-    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
+//    [self.headerWho enableAddButtonWithTarget: self action:@selector(userTappedWhoBox:)];
+//    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
     
     UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
     [self.viewContainer1 addGestureRecognizer:tap1 ];
