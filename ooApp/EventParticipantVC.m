@@ -39,12 +39,8 @@
     self = [super  initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.viewShadow= makeView( self, WHITE);
-        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
-        _viewShadow.layer.shadowColor= BLACK.CGColor;
-        _viewShadow.layer.shadowOpacity= .5;
-        _viewShadow.layer.shadowRadius= 4;
-        _viewShadow.clipsToBounds= NO;
-        
+        addShadowTo (_viewShadow);
+
         self.clipsToBounds= NO;
         self.backgroundColor= CLEAR;
         

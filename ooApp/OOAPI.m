@@ -12,6 +12,7 @@
 #import "Settings.h"
 #import "EventObject.h"
 #import "GroupObject.h"
+#import "AppDelegate.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -978,7 +979,11 @@ NSString *const kKeySearchFilter = @"filter";
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
 
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-    
+    NSLog (@"IMAGE DIMENSIONS=  %@", NSStringFromCGSize(image.size));
+    NSLog (@"JPEG IMAGE SIZE=  %ld bytes",[imageData length]);
+    [APP.diagnosticLogString appendFormat: @"IMAGE DIMENSIONS=  %@\r", NSStringFromCGSize(image.size)];
+    [APP.diagnosticLogString appendFormat:@"JPEG IMAGE SIZE=  %ld bytes\r",[imageData length]];
+
     [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary]
         forHTTPHeaderField:@"Content-Type"];
     
@@ -996,7 +1001,7 @@ NSString *const kKeySearchFilter = @"filter";
                       dataUsingEncoding:NSUTF8StringEncoding]];
     [request setHTTPBody:body];
     
-    NSString *postLength = [NSString stringWithFormat:@"%d", [body length]];
+    NSString *postLength = [NSString stringWithFormat:@"%lu", ( unsigned long) [body length]];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
 
     NSURLSessionDataTask *task = [session dataTaskWithRequest: request

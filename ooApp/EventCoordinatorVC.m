@@ -31,8 +31,12 @@
 @property (nonatomic,strong)  UILabel *labelEventCover;
 
 @property (nonatomic,strong)  UIView *viewContainer2;
-@property (nonatomic,strong)  UILabel *labelWho;
+@property (nonatomic,strong)  UILabel *labelWhoPending;
+@property (nonatomic,strong)  UILabel *labelWhoResponded;
+@property (nonatomic,strong)  UILabel *labelWhoVoted;
 @property (nonatomic,strong)  UILabel *labelPersonIcon;
+@property (nonatomic,strong) UIView* viewVerticalLine1;
+@property (nonatomic,strong) UIView* viewVerticalLine2;
 
 @property (nonatomic,strong)  UIView *viewContainer3;
 @property (nonatomic,strong)  UILabel *labelWhen;
@@ -131,25 +135,23 @@
         submitButtonMessage=@"SUBMIT EVENT";
     }
     _buttonSubmit= makeButton(self.viewContainer1, submitButtonMessage,
-                              kGeomFontSizeHeader, RED, CLEAR, self, @selector(doSubmit:), 1);
+                              kGeomFontSizeHeader, YELLOW, UIColorRGBA(0xb0000000), self, @selector(doSubmit:), 0);
     _buttonSubmit.titleLabel.numberOfLines= 0;
     _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
-    _buttonSubmit.layer.shadowColor= WHITE.CGColor;
-    _buttonSubmit.layer.shadowRadius= 1;
-    _buttonSubmit.layer.shadowOffset=  CGSizeMake (1,1);
-    _buttonSubmit.titleLabel.layer.shadowColor= WHITE.CGColor;
-    _buttonSubmit.titleLabel.layer.shadowRadius= 1;
-    _buttonSubmit.titleLabel.layer.shadowOffset=  CGSizeMake (1,1);
     _buttonSubmit.enabled= NO;
     
     self.viewContainer2= makeView(self.scrollView, WHITE);
-    self.labelWho = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
+    self.labelWhoPending = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
+    self.labelWhoResponded = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
+    self.labelWhoVoted = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
     self.labelPersonIcon= [UILabel new];
     [ self.viewContainer2  addSubview: _labelPersonIcon];
     _labelPersonIcon.attributedText= createPeopleIconString (1);
     _labelPersonIcon.textAlignment= NSTextAlignmentRight;
     _viewContainer2.layer.borderWidth= 1;
     _viewContainer2.layer.borderColor= GRAY.CGColor;
+    self.viewVerticalLine1= makeView(self.viewContainer2, BLACK);
+    self.viewVerticalLine2= makeView(self.viewContainer2, BLACK);
     
     self.viewContainer3= makeView(self.scrollView, WHITE);
     self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
@@ -167,7 +169,7 @@
     [_scrollView addSubview: self.headerWhen];
     [_scrollView addSubview: self.headerWhere];
 //    [self.headerWho enableAddButtonWithTarget: self action:@selector(userTappedWhoBox:)];
-//    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
+    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
     
     UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
     [self.viewContainer1 addGestureRecognizer:tap1 ];
@@ -178,19 +180,25 @@
     UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhereBox:)];
     [self.viewContainer4 addGestureRecognizer:tap4 ];
     
+    addShadowTo (_viewContainer1);
+    addShadowTo (_viewContainer2);
+    addShadowTo (_viewContainer3);
+    addShadowTo (_viewContainer4);
+    _imageViewContainer1.clipsToBounds= YES;
+    
     [self updateBoxes];
     
     EventObject* e= APP.eventBeingEdited;
     if  (e.primaryVenueImageIdentifier ) {
         __weak EventCoordinatorVC *weakSelf = self;
         OOAPI *api = [[OOAPI alloc] init];
-       /* _imageOperation=*/ [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
-                                                   maxWidth:self.view.frame.size.width
-                                                  maxHeight:0
-                                                    success:^(NSString *link) {
-                                                        UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
-                                                        ON_MAIN_THREAD(  ^{
-                                                            [weakSelf.imageViewContainer1
+        /* _imageOperation=*/ [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
+                                                         maxWidth:self.view.frame.size.width
+                                                        maxHeight:0
+                                                          success:^(NSString *link) {
+                                                              UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
+                                                              ON_MAIN_THREAD(  ^{
+                                                                  [weakSelf.imageViewContainer1
                                                              setImageWithURL:[NSURL URLWithString:link]
                                                              placeholderImage:placeholder];
                                                         });
@@ -308,12 +316,20 @@
     
     _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
     
-    NSString *countsString= [NSString stringWithFormat: @"\r%lu %@\r%lu %@\r%lu %@",
-                            (unsigned long) responded,  LOCAL( @"RESPONDED"),
-                            (unsigned long) pending,  LOCAL( @"PENDING"),
+    NSString *countsStringPending= [NSString stringWithFormat: @"%lu\r%@",
+                             (unsigned long) pending,  LOCAL( @"PENDING")
+                             ];
+    
+    NSString *countsStringResponded= [NSString stringWithFormat:  @"%lu\r%@",
+                             (unsigned long) responded,  LOCAL( @"RESPONDED")
+                             ];
+    
+    NSString *countsStringVoted= [NSString stringWithFormat:  @"%lu\r%@",
                              (unsigned long)voted,  LOCAL( @"VOTED")
                              ];
-    _labelWho.attributedText= attributedStringOf(countsString,  kGeomFontSizeHeader);
+    _labelWhoPending.attributedText= attributedStringOf(countsStringPending,  kGeomFontSizeHeader);
+    _labelWhoResponded.attributedText= attributedStringOf(countsStringResponded,  kGeomFontSizeHeader);
+    _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
 }
 
 - (void) updateWhereBoxAnimated:(id)animated
@@ -339,7 +355,6 @@
 
     // RULE: Do not allow submitting before we have all the restaurant information.
     _buttonSubmit.enabled= YES;
-
 }
 
 - (void)viewWillLayoutSubviews
@@ -500,11 +515,22 @@
     _scrollView.contentSize= CGSizeMake(w-1, y);
     
     y=  0;
-    _buttonSubmit.frame=  CGRectMake((boxWidth-kGeomButtonWidth)/2,_viewContainer1.frame.size.height-kGeomHeightButton-margin,kGeomButtonWidth,kGeomHeightButton);
+    _buttonSubmit.frame=  CGRectMake(0, _viewContainer1.frame.size.height-kGeomHeightButton,
+                                     boxWidth,kGeomHeightButton);
     _labelEventCover.frame = CGRectMake(0,0,boxWidth,_buttonSubmit.frame.origin.y);
     
-    _labelWho.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
-    _labelPersonIcon.frame = CGRectMake(boxWidth-kGeomButtonWidth, kGeomEventCoordinatorBoxHeight-kGeomHeightButton-margin,kGeomButtonWidth,kGeomHeightButton);
+    float subBoxWidth= boxWidth/3;
+    float subBoxHeight= 2*kGeomEventCoordinatorBoxHeight/3;
+    x= 0;
+    _labelWhoResponded.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
+    x+= subBoxWidth;
+    _viewVerticalLine1.frame = CGRectMake(x,kGeomSpaceEdge,1,subBoxHeight);
+    _labelWhoPending.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
+    x+= subBoxWidth;
+    _viewVerticalLine2.frame = CGRectMake(x,kGeomSpaceEdge,1,subBoxHeight);
+    _labelWhoVoted.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
+    
+    _labelPersonIcon.frame = CGRectMake(0,subBoxHeight,boxWidth,subBoxHeight/3);
     
     _labelWhen.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
 

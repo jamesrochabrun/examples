@@ -2,12 +2,10 @@
 //  DiagnosticVC.m
 //  ooApp
 //
-//  Created by Zack S on 7/16/15.
+//  Created by Zack Smith on 9/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-//#import "Common.h"
-//#import "CommonUIConstants.h"
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -23,8 +21,11 @@
 @property (nonatomic,strong)  UIButton* buttonClearCache;
 @property (nonatomic,strong)  UIButton* buttonSearchRadius;
 @property (nonatomic,strong)  UIButton* buttonUploadPhoto;
+@property (nonatomic,strong)  UIButton* buttonUploadHugePhoto;
+@property (nonatomic,strong)  UIButton* buttonTakePhoto;
 @property (nonatomic,strong)  UITextView* textviewDiagnosticLog;
 @property (nonatomic,strong)   UIImageView* ivPhoto;
+@property (nonatomic,strong)   UIImage* hugeImage;
 @end
 
 @implementation DiagnosticVC
@@ -49,7 +50,6 @@
     _textviewDiagnosticLog.layer.borderColor= GRAY.CGColor;
     _textviewDiagnosticLog.layer.borderWidth= 0.5;
     _textviewDiagnosticLog.layer.cornerRadius= 5;
-    _textviewDiagnosticLog.text= APP.diagnosticLogString;
     _textviewDiagnosticLog.textAlignment= NSTextAlignmentLeft;
     _textviewDiagnosticLog.font= [ UIFont systemFontOfSize:kGeomFontSizeDetail ];
     self.automaticallyAdjustsScrollViewInsets= NO;
@@ -69,6 +69,14 @@
     _buttonSearchRadius.titleLabel.numberOfLines= 0;
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
     
+    _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doTakeUpload:), 1);
+    _buttonTakePhoto.titleLabel.numberOfLines= 0;
+    _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
+    self.buttonUploadHugePhoto= makeButton(self.view,  @"UPLOAD HUGE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoHugeUpload:), 1);
+    _buttonUploadHugePhoto.titleLabel.numberOfLines= 0;
+    _buttonUploadHugePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
     _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
     _buttonUploadPhoto.titleLabel.numberOfLines= 0;
     _buttonUploadPhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
@@ -87,7 +95,15 @@
 {
     [super viewDidAppear:animated];
     
+    [self loadTextFieldAndScrollToBottom];
+}
+
+- (void) loadTextFieldAndScrollToBottom
+{
+    _textviewDiagnosticLog.text= APP.diagnosticLogString;
+
     [_textviewDiagnosticLog scrollRangeToVisible:NSMakeRange([_textviewDiagnosticLog.text length], 0)];
+
 }
 
 //------------------------------------------------------------------------------
@@ -111,12 +127,47 @@
 }
 
 //------------------------------------------------------------------------------
+// Name:    doTakeUpload
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doTakeUpload: (id) sender
+{
+    [self presentCameraModal];
+}
+
+//------------------------------------------------------------------------------
+// Name:    doPhotoHugeUpload
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doPhotoHugeUpload: (id) sender
+{
+    self.hugeImage= [ UIImage  imageNamed: @"Huge.jpg"];
+    [OOAPI uploadUserPhoto:self.hugeImage success:^{
+        NSLog  (@"Uploaded huge photo.");
+    } failure:^(NSError *error) {
+        NSLog  (@"Failed to upload huge photo.");
+    }];
+    
+    [self loadTextFieldAndScrollToBottom];
+}
+
+//------------------------------------------------------------------------------
 // Name:    doPhotoUpload
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)doPhotoUpload: (id) sender
 {
-    [self presentCameraModal];
+    if (! _hugeImage) {
+        message( @"Please take a photo first.");
+        return;
+    }
+    [OOAPI uploadUserPhoto: _hugeImage success:^{
+        NSLog  (@"Uploaded photo.");
+    } failure:^(NSError *error) {
+        NSLog  (@"Failed to upload photo.");
+    }];
+    
+    [self loadTextFieldAndScrollToBottom];
 }
 
 //------------------------------------------------------------------------------
@@ -179,7 +230,11 @@
     
     x += kGeomButtonWidth+ spacing;
     y= margin;
+    _buttonTakePhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
     _buttonUploadPhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
+    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
 
     _ivPhoto.frame = CGRectMake(0,0,w,_textviewDiagnosticLog.frame.origin.y);
@@ -217,6 +272,7 @@
     if (!image) {
         image= info[ @"UIImagePickerControllerEditedImage"];
     }
+    self.hugeImage= image;
     
     if ( image && [image isKindOfClass:[UIImage class]]) {
         _ivPhoto.image= image;

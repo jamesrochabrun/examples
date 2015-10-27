@@ -56,6 +56,9 @@
         UserObject *userInfo= [Settings sharedInstance].userObject;
         NSUInteger ownUserIdentifier= [userInfo userID];
         _viewingOwnProfile = _userID == ownUserIdentifier;
+        if ( !_viewingOwnProfile) {
+            self.navigationController.navigationItem.leftBarButtonItem= nil;
+        }
         
         self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
         
@@ -237,6 +240,7 @@
 
 @end
 
+//==============================================================================
 @interface ProfileVC ()
 
 @property (nonatomic, strong) ProfileTableFirstRow* headerCell;
@@ -272,7 +276,7 @@
         UserObject *userInfo = [Settings sharedInstance].userObject;
         self.profileOwner = userInfo;
     } else {
-        // NOTE: Whoever created this VC will have set the user ID and user object.
+        self.profileOwner = _userInfo;
     }
     
     _lists = [NSArray array];

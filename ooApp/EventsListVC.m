@@ -203,11 +203,6 @@
     float w=  self.view.bounds.size.width;
     float y=  kGeomSpaceEdge;
 
-//    _buttonAdd.frame=  CGRectMake( w-kGeomHeightButton-kGeomCancelButtonInteriorPadding,
-//                                     y+kGeomCancelButtonInteriorPadding,
-//                                     kGeomHeightButton,
-//                                     kGeomHeightButton);
-    
     _table.frame=  CGRectMake(kGeomSpaceEdge,y,w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
    
 }
@@ -247,6 +242,7 @@
             if ( section ==1) {
                 [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
             }
+            [cell setIsFirst];
         }else {
             cell.nameHeader= nil;
         }
@@ -277,14 +273,14 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 30;
+    return 7;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UILabel * label= makeLabelLeft (nil,   @"",  10);
-    return  label;
-}
+//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    UILabel * label= makeLabelLeft (nil,   @"",  10);
+//    return  label;
+//}
 
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath

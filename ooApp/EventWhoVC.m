@@ -17,6 +17,7 @@
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
 #import "GroupObject.h"
+#import "ProfileVC.h"
 
 @interface  EventWhoTableCell ()
 @property (nonatomic,strong) UIButton *radioButton;
@@ -421,15 +422,18 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString* name= nil;
+    UserObject* user= nil;
     NSInteger row= indexPath.row;
     @synchronized(_arrayOfPotentialParticipants) {
         if  ( row  < _arrayOfPotentialParticipants.count) {
-            name=  _arrayOfPotentialParticipants[row];
+            user=  _arrayOfPotentialParticipants[row];
         }
     }
-    if ( name) {
-        //        _fieldUsername.text= name;
+    if ( user) {
+        ProfileVC* vc= [[ProfileVC alloc] init];
+        vc.userID= user.userID;
+        vc.userInfo=user;
+        [self.navigationController pushViewController:vc animated:YES];
     }
 }
 

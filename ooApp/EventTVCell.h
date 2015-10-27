@@ -15,6 +15,7 @@
 
 - (void)setEvent:(EventObject *)eo;
 - (void) updateHighlighting: (BOOL)highlighted;
+- (void) setIsFirst;
 
 @property (nonatomic,strong) OOStripHeader *nameHeader;
 

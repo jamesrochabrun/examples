@@ -14,6 +14,8 @@
 @property (nonatomic,strong)  UILabel *labelIndicatingAttendeeCount;
 @property (nonatomic,strong)  AFHTTPRequestOperation *operation;
 @property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
+@property (nonatomic,strong) UIView* viewShadow;
+@property (nonatomic,assign) BOOL isFirst;
 @end
 
 @implementation EventTVCell
@@ -22,7 +24,10 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-
+        
+        _viewShadow= makeView(self,  WHITE);
+        addShadowTo(_viewShadow);
+        
         _labelIndicatingAttendeeCount= [UILabel  new];
         [self  addSubview: _labelIndicatingAttendeeCount];
         _labelIndicatingAttendeeCount.textColor= WHITE;
@@ -33,9 +38,12 @@
         self.header.textColor= WHITE;
         self.subHeader1.textColor= WHITE;
         self.subHeader2.textColor= WHITE;
+        self.header.font= [ UIFont  fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeHeader];
+        self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
 
         self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         self.thumbnail.clipsToBounds= YES;
+        
     }
     return self;
 }
@@ -50,11 +58,17 @@
     self.eventInfo= nil;    
     [_nameHeader removeFromSuperview];
     _nameHeader = nil;
+    self.isFirst= NO;
     self.header.text= nil;
     self.subHeader1.text= nil;
     self.subHeader2.text= nil;
     self.thumbnail.image= nil;
     _labelIndicatingAttendeeCount.text= nil;
+}
+
+- (void)setIsFirst
+{
+    self.isFirst= YES;
 }
 
 - (void) updateHighlighting: (BOOL)highlighted;
@@ -81,19 +95,36 @@
     
     float w= self.frame.size.width;
     float h= self.frame.size.height;
-    const float lowerGradientHeight=  5;
+    const float lowerGradientHeight=  7;
+    
     _nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);
     
     _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton-lowerGradientHeight,kGeomButtonWidth,kGeomHeightButton);
     _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
     
-    float thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
-    self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
+    float thumbHeight,y;
+    // RULE: If the cell is the first one then leave space for the header.
+    if  (_isFirst ) {
+        thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
+        self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
+        y= kGeomHeightButton/2+ (thumbHeight-2*kGeomFontSizeHeader)/2;
+   } else {
+        thumbHeight=h-lowerGradientHeight;
+        self.thumbnail.frame = CGRectMake(0,0,w,thumbHeight);
+       y= (thumbHeight-2*kGeomFontSizeHeader)/2;
+    }
     
-    float y= kGeomHeightButton/2+ (thumbHeight-2*kGeomFontSizeHeader)/2;
-    self.header.frame = CGRectMake(0,y,w,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
-    self.subHeader1.frame = CGRectMake(0,y,w,kGeomFontSizeHeader); y += kGeomFontSizeHeader;
-    //    self.subHeader2.frame = CGRectMake(0,y,w,kGeomFontSizeHeader);
+    _viewShadow.frame= self.thumbnail.frame;
+    [self  sendSubviewToBack:_viewShadow ];
+    
+    [self.header sizeToFit];
+    [self.subHeader1 sizeToFit];
+    float headerHeight= self.header.frame.size.height;
+    float subheaderHeight= self.subHeader1.frame.size.height;
+    
+    self.header.frame = CGRectMake(0,y,w,headerHeight); y += headerHeight;
+    self.subHeader1.frame = CGRectMake(0,y,w,subheaderHeight);
+    self.subHeader2.frame = CGRectZero;
 }
 
 - (void)setEvent:(EventObject *)eo

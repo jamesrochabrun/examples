@@ -28,8 +28,6 @@
 @interface EventParticipantFirstCell: UITableViewCell
 @property (nonatomic,assign) id <EventParticipantFirstCellDelegate> delegate;
 - (void) provideEvent: (EventObject*)event;
-- (void)indicateMissingVoteFor: (RestaurantObject*)venue;
-- (void)provideVote: (VoteObject*)vote;
 @end
 
 @interface EventParticipantVotingCell: UITableViewCell 

@@ -133,10 +133,6 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                 success:(void (^)(void))success
                 failure:(void (^)(NSError *error))failure;
 
-+ (void)uploadUserPhoto_AFNetworking:(UIImage *)image
-                             success:(void (^)(void))success
-                             failure:(void (^)(NSError *error))failure;
-
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                    success:(void (^)(BOOL))success
                                    failure:(void (^)(NSError *))failure;

@@ -17,6 +17,7 @@
 #define LOCAL(STR) NSLocalizedString(STR, nil)
 #define ON_MAIN_THREAD(BLK) dispatch_async(dispatch_get_main_queue(),BLK)
 #define RUN_AFTER(MS,BLK) {dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW,MS * 1000000);dispatch_after(delayTime, dispatch_get_main_queue(), BLK); }
+#define IS_IPAD ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad )
 
 extern void message (NSString *str);
 
@@ -47,7 +48,7 @@ extern UITableView* makeTable (UIView *parent,id  delegate);
 extern UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UIView* makeView (UIView *parent, UIColor* backgroundColor);
 extern UIScrollView* makeScrollView (UIView*parent, id  delegate);
-
+extern void addShadowTo (UIView*v);
 extern NSDate* parseUTCDateFromServer(NSString *string);
 extern NSString* parseStringOrNullFromServer (id object);
 extern double parseNumberOrNullFromServer (id object);
