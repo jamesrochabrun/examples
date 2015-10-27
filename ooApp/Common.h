@@ -9,6 +9,8 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#import "Reachability.h"
+
 @class AppDelegate;
 #define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
 
@@ -55,5 +57,10 @@ extern NSUInteger parseUnsignedIntegerOrNullFromServer (id object);
 extern BOOL isValidEmailAddress (NSString *string);
 
 extern NSString* expressLocalDateTime(NSDate* date);
+
+static inline BOOL is_reachable(void) {
+	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;
+	return status ==ReachableViaWiFi || status==ReachableViaWWAN;
+}
 
 #endif

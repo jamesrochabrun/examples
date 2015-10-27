@@ -111,6 +111,7 @@
 		96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E127B51BB32C6E00A8445E /* EmptyListVC.m */; };
 		96E270AF1BDAC001005BC4EC /* VotingResultsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E270AE1BDAC001005BC4EC /* VotingResultsVC.m */; };
 		96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E49E731BC5E14B008B70AF /* EventWhenVC.m */; };
+		96E954E21BDFF99100F5197A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E954E11BDFF99100F5197A /* Reachability.m */; };
 		96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */; };
 		96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */; };
 /* End PBXBuildFile section */
@@ -303,6 +304,8 @@
 		96E270AE1BDAC001005BC4EC /* VotingResultsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VotingResultsVC.m; sourceTree = "<group>"; };
 		96E49E721BC5E14B008B70AF /* EventWhenVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWhenVC.h; sourceTree = "<group>"; };
 		96E49E731BC5E14B008B70AF /* EventWhenVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWhenVC.m; sourceTree = "<group>"; };
+		96E954E01BDFF99100F5197A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		96E954E11BDFF99100F5197A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "No-Profile_Image.png"; path = "Graphic Assets/No-Profile_Image.png"; sourceTree = "<group>"; };
 		96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "No-Profile_Image(circled).png"; path = "Graphic Assets/No-Profile_Image(circled).png"; sourceTree = "<group>"; };
 		F945100C76CB8545DC64E837 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -578,6 +581,8 @@
 				3621F11A1B8E6A06004537B6 /* MenuTVC.m */,
 				36250BDA1B82679A00F456B5 /* LoginVC.h */,
 				36250BDB1B82679A00F456B5 /* LoginVC.m */,
+				96E954E01BDFF99100F5197A /* Reachability.h */,
+				96E954E11BDFF99100F5197A /* Reachability.m */,
 				36FDA7001B585F650029D29D /* Main.storyboard */,
 				36FDA7031B585F650029D29D /* Images.xcassets */,
 				36FDA7051B585F650029D29D /* LaunchScreen.xib */,
@@ -649,6 +654,7 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
+				B3B5895E4CDC70724AC21457 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -809,6 +815,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		B3B5895E4CDC70724AC21457 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -856,6 +877,7 @@
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */,
+				96E954E21BDFF99100F5197A /* Reachability.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
 				3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,

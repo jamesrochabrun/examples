@@ -995,16 +995,10 @@ NSString *const kKeySearchFilter = @"filter";
     [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary]
                       dataUsingEncoding:NSUTF8StringEncoding]];
     [request setHTTPBody:body];
-    NSLog  (@" body=  %s", [body bytes]);
     
     NSString *postLength = [NSString stringWithFormat:@"%d", [body length]];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
 
-//    NSURLResponse*r= nil;
-//    NSURLConnection*c=  [[NSURLConnection  alloc] initWithRequest:request delegate:nil startImmediately:YES];
-//    NSData*d= [NSURLConnection sendSynchronousRequest:request returningResponse:&r error:nil];
-//    NSLog  (@" response=  %s", [d bytes]);
-//    return ;
     NSURLSessionDataTask *task = [session dataTaskWithRequest: request
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                     if (error) {
@@ -1015,56 +1009,12 @@ NSString *const kKeySearchFilter = @"filter";
                                                         if (httpResp.statusCode == 200) {
                                                             if (success) success();
                                                         }else {
-                                                            if (failure) failure(error);
+                                                            if (failure) failure(nil);
                                                         }
                                                         
                                                     }
                                                 }];
     [task resume];
-}
-
-//------------------------------------------------------------------------------
-// Name:    uploadUserPhoto
-// Purpose: This is the AFNetworking approach.
-//------------------------------------------------------------------------------
-+ (void)uploadUserPhoto_AFNetworking:(UIImage *)image
-                success:(void (^)(void))success
-                failure:(void (^)(NSError *error))failure;
-{
-    if  (!image) {
-        failure(nil);
-        return ;
-    }
-    
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userid= userInfo.userID;
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], (unsigned long)userid];
-    
-    OONetworkManager *nm = [OONetworkManager sharedRequestManager];
-    nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
-    
-    NSString* token= userInfo.backendAuthorizationToken;
-    if  (token  &&  token.length ) {
-        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
-    }else {
-        NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
-    }
-    
-    NSDictionary *params=  @{
-                            };
-    [nm.requestManager POST: urlString
-                 parameters:params
-  constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-      if(image){
-          [formData appendPartWithFileData:UIImageJPEGRepresentation( image, 0.5) name:@"files"
-                                  fileName:@"xyz.jpg" mimeType:@"image/jpeg"];
-      }
-  } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-      NSLog  (@" success");
-  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-      NSLog  (@" failure %@",error);// NOTE:  typically error 500
-  }];
 }
 
 //------------------------------------------------------------------------------

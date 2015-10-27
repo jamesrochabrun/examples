@@ -255,8 +255,20 @@
         return;
     }
     
+    // RULE: The Internet must be reachable.
+    if (!is_reachable()) {
+        static BOOL toldThem= NO;
+        if  (!toldThem) {
+            toldThem= YES;
+            message(@"The Internet is not reachable.");
+        }
+        [self performSelector:@selector(showMainUIForUserWithEmail:)  withObject:email afterDelay:1];
+        return;
+    }
+    
     [self fetchProfilePhoto];
     
+    // RULE: Get the location manager working before we reach the Discover screen.
     [[LocationManager sharedInstance] askUserWhetherToTrack ];
 
     UserObject* userInfo= [Settings sharedInstance].userObject;
@@ -299,13 +311,7 @@
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
     
-    // This is giving a false positive
-//    if ([APP connected]) {
-//        message(@"The Internet is not reachable.");
-//        return ;
-//    }
-//    
-// XX: Need to retryOperation after Internet becomes accessible.
+// XX: Need to retry operation after Internet becomes accessible.
     
     AFHTTPRequestOperation* operation= [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
