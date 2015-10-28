@@ -15,7 +15,7 @@
 @property (nonatomic,strong)  AFHTTPRequestOperation *operation;
 @property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
 @property (nonatomic,strong) UIView* viewShadow;
-@property (nonatomic,assign) BOOL isFirst;
+@property (nonatomic,assign) BOOL isFirst, isMessage;
 @end
 
 @implementation EventTVCell
@@ -31,7 +31,7 @@
         _labelIndicatingAttendeeCount= [UILabel  new];
         [self  addSubview: _labelIndicatingAttendeeCount];
         _labelIndicatingAttendeeCount.textColor= WHITE;
-
+        
         self.header.textAlignment= NSTextAlignmentCenter;
         self.subHeader1.textAlignment= NSTextAlignmentCenter;
         self.subHeader2.textAlignment= NSTextAlignmentCenter;
@@ -40,7 +40,7 @@
         self.subHeader2.textColor= WHITE;
         self.header.font= [ UIFont  fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeHeader];
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-
+        
         self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         self.thumbnail.clipsToBounds= YES;
         
@@ -55,7 +55,7 @@
     [_imageOperation cancel];
     [self updateHighlighting:NO];
     self.clipsToBounds= NO;
-    self.eventInfo= nil;    
+    self.eventInfo= nil;
     [_nameHeader removeFromSuperview];
     _nameHeader = nil;
     self.isFirst= NO;
@@ -64,6 +64,15 @@
     self.subHeader2.text= nil;
     self.thumbnail.image= nil;
     _labelIndicatingAttendeeCount.text= nil;
+    _isMessage= NO;
+    self.header.textColor= WHITE;
+}
+
+- (void) setMessageMode:  (NSString*)message;
+{
+    self.header.text=  message;
+    _isMessage= YES;
+    self.header.textColor= BLACK;
 }
 
 - (void)setIsFirst
@@ -96,35 +105,43 @@
     float w= self.frame.size.width;
     float h= self.frame.size.height;
     const float lowerGradientHeight=  7;
+    float thumbHeight,y;
     
     _nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);
     
-    _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton-lowerGradientHeight,kGeomButtonWidth,kGeomHeightButton);
-    _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
-    
-    float thumbHeight,y;
-    // RULE: If the cell is the first one then leave space for the header.
-    if  (_isFirst ) {
-        thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
-        self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
-        y= kGeomHeightButton/2+ (thumbHeight-2*kGeomFontSizeHeader)/2;
-   } else {
-        thumbHeight=h-lowerGradientHeight;
-        self.thumbnail.frame = CGRectMake(0,0,w,thumbHeight);
-       y= (thumbHeight-2*kGeomFontSizeHeader)/2;
+    if (!_isMessage) {
+        
+        _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton-lowerGradientHeight,kGeomButtonWidth,kGeomHeightButton);
+        _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
+        
+        // RULE: If the cell is the first one then leave space for the header.
+        if  (_isFirst ) {
+            thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
+            self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
+            y= kGeomHeightButton/2+ (thumbHeight-2*kGeomFontSizeHeader)/2;
+        } else {
+            thumbHeight=h-lowerGradientHeight;
+            self.thumbnail.frame = CGRectMake(0,0,w,thumbHeight);
+            y= (thumbHeight-2*kGeomFontSizeHeader)/2;
+        }
+        
+        _viewShadow.frame= self.thumbnail.frame;
+        [self  sendSubviewToBack:_viewShadow ];
+        
+        [self.header sizeToFit];
+        [self.subHeader1 sizeToFit];
+        float headerHeight= self.header.frame.size.height;
+        float subheaderHeight= self.subHeader1.frame.size.height;
+        
+        self.header.frame = CGRectMake(0,y,w,headerHeight); y += headerHeight;
+        self.subHeader1.frame = CGRectMake(0,y,w,subheaderHeight);
+        self.subHeader2.frame = CGRectZero;
+    } else {
+        self.header.frame = CGRectMake(0,0,w,h);
+        self.subHeader1.frame = CGRectZero;
+        self.subHeader2.frame = CGRectZero;
+        self.thumbnail.frame= CGRectZero;
     }
-    
-    _viewShadow.frame= self.thumbnail.frame;
-    [self  sendSubviewToBack:_viewShadow ];
-    
-    [self.header sizeToFit];
-    [self.subHeader1 sizeToFit];
-    float headerHeight= self.header.frame.size.height;
-    float subheaderHeight= self.subHeader1.frame.size.height;
-    
-    self.header.frame = CGRectMake(0,y,w,headerHeight); y += headerHeight;
-    self.subHeader1.frame = CGRectMake(0,y,w,subheaderHeight);
-    self.subHeader2.frame = CGRectZero;
 }
 
 - (void)setEvent:(EventObject *)eo
@@ -145,7 +162,7 @@
     
     OOAPI *api = [[OOAPI alloc] init];
     UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
-
+    
     if (!primaryVenue && _eventInfo.numberOfVenues) {
         __weak EventTVCell *weakSelf = self;
         

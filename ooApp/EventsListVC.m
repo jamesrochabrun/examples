@@ -236,6 +236,13 @@
         cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         cell.selectedBackgroundView= [UIView new];
         
+        if (!events.count) {
+            [cell setMessageMode: @"You do not have such events."];
+        } else {
+            EventObject* e= events[row];
+            [cell setEvent: e];
+        }
+        
         if (!row ) {
             cell.nameHeader= [[OOStripHeader  alloc] init];
             [cell.nameHeader setName: _tableSectionNames[section]];
@@ -246,12 +253,9 @@
         }else {
             cell.nameHeader= nil;
         }
-        
-        EventObject* e= events[row];
-        [cell setEvent: e];
-        
-        cell.backgroundColor= WHITE;
     }
+    
+    cell.backgroundColor= WHITE;
     
     return cell;
 }
@@ -305,7 +309,7 @@
                 break;
         }
         if (!events.count) {
-            return kGeomHeightButton;
+            return kGeomHeightFeaturedCellHeight;
         }
     }
     
@@ -426,8 +430,11 @@
                 break;
                 
             default:
-                return 0;
+                return 1;
         }
+    }
+    if  (!n) {
+        return 1;
     }
     return n ;
 }
