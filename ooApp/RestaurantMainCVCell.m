@@ -201,7 +201,7 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_toTryButton]-[_horizontalLine1(1)]-[_distance]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_toTryButton]-[_horizontalLine1(1)]-(spaceInter)-[_hoursButton]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_hoursButton(25)][_hoursScroll]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -420,8 +420,7 @@
     [_favoriteButton setSelected:on];
 }
 
--(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
-//    return;
+- (void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) return;
     _mediaItemObject = mediaItemObject;
     OOAPI *api = [[OOAPI alloc] init];
@@ -441,7 +440,5 @@
         
     }
 }
-
-
 
 @end

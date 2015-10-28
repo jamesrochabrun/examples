@@ -47,7 +47,7 @@ static NSUInteger kColorIconSelected = 0xFFFFFFFF;
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
 static NSUInteger kGeomFontSizeHeader = 16;
-static NSUInteger kGeomFontSizeSubheader = 14;
+static NSUInteger kGeomFontSizeSubheader = 13;
 static NSUInteger kGeomFontSizeRemoveButton = 13;
 static NSUInteger kGeomFontSizeStripHeader = 13;
 static NSUInteger kGeomFontSizeBannerMain = 12;

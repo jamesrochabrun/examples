@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+#import <SafariServices/SafariServices.h>
 #import "AppDelegate.h"
 #import "RestaurantVC.h"
 #import "OOAPI.h"
@@ -17,13 +18,14 @@
 #import "PhotoCVCell.h"
 #import "OOStripHeader.h"
 #import "RestaurantListVC.h"
-#import <SafariServices/SafariServices.h>
 #import "HoursOpen.h"
+#import "OOActivityItemProvider.h"
 
 #import "DebugUtilities.h"
 
 @interface RestaurantVC ()
 
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIAlertController *styleSheetAC;
 @property (nonatomic, strong) UIAlertController *createListAC;
 @property (nonatomic, strong) NSArray *lists;
@@ -162,10 +164,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 //                                                     [self addToFavorites];
 //                                                 }];
 //    
-//    UIAlertAction *addToTryList = [UIAlertAction actionWithTitle:@"Add to Try List"
-//                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-//                                                                 [self addToTryList];
-//                                                             }];
+    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
+                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                 [self sharePressed];
+                                                             }];
 
     UIAlertAction *addToList = [UIAlertAction actionWithTitle:@"Add to List"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -192,7 +194,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     
 //    [_styleSheetAC addAction:addToFavorites];
-//    [_styleSheetAC addAction:addToTryList];
+    [_styleSheetAC addAction:shareRestaurant];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
     [_styleSheetAC addAction:addToEvent];
@@ -200,6 +202,58 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [_styleSheetAC addAction:cancel];
     
     [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)sharePressed {
+    MediaItemObject *mio;
+    if ([_mediaItems count]) {
+        mio = [_mediaItems objectAtIndex:0];
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        
+        NSString *imageRef = mio.reference;
+        
+        if (imageRef) {
+            _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:150 maxHeight:0 success:^(NSString *link) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showShare:link];
+                });
+            } failure:^(NSError *error) {
+                ;
+            }];
+        } else {
+            
+        }
+    }
+}
+
+- (void)showShare:(NSString *)url {
+    NSURL *nsURL = [NSURL URLWithString:url];
+    NSData *data = [NSData dataWithContentsOfURL:nsURL];
+    UIImage *img = [UIImage imageWithData:data];
+
+    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aip.restaurant = _restaurant;
+    
+    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    [avc setValue:[NSString stringWithFormat:@"Take a look at %@", _restaurant.name] forKey:@"subject"];
+    [avc setExcludedActivityTypes:
+     @[UIActivityTypeAssignToContact,
+       UIActivityTypeCopyToPasteboard,
+       UIActivityTypePrint,
+       UIActivityTypeSaveToCameraRoll,
+       UIActivityTypePostToWeibo]];
+    [self.navigationController presentViewController:avc animated:YES completion:^{
+        ;
+    }];
+    
+    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+    };
+
 }
 
 - (void)addToEvent
