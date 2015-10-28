@@ -63,6 +63,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         self.layoutMargins = UIEdgeInsetsZero;
         [self layout];
         
+        
 //        [DebugUtilities addBorderToViews:@[_name,_actionButton]];
     }
     

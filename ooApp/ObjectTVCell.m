@@ -11,6 +11,8 @@
 
 @interface ObjectTVCell ()
 
+@property (nonatomic,strong) UIView* viewShadow;
+
 @end
 
 @implementation ObjectTVCell
@@ -41,6 +43,13 @@
         _subHeader2 = [[UILabel alloc] init];
         [_subHeader2 withFont:[UIFont fontWithName:kFontLatoThin size:kGeomFontSizeSubheader] textColor:kColorBlack backgroundColor:kColorClear];
         
+        _viewShadow = [[UIView alloc] init];
+        [self addSubview:_viewShadow];
+        _viewShadow.backgroundColor = UIColorRGBA(kColorWhite);
+        _viewShadow.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addShadowToView:_viewShadow];
+        [self sendSubviewToBack:_viewShadow];
+        
         [self addSubview:_thumbnail];
         [self addSubview:_header];
         [self addSubview:_subHeader1];
@@ -56,26 +65,25 @@
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-        //[DebugUtilities addBorderToViews:@[_thumbnail, _header, _subHeader1, _subHeader2]];
+        [DebugUtilities addBorderToViews:@[/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
     }
     return self;
 }
 
 - (void)updateConstraints {
     [super updateConstraints];
-    [self layout];
-}
 
-- (void)layout {
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _thumbnail, _header, _subHeader1, _subHeader2);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _thumbnail, _header, _subHeader1, _subHeader2, _viewShadow);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(spaceEdge)-[_header]-(spaceEdge)-[_subHeader1]-(spaceEdge)-[_subHeader2]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
+
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_thumbnail]-[_header]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_thumbnail]-[_subHeader1]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_thumbnail]-[_subHeader2]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -90,6 +98,23 @@
                                       multiplier:1
                                       constant:0];
     [self addConstraint:constraint];
+    
+//    [self addConstraint:[NSLayoutConstraint
+//                         constraintWithItem:_viewShadow
+//                         attribute:NSLayoutAttributeWidth
+//                         relatedBy:NSLayoutRelationEqual
+//                         toItem:_thumbnail
+//                         attribute:NSLayoutAttributeWidth
+//                         multiplier:1
+//                         constant:0]];
+//    [self addConstraint:[NSLayoutConstraint
+//                         constraintWithItem:_viewShadow
+//                         attribute:NSLayoutAttributeHeight
+//                         relatedBy:NSLayoutRelationEqual
+//                         toItem:_thumbnail
+//                         attribute:NSLayoutAttributeHeight
+//                         multiplier:1
+//                         constant:0]];
 }
 
 - (void)prepareForReuse
@@ -102,6 +127,17 @@
     // AFNetworking
     [_requestOperation cancel];
     _requestOperation = nil;
+}
+
+- (void)addShadowToView:(UIView *)view
+{
+    view.opaque = YES;
+    view.layer.shadowOffset = CGSizeMake(2, 2);
+    view.layer.shadowColor = UIColorRGBA(kColorBlack).CGColor;
+    view.layer.shadowOpacity = 0.5;
+    view.layer.shadowRadius = 4;
+    view.clipsToBounds = NO;
+    view.layer.shouldRasterize = YES;
 }
 
 @end

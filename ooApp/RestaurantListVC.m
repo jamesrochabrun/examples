@@ -41,6 +41,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _tableView.rowHeight = kGeomHeightHorizontalListRow;
     _tableView.separatorInset = UIEdgeInsetsZero;
     _tableView.layoutMargins = UIEdgeInsetsZero;
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     _requestOperation = nil;
     
