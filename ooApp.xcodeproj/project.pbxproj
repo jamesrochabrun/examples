@@ -77,15 +77,15 @@
 		367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45391BCE3A7200E96B69 /* PhotoCVCell.m */; };
 		367B453D1BCE62BC00E96B69 /* RestaurantMainCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */; };
 		367B45401BD06AB600E96B69 /* OOStripHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453F1BD06AB600E96B69 /* OOStripHeader.m */; };
-		3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490B1BE04B73003BF98B /* UIImageEffects.m */; settings = {ASSET_TAGS = (); }; };
-		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; settings = {ASSET_TAGS = (); }; };
+		3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490B1BE04B73003BF98B /* UIImageEffects.m */; };
+		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */; };
 		36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C39BE01B84C7CD00648879 /* DebugUtilities.m */; };
 		36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D5D2191B69DA48009EE877 /* OONetworkManager.m */; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
-		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; settings = {ASSET_TAGS = (); }; };
+		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
 		36F872D91B919BC200006C29 /* ListObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F872D81B919BC200006C29 /* ListObject.m */; };
 		36FDA6F61B585F650029D29D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6F51B585F650029D29D /* main.m */; };
 		36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6F81B585F650029D29D /* AppDelegate.m */; };
@@ -680,6 +680,7 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
+				6D709F77AFD8ACF6E9887AE4 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -825,6 +826,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
+		};
+		6D709F77AFD8ACF6E9887AE4 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		923BDA435A444C3D92CBD745 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
