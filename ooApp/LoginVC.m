@@ -301,18 +301,18 @@
     [self fetchProfilePhoto];
     
     // RULE: Get the location manager working before we reach the Discover screen.
-    [[LocationManager sharedInstance] askUserWhetherToTrack ];
+    [[LocationManager sharedInstance] askUserWhetherToTrack];
 
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString* requestString= [NSString stringWithFormat:  @"https://%@/users/emails/%@", kOOURL,  email];
+    UserObject* userInfo = [Settings sharedInstance].userObject;
+    NSString* requestString = [NSString stringWithFormat:@"https://%@/users/emails/%@", kOOURL, email];
    
     //---------------------------------------------------
     // RULE: If the day has changed, we will need to request
     // a new authorization key.
     //
-    int newDay= 0;
-    NSString* dateString= getDateString();
-    NSString* lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
+    int newDay = 0;
+    NSString *dateString= getDateString();
+    NSString *lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
     if (lastKnownDateString && ![lastKnownDateString isEqualToString:dateString]) {
         newDay= 1;
     }
@@ -323,20 +323,20 @@
     // authorization token, we will need to request the token.
     //
     NSString *backendToken= userInfo.backendAuthorizationToken;
-    BOOL  seekingToken= NO;
-    if ((newDay  || (!backendToken || !backendToken.length)) && email && email.length) {
+    BOOL seekingToken= NO;
+    if ((newDay || (!backendToken || !backendToken.length)) && email && email.length) {
         NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
         NSString* md5= [ saltedString MD5String ];
         md5 = [md5 lowercaseString];
         seekingToken= YES;
         
-        requestString= [NSString stringWithFormat:  @"https://%@/users?needtoken=%@", kOOURL, md5];
+        requestString = [NSString stringWithFormat:  @"https://%@/users?needtoken=%@", kOOURL, md5];
         
         // NOTE:  this has helped identify the reason
         //  why the new authorization token is being
         //  requested in the first place.
         //
-        requestString= [NSString stringWithFormat: @"%@&reason=%d", requestString, newDay ? 1 : 0];
+        requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString, newDay ? 1 : 0];
     }
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];

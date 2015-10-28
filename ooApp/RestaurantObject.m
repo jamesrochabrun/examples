@@ -83,7 +83,7 @@ NSString *const kKeyRestaurantHours = @"hours";
     
     NSDictionary *hours = [dict objectForKey:kKeyRestaurantHours];
 
-    if (hours) {
+    if (![hours isKindOfClass:[NSNull class]] && hours && [hours count]) {
         NSMutableArray *restaurantHours = [NSMutableArray array];
         HoursOpen *ho;
         for (NSDictionary *dict in hours) {

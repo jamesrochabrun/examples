@@ -104,13 +104,13 @@ NSString *const kKeyParticipantState = @"participant_state";
     }
     
     profilePhoto= userProfilePhoto;
-    [OOAPI uploadUserPhoto:profilePhoto
-                   success:^() {
-                       
-                   }
-                   failure:^(NSError *e) {
-                       
-                   }];
+//    [OOAPI uploadUserPhoto:profilePhoto
+//                   success:^() {
+//                       
+//                   }
+//                   failure:^(NSError *e) {
+//                       
+//                   }];
 }
 
 - (UIImage *)userProfilePhoto;

@@ -145,8 +145,8 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 - (void)verifyTrackingIsOkay
 {
-    if (0==self.currentLocation.longitude) {
-        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation ];
+    if (0 == self.currentLocation.longitude) {
+        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation];
         if (TRACKING_UNKNOWN == c) {
             [[LocationManager sharedInstance] askUserWhetherToTrack];
         }
@@ -158,7 +158,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 - (void)updateLocation
 {
-    self.currentLocation= [[LocationManager sharedInstance] currentUserLocation ];
+    self.currentLocation = [[LocationManager sharedInstance] currentUserLocation];
 }
 
 - (void)didReceiveMemoryWarning

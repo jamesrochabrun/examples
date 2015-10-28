@@ -20,6 +20,7 @@
 #import "RestaurantListVC.h"
 #import "HoursOpen.h"
 #import "OOActivityItemProvider.h"
+#import <MapKit/MapKit.h>
 
 #import "DebugUtilities.h"
 
@@ -544,6 +545,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)addPhoto {
     
+    OOAPI *api = [[OOAPI alloc] init];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -579,6 +581,21 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         } else {
             [self addToTryList];
         }
+    }
+}
+
+- (void)showOnMap:(CLLocationCoordinate2D)location {
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?center=%f,%f",location.latitude, location.longitude]];
+    if (![[UIApplication sharedApplication] canOpenURL:url]) {
+        NSLog(@"Google Maps app is not installed");
+        //Apple Maps, using the MKMapItem class
+        MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:location addressDictionary:nil];
+        MKMapItem *item = [[MKMapItem alloc] initWithPlacemark:placemark];
+        item.name = @"ReignDesign Office";
+        [item openInMapsWithLaunchOptions:nil];
+        //left as an exercise for the reader: open the Google Maps mobile website instead!
+    } else {
+        [[UIApplication sharedApplication] openURL:url];
     }
 }
 
