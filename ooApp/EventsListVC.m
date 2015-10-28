@@ -287,11 +287,11 @@
     return 7;
 }
 
-//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-//{
-//    UILabel * label= makeLabelLeft (nil,   @"",  10);
-//    return  label;
-//}
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UILabel * label= makeLabelLeft (nil,   @"",  10);
+    return  label;
+}
 
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
