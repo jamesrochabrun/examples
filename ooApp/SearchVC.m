@@ -248,7 +248,7 @@ typedef enum: char {
                                                                                    withObject:users
                                                                                 waitUntilDone:NO];
                                                         
-                                                    } failure:^(NSError *e) {
+                                                    } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                                                         NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
                                                         
                                                         [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
@@ -289,7 +289,7 @@ typedef enum: char {
                                                                                        withObject:restaurants
                                                                                     waitUntilDone:NO];
                                                             
-                                                        } failure:^(NSError *e) {
+                                                        } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                                                             NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
                                                             
                                                             [weakSelf performSelectorOnMainThread:@selector(showSpinner:)

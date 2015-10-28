@@ -89,7 +89,7 @@
                 ON_MAIN_THREAD( ^{
                     [_iv setImageWithURL:[NSURL URLWithString:link]];
                 });
-            } failure:^(NSError *error) {
+            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                 ;
             }];
         } else if (userInfo.imageURLString) {
@@ -139,7 +139,7 @@
              success:^(id response) {
                  [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO];
              }
-             failure:^(NSError * error) {
+             failure:^(AFHTTPRequestOperation* operation, NSError * error) {
                  NSString *s = [NSString stringWithFormat:@"Error from cloud: %@", error.localizedDescription];
                  message(s);
              }
@@ -161,7 +161,7 @@
                          to:YES
                     success:^(id responseObject) {
                         NSLog (@"SUCCESSFULLY FOLLOWED USER");
-                    } failure:^(NSError *e) {
+                    } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                         NSLog (@"FAILED TO FOLLOW USER");
                     }];
 }
@@ -288,7 +288,7 @@
                     _lists = foundLists;
                     [self.table reloadData];
                 }
-                failure:^(NSError *e) {
+                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                     NSLog  (@" error while getting lists for user: %@",e);
                 }];
     // NOTE:  these will later be stored in user defaults.

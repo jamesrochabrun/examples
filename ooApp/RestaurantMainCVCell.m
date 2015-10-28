@@ -433,7 +433,7 @@
                 [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
                 [self setNeedsUpdateConstraints];
             });
-        } failure:^(NSError *error) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];
     } else {

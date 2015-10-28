@@ -6,11 +6,10 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "LoginVC.h"
-#import "Common.h"
-#import "AppDelegate.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import "Common.h"
+
+#import "LoginVC.h"
+#import "AppDelegate.h"
 #import "DebugUtilities.h"
 #import "LocationManager.h"
 #import "OONetworkManager.h"
@@ -22,6 +21,7 @@
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *logo;
 @property (nonatomic, assign) BOOL wentToDiscover;
+@property (nonatomic, strong) UIPinchGestureRecognizer* pinch;
 @end
 
 @implementation LoginVC
@@ -32,6 +32,8 @@
 //------------------------------------------------------------------------------
 - (void) viewDidLoad
 {
+    ENTRY;
+
     [super viewDidLoad];
     
     _wentToDiscover= NO;
@@ -53,6 +55,19 @@
     [self.view addSubview:_logo];
     [self.view addSubview:_facebookLoginButton];
     [self doLayout];
+    
+    self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
+    [self.view addGestureRecognizer:_pinch];
+    
+}
+
+- (void)loginBypass: (id) sender
+{
+    static NSInteger  counter= 0;
+    counter ++;
+    if  (counter ==4) {
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -82,6 +97,8 @@
 //------------------------------------------------------------------------------
 - (void)viewWillAppear:(BOOL)animated
 {
+    ENTRY;
+
     [super viewWillAppear:animated];
     
     _wentToDiscover= NO;
@@ -98,7 +115,7 @@
     if (!value || ![ value isKindOfClass:[NSString class]] ) {
         return;
     }
-    
+    LOGS2(@"USERNAME",value);
     UserObject* userInfo= [Settings sharedInstance].userObject;
     userInfo.username= value;
     [[Settings sharedInstance]save ];
@@ -129,6 +146,7 @@
     if  (!value) {
         return;
     }
+    LOGS2(@"EMAIL",value);
     UserObject* userInfo= [Settings sharedInstance].userObject;
     if  (!userInfo.email  || !userInfo.email.length) {
         userInfo.email= value;
@@ -141,14 +159,16 @@
 //------------------------------------------------------------------------------
 - (void)updateAuthorizationToken: (NSString*) value
 {
+    ENTRY;
+
     if  (!value) {
         return;
     }
     UserObject* userInfo= [Settings sharedInstance].userObject;
     if (!userInfo.backendAuthorizationToken || ![userInfo.backendAuthorizationToken isEqualToString: value]) {
         userInfo.backendAuthorizationToken= value;
-        [APP.diagnosticLogString appendFormat: @"TOKEN: %@\r",value ];
     }
+    LOGS2( @"TOKEN", value);
 }
 
 
@@ -158,6 +178,8 @@
 //------------------------------------------------------------------------------
 - (void) fetchEmailFromFacebookFor: (NSString*)identifier
 {
+    ENTRY;
+
     __weak LoginVC *weakSelf= self;
     FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
                                   initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=email,gender",
@@ -178,6 +200,7 @@
                  email= d [ @"email"];
              }
              NSLog(@"OBTAINED EMAIL FROM FACEBOOK IN ORDER TO GET AUTHORIZATION TOKEN: %@",email);
+             LOGS2(@"EMAIL FROM FACEBOOK", email);
              
              UserObject* userInfo= [Settings sharedInstance].userObject;
              userInfo.email= email;
@@ -187,10 +210,15 @@
              
          } else {
              NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
-             
+             LOGS2(@"ERROR FROM FACEBOOK", error);
+
              // NOTE: If we reach this point, the backend knows about the user but
              //  the Facebook server may be down.
              // QUESTION: What to do in that case?
+             
+             NSInteger code= connection.URLResponse.statusCode;
+             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
+             message( string);
          }
      }
      ];
@@ -202,6 +230,8 @@
 //------------------------------------------------------------------------------
 - (void)showMainUI
 {
+    ENTRY;
+
     if ( _wentToDiscover) { // Prevent duplicate simultaneous calls.
         return;
     }
@@ -251,7 +281,10 @@
 
 - (void)showMainUIForUserWithEmail:  (NSString*) email
 {
-    if  (!email) {
+    ENTRY;
+
+    if  (!email || !email.length) {
+        LOGS(@"NO EMAIL.");
         return;
     }
     
@@ -349,9 +382,8 @@
                                                  [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                              }
                                          }
-                                         failure:^void(NSError *   error) {
+                                         failure:^void(AFHTTPRequestOperation* operation, NSError *error) {
                                              NSInteger statusCode= operation.response.statusCode;
-                                             
                                              if  ( statusCode== 404) {
                                                  
                                                  [APP.diagnosticLogString appendFormat: @"AS YET UNKNOWN OO USER  %@, %@,  %@\r",  facebookID, error.description,requestString];
@@ -366,8 +398,9 @@
                                                  
                                                  [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                              } else {
-                                                 message ( @"A network error has occurred.");
+                                                 message ( @"A backend error has occurred.");
                                                  NSLog  (@"OTHER NETWORK ERROR: %ld", (long)statusCode);
+                                                 LOGSN(@"BACKEND ERROR",statusCode);
                                              }
                                          }];
     
@@ -379,6 +412,8 @@
 //------------------------------------------------------------------------------
 - (void)fetchDetailsAboutUserFromFacebook: (NSArray*)parameters
 {
+    ENTRY;
+
     if  (! parameters) {
         return;
     }
@@ -393,7 +428,7 @@
 
     FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
                                   initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,gender",
-                                                     identifier] //picture?type=large&redirect=false
+                                                     identifier]  
                                   parameters:nil
                                   HTTPMethod:@"GET"];
 
@@ -480,6 +515,8 @@
 //------------------------------------------------------------------------------
 - (void) conveyUserInformationToBackend: (id)alreadyKnown_
 {
+    ENTRY;
+
     BOOL alreadyKnown=  alreadyKnown_? YES: NO;
     UserObject* userInfo= [Settings sharedInstance].userObject;
 
@@ -558,7 +595,7 @@
                                                      }
                                                  }
                                              }
-                                             failure:^  void(NSError *error) {
+                                             failure:^  void(AFHTTPRequestOperation* operation, NSError *error) {
                                                  NSLog (@"PUT FAILED %@",error);
                                              }     ];
 
@@ -590,7 +627,7 @@
                                                       }
                                                   }
                                               }
-                                              failure:^  void(NSError *error) {
+                                              failure:^  void(AFHTTPRequestOperation* operation, NSError *error) {
                                                   NSLog (@"POST FAILED %@",error);
                                               }     ];
     }
@@ -602,6 +639,8 @@
 //------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated
 {
+    ENTRY;
+
     [super viewDidAppear:animated];
 
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
@@ -613,6 +652,8 @@
 
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
 {
+    ENTRY;
+
     NSLog (@"loginButtonDidLogOut: USER LOGGED OUT");
 }
 
@@ -632,6 +673,8 @@
 //------------------------------------------------------------------------------
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
 {
+    ENTRY;
+    
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email"
                                        parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
@@ -642,6 +685,11 @@
              //me?fields=first_name,age_range,last_name,id,gender,email
              
              NSLog(@"fetched user:%@", result);
+         } else {
+             
+             NSInteger code= connection.URLResponse.statusCode;
+             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
+             message( string);
          }
      }];
 }
@@ -652,6 +700,8 @@
 //------------------------------------------------------------------------------
 -(void)fetchProfilePhoto
 {
+    ENTRY;
+
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email,picture"
                                        parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {

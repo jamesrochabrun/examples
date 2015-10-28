@@ -72,7 +72,7 @@
                                               failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
                                                   ;
                                               }];
-        } failure:^(NSError *error) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];
     } else {
