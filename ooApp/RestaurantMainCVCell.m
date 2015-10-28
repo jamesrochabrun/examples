@@ -36,7 +36,6 @@
 @property (nonatomic, strong) UIScrollView *hoursScroll;
 @property (nonatomic, strong) UILabel *hoursView;
 @property (nonatomic, strong) UIView *horizontalLine1;
-@property (nonatomic) CGFloat hoursViewWidth;
 
 @end
 
@@ -71,6 +70,7 @@
         [_hoursButton withText:@"" fontSize:kGeomFontSizeDetail width:100 height:30 backgroundColor:kColorClear target:self selector:@selector(viewHours)];
         [_hoursButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
         _hoursButton.titleLabel.textAlignment = NSTextAlignmentLeft;
+        [_hoursButton setContentEdgeInsets:UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge)];
         _hoursButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_hoursButton];
         
@@ -189,7 +189,7 @@
 - (void)updateConstraints {
     [super updateConstraints];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"hoursViewWidth" : @(_hoursViewWidth)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _priceRange, _name, _address, _website, _phoneNumber, _distance, _toTryButton, _favoriteButton, _backgroundImage, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _horizontalLine1);
@@ -322,7 +322,6 @@
     [super layoutSubviews];
     CGSize s = [_hoursView.text sizeWithAttributes:@{NSFontAttributeName:_hoursView.font}];
     _hoursScroll.contentSize = CGSizeMake(width(_hoursScroll), s.height);
-    _hoursViewWidth = width(_hoursScroll);
     
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:CGPointMake(0, 0.0)];
@@ -334,7 +333,6 @@
     shapeLayer.fillColor = [[UIColor clearColor] CGColor];
     [_horizontalLine1.layer addSublayer:shapeLayer];
 
-//    NSLog(@"hoursViewWidth=%f", _hoursViewWidth);
     [self setNeedsUpdateConstraints];
 }
 
@@ -397,7 +395,19 @@
     NSDateComponents *comps = [gregorian components:NSCalendarUnitWeekday fromDate:[NSDate date]];
     NSInteger weekday = [comps weekday];
     
-    [_hoursButton setTitle:[(HoursOpen *)[_restaurant.hours objectAtIndex:weekday] formattedHoursOpen] forState:UIControlStateNormal];
+    __block HoursOpen *ho = [_restaurant.hours count] ? [_restaurant.hours objectAtIndex:0] : nil;
+    [_restaurant.hours enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        HoursOpen *h = (HoursOpen *)obj;
+        if (h.openDay == weekday) {
+            ho = h;
+            *stop = YES;
+        }
+    }];
+    
+    NSString *hrsButtonText = [ho formattedHoursOpen];
+    [_hoursButton setTitle:hrsButtonText forState:UIControlStateNormal];
+    
+    _hoursButton.hidden = (hrsButtonText.length) ? NO : YES;
     
     NSMutableString *hrs = [NSMutableString string];
     [_restaurant.hours enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -408,6 +418,7 @@
         }
     }];
     _hoursView.text = hrs;
+    
     
     [self updateConstraintsIfNeeded];
 }

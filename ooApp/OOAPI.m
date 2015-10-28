@@ -174,6 +174,8 @@ NSString *const kKeySearchFilter = @"filter";
                                  kKeySearchRadius:[NSNumber numberWithUnsignedInteger:radius],
                                  kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
                                  kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
+//                                 kKeyRestaurantLatitude:[NSNumber numberWithFloat:37.773972],
+//                                 kKeyRestaurantLongitude:[NSNumber numberWithFloat:-122.431297],
                                  kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly],
                                  kKeySearchFilter:filterName};
     
