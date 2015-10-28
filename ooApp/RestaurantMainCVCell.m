@@ -35,6 +35,7 @@
 @property (nonatomic, strong) UILabel *rating;
 @property (nonatomic, strong) UIScrollView *hoursScroll;
 @property (nonatomic, strong) UILabel *hoursView;
+@property (nonatomic, strong) UIView *horizontalLine1;
 @property (nonatomic) CGFloat hoursViewWidth;
 
 @end
@@ -46,7 +47,7 @@
     if (self) {
         _backgroundImage = [[UIImageView alloc] init];
         _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
-        _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
+        _backgroundImage.image = nil;// [UIImage imageNamed:@"background-image.jpg"];
         _backgroundImage.clipsToBounds = YES;
         [self addSubview:_backgroundImage];
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
@@ -75,6 +76,7 @@
         
         
         _hoursScroll = [[UIScrollView alloc] init];
+        _hoursScroll.backgroundColor = UIColorRGBA(kColorBlack);
         _hoursScroll.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursView = [[UILabel alloc] init];
@@ -141,6 +143,10 @@
         _hoursScroll.hidden = YES;
         [self addSubview:_hoursScroll]; //should appear above everything
         
+        _horizontalLine1 = [[UIView alloc] init];
+        [self addSubview:_horizontalLine1];
+        _horizontalLine1.translatesAutoresizingMaskIntoConstraints = NO;
+        
 //        [DebugUtilities addBorderToViews:@[_hoursView, _hoursScroll]];
     }
     return self;
@@ -186,22 +192,23 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"hoursViewWidth" : @(_hoursViewWidth)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _priceRange, _name, _address, _website, _phoneNumber, _distance, _toTryButton, _favoriteButton, _backgroundImage, _hoursButton, _hoursView, _hoursScroll, _imageOverlay);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _priceRange, _name, _address, _website, _phoneNumber, _distance, _toTryButton, _favoriteButton, _backgroundImage, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _horizontalLine1);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_horizontalLine1]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_name]-[_distance]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_toTryButton]-[_horizontalLine1(1)]-[_distance]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_hoursButton(25)][_hoursScroll]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_name]-(>=0)-[_toTryButton]-[_favoriteButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_name]-(>=0)-[_toTryButton]-spaceInter-[_favoriteButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_distance]-spaceInter-[_verticalLine1(1)]-spaceInter-[_priceRange]-(>=spaceInter)-[_hoursButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_phoneNumber]-[_verticalLine2(1)]-[_website]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_address]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -314,9 +321,19 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     CGSize s = [_hoursView.text sizeWithAttributes:@{NSFontAttributeName:_hoursView.font}];
-    NSUInteger newHeight = [_restaurant.hours count]*roundf(s.height);
     _hoursScroll.contentSize = CGSizeMake(width(_hoursScroll), s.height);
     _hoursViewWidth = width(_hoursScroll);
+    
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path moveToPoint:CGPointMake(0, 0.0)];
+    [path addLineToPoint:CGPointMake(width(_backgroundImage), 0.0)];
+    CAShapeLayer *shapeLayer = [CAShapeLayer layer];
+    shapeLayer.path = [path CGPath];
+    shapeLayer.strokeColor = UIColorRGBA(kColorGray).CGColor;
+    shapeLayer.lineWidth = 1;
+    shapeLayer.fillColor = [[UIColor clearColor] CGColor];
+    [_horizontalLine1.layer addSublayer:shapeLayer];
+
 //    NSLog(@"hoursViewWidth=%f", _hoursViewWidth);
     [self setNeedsUpdateConstraints];
 }

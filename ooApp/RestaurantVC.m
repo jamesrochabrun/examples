@@ -82,7 +82,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     _listButtons = [NSMutableSet set];
     
-//    [DebugUtilities addBorderToViews:@[_collectionView]];
+//    [DebugUtilities addBorderToViews:@[_listButtonsContainer]];
 }
 
 -(void)updateViewConstraints {
@@ -264,7 +264,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                         b.icon = kFontIconList;
                         b.name = [lo.name uppercaseString];
                         b.theId = lo.listID;
-                        [b addTarget:self action:@selector(showList:) forControlEvents:UIControlEventTouchUpInside];
                         [_listButtons addObject:b];
                     }];
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -300,6 +299,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _listButtonsContainerHeight = 0;
     [listButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOTagButton *b = (OOTagButton *)obj;
+        [b addTarget:self action:@selector(showList:) forControlEvents:UIControlEventTouchUpInside];
         [_listButtonsContainer addSubview:b];
         CGRect frame = b.frame;
         frame.size = [b getSuggestedSize];
@@ -317,6 +317,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         _listButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
     _listButtonsContainerHeight += (_listButtonsContainerHeight) ? kGeomSpaceInter : 0;
+    [self.view setNeedsUpdateConstraints];
     [_collectionView reloadData];
 }
 
