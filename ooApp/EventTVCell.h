@@ -16,6 +16,7 @@
 - (void)setEvent:(EventObject *)eo;
 - (void) updateHighlighting: (BOOL)highlighted;
 - (void) setIsFirst;
+- (void) setMessageMode:  (NSString*)message;
 
 @property (nonatomic,strong) OOStripHeader *nameHeader;
 
