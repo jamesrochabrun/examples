@@ -960,6 +960,12 @@ NSString *const kKeySearchFilter = @"filter";
         return ;
     }
     
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+    NSLog (@"IMAGE DIMENSIONS=  %@", NSStringFromCGSize(image.size));
+    NSLog (@"JPEG IMAGE SIZE=  %ld bytes",[imageData length]);
+    [APP.diagnosticLogString appendFormat: @"IMAGE DIMENSIONS=  %@\r", NSStringFromCGSize(image.size)];
+    [APP.diagnosticLogString appendFormat:@"JPEG IMAGE SIZE=  %ld bytes\r",[imageData length]];
+
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userID= userInfo.userID;
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], (unsigned long)userID];
@@ -972,17 +978,14 @@ NSString *const kKeySearchFilter = @"filter";
     [request setHTTPMethod:@"POST"];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [request setHTTPShouldHandleCookies:NO];
-    [request setTimeoutInterval:60];
+    
+    NSUInteger timeoutLength=5 + 5 * ([imageData length] >> 19);
+    [request setTimeoutInterval: timeoutLength];
+    NSLog (@"SETTING TIMEOUT TO: %lu seconds", ( unsigned long)timeoutLength);
     
     NSString*const boundary = @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
-
-    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-    NSLog (@"IMAGE DIMENSIONS=  %@", NSStringFromCGSize(image.size));
-    NSLog (@"JPEG IMAGE SIZE=  %ld bytes",[imageData length]);
-    [APP.diagnosticLogString appendFormat: @"IMAGE DIMENSIONS=  %@\r", NSStringFromCGSize(image.size)];
-    [APP.diagnosticLogString appendFormat:@"JPEG IMAGE SIZE=  %ld bytes\r",[imageData length]];
 
     [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary]
         forHTTPHeaderField:@"Content-Type"];

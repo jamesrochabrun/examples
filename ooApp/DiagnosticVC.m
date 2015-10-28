@@ -69,7 +69,7 @@
     _buttonSearchRadius.titleLabel.numberOfLines= 0;
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doTakeUpload:), 1);
+    _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doTakePhoto:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
@@ -100,10 +100,14 @@
 
 - (void) loadTextFieldAndScrollToBottom
 {
-    _textviewDiagnosticLog.text= APP.diagnosticLogString;
-
-    [_textviewDiagnosticLog scrollRangeToVisible:NSMakeRange([_textviewDiagnosticLog.text length], 0)];
-
+    NSString*string= APP.diagnosticLogString;
+    NSUInteger length= string.length;
+    _textviewDiagnosticLog.text= string;
+    if  (!length) {
+        return;
+    }
+    [_textviewDiagnosticLog setContentSize: _textviewDiagnosticLog.textContainer.size];
+    [_textviewDiagnosticLog scrollRangeToVisible:NSMakeRange(length-1, 1)];
 }
 
 //------------------------------------------------------------------------------
@@ -127,10 +131,10 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    doTakeUpload
+// Name:    doTakePhoto
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doTakeUpload: (id) sender
+- (void)doTakePhoto: (id) sender
 {
     [self presentCameraModal];
 }
@@ -144,11 +148,10 @@
     self.hugeImage= [ UIImage  imageNamed: @"Huge.jpg"];
     [OOAPI uploadUserPhoto:self.hugeImage success:^{
         NSLog  (@"Uploaded huge photo.");
+        [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
     } failure:^(NSError *error) {
-        NSLog  (@"Failed to upload huge photo.");
+        NSLog  (@"Failed to upload huge photo. %@",error);
     }];
-    
-    [self loadTextFieldAndScrollToBottom];
 }
 
 //------------------------------------------------------------------------------
@@ -163,11 +166,12 @@
     }
     [OOAPI uploadUserPhoto: _hugeImage success:^{
         NSLog  (@"Uploaded photo.");
+        
+        [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
     } failure:^(NSError *error) {
         NSLog  (@"Failed to upload photo.");
     }];
     
-    [self loadTextFieldAndScrollToBottom];
 }
 
 //------------------------------------------------------------------------------
@@ -280,11 +284,6 @@
         NSString* text= [NSString stringWithFormat: @"%@", info];
         _textviewDiagnosticLog.text=  text;
         
-        [OOAPI uploadUserPhoto:image success:^{
-            NSLog  (@"UPLOAD SUCCESS");
-        } failure:^(NSError *e) {
-            NSLog  (@"UPLOAD FAILURE");
-        }];
     }
 
     [self  dismissViewControllerAnimated:YES completion:nil];
