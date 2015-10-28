@@ -39,7 +39,7 @@
 
 @property (nonatomic,strong) NSArray* tableSectionNames;
 
-@property (nonatomic,assign) BOOL doingTransition;
+@property (nonatomic,assign) BOOL doingTransition, didGetInitialResponse;
 
 @end
 
@@ -127,9 +127,11 @@
         }
         
         @synchronized(weakSelf.yourEventsArray) {
-            self.yourEventsArray= your;
-            self.incompleteEventsArray= incomplete;
+            weakSelf.yourEventsArray= your;
+            weakSelf.incompleteEventsArray= incomplete;
         }
+        
+        weakSelf.didGetInitialResponse= YES;
         
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
@@ -238,7 +240,11 @@
         cell.selectedBackgroundView= [UIView new];
         
         if (!events.count) {
-            [cell setMessageMode: @"You do not have such events."];
+            if (!_didGetInitialResponse) {
+                [cell setMessageMode: @"Loading..."];
+            } else {
+                [cell setMessageMode: @"No events."];
+            }
         } else {
             EventObject* e= events[row];
             [cell setEvent: e];

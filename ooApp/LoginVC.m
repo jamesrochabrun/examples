@@ -720,7 +720,7 @@
                      if  ( urlString ) {
                          UserObject* userInfo= [Settings sharedInstance].userObject;
                          NSString* existingURL= userInfo.imageURLString;
-                         if (1|| !existingURL  ||  ![existingURL isEqualToString: urlString]) {
+                         if (!existingURL  ||  ![existingURL isEqualToString: urlString]) {
                              userInfo.imageURLString=  urlString;
                              [[Settings sharedInstance] save ];
                              
