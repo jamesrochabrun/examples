@@ -98,23 +98,6 @@
                                       multiplier:1
                                       constant:0];
     [self addConstraint:constraint];
-    
-//    [self addConstraint:[NSLayoutConstraint
-//                         constraintWithItem:_viewShadow
-//                         attribute:NSLayoutAttributeWidth
-//                         relatedBy:NSLayoutRelationEqual
-//                         toItem:_thumbnail
-//                         attribute:NSLayoutAttributeWidth
-//                         multiplier:1
-//                         constant:0]];
-//    [self addConstraint:[NSLayoutConstraint
-//                         constraintWithItem:_viewShadow
-//                         attribute:NSLayoutAttributeHeight
-//                         relatedBy:NSLayoutRelationEqual
-//                         toItem:_thumbnail
-//                         attribute:NSLayoutAttributeHeight
-//                         multiplier:1
-//                         constant:0]];
 }
 
 - (void)prepareForReuse
@@ -134,7 +117,7 @@
     view.opaque = YES;
     view.layer.shadowOffset = CGSizeMake(2, 2);
     view.layer.shadowColor = UIColorRGBA(kColorBlack).CGColor;
-    view.layer.shadowOpacity = 0.5;
+    view.layer.shadowOpacity = 0.25;
     view.layer.shadowRadius = 4;
     view.clipsToBounds = NO;
     view.layer.shouldRasterize = YES;
