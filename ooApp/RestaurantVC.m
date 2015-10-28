@@ -416,6 +416,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             cvc.delegate = self;
             [cvc setToTry:(_toTryID) ? YES: NO];
             [cvc setFavorite:(_favoriteID) ? YES: NO];
+            if ([_mediaItems count]) {
+                cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
+            }
             return cvc;
             break;
         }
@@ -474,13 +477,18 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     UICollectionReusableView *reuseView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:kRestaurantPhotosHeaderIdentifier forIndexPath:indexPath];
     
     if (indexPath.section == kSectionTypeMediaItems) {
-         OOStripHeader *header = [[OOStripHeader alloc] init];
-         header.frame = CGRectMake(0, 0, width(self.view), 27);
-         header.name = @"PHOTOS";
-         [reuseView addSubview:header];
+        OOStripHeader *header = [[OOStripHeader alloc] init];
+        header.frame = CGRectMake(0, 0, width(self.view), 27);
+        header.name = @"PHOTOS";
+        [header enableAddButtonWithTarget:self action:@selector(addPhoto)];
+        [reuseView addSubview:header];
         [collectionView bringSubviewToFront:reuseView];
      }
     return reuseView;
+}
+
+- (void)addPhoto {
+    
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {

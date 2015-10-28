@@ -77,6 +77,7 @@
 		367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45391BCE3A7200E96B69 /* PhotoCVCell.m */; };
 		367B453D1BCE62BC00E96B69 /* RestaurantMainCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */; };
 		367B45401BD06AB600E96B69 /* OOStripHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453F1BD06AB600E96B69 /* OOStripHeader.m */; };
+		3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490B1BE04B73003BF98B /* UIImageEffects.m */; settings = {ASSET_TAGS = (); }; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */; };
 		36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C39BE01B84C7CD00648879 /* DebugUtilities.m */; };
@@ -240,6 +241,8 @@
 		367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantMainCVCell.m; sourceTree = "<group>"; };
 		367B453E1BD06AB600E96B69 /* OOStripHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOStripHeader.h; sourceTree = "<group>"; };
 		367B453F1BD06AB600E96B69 /* OOStripHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOStripHeader.m; sourceTree = "<group>"; };
+		3686490A1BE04B73003BF98B /* UIImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageEffects.h; path = External/UIImageEffects/UIImageEffects.h; sourceTree = "<group>"; };
+		3686490B1BE04B73003BF98B /* UIImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageEffects.m; path = External/UIImageEffects/UIImageEffects.m; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantVC.h; sourceTree = "<group>"; };
@@ -500,9 +503,19 @@
 		367704651B8CFE2400B594E5 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				368649091BE04B0C003BF98B /* UIImageEffects */,
 				366B623C1B8D14A200B9F1C5 /* SMRevealViewController */,
 			);
 			name = External;
+			sourceTree = "<group>";
+		};
+		368649091BE04B0C003BF98B /* UIImageEffects */ = {
+			isa = PBXGroup;
+			children = (
+				3686490A1BE04B73003BF98B /* UIImageEffects.h */,
+				3686490B1BE04B73003BF98B /* UIImageEffects.m */,
+			);
+			name = UIImageEffects;
 			sourceTree = "<group>";
 		};
 		36FDA6E71B585F650029D29D = {
@@ -859,6 +872,7 @@
 				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
 				365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
+				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */,
