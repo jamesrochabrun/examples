@@ -49,13 +49,29 @@
     OOAPI *api = [[OOAPI alloc] init];
     
     NSString *imageRef = mediaItemObject.reference;
+    __weak UIImageView *weakIV = _backgroundImage;
+    __weak PhotoCVCell *weakSelf = self;
     
     if (imageRef) {
         _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
-                [self setNeedsUpdateConstraints];
-            });
+            
+            [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                     placeholderImage:nil
+                                              success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                                  ON_MAIN_THREAD(^ {
+                                                      [weakIV setAlpha:0.0];
+                                                      weakIV.image = image;
+                                                      [UIView beginAnimations:nil context:NULL];
+                                                      [UIView setAnimationDuration:0.3];
+                                                      [weakIV setAlpha:1.0];
+                                                      [UIView commitAnimations];
+                                                      [weakSelf setNeedsUpdateConstraints];
+                                                      [weakSelf setNeedsLayout];
+                                                  });
+                                              }
+                                              failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                                  ;
+                                              }];
         } failure:^(NSError *error) {
             ;
         }];

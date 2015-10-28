@@ -40,7 +40,7 @@ NSString *const kFontIconPhoto = @"x";
 NSString *const kFontIconUpload = @"F";
 NSString *const kFontIconLocation = @"w";
 NSString *const kFontIconToTry = @"K";
-NSString *const kFontIconToTryFilled = @"K";
+NSString *const kFontIconToTryFilled = @"N";
 NSString *const kFontIconList = @"p";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
