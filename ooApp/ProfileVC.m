@@ -15,6 +15,7 @@
 #import "EmptyListVC.h"
 #import "RestaurantListVC.h"
 #import "UIImage+Additions.h"
+#import "AppDelegate.h"
 
 @interface ProfileTableFirstRow ()
 @property (nonatomic, assign) NSInteger userID;
@@ -264,12 +265,29 @@
     return self;
 }
 
+- (void) viewWillAppear: (BOOL) animated
+{
+    [super viewWillAppear:animated];
+
+    OOAPI *api = [[OOAPI alloc] init];
+    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
+                success:^(NSArray *foundLists) {
+                    NSLog (@" number of lists for this user:  %ld", (long)foundLists.count);
+                    _lists = foundLists;
+                    [self.table reloadData];
+                }
+                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                    NSLog  (@" error while getting lists for user: %@",e);
+                }];
+}
+
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
+    ENTRY;
     [super viewDidLoad];
     
     if (!_userID) {
@@ -281,16 +299,6 @@
     
     _lists = [NSArray array];
     
-    OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
-                success:^(NSArray *foundLists) {
-                    NSLog (@" number of lists for this user:  %ld", (long)foundLists.count);
-                    _lists = foundLists;
-                    [self.table reloadData];
-                }
-                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                    NSLog  (@" error while getting lists for user: %@",e);
-                }];
     // NOTE:  these will later be stored in user defaults.
     _headerCell = [[ProfileTableFirstRow alloc] initWithUserInfo:_profileOwner];
     _headerCell.vc = self;

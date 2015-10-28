@@ -309,7 +309,8 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
+    ENTRY;
+   [super viewDidLoad];
     
     NSString* eventName= APP.eventBeingEdited.name;
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];

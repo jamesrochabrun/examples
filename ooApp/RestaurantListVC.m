@@ -95,7 +95,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)deleteList {
     OOAPI *api = [[OOAPI alloc] init];
     [api deleteList:_listItem.listID success:^(NSArray *lists) {
-        ;
+        [self.navigationController popViewControllerAnimated:YES];
+
     } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
         ;
     }];

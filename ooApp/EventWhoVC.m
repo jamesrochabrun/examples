@@ -168,7 +168,8 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
+    ENTRY;
+   [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.    
     
     self.view.autoresizesSubviews= NO;

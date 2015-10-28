@@ -51,6 +51,7 @@
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
+    ENTRY;
     [super viewDidLoad];
 
     self.automaticallyAdjustsScrollViewInsets= NO;

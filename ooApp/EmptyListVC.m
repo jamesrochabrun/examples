@@ -13,6 +13,7 @@
 #import "ListStripTVCell.h"
 #import "OOAPI.h"
 #import "ListsVC.h"
+#import "AppDelegate.h"
 
 @interface EmptyListVC ()
 
@@ -30,6 +31,7 @@
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
+    ENTRY;
     [super viewDidLoad];
     
     self.view.backgroundColor= WHITE;

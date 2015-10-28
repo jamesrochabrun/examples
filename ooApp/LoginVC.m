@@ -63,9 +63,10 @@
 
 - (void)loginBypass: (id) sender
 {
+    ENTRY;
     static NSInteger  counter= 0;
     counter ++;
-    if  (counter ==4) {
+    if  (counter == 8) {
         [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     }
 }
@@ -97,8 +98,6 @@
 //------------------------------------------------------------------------------
 - (void)viewWillAppear:(BOOL)animated
 {
-    ENTRY;
-
     [super viewWillAppear:animated];
     
     _wentToDiscover= NO;
@@ -350,7 +349,7 @@
                                       parameters:nil
                                          success:^void(id   result) {
                                              NSLog  (@"PRE-EXISTING OO USER %@, %@",  facebookID , result);
-                                             [APP.diagnosticLogString appendFormat: @"PRE-EXISTING OO USER %@, %@",  facebookID , result];
+                                             [APP.diagnosticLogString appendFormat: @"PRE-EXISTING OO USER %@, %@\r",  facebookID , result];
 
                                              if ([result isKindOfClass: [NSDictionary  class] ] ) {
                                                  NSDictionary* d=  (NSDictionary*)result;

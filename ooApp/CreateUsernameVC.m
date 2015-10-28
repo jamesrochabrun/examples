@@ -49,17 +49,18 @@
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
+    ENTRY;
     [super viewDidLoad];
     
     _arrayOfSuggestions=[NSMutableArray new];
-
+    
     self.view.backgroundColor= WHITE;
     
     self.scrollView= [UIScrollView  new];
     [self.view  addSubview: _scrollView ];
     
     self.buttonSignUp= makeButton( _scrollView, LOCAL(@"SIGN UP") , kGeomFontSizeHeader,
-                                 BLACK, CLEAR, self,
+                                  BLACK, CLEAR, self,
                                  @selector(userPressedSignUpButton:),
                                  1);
     

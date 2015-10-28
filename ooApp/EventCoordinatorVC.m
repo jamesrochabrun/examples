@@ -76,6 +76,7 @@
 
 - (void)viewDidLoad
 {
+    ENTRY;
     [super viewDidLoad];
     
     NSString* eventName= APP.eventBeingEdited.name;
@@ -124,7 +125,7 @@
     _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
     _viewContainer1.clipsToBounds= YES;
     
-    self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"EVENT NAME", kGeomEventHeadingFontSize);
+    self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
     _labelEventCover.textColor= WHITE;
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
@@ -209,7 +210,7 @@
 
 - (void) userPressedMenuButton: (id) sender
 {
-    UIAlertController *a= [UIAlertController alertControllerWithTitle:@"Delete Eventt?"
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Delete Event?")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleAlert];
     

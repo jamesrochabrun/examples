@@ -56,14 +56,15 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
+    ENTRY;
     [super viewDidLoad];
-
+    
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= WHITE;
     
     _arrayOfFilterNames=  @[
-                             LOCAL(@"None"),
+                            LOCAL(@"None"),
                              LOCAL(@"Places"),
                              LOCAL(@"People"),
                              LOCAL(@"Lists"),

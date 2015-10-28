@@ -38,7 +38,8 @@
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
+    ENTRY;
+   [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.    
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"WHEN IS THE EVENT" subHeader: nil];
