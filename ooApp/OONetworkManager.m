@@ -27,14 +27,14 @@
 
 - (id)init {
     if (self = [super init]) {
-
+        
     }
     return self;
 }
 
 - (AFHTTPRequestOperation *)GET:(NSString *)path parameters:(NSDictionary *)parameters
                         success:(void (^)(id responseObject))success
-                        failure:(void (^)(NSError *error))failure
+                        failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
 {
     NSLog  (@"GET:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
@@ -52,13 +52,13 @@
         NSLog(@"JSON: %@", responseObject);
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure(error);
+        failure(operation,error);
     }];
 }
 
 - (AFHTTPRequestOperation *)POST:(NSString *)path parameters:(NSDictionary *)parameters
                          success:(void (^)(id responseObject))success
-                         failure:(void (^)(NSError *error))failure
+                         failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
 {
     NSLog  (@"POST:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
@@ -72,7 +72,7 @@
     }else {
         NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
     }
-
+    
     NSLog (@"POST PARAMETERS:  %@",parameters);
     NSLog (@"SERIALIZER SAYS HEADERS:  %@", nm.requestManager.requestSerializer.HTTPRequestHeaders);
     NSLog (@"SERIALIZER SAYS TIMEOUT:   %g", nm.requestManager.requestSerializer.timeoutInterval);
@@ -80,13 +80,13 @@
         NSLog(@"JSON: %@", responseObject);;
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure(error);
+        failure(operation,error);
     }];
 }
 
 - (AFHTTPRequestOperation*) PUT:(NSString *)path parameters:(NSDictionary *)parameters
-                         success:(void (^)(id responseObject))success
-                         failure:(void (^)(NSError *error))failure
+                        success:(void (^)(id responseObject))success
+                        failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
 {
     NSLog  (@"PUT:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
@@ -102,19 +102,20 @@
         NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
     }
     return [nm.requestManager PUT:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"JSON: %@", responseObject);;
+        //        NSLog(@"JSON: %@", responseObject);;
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure(error);
+        failure(operation,error);
+
     }];
 }
 
 - (AFHTTPRequestOperation*) DELETE:(NSString *)path parameters:(NSDictionary *)parameters
-                        success:(void (^)(id responseObject))success
-                        failure:(void (^)(NSError *error))failure
+                           success:(void (^)(id responseObject))success
+                           failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
 {
     NSLog  (@"DELETE:  %@", path);
-
+    
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
@@ -130,13 +131,14 @@
     return [nm.requestManager DELETE:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure(error);
+        failure(operation,error);
+
     }];
 }
 
 - (AFHTTPRequestOperation*) PATCH:(NSString *)path parameters:(NSDictionary *)parameters
-                        success:(void (^)(id responseObject))success
-                        failure:(void (^)(NSError *error))failure
+                          success:(void (^)(id responseObject))success
+                          failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
 {
     NSLog  (@"PATCH:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
@@ -155,7 +157,8 @@
         //        NSLog(@"JSON: %@", responseObject);;
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure(error);
+        failure(operation,error);
+
     }];
 }
 

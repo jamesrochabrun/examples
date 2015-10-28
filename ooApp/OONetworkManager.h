@@ -18,23 +18,23 @@
 + (id)sharedRequestManager;
 
 //-(void)getResource:(NSString *)url;
-- (AFHTTPRequestOperation*) GET:(NSString *)path parameters:(NSDictionary *)parameters
-    success:(void (^)(id responseObject))success
-    failure:(void (^)(NSError *error))failure;
+- (AFHTTPRequestOperation *)GET:(NSString *)path parameters:(NSDictionary *)parameters
+                        success:(void (^)(id responseObject))success
+                        failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure;
 
 - (AFHTTPRequestOperation*) POST:(NSString *)path parameters:(NSDictionary *)parameters
-     success:(void (^)(id responseObject))success
-     failure:(void (^)(NSError *error))failure;
+                         success:(void (^)(id responseObject))success
+                         failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure;
 
 - (AFHTTPRequestOperation*) PUT:(NSString *)path parameters:(NSDictionary *)parameters
-                         success:(void (^)(id responseObject))success
-                        failure:(void (^)(NSError *error))failure;
+                        success:(void (^)(id responseObject))success
+                        failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure;
 
 - (AFHTTPRequestOperation*) DELETE:(NSString *)path parameters:(NSDictionary *)parameters
                            success:(void (^)(id responseObject))success
-                           failure:(void (^)(NSError *error))failure;
+                           failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure;
 
 - (AFHTTPRequestOperation*) PATCH:(NSString *)path parameters:(NSDictionary *)parameters
                           success:(void (^)(id responseObject))success
-                          failure:(void (^)(NSError *error))failure;
+                          failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure;
 @end

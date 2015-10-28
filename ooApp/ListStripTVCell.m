@@ -138,7 +138,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
             });
-        } failure:^(NSError *err) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *err) {
             ;
         }];
     } else {
@@ -152,7 +152,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
             });
-        } failure:^(NSError *err) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *err) {
             ;
         }];
     }

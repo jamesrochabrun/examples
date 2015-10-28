@@ -118,7 +118,7 @@
                                                                    setImageWithURL:[NSURL URLWithString:link]
                                                                    placeholderImage:nil];
                                                               });
-                                                          } failure:^(NSError *error) {
+                                                          } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                           }];
 
     }
@@ -288,7 +288,7 @@
                                                                  setImageWithURL:[NSURL URLWithString:link]
                                                                  placeholderImage:placeholder];
                                                             });
-                                                        } failure:^(NSError *error) {
+                                                        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                             [weakSelf.thumbnail setImage:placeholder];
                                                         }];
         }
@@ -418,7 +418,7 @@
        andRestaurant: object.venueID
              success:^(NSInteger eventID) {
                  NSLog  (@"DID SAVE VOTE.");
-             } failure:^(NSError *error) {
+             } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                  NSLog  (@"CANNOT SAVE VOTE.");
              }
      ];

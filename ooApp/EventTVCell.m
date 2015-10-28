@@ -167,7 +167,7 @@
                                                                      setImageWithURL:[NSURL URLWithString:link]
                                                                      placeholderImage:placeholder];
                                                                 });
-                                                            } failure:^(NSError *error) {
+                                                            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                                 [weakSelf.thumbnail setImage:placeholder];
                                                             }];
             }
@@ -190,7 +190,7 @@
                                                                setImageWithURL:[NSURL URLWithString:link]
                                                                placeholderImage:placeholder];
                                                           });
-                                                      } failure:^(NSError *error) {
+                                                      } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                           [weakSelf.thumbnail setImage:placeholder];
                                                       }];
         

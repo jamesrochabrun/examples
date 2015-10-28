@@ -154,7 +154,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                          success:^(id response) {
                              NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
                              message( @"Added.");
-                         } failure:^(NSError *error) {
+                         } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                              NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
                              [_venues removeObject: venue];
                              
@@ -178,7 +178,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                             success:^(id response) {
                                 NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
                                 message( @"Removed.");
-                            } failure:^(NSError *error) {
+                            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                 [_venues addObject: venue];
                                 NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
                             }];
@@ -209,7 +209,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                            self.numberOfPeopleResponded= event.numberOfPeopleResponded;
                            self.numberOfPeopleVoted= event.numberOfPeopleVoted;
                            success();
-                       } failure:^(NSError *error) {
+                       } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                            failure();
                        }
             ];
@@ -227,7 +227,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                                      }
                                      
                                      success();
-                                 } failure:^(NSError *error) {
+                                 } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                      failure();
                                  }];
     
@@ -246,7 +246,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
         [self establishPrimaryImage];
         
         success();
-    } failure:^(NSError *error) {
+    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
         failure();
     }];
 }
@@ -266,7 +266,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     [OOAPI reviseEvent:APP.eventBeingEdited
                success:^(id foo) {
                    NSLog  (@"UPDATED BACKEND WITH NEW DATES.");
-               } failure:^(NSError *error) {
+               } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                    NSLog  (@"UNABLE TO UPDATE BACKEND WITH NEW DATES.");
                }];
 }
@@ -324,7 +324,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
                               success();
                           }
-                          failure:^(NSError *error) {
+                          failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                               NSLog  (@"UNABLE TO GET VOTES FOR EVENT.");
                               failure();
                           }];

@@ -96,7 +96,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     OOAPI *api = [[OOAPI alloc] init];
     [api deleteList:_listItem.listID success:^(NSArray *lists) {
         ;
-    } failure:^(NSError *error) {
+    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
         ;
     }];
 }
@@ -137,7 +137,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
             });
-        } failure:^(NSError *err) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *err) {
             ;
         }];
     } else {
@@ -151,7 +151,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
             });
-        } failure:^(NSError *err) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *err) {
             ;
         }];
     }
@@ -220,10 +220,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
                 ON_MAIN_THREAD(^{
                     [weakSelf.tableView reloadData];
                 });
-            } failure:^(NSError *error) {
+            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                 ;
             }];
-        } failure:^(NSError *error) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];
     }

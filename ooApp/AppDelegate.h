@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-//#import "RestaurantObject.h"
+
 #import "UserObject.h"
 #import "TimeUtilities.h"
 #import "EventObject.h"
@@ -20,6 +20,12 @@
 @property (nonatomic,assign) BOOL usingStagingServer;
 
 - (BOOL)connected;
+
+// Later, remove from production
+#define ENTRY { [APP.diagnosticLogString appendFormat:  @"Entered %s\r",__FUNCTION__]; }
+#define LOGS(STRING) { [APP.diagnosticLogString appendFormat: @"%@\r",STRING]; }
+#define LOGS2(STRING1,STRING2) { [APP.diagnosticLogString appendFormat: @"%@: %@\r",STRING1,STRING2]; }
+#define LOGSN(STRING,NUMBER) { [APP.diagnosticLogString appendFormat: @"%@: %lu\r",STRING,(unsigned long)NUMBER]; }
 
 @end
 

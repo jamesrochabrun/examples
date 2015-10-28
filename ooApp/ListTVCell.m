@@ -61,14 +61,14 @@
         //remove from list
         [api deleteRestaurant:_restaurant.restaurantID fromList:_list.listID success:^(NSArray *lists) {
             [weakSelf getListsForRestaurant];
-        } failure:^(NSError *error) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];
     } else {
         //add to list
         [api addRestaurants:@[_restaurant] toList:_list.listID success:^(id response) {
             [weakSelf getListsForRestaurant];
-        } failure:^(NSError *error) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];
     }
@@ -88,7 +88,7 @@
                         [weakSelf updateAddButton];
                     });
                 }
-                failure:^(NSError *e) {
+                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
                 }];
 }
@@ -134,7 +134,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];
             });
-        } failure:^(NSError *error) {
+        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];
     }

@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "BaseVC.h"
 
-@interface DiagnosticVC : BaseVC<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+@interface DiagnosticVC : BaseVC<UIImagePickerControllerDelegate,UINavigationControllerDelegate, MFMailComposeViewControllerDelegate>
 
 @end
 

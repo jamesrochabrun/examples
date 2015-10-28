@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "AppDelegate.h"
 #import "DefaultVC.h"
 #import "OOAPI.h"
@@ -19,6 +20,7 @@
 @interface DiagnosticVC ()
 @property (nonatomic,strong)  UIButton* buttonClearUsername;
 @property (nonatomic,strong)  UIButton* buttonClearCache;
+@property (nonatomic,strong)  UIButton* buttonSendLog;
 @property (nonatomic,strong)  UIButton* buttonSearchRadius;
 @property (nonatomic,strong)  UIButton* buttonUploadPhoto;
 @property (nonatomic,strong)  UIButton* buttonUploadHugePhoto;
@@ -26,6 +28,7 @@
 @property (nonatomic,strong)  UITextView* textviewDiagnosticLog;
 @property (nonatomic,strong)   UIImageView* ivPhoto;
 @property (nonatomic,strong)   UIImage* hugeImage;
+@property (nonatomic,strong) MFMailComposeViewController *mailController;
 @end
 
 @implementation DiagnosticVC
@@ -54,13 +57,17 @@
     _textviewDiagnosticLog.font= [ UIFont systemFontOfSize:kGeomFontSizeDetail ];
     self.automaticallyAdjustsScrollViewInsets= NO;
     
-    _buttonClearUsername= makeButton(self.view,  @"CLEAR USERNAME", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doClearUsername:), 1);
+    _buttonClearUsername= makeButton(self.view,  @"CLEAR USERNAME", kGeomFontSizeHeader-2, WHITE, CLEAR, self, @selector(doClearUsername:), 1);
     _buttonClearUsername.titleLabel.numberOfLines= 0;
     _buttonClearUsername.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     _buttonClearCache= makeButton(self.view,  @"CLEAR CACHE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doClearCache:), 1);
     _buttonClearCache.titleLabel.numberOfLines= 0;
     _buttonClearCache.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
+    self.buttonSendLog= makeButton(self.view,  @"SEND LOG", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doSendLog:), 1);
+    _buttonSendLog.titleLabel.numberOfLines= 0;
+    _buttonSendLog.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     radius= [[Settings sharedInstance] searchRadius] / 1000;
     radius*= 2;
@@ -108,6 +115,26 @@
     }
     [_textviewDiagnosticLog setContentSize: _textviewDiagnosticLog.textContainer.size];
     [_textviewDiagnosticLog scrollRangeToVisible:NSMakeRange(length-1, 1)];
+}
+
+//------------------------------------------------------------------------------
+// Name:    doSendLog
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doSendLog:(id) sender
+{
+    self.mailController = [[MFMailComposeViewController alloc] init];
+    [_mailController setMessageBody: APP.diagnosticLogString isHTML: NO];
+    [_mailController setSubject:  @"OO log"];
+    _mailController.mailComposeDelegate = self;
+    [self presentViewController: _mailController animated: YES completion: NULL ];
+}
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller
+           didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    [_mailController dismissViewControllerAnimated: YES completion: NULL];
+    self.mailController = nil;
 }
 
 //------------------------------------------------------------------------------
@@ -174,6 +201,21 @@
     
 }
 
+//            [controller setSubject: subject];
+//    
+//    if (address) {
+//        NSArray  *ary = [NSArray arrayWithObject: address];
+//        [composeController setToRecipients: ary];
+//    }
+//    
+//    composeController.mailComposeDelegate = self;
+//    
+//    [vc presentViewController: composeController animated: YES completion: NULL ];
+//    
+//    return YES;
+    
+
+
 //------------------------------------------------------------------------------
 // Name:    doSearchRadius
 // Purpose:
@@ -204,7 +246,7 @@
     
     [OOAPI clearUsernameWithSuccess:^(NSArray *names) {
         message( @"success");
-    } failure:^(NSError *e) {
+    } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
         NSString *s = [NSString stringWithFormat: @"error %@",e.localizedDescription];
         message(s);
     } ];
@@ -222,25 +264,32 @@
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
-    float  spacing= 16;
+    float  spacing= kGeomSpaceEdge;
     _textviewDiagnosticLog.frame=  CGRectMake(margin,h/2,w-2*margin,h/2-margin);
     
-    float x=  margin, y=  margin;
-    _buttonClearUsername.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
-    y+=  spacing +kGeomHeightButton;
-    _buttonClearCache.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
-    y+=  spacing +kGeomHeightButton;
-    _buttonSearchRadius.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    float buttonWidth=(w-4*spacing)/3;
     
-    x += kGeomButtonWidth+ spacing;
+    float x=  spacing, y=  margin;
+    _buttonClearUsername.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
+    _buttonClearCache.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
+    _buttonSearchRadius.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    
+    x += buttonWidth+ spacing;
     y= margin;
-    _buttonTakePhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    _buttonTakePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    _buttonUploadPhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    _buttonUploadPhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,kGeomButtonWidth,kGeomHeightButton);
+    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-
+    
+    x += buttonWidth+ spacing;
+    y= margin;
+    _buttonSendLog.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
+    
     _ivPhoto.frame = CGRectMake(0,0,w,_textviewDiagnosticLog.frame.origin.y);
     [self.view sendSubviewToBack:_ivPhoto ];
     

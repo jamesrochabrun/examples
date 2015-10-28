@@ -119,7 +119,7 @@
                                    [weakSelf.arrayOfSuggestions addObject: string];
                                }
                                [weakSelf performSelectorOnMainThread:@selector(refreshTable) withObject:nil waitUntilDone:NO ];
-                           } failure:^(NSError *e) {
+                           } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                                NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
                            }];
 }
@@ -268,7 +268,7 @@
                                              [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
 
                                          }
-                                         failure:^  void(NSError *error) {
+                                         failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                              NSLog (@"PUT OF USERNAME FAILED %@",error);
                                              [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
 
