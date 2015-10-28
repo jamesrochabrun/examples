@@ -24,6 +24,7 @@ extern NSString *const kKeyRestaurantAddress;
 extern NSString *const kKeyRestaurantPhone;
 extern NSString *const kKeyRestaurantWebsite;
 extern NSString *const kKeyRestaurantRestaurantIDPlural;
+extern NSString *const kKeyRestaurantHours;
 
 typedef enum {
     kRestaurantSourceTypeGoogle = 2
@@ -45,6 +46,7 @@ typedef enum {
 @property (nonatomic, strong) NSString *website;
 @property (nonatomic, strong) NSString *phone;
 @property (nonatomic, strong) NSString *address;
+@property (nonatomic, strong) NSArray *hours;
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict;
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant;
