@@ -10,7 +10,7 @@
 #import "SWRevealViewController.h"
 #import "NavTitleObject.h"
 
-@interface BaseVC : UIViewController
+@interface BaseVC : UIViewController <SWRevealViewControllerDelegate>
 
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *menu;
 @property (nonatomic, strong) NavTitleObject *navTitle;
