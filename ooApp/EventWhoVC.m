@@ -191,7 +191,40 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [_table registerClass:[EventWhoTableCell class] forCellReuseIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER];
     
     self.navigationItem.leftBarButtonItem= nil;
+}
 
+- (BOOL)emailAlreadyInArray: (NSString*)emailString
+{
+    if  (!emailString) {
+        return NO;
+    }
+    emailString= [ emailString lowercaseString];
+    
+    for (UserObject* user  in  _arrayOfPotentialParticipants) {
+        if ( [[user.email lowercaseString] isEqualToString: emailString ]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)reloadTable
+{
+    @synchronized(_arrayOfPotentialParticipants) {
+        [_table reloadData];
+    }
+}
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    [self doLayout];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
     __weak EventWhoVC *weakSelf = self;
     
 #if 0
@@ -219,7 +252,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     } failure:^{
         NSLog (@"FAILED TO DETERMINE USERS ALREADY ATTACHED TO6 EVENT");
     }];
-
+    
     // RULE: Identify follower users we could potentially attach this event.
     [OOAPI getFollowingWithSuccess:^(NSArray *users) {
         NSLog  (@"USER IS FOLLOWING %lu USERS.", ( unsigned long)users.count);
@@ -250,34 +283,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                             failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                 NSLog  (@"CANNOT GET USER LISTING.  %@",error);
                             }];
-}
-
-- (BOOL)emailAlreadyInArray: (NSString*)emailString
-{
-    if  (!emailString) {
-        return NO;
-    }
-    emailString= [ emailString lowercaseString];
-    
-    for (UserObject* user  in  _arrayOfPotentialParticipants) {
-        if ( [[user.email lowercaseString] isEqualToString: emailString ]) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (void)reloadTable
-{
-    @synchronized(_arrayOfPotentialParticipants) {
-        [_table reloadData];
-    }
-}
-
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
-    [self doLayout];
 }
 
 - (void)viewDidAppear:(BOOL)animated

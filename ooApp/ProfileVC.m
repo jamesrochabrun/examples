@@ -58,7 +58,6 @@
         NSUInteger ownUserIdentifier= [userInfo userID];
         _viewingOwnProfile = _userID == ownUserIdentifier;
         if ( !_viewingOwnProfile) {
-            self.navigationController.navigationItem.leftBarButtonItem= nil;
         }
         
         self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
@@ -281,6 +280,11 @@
                 }];
 }
 
+- (void)done:(id)sender
+{
+    [self.navigationController  popViewControllerAnimated:YES];
+}
+
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
 // Purpose:
@@ -290,11 +294,23 @@
     ENTRY;
     [super viewDidLoad];
     
+    // Ascertain whether reviewing our own profile.
+    //
     if (!_userID) {
         UserObject *userInfo = [Settings sharedInstance].userObject;
         self.profileOwner = userInfo;
     } else {
         self.profileOwner = _userInfo;
+        
+        // Hide the menu button.
+        self.menu.title=  @"";
+        self.menu.enabled=NO;
+        message(@"profile VC descends from base VC, so there is no back button.");
+        
+        // This attempts to reestablish the back button but it does not work.
+        self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
+        self.navigationController.navigationItem.backBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
+
     }
     
     _lists = [NSArray array];

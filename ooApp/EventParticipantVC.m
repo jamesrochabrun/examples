@@ -329,6 +329,18 @@
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     
+}
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    [self doLayout];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
     if (! [APP.eventBeingEdited totalVenues ]) {
         /* _venueOperation=*/ [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
             [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
@@ -342,18 +354,6 @@
     } failure:^{
         NSLog  (@"FAILED TO FETCH VOTES");
     }];
-}
-
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
-    [self doLayout];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -405,7 +405,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     EventObject* event=APP.eventBeingEdited;
-    return [event totalVenues];
+    NSInteger total= [event totalVenues];
+    return 1+total ;
 }
 
 - (void) voteChanged:(VoteObject*) object;
