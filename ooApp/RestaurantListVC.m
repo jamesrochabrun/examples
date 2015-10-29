@@ -14,6 +14,8 @@
 #import "UIImageView+AFNetworking.h"
 #import "ListObject.h"
 #import "RestaurantVC.h"
+#import "ListsVC.h"
+#import "DiscoverVC.h"
 
 @interface RestaurantListVC ()
 
@@ -70,18 +72,33 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                     preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
     _alertController.view.tintColor = [UIColor blackColor];
-    
+
+    UIAlertAction *addRestaurantsFromDiscover = [UIAlertAction actionWithTitle:@"Add Restaurants from Discover"
+                                                                         style:UIAlertActionStyleDefault
+                                                                       handler:^(UIAlertAction * action) {
+                                                                           [self addRestaurantsFromDiscover];
+                                                                       }];
+
+    UIAlertAction *addRestaurantsFromList = [UIAlertAction actionWithTitle:@"Add Restaurants from List"
+                                                                     style:UIAlertActionStyleDefault
+                                                                   handler:^(UIAlertAction * action) {
+                                                                       [self addRestaurantsFromList];
+                                                                   }];
+
     UIAlertAction *deleteList = [UIAlertAction actionWithTitle:@"Delete List"
-                                                         style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
-                                                             [self deleteList];
-                                                         }];
+                                                         style:UIAlertActionStyleDestructive
+                                                       handler:^(UIAlertAction * action) {
+                                                           [self deleteList];
+                                                       }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }]; // 3
     
-    
+
+    [_alertController addAction:addRestaurantsFromDiscover];
+    [_alertController addAction:addRestaurantsFromList];
     [_alertController addAction:deleteList];
     [_alertController addAction:cancel];
     
@@ -99,6 +116,18 @@ static NSString * const cellIdentifier = @"horizontalCell";
     } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
         ;
     }];
+}
+
+- (void)addRestaurantsFromDiscover {
+    
+    
+}
+
+- (void)addRestaurantsFromList {
+    ListsVC *vc = [[ListsVC alloc] init];
+    [vc getLists];
+    vc.listToAddTo = _listItem;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated

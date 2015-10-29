@@ -104,7 +104,7 @@ NSString *const kKeyParticipantState = @"participant_state";
     }
     
     profilePhoto= userProfilePhoto;
-//    [OOAPI uploadUserPhoto:profilePhoto
+//    [OOAPI uploadUserPhoto:profilePhoto //NOTE: upoading the photo everytime floods S3 with images we don't need
 //                   success:^() {
 //                       
 //                   }

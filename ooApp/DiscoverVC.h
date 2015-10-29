@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
+#import "ListObject.h"
 
 @interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) ListObject *listToAddTo;
 
 - (void)getRestaurants;
 

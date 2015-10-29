@@ -345,17 +345,7 @@
     _website.text = @"Website";
     _phoneNumber.text = _restaurant.phone;
     
-    if (_restaurant.priceRange >= 4) {
-        _priceRange.text = @"$$$$$";
-    } else if (_restaurant.priceRange >= 3) {
-        _priceRange.text = @"$$$$";
-    } else if (_restaurant.priceRange >= 2) {
-        _priceRange.text = @"$$$";
-    } else if (_restaurant.priceRange >= 1) {
-        _priceRange.text = @"$$";
-    } else {
-        _priceRange.text = @"$";
-    }
+    _priceRange.text = [_restaurant priceRangeText];
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     
@@ -418,7 +408,6 @@
         }
     }];
     _hoursView.text = hrs;
-    
     
     [self updateConstraintsIfNeeded];
 }

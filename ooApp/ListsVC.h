@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
 #import "RestaurantObject.h"
+#import "ListObject.h"
 
 @interface ListsVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) RestaurantObject *restaurant;
+@property (nonatomic, strong) RestaurantObject *restaurantToAdd;
+@property (nonatomic, strong) ListObject *listToAddTo;
 
 - (void)getLists;
 
