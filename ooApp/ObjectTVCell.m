@@ -112,6 +112,24 @@
     _requestOperation = nil;
 }
 
+- (void)hideShadow
+{
+    _viewShadow.opaque = YES;
+    _viewShadow.layer.shadowOffset = CGSizeMake(0, 0);
+    _viewShadow.layer.shadowColor = CLEAR.CGColor;
+    _viewShadow.layer.shadowOpacity = 0;
+    _viewShadow.layer.shadowRadius = 0;
+}
+
+- (void)showShadow
+{
+    _viewShadow.opaque = YES;
+    _viewShadow.layer.shadowOffset = CGSizeMake(0, 5);
+    _viewShadow.layer.shadowColor = BLACK.CGColor;
+    _viewShadow.layer.shadowOpacity = 0.25;
+    _viewShadow.layer.shadowRadius = 4;
+}
+
 - (void)addShadowToView:(UIView *)view
 {
     view.opaque = YES;

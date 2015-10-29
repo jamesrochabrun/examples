@@ -51,6 +51,7 @@
 - (void)prepareForReuse
 {
     [  super prepareForReuse];
+    [self showShadow];
     [self.operation cancel ];
     [_imageOperation cancel];
     [self updateHighlighting:NO];
@@ -71,6 +72,7 @@
 - (void) setMessageMode:  (NSString*)message;
 {
     self.header.text=  message;
+    [self hideShadow];
     _isMessage= YES;
     self.header.textColor= BLACK;
 }

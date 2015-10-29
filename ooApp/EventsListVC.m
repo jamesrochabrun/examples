@@ -74,6 +74,26 @@
     _table.sectionFooterHeight= 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    [self doLayout];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     
@@ -138,28 +158,10 @@
         });
     }
                     failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-        NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
-    }
+                        NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
+                    }
      ];
-}
 
-//------------------------------------------------------------------------------
-// Name:    viewWillLayoutSubviews
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
-    [self doLayout];
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewWillAppear
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
 }
 
 //------------------------------------------------------------------------------
@@ -289,8 +291,8 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    UILabel * label= makeLabelLeft (nil,   @"",  10);
-    return  label;
+    UIView * v= makeView(nil, CLEAR);
+    return v;
 }
 
 //------------------------------------------------------------------------------
