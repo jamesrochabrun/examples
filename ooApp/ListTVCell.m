@@ -24,7 +24,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_addButton withIcon:kFontIconAdd fontSize:15 width:40 height:40 backgroundColor:kColorClear target:self selector:@selector(toggleListInclusion)];
+        [_addButton withIcon:kFontIconAdd fontSize:15 width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
         _addButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_addButton];
 //        [DebugUtilities addBorderToViews:@[_addButton]];
@@ -125,8 +125,18 @@
         self.subHeader1.text = @"";
     }
 
-    [self getListsForRestaurant];
-    
+    if (_restaurantToAdd) {
+        [_addButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+        [_addButton addTarget:self action:@selector(toggleListInclusion) forControlEvents:UIControlEventTouchUpInside];
+        [self getListsForRestaurant];
+    } else if (_listToAddTo) {
+        [_addButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+        [_addButton addTarget:self action:@selector(addAllRestaurantsFromList) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        
+    }
+
+    //get the list's image
     OOAPI *api = [[OOAPI alloc] init];
 
     if (_list.mediaItem) {
@@ -139,6 +149,19 @@
         }];
     }
 
+}
+
+- (void)addAllRestaurantsFromList {
+    OOAPI *api = [[OOAPI alloc] init];
+    [api getRestaurantsWithListID:_list.listID success:^(NSArray *restaurants) {
+        [api addRestaurants:restaurants toList:_listToAddTo.listID success:^(id response) {
+            ;
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
 }
 
 /*

@@ -86,7 +86,7 @@ static NSString * const ListRowID = @"HLRCell";
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
     self.navTitle = nto;
         
-    [self layout];
+//    [self layout];
 }
 
 - (void)selectNow {
@@ -109,8 +109,10 @@ static NSString * const ListRowID = @"HLRCell";
     [self getRestaurants];
 }
 
-- (void)layout {
-    [super layout];
+//- (void)layout {
+//    [super layout];
+- (void)updateViewConstraints {
+    [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2)};
     
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _filterView);
@@ -127,7 +129,7 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    [self layout];
+//    [self layout];
 }
 
 - (void)viewDidAppear:(BOOL)animated
