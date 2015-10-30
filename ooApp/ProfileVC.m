@@ -299,16 +299,11 @@
         self.profileOwner = userInfo;
     } else {
         self.profileOwner = _userInfo;
-        
-        // Hide the menu button.
-        self.menu.title=  @"";
-        self.menu.enabled=NO;
-        message2 (@"profile VC descends from base VC, so there is no back button.", @"we're working on it.6");
+        //message2 (@"profile VC descends from base VC, so there is no back button.", @"we're working on it.6");
         
         // This attempts to reestablish the back button but it does not work.
         self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
-        self.navigationController.navigationItem.backBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
-
+        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
     
     _lists = [NSArray array];

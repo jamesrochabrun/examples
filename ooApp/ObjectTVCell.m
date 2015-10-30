@@ -69,7 +69,7 @@
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-        [DebugUtilities addBorderToViews:@[_actionButton/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
+//        [DebugUtilities addBorderToViews:@[_actionButton/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
     }
     return self;
 }
