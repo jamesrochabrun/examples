@@ -609,7 +609,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
-                                 @"restaurant_ids":IDs
+                                 kKeyRestaurantRestaurantIDPlural: [NSString stringWithFormat:@"[%@]", IDs]
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
@@ -661,7 +661,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
-                                 @"restaurant_ids":IDs
+                                 kKeyRestaurantRestaurantIDPlural: [NSString stringWithFormat:@"[%@]", IDs]
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {

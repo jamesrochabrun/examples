@@ -12,8 +12,9 @@
 
 @interface BaseVC : UIViewController <SWRevealViewControllerDelegate>
 
-@property (nonatomic, strong) IBOutlet UIBarButtonItem *menu;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem *leftNavButton;
 @property (nonatomic, strong) NavTitleObject *navTitle;
 
-- (void)layout;
+- (void)setLeftNavWithIcon:(NSString *)icon target:(id)targer action:(SEL)sector;
+
 @end

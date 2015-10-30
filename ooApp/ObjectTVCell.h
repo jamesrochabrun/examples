@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UILabel *subHeader1;
 @property (nonatomic, strong) UILabel *subHeader2;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) UIButton *actionButton;
 
 - (void)hideShadow;
 - (void)showShadow;

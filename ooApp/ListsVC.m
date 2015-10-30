@@ -43,12 +43,11 @@ static NSString * const cellIdentifier = @"listCell";
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     _requestOperation = nil;
-    
-    [self layout];
 }
 
-- (void)layout
+- (void)updateViewConstraints
 {
+    [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
 
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
@@ -112,6 +111,8 @@ static NSString * const cellIdentifier = @"listCell";
 
     if (_restaurantToAdd) {
         cell.restaurantToAdd = _restaurantToAdd;
+    } else if (_listToAddTo) {
+        cell.listToAddTo = _listToAddTo;
     }
     ListObject *list = [_lists objectAtIndex:indexPath.row];
     cell.list = list;

@@ -31,21 +31,21 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = UIColorRGBA(kColorWhite);
     
-    _menu = [[UIBarButtonItem alloc] init];
-    self.navigationItem.leftBarButtonItem = _menu;
+    _leftNavButton = [[UIBarButtonItem alloc] init];
+    self.navigationItem.leftBarButtonItem = _leftNavButton;
     
     SWRevealViewController *revealViewController = self.revealViewController;
     revealViewController.delegate = self;
 
     if (revealViewController) {
         revealViewController.rearViewRevealWidth = self.view.frame.size.width - 60;
-        [self.menu setTitle:kFontIconMenu];
-        [self.menu setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+        [self.leftNavButton setTitle:kFontIconMenu];
+        [self.leftNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                            [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
                                            UIColorRGB(kColorBlack), NSForegroundColorAttributeName,
                                            nil] forState:UIControlStateNormal];
-        [self.menu setTarget:self.revealViewController];
-        [self.menu setAction:@selector(revealToggle:)];
+        [self.leftNavButton setTarget:self.revealViewController];
+        [self.leftNavButton setAction:@selector(revealToggle:)];
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
     
@@ -59,6 +59,12 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     
     self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorWhite);
+}
+
+- (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+    [self.leftNavButton setTitle:icon];
+    [self.leftNavButton setTarget:target];
+    [self.leftNavButton setAction:selector];
 }
 
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
@@ -89,11 +95,6 @@
     }
     else
         [[revealController.frontViewController.view viewWithTag:1000] removeFromSuperview];
-}
-
-- (void)layout
-{
-
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle

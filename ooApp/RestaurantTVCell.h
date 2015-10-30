@@ -8,10 +8,13 @@
 
 #import "ObjectTVCell.h"
 #import "RestaurantObject.h"
+#import "ListObject.h"
 #import <GoogleMaps/GoogleMaps.h>
 
 @interface RestaurantTVCell : ObjectTVCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
+
+@property (nonatomic, strong) ListObject *listToAddTo;
 
 @end
