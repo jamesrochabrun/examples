@@ -22,6 +22,7 @@ typedef enum : char {
 
 @property (nonatomic) NSUInteger eventID;
 @property (nonatomic, assign) BOOL isComplete;
+@property (nonatomic, assign) BOOL hasBeenAltered;
 @property (nonatomic) NSUInteger creatorID; // Participant type 0.
 @property (nonatomic, strong) NSString *eventCoverImageURL;
 @property (nonatomic, strong) NSString *name;
@@ -44,6 +45,7 @@ typedef enum : char {
 @property (nonatomic, strong) NSDate *updatedAt;
 @property (nonatomic, assign) NSInteger friendRecommendationAge;
 @property (nonatomic, strong) NSString *primaryVenueImageIdentifier;
+@property (nonatomic, strong) UIImage *primaryImage;
 
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)dictionaryFromEvent;
@@ -71,3 +73,4 @@ typedef enum : char {
 - (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
 
 @end
+

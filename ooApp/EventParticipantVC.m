@@ -106,7 +106,10 @@
 {
     self.event= event;
     
-    if  (event.primaryVenueImageIdentifier ) {
+    if  (event.primaryImage) {
+        self.backgroundImageView.image= event.primaryImage;
+    }
+    else if  (event.primaryVenueImageIdentifier ) {
         __weak EventParticipantFirstCell *weakSelf = self;
         OOAPI *api = [[OOAPI alloc] init];
         /* _imageOperation=*/ [api getRestaurantImageWithImageRef: event.primaryVenueImageIdentifier
@@ -120,7 +123,6 @@
                                                               });
                                                           } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                           }];
-
     }
 }
 
@@ -138,7 +140,6 @@
 //==============================================================================
 
 @interface EventParticipantVotingCell ()
-@property (nonatomic,strong)  UISwitch *voteSwitch;
 @property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong)  UIImageView *thumbnail;
 @property (nonatomic, strong) UIView *viewShadow;
@@ -171,16 +172,12 @@
         
         _thumbnail= makeImageView(self, nil);
         
-//        _voteSwitch= [UISwitch new];
-//        [self addSubview: _voteSwitch];
-        
         _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
         self.textLabel.hidden= YES;
         self.imageView.hidden= YES;
         _thumbnail.layer.borderColor= GRAY.CGColor;
         _thumbnail.layer.borderWidth= 1;
         
-        [_voteSwitch addTarget: self action:@selector(switchChanged:)  forControlEvents:UIControlEventValueChanged];
     }
     return self;
 }
@@ -193,12 +190,10 @@
         [self.delegate voteChanged:self.vote  ];
         
     }
-    
 }
 
 - (void) layoutSubviews
 {
-//    CGSize switchSize= _voteSwitch.intrinsicContentSize;
     CGSize switchSize= CGSizeMake(kGeomHeightButton, kGeomHeightButton);
     float w= self.frame.size.width;
     float h= self.frame.size.height;
@@ -212,7 +207,6 @@
     _labelName.frame = CGRectMake(x,0,w-x-switchSize.width-2*kGeomSpaceInter,h);
     x += _labelName.frame.size.width;
     _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
-//    _voteSwitch.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
 }
 
 - (void)switchChanged: (UISwitch*)theSwitch
@@ -223,10 +217,10 @@
 
     }
 }
+
 - (void)provideVote: (VoteObject*)vote
 {
     self.vote= vote;
-//    _voteSwitch.on= vote.vote != 0;
     _radioButton.selected= vote.vote != 0;
 }
 
@@ -234,7 +228,6 @@
 {
     [_imageOperation cancel];
     self.imageOperation= nil;
-//    self.voteSwitch.on= NO;
     self.radioButton.selected= NO;
     self.labelName.text= nil;
     self.thumbnail.image= nil;

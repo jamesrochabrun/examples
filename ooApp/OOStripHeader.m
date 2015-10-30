@@ -37,15 +37,37 @@
     return self;
 }
 
+- (void) unHighlightButton;
+{
+    // Need because any button that is a subview of UITableViewCell will get highlighted when the cell is highlighted.
+    _buttonAdd.highlighted= NO;
+    _buttonAdd.selected= NO;
+    _buttonAdd.backgroundColor= BLACK;
+}
+
 - (void)enableAddButtonWithTarget:(id)target action:(SEL)action
 {
     if  (_buttonAdd) {
         return;
     }
+#if 1
     self.buttonAdd = makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
                                         YELLOW, BLACK, target, action,
                                         0, kGeomFontSizeHeader/2.);
-    
+#else
+    _buttonAdd= makeLabel(self, kFontIconAdd, kGeomFontSizeHeader);
+    _buttonAdd.backgroundColor= BLACK;
+    _buttonAdd.textColor= YELLOW;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:target action:action];
+    tap.numberOfTapsRequired = 1;
+    [_buttonAdd addGestureRecognizer: tap];
+    _buttonAdd.userInteractionEnabled = YES;
+    _buttonAdd.layer.borderColor= WHITE.CGColor;
+    _buttonAdd.layer.borderWidth= .5;
+
+#endif
+    _buttonAdd.layer.borderColor= WHITE.CGColor;
+    _buttonAdd.layer.borderWidth= .5;
     [self setNeedsLayout];
 }
 
@@ -188,3 +210,5 @@
 }
 
 @end
+
+

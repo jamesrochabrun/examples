@@ -12,6 +12,7 @@
 @protocol EventWhenVCDelegate <NSObject>
 - (void) datesChanged;
 @end
+
 @interface EventWhenVC : SubBaseVC
 @property (nonatomic,assign) id<EventWhenVCDelegate> delegate;
 @end

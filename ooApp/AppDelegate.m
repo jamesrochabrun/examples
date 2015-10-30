@@ -60,6 +60,8 @@
     [[BITHockeyManager sharedHockeyManager] startManager];
     [[BITHockeyManager sharedHockeyManager].authenticator
      authenticateInstallation];
+    
+    self.imageForNoProfileSilhouette= [UIImage  imageNamed: @"No-Profile_Image.png"];
 
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];

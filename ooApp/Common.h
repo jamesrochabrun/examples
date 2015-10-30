@@ -20,11 +20,13 @@
 #define IS_IPAD ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad )
 
 extern void message (NSString *str);
+extern void message2 (NSString *str, NSString*string);
 
 extern NSString*const kOOURL;
 extern NSString *getDateString();
 extern NSString* trimString(NSString* s);
 extern NSString *platformString();
+extern unsigned long msTime (void);
 
 extern NSAttributedString* attributedStringOf(NSString*,double fontSize);
 extern NSAttributedString* underlinedAttributedStringOf(NSString* ,double fontSize);
@@ -32,7 +34,7 @@ extern NSMutableAttributedString *createPeopleIconString (NSInteger count);
 
 extern UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius);
 extern UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName);
-extern UIImageView* makeImageView (UIView *parent, NSString* imageName);
+extern UIImageView* makeImageView (UIView *parent, id image);
 extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UIButton* makeRoundIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius);
 extern UIButton* makeRoundButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius);

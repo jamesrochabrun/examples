@@ -16,12 +16,10 @@
 @end
 
 @interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
-
 @end
 
 @interface EventWhoTableCell: UITableViewCell
 @property (nonatomic,assign) EventWhoVC *viewController;
 - (void) specifyUser:  (UserObject*)user;
 - (void) specifyGroup:  (GroupObject*)group;
-
 @end

@@ -190,7 +190,10 @@
     [self updateBoxes];
     
     EventObject* e= APP.eventBeingEdited;
-    if  (e.primaryVenueImageIdentifier ) {
+    if  (e.primaryImage) {
+        self.imageViewContainer1.image= e.primaryImage;
+    }
+    else if  (e.primaryVenueImageIdentifier ) {
         __weak EventCoordinatorVC *weakSelf = self;
         OOAPI *api = [[OOAPI alloc] init];
         /* _imageOperation=*/ [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
@@ -200,11 +203,11 @@
                                                               UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
                                                               ON_MAIN_THREAD(  ^{
                                                                   [weakSelf.imageViewContainer1
-                                                             setImageWithURL:[NSURL URLWithString:link]
-                                                             placeholderImage:placeholder];
-                                                        });
-                                                    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
-                                                    }];
+                                                                   setImageWithURL:[NSURL URLWithString:link]
+                                                                   placeholderImage:placeholder];
+                                                              });
+                                                          } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                                                          }];
     }
 }
 

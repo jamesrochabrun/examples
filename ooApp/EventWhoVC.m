@@ -19,13 +19,18 @@
 #import "GroupObject.h"
 #import "ProfileVC.h"
 
+#define kGeomHeightEventWhoTableCellHeight 100
+#define kGeomHeightEventWhoTableCellImageHeight 84
+
 @interface  EventWhoTableCell ()
 @property (nonatomic,strong) UIButton *radioButton;
 @property (nonatomic,strong)  UILabel *labelName;
 @property (nonatomic,strong)  UIImageView *imageViewThumbnail;
+@property (nonatomic,strong) UIView *viewShadow;
 @property (nonatomic,strong) UserObject* user;
 @property (nonatomic,strong) GroupObject* group;
 @property (nonatomic,strong) NSString *imageIdentifierString;
+@property (nonatomic,strong) NSString *imageURLForFacebook;
 @property (nonatomic,strong) AFHTTPRequestOperation *operation;
 @end
 
@@ -35,11 +40,14 @@
 {
     self = [super initWithStyle:style reuseIdentifier:(NSString *)reuseIdentifier];
     if (self) {
-        _radioButton= makeButton(self, kFontIconRemove, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressRadioButton:), 0);
+        _viewShadow= makeView(self, WHITE);
+        addShadowTo(_viewShadow);
+        
+        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
         _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
         
-        _imageViewThumbnail= makeImageView(self,  @"No-Profile_Image.png");
+        _imageViewThumbnail= makeImageView(self, APP.imageForNoProfileSilhouette);
         _imageViewThumbnail.layer.borderWidth= 1;
         _imageViewThumbnail.layer.borderColor= GRAY.CGColor;
         
@@ -75,18 +83,59 @@
         _labelName.text= user.email; // NOTE: This is for the email–only case.
     }
     
-    if ( user.imageIdentifier) {
+    UIImage *profileImage= nil;
+    if (( profileImage= [user userProfilePhoto])) {
+        self.imageViewThumbnail.image= profileImage;
+    }
+    else if ( user.imageIdentifier ) {
         self.imageIdentifierString= user.imageIdentifier;
+        __weak EventWhoTableCell *weakSelf = self;
         self.operation= [OOAPI getUserImageWithImageID:_imageIdentifierString
                               maxWidth:0
                              maxHeight:self.frame.size.height
                                success:^(NSString *imageRefs) {
-                                   ON_MAIN_THREAD( ^{
-                                       [_imageViewThumbnail setImageWithURL:[NSURL URLWithString: imageRefs ]];
-                                   });
+                                   NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: imageRefs ]];
+                                   if  (request ) {
+                                       [weakSelf.imageViewThumbnail setImageWithURLRequest:request
+                                                                  placeholderImage:APP.imageForNoProfileSilhouette
+                                                                           success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                                                               
+                                                                               ON_MAIN_THREAD( ^{
+                                                                                   weakSelf.imageViewThumbnail.image= image;
+                                                                                   [user setUserProfilePhoto: image];
+                                                                               });
+                                                                               
+                                                                           } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                                               
+                                                                           }];
+                                   }
                                } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                                    NSLog(@"");
                                }];
+    }
+    else if ( user.imageURLString) {
+        self.imageURLForFacebook=   user.imageURLString;
+        __weak EventWhoTableCell *weakSelf = self;
+        
+        NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: user.imageURLString ]];
+        if  (request ) {
+            [weakSelf.imageViewThumbnail setImageWithURLRequest:request
+                                               placeholderImage:APP.imageForNoProfileSilhouette
+                                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                                            
+                                                            ON_MAIN_THREAD( ^{
+                                                                weakSelf.imageViewThumbnail.image= image;
+                                                                [user setUserProfilePhoto: image];
+                                                            });
+                                                            
+                                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                            
+                                                        }];
+        }
+    }
+    else {
+        self.imageViewThumbnail.image= APP.imageForNoProfileSilhouette;
+        
     }
 }
 
@@ -111,16 +160,21 @@
     // RULE: If this row will simply be an email address, then we completely hide the image.
     if  (!self.group && self.user && !self.user.firstName ) {
         _imageViewThumbnail.hidden= YES;
-        _labelName.frame = CGRectMake(kGeomSpaceEdge,0,w-kGeomSpaceEdge-kGeomButtonWidth,h);
-        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,h);
+        _viewShadow.frame = CGRectMake(kGeomSpaceEdge,0, w-kGeomSpaceEdge*2,
+                                       kGeomHeightEventWhoTableCellImageHeight);
+        _labelName.frame = CGRectMake(kGeomSpaceEdge,0,w-kGeomSpaceEdge-kGeomButtonWidth,kGeomHeightEventWhoTableCellImageHeight);
+        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,kGeomHeightEventWhoTableCellImageHeight);
     } else {
+        _viewShadow.frame = CGRectMake(kGeomSpaceEdge,0, w-kGeomSpaceEdge*2,
+                                       kGeomHeightEventWhoTableCellImageHeight);
         float x= kGeomSpaceEdge;
         _imageViewThumbnail.hidden= NO;
         float imageDimension= h-2*kGeomSpaceEdge;
-        _imageViewThumbnail.frame = CGRectMake(x,kGeomSpaceEdge,imageDimension,imageDimension);
+        _imageViewThumbnail.frame = CGRectMake(x,0,
+                                               kGeomHeightEventWhoTableCellImageHeight,kGeomHeightEventWhoTableCellImageHeight);
         x += imageDimension+kGeomSpaceInter ;
-        _labelName.frame = CGRectMake(x,0,w-x-kGeomButtonWidth,h);
-        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,h);
+        _labelName.frame = CGRectMake(x,0,w-x-kGeomButtonWidth, kGeomHeightEventWhoTableCellImageHeight);
+        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,kGeomHeightEventWhoTableCellImageHeight);
     }
     
 }
@@ -423,7 +477,12 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return kGeomHeightButton;
+    return kGeomHeightEventWhoTableCellHeight;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 10;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

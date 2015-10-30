@@ -58,6 +58,8 @@
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= WHITE;
     
+    APP.eventBeingEdited= nil;
+    
     _tableSectionNames= @[
                           @"YOUR EVENTS",
                           @"INCOMPLETE EVENTS",
@@ -97,71 +99,78 @@
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     
-    __weak EventsListVC *weakSelf = self;
+    // RULE:  only re-fetch if it's the first time, or if the user altered an event.
+    // XX:  need to add timer to periodically refresh the list.
     
-    [OOAPI getCuratedEventsWithSuccess:^(NSArray *events) {
-        NSLog  (@"CURATED EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
+    EventObject*e=APP.eventBeingEdited;
+    BOOL currentEventWasAltered= e.hasBeenAltered;
+    if  (1 || !self.didGetInitialResponse || currentEventWasAltered) {
         
-        NSMutableArray * curated= [NSMutableArray new];
-        
-        for (EventObject* eo in events) {
-            if  (![eo isKindOfClass:[EventObject class]]) {
-                continue;
-            }
+        __weak EventsListVC *weakSelf = self;
+#if 0
+        [OOAPI getCuratedEventsWithSuccess:^(NSArray *events) {
+            NSLog  (@"CURATED EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
             
-            if ( eo.eventType==EVENT_TYPE_CURATED &&  eo.isComplete) {
-                [  curated  addObject: eo];
-            }
+            NSMutableArray * curated= [NSMutableArray new];
             
-        }
-        self.curatedEventsArray=  curated;
-        
-        ON_MAIN_THREAD(^(){
-            [weakSelf.table  reloadData];
-        });
-        
-    }
-                               failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                                   NSLog  (@"EVENT FETCHING FAILED  %@",e);
-                               }
-     ];
-    
-    [OOAPI getEventsForUser:userid  success:^(NSArray *events) {
-        NSLog  (@"YOUR EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
-        
-        NSMutableArray *your= [NSMutableArray new];
-        NSMutableArray * incomplete= [NSMutableArray new];
-        
-        for (EventObject* eo in events) {
-            if  (![eo isKindOfClass:[EventObject class]]) {
-                continue;
-            }
-            
-            if ( eo.eventType==EVENT_TYPE_USER) {
-                if ( eo.isComplete) {
-                    [  your  addObject: eo];
-                } else {
-                    [  incomplete  addObject: eo];
+            for (EventObject* eo in events) {
+                if  (![eo isKindOfClass:[EventObject class]]) {
+                    continue;
+                }
+                
+                if ( eo.eventType==EVENT_TYPE_CURATED &&  eo.isComplete) {
+                    [  curated  addObject: eo];
                 }
             }
+            self.curatedEventsArray=  curated;
+            
+            ON_MAIN_THREAD(^(){
+                [weakSelf.table  reloadData];
+            });
+            
         }
+                                   failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                       NSLog  (@"EVENT FETCHING FAILED  %@",e);
+                                   }
+         ];
+#endif
         
-        @synchronized(weakSelf.yourEventsArray) {
-            weakSelf.yourEventsArray= your;
-            weakSelf.incompleteEventsArray= incomplete;
-        }
-        
-        weakSelf.didGetInitialResponse= YES;
-        
-        ON_MAIN_THREAD(^(){
-            [weakSelf.table  reloadData];
-        });
-    }
-                    failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                        NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
+        [OOAPI getEventsForUser:userid  success:^(NSArray *events) {
+            NSLog  (@"YOUR EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
+            
+            NSMutableArray *your= [NSMutableArray new];
+            NSMutableArray * incomplete= [NSMutableArray new];
+            
+            for (EventObject* eo in events) {
+                if  (![eo isKindOfClass:[EventObject class]]) {
+                    continue;
+                }
+                
+                if ( eo.eventType==EVENT_TYPE_USER) {
+                    if ( eo.isComplete) {
+                        [  your  addObject: eo];
+                    } else {
+                        [  incomplete  addObject: eo];
                     }
-     ];
-
+                }
+            }
+            
+            @synchronized(weakSelf.yourEventsArray) {
+                weakSelf.yourEventsArray= your;
+                weakSelf.incompleteEventsArray= incomplete;
+            }
+            
+            weakSelf.didGetInitialResponse= YES;
+            
+            ON_MAIN_THREAD(^(){
+                [weakSelf.table  reloadData];
+            });
+        }
+                        failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                            NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
+                        }
+         ];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -255,7 +264,7 @@
         if (!row ) {
             cell.nameHeader= [[OOStripHeader  alloc] init];
             [cell.nameHeader setName: _tableSectionNames[section]];
-            if ( section ==1) {
+            if ( section == 0) {
                 [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
             }
             [cell setIsFirst];
@@ -371,7 +380,7 @@
         EventTVCell* cell= [tableView cellForRowAtIndexPath: indexPath];
         [cell updateHighlighting:YES];
         RUN_AFTER(400, ^{
-            [cell updateHighlighting:NO];
+            [cell.nameHeader unHighlightButton];
         });
         
         // Determine whether event can be edited by this user.

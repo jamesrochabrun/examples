@@ -8,6 +8,7 @@
 
 #import "UserObject.h"
 #import "OOAPI.h"
+#import "Settings.h"
 
 const NSInteger kHashUser= 0x40000000;
 
@@ -67,6 +68,16 @@ NSString *const kKeyParticipantState = @"participant_state";
     user.imageIdentifier= parseStringOrNullFromServer( [dict objectForKey:kKeyImageIdentifier] );
     user.participantType = parseIntegerOrNullFromServer(dict [kKeyParticipantType]);
     user.participantState =parseIntegerOrNullFromServer(dict [kKeyParticipantState]);
+    
+    // RULE: If the server referred to the current user and
+    // we have more information about the current user then fill it in.
+    //
+    if  (!user.imageURLString) {
+        UserObject* currentUser= [Settings sharedInstance].userObject;
+        if  (user.userID==currentUser.userID ) {
+            user.imageURLString= currentUser.imageURLString;
+        }
+    }
     
     return user;
 }

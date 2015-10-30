@@ -16,9 +16,18 @@ NSString *const kOOURL= @"stage.oomamiapp.com/api/v1";
 void message (NSString *str)
 {
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: str
-				message:nil
-				delegate: nil
-				cancelButtonTitle: @"OK" otherButtonTitles: nil ];
+                                                     message:nil
+                                                    delegate: nil
+                                           cancelButtonTitle: @"OK" otherButtonTitles: nil ];
+    [alert show];
+}
+
+void message2 (NSString *str, NSString*string)
+{
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: str
+                                                     message:string
+                                                    delegate: nil
+                                           cancelButtonTitle: @"OK" otherButtonTitles: nil ];
     [alert show];
 }
 
@@ -59,19 +68,24 @@ UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString*
     return iv;
 }
 
-UIImageView* makeImageView (UIView *parent, NSString* imageName)
+UIImageView* makeImageView (UIView *parent, id image_)
 {
-    BOOL imageIsURL= [[imageName lowercaseString] hasPrefix: @"http"];
-    NSURL *url= imageIsURL? [ NSURL  URLWithString:imageName]:nil;
+    BOOL imageIsURL= NO;
+    NSURL *url= nil;
     UIImage* image=nil;
-    if ( !imageIsURL) {
-        image= [ UIImage imageNamed:imageName];
+    if ([image_ isKindOfClass:[UIImage class  ] ]) {
+        image=  image_;
+    }
+    else if([image_ isKindOfClass:[NSString class   ]] ){
+        imageIsURL= [[image_ lowercaseString] hasPrefix: @"http"];
+        url= imageIsURL? [ NSURL  URLWithString:image_] : nil;
+        if ( !imageIsURL) {
+            image= [ UIImage imageNamed:image_];
+        }
     }
     UIImageView* iv= [ [UIImageView alloc ]initWithImage:  image  ];
-    if  ( imageIsURL) {
-        if  (url) {
-            [iv setImageWithURL:url placeholderImage:nil];
-        }
+    if  ( imageIsURL && url) {
+        [iv setImageWithURL:url placeholderImage:nil];
     }
     [ parent addSubview: iv ];
     return iv;
@@ -453,4 +467,12 @@ BOOL isValidEmailAddress (NSString *string)
     }
     
     return YES;
+}
+
+unsigned long msTime (void)
+{
+    struct timeval t;
+    gettimeofday (&t, NULL);
+    unsigned long ms = (t.tv_sec  * 1000) + (t.tv_usec / 1000);
+    return ms;
 }

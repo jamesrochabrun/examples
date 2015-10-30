@@ -127,6 +127,8 @@ extern NSString *const kFontIconLocation;
 extern NSString *const kFontIconToTry;
 extern NSString *const kFontIconToTryFilled;
 extern NSString *const kFontIconList;
+extern NSString *const kFontIconEmptyCircle;
+extern NSString *const kFontIconFilledCircle;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

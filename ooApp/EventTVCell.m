@@ -67,6 +67,8 @@
     _labelIndicatingAttendeeCount.text= nil;
     _isMessage= NO;
     self.header.textColor= WHITE;
+    
+    NSLog (@"0x%lx prepare @ %lu", (unsigned long) self,msTime());
 }
 
 - (void) setMessageMode:  (NSString*)message;
@@ -145,6 +147,17 @@
         self.thumbnail.frame= CGRectZero;
     }
 }
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    [super setHighlighted:highlighted animated:animated];
+    [_nameHeader unHighlightButton ];
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
+    [super setSelected:selected animated:animated];
+    [_nameHeader unHighlightButton ];
+}
 
 - (void)setEvent:(EventObject *)eo
 {
@@ -165,7 +178,11 @@
     OOAPI *api = [[OOAPI alloc] init];
     UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
     
-    if (!primaryVenue && _eventInfo.numberOfVenues) {
+    if (_eventInfo.primaryImage ) {
+        self.thumbnail.image= _eventInfo.primaryImage;
+        NSLog (@"0x%lx set primaryImage @ %lu", (unsigned long) self,msTime());
+
+    } else if (!primaryVenue && _eventInfo.numberOfVenues) {
         __weak EventTVCell *weakSelf = self;
         
         self.thumbnail.image= placeholder;
@@ -177,15 +194,31 @@
                 [weakSelf.thumbnail setImage:placeholder];
             } else {
                 __weak EventTVCell *weakSelf = self;
+                
                 _imageOperation=[api getRestaurantImageWithImageRef: _eventInfo.primaryVenueImageIdentifier
                                                            maxWidth:self.frame.size.width// XX:
                                                           maxHeight:0
                                                             success:^(NSString *link) {
-                                                                ON_MAIN_THREAD(  ^{
-                                                                    [weakSelf.thumbnail
-                                                                     setImageWithURL:[NSURL URLWithString:link]
-                                                                     placeholderImage:placeholder];
-                                                                });
+                                                                NSURLRequest* request= [NSURLRequest requestWithURL:[NSURL URLWithString:link]];
+                                                                
+                                                                NSLog (@"0x%lx setImageWithURLRequest @ %lu", (unsigned long) self,msTime());
+
+                                                                [weakSelf.thumbnail setImageWithURLRequest:request
+                                                                                          placeholderImage:placeholder
+                                                                                                   success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {
+                                                                                                       weakSelf.eventInfo.primaryImage= image;
+                                                                                                       NSLog  (@"MANAGED TO CAPTURE IMAGE THAT WAS FETCHED.");
+                                                                                                       ON_MAIN_THREAD(  ^{
+                                                                                                           NSLog (@"0x%lx thumbnail.image @ %lu", (unsigned long) self,msTime());
+
+                                                                                                           weakSelf.thumbnail.image= image;
+                                                                                                           weakSelf.thumbnail.hidden= NO;
+
+                                                                                                       });
+                                                                                                   } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                                                                       ;
+                                                                                                   }];
+                                                                
                                                             } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                                 [weakSelf.thumbnail setImage:placeholder];
                                                             }];
@@ -204,11 +237,24 @@
                                                      maxWidth:self.frame.size.width
                                                     maxHeight:0
                                                       success:^(NSString *link) {
-                                                          ON_MAIN_THREAD(  ^{
-                                                              [weakSelf.thumbnail
-                                                               setImageWithURL:[NSURL URLWithString:link]
-                                                               placeholderImage:placeholder];
-                                                          });
+                                                          NSLog (@"0x%lx setImageWithURLRequest @ %lu", (unsigned long) self,msTime());
+
+                                                          NSURLRequest* request= [NSURLRequest requestWithURL:[NSURL URLWithString:link]];
+                                                          
+                                                          [weakSelf.thumbnail setImageWithURLRequest:request
+                                                                                    placeholderImage:placeholder
+                                                                                             success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {
+                                                                                                 weakSelf.eventInfo.primaryImage= image;
+                                                                                                 ON_MAIN_THREAD(  ^{
+                                                                                                     NSLog (@"0x%lx thumbnail.image @ %lu", (unsigned long) self,msTime());
+
+                                                                                                     weakSelf.thumbnail.image= image;
+                                                                                                 });
+                                                                                                 
+                                                                                                 NSLog  (@"MANAGED TO OBTAIN IMAGE THAT WAS FETCHED.");
+                                                                                             } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                                                                 ;
+                                                                                             }];
                                                       } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                           [weakSelf.thumbnail setImage:placeholder];
                                                       }];

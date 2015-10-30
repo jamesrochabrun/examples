@@ -37,6 +37,8 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 
 @implementation EventObject
 
+static NSMutableDictionary *imageCache;// XX: This will be replaced with something like an MRU cache.
+
 - (instancetype)init
 {
     self = [super init];
@@ -44,6 +46,10 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
         _venues= [NSMutableOrderedSet new];
         _users= [NSMutableOrderedSet new];
         _votes= [NSMutableArray new];
+        
+        if  (!imageCache) {
+            imageCache=[NSMutableDictionary  new];
+        }
     }
     return self;
 }
@@ -88,8 +94,43 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
             }
         }
         
+        UIImage *image= imageCache [@(e.eventID)];
+        if  (image ) {
+            e.primaryImage= image;
+            NSLog (@"FOUND CACHED IMAGE");
+        }
     }
     return e;
+}
+
+- (void)dealloc
+{
+    self.primaryImage= nil;
+    [_venues removeAllObjects ];
+    [_users removeAllObjects ];
+    [_votes removeAllObjects ];
+    [_keywords removeAllObjects ];
+    self.date= nil;
+    self.dateWhenVotingClosed= nil;
+    self.createdAt= nil;
+    self.updatedAt= nil;
+    self.eventCoverImageURL= nil;
+    self.name= nil;
+    self.eventCoverImageURL= nil;
+    self.reviewSite= nil;
+    self.specialEvent= nil;
+    self.comment= nil;
+}
+
+- (void)setPrimaryImage:(UIImage *)primaryImage
+{
+    if (primaryImage ) {
+        _primaryImage= primaryImage;
+        [imageCache setObject:primaryImage forKey:@(self.eventID)];
+    } else {
+        _primaryImage= nil;
+    }
+    
 }
 
 - (NSDictionary *)dictionaryFromEvent;
@@ -148,7 +189,8 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     @synchronized(_venues)  {
         if (![_venues containsObject: venue]) {
             [_venues addObject: venue];
-            
+            self.hasBeenAltered= YES;
+
             [OOAPI addRestaurant:venue
                          toEvent:self
                          success:^(id response) {
@@ -172,7 +214,8 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     @synchronized(_venues)  {
         if ([_venues containsObject: venue]) {
             [_venues removeObject: venue];
-            
+            self.hasBeenAltered= YES;
+
             [OOAPI removeRestaurant:venue
                           fromEvent:self
                             success:^(id response) {
@@ -203,12 +246,15 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 - (AFHTTPRequestOperation *)refreshParticipantStatsFromServerWithSuccess:(void (^)())success
                                                                  failure:(void (^)())failure;
 {
+    __weak EventObject *weakSelf = self;
+
     return [OOAPI getEventByID:self.eventID
                        success:^(EventObject *event) {
-                           self.numberOfPeople= event.numberOfPeople;
-                           self.numberOfPeopleResponded= event.numberOfPeopleResponded;
-                           self.numberOfPeopleVoted= event.numberOfPeopleVoted;
-                           success();
+                           weakSelf.numberOfPeople= event.numberOfPeople;
+                           weakSelf.numberOfPeopleResponded= event.numberOfPeopleResponded;
+                           weakSelf.numberOfPeopleVoted= event.numberOfPeopleVoted;
+                           weakSelf.hasBeenAltered= YES;
+                          success();
                        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                            failure();
                        }
@@ -218,6 +264,8 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 - (AFHTTPRequestOperation *)refreshUsersFromServerWithSuccess:(void (^)())success
                                                       failure:(void (^)())failure;
 {
+    __weak EventObject *weakSelf = self;
+
     return [OOAPI getParticipantsInEvent:self
                                  success:^(NSArray *users) {
                                      
@@ -225,7 +273,8 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                                      for (UserObject *user in users) {
                                          [self.users addObject:user];
                                      }
-                                     
+                                     weakSelf.hasBeenAltered= YES;
+
                                      success();
                                  } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                      failure();
@@ -236,6 +285,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 - (AFHTTPRequestOperation *)refreshVenuesFromServerWithSuccess:(void (^)())success
                                                        failure:(void (^)())failure;
 {
+    __weak EventObject *weakSelf = self;
     return [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
         @synchronized(_venues)  {
             [self.venues removeAllObjects];
@@ -243,7 +293,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                 [_venues addObject:venue];
             }
         }
-        [self establishPrimaryImage];
+        [weakSelf establishPrimaryImage];
         
         success();
     } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
@@ -273,6 +323,8 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 
 - (void)establishPrimaryImage;
 {
+    NSString *originalImageIdentifier=self.primaryVenueImageIdentifier;
+    
     self.primaryVenueImageIdentifier= nil;
     
     @synchronized(_venues)  {
@@ -282,6 +334,9 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                 NSString *imageReference= media.reference;
                 if  (imageReference ) {
                     self.primaryVenueImageIdentifier= imageReference;
+                    if (!originalImageIdentifier ||  ![imageReference isEqualToString:originalImageIdentifier] ) {
+                        self.hasBeenAltered= YES;
+                    }
                     break;
                 }
             }
@@ -315,12 +370,15 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 - (AFHTTPRequestOperation *)refreshVotesFromServerWithSuccess:(void (^)())success
                                                       failure:(void (^)())failure;
 {
+    __weak EventObject *weakSelf = self;
     return [OOAPI getVoteForEvent:self
                           success:^(NSArray *votes) {
                               @synchronized(_votes) {
                                   [self.votes removeAllObjects];
                                   [self.votes addObjectsFromArray: votes ];
                               }
+                              weakSelf.hasBeenAltered= YES;
+
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
                               success();
                           }

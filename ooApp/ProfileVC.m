@@ -54,11 +54,9 @@
         _userID = u.userID ;
         
         // Ascertain whether reviewing our own profile.
-        UserObject *userInfo= [Settings sharedInstance].userObject;
-        NSUInteger ownUserIdentifier= [userInfo userID];
+        UserObject *currentUser= [Settings sharedInstance].userObject;
+        NSUInteger ownUserIdentifier= [currentUser userID];
         _viewingOwnProfile = _userID == ownUserIdentifier;
-        if ( !_viewingOwnProfile) {
-        }
         
         self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
         
@@ -82,8 +80,8 @@
         
         self.backgroundColor = WHITE;
         
-        if (userInfo.imageIdentifier && [userInfo.imageIdentifier length]) {
-            self.requestOperation = [OOAPI getUserImageWithImageID:userInfo.imageIdentifier
+        if (_userInfo.imageIdentifier && [_userInfo.imageIdentifier length]) {
+            self.requestOperation = [OOAPI getUserImageWithImageID: _userInfo.imageIdentifier
                                                          maxWidth:self.frame.size.width
                                                         maxHeight:0 success:^(NSString *link) {
                 ON_MAIN_THREAD( ^{
@@ -92,9 +90,9 @@
             } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                 ;
             }];
-        } else if (userInfo.imageURLString) {
+        } else if (_userInfo.imageURLString) {
             ON_MAIN_THREAD( ^{
-                [_iv setImageWithURL:[NSURL URLWithString:userInfo.imageURLString]];
+                [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
             });
         }
     }
@@ -305,7 +303,7 @@
         // Hide the menu button.
         self.menu.title=  @"";
         self.menu.enabled=NO;
-        message(@"profile VC descends from base VC, so there is no back button.");
+        message2 (@"profile VC descends from base VC, so there is no back button.", @"we're working on it.6");
         
         // This attempts to reestablish the back button but it does not work.
         self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;

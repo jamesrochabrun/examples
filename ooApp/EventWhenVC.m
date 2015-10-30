@@ -142,14 +142,16 @@
 {
     NSDate *gmtTime= _pickerEventDate.date;
     APP.eventBeingEdited.date= gmtTime;
+    APP.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date method
     [self expressUpperDate];
+    
 }
 
 - (void)extractDateTimeFromLowerPicker
 {
     NSDate *gmtTime= _pickerEventVotingDate.date;
     APP.eventBeingEdited.dateWhenVotingClosed= gmtTime;
-
+    APP.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date when voting method
     [self expressLowerDate];
 }
 
