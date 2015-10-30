@@ -345,12 +345,12 @@
     
 // XX: Need to retry operation after Internet becomes accessible.
     
-    AFHTTPRequestOperation* operation= [[OONetworkManager sharedRequestManager] GET:requestString
+    [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
                                          success:^void(id   result) {
                                              NSLog  (@"PRE-EXISTING OO USER %@, %@",  facebookID , result);
                                              [APP.diagnosticLogString appendFormat: @"PRE-EXISTING OO USER %@, %@\r",  facebookID , result];
-
+                                             
                                              if ([result isKindOfClass: [NSDictionary  class] ] ) {
                                                  NSDictionary* d=  (NSDictionary*)result;
                                                  
@@ -412,7 +412,7 @@
 - (void)fetchDetailsAboutUserFromFacebook: (NSArray*)parameters
 {
     ENTRY;
-
+    
     if  (! parameters) {
         return;
     }

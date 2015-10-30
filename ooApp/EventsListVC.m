@@ -104,7 +104,7 @@
     
     EventObject*e=APP.eventBeingEdited;
     BOOL currentEventWasAltered= e.hasBeenAltered;
-    if  (1 || !self.didGetInitialResponse || currentEventWasAltered) {
+    if  (!self.didGetInitialResponse || currentEventWasAltered) {
         
         __weak EventsListVC *weakSelf = self;
 #if 0

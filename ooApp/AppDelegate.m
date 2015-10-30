@@ -42,9 +42,9 @@
     // Override point for customization after application launch.
     NSLog(@"application finished launching");
 //    [DebugUtilities displayAllFonts];
-
+    
     NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:10 * 1024 * 1024
-                                                            diskCapacity:10 * 1024 * 1024
+                                                            diskCapacity:100 * 1024 * 1024
                                                                 diskPath:nil];
     [NSURLCache setSharedURLCache:sharedCache];
     

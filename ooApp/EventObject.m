@@ -37,8 +37,6 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 
 @implementation EventObject
 
-static NSMutableDictionary *imageCache;// XX: This will be replaced with something like an MRU cache.
-
 - (instancetype)init
 {
     self = [super init];
@@ -47,9 +45,6 @@ static NSMutableDictionary *imageCache;// XX: This will be replaced with somethi
         _users= [NSMutableOrderedSet new];
         _votes= [NSMutableArray new];
         
-        if  (!imageCache) {
-            imageCache=[NSMutableDictionary  new];
-        }
     }
     return self;
 }
@@ -93,12 +88,6 @@ static NSMutableDictionary *imageCache;// XX: This will be replaced with somethi
                 [results  addObject:string];
             }
         }
-        
-        UIImage *image= imageCache [@(e.eventID)];
-        if  (image ) {
-            e.primaryImage= image;
-            NSLog (@"FOUND CACHED IMAGE");
-        }
     }
     return e;
 }
@@ -126,7 +115,6 @@ static NSMutableDictionary *imageCache;// XX: This will be replaced with somethi
 {
     if (primaryImage ) {
         _primaryImage= primaryImage;
-        [imageCache setObject:primaryImage forKey:@(self.eventID)];
     } else {
         _primaryImage= nil;
     }
