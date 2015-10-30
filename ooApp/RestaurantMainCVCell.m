@@ -345,17 +345,7 @@
     _website.text = @"Website";
     _phoneNumber.text = _restaurant.phone;
     
-    if (_restaurant.priceRange >= 4) {
-        _priceRange.text = @"$$$$$";
-    } else if (_restaurant.priceRange >= 3) {
-        _priceRange.text = @"$$$$";
-    } else if (_restaurant.priceRange >= 2) {
-        _priceRange.text = @"$$$";
-    } else if (_restaurant.priceRange >= 1) {
-        _priceRange.text = @"$$";
-    } else {
-        _priceRange.text = @"$";
-    }
+    _priceRange.text = [_restaurant priceRangeText];
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     
@@ -393,7 +383,7 @@
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     [gregorian setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     NSDateComponents *comps = [gregorian components:NSCalendarUnitWeekday fromDate:[NSDate date]];
-    NSInteger weekday = [comps weekday];
+    NSInteger weekday = [comps weekday] - 1; //because google maps 0-6 and NSDateComponents uses 1-7 grrr
     
     __block HoursOpen *ho = [_restaurant.hours count] ? [_restaurant.hours objectAtIndex:0] : nil;
     [_restaurant.hours enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -418,7 +408,6 @@
         }
     }];
     _hoursView.text = hrs;
-    
     
     [self updateConstraintsIfNeeded];
 }

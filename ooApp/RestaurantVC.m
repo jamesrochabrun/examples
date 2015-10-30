@@ -223,8 +223,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                 ;
             }];
         } else {
-            
+            [self showShare:nil];
         }
+    } else {
+        [self showShare:nil];
     }
 }
 
@@ -441,7 +443,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)showLists {
     ListsVC *vc = [[ListsVC alloc] init];
-    vc.restaurant = _restaurant;
+    vc.restaurantToAdd = _restaurant;
     [vc getLists];
     [self.navigationController pushViewController:vc animated:YES];
 }

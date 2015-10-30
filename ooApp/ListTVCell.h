@@ -13,6 +13,8 @@
 
 @property (nonatomic, strong) ListObject *list;
 @property (nonatomic) BOOL onList;
-@property (nonatomic, strong) RestaurantObject *restaurant;
+
+@property (nonatomic, strong) RestaurantObject *restaurantToAdd;
+@property (nonatomic, strong) ListObject *listToAddTo;
 
 @end

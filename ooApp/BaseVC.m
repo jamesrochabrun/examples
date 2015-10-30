@@ -35,6 +35,8 @@
     self.navigationItem.leftBarButtonItem = _menu;
     
     SWRevealViewController *revealViewController = self.revealViewController;
+    revealViewController.delegate = self;
+
     if (revealViewController) {
         revealViewController.rearViewRevealWidth = self.view.frame.size.width - 60;
         [self.menu setTitle:kFontIconMenu];
@@ -44,7 +46,7 @@
                                            nil] forState:UIControlStateNormal];
         [self.menu setTarget:self.revealViewController];
         [self.menu setAction:@selector(revealToggle:)];
-        [self.view addGestureRecognizer: self.revealViewController.panGestureRecognizer];
+        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
     
     _navTitleView = [[NavTitleView alloc] init];
@@ -57,6 +59,36 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     
     self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorWhite);
+}
+
+- (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
+{
+    if (revealController.frontViewPosition == FrontViewPositionRight) {
+        UIView *lockingView = [UIView new];
+        lockingView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:revealController action:@selector(revealToggle:)];
+        [lockingView addGestureRecognizer:tap];
+        [lockingView addGestureRecognizer:revealController.panGestureRecognizer];
+        [lockingView setTag:1000];
+        [revealController.frontViewController.view addSubview:lockingView];
+        
+        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(lockingView);
+        
+        [revealController.frontViewController.view addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"|[lockingView]|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:viewsDictionary]];
+        [revealController.frontViewController.view addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[lockingView]|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:viewsDictionary]];
+        [lockingView sizeToFit];
+    }
+    else
+        [[revealController.frontViewController.view viewWithTag:1000] removeFromSuperview];
 }
 
 - (void)layout

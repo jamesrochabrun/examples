@@ -193,8 +193,10 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
-    [marker highLight:NO];
+    if ([_mapMarkers count] > indexPath.row) {
+        OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
+        [marker highLight:NO];
+    }
 }
 
 - (void)getRestaurants
@@ -212,7 +214,7 @@ static NSString * const ListRowID = @"HLRCell";
                                            andOpenOnly:_openOnly
                                                   andSort:kSearchSortTypeDistance
                                                success:^(NSArray *r) {
-        weakSelf.restaurants = r;
+        _restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf gotRestaurants];
         });
@@ -271,21 +273,29 @@ static NSString * const ListRowID = @"HLRCell";
     if (![_restaurants count]) {
         NSLog (@"Received no restaurants.");
     }
-    __weak DiscoverVC *weakSelf=self;
-    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+
+    [_mapMarkers enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
     }];
     [_mapMarkers removeAllObjects];
     _mapMarkers = [NSMutableArray arrayWithCapacity:[_restaurants count]];
+
+    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
+
     [_restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *marker = [[OOMapMarker alloc] init];
         RestaurantObject *ro = (RestaurantObject *)obj;
+        
+        CLLocation *locationB = [[CLLocation alloc] initWithLatitude:ro.location.latitude longitude:ro.location.longitude];
+        CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
+
         marker.objectID = ro.googleID;
         marker.index = idx;
         marker.position = ro.location;
         marker.title = ro.name;
-        marker.snippet = @"my snippet";
+        marker.snippet = [NSString stringWithFormat:@"%0.1f mi. | %@", metersToMiles(distanceInMeters), [ro priceRangeText]];
         marker.map = _mapView;
         [marker highLight:NO];
         [_mapMarkers addObject:marker];

@@ -59,14 +59,14 @@
     
     if (_onList) {
         //remove from list
-        [api deleteRestaurant:_restaurant.restaurantID fromList:_list.listID success:^(NSArray *lists) {
+        [api deleteRestaurant:_restaurantToAdd.restaurantID fromList:_list.listID success:^(NSArray *lists) {
             [weakSelf getListsForRestaurant];
         } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];
     } else {
         //add to list
-        [api addRestaurants:@[_restaurant] toList:_list.listID success:^(id response) {
+        [api addRestaurants:@[_restaurantToAdd] toList:_list.listID success:^(id response) {
             [weakSelf getListsForRestaurant];
         } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
@@ -80,7 +80,7 @@
     
     UserObject *userInfo = [Settings sharedInstance].userObject;
 
-    [api getListsOfUser:userInfo.userID withRestaurant:_restaurant.restaurantID
+    [api getListsOfUser:userInfo.userID withRestaurant:_restaurantToAdd.restaurantID
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;
@@ -94,16 +94,16 @@
 }
 
 - (void)updateAddButton {
-    __block BOOL onLine = NO;
+    __block BOOL onList = NO;
     [_lists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         ListObject *lo = (ListObject *)obj;
         if (lo.listID == _list.listID) {
-            onLine = YES;
+            onList = YES;
             *stop = YES;
         }
     }];
     
-    [self setOnList:onLine];
+    [self setOnList:onList];
 }
 
 - (void)setOnList:(BOOL)onList {

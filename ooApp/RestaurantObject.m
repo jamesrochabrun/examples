@@ -103,4 +103,20 @@ NSString *const kKeyRestaurantHours = @"hours";
     return dict;
 }
 
+- (NSString *)priceRangeText {
+    NSString *text;
+    if (_priceRange >= 4) {
+        text = @"$$$$$";
+    } else if (_priceRange >= 3) {
+        text = @"$$$$";
+    } else if (_priceRange >= 2) {
+        text = @"$$$";
+    } else if (_priceRange >= 1) {
+        text = @"$$";
+    } else {
+        text = @"$";
+    }
+    return text;
+}
+
 @end
