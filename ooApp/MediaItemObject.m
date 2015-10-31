@@ -17,6 +17,9 @@ NSString *const kKeyMediaItemWidth = @"width";
 @implementation MediaItemObject
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict {
+    if (! [dict isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
     MediaItemObject *mio = [[MediaItemObject alloc] init];
     mio.mediaItemId = [dict objectForKey:kKeyMediaItemID];
     mio.type = [dict objectForKey:kKeyMediaItemType];

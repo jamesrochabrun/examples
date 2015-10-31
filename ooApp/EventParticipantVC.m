@@ -30,7 +30,7 @@
 @property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) EventObject *event;
-
+@property (nonatomic,strong) NSMutableArray* viewsForFaces;
 @end
 
 @implementation  EventParticipantFirstCell
@@ -61,8 +61,8 @@
         _labelTimeLeft.textColor= WHITE;
         _labelTimeLeft.backgroundColor= UIColorRGBA(0x80000000);
         
-        self.labelPersonIcon= makeIconLabel( self,  kFontIconPerson, kGeomFontSizeSubheader);
-        _labelPersonIcon.textColor= GREEN;
+//        self.labelPersonIcon= makeIconLabel( self,  kFontIconPerson, kGeomFontSizeSubheader);
+//        _labelPersonIcon.textColor= GREEN;
 
         _buttonSubmitVote= makeButton(self,  @"SUBMIT VOTE", kGeomFontSizeSubheader,
                                       YELLOW,  UIColorRGBA(0x80000000), self, @selector(doSubmitVote:), 0);
@@ -75,6 +75,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     float h=  self.bounds.size.height;
     float w=  self.bounds.size.width;
     float  margin= kGeomSpaceEdge;
@@ -100,17 +101,27 @@
     _buttonSubmitVote.frame=  CGRectMake(  margin, h-kGeomEventParticipantButtonHeight, biggerButtonWidth,kGeomEventParticipantButtonHeight);
     
     _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
+    
+    if ( self.viewsForFaces.count) {
+        float x;
+        float subBoxHeight= _buttonSubmitVote.frame.origin.y - spacing- 20;
+        x= (w-self.viewsForFaces.count*30-(self.viewsForFaces.count-1)*kGeomSpaceInter)/2;
+        for (UIImageView*iv  in self.viewsForFaces) {
+            iv.frame= CGRectMake(x, (kGeomEventCoordinatorBoxHeight+subBoxHeight)/2-10, 20, 20);
+            x+= 30+kGeomSpaceInter;
+        }
+    }
 }
 
 - (void) provideEvent: (EventObject*)event;
 {
     self.event= event;
-    
+    __weak EventParticipantFirstCell *weakSelf = self;
+
     if  (event.primaryImage) {
         self.backgroundImageView.image= event.primaryImage;
     }
     else if  (event.primaryVenueImageIdentifier ) {
-        __weak EventParticipantFirstCell *weakSelf = self;
         OOAPI *api = [[OOAPI alloc] init];
         /* _imageOperation=*/ [api getRestaurantImageWithImageRef: event.primaryVenueImageIdentifier
                                                          maxWidth:self.frame.size.width
@@ -123,7 +134,19 @@
                                                               });
                                                           } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                                                           }];
+        
     }
+        
+    [event refreshUsersFromServerWithSuccess:^{
+        if  (event.users.count ) {
+            if  (!weakSelf.viewsForFaces ) {
+                weakSelf.viewsForFaces= makeImageViewsForUsers(self,  event.users, 10, 10);
+            }
+            [weakSelf performSelectorOnMainThread:@selector(layoutSubviews) withObject:nil waitUntilDone:NO];
+        }
+    } failure:^{
+        NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
+    }];
 }
 
 //------------------------------------------------------------------------------
