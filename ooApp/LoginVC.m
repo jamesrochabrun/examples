@@ -310,13 +310,13 @@
     // RULE: If the day has changed, we will need to request
     // a new authorization key.
     //
-    int newDay = 0;
+    BOOL newDay = NO;
     NSString *dateString= getDateString();
     NSString *lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
-    if (lastKnownDateString && ![lastKnownDateString isEqualToString:dateString]) {
-        newDay= 1;
+    if (!lastKnownDateString  ||  ![lastKnownDateString isEqualToString:dateString]) {
+        newDay= YES;
+        [[Settings sharedInstance] saveDateString: dateString];
     }
-    newDay= 1;
 
     //---------------------------------------------------
     // RULE:  If we have the email address but not the
@@ -330,11 +330,12 @@
         md5 = [md5 lowercaseString];
         seekingToken= YES;
         
-        requestString = [NSString stringWithFormat:  @"https://%@/users?needtoken=%@", kOOURL, md5];
+        requestString = [NSString stringWithFormat:  @"https://%@/users?needtoken=%@&device=%@", kOOURL, md5,
+                         [Settings sharedInstance].uniqueDeviceKey
+                         ];
         
-        // NOTE:  this has helped identify the reason
-        //  why the new authorization token is being
-        //  requested in the first place.
+        // NOTE:  this may be helpful if we need to identify the reason
+        //  why the new authorization token is being requested.
         //
         requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString, newDay ? 1 : 0];
     }

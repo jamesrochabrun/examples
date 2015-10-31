@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "OONetworkManager.h"
 #import "VoteObject.h"
+#import "MediaItemObject.h"
 
 @class RestaurantObject;
 
@@ -46,6 +47,7 @@ typedef enum : char {
 @property (nonatomic, assign) NSInteger friendRecommendationAge;
 @property (nonatomic, strong) NSString *primaryVenueImageIdentifier;
 @property (nonatomic, strong) UIImage *primaryImage;
+@property (nonatomic, strong) MediaItemObject *mediaItem;
 
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)dictionaryFromEvent;

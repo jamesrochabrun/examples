@@ -311,6 +311,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger section= indexPath.section;
+    float extraSpaceForFirstRow= !indexPath.row ? 27 : 0;
     
     @synchronized(_yourEventsArray) {
         
@@ -327,11 +328,11 @@
                 break;
         }
         if (!events.count) {
-            return kGeomHeightFeaturedCellHeight;
+            return kGeomHeightFeaturedCellHeight  +extraSpaceForFirstRow;
         }
     }
     
-    return kGeomHeightFeaturedCellHeight;
+    return kGeomHeightFeaturedCellHeight +extraSpaceForFirstRow;
 }
 
 //------------------------------------------------------------------------------

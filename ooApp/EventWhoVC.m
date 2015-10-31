@@ -43,7 +43,7 @@
         _viewShadow= makeView(self, WHITE);
         addShadowTo(_viewShadow);
         
-        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressRadioButton:), 0);
+        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomIconSize, BLACK, CLEAR, self, @selector(userPressRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
         _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
         

@@ -34,6 +34,7 @@ NSString *const kKeyNumberOfPeopleResponded = @"num_responded";
 NSString *const kKeyNumberOfPeopleVoted = @"num_voted";
 NSString *const kKeyMediaURL = @"media_url";
 NSString *const kKeyNumberOfVenues=  @"num_restaurants";
+NSString *const kKeyEventMediaItem = @"media_item";
 
 @implementation EventObject
 
@@ -88,6 +89,12 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
                 [results  addObject:string];
             }
         }
+        
+        NSDictionary* mediaDictionary= dictionary[kKeyEventMediaItem];
+        if (mediaDictionary ) {
+            NSLog  (@"EVENT INCLUDED MEDIA ITEM FOR %@",e.name);
+            e.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
+        }
     }
     return e;
 }
@@ -109,6 +116,7 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     self.reviewSite= nil;
     self.specialEvent= nil;
     self.comment= nil;
+    self.mediaItem= nil;
 }
 
 - (void)setPrimaryImage:(UIImage *)primaryImage
@@ -315,6 +323,12 @@ NSString *const kKeyNumberOfVenues=  @"num_restaurants";
     
     self.primaryVenueImageIdentifier= nil;
     
+    if ( self.mediaItem) {
+        if ((self.primaryVenueImageIdentifier= self.mediaItem.reference))
+            return;
+    }
+    
+    // The previous slower way.
     @synchronized(_venues)  {
         for (RestaurantObject* r  in  self.venues) {
             if  (r.mediaItems.count ) {

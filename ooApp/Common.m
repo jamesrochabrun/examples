@@ -9,6 +9,8 @@
 #import <sys/types.h>
 #import <sys/sysctl.h>
 #import "UIImageView+AFNetworking.h"
+#import "UserObject.h"
+#import "AppDelegate.h"
 
 //NSString *const kOOURL= @"www.oomamiapp.com/api/v1";
 NSString *const kOOURL= @"stage.oomamiapp.com/api/v1";
@@ -33,11 +35,11 @@ void message2 (NSString *str, NSString*string)
 
 NSString *getDateString()
 {
-    struct tm tm;
-    timelocal(&tm);
-    int year= tm.tm_year;
-    int month= tm.tm_mon;
-    int day= 1 + tm.tm_mday;
+    time_t t = time (NULL);
+    struct tm *tm = localtime (&t);
+    int year= 1900 + tm->tm_year;
+    int month= 1 + tm->tm_mon;
+    int day= tm->tm_mday;
     return [NSString stringWithFormat: @"%04d/%02d/%02d",year,month,day];
 }
 
@@ -89,6 +91,30 @@ UIImageView* makeImageView (UIView *parent, id image_)
     }
     [ parent addSubview: iv ];
     return iv;
+}
+
+NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, float radius, NSUInteger  maximum)
+{
+    NSMutableArray* array= [NSMutableArray new];
+    NSUInteger i= 0;
+    for (UserObject* user  in  users) {
+        UIImage *silhouette=APP.imageForNoProfileSilhouette;// XX:  need to make a smaller copy of the silhouette.
+        UIImageView* iv=  makeImageView(parent, user.imageURLString.length ? user.imageURLString :  silhouette);
+        iv.backgroundColor= WHITE;
+        iv.layer.cornerRadius=  radius;
+        iv.clipsToBounds= YES;
+        iv.frame = CGRectMake(0,0, radius*2, radius*2);
+//        iv.contentMode= UIViewContentModeCenter;
+        // XX: Need to shrink the image as well as center it.
+        iv.layer.borderColor= GREEN.CGColor;
+        iv.layer.borderWidth= 1;
+        [array addObject: iv];
+        i++;
+        if  (i>=  maximum ) {
+            break;
+        }
+    }
+    return array;
 }
 
 UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize)
@@ -206,6 +232,7 @@ UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize
 
 UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
+    fontSize=kGeomIconSize;
     UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
     if  (title ) {
         [ button setTitle: title forState:UIControlStateNormal ];
@@ -418,9 +445,7 @@ NSString* parseStringOrNullFromServer (id object)
 
 NSMutableAttributedString *createPeopleIconString (NSInteger count)
 {
-    NSString *iconicRepresentationOfNumberOfPeople= count>1
-                ? [NSString stringWithFormat: @"%@%@", kFontIconPerson,kFontIconPerson ]
-                : [NSString stringWithFormat: @"%@",kFontIconPerson ];
+    NSString *iconicRepresentationOfNumberOfPeople= [NSString stringWithFormat: @"%@",kFontIconPerson ];
     NSAttributedString *countString= attributedStringOf([NSString stringWithFormat: @"%lu ",
                                                          ( unsigned long)  count], kGeomFontSizeHeader);
     NSAttributedString *iconString= [[NSAttributedString alloc]

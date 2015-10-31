@@ -57,6 +57,8 @@
 
 @property (nonatomic,strong) NSTimer *timerForUpdating;
 @property (nonatomic,assign) BOOL transitioning;
+
+@property (nonatomic,strong) NSMutableArray* viewsForFaces;
 @end
 
 @implementation EventCoordinatorVC
@@ -145,10 +147,11 @@
     self.labelWhoPending = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
     self.labelWhoResponded = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
     self.labelWhoVoted = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
-    self.labelPersonIcon= [UILabel new];
-    [ self.viewContainer2  addSubview: _labelPersonIcon];
-    _labelPersonIcon.attributedText= createPeopleIconString (1);
-    _labelPersonIcon.textAlignment= NSTextAlignmentRight;
+//    self.labelPersonIcon= [UILabel new];
+//    [ self.viewContainer2  addSubview: _labelPersonIcon];
+////    _labelPersonIcon.attributedText= createPeopleIconString (1);
+//    _labelPersonIcon.attributedText= nil;
+//    _labelPersonIcon.textAlignment= NSTextAlignmentRight;
     _viewContainer2.layer.borderWidth= 1;
     _viewContainer2.layer.borderColor= GRAY.CGColor;
     self.viewVerticalLine1= makeView(self.viewContainer2, BLACK);
@@ -293,10 +296,19 @@
     EventObject* e= APP.eventBeingEdited;
     [e refreshParticipantStatsFromServerWithSuccess:^{
         [self performSelectorOnMainThread:@selector(updateWhoBox) withObject:nil waitUntilDone:NO];
-
+        
     }
                                             failure:^{
+                                                NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
+                                                
                                             }];
+    
+    [e refreshUsersFromServerWithSuccess:^{
+        [self performSelectorOnMainThread:@selector(updateWhereBoxAnimated:) withObject:@1 waitUntilDone:NO];
+    } failure:^{
+        NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
+    }];
+    
 }
 
 - (void)initiateUpdateOfWhereBox
@@ -318,7 +330,7 @@
     NSInteger responded= e.numberOfPeopleResponded;
     NSInteger  voted= e.numberOfPeopleVoted;
     
-    _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
+//    _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
     
     NSString *countsStringPending= [NSString stringWithFormat: @"%lu\r%@",
                              (unsigned long) pending,  LOCAL( @"PENDING")
@@ -334,6 +346,13 @@
     _labelWhoPending.attributedText= attributedStringOf(countsStringPending,  kGeomFontSizeHeader);
     _labelWhoResponded.attributedText= attributedStringOf(countsStringResponded,  kGeomFontSizeHeader);
     _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
+    
+    if  (e.users.count ) {
+        if  (!self.viewsForFaces ) {
+            self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users, 10, 10);
+        }
+        [self doLayout];
+    }
 }
 
 - (void) updateWhereBoxAnimated:(id)animated
@@ -534,7 +553,7 @@
     _viewVerticalLine2.frame = CGRectMake(x,kGeomSpaceEdge,1,subBoxHeight);
     _labelWhoVoted.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
     
-    _labelPersonIcon.frame = CGRectMake(0,subBoxHeight,boxWidth,subBoxHeight/3);
+//    _labelPersonIcon.frame = CGRectMake(0,subBoxHeight,boxWidth,subBoxHeight/3);
     
     _labelWhen.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
 
@@ -542,6 +561,14 @@
     float x2=_viewContainer4.frame.origin.x;
     float y2=_viewContainer4.frame.origin.y;
     _venuesCollectionView.frame = CGRectMake(x2,y2 ,boxWidth,kGeomEventCoordinatorBoxHeight);
+    
+    if ( self.viewsForFaces.count) {
+        x= (w-self.viewsForFaces.count*30-(self.viewsForFaces.count-1)*kGeomSpaceInter)/2;
+        for (UIImageView*iv  in self.viewsForFaces) {
+            iv.frame= CGRectMake(x, (kGeomEventCoordinatorBoxHeight+subBoxHeight)/2-10, 20, 20);
+            x+= 30+kGeomSpaceInter;
+        }
+    }
 }
 
 #pragma mark - Collection View stuff

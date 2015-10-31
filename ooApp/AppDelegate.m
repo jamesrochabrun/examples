@@ -36,7 +36,6 @@
 #else
     _usingStagingServer= NO;
 #endif
-
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     
     // Override point for customization after application launch.

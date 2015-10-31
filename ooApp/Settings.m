@@ -14,6 +14,8 @@
 NSString *const kDefaultsCurrentUserInfo = @"currentUser";
 NSString *const kDefaultsLastKnownDate = @"lastKnownDate";
 NSString *const kDefaultsSearchRadius = @"searchRadius";
+NSString *const kDefaultsUniqueDeviceKey= @"uniqueDeviceKey";
+
 static const double kDefaultSearchRadius = 10000; // meters
 
 @implementation Settings
@@ -44,6 +46,29 @@ static const double kDefaultSearchRadius = 10000; // meters
         
     }
     return self;
+}
+
+-  (NSString*)uniqueDeviceKey
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSString *string= [ud stringForKey: kDefaultsUniqueDeviceKey];
+    if  (!string) {
+        unsigned long  value= arc4random();
+        unsigned long  value2= time(NULL);
+        
+        NSString *platform=  platformString();
+        platform= [platform  stringByReplacingOccurrencesOfString:@"," withString:@"."];
+        
+        NSString *language = [[NSLocale preferredLanguages] firstObject];
+        language= [language  stringByReplacingOccurrencesOfString:@"-" withString:@""];
+
+        string= [NSString  stringWithFormat:  @"%@,%@,%08lx,%08lx",platform, language, value, value2];
+        [ud  setObject:string forKey:kDefaultsUniqueDeviceKey];
+        [ud synchronize];
+        
+        // XX:  really this needs to be put into the keychain.
+    }
+    return  string;
 }
 
 //------------------------------------------------------------------------------
@@ -88,6 +113,13 @@ static const double kDefaultSearchRadius = 10000; // meters
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     return  [ud stringForKey:kDefaultsLastKnownDate];
+}
+
+- (void)saveDateString:(NSString *)string;
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud  setObject: string forKey: kDefaultsLastKnownDate];
+    [ud synchronize];
 }
 
 - (void)storeUser

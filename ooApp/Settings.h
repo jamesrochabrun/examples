@@ -12,6 +12,7 @@
 #import "UserObject.h"
 
 extern NSString *const kDefaultsCurrentUserInfo;
+extern NSString *const kDefaultsUniqueDeviceKey;
 
 @interface Settings : NSObject
 
@@ -30,9 +31,12 @@ extern NSString *const kDefaultsCurrentUserInfo;
 - (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;
 
 - (NSString *)lastKnownDateString;
+- (void)saveDateString:(NSString *)string;
 
 - (double) searchRadius;
 - (void) setSearchRadius:(double)r;
+
+-  (NSString*)uniqueDeviceKey;
 
 @end
 
