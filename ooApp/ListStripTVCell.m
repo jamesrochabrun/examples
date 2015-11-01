@@ -61,9 +61,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"strip_gradient.png"]];
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
-        [self layout];
-        
-        
 //        [DebugUtilities addBorderToViews:@[_name,_actionButton]];
     }
     
@@ -86,8 +83,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     
 }
 
-- (void)layout {
-    
+- (void)updateConstraints {
+    [super updateConstraints];
 //    CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_nameHeader.font}];
     
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)/2), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};

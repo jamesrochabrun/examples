@@ -55,6 +55,33 @@
             ;
         }];
     }
+    [self setupActionButton];
+}
+
+- (void)setListToAddTo:(ListObject *)listToAddTo {
+    if (_listToAddTo == listToAddTo) return;
+    _listToAddTo = listToAddTo;
+    [self setupActionButton];
+}
+
+- (void)setupActionButton {
+    if (_listToAddTo && _restaurant.restaurantID) {
+        self.actionButton.hidden = NO;
+        [self.actionButton setTitle:kFontIconAdd forState:UIControlStateNormal];
+        [self.actionButton addTarget:self action:@selector(addToList) forControlEvents:UIControlEventTouchUpInside];
+        
+    } else {
+        self.actionButton.hidden = YES;
+    }
+}
+
+- (void)addToList {
+    OOAPI *api = [[OOAPI alloc] init];
+    [api addRestaurants:@[_restaurant] toList:_listToAddTo.listID success:^(id response) {
+        ;
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
 }
 
 @end

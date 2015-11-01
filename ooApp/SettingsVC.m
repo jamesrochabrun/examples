@@ -27,8 +27,6 @@
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Settings" subHeader:nil];
     self.navTitle = nto;
-    
-    [self layout];
 }
 
 - (void)didReceiveMemoryWarning
@@ -37,8 +35,9 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)layout
+- (void)updateViewConstraints
 {
+    [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self.view;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _facebookButton);
@@ -57,8 +56,6 @@
                                                              toItem:_facebookButton.superview
                                                           attribute:NSLayoutAttributeCenterX
                                                          multiplier:1.f constant:0.f]];
-    
-    
 }
 
 /*
@@ -74,7 +71,6 @@
 #pragma mark - Facebook delegate methods
 
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error {
-
 }
 
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {

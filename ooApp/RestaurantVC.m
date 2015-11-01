@@ -170,9 +170,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                                  [self sharePressed];
                                                              }];
 
-    UIAlertAction *addToList = [UIAlertAction actionWithTitle:@"Add to List"
+    UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add to List"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     [self showLists];
+                                                     [self addToList];
                                                  }];
     UIAlertAction *addToEvent = [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -439,6 +439,14 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
         ;
     }];
+}
+
+- (void)addToList {
+    if (_listToAddTo) {
+        [self addRestaurantToList:_listToAddTo];
+    } else {
+        [self showLists];
+    }
 }
 
 - (void)showLists {

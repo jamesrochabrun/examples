@@ -180,6 +180,7 @@ static NSString * const ListRowID = @"HLRCell";
     RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     
     cell.restaurant = ro;
+    cell.listToAddTo = _listToAddTo;
     
     [cell updateConstraintsIfNeeded];
 
@@ -315,6 +316,7 @@ static NSString * const ListRowID = @"HLRCell";
     [self.navigationController pushViewController:vc animated:YES];
     vc.title = ro.name;
     vc.restaurant = ro;
+    vc.listToAddTo = (_listToAddTo) ? _listToAddTo : nil;
     [vc getRestaurant];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

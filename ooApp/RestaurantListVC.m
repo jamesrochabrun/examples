@@ -120,8 +120,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
 }
 
 - (void)addRestaurantsFromDiscover {
-    
-    
+    DiscoverVC *vc = [[DiscoverVC alloc] init];
+    vc.listToAddTo = _listItem;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)addRestaurantsFromList {

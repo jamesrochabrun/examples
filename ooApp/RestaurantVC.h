@@ -11,10 +11,12 @@
 #import "SubBaseVC.h"
 #import "RestaurantVCCVL.h"
 #import "RestaurantMainCVCell.h"
+#import "ListObject.h"
 
 @interface RestaurantVC : SubBaseVC <UIActionSheetDelegate, UICollectionViewDataSource, RestaurantVCCollectionViewDelegate, RestaurantMainCVCellDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
+@property (nonatomic, strong) ListObject *listToAddTo;
 
 - (void)getRestaurant;
 

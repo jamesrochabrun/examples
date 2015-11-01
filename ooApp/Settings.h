@@ -33,10 +33,10 @@ extern NSString *const kDefaultsUniqueDeviceKey;
 - (NSString *)lastKnownDateString;
 - (void)saveDateString:(NSString *)string;
 
-- (double) searchRadius;
-- (void) setSearchRadius:(double)r;
+- (double)searchRadius;
+- (void)setSearchRadius:(double)r;
 
--  (NSString*)uniqueDeviceKey;
+- (NSString *)uniqueDeviceKey;
 
 @end
 

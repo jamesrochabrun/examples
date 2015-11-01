@@ -48,27 +48,27 @@ static const double kDefaultSearchRadius = 10000; // meters
     return self;
 }
 
--  (NSString*)uniqueDeviceKey
+- (NSString *)uniqueDeviceKey
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSString *string= [ud stringForKey: kDefaultsUniqueDeviceKey];
-    if  (!string) {
-        unsigned long  value= arc4random();
-        unsigned long  value2= time(NULL);
+    if (!string) {
+        unsigned long value = arc4random();
+        unsigned long value2 = time(NULL);
         
-        NSString *platform=  platformString();
-        platform= [platform  stringByReplacingOccurrencesOfString:@"," withString:@"."];
+        NSString *platform =  platformString();
+        platform = [platform stringByReplacingOccurrencesOfString:@"," withString:@"."];
         
         NSString *language = [[NSLocale preferredLanguages] firstObject];
-        language= [language  stringByReplacingOccurrencesOfString:@"-" withString:@""];
+        language = [language stringByReplacingOccurrencesOfString:@"-" withString:@""];
 
-        string= [NSString  stringWithFormat:  @"%@,%@,%08lx,%08lx",platform, language, value, value2];
-        [ud  setObject:string forKey:kDefaultsUniqueDeviceKey];
+        string = [NSString stringWithFormat:@"%@,%@,%08lx,%08lx", platform, language, value, value2];
+        [ud setObject:string forKey:kDefaultsUniqueDeviceKey];
         [ud synchronize];
         
         // XX:  really this needs to be put into the keychain.
     }
-    return  string;
+    return string;
 }
 
 //------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ static const double kDefaultSearchRadius = 10000; // meters
 {
     [self storeUser];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    [ud  synchronize];
+    [ud synchronize];
 }
 
 //------------------------------------------------------------------------------
@@ -89,9 +89,9 @@ static const double kDefaultSearchRadius = 10000; // meters
 - (void)readUser
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSDictionary *d= [ud dictionaryForKey: kDefaultsCurrentUserInfo];
+    NSDictionary *d = [ud dictionaryForKey:kDefaultsCurrentUserInfo];
     if (!d) {
-        NSLog (@"NO USER INFO FOUND.");
+        NSLog(@"NO USER INFO FOUND.");
         return;
     }
     self.userObject = [UserObject userFromDict:d];
@@ -112,21 +112,21 @@ static const double kDefaultSearchRadius = 10000; // meters
 - (NSString *)lastKnownDateString;
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    return  [ud stringForKey:kDefaultsLastKnownDate];
+    return [ud stringForKey:kDefaultsLastKnownDate];
 }
 
 - (void)saveDateString:(NSString *)string;
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    [ud  setObject: string forKey: kDefaultsLastKnownDate];
+    [ud setObject:string forKey: kDefaultsLastKnownDate];
     [ud synchronize];
 }
 
 - (void)storeUser
 {
-    NSDictionary *d= [self.userObject dictionaryFromUser];
+    NSDictionary *d = [self.userObject dictionaryFromUser];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    [ud setObject: d forKey: kDefaultsCurrentUserInfo];
+    [ud setObject: d forKey:kDefaultsCurrentUserInfo];
     [ud synchronize];
 }
 
@@ -136,7 +136,7 @@ static const double kDefaultSearchRadius = 10000; // meters
 //------------------------------------------------------------------------------
 - (NSArray *)mostRecentChoice:(NSString *)key;
 {
-    if  (!key) {
+    if (!key) {
         return nil;
     }
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -163,7 +163,7 @@ static const double kDefaultSearchRadius = 10000; // meters
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     NSDate *date = ary[0];
     if ([date isKindOfClass: [NSDate class]]) {
-        [ud setObject: ary forKey: key];
+        [ud setObject:ary forKey:key];
         [ud synchronize];
     }
 }
@@ -173,28 +173,30 @@ static const double kDefaultSearchRadius = 10000; // meters
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     double lat = [ud doubleForKey:kDefaultsUserLocationLastKnownLatitude];
     double lon = [ud doubleForKey:kDefaultsUserLocationLastKnownLongitude];
-    return  CLLocationCoordinate2DMake(lat,lon);
+    return CLLocationCoordinate2DMake(lat,lon);
 }
 
 - (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud setDouble:coord.latitude forKey:kDefaultsUserLocationLastKnownLatitude];
-    [ud setDouble:coord.longitude  forKey:kDefaultsUserLocationLastKnownLongitude];
+    [ud setDouble:coord.longitude forKey:kDefaultsUserLocationLastKnownLongitude];
 }
 
-- (double) searchRadius
+- (double)searchRadius
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    double r = [ud doubleForKey: kDefaultsSearchRadius];
+    double r = [ud doubleForKey:kDefaultsSearchRadius];
     if (r < 5)
         r = kDefaultSearchRadius;
     return r;
 }
-- (void) setSearchRadius:(double)r
+
+- (void)setSearchRadius:(double)r
 {
-    if (r < 5)
+    if (r < 5) {
         return;
+    }
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud setDouble:r forKey:kDefaultsSearchRadius];
 }

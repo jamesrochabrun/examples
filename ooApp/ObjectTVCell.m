@@ -44,6 +44,7 @@
         [_subHeader2 withFont:[UIFont fontWithName:kFontLatoThin size:kGeomFontSizeSubheader] textColor:kColorBlack backgroundColor:kColorClear];
         
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_actionButton withIcon:kFontIconAdd fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:nil selector:nil];
         [self addSubview:_actionButton];
         _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
         
@@ -69,7 +70,7 @@
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-//        [DebugUtilities addBorderToViews:@[_actionButton/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
+        [DebugUtilities addBorderToViews:@[_actionButton/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
     }
     return self;
 }
@@ -86,6 +87,7 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(spaceEdge)-[_header]-(spaceEdge)-[_subHeader1]-(spaceEdge)-[_subHeader2]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_actionButton(buttonWidth)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_thumbnail]-[_header]-[_actionButton(buttonWidth)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -106,7 +108,7 @@
                                       constraintWithItem:_actionButton
                                       attribute:NSLayoutAttributeCenterY
                                       relatedBy:NSLayoutRelationEqual
-                                      toItem:self
+                                      toItem:self.viewShadow
                                       attribute:NSLayoutAttributeCenterY
                                       multiplier:1
                                       constant:0]];

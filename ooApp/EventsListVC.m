@@ -199,10 +199,10 @@
 - (void)userPressedAdd: (id) sender
 {
     UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Event")
-                                                     message: LOCAL(@"Enter a name for the new event")
-                                                    delegate: self
-                                           cancelButtonTitle: LOCAL(@"Cancel")
-                                           otherButtonTitles: LOCAL(@"Create"), nil];
+                                                     message:LOCAL(@"Enter a name for the new event")
+                                                    delegate:self
+                                           cancelButtonTitle:LOCAL(@"Cancel")
+                                           otherButtonTitles:LOCAL(@"Create"), nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     [alert show];
 }
@@ -213,11 +213,11 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float h=  self.view.bounds.size.height;
-    float w=  self.view.bounds.size.width;
-    float y=  kGeomSpaceEdge;
+    CGFloat h = self.view.bounds.size.height;
+    CGFloat w = self.view.bounds.size.width;
+    CGFloat y = kGeomSpaceEdge;
 
-    _table.frame=  CGRectMake(kGeomSpaceEdge,y,w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
+    _table.frame = CGRectMake(kGeomSpaceEdge, y, w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
    
 }
 
@@ -257,23 +257,23 @@
                 [cell setMessageMode: @"No events."];
             }
         } else {
-            EventObject* e= events[row];
+            EventObject *e = events[row];
             [cell setEvent: e];
         }
         
-        if (!row ) {
-            cell.nameHeader= [[OOStripHeader  alloc] init];
-            [cell.nameHeader setName: _tableSectionNames[section]];
-            if ( section == 0) {
+        if (!row) {
+            cell.nameHeader= [[OOStripHeader alloc] init];
+            [cell.nameHeader setName:_tableSectionNames[section]];
+            if (section == 0) {
                 [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
             }
             [cell setIsFirst];
-        }else {
+        } else {
             cell.nameHeader= nil;
         }
     }
     
-    cell.backgroundColor= WHITE;
+    cell.backgroundColor = WHITE;
     
     return cell;
 }
@@ -300,7 +300,7 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    UIView * v= makeView(nil, CLEAR);
+    UIView *v = makeView(nil, CLEAR);
     return v;
 }
 
@@ -315,24 +315,24 @@
     
     @synchronized(_yourEventsArray) {
         
-        NSArray* events= nil;
-        switch ( section) {
+        NSArray *events= nil;
+        switch (section) {
             case 0:
-                events=  _yourEventsArray;
+                events = _yourEventsArray;
                 break;
             case 1:
-                events=  _incompleteEventsArray;
+                events = _incompleteEventsArray;
                 break;
             case 2:
-                events=  _curatedEventsArray;
+                events = _curatedEventsArray;
                 break;
         }
         if (!events.count) {
-            return kGeomHeightFeaturedCellHeight  +extraSpaceForFirstRow;
+            return kGeomHeightFeaturedCellHeight + extraSpaceForFirstRow;
         }
     }
     
-    return kGeomHeightFeaturedCellHeight +extraSpaceForFirstRow;
+    return kGeomHeightFeaturedCellHeight + extraSpaceForFirstRow;
 }
 
 //------------------------------------------------------------------------------
@@ -341,27 +341,27 @@
 //------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if  (_doingTransition ) {
+    if (_doingTransition) {
         return;
     }
     
-    NSInteger row= indexPath.row;
-    NSInteger section= indexPath.section;
+    NSInteger row = indexPath.row;
+    NSInteger section = indexPath.section;
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     @synchronized(_yourEventsArray) {
         
-        NSArray* events= nil;
-        switch ( section) {
+        NSArray *events = nil;
+        switch (section) {
             case 0:
-                events=  _yourEventsArray;
+                events = _yourEventsArray;
                 break;
             case 1:
-                events=  _incompleteEventsArray;
+                events = _incompleteEventsArray;
                 break;
             case 2:
-                events=  _curatedEventsArray;
+                events = _curatedEventsArray;
                 break;
         }
         
@@ -369,16 +369,16 @@
             return;
         }
         
-        EventObject *event = [events objectAtIndex: row];
+        EventObject *event = [events objectAtIndex:row];
         
         // RULE: Curated events are never editable.
-        if ( section==2) {
-            EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-            [self.navigationController pushViewController:vc animated:YES ];
+        if (section == 2) {
+            EventParticipantVC *vc= [[EventParticipantVC alloc] init];
+            [self.navigationController pushViewController:vc animated:YES];
             return;
         }
         
-        EventTVCell* cell= [tableView cellForRowAtIndexPath: indexPath];
+        EventTVCell *cell= [tableView cellForRowAtIndexPath:indexPath];
         [cell updateHighlighting:YES];
         RUN_AFTER(400, ^{
             [cell.nameHeader unHighlightButton];
@@ -393,20 +393,19 @@
                                           success:^(bool allowed) {
                                               weakSelf.doingTransition= NO;
                                             
-                                              NSDate* now= [NSDate date];
-                                              NSDate* end= event.dateWhenVotingClosed;
+                                              NSDate *now= [NSDate date];
+                                              NSDate *end= event.dateWhenVotingClosed;
 //                                              allowed=0;
-                                              if  (allowed ) {
-                                                  NSLog  (@"EDITING ALLOWED");
+                                              if (allowed) {
+                                                  NSLog(@"EDITING ALLOWED");
                                                   
                                                   APP.eventBeingEdited= event;
-                                                  EventCoordinatorVC* vc= [[EventCoordinatorVC  alloc] init];
+                                                  EventCoordinatorVC *vc= [[EventCoordinatorVC alloc] init];
                                                   [weakSelf.navigationController pushViewController:vc animated:YES ];
-                                                  
                                               } else {
-                                                  NSLog  (@"EDITING PROHIBITED");
+                                                  NSLog(@"EDITING PROHIBITED");
                                                   
-                                                  if  (end &&  now.timeIntervalSince1970>end.timeIntervalSince1970 ) {
+                                                  if (end && now.timeIntervalSince1970>end.timeIntervalSince1970 ) {
                                                       APP.eventBeingEdited= event;
                                                       VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
                                                       [weakSelf.navigationController pushViewController:vc animated:YES ];
