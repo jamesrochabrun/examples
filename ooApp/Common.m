@@ -93,7 +93,7 @@ UIImageView* makeImageView (UIView *parent, id image_)
     return iv;
 }
 
-NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, float radius, NSUInteger  maximum)
+NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum)
 {
     NSMutableArray* array= [NSMutableArray new];
     NSUInteger i= 0;
@@ -101,11 +101,9 @@ NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*user
         UIImage *silhouette=APP.imageForNoProfileSilhouette;// XX:  need to make a smaller copy of the silhouette.
         UIImageView* iv=  makeImageView(parent, user.imageURLString.length ? user.imageURLString :  silhouette);
         iv.backgroundColor= WHITE;
-        iv.layer.cornerRadius=  radius;
+        iv.layer.cornerRadius=  kGeomFaceBubbleDiameter/2;
         iv.clipsToBounds= YES;
-        iv.frame = CGRectMake(0,0, radius*2, radius*2);
-//        iv.contentMode= UIViewContentModeCenter;
-        // XX: Need to shrink the image as well as center it.
+        iv.frame = CGRectMake(0,0, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
         iv.layer.borderColor= GREEN.CGColor;
         iv.layer.borderWidth= 1;
         [array addObject: iv];

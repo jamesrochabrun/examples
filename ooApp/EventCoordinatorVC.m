@@ -304,7 +304,7 @@
                                             }];
     
     [e refreshUsersFromServerWithSuccess:^{
-        [self performSelectorOnMainThread:@selector(updateWhereBoxAnimated:) withObject:@1 waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(updateWhoBox) withObject:nil waitUntilDone:NO];
     } failure:^{
         NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
     }];
@@ -348,9 +348,8 @@
     _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
     
     if  (e.users.count ) {
-        if  (!self.viewsForFaces ) {
-            self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users, 10, 10);
-        }
+        [self.viewsForFaces removeAllObjects];
+        self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users,10);
         [self doLayout];
     }
 }
@@ -563,10 +562,12 @@
     _venuesCollectionView.frame = CGRectMake(x2,y2 ,boxWidth,kGeomEventCoordinatorBoxHeight);
     
     if ( self.viewsForFaces.count) {
-        x= (w-self.viewsForFaces.count*30-(self.viewsForFaces.count-1)*kGeomSpaceInter)/2;
+        NSUInteger count=self.viewsForFaces.count;
+        y=(kGeomEventCoordinatorBoxHeight+subBoxHeight-kGeomFaceBubbleDiameter)/2;
+        x= (boxWidth-count*kGeomFaceBubbleDiameter-(count-1)*kGeomSpaceInter)/2;
         for (UIImageView*iv  in self.viewsForFaces) {
-            iv.frame= CGRectMake(x, (kGeomEventCoordinatorBoxHeight+subBoxHeight)/2-10, 20, 20);
-            x+= 30+kGeomSpaceInter;
+            iv.frame= CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
+            x+= kGeomFaceBubbleDiameter+kGeomSpaceInter;
         }
     }
 }

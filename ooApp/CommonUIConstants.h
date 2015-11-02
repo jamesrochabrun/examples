@@ -88,6 +88,7 @@ static CGFloat kGeomEventCoordinatorBoxHeight=  114;
 static CGFloat  kGeomEventParticipantFirstBoxHeight=  170;
 static CGFloat  kGeomEventParticipantRestaurantHeight=  92;
 static CGFloat  kGeomEventParticipantSeparatorHeight=  6;
+static CGFloat kGeomFaceBubbleDiameter = 26;
 
 // Images
 extern NSString *const kImageNoProfileImage;

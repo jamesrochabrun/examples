@@ -140,7 +140,7 @@
     [event refreshUsersFromServerWithSuccess:^{
         if  (event.users.count ) {
             if  (!weakSelf.viewsForFaces ) {
-                weakSelf.viewsForFaces= makeImageViewsForUsers(self,  event.users, 10, 10);
+                weakSelf.viewsForFaces= makeImageViewsForUsers(self,  event.users, 10);
             }
             [weakSelf performSelectorOnMainThread:@selector(layoutSubviews) withObject:nil waitUntilDone:NO];
         }
