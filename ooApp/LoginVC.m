@@ -310,6 +310,7 @@
     // RULE: If the day has changed, we will need to request
     // a new authorization key.
     //
+    static BOOL isFirstRun= YES;
     BOOL newDay = NO;
     NSString *dateString= getDateString();
     NSString *lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
@@ -324,7 +325,7 @@
     //
     NSString *backendToken= userInfo.backendAuthorizationToken;
     BOOL seekingToken= NO;
-    if ((newDay || (!backendToken || !backendToken.length)) && email && email.length) {
+    if ((isFirstRun || newDay || !backendToken || !backendToken.length) && email && email.length) {
         NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
         NSString* md5= [ saltedString MD5String ];
         md5 = [md5 lowercaseString];
@@ -339,6 +340,7 @@
         //
         requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString, newDay ? 1 : 0];
     }
+    isFirstRun= NO;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     NSString*  facebookID = facebookToken.userID;

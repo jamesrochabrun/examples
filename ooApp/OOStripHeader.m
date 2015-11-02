@@ -12,8 +12,6 @@
 
 @property (nonatomic, strong) UILabel *nameLabel;
 @property (nonatomic,strong) UIButton* buttonAdd;
-@property (nonatomic, strong) UIView *spacerLeft;
-@property (nonatomic, strong) UIView *spacerRight;
 
 @end
 
@@ -28,11 +26,6 @@
         [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [self addSubview:_nameLabel];
         self.backgroundColor = UIColorRGBA(kColorClear);
-        
-        _spacerLeft= makeView(self, CLEAR);
-        _spacerRight=  makeView(self, CLEAR);
-        _spacerLeft.translatesAutoresizingMaskIntoConstraints = NO ;
-        _spacerRight.translatesAutoresizingMaskIntoConstraints = NO ;
     }
     return self;
 }
@@ -50,22 +43,11 @@
     if  (_buttonAdd) {
         return;
     }
-#if 1
+
     self.buttonAdd = makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
                                         YELLOW, BLACK, target, action,
                                         0, kGeomFontSizeHeader/2.);
-#else
-    _buttonAdd= makeLabel(self, kFontIconAdd, kGeomFontSizeHeader);
-    _buttonAdd.backgroundColor= BLACK;
-    _buttonAdd.textColor= YELLOW;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:target action:action];
-    tap.numberOfTapsRequired = 1;
-    [_buttonAdd addGestureRecognizer: tap];
-    _buttonAdd.userInteractionEnabled = YES;
-    _buttonAdd.layer.borderColor= WHITE.CGColor;
-    _buttonAdd.layer.borderWidth= .5;
 
-#endif
     _buttonAdd.layer.borderColor= WHITE.CGColor;
     _buttonAdd.layer.borderWidth= .5;
     [self setNeedsLayout];

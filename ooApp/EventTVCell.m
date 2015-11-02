@@ -31,7 +31,7 @@
         _labelIndicatingAttendeeCount= [UILabel  new];
         [self  addSubview: _labelIndicatingAttendeeCount];
         _labelIndicatingAttendeeCount.textColor= WHITE;
-        
+
         self.header.textAlignment= NSTextAlignmentCenter;
         self.subHeader1.textAlignment= NSTextAlignmentCenter;
         self.subHeader2.textAlignment= NSTextAlignmentCenter;
@@ -40,7 +40,7 @@
         self.subHeader2.textColor= WHITE;
         self.header.font= [ UIFont  fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeHeader];
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-        
+
         self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         self.thumbnail.clipsToBounds= YES;
         
