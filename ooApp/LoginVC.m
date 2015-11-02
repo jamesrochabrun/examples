@@ -21,7 +21,7 @@
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *logo;
 @property (nonatomic, assign) BOOL wentToDiscover;
-@property (nonatomic, strong) UIPinchGestureRecognizer* pinch;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
 
 @implementation LoginVC
@@ -339,7 +339,7 @@
         //
         requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString, newDay ? 1 : 0];
     }
-    
+
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;

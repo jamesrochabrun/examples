@@ -40,7 +40,7 @@
 
 - (void)layout
 {
-    // Create the views and metrics dictionaries
+// Create the views and metrics dictionaries
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _headerLabel, _subHeaderLabel);
@@ -79,7 +79,7 @@
     if (_navTitle == navTitle) return;
     _navTitle = navTitle;
     
-    _headerLabel.text = _navTitle.header;
+    _headerLabel.text = [_navTitle.header uppercaseString];
     _subHeaderLabel.text = _navTitle.subheader;
     
     [_headerLabel sizeToFit];
