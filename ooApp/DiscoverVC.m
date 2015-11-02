@@ -85,8 +85,10 @@ static NSString * const ListRowID = @"HLRCell";
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
     self.navTitle = nto;
-        
-//    [self layout];
+
+    if (_listToAddTo) {
+        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    }
 }
 
 - (void)selectNow {
@@ -109,8 +111,6 @@ static NSString * const ListRowID = @"HLRCell";
     [self getRestaurants];
 }
 
-//- (void)layout {
-//    [super layout];
 - (void)updateViewConstraints {
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2)};
@@ -126,10 +126,18 @@ static NSString * const ListRowID = @"HLRCell";
 
 }
 
+- (void)setListToAddTo:(ListObject *)listToAddTo {
+    if (_listToAddTo == listToAddTo) return;
+    _listToAddTo = listToAddTo;
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-//    [self layout];
 }
 
 - (void)viewDidAppear:(BOOL)animated

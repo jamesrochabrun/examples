@@ -51,11 +51,13 @@ static NSString * const cellIdentifier = @"horizontalCell";
         [self setupAlertController];
     }
     
-    [self layout];
+//    [self layout];
 }
 
-- (void)layout
-{
+//- (void)layout
+//{
+- (void)updateViewConstraints {
+    [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
 
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);

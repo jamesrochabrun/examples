@@ -133,7 +133,7 @@
         [self addSubview:_website];
         
         _address = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
-        [_address withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
+        [_address withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         _address.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_address];
         self.backgroundColor = UIColorRGBA(kColorWhite);
@@ -189,7 +189,7 @@
 - (void)updateConstraints {
     [super updateConstraints];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _priceRange, _name, _address, _website, _phoneNumber, _distance, _toTryButton, _favoriteButton, _backgroundImage, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _horizontalLine1);
@@ -197,21 +197,22 @@
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_horizontalLine1][_verticalLine3]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_horizontalLine1]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_toTryButton]-[_horizontalLine1(1)]-(spaceInter)-[_hoursButton]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_toTryButton(iconButtonDimensions)]-[_horizontalLine1(1)]-(spaceInter)-[_hoursButton]-[_address]-[_phoneNumber]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_hoursButton(25)][_hoursScroll]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_name]-(>=0)-[_toTryButton]-spaceInter-[_favoriteButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_distance]-spaceInter-[_verticalLine1(1)]-spaceInter-[_priceRange]-(>=spaceInter)-[_hoursButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_phoneNumber]-[_verticalLine2(1)]-[_website]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInterX2-[_address]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-45-[_verticalLine3(1)]-spaceInter-[_name]-(>=0)-[_toTryButton(iconButtonDimensions)]-spaceInter-[_favoriteButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_distance]-spaceInter-[_verticalLine1(1)]-spaceInter-[_priceRange]-(>=spaceInter)-[_hoursButton]-spaceInterX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_phoneNumber]-[_verticalLine2(1)]-[_website]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_address]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     
     //name line
@@ -233,6 +234,14 @@
                          constant:0]];
     
     //distance line
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_distance
+                         attribute:NSLayoutAttributeLeft
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_name
+                         attribute:NSLayoutAttributeLeft
+                         multiplier:1
+                         constant:0]];
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_verticalLine1
                          attribute:NSLayoutAttributeCenterY
@@ -265,8 +274,25 @@
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
                          constant:0]];
+    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_address
+                         attribute:NSLayoutAttributeLeft
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_name
+                         attribute:NSLayoutAttributeLeft
+                         multiplier:1
+                         constant:0]];
 
     //phone number line
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_phoneNumber
+                         attribute:NSLayoutAttributeLeft
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_name
+                         attribute:NSLayoutAttributeLeft
+                         multiplier:1
+                         constant:0]];
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_verticalLine2
                          attribute:NSLayoutAttributeCenterY
@@ -373,12 +399,12 @@
                                      UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
                                      nil]];
 
-    range = [_address.text rangeOfString:_address.text];
+//    range = [_address.text rangeOfString:_address.text];
 
-    [_address setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                 [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader], NSFontAttributeName,
-                                 UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
-                                 nil]];
+//    [_address setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+//                                 [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader], NSFontAttributeName,
+//                                 UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
+//                                 nil]];
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     [gregorian setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];

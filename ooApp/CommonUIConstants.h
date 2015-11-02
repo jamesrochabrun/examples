@@ -55,6 +55,7 @@ static NSUInteger kGeomFontSizeDetail = 11;
 static NSInteger kGeomPeopleIconFontSize = 30;
 static NSInteger kGeomEventHeadingFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;
+static CGFloat kGeomDimensionsIconButton = 40.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
 static CGFloat kGeomHeightFilters = 40.0;
 static CGFloat kGeomProfileInformationHeight = 18;

@@ -118,7 +118,8 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_lists addObject:list];
 }
 
--(void)layout {
+- (void)updateViewConstraints {
+    [super updateViewConstraints];
 //    [super layout];
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     
@@ -134,7 +135,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    [self layout];
 }
 
 - (void)viewDidAppear:(BOOL)animated
