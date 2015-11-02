@@ -23,11 +23,6 @@
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-//        _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//        [_addButton withIcon:kFontIconAdd fontSize:15 width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-//        _addButton.translatesAutoresizingMaskIntoConstraints = NO;
-//        [self addSubview:_addButton];
-//        [DebugUtilities addBorderToViews:@[_addButton]];
     }
     return self;
 }
@@ -35,22 +30,12 @@
 - (void)updateConstraints {
     [super updateConstraints];
 
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonHeight":@(kGeomHeightButton)};
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonHeight":@(kGeomHeightButton)};
     
-    UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview);//, _addButton);
+//    UIView *superview = self;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(superview);//, _addButton);
     
-    // Vertical layout - note the options for aligning the top and bottom of all views
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_addButton(buttonHeight)]-(>=10)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=100)-[_addButton(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_addButton
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_addButton.superview
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                    multiplier:1.f constant:0.f]];
+
 }
 
 - (void)toggleListInclusion {

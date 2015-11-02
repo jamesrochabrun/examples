@@ -21,7 +21,7 @@
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *logo;
 @property (nonatomic, assign) BOOL wentToDiscover;
-@property (nonatomic, strong) UIPinchGestureRecognizer* pinch;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
 
 @implementation LoginVC

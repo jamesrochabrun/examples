@@ -134,8 +134,10 @@
         OOAPI *api = [[OOAPI alloc] init];
         
         [api addList:string
-             success:^(id response) {
-                 [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:string waitUntilDone:NO];
+             success:^(ListObject *list) {
+                 ON_MAIN_THREAD(^{
+                     [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
+                 });
              }
              failure:^(AFHTTPRequestOperation* operation, NSError * error) {
                  NSString *s = [NSString stringWithFormat:@"Error from cloud: %@", error.localizedDescription];
@@ -299,7 +301,6 @@
         self.profileOwner = userInfo;
     } else {
         self.profileOwner = _userInfo;
-        //message2 (@"profile VC descends from base VC, so there is no back button.", @"we're working on it.6");
         
         // This attempts to reestablish the back button but it does not work.
         self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
@@ -344,12 +345,12 @@
 // Name:    goToEmptyListScreen
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)goToEmptyListScreen:(NSString *)string
+- (void)goToEmptyListScreen:(ListObject *)list
 {
 //     [self performSegueWithIdentifier: @"gotoEmptyList" sender:self];
     
     EmptyListVC *vc= [[EmptyListVC alloc] init];
-    vc.listName = string;
+    vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -383,7 +384,7 @@
 {
     NSInteger row = indexPath.row;
 
-    if (! row) {
+    if (!row) {
         return [_headerCell neededHeight];
     }
     return kGeomHeightStripListRow;
@@ -425,7 +426,7 @@
 {
     NSInteger row = indexPath.row;
     if (!row) {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO ];
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
         return;
     }
     ListObject *item = [_lists objectAtIndex:(indexPath.row - 1)];

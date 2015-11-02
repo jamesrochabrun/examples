@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "SubBaseVC.h"
+#import "ListObject.h"
 
 @interface EmptyListVC : SubBaseVC
-@property (nonatomic,strong) NSString* listName;
+@property (nonatomic, strong) ListObject* listItem;
 @end

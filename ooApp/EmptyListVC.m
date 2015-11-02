@@ -14,13 +14,15 @@
 #import "OOAPI.h"
 #import "ListsVC.h"
 #import "AppDelegate.h"
+#import "DiscoverVC.h"
 
 @interface EmptyListVC ()
 
 @property (nonatomic, strong) UITextView *textView;
-@property (nonatomic,strong)  UILabel* label;
-@property (nonatomic,strong) UIButton* buttonDiscover;
-@property (nonatomic,strong) UIButton* buttonLists;
+@property (nonatomic, strong) UILabel *label;
+@property (nonatomic, strong) UIButton *buttonDiscover;
+@property (nonatomic, strong) UIButton *buttonLists;
+
 @end
 
 @implementation EmptyListVC
@@ -76,9 +78,9 @@
     _textView.attributedText= aString;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader: self.listName ?: LOCAL (@"Unnamed list")
+                           initWithHeader:_listItem.name
                            subHeader:nil];
-    [self setNavTitle:  nto];
+    [self setNavTitle:nto];
     
     [ self.view setNeedsLayout ];
 }
@@ -90,6 +92,7 @@
 - (void)userPressedListsButton:(id)sender
 {
     ListsVC *vc= [[ListsVC alloc] init];
+    vc.listToAddTo = _listItem;
     [vc getLists];
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -98,10 +101,10 @@
 // Purpose:
 //------------------------------------------------------------------------------
 
-- (void)userPressedDiscoverButton: (id) sender
+- (void)userPressedDiscoverButton:(id)sender
 {
-    UIViewController *vc= [[UIViewController  alloc] init];
-    vc.view.backgroundColor= GREEN;
+    DiscoverVC *vc = [[DiscoverVC  alloc] init];
+    vc.listToAddTo = _listItem;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -109,16 +112,16 @@
 // Name:    doLayout
 // Purpose:
 //------------------------------------------------------------------------------
--(void) doLayout
+-(void)doLayout
 {
-    float h=  self.view.bounds.size.height;
-    float w=  self.view.bounds.size.width;
+    CGFloat h = height(self.view);
+    CGFloat w = width(self.view);
     
-    [self.textView sizeToFit ];
-    float heightForText= _textView.bounds.size.height;
-    const float spacer=kGeomSpaceInter;
+    [self.textView sizeToFit];
+    float heightForText = _textView.bounds.size.height;
+    const float spacer = kGeomSpaceInter;
     
-    float totalHeightNeeded= heightForText+kGeomForkImageSize +2*kGeomHeightButton;
+    float totalHeightNeeded= heightForText+kGeomForkImageSize + 2*kGeomHeightButton;
     totalHeightNeeded += 3*spacer;
     
     float y= (h-totalHeightNeeded)/2;
@@ -163,7 +166,7 @@
 
 - (void) viewWillLayoutSubviews
 {
-    [ super viewWillLayoutSubviews ];
+    [super viewWillLayoutSubviews];
 
     [self doLayout];
 }
