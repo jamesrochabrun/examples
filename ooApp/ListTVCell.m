@@ -125,10 +125,27 @@
     OOAPI *api = [[OOAPI alloc] init];
 
     if (_list.mediaItem) {
+        __weak UIImageView *weakIV = self.thumbnail;
+        __weak ListTVCell *weakSelf = self;
+        
         self.requestOperation = [api getRestaurantImageWithImageRef:_list.mediaItem.reference maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];
-            });
+            [self.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                    placeholderImage:nil
+                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                                 ON_MAIN_THREAD(^ {
+                                                     [weakIV setAlpha:0.0];
+                                                     weakIV.image = image;
+                                                     [UIView beginAnimations:nil context:NULL];
+                                                     [UIView setAnimationDuration:0.3];
+                                                     [weakIV setAlpha:1.0];
+                                                     [UIView commitAnimations];
+                                                     [weakSelf setNeedsUpdateConstraints];
+                                                     [weakSelf setNeedsLayout];
+                                                 });
+                                             }
+                                             failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                                 ;
+                                             }];            
         } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
             ;
         }];

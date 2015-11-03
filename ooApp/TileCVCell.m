@@ -57,9 +57,6 @@
         [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
         [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeDetail] textColor:kColorYellow backgroundColor:kColorClear];
 
-        _gradient = [CAGradientLayer layer];
-        _gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor clearColor] CGColor], (id)[[UIColor blackColor] CGColor], nil];
-
         [self addSubview:_emptyTile];
         [self addSubview:_backgroundImage];
         [self addSubview:_overlay];
