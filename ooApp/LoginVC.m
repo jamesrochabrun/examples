@@ -287,7 +287,6 @@
         return;
     }
     
-    // RULE: The Internet must be reachable.
     if (!is_reachable()) {
         static BOOL toldThem= NO;
         if  (!toldThem) {
@@ -300,7 +299,6 @@
     
     [self fetchProfilePhoto];
     
-    // RULE: Get the location manager working before we reach the Discover screen.
     [[LocationManager sharedInstance] askUserWhetherToTrack];
 
     UserObject* userInfo = [Settings sharedInstance].userObject;
@@ -325,7 +323,9 @@
     //
     NSString *backendToken= userInfo.backendAuthorizationToken;
     BOOL seekingToken= NO;
-    if ((isFirstRun || newDay || !backendToken || !backendToken.length) && email && email.length) {
+//    if ((isFirstRun || newDay || !backendToken || !backendToken.length) && email && email.length) {
+    if (!backendToken) {
+        
         NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
         NSString* md5= [ saltedString MD5String ];
         md5 = [md5 lowercaseString];
@@ -345,9 +345,7 @@
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
-    
-// XX: Need to retry operation after Internet becomes accessible.
-    
+        
     [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
                                          success:^void(id   result) {

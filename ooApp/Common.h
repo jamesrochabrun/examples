@@ -62,6 +62,10 @@ extern NSUInteger parseUnsignedIntegerOrNullFromServer (id object);
 extern BOOL isValidEmailAddress (NSString *string);
 
 extern NSString* expressLocalDateTime(NSDate* date);
+extern NSString* expressLocalTime(NSDate* date);
+extern NSString* expressLocalMonth(NSDate* date);
+extern NSInteger getLocalDayNumber (NSDate*);
+extern NSInteger getLocalDayOfMonth (NSDate* date);
 
 static inline BOOL is_reachable(void) {
 	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;

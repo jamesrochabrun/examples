@@ -466,6 +466,46 @@ NSString* expressLocalDateTime(NSDate* date)
     return string;
 }
 
+NSString* expressLocalTime(NSDate* date)
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"h:mmaa";
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    [dateFormatter setTimeZone:gmt];
+    NSString *string = [dateFormatter stringFromDate: date];
+    return string;
+}
+
+NSInteger getLocalDayOfMonth (NSDate* date)
+{
+    NSCalendar *calender = [NSCalendar currentCalendar];
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    NSDateComponents *dateComponents = [calender components:NSCalendarUnitDay fromDate: date];
+    [dateComponents  setTimeZone:gmt];
+    NSInteger n = [dateComponents day];
+    return n;
+}
+
+NSInteger getLocalDayNumber(NSDate* date)
+{
+    NSCalendar *calender = [NSCalendar currentCalendar];
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    NSDateComponents *dateComponents = [calender components:NSCalendarUnitWeekday fromDate: date];
+    [dateComponents  setTimeZone:gmt];
+    NSInteger n = [dateComponents weekday]-1;
+    return n;
+}
+
+NSString* expressLocalMonth(NSDate* date)
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"MMMM";
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    [dateFormatter setTimeZone:gmt];
+    NSString *string = [dateFormatter stringFromDate: date];
+    return string;
+}
+
 BOOL isValidEmailAddress (NSString *string)
 {
     if  (!string) {

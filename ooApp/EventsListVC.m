@@ -311,7 +311,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger section= indexPath.section;
-    float extraSpaceForFirstRow= !indexPath.row ? 27 : 0;
+    float extraSpaceForFirstRow= !indexPath.row ? kGeomStripHeaderHeight/2. : 0;
     
     @synchronized(_yourEventsArray) {
         
@@ -327,6 +327,7 @@
                 events = _curatedEventsArray;
                 break;
         }
+        
         if (!events.count) {
             return kGeomHeightFeaturedCellHeight + extraSpaceForFirstRow;
         }

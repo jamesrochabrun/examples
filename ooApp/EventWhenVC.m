@@ -25,7 +25,8 @@
 @property (nonatomic,strong) UIButton* buttonDuration1;
 @property (nonatomic,strong)  UIDatePicker* pickerEventDate;
 @property (nonatomic,strong)   UIDatePicker* pickerEventVotingDate;
-
+@property (nonatomic,assign) BOOL upperDateWasModified;
+@property (nonatomic,assign) BOOL lowerDateWasModified;
 @property (nonatomic,strong) OOStripHeader *headerWhen;
 @property (nonatomic,strong) OOStripHeader *headerEndOfVoting;
 @end
@@ -72,6 +73,14 @@
     _pickerEventDate.datePickerMode= UIDatePickerModeDateAndTime;
     _pickerEventVotingDate.datePickerMode= UIDatePickerModeDateAndTime;
     
+    if ( APP.eventBeingEdited.date) {
+        _pickerEventDate.date= APP.eventBeingEdited.date;
+
+    }
+    if (APP.eventBeingEdited.dateWhenVotingClosed ) {
+        _pickerEventDate.date= APP.eventBeingEdited.dateWhenVotingClosed;
+    }
+    
     _pickerEventDate.hidden= YES;
     _pickerEventVotingDate.hidden= YES;
     
@@ -116,10 +125,14 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [self extractDateTimeFromUpperPicker];
-    [self extractDateTimeFromLowerPicker];
+    if  (_lowerDateWasModified ) {
+        [self extractDateTimeFromLowerPicker];
+    }
+    if ( _upperDateWasModified) {
+        [self extractDateTimeFromUpperPicker];
+    }
     
-    if ( self.delegate) {
+    if ( self.delegate  && (_upperDateWasModified || _lowerDateWasModified)) {
         [self.delegate datesChanged];
     }
     
@@ -144,7 +157,6 @@
     APP.eventBeingEdited.date= gmtTime;
     APP.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date method
     [self expressUpperDate];
-    
 }
 
 - (void)extractDateTimeFromLowerPicker
@@ -170,6 +182,8 @@
     [UIView animateWithDuration: 0.4 animations:^{
         [weakSelf doLayout];
     }];
+    
+    _upperDateWasModified= YES;
 }
 
 - (void)userPressedLowerButton: (id) sender
@@ -187,6 +201,8 @@
     [UIView animateWithDuration: 0.4 animations:^{
         [weakSelf doLayout];
     }];
+    
+    _lowerDateWasModified= YES;
 }
 
 //------------------------------------------------------------------------------
