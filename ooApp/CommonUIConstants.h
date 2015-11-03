@@ -102,6 +102,7 @@ extern NSString *const kFontLatoBold;
 extern NSString *const kFontLatoMedium;
 extern NSString *const kFontLatoMediumItalic;
 extern NSString *const kFontLatoSemiboldItalic;
+extern NSString *const kFontLatoBoldItalic;
 extern NSString *const kFontLatoHeavyItalic;
 
 // Icon font mappings

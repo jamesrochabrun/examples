@@ -17,6 +17,7 @@ NSString *const kFontLatoBold = @"Lato-Bold";
 NSString *const kFontLatoMedium = @"Lato-Medium";
 NSString *const kFontLatoMediumItalic = @"Lato-MediumItalic";
 NSString *const kFontLatoSemiboldItalic = @"Lato-SemiboldItalic";
+NSString *const kFontLatoBoldItalic = @"Lato-BoldItalic";
 NSString *const kFontLatoHeavyItalic = @"Lato-HeavyItalic";
 
 NSString *const kFontIconAdd = @"b";
