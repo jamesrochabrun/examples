@@ -11,10 +11,7 @@
 
 @interface ObjectTVCell ()
 
-@property (nonatomic, strong) UIView *viewShadow;
-@property (nonatomic, strong) UILabel *locationIcon;
 @property (nonatomic, strong) UIView *verticalLine1;
-@property (nonatomic, strong) CAGradientLayer *gradient;
 
 @end
 
@@ -68,6 +65,7 @@
         
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_actionButton withIcon:kFontIconAdd fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:nil selector:nil];
+        [_actionButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         [self addSubview:_actionButton];
         _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
         _actionButton.hidden = YES;
@@ -108,7 +106,9 @@
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    _tnConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    [self addConstraints:_tnConstraints];
+    
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_header]-(spaceEdge)-[_subHeader1]-(spaceEdge)-[_subHeader2]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_actionButton(buttonWidth)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -158,6 +158,7 @@
 }
 
 - (void)layoutSubviews {
+    [super layoutSubviews];
     _gradient.frame = CGRectMake(kGeomSpaceEdge, kGeomSpaceEdge, 280, height(_viewShadow));
     [_gradient setStartPoint:CGPointMake(0, 0)];
     [_gradient setEndPoint:CGPointMake(1, 0)];

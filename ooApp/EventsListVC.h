@@ -14,6 +14,7 @@
 @end
 
 @interface EventListTableTitleView: UIView
-- (void) setTitle: (NSString*)string;
+
+- (void)setTitle:(NSString *)string;
 
 @end

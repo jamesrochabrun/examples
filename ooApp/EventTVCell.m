@@ -8,14 +8,17 @@
 
 #import "EventTVCell.h"
 #import "LocationManager.h"
+#import "DebugUtilities.h"
 
 @interface EventTVCell ()
-@property (nonatomic,strong) EventObject* eventInfo;
-@property (nonatomic,strong)  UILabel *labelIndicatingAttendeeCount;
-@property (nonatomic,strong)  AFHTTPRequestOperation *operation;
-@property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
-@property (nonatomic,strong) UIView* viewShadow;
-@property (nonatomic,assign) BOOL isFirst, isMessage;
+
+@property (nonatomic, strong) EventObject *eventInfo;
+@property (nonatomic, strong) UILabel *labelIndicatingAttendeeCount;
+@property (nonatomic, strong) AFHTTPRequestOperation *operation;
+@property (nonatomic, strong) AFHTTPRequestOperation *imageOperation;
+//@property (nonatomic, strong) UIView *viewShadow;
+@property (nonatomic, assign) BOOL isFirst, isMessage;
+
 @end
 
 @implementation EventTVCell
@@ -25,8 +28,8 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        _viewShadow= makeView(self,  WHITE);
-        addShadowTo(_viewShadow);
+//        _viewShadow= makeView(self,  WHITE);
+//        addShadowTo(_viewShadow);
         
         _labelIndicatingAttendeeCount= [UILabel  new];
         [self  addSubview: _labelIndicatingAttendeeCount];
@@ -40,19 +43,17 @@
         self.subHeader2.textColor= WHITE;
         self.header.font= [ UIFont  fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeHeader];
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-        
-        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
-        self.thumbnail.clipsToBounds= YES;
-        
+//        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
+//        self.thumbnail.clipsToBounds= YES;
     }
     return self;
 }
 
 - (void)prepareForReuse
 {
-    [  super prepareForReuse];
+    [super prepareForReuse];
     [self showShadow];
-    [self.operation cancel ];
+    [self.operation cancel];
     [_imageOperation cancel];
     [self updateHighlighting:NO];
     self.clipsToBounds= NO;
@@ -86,51 +87,72 @@
 
 - (void) updateHighlighting: (BOOL)highlighted;
 {
-    if  (highlighted ) {
-        self.thumbnail.alpha=  .5;
+    if (highlighted) {
+        self.thumbnail.alpha = 0.5;
     } else {
-        self.thumbnail.alpha=  1;
+        self.thumbnail.alpha = 1;
     }
 }
 
-- (void)setNameHeader: (OOStripHeader*)header
+- (void)setNameHeader:(OOStripHeader *)header
 {
     if (!header || _nameHeader) {
         return;
     }
-    _nameHeader= header;
-    [self  addSubview: header];
+    _nameHeader = header;
+    [self addSubview: header];
+}
+
+- (void)updateConstraints {
+    [super updateConstraints];
+    
+    [self removeConstraints:self.tnConstraints];
+    
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
+    
+    UIView *superview = self, *tn = self.thumbnail;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn);
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tn]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:self.thumbnail
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:nil
+                         attribute:NSLayoutAttributeHeight
+                         multiplier:1
+                         constant:kGeomHeightEventCellHeight]];
 }
 
 - (void) layoutSubviews
 {
     [super layoutSubviews];
     
-    float w= self.frame.size.width;
-    float h= self.frame.size.height;
-    const float lowerGradientHeight=  7;
+    CGFloat w = width(self);
+    CGFloat h = height(self);
+    const float lowerGradientHeight =  7;
     float thumbHeight,y;
     
     _nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);
     
     if (!_isMessage) {
-        
         _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton-lowerGradientHeight,kGeomButtonWidth,kGeomHeightButton);
         _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
         
         // RULE: If the cell is the first one then leave space for the header.
-        if  (_isFirst ) {
+        if  (_isFirst) {
             thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
             self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
-            y= kGeomHeightButton/2+ (thumbHeight-2*kGeomFontSizeHeader)/2;
+            y= kGeomHeightButton/2 + (thumbHeight-2*kGeomFontSizeHeader)/2;
         } else {
             thumbHeight=h-lowerGradientHeight;
             self.thumbnail.frame = CGRectMake(0,0,w,thumbHeight);
             y= (thumbHeight-2*kGeomFontSizeHeader)/2;
         }
         
-        _viewShadow.frame= self.thumbnail.frame;
-        [self  sendSubviewToBack:_viewShadow ];
+//        _viewShadow.frame= self.thumbnail.frame;
+//        [self  sendSubviewToBack:_viewShadow ];
         
         [self.header sizeToFit];
         [self.subHeader1 sizeToFit];
@@ -146,7 +168,11 @@
         self.subHeader2.frame = CGRectZero;
         self.thumbnail.frame= CGRectZero;
     }
+    
+    self.gradient.hidden = YES;
+    self.locationIcon.hidden = YES;
 }
+
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
     [super setHighlighted:highlighted animated:animated];
@@ -165,7 +191,7 @@
     self.thumbnail.image = nil;
     self.header.text = eo.name.length ? eo.name :  @"Unnamed event.";
     
-    NSString*dateString = expressLocalDateTime(eo.date);
+    NSString *dateString = expressLocalDateTime(eo.date);
     
     self.subHeader1.text = dateString;
     //    self.subHeader2.text = primaryVenue ? primaryVenue.name :  @"Undisclosed location";
@@ -181,7 +207,6 @@
     if (_eventInfo.primaryImage ) {
         self.thumbnail.image= _eventInfo.primaryImage;
         NSLog (@"0x%lx set primaryImage @ %lu", (unsigned long) self,msTime());
-
     } else if (!primaryVenue && _eventInfo.numberOfVenues) {
         __weak EventTVCell *weakSelf = self;
         

@@ -89,7 +89,7 @@
     
     if (!_buttonAdd) {
         views= NSDictionaryOfVariableBindings(superview, _nameLabel);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=5)-[_nameLabel]-(>=5)-|"
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel

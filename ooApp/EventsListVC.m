@@ -29,17 +29,17 @@
 
 @interface EventsListVC ()
 
-@property (nonatomic,strong)  UIButton* buttonAdd;
+@property (nonatomic, strong)  UIButton *buttonAdd;
 
-@property (nonatomic,strong)  UITableView*  table;
+@property (nonatomic, strong)  UITableView *table;
 
-@property (nonatomic,strong) NSArray* yourEventsArray;
-@property (nonatomic,strong) NSArray* incompleteEventsArray;
-@property (nonatomic,strong) NSArray* curatedEventsArray;
+@property (nonatomic, strong) NSArray *yourEventsArray;
+@property (nonatomic, strong) NSArray *incompleteEventsArray;
+@property (nonatomic, strong) NSArray *curatedEventsArray;
 
-@property (nonatomic,strong) NSArray* tableSectionNames;
+@property (nonatomic, strong) NSArray *tableSectionNames;
 
-@property (nonatomic,assign) BOOL doingTransition, didGetInitialResponse;
+@property (nonatomic, assign) BOOL doingTransition, didGetInitialResponse;
 
 @end
 
@@ -72,8 +72,8 @@
 
     self.table= makeTable( self.view, self);
     [_table registerClass:[EventTVCell class] forCellReuseIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER];
-    _table.sectionHeaderHeight= 55;
-    _table.sectionFooterHeight= 10;
+    _table.sectionHeaderHeight = 55;
+    _table.sectionFooterHeight = 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     
 }
@@ -139,9 +139,9 @@
             NSLog  (@"YOUR EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
             
             NSMutableArray *your= [NSMutableArray new];
-            NSMutableArray * incomplete= [NSMutableArray new];
+            NSMutableArray *incomplete= [NSMutableArray new];
             
-            for (EventObject* eo in events) {
+            for (EventObject *eo in events) {
                 if  (![eo isKindOfClass:[EventObject class]]) {
                     continue;
                 }
@@ -213,12 +213,11 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    CGFloat h = self.view.bounds.size.height;
-    CGFloat w = self.view.bounds.size.width;
+    CGFloat h = height(self.view);
+    CGFloat w = width(self.view);
     CGFloat y = kGeomSpaceEdge;
 
     _table.frame = CGRectMake(kGeomSpaceEdge, y, w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
-   
 }
 
 //------------------------------------------------------------------------------
@@ -229,26 +228,26 @@
 {
     EventTVCell *cell;
     
-    NSInteger row= indexPath.row;
-    NSInteger section= indexPath.section;
+    NSInteger row = indexPath.row;
+    NSInteger section = indexPath.section;
     
     @synchronized(_yourEventsArray) {
         
-        NSArray* events= nil;
+        NSArray *events= nil;
         switch ( section) {
             case 0:
-                events=  _yourEventsArray;
+                events = _yourEventsArray;
                 break;
             case 1:
-                events=  _incompleteEventsArray;
+                events = _incompleteEventsArray;
                 break;
             case 2:
-                events=  _curatedEventsArray;
+                events = _curatedEventsArray;
                 break;
         }
         
         cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-        cell.selectedBackgroundView= [UIView new];
+        cell.selectedBackgroundView = [UIView new];
         
         if (!events.count) {
             if (!_didGetInitialResponse) {
@@ -258,7 +257,7 @@
             }
         } else {
             EventObject *e = events[row];
-            [cell setEvent: e];
+            [cell setEvent:e];
         }
         
         if (!row) {
@@ -295,7 +294,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return 7;
+    return 0;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
@@ -328,11 +327,11 @@
                 break;
         }
         if (!events.count) {
-            return kGeomHeightFeaturedCellHeight + extraSpaceForFirstRow;
+            return kGeomHeightEventCellHeight + extraSpaceForFirstRow;
         }
     }
     
-    return kGeomHeightFeaturedCellHeight + extraSpaceForFirstRow;
+    return kGeomHeightEventCellHeight + extraSpaceForFirstRow;
 }
 
 //------------------------------------------------------------------------------

@@ -111,14 +111,16 @@
     }
 
     if (_restaurantToAdd) {
+        self.actionButton.hidden = NO;
         [self.actionButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
         [self.actionButton addTarget:self action:@selector(toggleListInclusion) forControlEvents:UIControlEventTouchUpInside];
         [self getListsForRestaurant];
     } else if (_listToAddTo) {
+        self.actionButton.hidden = NO;
         [self.actionButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
         [self.actionButton addTarget:self action:@selector(addAllRestaurantsFromList) forControlEvents:UIControlEventTouchUpInside];
     } else {
-        
+        self.actionButton.hidden = YES;
     }
 
     //get the list's image

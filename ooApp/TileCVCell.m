@@ -33,7 +33,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = UIColorRGBA(kColorWhite);
+        self.backgroundColor = UIColorRGBA(kColorBlack);
         _name = [[UILabel alloc] init];
         _distance = [[UILabel alloc] init];
         _rating = [[UILabel alloc] init];

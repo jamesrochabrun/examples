@@ -71,23 +71,24 @@ static NSUInteger kGeomIconSize = 20;
 static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 8;
-static CGFloat kGeomSampleUsernameTableHeight=  175;
-static NSUInteger kGeomSampleUsernameTableWidth=  175/.62;
-static CGFloat kGeomProfileImageSize =  100;
-static CGFloat kGeomForkImageSize =  150;
+static CGFloat kGeomSampleUsernameTableHeight = 175;
+static NSUInteger kGeomSampleUsernameTableWidth = 175/.62;
+static CGFloat kGeomProfileImageSize = 100;
+static CGFloat kGeomForkImageSize = 150;
 static CGFloat kGeomEmptyTextViewWidth = 200;
 static CGFloat kGeomEmptyTextFieldWidth = 150;
-static CGFloat kGeomLogoWidth= 200;
-static CGFloat kGeomLogoHeight= 100;
+static CGFloat kGeomLogoWidth = 200;
+static CGFloat kGeomLogoHeight = 100;
 static CGFloat kGeomLoginVerticalDisplacement = 75;
 static CGFloat kGeomWidthMenuButton = 44;// The button should stay at 44. The titleView should shrink if required
 static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 static CGFloat kGeomHeightFilterSelectedLine = 3.0;
-static CGFloat kGeomHeightSearchBar=  55;
-static CGFloat kGeomEventCoordinatorBoxHeight=  114;
-static CGFloat  kGeomEventParticipantFirstBoxHeight=  170;
-static CGFloat  kGeomEventParticipantRestaurantHeight=  92;
-static CGFloat  kGeomEventParticipantSeparatorHeight=  6;
+static CGFloat kGeomHeightSearchBar = 55;
+static CGFloat kGeomEventCoordinatorBoxHeight = 114;
+static CGFloat kGeomEventParticipantFirstBoxHeight = 170;
+static CGFloat kGeomEventParticipantRestaurantHeight = 92;
+static CGFloat kGeomEventParticipantSeparatorHeight = 6;
+static CGFloat kGeomHeightEventCellHeight = 160.0;
 
 // Images
 extern NSString *const kImageNoProfileImage;
