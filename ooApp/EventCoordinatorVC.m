@@ -15,7 +15,7 @@
 #import "EventCoordinatorVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
-#import "RestaurantMainCVCell.h"
+#import "TileCVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
 #import "SearchVC.h"
@@ -39,7 +39,26 @@
 @property (nonatomic,strong) UIView* viewVerticalLine2;
 
 @property (nonatomic,strong)  UIView *viewContainer3;
-@property (nonatomic,strong)  UILabel *labelWhen;
+//@property (nonatomic,strong)  UILabel *labelWhen;
+@property (nonatomic,strong)  UILabel *labelTime;
+@property (nonatomic,strong)  UILabel *labelMonth;
+@property (nonatomic,strong)  UILabel *labelDay0;
+@property (nonatomic,strong)  UILabel *labelDay1;
+@property (nonatomic,strong)  UILabel *labelDay2;
+@property (nonatomic,strong)  UILabel *labelDay3;
+@property (nonatomic,strong)  UILabel *labelDay4;
+@property (nonatomic,strong)  UILabel *labelDay5;
+@property (nonatomic,strong)  UILabel *labelDay6;
+@property (nonatomic,strong)  UILabel *labelDate0;
+@property (nonatomic,strong)  UILabel *labelDate1;
+@property (nonatomic,strong)  UILabel *labelDate2;
+@property (nonatomic,strong)  UILabel *labelDate3;
+@property (nonatomic,strong)  UILabel *labelDate4;
+@property (nonatomic,strong)  UILabel *labelDate5;
+@property (nonatomic,strong)  UILabel *labelDate6;
+@property (nonatomic,strong) UIView* viewTodayBubble;
+@property (nonatomic,strong)  UILabel *labelDayOfWeek;
+@property (nonatomic,strong) UIView* viewhorizontalLine;
 
 @property (nonatomic,strong)  UIView *viewContainer4;
 
@@ -120,7 +139,7 @@
     _venuesCollectionView.backgroundColor= CLEAR;
     [_scrollView addSubview: _venuesCollectionView];
 #define CV_CELL_REUSE_IDENTIFER @"E3_CV"
-    [_venuesCollectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
+    [_venuesCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
     
     self.viewContainer1= makeView(self.scrollView, WHITE);
     _imageViewContainer1= makeImageView(_viewContainer1,  @"background-image.jpg");
@@ -147,21 +166,42 @@
     self.labelWhoPending = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
     self.labelWhoResponded = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
     self.labelWhoVoted = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
-//    self.labelPersonIcon= [UILabel new];
-//    [ self.viewContainer2  addSubview: _labelPersonIcon];
-////    _labelPersonIcon.attributedText= createPeopleIconString (1);
-//    _labelPersonIcon.attributedText= nil;
-//    _labelPersonIcon.textAlignment= NSTextAlignmentRight;
+
     _viewContainer2.layer.borderWidth= 1;
     _viewContainer2.layer.borderColor= GRAY.CGColor;
     self.viewVerticalLine1= makeView(self.viewContainer2, BLACK);
     self.viewVerticalLine2= makeView(self.viewContainer2, BLACK);
     
     self.viewContainer3= makeView(self.scrollView, WHITE);
-    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
+//    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
     _viewContainer3.layer.borderWidth= 1;
     _viewContainer3.layer.borderColor= GRAY.CGColor;
     
+    self.labelTime= makeLabel(self.viewContainer3,  @"", 18);
+    self.labelTime.font= [UIFont  fontWithName: @"Lato-Bold" size:18];
+    
+    self.labelDay0= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
+    self.labelDay1= makeLabel(self.viewContainer3,  @"M", kGeomFontSizeHeader);
+    self.labelDay2= makeLabel(self.viewContainer3,  @"T", kGeomFontSizeHeader);
+    self.labelDay3= makeLabel(self.viewContainer3,  @"W", kGeomFontSizeHeader);
+    self.labelDay4= makeLabel(self.viewContainer3,  @"R", kGeomFontSizeHeader);
+    self.labelDay5= makeLabel(self.viewContainer3,  @"F", kGeomFontSizeHeader);
+    self.labelDay6= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
+    
+    self.labelDate0= makeLabel(self.viewContainer3,  @"10", kGeomFontSizeHeader);
+    self.labelDate1= makeLabel(self.viewContainer3,  @"11", kGeomFontSizeHeader);
+    self.labelDate2= makeLabel(self.viewContainer3,  @"12", kGeomFontSizeHeader);
+    self.labelDate3= makeLabel(self.viewContainer3,  @"13", kGeomFontSizeHeader);
+    self.labelDate4= makeLabel(self.viewContainer3,  @"14", kGeomFontSizeHeader);
+    self.labelDate5= makeLabel(self.viewContainer3,  @"15", kGeomFontSizeHeader);
+    self.labelDate6= makeLabel(self.viewContainer3,  @"16", kGeomFontSizeHeader);
+    
+    self.viewTodayBubble= makeView(self.viewContainer3, BLACK);
+    
+    self.labelMonth= makeLabel(self.viewContainer3,  @"month", 18);
+    self.viewhorizontalLine=makeView(self.viewContainer3, GRAY);
+    self.labelDayOfWeek=makeLabel(self.viewContainer3,  @"day of week", 18);
+
     self.headerWho= [[OOStripHeader alloc] init];
     self.headerWhen= [[OOStripHeader alloc] init];
     self.headerWhere= [[OOStripHeader alloc] init];
@@ -172,11 +212,11 @@
     [_scrollView addSubview: self.headerWho];
     [_scrollView addSubview: self.headerWhen];
     [_scrollView addSubview: self.headerWhere];
-//    [self.headerWho enableAddButtonWithTarget: self action:@selector(userTappedWhoBox:)];
+
     [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
     
-    UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
-    [self.viewContainer1 addGestureRecognizer:tap1 ];
+//    UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
+//    [self.viewContainer1 addGestureRecognizer:tap1 ];
     UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
     [self.viewContainer2 addGestureRecognizer:tap2 ];
     UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhenBox:)];
@@ -250,10 +290,10 @@
                    
 }
      
-- (void)userTappedBox1:(id) sender
-{
-    
-}
+//- (void)userTappedBox1:(id) sender
+//{
+//    
+//}
 
 - (void)updateBoxes
 {
@@ -288,7 +328,8 @@
                  ];
     }
     
-    _labelWhen.attributedText= attributedStringOf(string,  kGeomFontSizeHeader);
+    _labelTime.text= [expressLocalTime(event.date) lowercaseString ];
+    _labelMonth.text= expressLocalMonth( event.date);
 }
 
 - (void) initiateUpdateOfWhoBox
@@ -304,7 +345,7 @@
                                             }];
     
     [e refreshUsersFromServerWithSuccess:^{
-        [self performSelectorOnMainThread:@selector(updateWhereBoxAnimated:) withObject:@1 waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(updateWhoBox) withObject:nil waitUntilDone:NO];
     } failure:^{
         NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
     }];
@@ -348,9 +389,13 @@
     _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
     
     if  (e.users.count ) {
-        if  (!self.viewsForFaces ) {
-            self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users, 10, 10);
+        if (_viewsForFaces ) {
+        for (UIView* v  in  _viewsForFaces) {
+            [v removeFromSuperview];  
         }
+        [self.viewsForFaces removeAllObjects];
+        }
+        self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users,10);
         [self doLayout];
     }
 }
@@ -547,26 +592,112 @@
     x= 0;
     _labelWhoResponded.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
     x+= subBoxWidth;
-    _viewVerticalLine1.frame = CGRectMake(x,kGeomSpaceEdge,1,subBoxHeight);
+    _viewVerticalLine1.frame = CGRectMake(x,kGeomStripHeaderHeight/2,1,subBoxHeight-kGeomStripHeaderHeight);
     _labelWhoPending.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
     x+= subBoxWidth;
-    _viewVerticalLine2.frame = CGRectMake(x,kGeomSpaceEdge,1,subBoxHeight);
+    _viewVerticalLine2.frame = CGRectMake(x,kGeomStripHeaderHeight/2,1,subBoxHeight-kGeomStripHeaderHeight);
     _labelWhoVoted.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
     
-//    _labelPersonIcon.frame = CGRectMake(0,subBoxHeight,boxWidth,subBoxHeight/3);
-    
-    _labelWhen.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
+    _labelTime.frame = CGRectMake(2*boxWidth/3,0,boxWidth/3,kGeomEventCoordinatorBoxHeight);
+    _labelMonth.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
+    float DAYCELLWIDTH =  floorf((2*boxWidth/3-2*kGeomSpaceEdge)/7 );
+    if  (DAYCELLWIDTH> 40 ) {
+        DAYCELLWIDTH= 40;
+    }
+    float DAYCELLHEIGHT=  floorf((kGeomEventCoordinatorBoxHeight-kGeomStripHeaderHeight/2-2*kGeomSpaceEdge)/3);
+    float requiredWidth= DAYCELLWIDTH * 7;
+    float x0=  (2*boxWidth/3 - requiredWidth)/2;
+    x=x0;
+    y= kGeomStripHeaderHeight/2;
 
+    self.labelMonth.frame = CGRectMake(x0,y,requiredWidth,DAYCELLHEIGHT);
+    y+= DAYCELLHEIGHT;
+    self.viewhorizontalLine.frame = CGRectMake(x0,y,requiredWidth,1);
+    y += 5;
+    self.labelDay0.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDay1.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDay2.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDay3.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDay4.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDay5.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDay6.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT);
+    x=x0;
+    y+= DAYCELLHEIGHT;
+    self.labelDate0.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDate1.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDate2.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDate3.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDate4.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDate5.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
+    self.labelDate6.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT);
+    
+    self.labelDate0.textColor= BLACK;
+    self.labelDate1.textColor= BLACK;
+    self.labelDate2.textColor= BLACK;
+    self.labelDate3.textColor= BLACK;
+    self.labelDate4.textColor= BLACK;
+    self.labelDate5.textColor= BLACK;
+    self.labelDate6.textColor= BLACK;
+    
+    NSInteger dayNumber= getLocalDayNumber(APP.eventBeingEdited.date);
+    self.viewTodayBubble.frame = CGRectMake(x0+DAYCELLWIDTH*dayNumber,y- (DAYCELLWIDTH-DAYCELLHEIGHT)/2,DAYCELLWIDTH,DAYCELLWIDTH);
+    [self.viewContainer3 sendSubviewToBack: self.viewTodayBubble ];
+    self.viewTodayBubble.layer.cornerRadius=DAYCELLWIDTH/2;
+    
+    NSUInteger u= [APP.eventBeingEdited.date timeIntervalSince1970];
+    if (dayNumber>0 ) {
+        u-= 24*60*60*dayNumber;
+    }
+    for (int i=0; i < 7; i++) {
+        NSDate *date= [NSDate dateWithTimeIntervalSince1970:u];
+        NSInteger day= getLocalDayOfMonth( date);
+        switch (i) {
+            case 0:
+                self.labelDate0.text= [NSString stringWithFormat: @"%ld",  (long) day ];
+                if  (i==dayNumber ) self.labelDate0.textColor= YELLOW;
+                break;
+            case 1:
+                self.labelDate1.text= [NSString stringWithFormat: @"%ld",  (long) day ];
+                if  (i==dayNumber ) self.labelDate1.textColor= YELLOW;
+                break;
+            case 2:
+                self.labelDate2.text= [NSString stringWithFormat: @"%ld",  (long) day ];
+                if  (i==dayNumber ) self.labelDate2.textColor= YELLOW;
+                break;
+            case 3:
+                self.labelDate3.text= [NSString stringWithFormat: @"%ld",  (long) day ];
+                if  (i==dayNumber ) self.labelDate3.textColor= YELLOW;
+                break;
+            case 4:
+                self.labelDate4.text= [NSString stringWithFormat: @"%ld",  (long) day ];
+                if  (i==dayNumber ) self.labelDate4.textColor= YELLOW;
+                break;
+            case 5:
+                self.labelDate5.text= [NSString stringWithFormat: @"%ld",  (long) day ];
+                if  (i==dayNumber ) self.labelDate5.textColor= YELLOW;
+                break;
+            case 6:
+                self.labelDate6.text= [NSString stringWithFormat: @"%ld",  (long) day ];
+                if  (i==dayNumber ) self.labelDate6.textColor= YELLOW;
+                break;
+            default:
+                break;
+        }
+        u += 24 *3600;
+    }
+    
     // RULE: If no restaurants have been added then did label should take up the entire height.
     float x2=_viewContainer4.frame.origin.x;
     float y2=_viewContainer4.frame.origin.y;
     _venuesCollectionView.frame = CGRectMake(x2,y2 ,boxWidth,kGeomEventCoordinatorBoxHeight);
     
     if ( self.viewsForFaces.count) {
-        x= (w-self.viewsForFaces.count*30-(self.viewsForFaces.count-1)*kGeomSpaceInter)/2;
+        NSUInteger count=self.viewsForFaces.count;
+        y=subBoxHeight+kGeomEventCoordinatorBoxHeight/6-kGeomFaceBubbleDiameter/2-kGeomStripHeaderHeight/2;
+        x= (boxWidth-count*kGeomFaceBubbleDiameter-(count-1)*kGeomSpaceInter)/2;
         for (UIImageView*iv  in self.viewsForFaces) {
-            iv.frame= CGRectMake(x, (kGeomEventCoordinatorBoxHeight+subBoxHeight)/2-10, 20, 20);
-            x+= 30+kGeomSpaceInter;
+            iv.frame= CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
+            x+= kGeomFaceBubbleDiameter+kGeomSpaceInter;
         }
     }
 }
@@ -591,13 +722,12 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
-                                                                          forIndexPath:indexPath];
+    TileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
+                                                                forIndexPath:indexPath];
     cvc.backgroundColor = GRAY;
     NSInteger  row= indexPath.row;
     RestaurantObject *venue= [APP.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
-    cvc.mediaItemObject= venue.mediaItems.count ?  venue.mediaItems[0] :nil;
     CGRect r= cvc.frame;
     r.size=  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
     cvc.frame= r;

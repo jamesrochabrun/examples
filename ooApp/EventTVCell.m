@@ -34,7 +34,7 @@
         _labelIndicatingAttendeeCount= [UILabel  new];
         [self  addSubview: _labelIndicatingAttendeeCount];
         _labelIndicatingAttendeeCount.textColor= WHITE;
-        
+
         self.header.textAlignment= NSTextAlignmentCenter;
         self.subHeader1.textAlignment= NSTextAlignmentCenter;
         self.subHeader2.textAlignment= NSTextAlignmentCenter;
@@ -72,7 +72,7 @@
     NSLog (@"0x%lx prepare @ %lu", (unsigned long) self,msTime());
 }
 
-- (void) setMessageMode:  (NSString*)message;
+- (void)setMessageMode:(NSString *)message;
 {
     self.header.text=  message;
     [self hideShadow];
@@ -85,7 +85,7 @@
     self.isFirst= YES;
 }
 
-- (void) updateHighlighting: (BOOL)highlighted;
+- (void)updateHighlighting:(BOOL)highlighted;
 {
     if (highlighted) {
         self.thumbnail.alpha = 0.5;
@@ -106,13 +106,16 @@
 - (void)updateConstraints {
     [super updateConstraints];
     
+    [self removeConstraints:self.shadowConstraints];
     [self removeConstraints:self.tnConstraints];
     
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
     
-    UIView *superview = self, *tn = self.thumbnail;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn);
-    
+    UIView *superview = self, *tn = self.thumbnail, *shadow = self.viewShadow;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn, shadow);
+
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[shadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[shadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tn]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraint:[NSLayoutConstraint
@@ -123,9 +126,19 @@
                          attribute:NSLayoutAttributeHeight
                          multiplier:1
                          constant:kGeomHeightEventCellHeight]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:self.viewShadow
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:nil
+                         attribute:NSLayoutAttributeHeight
+                         multiplier:1
+                         constant:kGeomHeightEventCellHeight]];
+
+
 }
 
-- (void) layoutSubviews
+- (void)layoutSubviews
 {
     [super layoutSubviews];
     
@@ -176,13 +189,13 @@
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
     [super setHighlighted:highlighted animated:animated];
-    [_nameHeader unHighlightButton ];
+    [_nameHeader unHighlightButton];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-    [_nameHeader unHighlightButton ];
+    [_nameHeader unHighlightButton];
 }
 
 - (void)setEvent:(EventObject *)eo

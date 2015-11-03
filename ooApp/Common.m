@@ -93,7 +93,7 @@ UIImageView* makeImageView (UIView *parent, id image_)
     return iv;
 }
 
-NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, float radius, NSUInteger  maximum)
+NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum)
 {
     NSMutableArray* array= [NSMutableArray new];
     NSUInteger i= 0;
@@ -101,11 +101,9 @@ NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*user
         UIImage *silhouette=APP.imageForNoProfileSilhouette;// XX:  need to make a smaller copy of the silhouette.
         UIImageView* iv=  makeImageView(parent, user.imageURLString.length ? user.imageURLString :  silhouette);
         iv.backgroundColor= WHITE;
-        iv.layer.cornerRadius=  radius;
+        iv.layer.cornerRadius=  kGeomFaceBubbleDiameter/2;
         iv.clipsToBounds= YES;
-        iv.frame = CGRectMake(0,0, radius*2, radius*2);
-//        iv.contentMode= UIViewContentModeCenter;
-        // XX: Need to shrink the image as well as center it.
+        iv.frame = CGRectMake(0,0, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
         iv.layer.borderColor= GREEN.CGColor;
         iv.layer.borderWidth= 1;
         [array addObject: iv];
@@ -462,6 +460,46 @@ NSString* expressLocalDateTime(NSDate* date)
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"MMM dd, h:mmaa";
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    [dateFormatter setTimeZone:gmt];
+    NSString *string = [dateFormatter stringFromDate: date];
+    return string;
+}
+
+NSString* expressLocalTime(NSDate* date)
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"h:mmaa";
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    [dateFormatter setTimeZone:gmt];
+    NSString *string = [dateFormatter stringFromDate: date];
+    return string;
+}
+
+NSInteger getLocalDayOfMonth (NSDate* date)
+{
+    NSCalendar *calender = [NSCalendar currentCalendar];
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    NSDateComponents *dateComponents = [calender components:NSCalendarUnitDay fromDate: date];
+    [dateComponents  setTimeZone:gmt];
+    NSInteger n = [dateComponents day];
+    return n;
+}
+
+NSInteger getLocalDayNumber(NSDate* date)
+{
+    NSCalendar *calender = [NSCalendar currentCalendar];
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    NSDateComponents *dateComponents = [calender components:NSCalendarUnitWeekday fromDate: date];
+    [dateComponents  setTimeZone:gmt];
+    NSInteger n = [dateComponents weekday]-1;
+    return n;
+}
+
+NSString* expressLocalMonth(NSDate* date)
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"MMMM";
     NSTimeZone *gmt = [NSTimeZone localTimeZone];
     [dateFormatter setTimeZone:gmt];
     NSString *string = [dateFormatter stringFromDate: date];

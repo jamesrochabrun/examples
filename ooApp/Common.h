@@ -51,7 +51,7 @@ extern UIButton* makeAttributedButton (UIView *parent, NSString*  title, float f
 extern UIView* makeView (UIView *parent, UIColor* backgroundColor);
 extern UIScrollView* makeScrollView (UIView*parent, id  delegate);
 extern void addShadowTo (UIView*v);
-extern NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, float radius, NSUInteger  maximum);
+extern NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users,  NSUInteger  maximum);
 
 extern NSDate* parseUTCDateFromServer(NSString *string);
 extern NSString* parseStringOrNullFromServer (id object);
@@ -62,6 +62,10 @@ extern NSUInteger parseUnsignedIntegerOrNullFromServer (id object);
 extern BOOL isValidEmailAddress (NSString *string);
 
 extern NSString* expressLocalDateTime(NSDate* date);
+extern NSString* expressLocalTime(NSDate* date);
+extern NSString* expressLocalMonth(NSDate* date);
+extern NSInteger getLocalDayNumber (NSDate*);
+extern NSInteger getLocalDayOfMonth (NSDate* date);
 
 static inline BOOL is_reachable(void) {
 	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;

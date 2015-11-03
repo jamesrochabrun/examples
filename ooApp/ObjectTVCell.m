@@ -91,7 +91,7 @@
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-//        [DebugUtilities addBorderToViews:@[_actionButton/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
+//        [DebugUtilities addBorderToViews:@[_viewShadow/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
     }
     return self;
 }
@@ -105,13 +105,16 @@
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _thumbnail, _header, _subHeader1, _subHeader2, _viewShadow, _actionButton, _locationIcon);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    _shadowConstraints = [NSMutableArray array];
+    [_shadowConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [_shadowConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:_shadowConstraints];
+    
     _tnConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     [self addConstraints:_tnConstraints];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_header]-(spaceEdge)-[_subHeader1]-(spaceEdge)-[_subHeader2]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_actionButton(buttonWidth)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationIcon(45)]-spaceInter-[_header]-[_actionButton(buttonWidth)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
@@ -121,6 +124,14 @@
                          relatedBy:NSLayoutRelationEqual
                          toItem:_locationIcon
                          attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_viewShadow
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_thumbnail
+                         attribute:NSLayoutAttributeHeight
                          multiplier:1
                          constant:0]];
     [self addConstraint:[NSLayoutConstraint
