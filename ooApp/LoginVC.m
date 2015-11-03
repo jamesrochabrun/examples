@@ -323,11 +323,15 @@
     //
     NSString *backendToken= userInfo.backendAuthorizationToken;
     BOOL seekingToken= NO;
+    
+//**** NOTE: These logic does not allow the client to "edit" data if the token gets out of sync. This happens very easily
+// when two devices with the same email address are used. 
+    
 //    if ((isFirstRun || newDay || !backendToken || !backendToken.length) && email && email.length) {
     if (!backendToken) {
         
         NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
-        NSString* md5= [ saltedString MD5String ];
+        NSString* md5= [ saltedString MD5String];
         md5 = [md5 lowercaseString];
         seekingToken= YES;
         
@@ -340,6 +344,7 @@
         //
         requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString, newDay ? 1 : 0];
     }
+
     isFirstRun= NO;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];

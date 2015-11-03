@@ -106,7 +106,6 @@
 - (void)updateConstraints {
     [super updateConstraints];
     
-    [self removeConstraints:self.shadowConstraints];
     [self removeConstraints:self.tnConstraints];
     
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
@@ -114,28 +113,8 @@
     UIView *superview = self, *tn = self.thumbnail, *shadow = self.viewShadow;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn, shadow);
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[shadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[shadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tn]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:self.thumbnail
-                         attribute:NSLayoutAttributeHeight
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:nil
-                         attribute:NSLayoutAttributeHeight
-                         multiplier:1
-                         constant:kGeomHeightEventCellHeight]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:self.viewShadow
-                         attribute:NSLayoutAttributeHeight
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:nil
-                         attribute:NSLayoutAttributeHeight
-                         multiplier:1
-                         constant:kGeomHeightEventCellHeight]];
-
-
 }
 
 - (void)layoutSubviews
@@ -164,7 +143,9 @@
             y= (thumbHeight-2*kGeomFontSizeHeader)/2;
         }
         
-//        _viewShadow.frame= self.thumbnail.frame;
+        //NOTE: this is a bit of a hack. We should really be using autolayout
+        self.viewShadow.frame = self.thumbnail.frame;
+        
 //        [self  sendSubviewToBack:_viewShadow ];
         
         [self.header sizeToFit];
