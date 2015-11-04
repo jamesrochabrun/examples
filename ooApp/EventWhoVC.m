@@ -19,9 +19,6 @@
 #import "GroupObject.h"
 #import "ProfileVC.h"
 
-#define kGeomHeightEventWhoTableCellHeight 100
-#define kGeomHeightEventWhoTableCellImageHeight 84
-
 @interface  EventWhoTableCell ()
 @property (nonatomic,strong) UIButton *radioButton;
 @property (nonatomic,strong)  UILabel *labelName;
@@ -91,27 +88,27 @@
         self.imageIdentifierString= user.imageIdentifier;
         __weak EventWhoTableCell *weakSelf = self;
         self.operation= [OOAPI getUserImageWithImageID:_imageIdentifierString
-                              maxWidth:0
-                             maxHeight:self.frame.size.height
-                               success:^(NSString *imageRefs) {
-                                   NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: imageRefs ]];
-                                   if  (request ) {
-                                       [weakSelf.imageViewThumbnail setImageWithURLRequest:request
-                                                                  placeholderImage:APP.imageForNoProfileSilhouette
-                                                                           success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                                                               
-                                                                               ON_MAIN_THREAD( ^{
-                                                                                   weakSelf.imageViewThumbnail.image= image;
-                                                                                   [user setUserProfilePhoto: image];
-                                                                               });
-                                                                               
-                                                                           } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                                                               
-                                                                           }];
-                                   }
-                               } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                                   NSLog(@"");
-                               }];
+                                              maxWidth:0
+                                             maxHeight:self.frame.size.height
+                                               success:^(NSString *imageRefs) {
+                                                   NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: imageRefs ]];
+                                                   if  (request ) {
+                                                       [weakSelf.imageViewThumbnail setImageWithURLRequest:request
+                                                                                          placeholderImage:APP.imageForNoProfileSilhouette
+                                                                                                   success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                                                                                       
+                                                                                                       ON_MAIN_THREAD( ^{
+                                                                                                           weakSelf.imageViewThumbnail.image= image;
+                                                                                                           [user setUserProfilePhoto: image];
+                                                                                                       });
+                                                                                                       
+                                                                                                   } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                                                                       
+                                                                                                   }];
+                                                   }
+                                               } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                                   NSLog(@"");
+                                               }];
     }
     else if ( user.imageURLString) {
         self.imageURLForFacebook=   user.imageURLString;
@@ -202,7 +199,7 @@
 @property (nonatomic,strong)UILabel* labelEventDateHeader;
 @property (nonatomic,strong)UIButton* buttonAddEmail;
 @property (nonatomic,strong)UITableView* table;
-@property (nonatomic,strong) NSMutableArray *arrayOfPotentialParticipants;
+@property (nonatomic,strong) NSMutableOrderedSet *setOfPotentialParticipants;
 @property (nonatomic,strong)  NSMutableOrderedSet *participants;
 
 @end
@@ -223,22 +220,22 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 - (void)viewDidLoad
 {
     ENTRY;
-   [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.    
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
     
     self.view.autoresizesSubviews= NO;
     
-    self.arrayOfPotentialParticipants= [NSMutableArray new];
+    self.setOfPotentialParticipants= [NSMutableOrderedSet new];
     self.participants= [NSMutableOrderedSet new];
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
     self.navTitle = nto;
     
     self.view.backgroundColor= WHITE;
-
+    
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
     self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  BLACK, CLEAR,
-                                    self, @selector(userPressedInviteByEmail:), 1);
+                                   self, @selector(userPressedInviteByEmail:), 1);
     
     self.table= makeTable( self.view,  self);
 #define PARTICIPANTS_TABLE_REUSE_IDENTIFIER  @"whomToInviteCell"
@@ -254,7 +251,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }
     emailString= [ emailString lowercaseString];
     
-    for (UserObject* user  in  _arrayOfPotentialParticipants) {
+    for (UserObject* user  in  _setOfPotentialParticipants) {
         if ( [[user.email lowercaseString] isEqualToString: emailString ]) {
             return YES;
         }
@@ -264,7 +261,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)reloadTable
 {
-    @synchronized(_arrayOfPotentialParticipants) {
+    @synchronized(_setOfPotentialParticipants) {
         [_table reloadData];
     }
 }
@@ -285,9 +282,9 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [OOAPI getGroupsWithSuccess:^(NSArray *groups) {
         //        NSLog  (@" groups for this user=  %@", groups);
         NSLog  (@"USER HAS %lu GROUPS.",groups.count);
-        @synchronized(weakSelf.arrayOfPotentialParticipants) {
+        @synchronized(weakSelf.setOfPotentialParticipants) {
             for (id object in groups) {
-                [self.arrayOfPotentialParticipants  addObject: object];
+                [self.setOfPotentialParticipants  addObject: object];
             }
         }
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
@@ -310,9 +307,11 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     // RULE: Identify follower users we could potentially attach this event.
     [OOAPI getFollowingWithSuccess:^(NSArray *users) {
         NSLog  (@"USER IS FOLLOWING %lu USERS.", ( unsigned long)users.count);
-        @synchronized(weakSelf.arrayOfPotentialParticipants) {
-            for (id object in users) {
-                [self.arrayOfPotentialParticipants  addObject: object];
+        @synchronized(weakSelf.setOfPotentialParticipants) {
+            for (UserObject* user in users) {
+                if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
+                    [self.setOfPotentialParticipants  addObject: user];
+                }
             }
         }
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
@@ -323,10 +322,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     // XX:  just at all the users
     [  OOAPI getAllUsersWithSuccess:^(NSArray *users) {
-        @synchronized(weakSelf.arrayOfPotentialParticipants) {
+        @synchronized(weakSelf.setOfPotentialParticipants) {
             for (UserObject* user  in  users) {
-                if (![weakSelf.arrayOfPotentialParticipants containsObject:user ]) {
-                    [weakSelf.arrayOfPotentialParticipants addObject: user];
+                if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
+                    [weakSelf.setOfPotentialParticipants addObject: user];
                 }
             }
             [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
@@ -397,24 +396,24 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)addUser: (UserObject*)user
 {
-    @synchronized(_arrayOfPotentialParticipants) {
-        [_arrayOfPotentialParticipants  addObject: user];
+    @synchronized(_setOfPotentialParticipants) {
+        [_setOfPotentialParticipants  addObject: user];
     }
     [_table reloadData];
     [_table scrollToRowAtIndexPath:
-        [NSIndexPath indexPathForRow:_arrayOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+     [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 - (void)addTheirEmailAddress: (NSString*)emailAddress
 {
-    @synchronized(_arrayOfPotentialParticipants) {
+    @synchronized(_setOfPotentialParticipants) {
         UserObject *user= makeEmailOnlyUserObject(emailAddress);
-        [_arrayOfPotentialParticipants  addObject: user];
+        [_setOfPotentialParticipants  addObject: user];
     }
     [_table reloadData];
     
     [_table scrollToRowAtIndexPath:
-     [NSIndexPath indexPathForRow:_arrayOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+     [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 //------------------------------------------------------------------------------
@@ -427,9 +426,9 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     float w=  self.view.bounds.size.width;
     float  margin= kGeomSpaceEdge;
     float  spacing=  kGeomSpaceInter;
-
+    
     float  y=  0;
-
+    
     float tableHeight= h-kGeomHeightButton-2*spacing;
     _table.frame = CGRectMake(0,y,w,tableHeight);
     y+= tableHeight+ spacing;
@@ -441,12 +440,12 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 {
     EventWhoTableCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
- 
+    
     UserObject* object= nil;
     NSInteger row= indexPath.row;
-    @synchronized(_arrayOfPotentialParticipants) {
-        if  (row  < _arrayOfPotentialParticipants.count) {
-             object=  _arrayOfPotentialParticipants[row];
+    @synchronized(_setOfPotentialParticipants) {
+        if  (row  < _setOfPotentialParticipants.count) {
+            object=  _setOfPotentialParticipants[row];
         }
     }
     
@@ -461,17 +460,15 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
             break;
         }
     }
-//    inList= [_participants containsObject: object];
     [ cell setRadioButtonState: inList];
-
+    
     cell.viewController=  self;
     if  ([object isKindOfClass:[GroupObject class]] ) {
-//        [cell specifyGroup: object];
     } else {
         [cell specifyUser: object];
-
+        
     }
-
+    
     return cell;
 }
 
@@ -489,9 +486,9 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 {
     UserObject* user= nil;
     NSInteger row= indexPath.row;
-    @synchronized(_arrayOfPotentialParticipants) {
-        if  ( row  < _arrayOfPotentialParticipants.count) {
-            user=  _arrayOfPotentialParticipants[row];
+    @synchronized(_setOfPotentialParticipants) {
+        if  ( row  < _setOfPotentialParticipants.count) {
+            user=  _setOfPotentialParticipants[row];
         }
     }
     if ( user) {
@@ -505,8 +502,8 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger  total;
-    @synchronized(_arrayOfPotentialParticipants) {
-        total= _arrayOfPotentialParticipants.count;
+    @synchronized(_setOfPotentialParticipants) {
+        total= _setOfPotentialParticipants.count;
     }
     return  total;
 }
@@ -519,7 +516,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     if ( value) {
         [_participants  addObject: object];
-      }else {
+    }else {
         [_participants  removeObject: object];
     }
     
@@ -528,16 +525,16 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     [OOAPI setParticipationOf:object
                       inEvent:APP.eventBeingEdited
-                                to:value
-                           success:^(NSInteger eventID) {
-                               NSLog  (@"SUCCESS");
-                           } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                               NSLog  (@"FAILURE  %@",e);
-                               if ( value) {
-                                   [_participants  removeObject: object];
-                                   // XX:  need to update radio button is well
-                               }
-                           }];
-
+                           to:value
+                      success:^(NSInteger eventID) {
+                          NSLog  (@"SUCCESS");
+                      } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                          NSLog  (@"FAILURE  %@",e);
+                          if ( value) {
+                              [_participants  removeObject: object];
+                              // XX:  need to update radio button is well
+                          }
+                      }];
+    
 }
 @end

@@ -1289,9 +1289,9 @@ NSString *const kKeySearchFilter = @"filter";
                                           identifier= parseIntegerOrNullFromServer(eventID);
                                       }
                                       if (!identifier) {
-                                          message( @"event ID is zero.");
-                                          //                                          failure(nil);
-                                          //                                          return;
+//                                          message( @"event ID is zero.");
+                                          failure(nil,nil);
+                                          return;
                                       }
                                       success(identifier);
                                   } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {

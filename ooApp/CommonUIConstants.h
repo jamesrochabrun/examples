@@ -95,6 +95,8 @@ static CGFloat kGeomFaceBubbleSpacing = 5;
 static CGFloat kGeomStripHeaderHeight = 27;
 static CGFloat kGeomEventCoordinatorRestaurantHeight=  114;
 static CGFloat kGeomEventCoordinatorBoxHeightTopmost = 230;
+static CGFloat kGeomHeightEventWhoTableCellHeight =100;
+static CGFloat kGeomHeightEventWhoTableCellImageHeight = 84;
 
 // Images
 extern NSString *const kImageNoProfileImage;

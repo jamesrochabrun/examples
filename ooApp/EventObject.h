@@ -52,6 +52,8 @@ typedef enum : char {
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)dictionaryFromEvent;
 
+- (NSUInteger)totalUsers;
+
 - (void)addVenue:(RestaurantObject *)venue;
 - (void)removeVenue:(RestaurantObject *)venue;
 - (RestaurantObject *)getNthVenue:(NSInteger)index;

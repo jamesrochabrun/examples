@@ -22,6 +22,11 @@ static NSString *const kKeyGroupID = @"group_id";
     return kHashGroup + (_groupID & 0xffffff);
 }
 
+- (BOOL)isEqual: (NSObject*)other
+{
+    return self.hash == other.hash;
+}
+
 + (GroupObject*) groupFromDictionary: (NSDictionary*)dictionary;
 {
     GroupObject* g= [[GroupObject alloc] init];

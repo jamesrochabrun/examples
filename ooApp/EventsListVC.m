@@ -75,7 +75,6 @@
     _table.sectionHeaderHeight = 55;
     _table.sectionFooterHeight = 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
-    
 }
 
 //------------------------------------------------------------------------------

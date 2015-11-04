@@ -48,6 +48,11 @@ NSString *const kKeyParticipantState = @"participant_state";
     return kHashUser + (_userID & 0xffffff);
 }
 
+- (BOOL)isEqual: (NSObject*)other
+{
+    return self.hash == other.hash;
+}
+
 //------------------------------------------------------------------------------
 // Name:    +userFromDict
 // Purpose: Instantiates user object from user dictionary.

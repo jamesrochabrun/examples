@@ -99,6 +99,11 @@ NSString *const kKeyEventMediaItem = @"media_item";
     return e;
 }
 
+- (NSUInteger)totalUsers;
+{
+    return _users.count;
+}
+
 - (void)dealloc
 {
     self.primaryImage= nil;

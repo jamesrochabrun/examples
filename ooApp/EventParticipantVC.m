@@ -1,5 +1,5 @@
 //
-//  EventParticipantVC.m
+//  EventParticipantVC.m E13
 //  ooApp
 //
 //  Created by Zack Smith on 9/16/15.
@@ -19,6 +19,27 @@
 #import "EventWhenVC.h"
 #import  <QuartzCore/CALayer.h>
 
+@interface EventParticipantEmptyCell()
+@property (nonatomic,strong)  UILabel *labelCentered;
+@end
+
+@implementation EventParticipantEmptyCell
+- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        _labelCentered= makeLabel(self, @"This event has no restaurants.", kGeomFontSizeHeader);
+
+    }
+    return self;
+}
+
+- (void)layoutSubviews
+{
+    _labelCentered.frame= self.bounds;
+}
+@end
+
 @interface EventParticipantFirstCell ()
 
 @property (nonatomic, strong) UIButton *buttonSubmitVote;
@@ -30,7 +51,10 @@
 @property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) EventObject *event;
+@property (nonatomic, strong) NSTimer  *timerCountdown;
+
 @property (nonatomic,strong) NSMutableArray* viewsForFaces;
+@property (nonatomic,strong)  UILabel*labelEllipsis;
 @end
 
 @implementation  EventParticipantFirstCell
@@ -55,19 +79,19 @@
         self.labelTitle= makeLabel( self, APP.eventBeingEdited.name,
                                    kGeomEventHeadingFontSize);
         _labelTitle.textColor= WHITE;
-        _labelTitle.font= [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomEventHeadingFontSize];
-        
-        self.labelTimeLeft= makeLabel( self,  @"00:00:??\rUNTIL VOTING CLOSES", kGeomFontSizeSubheader);
+        _labelTitle.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
+
+        self.labelTimeLeft= makeLabel( self,  @"TIME UNTIL\rVOTING CLOSES", kGeomFontSizeSubheader);
         _labelTimeLeft.textColor= WHITE;
         _labelTimeLeft.backgroundColor= UIColorRGBA(0x80000000);
         
-//        self.labelPersonIcon= makeIconLabel( self,  kFontIconPerson, kGeomFontSizeSubheader);
-//        _labelPersonIcon.textColor= GREEN;
-
         _buttonSubmitVote= makeButton(self,  @"SUBMIT VOTE", kGeomFontSizeSubheader,
                                       YELLOW,  UIColorRGBA(0x80000000), self, @selector(doSubmitVote:), 0);
         _buttonSubmitVote.titleLabel.font= [UIFont fontWithName:kFontLatoBold
                                                            size:kGeomFontSizeSubheader];
+        _labelEllipsis= makeLabel(self,  @"...", kGeomFontSizeHeader);
+        _labelEllipsis.textColor=WHITE;
+        
         
     }
     return self;
@@ -103,12 +127,25 @@
     _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
     
     if ( self.viewsForFaces.count) {
-        float x;
         float subBoxHeight= _buttonSubmitVote.frame.origin.y - spacing- 20;
-        x= (w-self.viewsForFaces.count*30-(self.viewsForFaces.count-1)*kGeomSpaceInter)/2;
+        float x;
+
+        NSUInteger count=self.viewsForFaces.count;
+        NSUInteger totalPeople=  [self.event totalUsers ];
+        y=subBoxHeight+kGeomEventCoordinatorBoxHeight/6-kGeomFaceBubbleDiameter/2-kGeomStripHeaderHeight/2;
+        x= (w-count*kGeomFaceBubbleDiameter-(count-1)*kGeomFaceBubbleSpacing)/2;
+        NSInteger i= 0;
         for (UIImageView*iv  in self.viewsForFaces) {
-            iv.frame= CGRectMake(x, (kGeomEventCoordinatorBoxHeight+subBoxHeight)/2-10, 20, 20);
-            x+= 30+kGeomSpaceInter;
+            
+            if  (i >= _viewsForFaces.count-1  && _viewsForFaces.count < totalPeople  ) {
+                _labelEllipsis.frame=CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
+                iv.frame= CGRectZero;
+            } else {
+                iv.frame= CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
+                _labelEllipsis.frame=CGRectZero;
+            }
+            x+= kGeomFaceBubbleDiameter+kGeomFaceBubbleSpacing;
+            i++;
         }
     }
 }
@@ -116,6 +153,23 @@
 - (void) provideEvent: (EventObject*)event;
 {
     self.event= event;
+ 
+    NSDate* dv=self.event.dateWhenVotingClosed;
+    unsigned long votingEnds= [dv timeIntervalSince1970];
+    if (!votingEnds) {
+        _labelTimeLeft.attributedText=attributedStringOf( @"END OF VOTING\rDATE NOT SET", kGeomFontSizeSubheader);
+        return;
+    }
+    
+    unsigned long now= [[NSDate date ] timeIntervalSince1970];
+    if  ( now < votingEnds) {
+        self.timerCountdown= [ NSTimer  scheduledTimerWithTimeInterval:1
+                                                                target:self
+                                                              selector:@selector(callbackCountdown:)
+                                                              userInfo:nil repeats:YES];
+
+    }
+    
     __weak EventParticipantFirstCell *weakSelf = self;
 
     if  (event.primaryImage) {
@@ -136,14 +190,48 @@
                                                           }];
         
     }
-        
-    [event refreshUsersFromServerWithSuccess:^{
-        if  (event.users.count ) {
-            if  (!weakSelf.viewsForFaces ) {
-                weakSelf.viewsForFaces= makeImageViewsForUsers(self,  event.users, 10);
+    
+    [self refreshUsers];
+}
+
+- (void)callbackCountdown: ( NSTimer *) timer
+{
+     long votingEnds= [self.event.dateWhenVotingClosed timeIntervalSince1970];
+     long now= [[NSDate date ] timeIntervalSince1970];
+     long  timeRemaining= votingEnds-now;
+    if ( timeRemaining <= 0) {
+        _labelTimeLeft.attributedText=attributedStringOf( @"VOTING HAS ENDED", kGeomFontSizeHeader);
+        [self.timerCountdown  invalidate];
+        self.timerCountdown= nil;
+        return;
+    }
+    
+    unsigned long  hours= timeRemaining/3600;
+    unsigned long  minutes=  (timeRemaining/60)% 60;
+    unsigned long  seconds=  timeRemaining% 60;
+    NSString* string= [NSString  stringWithFormat: @"%ld:%02ld:%02ld", hours, minutes, seconds];
+    NSAttributedString* s= attributedStringOf(string, kGeomFontSizeHeader);
+    NSMutableAttributedString *mas=[[NSMutableAttributedString  alloc] initWithAttributedString: s];
+    NSAttributedString* lowerString= attributedStringOf( @"\rUNTIL VOTING CLOSES", kGeomFontSizeDetail);
+
+    [mas  appendAttributedString:lowerString];
+    _labelTimeLeft.attributedText= mas;
+}
+
+- (void) refreshUsers
+{
+    __weak EventParticipantFirstCell *weakSelf = self;
+    
+    [self.event refreshUsersFromServerWithSuccess:^{
+        if (weakSelf.viewsForFaces ) {
+            for (UIView* v  in  weakSelf.viewsForFaces) {
+                [v removeFromSuperview];
             }
-            [weakSelf performSelectorOnMainThread:@selector(layoutSubviews) withObject:nil waitUntilDone:NO];
+            [weakSelf.viewsForFaces removeAllObjects];
         }
+        NSInteger nBubbles=  ([UIScreen  mainScreen].bounds.size.width -2*kGeomSpaceEdge)/(kGeomFaceBubbleDiameter +kGeomFaceBubbleSpacing);
+        weakSelf.viewsForFaces= makeImageViewsForUsers(self,  weakSelf.event.users, nBubbles);
+        [weakSelf performSelectorOnMainThread:@selector(layoutSubviews) withObject:nil waitUntilDone:NO];
     } failure:^{
         NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
     }];
@@ -158,6 +246,12 @@
     [_delegate userRequestToSubmit];
 }
 
+- (void)prepareForReuse
+{
+    [_timerCountdown  invalidate];
+    self.timerCountdown= nil;
+    self.event= nil;
+}
 @end
 
 //==============================================================================
@@ -189,7 +283,7 @@
         self.clipsToBounds= NO;
         self.backgroundColor= CLEAR;
         
-        _radioButton= makeButton(self, kFontIconRemove, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressedRadioButton:), 0);
+        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressedRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
         _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
         
@@ -338,13 +432,20 @@
     _table= makeTable( self.view,  self);
 #define TABLE_REUSE_IDENTIFIER  @"participantsCell"  
 #define TABLE_REUSE_FIRST_IDENTIFIER @"participantsCell1st"
+#define TABLE_EMPTY_REUSE_IDENTIFIER  @"participantsEmpty"
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
 
+    [_table registerClass:[EventParticipantEmptyCell class] forCellReuseIdentifier:TABLE_EMPTY_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantVotingCell class] forCellReuseIdentifier:TABLE_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantFirstCell class] forCellReuseIdentifier:TABLE_REUSE_FIRST_IDENTIFIER];
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [_table reloadData];
 }
 
 - (void)viewWillLayoutSubviews
@@ -386,6 +487,13 @@
         return cell;
     }
     
+    if (![event totalVenues]) {
+        EventParticipantEmptyCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier: TABLE_EMPTY_REUSE_IDENTIFIER forIndexPath:indexPath];
+        cell.selectionStyle= UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+    
     EventParticipantVotingCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     cell.delegate= self;
@@ -422,6 +530,9 @@
 {
     EventObject* event=APP.eventBeingEdited;
     NSInteger total= [event totalVenues];
+    if (!total) {
+        return 2;
+    }
     return 1+total ;
 }
 

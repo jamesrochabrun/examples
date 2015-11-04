@@ -25,6 +25,9 @@
 
 @end
 
+@interface EventParticipantEmptyCell:UITableViewCell
+@end
+
 @interface EventParticipantFirstCell: UITableViewCell
 @property (nonatomic,assign) id <EventParticipantFirstCellDelegate> delegate;
 - (void) provideEvent: (EventObject*)event;

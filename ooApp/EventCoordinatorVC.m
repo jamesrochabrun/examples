@@ -148,6 +148,7 @@
     
     self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
     _labelEventCover.textColor= WHITE;
+    _labelEventCover.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
     NSString* submitButtonMessage;
@@ -179,7 +180,7 @@
     _viewContainer3.layer.borderColor= GRAY.CGColor;
     
     self.labelTime= makeLabel(self.viewContainer3,  @"", 18);
-    self.labelTime.font= [UIFont  fontWithName: @"Lato-Bold" size:18];
+    self.labelTime.font= [UIFont  fontWithName: kFontLatoBold  size:18];
     
     self.pieHour= [[PieView alloc] init];
     [self.viewContainer3  addSubview: _pieHour];
@@ -207,17 +208,17 @@
     self.labelDate5.textColor= BLACK;
     self.labelDate6.textColor= BLACK;
     
-    self.labelDate0= makeLabel(self.viewContainer3,  @"10", kGeomFontSizeHeader);
-    self.labelDate1= makeLabel(self.viewContainer3,  @"11", kGeomFontSizeHeader);
-    self.labelDate2= makeLabel(self.viewContainer3,  @"12", kGeomFontSizeHeader);
-    self.labelDate3= makeLabel(self.viewContainer3,  @"13", kGeomFontSizeHeader);
-    self.labelDate4= makeLabel(self.viewContainer3,  @"14", kGeomFontSizeHeader);
-    self.labelDate5= makeLabel(self.viewContainer3,  @"15", kGeomFontSizeHeader);
-    self.labelDate6= makeLabel(self.viewContainer3,  @"16", kGeomFontSizeHeader);
+    self.labelDate0= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+    self.labelDate1= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+    self.labelDate2= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+    self.labelDate3= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+    self.labelDate4= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+    self.labelDate5= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+    self.labelDate6= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
     self.viewTodayBubble= makeView(self.viewContainer3, BLACK);
 
-    self.labelMonth= makeLabel(self.viewContainer3,  @"month", 18);
-    _labelMonth.font= [UIFont  fontWithName: @"Lato-Bold" size:kGeomFontSizeHeader];
+    self.labelMonth= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+    _labelMonth.font= [UIFont  fontWithName: kFontLatoBold  size:kGeomFontSizeHeader];
     
     self.viewhorizontalLine=makeView(self.viewContainer3, GRAY);
     _viewhorizontalLine.backgroundColor= UIColorRGB(0xff808080);
@@ -235,8 +236,6 @@
 
     [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
     
-//    UITapGestureRecognizer *tap1= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedBox1:)];
-//    [self.viewContainer1 addGestureRecognizer:tap1 ];
     UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
     [self.viewContainer2 addGestureRecognizer:tap2 ];
     UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhenBox:)];
@@ -309,11 +308,6 @@
                     }];
                    
 }
-     
-//- (void)userTappedBox1:(id) sender
-//{
-//    
-//}
 
 - (void)updateBoxes
 {
@@ -567,7 +561,6 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     [self updateWhoBox];
-    
 }
 
 //------------------------------------------------------------------------------
@@ -727,12 +720,11 @@
     
     if ( self.viewsForFaces.count) {
         NSUInteger count=self.viewsForFaces.count;
-        NSUInteger totalPeople=  APP.eventBeingEdited.users.count;
+        NSUInteger totalPeople=  [APP.eventBeingEdited totalUsers ];
         y=subBoxHeight+kGeomEventCoordinatorBoxHeight/6-kGeomFaceBubbleDiameter/2-kGeomStripHeaderHeight/2;
         x= (boxWidth-count*kGeomFaceBubbleDiameter-(count-1)*kGeomFaceBubbleSpacing)/2;
         NSInteger i= 0;
         for (UIImageView*iv  in self.viewsForFaces) {
-            
             if  (i >= _viewsForFaces.count-1  && _viewsForFaces.count < totalPeople  ) {
                 _labelEllipsis.frame=CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
                 iv.frame= CGRectZero;
