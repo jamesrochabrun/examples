@@ -112,6 +112,7 @@
 		96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */; };
 		96CA59D01BE14C2E00618B57 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96CA59CF1BE14C2E00618B57 /* UIKit.framework */; };
 		96CA59D21BE14E2200618B57 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96CA59D11BE14E2200618B57 /* MessageUI.framework */; };
+		96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96CC3A201BE97E1C00A43A04 /* PieView.m */; };
 		96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D175B91BA76926000C88AC /* NSString+MD5.m */; };
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
 		96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E127B51BB32C6E00A8445E /* EmptyListVC.m */; };
@@ -309,6 +310,8 @@
 		96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventParticipantVC.m; sourceTree = "<group>"; };
 		96CA59CF1BE14C2E00618B57 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		96CA59D11BE14E2200618B57 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		96CC3A1F1BE97E1C00A43A04 /* PieView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PieView.h; sourceTree = "<group>"; };
+		96CC3A201BE97E1C00A43A04 /* PieView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PieView.m; sourceTree = "<group>"; };
 		96D175B91BA76926000C88AC /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 		96D175BA1BA76926000C88AC /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		96D35F7B1B9F879200A18A23 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
@@ -573,6 +576,8 @@
 				367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
+				96CC3A1F1BE97E1C00A43A04 /* PieView.h */,
+				96CC3A201BE97E1C00A43A04 /* PieView.m */,
 				9606C5631BBF08C400CB06FE /* EventsListVC.h */,
 				9606C5641BBF08C400CB06FE /* EventsListVC.m */,
 				96E49E721BC5E14B008B70AF /* EventWhenVC.h */,
@@ -909,6 +914,7 @@
 				3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */,
 				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
 				365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */,
+				96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,

@@ -21,13 +21,4 @@
 
 @interface ProfileTableFirstRow : UITableViewCell <UIAlertViewDelegate>
 
-@property (nonatomic, strong) UIImageView *iv;
-@property (nonatomic, strong) UIButton *buttonFollow;
-@property (nonatomic, strong) UIButton *buttonNewList;
-@property (nonatomic, strong) UILabel *labelUsername;
-@property (nonatomic, strong) UILabel *labelDescription;
-@property (nonatomic, strong) UILabel *labelRestaurants;
-@property (nonatomic, strong) UIButton *buttonNewListIcon;
-@property (nonatomic, assign) float spaceNeededForFirstCell;
-@property (nonatomic, assign) UINavigationController *navigationController;
 @end

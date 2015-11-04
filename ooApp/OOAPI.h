@@ -120,7 +120,8 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                     success:(void (^)(NSArray *users))success
                                     failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *users))success
++ (AFHTTPRequestOperation *)getFollowersOf: (unsigned long)userid
+                                   success:(void (^)(NSArray *users))success
                                         failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success

@@ -476,6 +476,16 @@ NSString* expressLocalTime(NSDate* date)
     return string;
 }
 
+NSInteger getLocalHour (NSDate* date)
+{
+    NSCalendar *calender = [NSCalendar currentCalendar];
+    NSTimeZone *gmt = [NSTimeZone localTimeZone];
+    NSDateComponents *dateComponents = [calender components:NSCalendarUnitHour fromDate: date];
+    [dateComponents  setTimeZone:gmt];
+    NSInteger n = [dateComponents hour];
+    return n;
+}
+
 NSInteger getLocalDayOfMonth (NSDate* date)
 {
     NSCalendar *calender = [NSCalendar currentCalendar];

@@ -21,6 +21,7 @@
 #import "SearchVC.h"
 #import "RestaurantVC.h"
 #import "OOStripHeader.h"
+#import "PieView.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -39,7 +40,6 @@
 @property (nonatomic,strong) UIView* viewVerticalLine2;
 
 @property (nonatomic,strong)  UIView *viewContainer3;
-//@property (nonatomic,strong)  UILabel *labelWhen;
 @property (nonatomic,strong)  UILabel *labelTime;
 @property (nonatomic,strong)  UILabel *labelMonth;
 @property (nonatomic,strong)  UILabel *labelDay0;
@@ -59,7 +59,7 @@
 @property (nonatomic,strong) UIView* viewTodayBubble;
 @property (nonatomic,strong)  UILabel *labelDayOfWeek;
 @property (nonatomic,strong) UIView* viewhorizontalLine;
-
+@property (nonatomic,strong) PieView *pieHour;
 @property (nonatomic,strong)  UIView *viewContainer4;
 
 @property (nonatomic,strong) OOStripHeader *headerWhere;
@@ -78,6 +78,7 @@
 @property (nonatomic,assign) BOOL transitioning;
 
 @property (nonatomic,strong) NSMutableArray* viewsForFaces;
+@property (nonatomic,strong)  UILabel*labelEllipsis;
 @end
 
 @implementation EventCoordinatorVC
@@ -171,7 +172,8 @@
     _viewContainer2.layer.borderColor= GRAY.CGColor;
     self.viewVerticalLine1= makeView(self.viewContainer2, BLACK);
     self.viewVerticalLine2= makeView(self.viewContainer2, BLACK);
-    
+    self.labelEllipsis= makeLabel(self.viewContainer2,  @"...", kGeomFontSizeHeader);
+
     self.viewContainer3= makeView(self.scrollView, WHITE);
 //    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
     _viewContainer3.layer.borderWidth= 1;
@@ -179,7 +181,8 @@
     
     self.labelTime= makeLabel(self.viewContainer3,  @"", 18);
     self.labelTime.font= [UIFont  fontWithName: @"Lato-Bold" size:18];
-    
+    self.pieHour= [[PieView alloc] init];
+    [self.viewContainer3  addSubview: _pieHour];
     self.labelDay0= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
     self.labelDay1= makeLabel(self.viewContainer3,  @"M", kGeomFontSizeHeader);
     self.labelDay2= makeLabel(self.viewContainer3,  @"T", kGeomFontSizeHeader);
@@ -195,7 +198,6 @@
     self.labelDate4= makeLabel(self.viewContainer3,  @"14", kGeomFontSizeHeader);
     self.labelDate5= makeLabel(self.viewContainer3,  @"15", kGeomFontSizeHeader);
     self.labelDate6= makeLabel(self.viewContainer3,  @"16", kGeomFontSizeHeader);
-    
     self.viewTodayBubble= makeView(self.viewContainer3, BLACK);
     
     self.labelMonth= makeLabel(self.viewContainer3,  @"month", 18);
@@ -366,7 +368,6 @@
 - (void)updateWhoBox
 {
     EventObject* e= APP.eventBeingEdited;
-    NSInteger totalPeople= e.numberOfPeople;
     NSInteger pending= e.numberOfPeople - e.numberOfPeopleResponded;
     NSInteger responded= e.numberOfPeopleResponded;
     NSInteger  voted= e.numberOfPeopleVoted;
@@ -374,28 +375,29 @@
 //    _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
     
     NSString *countsStringPending= [NSString stringWithFormat: @"%lu\r%@",
-                             (unsigned long) pending,  LOCAL( @"PENDING")
-                             ];
+                                    (unsigned long) pending,  LOCAL( @"PENDING")
+                                    ];
     
     NSString *countsStringResponded= [NSString stringWithFormat:  @"%lu\r%@",
-                             (unsigned long) responded,  LOCAL( @"RESPONDED")
-                             ];
+                                      (unsigned long) responded,  LOCAL( @"RESPONDED")
+                                      ];
     
     NSString *countsStringVoted= [NSString stringWithFormat:  @"%lu\r%@",
-                             (unsigned long)voted,  LOCAL( @"VOTED")
-                             ];
+                                  (unsigned long)voted,  LOCAL( @"VOTED")
+                                  ];
     _labelWhoPending.attributedText= attributedStringOf(countsStringPending,  kGeomFontSizeHeader);
     _labelWhoResponded.attributedText= attributedStringOf(countsStringResponded,  kGeomFontSizeHeader);
     _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
     
     if  (e.users.count ) {
         if (_viewsForFaces ) {
-        for (UIView* v  in  _viewsForFaces) {
-            [v removeFromSuperview];  
+            for (UIView* v  in  _viewsForFaces) {
+                [v removeFromSuperview];
+            }
+            [self.viewsForFaces removeAllObjects];
         }
-        [self.viewsForFaces removeAllObjects];
-        }
-        self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users,10);
+        NSInteger nBubbles=  ([UIScreen  mainScreen].bounds.size.width -2*kGeomSpaceEdge)/(kGeomFaceBubbleDiameter +kGeomFaceBubbleSpacing);
+        self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users, nBubbles);
         [self doLayout];
     }
 }
@@ -544,6 +546,12 @@
                }];
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [self updateWhoBox];
+    
+}
+
 //------------------------------------------------------------------------------
 // Name:    doLayout
 // Purpose:
@@ -597,8 +605,14 @@
     x+= subBoxWidth;
     _viewVerticalLine2.frame = CGRectMake(x,kGeomStripHeaderHeight/2,1,subBoxHeight-kGeomStripHeaderHeight);
     _labelWhoVoted.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
+
+    _pieHour.frame = CGRectMake(2*boxWidth/3 + boxWidth/6 - kGeomEventCoordinatorPieDiameter/2,
+                               kGeomStripHeaderHeight/2+ kGeomEventCoordinatorBoxHeight/4 - kGeomEventCoordinatorPieDiameter/2,
+                                  kGeomEventCoordinatorPieDiameter, kGeomEventCoordinatorPieDiameter);
+    _pieHour.layer.cornerRadius= kGeomEventCoordinatorPieDiameter/2;
     
-    _labelTime.frame = CGRectMake(2*boxWidth/3,0,boxWidth/3,kGeomEventCoordinatorBoxHeight);
+    _labelTime.frame = CGRectMake(2*boxWidth/3,  kGeomEventCoordinatorBoxHeight/2,
+                                  boxWidth/3, kGeomEventCoordinatorBoxHeight/2);
     _labelMonth.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
     float DAYCELLWIDTH =  floorf((2*boxWidth/3-2*kGeomSpaceEdge)/7 );
     if  (DAYCELLWIDTH> 40 ) {
@@ -643,6 +657,8 @@
     self.viewTodayBubble.frame = CGRectMake(x0+DAYCELLWIDTH*dayNumber,y- (DAYCELLWIDTH-DAYCELLHEIGHT)/2,DAYCELLWIDTH,DAYCELLWIDTH);
     [self.viewContainer3 sendSubviewToBack: self.viewTodayBubble ];
     self.viewTodayBubble.layer.cornerRadius=DAYCELLWIDTH/2;
+    
+    [self.pieHour setHour: getLocalHour(APP.eventBeingEdited.date)];
     
     NSUInteger u= [APP.eventBeingEdited.date timeIntervalSince1970];
     if (dayNumber>0 ) {
@@ -693,11 +709,21 @@
     
     if ( self.viewsForFaces.count) {
         NSUInteger count=self.viewsForFaces.count;
+        NSUInteger totalPeople=  APP.eventBeingEdited.users.count;
         y=subBoxHeight+kGeomEventCoordinatorBoxHeight/6-kGeomFaceBubbleDiameter/2-kGeomStripHeaderHeight/2;
-        x= (boxWidth-count*kGeomFaceBubbleDiameter-(count-1)*kGeomSpaceInter)/2;
+        x= (boxWidth-count*kGeomFaceBubbleDiameter-(count-1)*kGeomFaceBubbleSpacing)/2;
+        NSInteger i= 0;
         for (UIImageView*iv  in self.viewsForFaces) {
-            iv.frame= CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-            x+= kGeomFaceBubbleDiameter+kGeomSpaceInter;
+            
+            if  (i >= _viewsForFaces.count-1  && _viewsForFaces.count < totalPeople  ) {
+                _labelEllipsis.frame=CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
+                iv.frame= CGRectZero;
+            } else {
+                iv.frame= CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
+                _labelEllipsis.frame=CGRectZero;
+            }
+            x+= kGeomFaceBubbleDiameter+kGeomFaceBubbleSpacing;
+            i++;
         }
     }
 }

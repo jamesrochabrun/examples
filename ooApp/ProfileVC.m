@@ -23,6 +23,16 @@
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, assign) ProfileVC *vc;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+
+@property (nonatomic, strong) UIImageView *iv;
+@property (nonatomic, strong) UIButton *buttonFollow;
+@property (nonatomic, strong) UIButton *buttonNewList;
+@property (nonatomic, strong) UILabel *labelUsername;
+@property (nonatomic, strong) UILabel *labelDescription;
+@property (nonatomic, strong) UILabel *labelRestaurants;
+@property (nonatomic, strong) UIButton *buttonNewListIcon;
+@property (nonatomic, assign) float spaceNeededForFirstCell;
+@property (nonatomic, assign) UINavigationController *navigationController;
 @end
 
 @implementation ProfileTableFirstRow
@@ -39,6 +49,9 @@
                                       kGeomFontSizeHeader,BLACK, CLEAR,
                                       self,
                                       @selector (userPressedFollow:), 1);
+        
+        [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
+        
         self.buttonNewList= makeButton(self,  @"NEW LIST",
                                        kGeomFontSizeHeader,BLACK, CLEAR,
                                        self,
@@ -57,6 +70,9 @@
         UserObject *currentUser= [Settings sharedInstance].userObject;
         NSUInteger ownUserIdentifier= [currentUser userID];
         _viewingOwnProfile = _userID == ownUserIdentifier;
+        if ( _viewingOwnProfile) {
+            _buttonFollow.hidden= YES;
+        }
         
         self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
         
@@ -80,6 +96,8 @@
         
         self.backgroundColor = WHITE;
         
+        // Get this user's image.
+        //
         if (_userInfo.imageIdentifier && [_userInfo.imageIdentifier length]) {
             self.requestOperation = [OOAPI getUserImageWithImageID: _userInfo.imageIdentifier
                                                          maxWidth:self.frame.size.width
@@ -94,6 +112,24 @@
             ON_MAIN_THREAD( ^{
                 [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
             });
+        }
+        
+        // Find out if current user is following this user.
+        if  (!_viewingOwnProfile) {
+            self.buttonFollow.selected= NO;
+            __weak ProfileTableFirstRow *weakSelf = self;
+
+            [OOAPI  getFollowersOf: _userID
+                           success:^(NSArray *users) {
+                               for (UserObject* user   in  users) {
+                                   if ( user.userID==ownUserIdentifier) {
+                                       weakSelf.buttonFollow.selected= YES;
+                                       break;
+                                   }
+                               }
+                           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                               NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
+                           }];
         }
     }
     return self;
@@ -157,12 +193,18 @@
         return;
     }
     
+    __weak ProfileTableFirstRow *weakSelf = self;
     [OOAPI setFollowingUser:_userInfo
-                         to:YES
+                         to: !weakSelf.buttonFollow.selected
                     success:^(id responseObject) {
-                        NSLog (@"SUCCESSFULLY FOLLOWED USER");
+                        weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected;
+                       if (weakSelf.buttonFollow.selected ) {
+                           NSLog (@"SUCCESSFULLY FOLLOWED USER");
+                       } else {
+                           NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
+                       }
                     } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                        NSLog (@"FAILED TO FOLLOW USER");
+                        NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
                     }];
 }
 
@@ -238,6 +280,13 @@
     return self.spaceNeededForFirstCell;
 }
 
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    _buttonFollow.hidden= NO;
+
+}
 @end
 
 //==============================================================================

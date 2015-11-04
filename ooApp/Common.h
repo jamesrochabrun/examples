@@ -66,6 +66,7 @@ extern NSString* expressLocalTime(NSDate* date);
 extern NSString* expressLocalMonth(NSDate* date);
 extern NSInteger getLocalDayNumber (NSDate*);
 extern NSInteger getLocalDayOfMonth (NSDate* date);
+extern NSInteger getLocalHour (NSDate* date);
 
 static inline BOOL is_reachable(void) {
 	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;

@@ -302,7 +302,6 @@
     [[LocationManager sharedInstance] askUserWhetherToTrack];
 
     UserObject* userInfo = [Settings sharedInstance].userObject;
-    NSString* requestString = [NSString stringWithFormat:@"https://%@/users/emails/%@", kOOURL, email];
    
     //---------------------------------------------------
     // RULE: If the day has changed, we will need to request
@@ -317,40 +316,34 @@
         [[Settings sharedInstance] saveDateString: dateString];
     }
 
-    //---------------------------------------------------
-    // RULE:  If we have the email address but not the
-    // authorization token, we will need to request the token.
-    //
-    NSString *backendToken= userInfo.backendAuthorizationToken;
     BOOL seekingToken= NO;
+    NSString* requestString = nil;
+ 
+    //---------------------------------------------------
+    // RULE: Always request the backend token, just in case
+    // it changed on a different device  i.e. the user
+    // forgot to delete the app after we instituted
+    // the new rule that all devices get the same token.
     
-//**** NOTE: These logic does not allow the client to "edit" data if the token gets out of sync. This happens very easily
-// when two devices with the same email address are used. 
+    NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
+    NSString* md5= [ saltedString MD5String];
+    md5 = [md5 lowercaseString];
+    seekingToken= YES;
     
-//    if ((isFirstRun || newDay || !backendToken || !backendToken.length) && email && email.length) {
-    if (!backendToken) {
-        
-        NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
-        NSString* md5= [ saltedString MD5String];
-        md5 = [md5 lowercaseString];
-        seekingToken= YES;
-        
-        requestString = [NSString stringWithFormat:  @"https://%@/users?needtoken=%@&device=%@", kOOURL, md5,
-                         [Settings sharedInstance].uniqueDeviceKey
-                         ];
-        
-        // NOTE:  this may be helpful if we need to identify the reason
-        //  why the new authorization token is being requested.
-        //
-        requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString, newDay ? 1 : 0];
-    }
-
+    requestString = [NSString stringWithFormat:  @"https://%@/users?needtoken=%@&device=%@", kOOURL, md5,
+                     [Settings sharedInstance].uniqueDeviceKey
+                     ];
+    
+    // NOTE:  this may be helpful if we need to identify the reason
+    //  why the new authorization token is being requested.
+    //
+    requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString,/*newDay ? 1 : */ 0];
     isFirstRun= NO;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     NSString*  facebookID = facebookToken.userID;
     __weak LoginVC *weakSelf= self;
-        
+    
     [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
                                          success:^void(id   result) {

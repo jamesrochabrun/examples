@@ -784,17 +784,20 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following/%lu", [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
     
     AFHTTPRequestOperation *op;
     if (following) {
-        op = [rm PUT: urlString parameters:nil
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following", [OOAPI URL], (unsigned long)selfUserID];
+        op = [rm POST: urlString parameters: @{
+                                               @"user_id": @(otherUserID)
+                                              }
              success:^(id responseObject) {
                  success(responseObject);
              } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
                  failure(operation, error);
              }];
     } else {
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following/%lu", [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
         op = [rm DELETE: urlString parameters:nil
                 success:^(id responseObject) {
                     success(responseObject);
@@ -1333,19 +1336,13 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getFollowersWithSuccess
+// Name:    getFollowers…
 // Purpose: Fetch an array of users that are following the current user.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getFollowersWithSuccess:(void (^)(NSArray *users))success
-                                            failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getFollowersOf: (unsigned long)userid
+                                   success:(void (^)(NSArray *users))success
+                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
 {
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userid= userInfo.userID;
-    if (!userid) {
-        failure(nil,nil);
-        return nil;
-    }
-    
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/followers", [OOAPI URL], (unsigned long)userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
