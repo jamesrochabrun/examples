@@ -11,10 +11,9 @@
 {
     self = [super init];
     if (self) {
-        self.backgroundColor= WHITE;
-        self.opaque= YES;
+        self.backgroundColor= CLEAR;
         self.layer.borderColor= BLACK.CGColor;
-        self.layer.borderWidth= 2;
+        self.layer.borderWidth= 1;
     }
     return self;
     
@@ -23,13 +22,21 @@
 - (void)drawRect: (CGRect) rect
 {
     [ super  drawRect: rect];
+
     float w= self.frame.size.width;
     float h= self.frame.size.height;
+    float  radius= w/2;
+    
+    self.layer.cornerRadius= radius;
     
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetRGBStrokeColor (context, 0,0,0, 0);
+    
+    CGContextBeginPath (context);
+    CGContextSetRGBFillColor (context, 1,1,0, 1);
+    CGContextAddArc (context, w/2, h/2, radius, 0, M_PI*2, YES);
+    CGContextClosePath(context);
+    CGContextFillPath(context);
 
-    float  radius= w/2;
     CGContextBeginPath (context);
     CGContextMoveToPoint (context, w/2,h/2);
     CGContextAddLineToPoint (context, w/2,0);

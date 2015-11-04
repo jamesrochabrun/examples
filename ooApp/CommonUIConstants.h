@@ -85,7 +85,7 @@ static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 static CGFloat kGeomHeightFilterSelectedLine = 3.0;
 static CGFloat kGeomHeightSearchBar = 55;
 static CGFloat kGeomEventCoordinatorBoxHeight = 114;
-static CGFloat kGeomEventCoordinatorPieDiameter = 40;
+static CGFloat kGeomEventCoordinatorPieDiameter = 33;
 static CGFloat kGeomEventParticipantFirstBoxHeight = 170;
 static CGFloat kGeomEventParticipantRestaurantHeight = 92;
 static CGFloat kGeomEventParticipantSeparatorHeight = 6;
@@ -93,6 +93,8 @@ static CGFloat kGeomHeightEventCellHeight = 160.0;
 static CGFloat kGeomFaceBubbleDiameter = 26;
 static CGFloat kGeomFaceBubbleSpacing = 5;
 static CGFloat kGeomStripHeaderHeight = 27;
+static CGFloat kGeomEventCoordinatorRestaurantHeight=  114;
+static CGFloat kGeomEventCoordinatorBoxHeightTopmost = 230;
 
 // Images
 extern NSString *const kImageNoProfileImage;

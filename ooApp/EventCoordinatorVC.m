@@ -57,7 +57,6 @@
 @property (nonatomic,strong)  UILabel *labelDate5;
 @property (nonatomic,strong)  UILabel *labelDate6;
 @property (nonatomic,strong) UIView* viewTodayBubble;
-@property (nonatomic,strong)  UILabel *labelDayOfWeek;
 @property (nonatomic,strong) UIView* viewhorizontalLine;
 @property (nonatomic,strong) PieView *pieHour;
 @property (nonatomic,strong)  UIView *viewContainer4;
@@ -181,8 +180,10 @@
     
     self.labelTime= makeLabel(self.viewContainer3,  @"", 18);
     self.labelTime.font= [UIFont  fontWithName: @"Lato-Bold" size:18];
+    
     self.pieHour= [[PieView alloc] init];
     [self.viewContainer3  addSubview: _pieHour];
+    
     self.labelDay0= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
     self.labelDay1= makeLabel(self.viewContainer3,  @"M", kGeomFontSizeHeader);
     self.labelDay2= makeLabel(self.viewContainer3,  @"T", kGeomFontSizeHeader);
@@ -190,6 +191,21 @@
     self.labelDay4= makeLabel(self.viewContainer3,  @"R", kGeomFontSizeHeader);
     self.labelDay5= makeLabel(self.viewContainer3,  @"F", kGeomFontSizeHeader);
     self.labelDay6= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
+    _labelDay0.textColor= UIColorRGB(0xff808080);
+    _labelDay1.textColor= UIColorRGB(0xff808080);
+    _labelDay2.textColor= UIColorRGB(0xff808080);
+    _labelDay3.textColor= UIColorRGB(0xff808080);
+    _labelDay4.textColor= UIColorRGB(0xff808080);
+    _labelDay5.textColor= UIColorRGB(0xff808080);
+    _labelDay6.textColor= UIColorRGB(0xff808080);
+    
+    self.labelDate0.textColor= BLACK;
+    self.labelDate1.textColor= BLACK;
+    self.labelDate2.textColor= BLACK;
+    self.labelDate3.textColor= BLACK;
+    self.labelDate4.textColor= BLACK;
+    self.labelDate5.textColor= BLACK;
+    self.labelDate6.textColor= BLACK;
     
     self.labelDate0= makeLabel(self.viewContainer3,  @"10", kGeomFontSizeHeader);
     self.labelDate1= makeLabel(self.viewContainer3,  @"11", kGeomFontSizeHeader);
@@ -199,11 +215,13 @@
     self.labelDate5= makeLabel(self.viewContainer3,  @"15", kGeomFontSizeHeader);
     self.labelDate6= makeLabel(self.viewContainer3,  @"16", kGeomFontSizeHeader);
     self.viewTodayBubble= makeView(self.viewContainer3, BLACK);
-    
-    self.labelMonth= makeLabel(self.viewContainer3,  @"month", 18);
-    self.viewhorizontalLine=makeView(self.viewContainer3, GRAY);
-    self.labelDayOfWeek=makeLabel(self.viewContainer3,  @"day of week", 18);
 
+    self.labelMonth= makeLabel(self.viewContainer3,  @"month", 18);
+    _labelMonth.font= [UIFont  fontWithName: @"Lato-Bold" size:kGeomFontSizeHeader];
+    
+    self.viewhorizontalLine=makeView(self.viewContainer3, GRAY);
+    _viewhorizontalLine.backgroundColor= UIColorRGB(0xff808080);
+    
     self.headerWho= [[OOStripHeader alloc] init];
     self.headerWhen= [[OOStripHeader alloc] init];
     self.headerWhere= [[OOStripHeader alloc] init];
@@ -563,14 +581,12 @@
     float vspacing= 25;
 
     _scrollView.frame=  self.view.bounds;
-#define kGeomEventCoordinatorRestaurantHeight 114
-#define kGeomEventCoordinatorBoxHeight0 230
     float boxWidth=w-2*margin;
     
     float x=  margin, y=  margin;
-    _viewContainer1.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight0);
-    _imageViewContainer1.frame= CGRectMake(0, 0, boxWidth, kGeomEventCoordinatorBoxHeight0);
-    y += kGeomEventCoordinatorBoxHeight0 + vspacing;
+    _viewContainer1.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeightTopmost);
+    _imageViewContainer1.frame= CGRectMake(0, 0, boxWidth, kGeomEventCoordinatorBoxHeightTopmost);
+    y += kGeomEventCoordinatorBoxHeightTopmost + vspacing;
     
     _viewContainer2.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
     self.headerWho.frame= CGRectMake(x, y-13, boxWidth, 27);
@@ -609,55 +625,57 @@
     _pieHour.frame = CGRectMake(2*boxWidth/3 + boxWidth/6 - kGeomEventCoordinatorPieDiameter/2,
                                kGeomStripHeaderHeight/2+ kGeomEventCoordinatorBoxHeight/4 - kGeomEventCoordinatorPieDiameter/2,
                                   kGeomEventCoordinatorPieDiameter, kGeomEventCoordinatorPieDiameter);
-    _pieHour.layer.cornerRadius= kGeomEventCoordinatorPieDiameter/2;
-    
+
     _labelTime.frame = CGRectMake(2*boxWidth/3,  kGeomEventCoordinatorBoxHeight/2,
                                   boxWidth/3, kGeomEventCoordinatorBoxHeight/2);
     _labelMonth.frame = CGRectMake(0,0,boxWidth,kGeomEventCoordinatorBoxHeight);
-    float DAYCELLWIDTH =  floorf((2*boxWidth/3-2*kGeomSpaceEdge)/7 );
-    if  (DAYCELLWIDTH> 40 ) {
-        DAYCELLWIDTH= 40;
+    float dayCellWidth =  floorf((2*boxWidth/3-2*kGeomSpaceEdge)/7 );
+    if  (dayCellWidth> 40 ) {
+        dayCellWidth= 40;
     }
-    float DAYCELLHEIGHT=  floorf((kGeomEventCoordinatorBoxHeight-kGeomStripHeaderHeight/2-2*kGeomSpaceEdge)/3);
-    float requiredWidth= DAYCELLWIDTH * 7;
+    float dayCellHeight=  floorf((kGeomEventCoordinatorBoxHeight-kGeomStripHeaderHeight/2-2*kGeomSpaceEdge)/3);
+    float requiredWidth= dayCellWidth * 7;
     float x0=  (2*boxWidth/3 - requiredWidth)/2;
     x=x0;
     y= kGeomStripHeaderHeight/2;
 
-    self.labelMonth.frame = CGRectMake(x0,y,requiredWidth,DAYCELLHEIGHT);
-    y+= DAYCELLHEIGHT;
+    self.labelMonth.frame = CGRectMake(x0,y,requiredWidth,dayCellHeight);
+    y+= dayCellHeight;
     self.viewhorizontalLine.frame = CGRectMake(x0,y,requiredWidth,1);
     y += 5;
-    self.labelDay0.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDay1.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDay2.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDay3.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDay4.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDay5.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDay6.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT);
+    self.labelDay0.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDay1.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDay2.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDay3.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDay4.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDay5.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDay6.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight);
     x=x0;
-    y+= DAYCELLHEIGHT;
-    self.labelDate0.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDate1.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDate2.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDate3.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDate4.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDate5.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT); x += DAYCELLWIDTH;
-    self.labelDate6.frame = CGRectMake(x,y,DAYCELLWIDTH,DAYCELLHEIGHT);
-    
-    self.labelDate0.textColor= BLACK;
-    self.labelDate1.textColor= BLACK;
-    self.labelDate2.textColor= BLACK;
-    self.labelDate3.textColor= BLACK;
-    self.labelDate4.textColor= BLACK;
-    self.labelDate5.textColor= BLACK;
-    self.labelDate6.textColor= BLACK;
+    y+= dayCellHeight;
+    self.labelDate0.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDate1.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDate2.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDate3.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDate4.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDate5.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
+    self.labelDate6.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight);
     
     NSInteger dayNumber= getLocalDayNumber(APP.eventBeingEdited.date);
-    self.viewTodayBubble.frame = CGRectMake(x0+DAYCELLWIDTH*dayNumber,y- (DAYCELLWIDTH-DAYCELLHEIGHT)/2,DAYCELLWIDTH,DAYCELLWIDTH);
+    const float bubbleDiameter=dayCellWidth-5;
+    self.viewTodayBubble.frame = CGRectMake(0,0,bubbleDiameter,bubbleDiameter);
     [self.viewContainer3 sendSubviewToBack: self.viewTodayBubble ];
-    self.viewTodayBubble.layer.cornerRadius=DAYCELLWIDTH/2;
-    
+    _viewTodayBubble.layer.cornerRadius= bubbleDiameter/2;
+    switch (dayNumber) {
+        case 0:[_viewTodayBubble setCenter:_labelDate0.center];  break;
+        case 1:[_viewTodayBubble setCenter:_labelDate1.center];  break;
+        case 2:[_viewTodayBubble setCenter:_labelDate2.center];  break;
+        case 3:[_viewTodayBubble setCenter:_labelDate3.center];  break;
+        case 4:[_viewTodayBubble setCenter:_labelDate4.center];  break;
+        case 5:[_viewTodayBubble setCenter:_labelDate5.center];  break;
+        case 6:[_viewTodayBubble setCenter:_labelDate6.center];  break;
+
+    }
+
     [self.pieHour setHour: getLocalHour(APP.eventBeingEdited.date)];
     
     NSUInteger u= [APP.eventBeingEdited.date timeIntervalSince1970];
