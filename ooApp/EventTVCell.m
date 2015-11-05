@@ -123,7 +123,7 @@
     
     CGFloat w = width(self);
     CGFloat h = height(self);
-    const float lowerGradientHeight =  7;
+    const float lowerGradientHeight =  8;
     float thumbHeight,y;
     
     _nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);

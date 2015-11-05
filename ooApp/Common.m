@@ -136,6 +136,7 @@ UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
     if ( fontSize >0) {
         l.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
     }
+    l.lineBreakMode= NSLineBreakByWordWrapping;
     return l;
 }
 

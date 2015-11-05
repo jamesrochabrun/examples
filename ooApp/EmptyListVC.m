@@ -36,7 +36,9 @@
     ENTRY;
     [super viewDidLoad];
     
-    self.view.backgroundColor= WHITE;
+    self.view.backgroundColor= WHITE;    
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
     
     self.buttonLists= makeButton( self.view, LOCAL(@"LISTS") , kGeomFontSizeHeader,
                                  BLACK, CLEAR, self,

@@ -106,10 +106,11 @@
     self.navTitle = nto;
     
     self.view.backgroundColor= [UIColor lightGrayColor];
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
+    
     _scrollView= makeScrollView(self.view, self);
     [_scrollView setCanCancelContentTouches:YES];
-    
-    self.automaticallyAdjustsScrollViewInsets= NO;
     
     UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
     UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];

@@ -10,8 +10,7 @@
 #import "UserObject.h"
 #import <GoogleMaps/GoogleMaps.h>
 
-@interface UserTVCell : ObjectTVCell
+@interface UserTVCell : UITableViewCell
 
-@property (nonatomic, strong) UserObject *userInfo;
-
+- (void)setUser:(UserObject *)user;
 @end

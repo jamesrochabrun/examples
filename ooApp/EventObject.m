@@ -196,7 +196,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                          toEvent:self
                          success:^(id response) {
                              NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
-                             message( @"Added.");
+//                             message( @"Added.");6
                          } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                              NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
                              [_venues removeObject: venue];

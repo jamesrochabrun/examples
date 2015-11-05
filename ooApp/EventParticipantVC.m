@@ -428,7 +428,10 @@
     
     self.navigationController.navigationItem.rightBarButtonItem= nil;
     
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= [UIColor lightGrayColor];
+    
     _table= makeTable( self.view,  self);
 #define TABLE_REUSE_IDENTIFIER  @"participantsCell"  
 #define TABLE_REUSE_FIRST_IDENTIFIER @"participantsCell1st"

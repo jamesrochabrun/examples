@@ -223,6 +223,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
     self.setOfPotentialParticipants= [NSMutableOrderedSet new];

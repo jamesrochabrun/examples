@@ -47,6 +47,8 @@
     self.navTitle = nto;
     
     self.view.backgroundColor= UIColorRGB(0xfff0f0f0);
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
     
     self.buttonEventDate=makeButton(self.view, @"Press here to set.", kGeomFontSizeHeader,  BLACK, CLEAR,
                                     self, @selector(userPressedUpperButton:), 0);
