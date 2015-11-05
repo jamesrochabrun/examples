@@ -40,7 +40,7 @@
 @property (nonatomic, strong) NSArray *tableSectionNames;
 
 @property (nonatomic, assign) BOOL doingTransition, didGetInitialResponse;
-
+@property (nonatomic,strong)  NSTimer *refreshTimer;
 @end
 
 @implementation EventsListVC
@@ -95,81 +95,96 @@
 {
     [super viewWillAppear:animated];
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userid= userInfo.userID;
-    
     // RULE:  only re-fetch if it's the first time, or if the user altered an event.
     // XX:  need to add timer to periodically refresh the list.
     
     EventObject*e=APP.eventBeingEdited;
     BOOL currentEventWasAltered= e.hasBeenAltered;
+    BOOL didRefresh= NO;
     if  (!self.didGetInitialResponse || currentEventWasAltered) {
-        
-        __weak EventsListVC *weakSelf = self;
-#if 0
-        [OOAPI getCuratedEventsWithSuccess:^(NSArray *events) {
-            NSLog  (@"CURATED EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
-            
-            NSMutableArray * curated= [NSMutableArray new];
-            
-            for (EventObject* eo in events) {
-                if  (![eo isKindOfClass:[EventObject class]]) {
-                    continue;
-                }
-                
-                if ( eo.eventType==EVENT_TYPE_CURATED &&  eo.isComplete) {
-                    [  curated  addObject: eo];
-                }
-            }
-            self.curatedEventsArray=  curated;
-            
-            ON_MAIN_THREAD(^(){
-                [weakSelf.table  reloadData];
-            });
-            
-        }
-                                   failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                                       NSLog  (@"EVENT FETCHING FAILED  %@",e);
-                                   }
-         ];
-#endif
-        
-        [OOAPI getEventsForUser:userid  success:^(NSArray *events) {
-            NSLog  (@"YOUR EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
-            
-            NSMutableArray *your= [NSMutableArray new];
-            NSMutableArray *incomplete= [NSMutableArray new];
-            
-            for (EventObject *eo in events) {
-                if  (![eo isKindOfClass:[EventObject class]]) {
-                    continue;
-                }
-                
-                if ( eo.eventType==EVENT_TYPE_USER) {
-                    if ( eo.isComplete) {
-                        [  your  addObject: eo];
-                    } else {
-                        [  incomplete  addObject: eo];
-                    }
-                }
-            }
-            
-            @synchronized(weakSelf.yourEventsArray) {
-                weakSelf.yourEventsArray= your;
-                weakSelf.incompleteEventsArray= incomplete;
-            }
-            
-            weakSelf.didGetInitialResponse= YES;
-            
-            ON_MAIN_THREAD(^(){
-                [weakSelf.table  reloadData];
-            });
-        }
-                        failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                            NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
-                        }
-         ];
+        [self refetchEvents];
+        didRefresh=YES;
     }
+    
+    [self performSelector:@selector(startRefreshTimer)  withObject:nil afterDelay:30];
+}
+
+- (void)startRefreshTimer
+{
+    self.refreshTimer=[NSTimer scheduledTimerWithTimeInterval:60
+                                                       target:self
+                                                     selector:@selector(refetchEvents)
+                                                     userInfo:nil repeats:YES];
+}
+
+- (void)refetchEvents
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSUInteger userid= userInfo.userID;
+    __weak EventsListVC *weakSelf = self;
+
+    [OOAPI getCuratedEventsWithSuccess:^(NSArray *events) {
+        NSLog  (@"CURATED EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
+        
+        NSMutableArray * curated= [NSMutableArray new];
+        
+        for (EventObject* eo in events) {
+            if  (![eo isKindOfClass:[EventObject class]]) {
+                continue;
+            }
+            
+            if ( eo.eventType==EVENT_TYPE_CURATED &&  eo.isComplete) {
+                [  curated  addObject: eo];
+            }
+        }
+        self.curatedEventsArray=  curated;
+        
+        ON_MAIN_THREAD(^(){
+            [weakSelf.table  reloadData];
+        });
+        
+    }
+                               failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                   NSLog  (@"EVENT FETCHING FAILED  %@",e);
+                               }
+     ];
+    
+    [OOAPI getEventsForUser:userid  success:^(NSArray *events) {
+        NSLog  (@"YOUR EVENTS FETCH SUCCEEDED %lu", ( unsigned long) events.count);
+        
+        NSMutableArray *your= [NSMutableArray new];
+        NSMutableArray *incomplete= [NSMutableArray new];
+        
+        for (EventObject *eo in events) {
+            if  (![eo isKindOfClass:[EventObject class]]) {
+                continue;
+            }
+            
+            if ( eo.eventType==EVENT_TYPE_USER) {
+                if ( eo.isComplete) {
+                    [  your  addObject: eo];
+                } else {
+                    [  incomplete  addObject: eo];
+                }
+            }
+        }
+        
+        @synchronized(weakSelf.yourEventsArray) {
+            weakSelf.yourEventsArray= your;
+            weakSelf.incompleteEventsArray= incomplete;
+        }
+        
+        weakSelf.didGetInitialResponse= YES;
+        
+        ON_MAIN_THREAD(^(){
+            [weakSelf.table  reloadData];
+        });
+    }
+                    failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                        NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
+                    }
+     ];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -179,6 +194,9 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    
+    [self.refreshTimer invalidate];
+    self.refreshTimer= nil;
 }
 
 //------------------------------------------------------------------------------
@@ -334,6 +352,112 @@
     return kGeomHeightEventCellHeight + extraSpaceForFirstRow;
 }
 
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    NSInteger section= indexPath.section;
+    NSInteger row = indexPath.row;
+    @synchronized(_yourEventsArray) {
+        
+        NSArray *events= nil;
+        switch (section) {
+            case 0:
+                events = _yourEventsArray;
+                break;
+            case 1:
+                events = _incompleteEventsArray;
+                break;
+            case 2:
+                events = _curatedEventsArray;
+                // RULE: No one can delete curated events.
+                return nil;
+        }
+        
+        EventObject* event= events[ row];
+        __weak EventsListVC *weakSelf = self;
+        switch ( event.currentUserCanEdit) {
+            case EVENT_USER_CAN_EDIT: {
+                // RULE: If the user is the coordinator then they can delete the event.
+                UITableViewRowAction *deleteAction =
+                [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault
+                                                   title:@"Delete"
+                                                 handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
+                                                     [weakSelf verifyDeletionOfEvent: event];
+                                                 }];
+                deleteAction.backgroundColor = RED;
+                return @[deleteAction];
+            }
+                break;
+                
+            case EVENT_USER_CANNOT_EDIT:  {
+                // RULE: If the user is not the coordinator then they can only be removed from the event.
+                UITableViewRowAction *leaveAction =
+                [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault
+                                                   title:@"Leave"
+                                                 handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
+                                                     [weakSelf leaveEvent: event];
+                                                 }];
+                leaveAction.backgroundColor = BLUE;
+                return @[leaveAction];
+            }
+                break;
+                
+            default:
+                break;
+        }
+        
+    }
+    
+    return nil;
+}
+
+- (void) verifyDeletionOfEvent:(EventObject*)event
+{
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really delete?")
+                                                              message:nil
+                                                       preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [self deleteEvent: event ];
+                                                 }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [self presentViewController:a animated:YES completion:nil];
+}
+
+- (void)deleteEvent: (EventObject*)event
+{
+    __weak EventsListVC *weakSelf = self;
+    [OOAPI deleteEvent: event.eventID
+               success:^{
+                   [weakSelf refetchEvents ];
+               }
+               failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                   message( @"Failed to delete event.");
+                   NSLog (@"FAILED TO DELETE EVENT %@",error);
+               }];
+    
+}
+
+- (void)leaveEvent:(EventObject*)event
+{
+     __weak EventsListVC *weakSelf = self;
+     UserObject* currentUser= [Settings sharedInstance].userObject;
+    [OOAPI setParticipationOf: currentUser
+                      inEvent: event
+                           to:NO
+                      success:^(NSInteger eventID) {
+                          [weakSelf refetchEvents ];
+                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          NSLog (@"FAILED TO LEAVE EVENT %@",error);
+                      }];
+}
+
 //------------------------------------------------------------------------------
 // Name:    didSelectRowAtIndexPath
 // Purpose:
@@ -395,10 +519,11 @@
                                             
                                               NSDate *now= [NSDate date];
                                               NSDate *end= event.dateWhenVotingClosed;
+                                              BOOL isSubmitted = event.isComplete;
                                               BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
                                               
 //                                              allowed=0;
-                                              if (allowed && !votingIsDone) {
+                                              if (!isSubmitted && allowed && !votingIsDone) {
                                                   NSLog(@"EDITING ALLOWED");
                                                   
                                                   APP.eventBeingEdited= event;

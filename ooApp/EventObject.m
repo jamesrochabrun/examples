@@ -95,6 +95,21 @@ NSString *const kKeyEventMediaItem = @"media_item";
             NSLog  (@"EVENT INCLUDED MEDIA ITEM FOR %@",e.name);
             e.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
         }
+        
+        // RULE: As early as possible find out whether the current user can edit this event.
+        __weak EventObject *weakEvent = e;
+        [OOAPI determineIfCurrentUserCanEditEvent: e
+                                          success:^(bool allowed) {
+                                              if  (allowed ) {
+                                                  weakEvent.currentUserCanEdit= EVENT_USER_CAN_EDIT;
+                                              } else {
+                                                  weakEvent.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
+                                              }
+                                          } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                              
+                                              NSLog ( @"Unable to contact the cloud.");
+                                          }];
+        
     }
     return e;
 }
