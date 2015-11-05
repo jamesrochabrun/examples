@@ -56,6 +56,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>akamaihd.net</key>
@@ -86,7 +88,7 @@
 	<key>NSLocationUsageDescription</key>
 	<string>Hey Kevin et al, what do we want to have here?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Hey Kevin et al, what do we want to say here?</string>
+	<string>Oomami uses your location to find the best restaurants and events near you.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>oomami-icons.ttf</string>

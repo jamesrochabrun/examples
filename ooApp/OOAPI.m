@@ -141,6 +141,40 @@ NSString *const kKeySearchFilter = @"filter";
     }];
 }
 
+- (AFHTTPRequestOperation *)getRestaurantImageWithMediaItem:(MediaItemObject *)mediaItem
+                                                  maxWidth:(NSUInteger)maxWidth
+                                                 maxHeight:(NSUInteger)maxHeight
+                                                   success:(void (^)(NSString *link))success
+                                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (maxWidth) {
+        maxWidth = (isRetinaDisplay()) ? 2*maxWidth:maxWidth;
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)maxWidth] forKey:@"maxwidth"];
+    } else if (maxHeight) {
+        maxHeight = (isRetinaDisplay()) ? 2*maxHeight:maxHeight;
+        [parameters setObject:[NSString stringWithFormat:@"%lu", ( unsigned long) maxWidth] forKey:@"maxHeight"];
+    }
+    
+    if (mediaItem.reference && mediaItem.source == 2) {
+        [parameters setObject:mediaItem.reference forKey:@"reference"];
+    } else if (mediaItem.url && mediaItem.source == 1) {
+        success(mediaItem.url);
+        return nil;
+    }
+
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
+        success([responseObject objectForKey:@"link"]);
+    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
 //------------------------------------------------------------------------------
 // Name:    getRestaurantsWithKeyword andLocation
 // Purpose:
@@ -954,6 +988,46 @@ NSString *const kKeySearchFilter = @"filter";
           }];
     
     return op;
+}
+
+
+//------------------------------------------------------------------------------
+// Name:    uploadUserPhoto
+// Purpose: This is the native approach.
+//------------------------------------------------------------------------------
++ (void)uploadPhoto:(UIImage *)image
+      forRestaurant:(RestaurantObject *)restaurant
+                success:(void (^)(void))success
+                failure:(void (^)( NSError *error))failure;
+{
+    if (!image || !restaurant) {
+        failure(nil);
+        return ;
+    }
+    
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+    
+    NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
+    NSLog(@"img size = %ld bytes",[imageData length]);
+    
+    NSDictionary *parameters = @{@"restaurant_id": [NSString stringWithFormat:@"%lu", restaurant.restaurantID]};
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm POST:[NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], userID] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFileData:imageData name:@"upload" fileName:@"photo.png" mimeType:@"image/png"];
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Success: %@ ***** %@", operation.responseString, responseObject);
+        success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@ ***** %@", operation.responseString, error);
+        failure(error);
+    }];
+    [op start];
 }
 
 

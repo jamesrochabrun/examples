@@ -53,6 +53,12 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                    success:(void (^)(NSString *imageRefs))success
                                                    failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
 
+- (AFHTTPRequestOperation *)getRestaurantImageWithMediaItem:(MediaItemObject *)mediaItem
+                                                  maxWidth:(NSUInteger)maxWidth
+                                                 maxHeight:(NSUInteger)maxHeight
+                                                   success:(void (^)(NSString *imageRefs))success
+                                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+
 - (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
                                      success:(void (^)(NSArray *lists))success
                                      failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
@@ -132,6 +138,11 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (void)uploadUserPhoto:(UIImage *)image
                 success:(void (^)(void))success
                 failure:(void (^)(NSError *error))failure;
+
++ (void)uploadPhoto:(UIImage *)image
+      forRestaurant:(RestaurantObject *)restaurant
+            success:(void (^)(void))success
+            failure:(void (^)( NSError *error))failure;
 
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                    success:(void (^)(BOOL))success

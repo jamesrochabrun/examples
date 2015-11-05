@@ -10,9 +10,11 @@
 
 NSString *const kKeyMediaItemReference = @"reference";
 NSString *const kKeyMediaItemType = @"type";
+NSString *const kKeyMediaItemSource = @"source";
 NSString *const kKeyMediaItemID = @"media_item_id";
 NSString *const kKeyMediaItemHeight = @"height";
 NSString *const kKeyMediaItemWidth = @"width";
+NSString *const kKeyMediaItemURL = @"url";
 
 @implementation MediaItemObject
 
@@ -22,10 +24,12 @@ NSString *const kKeyMediaItemWidth = @"width";
     }
     MediaItemObject *mio = [[MediaItemObject alloc] init];
     mio.mediaItemId = [dict objectForKey:kKeyMediaItemID];
-    mio.type = [dict objectForKey:kKeyMediaItemType];
+    mio.type = [dict[kKeyMediaItemType] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemType] unsignedIntegerValue];
+    mio.source = [dict[kKeyMediaItemSource] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemSource] unsignedIntegerValue];
     mio.reference = [dict objectForKey:kKeyMediaItemReference];
     mio.height = [dict[kKeyMediaItemHeight] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemHeight] floatValue];
     mio.width = [dict[kKeyMediaItemWidth] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemWidth] floatValue]; 
+    mio.url = [dict objectForKey:kKeyMediaItemURL];
     return mio;
 }
 

@@ -58,7 +58,7 @@
         _imageOverlay.backgroundColor = UIColorRGBA(kColorOverlay35);
         [_backgroundImage addSubview:_imageOverlay];
         _imageOverlay.translatesAutoresizingMaskIntoConstraints = NO;
-
+        
         _verticalLine1 = [[UIView alloc] init];
         _verticalLine2 = [[UIView alloc] init];
         _verticalLine3 = [[UIView alloc] init];
@@ -484,25 +484,51 @@
     [_favoriteButton setSelected:on];
 }
 
+- (void)prepareForReuse {
+}
+
 - (void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) return;
     _mediaItemObject = mediaItemObject;
-    OOAPI *api = [[OOAPI alloc] init];
     
-    NSString *imageRef = mediaItemObject.reference;
-
-    if (imageRef) {
-        _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
-                [self setNeedsUpdateConstraints];
-            });
-        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
-            ;
-        }];
-    } else {
-        
+    if (!_mediaItemObject) {
+        _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
+        [self setNeedsUpdateConstraints];
+        [self setNeedsLayout];
+        return;
     }
+    OOAPI *api = [[OOAPI alloc] init];
+
+    __weak UIImageView *weakIV = _backgroundImage;
+    __weak RestaurantMainCVCell *weakSelf = self;
+    
+    _requestOperation = [api getRestaurantImageWithMediaItem:mediaItemObject maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                    placeholderImage:nil
+                                             success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                                 ON_MAIN_THREAD(^ {
+                                                     weakIV.image = image;
+                                                     
+                                                     [weakSelf setNeedsUpdateConstraints];
+                                                     [weakSelf setNeedsLayout];
+                                                 });
+                                             }
+                                             failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                                 ON_MAIN_THREAD(^ {
+                                                     weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
+                                                     [weakSelf setNeedsUpdateConstraints];
+                                                     [weakSelf setNeedsLayout];
+                                                 });
+                                             }];
+        });
+    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+        ON_MAIN_THREAD(^ {
+            weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
+            [weakSelf setNeedsUpdateConstraints];
+            [weakSelf setNeedsLayout];
+        });
+    }];
 }
 
 @end

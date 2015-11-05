@@ -11,8 +11,10 @@
 @interface MediaItemObject : NSObject
 
 @property (nonatomic, strong) NSString *reference;
-@property (nonatomic, strong) NSString *type;
+@property (nonatomic) NSUInteger type;
+@property (nonatomic) NSUInteger source;
 @property (nonatomic, strong) NSString *mediaItemId;
+@property (nonatomic, strong) NSString *url;
 @property (nonatomic) CGFloat width;
 @property (nonatomic) CGFloat height;
 

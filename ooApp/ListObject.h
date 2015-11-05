@@ -20,6 +20,7 @@ typedef enum {
 } ListType;
 
 extern NSString *const kKeyListID;
+extern NSString *const kKeyUserID;
 extern NSString *const kKeyListName;
 extern NSString *const kKeyListType;
 extern NSString *const kKeyListMediaItem;
@@ -32,6 +33,7 @@ extern NSString *const kKeyListNumRestaurants;
 @interface ListObject : NSObject
 
 @property (nonatomic) NSUInteger listID;
+@property (nonatomic) NSUInteger userID;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) NSInteger type;
 @property (nonatomic, strong) NSString *imageURL;

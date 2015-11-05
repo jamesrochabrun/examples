@@ -482,9 +482,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             cvc.delegate = self;
             [cvc setToTry:(_toTryID) ? YES: NO];
             [cvc setFavorite:(_favoriteID) ? YES: NO];
-            if ([_mediaItems count]) {
-                cvc.mediaItemObject = [_mediaItems objectAtIndex:0];
-            }
+            cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
+
             return cvc;
             break;
         }
@@ -546,16 +545,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         OOStripHeader *header = [[OOStripHeader alloc] init];
         header.frame = CGRectMake(0, 0, width(self.view), 27);
         header.name = @"PHOTOS";
-        [header enableAddButtonWithTarget:self action:@selector(addPhoto)];
+        [header enableAddButtonWithTarget:self action:@selector(showPickPhotoUI)];
         [reuseView addSubview:header];
         [collectionView bringSubviewToFront:reuseView];
      }
     return reuseView;
-}
-
-- (void)addPhoto {
-    
-    OOAPI *api = [[OOAPI alloc] init];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -608,5 +602,77 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         [[UIApplication sharedApplication] openURL:url];
     }
 }
+
+- (void)showPickPhotoUI
+{
+    BOOL haveCamera = NO, havePhotoLibrary = NO;
+    haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ? YES : NO;
+    havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary] ? YES : NO;
+    UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Add Photo for %@", _restaurant.name]
+                                                        message:[NSString stringWithFormat:@"Take a photo with your camera or add one from your photo library."]
+                                                 preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"Camera"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                         [self showCameraUI];
+                                                     }];
+
+    UIAlertAction *libraryUI = [UIAlertAction actionWithTitle:@"Library"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                         [self showPhotoLibraryUI];
+                                                     }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [self createListNamed:_createListAC.textFields[0].text];
+                                                 }];
+    
+
+    [addPhoto addAction:cameraUI];
+    [addPhoto addAction:libraryUI];
+    [addPhoto addAction:cancel];
+    [self presentViewController:addPhoto animated:YES completion:nil];
+}
+
+- (void)showCameraUI {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)showPhotoLibraryUI {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    UIImage *image = info[@"UIImagePickerControllerEditedImage"];
+    if (!image) {
+        image = info[@"UIImagePickerControllerEditedImage"];
+    }
+    
+    [OOAPI uploadPhoto:image forRestaurant:_restaurant
+               success:^{
+                   [self getMediaItemsForRestaurant];
+    } failure:^(NSError *error) {
+        ;
+    }];
+    
+    [self  dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    message( @"you canceled taking a photo");
+    [self  dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 @end
