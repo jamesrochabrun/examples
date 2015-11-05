@@ -22,6 +22,8 @@
 #import "RestaurantVC.h"
 #import "OOStripHeader.h"
 #import "PieView.h"
+#import "VotingResultsVC.h"
+#import "EventParticipantVC.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -274,14 +276,14 @@
     }
 }
 
-- (void) userPressedMenuButton: (id) sender
+- (void) verifyDeletion
 {
-    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Delete Event?")
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really delete?")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -291,6 +293,57 @@
     [a addAction:cancel];
     [a addAction:ok];
     
+    [self presentViewController:a animated:YES completion:nil];
+    
+}
+
+- (void)castVote
+{
+    
+    NSDate *now= [NSDate date];
+    NSDate *end= APP.eventBeingEdited.dateWhenVotingClosed;
+    BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
+    
+    NSLog(@"EDITING PROHIBITED");
+    
+    if ( votingIsDone ) {
+        VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
+        [self.navigationController pushViewController:vc animated:YES ];
+        
+    } else {
+        
+        EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+        [self.navigationController pushViewController:vc animated:YES ];
+        
+    }
+    
+}
+
+- (void) userPressedMenuButton: (id) sender
+{
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
+                                                              message:nil
+                                                       preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *delete = [UIAlertAction actionWithTitle:@"Delete event"
+                                                     style:UIAlertActionStyleDestructive
+                                                   handler:^(UIAlertAction * action) {
+                                                       [self verifyDeletion];
+                                                   }];
+    
+    UIAlertAction *vote = [UIAlertAction actionWithTitle:@"Cast vote"
+                                                   style:UIAlertActionStyleDefault
+                                                 handler:^(UIAlertAction * action) {
+                                                     [self castVote];
+                                                 }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     }];
+    [a addAction:delete];
+    [a addAction:vote];
+    [a addAction:cancel];
+
     [self presentViewController:a animated:YES completion:nil];
     
 }
