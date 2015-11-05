@@ -21,6 +21,7 @@ extern NSString *const kDefaultsUniqueDeviceKey;
 + (instancetype)sharedInstance;
 
 - (void)save;
+- (void)clearUser;
 
 - (void)setCurrentUser:(UserObject *)user;
 

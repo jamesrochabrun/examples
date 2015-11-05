@@ -130,6 +130,14 @@ static const double kDefaultSearchRadius = 10000; // meters
     [ud synchronize];
 }
 
+- (void)clearUser
+{
+    self.userObject= [[UserObject alloc]init];
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud setObject: @{} forKey:kDefaultsCurrentUserInfo];
+    [ud synchronize];
+}
+
 //------------------------------------------------------------------------------
 // Name:    mostRecentChoice
 // Purpose: Returns the date and boolean for a recent user choice.

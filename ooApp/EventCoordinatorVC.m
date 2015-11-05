@@ -723,45 +723,37 @@
         u-= 24*60*60*dayNumber;
     }
     
-    self.labelDate0.textColor= BLACK;
-    self.labelDate1.textColor= BLACK;
-    self.labelDate2.textColor= BLACK;
-    self.labelDate3.textColor= BLACK;
-    self.labelDate4.textColor= BLACK;
-    self.labelDate5.textColor= BLACK;
-    self.labelDate6.textColor= BLACK;
-    
     for (int i=0; i < 7; i++) {
         NSDate *date= [NSDate dateWithTimeIntervalSince1970:u];
         NSInteger day= getLocalDayOfMonth( date);
         switch (i) {
             case 0:
                 self.labelDate0.text= [NSString stringWithFormat: @"%ld",  (long) day ];
-                if  (i==dayNumber ) self.labelDate0.textColor= YELLOW;
+                self.labelDate0.textColor= i==dayNumber ? YELLOW : BLACK;
                 break;
             case 1:
                 self.labelDate1.text= [NSString stringWithFormat: @"%ld",  (long) day ];
-                if  (i==dayNumber ) self.labelDate1.textColor= YELLOW;
+                self.labelDate1.textColor= i==dayNumber ? YELLOW: BLACK;
                 break;
             case 2:
                 self.labelDate2.text= [NSString stringWithFormat: @"%ld",  (long) day ];
-                if  (i==dayNumber ) self.labelDate2.textColor= YELLOW;
+                self.labelDate2.textColor= i==dayNumber ? YELLOW: BLACK;
                 break;
             case 3:
                 self.labelDate3.text= [NSString stringWithFormat: @"%ld",  (long) day ];
-                if  (i==dayNumber ) self.labelDate3.textColor= YELLOW;
+                self.labelDate3.textColor= i==dayNumber ? YELLOW: BLACK;
                 break;
             case 4:
                 self.labelDate4.text= [NSString stringWithFormat: @"%ld",  (long) day ];
-                if  (i==dayNumber ) self.labelDate4.textColor= YELLOW;
+                self.labelDate4.textColor= i==dayNumber ? YELLOW: BLACK;
                 break;
             case 5:
                 self.labelDate5.text= [NSString stringWithFormat: @"%ld",  (long) day ];
-                if  (i==dayNumber ) self.labelDate5.textColor= YELLOW;
+                self.labelDate5.textColor= i==dayNumber ? YELLOW: BLACK;
                 break;
             case 6:
                 self.labelDate6.text= [NSString stringWithFormat: @"%ld",  (long) day ];
-                if  (i==dayNumber ) self.labelDate6.textColor= YELLOW;
+                self.labelDate6.textColor= i==dayNumber ? YELLOW: BLACK;
                 break;
             default:
                 break;

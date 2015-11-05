@@ -7,6 +7,7 @@
 //
 
 #import "SettingsVC.h"
+#import "Settings.h"
 
 @interface SettingsVC ()
 
@@ -70,10 +71,14 @@
 
 #pragma mark - Facebook delegate methods
 
-- (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error {
+- (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
+{
 }
 
-- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton {
+- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
+{
+    [[Settings sharedInstance] clearUser];
+    
     [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
     //performSegueWithIdentifier:@"loginUISegue" sender:self];
 //    [self performSegueWithIdentifier:@"loginUISegue" sender:self];
