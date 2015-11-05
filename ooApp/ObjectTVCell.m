@@ -34,6 +34,7 @@
         self.backgroundColor = UIColorRGB(kColorWhite);
         _thumbnail = [[UIImageView alloc] init];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFill;
+        _thumbnail.backgroundColor = UIColorRGBA(kColorOffWhite);
         _thumbnail.clipsToBounds = YES;
         [self addSubview:_thumbnail];
 

@@ -162,4 +162,33 @@
     }];
 }
 
+- (AFHTTPRequestOperation *)POST:(NSString *)URLString
+                      parameters:(id)parameters
+       constructingBodyWithBlock:(void (^)(id <AFMultipartFormData> formData))block
+                         success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    OONetworkManager *nm = [OONetworkManager sharedRequestManager];
+    nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* token= userInfo.backendAuthorizationToken;
+    if  (token  &&  token.lowercaseString.length ) {
+        [nm.requestManager.requestSerializer setValue:token.lowercaseString forHTTPHeaderField:@"authorization"];
+    } else {
+        NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN (NOT NEEDED FOR GET)");
+    }
+
+    [nm.requestManager.requestSerializer setValue:@"image/png" forHTTPHeaderField:@"Content-Type"];
+    
+    return [nm.requestManager POST:URLString parameters:parameters constructingBodyWithBlock:block
+                           success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+                               success(operation, responseObject);
+                           } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+                               failure(operation, error);
+                           }];
+    
+}
+
 @end

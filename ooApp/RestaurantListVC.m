@@ -47,15 +47,18 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
     _requestOperation = nil;
     
-    if (_listItem.type == kListTypeUser) {
-        [self setupAlertController];
-    }
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
     
-//    [self layout];
+    if (_listItem.type == kListTypeUser &&
+        _listItem.userID == userID) {
+        [self setupAlertController];
+        self.moreButton.hidden = NO;
+    } else {
+        self.moreButton.hidden = YES;
+    }
 }
 
-//- (void)layout
-//{
 - (void)updateViewConstraints {
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
