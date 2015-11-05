@@ -58,7 +58,7 @@
     _textviewDiagnosticLog.layer.cornerRadius= 5;
     _textviewDiagnosticLog.textAlignment= NSTextAlignmentLeft;
     _textviewDiagnosticLog.font= [ UIFont systemFontOfSize:kGeomFontSizeDetail ];
-    
+
     _buttonClearUsername= makeButton(self.view,  @"CLEAR USERNAME", kGeomFontSizeHeader-2, WHITE, CLEAR, self, @selector(doClearUsername:), 1);
     _buttonClearUsername.titleLabel.numberOfLines= 0;
     _buttonClearUsername.titleLabel.textAlignment= NSTextAlignmentCenter;

@@ -394,8 +394,10 @@
                                             
                                               NSDate *now= [NSDate date];
                                               NSDate *end= event.dateWhenVotingClosed;
+                                              BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
+                                              
 //                                              allowed=0;
-                                              if (allowed) {
+                                              if (allowed && !votingIsDone) {
                                                   NSLog(@"EDITING ALLOWED");
                                                   
                                                   APP.eventBeingEdited= event;
@@ -404,7 +406,7 @@
                                               } else {
                                                   NSLog(@"EDITING PROHIBITED");
                                                   
-                                                  if (end && now.timeIntervalSince1970>end.timeIntervalSince1970 ) {
+                                                  if ( votingIsDone ) {
                                                       APP.eventBeingEdited= event;
                                                       VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
                                                       [weakSelf.navigationController pushViewController:vc animated:YES ];
