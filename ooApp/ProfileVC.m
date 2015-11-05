@@ -343,6 +343,9 @@
     ENTRY;
     [super viewDidLoad];
     
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
+    
     // Ascertain whether reviewing our own profile.
     //
     if (!_userID) {

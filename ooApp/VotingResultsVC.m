@@ -236,13 +236,16 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.    
     
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
+    self.view.backgroundColor= [UIColor lightGrayColor];
+
     self.arrayOfVenues= [NSMutableArray new];
     
     NSString* eventName= APP.eventBeingEdited.name;
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
     
-    self.view.backgroundColor= [UIColor lightGrayColor];
     _table= makeTable( self.view,  self);
 #define TABLE_REUSE_IDENTIFIER  @"participantsCell"
 #define TABLE_REUSE_FIRST_IDENTIFIER @"participantsCell1st"

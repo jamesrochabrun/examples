@@ -55,6 +55,8 @@
     _arrayOfSuggestions=[NSMutableArray new];
     
     self.view.backgroundColor= WHITE;
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
     
     self.scrollView= [UIScrollView  new];
     [self.view  addSubview: _scrollView ];

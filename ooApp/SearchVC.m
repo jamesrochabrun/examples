@@ -104,7 +104,6 @@ typedef enum: char {
     [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];
     _currentFilter = FILTER_PLACES;
     [_filterView setCurrent:2];
-
     
     self.tableRestaurants= makeTable (self.view,self);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
@@ -123,6 +122,8 @@ typedef enum: char {
     [self.view addSubview: _activityView ];
     _activityView.hidden= YES;
     [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    
+    [self changeFilter: FILTER_PLACES];
 }
 
 //------------------------------------------------------------------------------
@@ -197,8 +198,6 @@ typedef enum: char {
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    [self changeFilter: FILTER_PLACES];
 }
 
 //------------------------------------------------------------------------------
@@ -546,28 +545,18 @@ typedef enum: char {
     float x = 0;
     
     _searchBar.frame=  CGRectMake(0,y,w-kGeomButtonWidth,kGeomHeightSearchBar);
+    
     _buttonCancel.frame=  CGRectMake( w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
                                      y+kGeomCancelButtonInteriorPadding,
                                      kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
-                                     kGeomHeightButton-2*kGeomCancelButtonInteriorPadding);
+                                     kGeomHeightSearchBar+-2*kGeomCancelButtonInteriorPadding);
     y += kGeomHeightSearchBar;
     
     _filterView.frame=  CGRectMake(0,  y,w,kGeomHeightFilters);
     y += kGeomHeightButton;
 
-//    int buttonWidth= w/4;
-//    _buttonList.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-//    x+=   buttonWidth;
-//    _buttonPeople.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-//    x+=   buttonWidth;
-//    _buttonPlaces.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-//    x+=   buttonWidth;
-//    _buttonYou.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-//    y+=kGeomHeightButton + spacing;
-    
     _tableRestaurants.frame=  CGRectMake(0,y,w, h-y);
     _tablePeople.frame=  CGRectMake(0,y,w, h-y);
-   
 }
 
 //------------------------------------------------------------------------------
@@ -589,7 +578,8 @@ typedef enum: char {
         }
         [cell updateConstraintsIfNeeded];
         return cell;
-    } else {
+    }
+    else {
         UserTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         if (!cell) {
@@ -597,7 +587,8 @@ typedef enum: char {
         }
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
-            cell.userInfo = _peopleArray[row];
+            UserObject *user=_peopleArray[row];
+            [cell setUser: user];
         }
         [cell updateConstraintsIfNeeded];
         return cell;
@@ -651,7 +642,8 @@ typedef enum: char {
         [self.navigationController pushViewController:vc animated:YES];
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    } else {
+    }
+    else {
         if  (row >= _peopleArray.count ) {
             return;
         }

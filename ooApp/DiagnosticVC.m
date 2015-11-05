@@ -48,15 +48,17 @@
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Diagnostics" subHeader: @"& Testing"];
     self.navTitle = nto;
     
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= [UIColor lightGrayColor];
+    
     _textviewDiagnosticLog= makeTextView(self.view, WHITE, NO);
     _textviewDiagnosticLog.layer.borderColor= GRAY.CGColor;
     _textviewDiagnosticLog.layer.borderWidth= 0.5;
     _textviewDiagnosticLog.layer.cornerRadius= 5;
     _textviewDiagnosticLog.textAlignment= NSTextAlignmentLeft;
     _textviewDiagnosticLog.font= [ UIFont systemFontOfSize:kGeomFontSizeDetail ];
-    self.automaticallyAdjustsScrollViewInsets= NO;
-    
+
     _buttonClearUsername= makeButton(self.view,  @"CLEAR USERNAME", kGeomFontSizeHeader-2, WHITE, CLEAR, self, @selector(doClearUsername:), 1);
     _buttonClearUsername.titleLabel.numberOfLines= 0;
     _buttonClearUsername.titleLabel.textAlignment= NSTextAlignmentCenter;
