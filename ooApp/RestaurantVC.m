@@ -627,10 +627,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                  }];
     
 
-    [addPhoto addAction:cameraUI];
-    [addPhoto addAction:libraryUI];
+    if (haveCamera) [addPhoto addAction:cameraUI];
+    if (havePhotoLibrary) [addPhoto addAction:libraryUI];
     [addPhoto addAction:cancel];
-    [self presentViewController:addPhoto animated:YES completion:nil];
+    
+    if (havePhotoLibrary && haveCamera )[self presentViewController:addPhoto animated:YES completion:nil];
 }
 
 - (void)showCameraUI {
@@ -665,13 +666,12 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         ;
     }];
     
-    [self  dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    message( @"you canceled taking a photo");
-    [self  dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 
