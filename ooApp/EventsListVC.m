@@ -381,6 +381,7 @@
         [cell updateHighlighting:YES];
         RUN_AFTER(400, ^{
             [cell.nameHeader unHighlightButton];
+            [cell updateHighlighting:NO];
         });
         
         // Determine whether event can be edited by this user.
@@ -419,6 +420,8 @@
                                                       
                                                   }
                                               }
+                                              [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
+
                                           } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                                               weakSelf.doingTransition= NO;
                                               [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
