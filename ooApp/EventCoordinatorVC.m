@@ -203,14 +203,6 @@
     _labelDay5.textColor= UIColorRGB(0xff808080);
     _labelDay6.textColor= UIColorRGB(0xff808080);
     
-    self.labelDate0.textColor= BLACK;
-    self.labelDate1.textColor= BLACK;
-    self.labelDate2.textColor= BLACK;
-    self.labelDate3.textColor= BLACK;
-    self.labelDate4.textColor= BLACK;
-    self.labelDate5.textColor= BLACK;
-    self.labelDate6.textColor= BLACK;
-    
     self.labelDate0= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
     self.labelDate1= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
     self.labelDate2= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
@@ -288,6 +280,7 @@
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self deleteEvent];
+                                                     [self.navigationController  popViewControllerAnimated:YES];
                                                  }];
     
     [a addAction:cancel];
@@ -729,6 +722,15 @@
     if (dayNumber>0 ) {
         u-= 24*60*60*dayNumber;
     }
+    
+    self.labelDate0.textColor= BLACK;
+    self.labelDate1.textColor= BLACK;
+    self.labelDate2.textColor= BLACK;
+    self.labelDate3.textColor= BLACK;
+    self.labelDate4.textColor= BLACK;
+    self.labelDate5.textColor= BLACK;
+    self.labelDate6.textColor= BLACK;
+    
     for (int i=0; i < 7; i++) {
         NSDate *date= [NSDate dateWithTimeIntervalSince1970:u];
         NSInteger day= getLocalDayOfMonth( date);
@@ -765,6 +767,17 @@
                 break;
         }
         u += 24 *3600;
+    }
+    if ( !APP.eventBeingEdited.date) {
+        self.viewTodayBubble.hidden= YES;
+        self.pieHour.hidden= YES;
+        _labelMonth.text= expressLocalMonth( [NSDate date]);
+        _labelTime.text=  @"Tap to\rset date.";
+        _labelTime.frame= CGRectMake(_labelTime.frame.origin.x,0,
+                                     _labelTime.frame.size.width,kGeomEventCoordinatorBoxHeight);
+    } else {
+        self.viewTodayBubble.hidden= NO;
+        self.pieHour.hidden= NO;
     }
     
     // RULE: If no restaurants have been added then did label should take up the entire height.

@@ -502,7 +502,7 @@
     cell.delegate= self;
     cell.selectionStyle= UITableViewCellSelectionStyleNone;
 
-    RestaurantObject* venue= [event getNthVenue:row];
+    RestaurantObject* venue= [event getNthVenue:row-1];
 
     NSUInteger venueID = venue.restaurantID;
     VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];

@@ -262,11 +262,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)addToEvent
 {
     [APP.eventBeingEdited addVenue:_restaurant];
+    [self.navigationController  popViewControllerAnimated:YES];
 }
 
 - (void)removeFromEvent
 {
     [APP.eventBeingEdited removeVenue:_restaurant];
+    [self.navigationController  popViewControllerAnimated:YES];
 }
 
 - (void)moreButtonPressed:(id)sender {
