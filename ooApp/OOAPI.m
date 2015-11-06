@@ -39,7 +39,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIds
                                           success:(void (^)(NSArray *restaurants))success
-                                          failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -51,7 +51,7 @@ NSString *const kKeySearchFilter = @"filter";
             [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
         }
         success(restaurants);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
     }];
 }
@@ -62,7 +62,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getMediaItemsForRestaurant:(RestaurantObject *)restaurant
                                                success:(void (^)(NSArray *mediaItems))success
-                                               failure:(void (^)(AFHTTPRequestOperation* operation,NSError *error))failure
+                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%lu/photos", [self ooURL], ( unsigned long) restaurant.restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -74,7 +74,7 @@ NSString *const kKeySearchFilter = @"filter";
             [mediaItems addObject:[MediaItemObject mediaItemFromDict:dict]];
         }
         success(mediaItems);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
     }];
 }
@@ -85,7 +85,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
                                         success:(void (^)(RestaurantObject *))success
-                                        failure:(void (^)(AFHTTPRequestOperation* operation,NSError *error))failure
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     if (!restaurantId) return nil;
     
@@ -101,7 +101,7 @@ NSString *const kKeySearchFilter = @"filter";
         //        }
         RestaurantObject *restaurant = [RestaurantObject restaurantFromDict:responseObject];
         success(restaurant);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
     }];
 }
@@ -117,7 +117,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
                                                    success:(void (^)(NSString *link))success
-                                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
     
@@ -136,7 +136,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         success([responseObject objectForKey:@"link"]);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
     }];
 }
@@ -145,7 +145,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
                                                    success:(void (^)(NSString *link))success
-                                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
     
@@ -161,16 +161,16 @@ NSString *const kKeySearchFilter = @"filter";
         [parameters setObject:[NSString stringWithFormat:@"%lu", ( unsigned long) maxWidth] forKey:@"maxHeight"];
     }
     
-    if (mediaItem.reference && mediaItem.source == 2) {
-        [parameters setObject:mediaItem.reference forKey:@"reference"];
-    } else if (mediaItem.url && mediaItem.source == 1) {
+    if (mediaItem.reference && mediaItem.source == kMediaItemTypeGoogle) {
+        [parameters setObject:mediaItem.reference forKey:kKeyMediaItemReference];
+    } else if (mediaItem.url && mediaItem.source == kMediaItemTypeOomami) {
         success(mediaItem.url);
         return nil;
     }
 
     return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         success([responseObject objectForKey:@"link"]);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
     }];
 }
@@ -185,7 +185,7 @@ NSString *const kKeySearchFilter = @"filter";
                                           andOpenOnly:(BOOL)openOnly
                                               andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
-                                              failure:(void (^)(AFHTTPRequestOperation* operation,NSError *error))failure
+                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     if (!keyword) {
         failure(nil,nil);
@@ -224,7 +224,33 @@ NSString *const kKeySearchFilter = @"filter";
             [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
         }
         success(restaurants);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        NSLog(@"Error: %@", error);
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)getFeed:(void (^)(NSArray *feedItems))success
+                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
+
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld/feed", [OOAPI URL], userID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *feedItems = [NSMutableArray array];
+        for (id dict in responseObject) {
+            EventObject *eo = [EventObject eventFromDictionary:dict];
+            if (eo) {
+                NSLog(@"parsed event: %@", eo.name);
+                [feedItems addObject:eo];
+            }
+        }
+        success(feedItems);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
         failure(operation, error);
     }];
@@ -235,7 +261,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getAllUsersWithSuccess:(void (^)(NSArray *users))success
-                                           failure:(void (^)(AFHTTPRequestOperation* operation,NSError *error))failure
+                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users", [OOAPI URL]];
     
@@ -244,14 +270,14 @@ NSString *const kKeySearchFilter = @"filter";
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *users = [NSMutableArray array];
         for (id dict in responseObject) {
-            UserObject *u=[UserObject userFromDict:dict];
-            if ( u) {
+            UserObject *u= [UserObject userFromDict:dict];
+            if (u) {
                 NSLog(@"FOUND USER: %@", u.username);
                 [users addObject:u];
             }
         }
         success(users);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
         failure(operation, error);
     }];
@@ -263,7 +289,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
                                         success:(void (^)(NSArray *users))success
-                                        failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     if (!keyword  || !keyword.length) {
         failure(nil,nil);
@@ -287,7 +313,7 @@ NSString *const kKeySearchFilter = @"filter";
             [users addObject:u];
         }
         success(users);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
 }
@@ -298,7 +324,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs
                                    success:(void (^)(NSArray *users))success
-                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users", [OOAPI URL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -310,7 +336,7 @@ NSString *const kKeySearchFilter = @"filter";
             [users addObject:[UserObject userFromDict:dict]];
         }
         success(users);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
 }
@@ -321,7 +347,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs
                                     success:(void (^)(NSArray *dishes))success
-                                    failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/dishes", [OOAPI URL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -331,7 +357,7 @@ NSString *const kKeySearchFilter = @"filter";
         for (id dict in responseObject) {
             NSLog(@"dish: %@", dict);
         }
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
         NSLog(@"Error: %@", error);
     }];
@@ -344,7 +370,7 @@ NSString *const kKeySearchFilter = @"filter";
 - (AFHTTPRequestOperation*)getListsOfUser:(NSUInteger)userID
                            withRestaurant:(NSUInteger)restaurantID
                                   success:(void (^)(NSArray *lists))success
-                                  failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     if (!userID) {
         failure(nil,nil);
@@ -366,7 +392,7 @@ NSString *const kKeySearchFilter = @"filter";
             [lists addObject:[ListObject listFromDict:dict]];
         }
         success(lists);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         ;
     }];
 }
@@ -377,7 +403,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
                                      success:(void (^)(NSArray *lists))success
-                                     failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu/restaurants/%lu",
                            [OOAPI URL], (unsigned long)listID, (unsigned long)restaurantID];
@@ -387,7 +413,7 @@ NSString *const kKeySearchFilter = @"filter";
     return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *lists = [NSMutableArray array];
         success(lists);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         ;
     }];
 }
@@ -399,7 +425,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)lookupUserByEmail:(NSString *)emailString
                                       success:(void (^)(UserObject *users))success
-                                      failure:(void (^)(AFHTTPRequestOperation* operation, NSError *))failure;
+                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure;
 {
     if (!emailString || !emailString.length) {
         failure(nil,nil);
@@ -419,7 +445,7 @@ NSString *const kKeySearchFilter = @"filter";
                 success( nil);
             }
         }
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
         failure(operation, error);
     }
@@ -432,7 +458,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)deleteList:(NSUInteger)listID
                                success:(void (^)(NSArray *))success
-                               failure:(void (^)(AFHTTPRequestOperation* operation, NSError *))failure
+                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu",
                            [OOAPI URL], (unsigned long)listID];
@@ -442,7 +468,7 @@ NSString *const kKeySearchFilter = @"filter";
     return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *lists = [NSMutableArray array];
         success(lists);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         ;
     }];
 }
@@ -453,7 +479,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                    success:(void (^)(BOOL exists))success
-                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *))failure;
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure;
 {
     if (!string || !string.length) {
         failure(nil,nil);
@@ -474,7 +500,7 @@ NSString *const kKeySearchFilter = @"filter";
             }
         }
         success( users.count>0);
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
         failure(operation, error);
     }
@@ -486,7 +512,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: For testing.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)clearUsernameWithSuccess:(void (^)(NSArray *names))success
-                                             failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
@@ -509,7 +535,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)fetchSampleUsernamesFor:(NSString *)emailAddressString
                                             success:(void (^)(NSArray *names))success
-                                            failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!emailAddressString || !emailAddressString.length) {
         failure(nil,nil);
@@ -520,7 +546,7 @@ NSString *const kKeySearchFilter = @"filter";
                            [OOAPI URL], emailAddressString];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:success failure:^(AFHTTPRequestOperation* operation,NSError *error) {
+    return [rm GET:urlString parameters:nil success:success failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
         failure(operation, error);
     } ];
@@ -532,7 +558,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
                                              success:(void (^)(NSArray *restaurants))success
-                                             failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%ld/restaurants",
                            [OOAPI URL],
@@ -547,7 +573,7 @@ NSString *const kKeySearchFilter = @"filter";
             }
         }
         success(restaurants);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
     
@@ -561,7 +587,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
                                   success:(void (^)(NSArray *dishes))success
-                                  failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", [OOAPI URL]];
@@ -570,7 +596,7 @@ NSString *const kKeySearchFilter = @"filter";
                                parameters:[RestaurantObject dictFromRestaurant:restaurant]
                                   success:^(id responseObject) {
                                       success(responseObject);
-                                  } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
                                   }];
     
@@ -583,7 +609,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addList:(NSString *)listName
                             success:(void (^)(ListObject *listObject))success
-                            failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!listName) {
         failure(nil,nil);
@@ -606,7 +632,7 @@ NSString *const kKeySearchFilter = @"filter";
                                   success:^(id responseObject) {
                                       ListObject *l = [ListObject listFromDict:responseObject];
                                       success(l);
-                                  } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
                                   }];
     
@@ -619,7 +645,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listID
                                    success:(void (^)(id response))success
-                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure {
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
     NSMutableArray *restaurantIDs;
     if (!restaurants || !listID) {
         failure(nil,nil);
@@ -648,7 +674,7 @@ NSString *const kKeySearchFilter = @"filter";
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
-                                  } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
                                   }];
     
@@ -662,7 +688,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addRestaurantsToSpecialList:(NSArray *)restaurants listType:(ListType)listType
                                                 success:(void (^)(id response))success
-                                                failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSMutableArray *restaurantIDs;
     if (!restaurants) {
@@ -700,7 +726,7 @@ NSString *const kKeySearchFilter = @"filter";
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
-                                  } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
                                   }];
     
@@ -718,7 +744,7 @@ NSString *const kKeySearchFilter = @"filter";
                                            maxWidth:(NSUInteger)maxWidth
                                           maxHeight:(NSUInteger)maxHeight
                                             success:(void (^)(NSString *link))success
-                                            failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/photos", [OOAPI URL]];
     
@@ -737,7 +763,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         success([responseObject objectForKey:@"link"]);
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
     }];
 }
@@ -745,7 +771,7 @@ NSString *const kKeySearchFilter = @"filter";
 
 + (AFHTTPRequestOperation *)isFollowingUser:(UserObject *)user
                                     success:(void (^)(BOOL))success
-                                    failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!user) {
         failure(nil,nil);
@@ -781,7 +807,7 @@ NSString *const kKeySearchFilter = @"filter";
                    }
                }
                success(NO);
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -794,7 +820,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)setFollowingUser:(UserObject *) user
                                           to: (BOOL) following
                                      success:(void (^)(id responseObject))success
-                                     failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!user) {
         failure(nil,nil);
@@ -827,7 +853,7 @@ NSString *const kKeySearchFilter = @"filter";
                                               }
              success:^(id responseObject) {
                  success(responseObject);
-             } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+             } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                  failure(operation, error);
              }];
     } else {
@@ -835,7 +861,7 @@ NSString *const kKeySearchFilter = @"filter";
         op = [rm DELETE: urlString parameters:nil
                 success:^(id responseObject) {
                     success(responseObject);
-                } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                     failure(operation, error);
                 }];
         
@@ -853,7 +879,7 @@ NSString *const kKeySearchFilter = @"filter";
                                        inEvent:(EventObject *)event
                                             to:(BOOL) participating
                                        success:(void (^)(NSInteger eventID))success
-                                       failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!event ) {
         failure(nil,nil);
@@ -890,7 +916,7 @@ NSString *const kKeySearchFilter = @"filter";
                       identifier= parseIntegerOrNullFromServer(eventID);
                   }
                   success(identifier);
-              } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+              } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                   failure(operation, error);
               }];
     } else {
@@ -907,7 +933,7 @@ NSString *const kKeySearchFilter = @"filter";
                         identifier= parseIntegerOrNullFromServer(eventID);
                     }
                     success(identifier);
-                } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                     failure(operation, error);
                 }];
         
@@ -918,7 +944,7 @@ NSString *const kKeySearchFilter = @"filter";
 
 + (AFHTTPRequestOperation *) getVenuesForEvent:(EventObject *)eo
                                        success:(void (^)(NSArray *venues))success
-                                       failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!eo) {
         failure(nil,nil);
@@ -942,7 +968,7 @@ NSString *const kKeySearchFilter = @"filter";
                   }
               }
               success(venues);
-          } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
               // RULE: Leave the venues unchanged.
               failure(operation, error);
           }];
@@ -956,7 +982,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getParticipantsInEvent:(EventObject *)eo
                                            success:(void (^)(NSArray *users))success
-                                           failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!eo) {
         failure(nil,nil);
@@ -986,7 +1012,7 @@ NSString *const kKeySearchFilter = @"filter";
                   }
               }
               success(users);
-          } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
               failure(operation, error);
           }];
     
@@ -1120,7 +1146,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)deleteEvent:(NSUInteger)eventID
                                 success:(void (^)())success
-                                failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure
+                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     if  (!eventID) {
         failure (nil,nil);
@@ -1133,7 +1159,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
         success();
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
 }
@@ -1144,7 +1170,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getEventsForUser:(NSUInteger) identifier
                                      success:(void (^)(NSArray *events))success
-                                     failure:(void (^)(AFHTTPRequestOperation* operation,NSError *error))failure;
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/events",[OOAPI URL], (unsigned long)identifier];
     
@@ -1166,7 +1192,7 @@ NSString *const kKeySearchFilter = @"filter";
                    NSLog  (@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
                    failure(nil,nil);
                }
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1177,7 +1203,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getEventByID:(NSUInteger)identifier
                                  success:(void (^)(EventObject *event))success
-                                 failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu",[OOAPI URL], (unsigned long)identifier];
     
@@ -1196,7 +1222,7 @@ NSString *const kKeySearchFilter = @"filter";
                    NSLog  (@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
                    failure(nil,nil);
                }
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1207,7 +1233,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: Obtain a list of curated events that are complete.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
-                                                failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events",[OOAPI URL]];
     
@@ -1228,7 +1254,7 @@ NSString *const kKeySearchFilter = @"filter";
             NSLog(@"RESPONSE IS NOT AN ARRAY OF EVENTS.");
             failure(nil,nil);
         }
-    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
         failure(operation, error);
     }];
@@ -1241,7 +1267,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)addRestaurant:(RestaurantObject *)restaurant
                                   toEvent:(EventObject *)event
                                   success:(void (^)(id response))success
-                                  failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!event || !restaurant) {
         failure(nil,nil);
@@ -1278,7 +1304,7 @@ NSString *const kKeySearchFilter = @"filter";
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       success(responseObject);
-                                  } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
                                   }];
     
@@ -1292,7 +1318,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)removeRestaurant:(RestaurantObject *)restaurant
                                    fromEvent:(EventObject *)event
                                      success:(void (^)(id response))success
-                                     failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!event  || !restaurant) {
         failure( nil,nil);
@@ -1325,7 +1351,7 @@ NSString *const kKeySearchFilter = @"filter";
     AFHTTPRequestOperation *op = [rm DELETE: urlString parameters:parameters
                                     success:^(id responseObject) {
                                         success(responseObject);
-                                    } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                         failure(operation, error);
                                     }];
     return op;
@@ -1338,7 +1364,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)addEvent:(EventObject *)eo
                              success:(void (^)(NSInteger eventID))success
-                             failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!eo) {
         failure(nil,nil);
@@ -1368,7 +1394,7 @@ NSString *const kKeySearchFilter = @"filter";
                                           return;
                                       }
                                       success(identifier);
-                                  } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
                                   }];
     
@@ -1382,7 +1408,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)reviseEvent:(EventObject *)eo
                                 success:(void (^)(id))success
-                                failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!eo) {
         failure(nil,nil);
@@ -1402,7 +1428,7 @@ NSString *const kKeySearchFilter = @"filter";
     AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
                                  success:^(id responseObject) {
                                      success(responseObject);
-                                 } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                      failure(operation, error);
                                  }];
     
@@ -1415,7 +1441,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFollowersOf: (unsigned long)userid
                                    success:(void (^)(NSArray *users))success
-                                   failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/followers", [OOAPI URL], (unsigned long)userid];
     
@@ -1428,7 +1454,7 @@ NSString *const kKeySearchFilter = @"filter";
                    [users addObject:[UserObject userFromDict:dict]];
                }
                success(users);
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1439,7 +1465,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: Fetch an array of users that the current user is following.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
-                                            failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
@@ -1459,7 +1485,7 @@ NSString *const kKeySearchFilter = @"filter";
                    [users addObject:[UserObject userFromDict:dict]];
                }
                success(users);
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1470,7 +1496,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: Fetch an array of groups of which the current user is a member .
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
-                                         failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
@@ -1495,7 +1521,7 @@ NSString *const kKeySearchFilter = @"filter";
                
                NSLog  (@"TOTAL GROUPS FOUND: %ld", (unsigned long)groups.count);
                success(groups);
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1507,7 +1533,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getUsersOfGroup: (NSInteger)groupID
                                     success:(void (^)(NSArray *groups))success
-                                    failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
@@ -1533,7 +1559,7 @@ NSString *const kKeySearchFilter = @"filter";
                NSLog  (@"TOTAL USERS FOUND: %ld", (unsigned long)users.count);
                success(users);
                
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1545,7 +1571,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *) event
                                                        success:(void (^)(bool))success
-                                                       failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
@@ -1575,7 +1601,7 @@ NSString *const kKeySearchFilter = @"filter";
                                             }
                                             success(NO);
                                             
-                                        } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+                                        } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                             NSInteger statusCode= operation.response.statusCode;
                                             
                                             if (statusCode == 404) {
@@ -1595,7 +1621,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getVoteForEvent:(EventObject*)event
                                     success:(void (^)(NSArray *votes))success
-                                    failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes", [OOAPI URL], (unsigned long)event.eventID];
@@ -1613,7 +1639,7 @@ NSString *const kKeySearchFilter = @"filter";
                }
                success(votes);
                
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1625,7 +1651,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getVoteTalliesForEvent:(NSUInteger)eventID
                                            success:(void (^)(NSArray *venues))success
-                                           failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes/results", [OOAPI URL], (unsigned long)eventID];
     
@@ -1642,7 +1668,7 @@ NSString *const kKeySearchFilter = @"filter";
                }
                success(venues);
                
-           } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -1656,7 +1682,7 @@ NSString *const kKeySearchFilter = @"filter";
                              forEvent:(NSUInteger) eventID
                         andRestaurant: (NSUInteger) venueID
                               success:(void (^)(NSInteger eventID))success
-                              failure:(void (^)(AFHTTPRequestOperation* operation, NSError *error))failure;
+                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!eventID  || !venueID ) {
         failure(nil,nil);
@@ -1692,7 +1718,7 @@ NSString *const kKeySearchFilter = @"filter";
                   identifier= parseIntegerOrNullFromServer(eventID);
               }
               success(identifier);
-          } failure:^(AFHTTPRequestOperation* operation,NSError *error ) {
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
               failure(operation, error);
           }];
     

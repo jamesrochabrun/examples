@@ -46,12 +46,12 @@ NSString *getDateString()
     return [NSString stringWithFormat: @"%04d/%02d/%02d",year,month,day];
 }
 
-NSString* trimString(NSString* s)
+NSString *trimString(NSString *s)
 {
     if (!s) {
-        return  @"";
+        return @"";
     }
-    return [s stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+    return [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 }
 
 UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName)

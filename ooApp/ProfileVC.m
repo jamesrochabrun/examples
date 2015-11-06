@@ -105,7 +105,7 @@
                 ON_MAIN_THREAD( ^{
                     [_iv setImageWithURL:[NSURL URLWithString:link]];
                 });
-            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 ;
             }];
         } else if (_userInfo.imageURLString) {
@@ -175,7 +175,7 @@
                      [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
                  });
              }
-             failure:^(AFHTTPRequestOperation* operation, NSError * error) {
+             failure:^(AFHTTPRequestOperation *operation, NSError * error) {
                  NSString *s = [NSString stringWithFormat:@"Error from cloud: %@", error.localizedDescription];
                  message(s);
              }
@@ -203,7 +203,7 @@
                        } else {
                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
                        }
-                    } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
                     }];
 }
@@ -324,7 +324,7 @@
                     _lists = foundLists;
                     [self.table reloadData];
                 }
-                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@" error while getting lists for user: %@",e);
                 }];
 }

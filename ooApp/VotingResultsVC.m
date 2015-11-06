@@ -88,7 +88,7 @@
                                                                    setImageWithURL:[NSURL URLWithString:link]
                                                                    placeholderImage:nil];
                                                               });
-                                                          } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                           }];
 
     }
@@ -209,7 +209,7 @@
                                                                  setImageWithURL:[NSURL URLWithString:link]
                                                                  placeholderImage:placeholder];
                                                             });
-                                                        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                                                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                             [weakSelf.thumbnail setImage:placeholder];
                                                         }];
         }
@@ -280,7 +280,7 @@
                               [weakSelf.arrayOfVenues addObjectsFromArray:venues];
                               [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
                               
-                          } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                               NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
                               
                           }];

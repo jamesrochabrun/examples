@@ -8,6 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    kMediaItemTypeOomami = 1,
+    kMediaItemTypeGoogle = 2
+} MediaItemType;
+
+extern NSString *const kKeyMediaItemReference;
+extern NSString *const kKeyMediaItemType;
+extern NSString *const kKeyMediaItemSource;
+extern NSString *const kKeyMediaItemID;
+extern NSString *const kKeyMediaItemHeight;
+extern NSString *const kKeyMediaItemWidth;
+extern NSString *const kKeyMediaItemURL;
+
 @interface MediaItemObject : NSObject
 
 @property (nonatomic, strong) NSString *reference;

@@ -70,7 +70,7 @@
                                          failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
                                              ;
                                          }];
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
     
@@ -94,7 +94,7 @@
 //                                              failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
 //                                                  ;
 //                                              }];
-//        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //            ;
 //        }];
 //    } else if (mediaItemObject.source == 1 && mediaItemObject.url) {

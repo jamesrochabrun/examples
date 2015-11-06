@@ -34,7 +34,7 @@
 
 - (AFHTTPRequestOperation *)GET:(NSString *)path parameters:(NSDictionary *)parameters
                         success:(void (^)(id responseObject))success
-                        failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
+                        failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure
 {
     NSLog  (@"GET:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
@@ -58,7 +58,7 @@
 
 - (AFHTTPRequestOperation *)POST:(NSString *)path parameters:(NSDictionary *)parameters
                          success:(void (^)(id responseObject))success
-                         failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
+                         failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure
 {
     NSLog  (@"POST:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
@@ -86,7 +86,7 @@
 
 - (AFHTTPRequestOperation*) PUT:(NSString *)path parameters:(NSDictionary *)parameters
                         success:(void (^)(id responseObject))success
-                        failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
+                        failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure
 {
     NSLog  (@"PUT:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
@@ -112,7 +112,7 @@
 
 - (AFHTTPRequestOperation*) DELETE:(NSString *)path parameters:(NSDictionary *)parameters
                            success:(void (^)(id responseObject))success
-                           failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
+                           failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure
 {
     NSLog  (@"DELETE:  %@", path);
     
@@ -138,7 +138,7 @@
 
 - (AFHTTPRequestOperation*) PATCH:(NSString *)path parameters:(NSDictionary *)parameters
                           success:(void (^)(id responseObject))success
-                          failure:(void (^)(AFHTTPRequestOperation*operation,NSError *error))failure
+                          failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure
 {
     NSLog  (@"PATCH:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];

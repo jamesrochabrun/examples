@@ -127,23 +127,26 @@
     
     OOAPI *api = [[OOAPI alloc] init];
     
-    NSString *imageRef;
     if ([restaurant.mediaItems count]) {
-        imageRef = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]).reference;
-    } else if ([restaurant.imageRefs count]) {
-        imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
-    }
-    
-    if (imageRef) {
-        _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+        MediaItemObject *mediaItem = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]);
+        _requestOperation = [api getRestaurantImageWithMediaItem:mediaItem maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
             });
-        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
-    } else {
-        
+    } else if ([restaurant.imageRefs count]) {
+        NSString *imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
+        if (imageRef) {
+            _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
+                });
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
+        }
     }
 }
 

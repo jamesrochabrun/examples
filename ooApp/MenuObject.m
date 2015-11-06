@@ -10,6 +10,7 @@
 
 NSString *const kMenuItemDiagnostic = @"diagnostic";
 NSString *const kMenuItemPlay = @"play";
+NSString *const kMenuItemFeed = @"feed";
 NSString *const kMenuItemConnect = @"connect";
 NSString *const kMenuItemProfile = @"profile";
 NSString *const kMenuItemDiscover = @"discover";

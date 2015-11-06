@@ -119,7 +119,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [api deleteList:_listItem.listID success:^(NSArray *lists) {
         [self.navigationController popViewControllerAnimated:YES];
 
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }
@@ -173,7 +173,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
             });
-        } failure:^(AFHTTPRequestOperation* operation, NSError *err) {
+        } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
             ;
         }];
     } else {
@@ -187,7 +187,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
             });
-        } failure:^(AFHTTPRequestOperation* operation, NSError *err) {
+        } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
             ;
         }];
     }
@@ -256,10 +256,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
                 ON_MAIN_THREAD(^{
                     [weakSelf.tableView reloadData];
                 });
-            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 ;
             }];
-        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
     }

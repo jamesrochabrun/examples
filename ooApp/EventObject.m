@@ -212,7 +212,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                          success:^(id response) {
                              NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
 //                             message( @"Added.");6
-                         } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                              NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
                              [_venues removeObject: venue];
                              
@@ -237,7 +237,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                             success:^(id response) {
                                 NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
                                 message( @"Removed.");
-                            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                 [_venues addObject: venue];
                                 NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
                             }];
@@ -270,7 +270,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                            weakSelf.numberOfPeopleResponded= event.numberOfPeopleResponded;
                            weakSelf.numberOfPeopleVoted= event.numberOfPeopleVoted;
                           success();
-                       } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            failure();
                        }
             ];
@@ -290,7 +290,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                                      }
 
                                      success();
-                                 } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                      failure();
                                  }];
     
@@ -310,7 +310,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
         [weakSelf establishPrimaryImage];
         
         success();
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure();
     }];
 }
@@ -330,7 +330,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
     [OOAPI reviseEvent:APP.eventBeingEdited
                success:^(id foo) {
                    NSLog  (@"UPDATED BACKEND WITH NEW DATES.");
-               } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                    NSLog  (@"UNABLE TO UPDATE BACKEND WITH NEW DATES.");
                }];
 }
@@ -402,7 +402,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
                               success();
                           }
-                          failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                               NSLog  (@"UNABLE TO GET VOTES FOR EVENT.");
                               failure();
                           }];

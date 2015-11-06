@@ -69,12 +69,12 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list.name = @"Vegetarian";
     list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
-    
+
     list = [[ListObject alloc] init];
     list.name = @"Burgers";
     list.listDisplayType = KListDisplayTypeStrip;
     [_lists addObject:list];
-    
+
     list = [[ListObject alloc] init];
     list.name = @"Vietnamese";
     list.listDisplayType = KListDisplayTypeStrip;

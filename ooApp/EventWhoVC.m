@@ -106,7 +106,7 @@
                                                                                                        
                                                                                                    }];
                                                    }
-                                               } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                               } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                    NSLog(@"");
                                                }];
     }
@@ -317,7 +317,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         }
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
     }
-                           failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                           failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
                            }];
     
@@ -334,7 +334,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         }
         
     }
-                            failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                            failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                 NSLog  (@"CANNOT GET USER LISTING.  %@",error);
                             }];
 }
@@ -389,7 +389,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                                  [weakSelf addTheirEmailAddress: string];
                              }
                              
-                         } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                         } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                              [weakSelf addTheirEmailAddress: string];
                          }];
     }
@@ -529,7 +529,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                            to:value
                       success:^(NSInteger eventID) {
                           NSLog  (@"SUCCESS");
-                      } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                      } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                           NSLog  (@"FAILURE  %@",e);
                           if ( value) {
                               [_participants  removeObject: object];

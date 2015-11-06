@@ -378,7 +378,7 @@
                                                  [self performSegueWithIdentifier:@"gotofsername" sender:self];
                                              }
                                          }
-                                         failure:^void(AFHTTPRequestOperation* operation, NSError *error) {
+                                         failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
                                              NSInteger statusCode= operation.response.statusCode;
                                              if  ( statusCode== 404) {
                                                  
@@ -591,7 +591,7 @@
                                                      }
                                                  }
                                              }
-                                             failure:^  void(AFHTTPRequestOperation* operation, NSError *error) {
+                                             failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
                                                  NSLog (@"PUT FAILED %@",error);
                                              }     ];
 
@@ -623,7 +623,7 @@
                                                       }
                                                   }
                                               }
-                                              failure:^  void(AFHTTPRequestOperation* operation, NSError *error) {
+                                              failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
                                                   NSLog (@"POST FAILED %@",error);
                                               }     ];
     }

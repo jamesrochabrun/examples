@@ -229,7 +229,7 @@ static NSString * const ListRowID = @"HLRCell";
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf gotRestaurants];
         });
-    } failure:^(AFHTTPRequestOperation* operation, NSError *err) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
         ;
     }];
 }
