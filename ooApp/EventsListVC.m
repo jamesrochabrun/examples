@@ -39,7 +39,7 @@
 
 @property (nonatomic, strong) NSArray *tableSectionNames;
 
-@property (nonatomic, assign) BOOL doingTransition, didGetInitialResponse;
+@property (nonatomic, assign) BOOL doingTransition, didGetInitialResponse, needToRefreshEventList;
 @property (nonatomic,strong)  NSTimer *refreshTimer;
 @end
 
@@ -96,14 +96,12 @@
     [super viewWillAppear:animated];
     
     // RULE:  only re-fetch if it's the first time, or if the user altered an event.
-    // XX:  need to add timer to periodically refresh the list.
     
     EventObject*e=APP.eventBeingEdited;
-    BOOL currentEventWasAltered= e.hasBeenAltered;
-    BOOL didRefresh= NO;
-    if  (!self.didGetInitialResponse || currentEventWasAltered) {
+    
+    // NOTE: Currently the addition of restaurants to an event is not easily detected except using the boolean.
+    if  (_needToRefreshEventList || !self.didGetInitialResponse || e.hasBeenAltered) {
         [self refetchEvents];
-        didRefresh=YES;
     }
     
     [self performSelector:@selector(startRefreshTimer)  withObject:nil afterDelay:30];
@@ -138,6 +136,7 @@
             }
         }
 
+        _needToRefreshEventList= NO;
         self.curatedEventsArray=  curated;
         
         ON_MAIN_THREAD(^(){
@@ -523,12 +522,12 @@
                                               BOOL isSubmitted = event.isComplete;
                                               BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
                                               
-//                                              allowed=0;
                                               if (!isSubmitted && allowed && !votingIsDone) {
                                                   NSLog(@"EDITING ALLOWED");
                                                   
                                                   APP.eventBeingEdited= event;
                                                   EventCoordinatorVC *vc= [[EventCoordinatorVC alloc] init];
+                                                  vc.delegate= weakSelf;
                                                   [weakSelf.navigationController pushViewController:vc animated:YES ];
                                               } else {
                                                   NSLog(@"EDITING PROHIBITED");
@@ -617,6 +616,7 @@
                     APP.eventBeingEdited= e;
                     e.eventID= eventID;
                     
+                    weakSelf.needToRefreshEventList= YES;
                     [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
                     
                 }
@@ -630,6 +630,13 @@
 - (void)goToEventCoordinatorScreen: (NSString*)name
 {
     EventCoordinatorVC *vc= [[EventCoordinatorVC  alloc] init ];
+    vc.delegate= self;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)userDidAlterEvent
+{
+    self.needToRefreshEventList= YES;
+    [self refetchEvents];
 }
 @end

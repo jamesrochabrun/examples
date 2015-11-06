@@ -521,8 +521,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         [_participants  removeObject: object];
     }
     
-    NSLog  (@" set=  %@",_participants);
-    NSLog (@"OBJ %@", object);
+    [self.delegate userDidAlterEventParticipants];
     
     [OOAPI setParticipationOf:object
                       inEvent:APP.eventBeingEdited

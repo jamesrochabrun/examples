@@ -17,7 +17,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "ListTVCell.h"
 #import "EventWhenVC.h"
-#import "ParticipantsView.h"
+#import "ProfileVC.h"
 
 #import  <QuartzCore/CALayer.h>
 
@@ -70,6 +70,7 @@
         
         self.participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
+        _participantsView.delegate= self;
         
         self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
         self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
@@ -127,6 +128,11 @@
     _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
     
     [self.participantsView setNeedsLayout];
+}
+
+- (void)userPressedButtonForProfile:(NSUInteger)userid
+{
+    [_delegate userPressedProfilePicture:userid];
 }
 
 - (void) provideEvent: (EventObject*)event;
@@ -277,7 +283,6 @@
     self.vote.vote= _radioButton.selected  ? 1:0;
     if  ( self.delegate) {
         [self.delegate voteChanged:self.vote  ];
-        
     }
 }
 
@@ -541,6 +546,24 @@
 {
     message( @"you pressed submit.");
 
+}
+
+- (void)userPressedProfilePicture: (NSUInteger)userid
+{
+    __weak EventParticipantVC *weakSelf = self;
+
+    [OOAPI lookupUserByID: userid
+                  success:^(UserObject *user) {
+                      if ( user) {
+                         ProfileVC* vc= [[ProfileVC alloc] init];
+                         vc.userInfo= user;
+                         vc.userID= userid;
+                         [weakSelf.navigationController  pushViewController:vc animated:YES];
+                     }
+                 }
+                 failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                     
+                 }];
 }
 
 @end

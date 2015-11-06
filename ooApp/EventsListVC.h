@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
+#import "ParticipantsView.h"
+#import "EventCoordinatorVC.h"
 
-@interface EventsListVC : BaseVC <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
+@interface EventsListVC : BaseVC <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate,  EventCoordinatorVCDelegate>
 
 @end
 

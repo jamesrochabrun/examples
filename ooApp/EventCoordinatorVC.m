@@ -24,7 +24,7 @@
 #import "PieView.h"
 #import "VotingResultsVC.h"
 #import "EventParticipantVC.h"
-#import "ParticipantsView.h"
+#import "ProfileVC.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -178,7 +178,8 @@
     self.viewVerticalLine2= makeView(self.viewContainer2, BLACK);
     self.participantsView= [[ ParticipantsView alloc] init];
     [_viewContainer2 addSubview: _participantsView];
-    
+    _participantsView.delegate= self;
+
     self.viewContainer3= makeView(self.scrollView, WHITE);
     _viewContainer3.layer.borderWidth= 1;
     _viewContainer3.layer.borderColor= GRAY.CGColor;
@@ -269,6 +270,23 @@
     }
 }
 
+- (void)userPressedButtonForProfile:(NSUInteger)userid
+{
+    __weak EventCoordinatorVC *weakSelf = self;
+    [OOAPI lookupUserByID: userid
+                  success:^(UserObject *user) {
+                      if ( user) {
+                          ProfileVC* vc= [[ProfileVC alloc] init];
+                          vc.userInfo= user;
+                          vc.userID= userid;
+                          [weakSelf.navigationController  pushViewController:vc animated:YES];
+                      }
+                  }
+                  failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      
+                  }];
+}
+
 - (void) verifyDeletion
 {
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really delete?")
@@ -288,7 +306,6 @@
     [a addAction:ok];
     
     [self presentViewController:a animated:YES completion:nil];
-    
 }
 
 - (void)castVote
@@ -344,6 +361,7 @@
 
 - (void)deleteEvent
 {
+    [self.delegate userDidAlterEvent];
     [OOAPI deleteEvent:APP.eventBeingEdited.eventID
                success:^{
                     [self dismissViewControllerAnimated:YES
@@ -370,9 +388,15 @@
     [self initiateUpdateOfWhereBox];
 }
 
+- (void)userDidAlterEventParticipants
+{
+    [self.delegate userDidAlterEvent];
+}
+
 - (void)datesChanged
 {
     [APP.eventBeingEdited sendDatesToServer];
+    [self.delegate userDidAlterEvent];
 }
 
 - (void) updateWhenBox
@@ -524,6 +548,7 @@
     _transitioning= YES;
     
     EventWhoVC* vc= [[EventWhoVC alloc] init];
+    vc.delegate= self;
     [self.navigationController pushViewController:vc animated:YES];
 
 }

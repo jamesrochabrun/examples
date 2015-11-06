@@ -36,7 +36,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
     return sharedInstance;
 }
 
-- (void) dealloc6
+- (void) dealloc
 {
     [self stopTrackingLocation];
 }
@@ -45,25 +45,9 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 {
     self = [super init];
     if (self) {
-        _currentLocation = [[Settings sharedInstance] mostRecentLocation ];
+        _currentLocation= [[Settings sharedInstance] mostRecentLocation ];
     }
     return self;
-}
-
-//------------------------------------------------------------------------------
-// Name:    dontTrackLocation
-// Purpose: Reads the current user location tracking choice from settings.
-//------------------------------------------------------------------------------
-- (TrackingChoice) dontTrackLocation;
-{
-    NSArray* ary= [[Settings sharedInstance] mostRecentChoice: kDefaultsUserLocationChoice];
-    if (!ary) {
-        NSLog  (@"User has not yet specified whether to track the location.");
-        return TRACKING_UNKNOWN;
-    }
-    
-    BOOL dontTrackLocation= ((NSNumber*)ary[1]).boolValue;
-    return dontTrackLocation ? TRACKING_NO : TRACKING_YES;
 }
 
 //------------------------------------------------------------------------------
@@ -75,23 +59,6 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
     // RULE: Only show the one Apple pop-up.
     
     [self startTrackingLocation];
-}
-
-//------------------------------------------------------------------------------
-// Name:    setUserLocationTrackingChoice
-// Purpose: Writes the current user location tracking choice from settings.
-//------------------------------------------------------------------------------
-- (void) setUserLocationTrackingChoice:  (TrackingChoice) choice
-{
-    [[Settings sharedInstance] setMostRecentChoice: kDefaultsUserLocationChoice
-                                                to: @[
-                                                      [NSDate date],
-                                                      [NSNumber numberWithInteger: choice==TRACKING_NO?1:0]
-                                                      ]];
-    if (choice==TRACKING_YES ) {
-        //  start the location manager if not already started.
-//        [self currentUserLocation];
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -114,11 +81,11 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
     if ( status==kCLAuthorizationStatusAuthorizedAlways && status == kCLAuthorizationStatusAuthorizedWhenInUse) {
         [[NSNotificationCenter defaultCenter] postNotificationName: kNotificationLocationBecameAvailable object:nil];
         
-        [self setUserLocationTrackingChoice: TRACKING_YES];
+        self.dontTrackLocation=TRACKING_YES;
     } else {
         [[NSNotificationCenter defaultCenter] postNotificationName: kNotificationLocationBecameUnavailable object:nil];
-        
-        [self setUserLocationTrackingChoice: TRACKING_NO ];
+        self.dontTrackLocation=TRACKING_NO;
+
     }
 }
 
@@ -140,11 +107,6 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 //------------------------------------------------------------------------------
 - (CLLocationCoordinate2D) currentUserLocation
 {
-    if (TRACKING_NO == [self dontTrackLocation]) {
-//        return CLLocationCoordinate2DMake(37.775,-122.4183333); // San Francisco
-        return CLLocationCoordinate2DMake(21.3069444,-157.8583333); // Honolulu Hawaii
-        // XX: In future we want to convert the user's IP address to a location.
-    }
     if (!self.locationManager) {
         [self startTrackingLocation];
         return [[Settings sharedInstance] mostRecentLocation ];

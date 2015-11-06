@@ -9,8 +9,16 @@
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
 #import "EventWhenVC.h"
+#import "ParticipantsView.h"
+#import "EventWhoVC.h"
 
-@interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,EventWhenVCDelegate>
+@protocol EventCoordinatorVCDelegate
+- (void) userDidAlterEvent;
 
+@end
+
+@interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate,UICollectionViewDataSource,
+                    UICollectionViewDelegate,EventWhenVCDelegate, ParticipantsViewDelegate, EventWhoVCDelegate>
+@property (nonatomic,assign) id <EventCoordinatorVCDelegate> delegate;
 @end
 

@@ -11,6 +11,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "UserObject.h"
 #import "AppDelegate.h"
+#import "OOAPI.h"
 
 NSString *const kNotificationLocationBecameAvailable= @"notificationLocationAvailable";
 NSString *const kNotificationLocationBecameUnavailable= @"notificationLocationUnavailable";
@@ -73,6 +74,59 @@ UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString*
     return iv;
 }
 
+UIButton* makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SEL callback)
+{
+    UIButton* b= makeButton( parent, nil, 0, WHITE, CLEAR,  delegate,  callback, 1);
+    b.tag=  user.userID;
+    [b setImage:APP.imageForNoProfileSilhouette forState:UIControlStateNormal];
+    b.layer.cornerRadius=kGeomFaceBubbleDiameter/2;
+    b.clipsToBounds= YES;
+    
+    if ( user.imageIdentifier && user.imageIdentifier.length) {
+        
+        /*self.requestOperation =*/ [OOAPI getUserImageWithImageID: user.imageIdentifier
+                                                          maxWidth: kGeomFaceBubbleDiameter
+                                                         maxHeight: 0
+                                                           success: ^(NSString *link)  {
+                                                               NSURL *url= [NSURL URLWithString: link];
+                                                               if  ( url) {
+                                                                   NSURLRequest*r= [NSURLRequest requestWithURL:url];
+                                                                   __weak UIButton *weakButton = b;
+                                                                   [b.imageView setImageWithURLRequest:r
+                                                                                      placeholderImage:APP.imageForNoProfileSilhouette
+                                                                                               success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                                                                                   ON_MAIN_THREAD( ^{
+                                                                                                       [weakButton setImage:image forState:UIControlStateNormal];
+                                                                                                   });
+                                                                                                   
+                                                                                               } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                                                                   ;
+                                                                                               }];
+                                                               }
+                                                           }
+                                                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                           }];
+    }
+    else if (user.imageURLString  && user.imageURLString.length) {//  Facebook photo
+        NSURL *url= [NSURL URLWithString: user.imageURLString];
+        if  ( url) {
+            NSURLRequest*r= [NSURLRequest requestWithURL:url];
+            __weak UIButton *weakButton = b;
+            [b.imageView setImageWithURLRequest:r
+                               placeholderImage:APP.imageForNoProfileSilhouette
+                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                            ON_MAIN_THREAD( ^{
+                                                [weakButton setImage:image forState:UIControlStateNormal];
+                                            });
+                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                            ;
+                                        }];
+        }
+    }
+    
+    return b;
+}
+
 UIImageView* makeImageView (UIView *parent, id image_)
 {
     BOOL imageIsURL= NO;
@@ -96,20 +150,19 @@ UIImageView* makeImageView (UIView *parent, id image_)
     return iv;
 }
 
-NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum)
+NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum,id target,SEL callback)
 {
     NSMutableArray* array= [NSMutableArray new];
     NSUInteger i= 0;
     for (UserObject* user  in  users) {
-        UIImage *silhouette=APP.imageForNoProfileSilhouette;// XX:  need to make a smaller copy of the silhouette.
-        UIImageView* iv=  makeImageView(parent, user.imageURLString.length ? user.imageURLString :  silhouette);
-        iv.backgroundColor= WHITE;
-        iv.layer.cornerRadius=  kGeomFaceBubbleDiameter/2;
-        iv.clipsToBounds= YES;
-        iv.frame = CGRectMake(0,0, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-        iv.layer.borderColor= GREEN.CGColor;
-        iv.layer.borderWidth= 1;
-        [array addObject: iv];
+        UIButton* b= makeProfileImageButton(parent, user, target, callback);
+        
+        b.backgroundColor= WHITE;
+
+        b.frame = CGRectMake(0,0, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
+        b.layer.borderColor= GREEN.CGColor;
+        
+        [array addObject: b];
         i++;
         if  (i>=  maximum ) {
             break;

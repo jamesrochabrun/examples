@@ -15,7 +15,12 @@
 - (void) radioButtonChanged: (BOOL)value for: (id)object;
 @end
 
+@protocol EventWhoVCDelegate
+- (void) userDidAlterEventParticipants;
+@end
+
 @interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
+@property (nonatomic,assign) id <EventWhoVCDelegate> delegate;
 @end
 
 @interface EventWhoTableCell: UITableViewCell

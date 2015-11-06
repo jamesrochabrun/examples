@@ -20,6 +20,24 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [_labelEllipsis removeFromSuperview];
+    self.labelEllipsis= nil;
+    [self clearFaces];
+    self.viewsForFaces= nil;
+}
+
+- (void)clearFaces
+{
+    if (_viewsForFaces ) {
+        for (UIView* v  in  _viewsForFaces) {
+            [v removeFromSuperview];
+        }
+        [self.viewsForFaces removeAllObjects];
+    }
+}
+
 - (void) setEvent: (EventObject*)event
 {
     if  (!event) {
@@ -29,18 +47,14 @@
     _event= event;
     
     if  ([self.event totalUsers ] ) {
-        if (_viewsForFaces ) {
-            for (UIView* v  in  _viewsForFaces) {
-                [v removeFromSuperview];
-            }
-            [self.viewsForFaces removeAllObjects];
-        }
+        [self clearFaces];
+      
         float availableWidth= self.frame.size.width;
         if  (!availableWidth) {
             return;
         }
         NSInteger nBubbles= (availableWidth-2*kGeomSpaceEdge)/(kGeomFaceBubbleDiameter +kGeomFaceBubbleSpacing);
-        self.viewsForFaces= makeImageViewsForUsers (self, event.users, nBubbles);
+        self.viewsForFaces= makeImageViewsForUsers (self, event.users, nBubbles,self,@selector(userPressedFaceBubble:) );
         [self setNeedsLayout];
     }
 }
@@ -68,7 +82,13 @@
             i++;
         }
     }
-
 }
 
+- (void)userPressedFaceBubble: (UIButton*)button
+{
+    NSLog  (@"USER PRESSED FACE BUBBLE  %lu",(unsigned long)button.tag);
+    if ( self.delegate) {
+        [self.delegate userPressedButtonForProfile: button.tag ];
+    }
+}
 @end

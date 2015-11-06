@@ -13,12 +13,10 @@
 @interface EventTVCell ()
 
 @property (nonatomic, strong) EventObject *eventInfo;
-@property (nonatomic, strong) UILabel *labelIndicatingAttendeeCount;
 @property (nonatomic, strong) AFHTTPRequestOperation *operation;
 @property (nonatomic, strong) AFHTTPRequestOperation *imageOperation;
-//@property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic, assign) BOOL isFirst, isMessage;
-
+@property (nonatomic,strong)  ParticipantsView* participantsView;
 @end
 
 @implementation EventTVCell
@@ -27,14 +25,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
-//        _viewShadow= makeView(self,  WHITE);
-//        addShadowTo(_viewShadow);
-        
-        _labelIndicatingAttendeeCount= [UILabel  new];
-        [self  addSubview: _labelIndicatingAttendeeCount];
-        _labelIndicatingAttendeeCount.textColor= WHITE;
-
         self.header.textAlignment= NSTextAlignmentCenter;
         self.subHeader1.textAlignment= NSTextAlignmentCenter;
         self.subHeader2.textAlignment= NSTextAlignmentCenter;
@@ -45,6 +35,11 @@
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
 //        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
 //        self.thumbnail.clipsToBounds= YES;
+        
+        _participantsView= [[ParticipantsView alloc] init];
+        [self  addSubview: _participantsView];
+        _participantsView.delegate= self;
+        [self  bringSubviewToFront:_participantsView];
     }
     return self;
 }
@@ -53,6 +48,7 @@
 {
     [super prepareForReuse];
     [self showShadow];
+    [_participantsView clearFaces];
     [self.operation cancel];
     [_imageOperation cancel];
     [self updateHighlighting:NO];
@@ -65,11 +61,9 @@
     self.subHeader1.text= nil;
     self.subHeader2.text= nil;
     self.thumbnail.image= nil;
-    _labelIndicatingAttendeeCount.text= nil;
     _isMessage= NO;
     self.header.textColor= WHITE;
     
-    NSLog (@"0x%lx prepare @ %lu", (unsigned long) self,msTime());
 }
 
 - (void)setMessageMode:(NSString *)message;
@@ -83,6 +77,11 @@
 - (void)setIsFirst
 {
     self.isFirst= YES;
+}
+
+- (void)userPressedButtonForProfile:(NSUInteger)userid
+{
+    [_delegate userTappedOnProfilePicture:userid];
 }
 
 - (void)updateHighlighting:(BOOL)highlighted;
@@ -129,24 +128,18 @@
     _nameHeader.frame = CGRectMake(0,(kGeomHeightButton-27)/2,w, 27);
     
     if (!_isMessage) {
-        _labelIndicatingAttendeeCount.frame = CGRectMake(w-kGeomButtonWidth-kGeomSpaceEdge,h-kGeomHeightButton-lowerGradientHeight,kGeomButtonWidth,kGeomHeightButton);
-        _labelIndicatingAttendeeCount.textAlignment= NSTextAlignmentRight;
-        
         // RULE: If the cell is the first one then leave space for the header.
         if  (_isFirst) {
             thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
             self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
-            y= kGeomHeightButton/2 + (thumbHeight-2*kGeomFontSizeHeader)/2;
+            y= kGeomHeightButton/2+  (thumbHeight-kGeomFaceBubbleDiameter -2*kGeomFontSizeHeader)/2;
         } else {
             thumbHeight=h-lowerGradientHeight;
             self.thumbnail.frame = CGRectMake(0,0,w,thumbHeight);
-            y= (thumbHeight-2*kGeomFontSizeHeader)/2;
+            y= (thumbHeight-kGeomFaceBubbleDiameter-2*kGeomFontSizeHeader)/2;
         }
         
-        //NOTE: this is a bit of a hack. We should really be using autolayout
         self.viewShadow.frame = self.thumbnail.frame;
-        
-//        [self  sendSubviewToBack:_viewShadow ];
         
         [self.header sizeToFit];
         [self.subHeader1 sizeToFit];
@@ -154,13 +147,17 @@
         float subheaderHeight= self.subHeader1.frame.size.height;
         
         self.header.frame = CGRectMake(0,y,w,headerHeight); y += headerHeight;
-        self.subHeader1.frame = CGRectMake(0,y,w,subheaderHeight);
+        self.subHeader1.frame = CGRectMake(0,y,w,subheaderHeight); y += subheaderHeight;
+        y+= kGeomSpaceInter;
+        _participantsView.frame = CGRectMake(0,y,w,kGeomFaceBubbleDiameter);
+        
         self.subHeader2.frame = CGRectZero;
     } else {
         self.header.frame = CGRectMake(0,0,w,h);
         self.subHeader1.frame = CGRectZero;
         self.subHeader2.frame = CGRectZero;
         self.thumbnail.frame= CGRectZero;
+        _participantsView.frame=CGRectZero;
     }
     
     self.gradient.hidden = YES;
@@ -188,16 +185,13 @@
     NSString *dateString = expressLocalDateTime(eo.date);
     
     self.subHeader1.text = dateString;
-    //    self.subHeader2.text = primaryVenue ? primaryVenue.name :  @"Undisclosed location";
-    
-    NSInteger numberOfPeople=_eventInfo.numberOfPeople;
-    _labelIndicatingAttendeeCount.attributedText= createPeopleIconString(numberOfPeople );
     
     RestaurantObject* primaryVenue= [_eventInfo totalVenues ] ? (RestaurantObject*)[_eventInfo firstVenue ] :nil;
     
     OOAPI *api = [[OOAPI alloc] init];
     UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
-    
+    __weak EventTVCell *weakSelf = self;
+
     if (_eventInfo.primaryImage ) {
         self.thumbnail.image= _eventInfo.primaryImage;
         NSLog (@"0x%lx set primaryImage @ %lu", (unsigned long) self,msTime());
@@ -220,16 +214,12 @@
                                                             success:^(NSString *link) {
                                                                 NSURLRequest* request= [NSURLRequest requestWithURL:[NSURL URLWithString:link]];
                                                                 
-                                                                NSLog (@"0x%lx setImageWithURLRequest @ %lu", (unsigned long) self,msTime());
-
                                                                 [weakSelf.thumbnail setImageWithURLRequest:request
                                                                                           placeholderImage:placeholder
                                                                                                    success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {
                                                                                                        weakSelf.eventInfo.primaryImage= image;
                                                                                                        NSLog  (@"MANAGED TO CAPTURE IMAGE THAT WAS FETCHED.");
                                                                                                        ON_MAIN_THREAD(  ^{
-                                                                                                           NSLog (@"0x%lx thumbnail.image @ %lu", (unsigned long) self,msTime());
-
                                                                                                            weakSelf.thumbnail.image= image;
                                                                                                            weakSelf.thumbnail.hidden= NO;
 
@@ -247,11 +237,8 @@
                                                                    NSLog  (@" failed to refresh");
                                                                }];
         
-        return;
     }
     else if (_eventInfo.primaryVenueImageIdentifier) {
-        
-        __weak EventTVCell *weakSelf = self;
         _imageOperation=  [api getRestaurantImageWithImageRef: _eventInfo.primaryVenueImageIdentifier
                                                      maxWidth:self.frame.size.width
                                                     maxHeight:0
@@ -265,8 +252,6 @@
                                                                                              success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {
                                                                                                  weakSelf.eventInfo.primaryImage= image;
                                                                                                  ON_MAIN_THREAD(  ^{
-                                                                                                     NSLog (@"0x%lx thumbnail.image @ %lu", (unsigned long) self,msTime());
-
                                                                                                      weakSelf.thumbnail.image= image;
                                                                                                  });
                                                                                                  
@@ -282,6 +267,15 @@
         NSLog (@"EVENT %lu HAS NO PRIMARY VENUE",(unsigned long)_eventInfo.eventID);
         [self.thumbnail setImage:placeholder];
     }
+
+    NSLog  (@"HAVE %ld USERS", (unsigned long)[eo  totalUsers]);
+
+    [eo refreshUsersFromServerWithSuccess:^{
+        NSLog  (@"FOUND %ld USERS", (unsigned long)[eo  totalUsers]);
+        [weakSelf.participantsView setEvent:eo];
+    } failure:^{
+        NSLog  (@"UNABLE TO REFRESH USERS.");
+    }];
 }
 
 @end

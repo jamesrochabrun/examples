@@ -319,32 +319,35 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getUsersWithIDs
+// Name:    lookupUserByID
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation*)getUsersWithIDs:(NSArray *)userIDs
-                                   success:(void (^)(NSArray *users))success
-                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+
++ (AFHTTPRequestOperation *)lookupUserByID:(NSUInteger)userID
+                                   success:(void (^)(UserObject *user))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users", [OOAPI URL]];
+    if  (!userID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu", [OOAPI URL],  (unsigned long)userID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        NSMutableArray *users = [NSMutableArray array];
-        for (id dict in responseObject) {
-            //            NSLog(@"user: %@", dict);
-            [users addObject:[UserObject userFromDict:dict]];
-        }
-        success(users);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-        failure(operation, error);
-    }];
+    return [rm GET:urlString parameters:  nil
+           success:^(id responseObject) {
+               UserObject *user= [UserObject userFromDict: responseObject];
+              
+               success(user);
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               failure(operation, error);
+           }];
 }
 
 //------------------------------------------------------------------------------
 // Name:    getDishesWithIDs
 // Purpose:
-//------------------------------------------------------------------------------
+//------------------It's------------------------------------------------------------
 - (AFHTTPRequestOperation*)getDishesWithIDs:(NSArray *)dishIDs
                                     success:(void (^)(NSArray *dishes))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
@@ -767,7 +770,6 @@ NSString *const kKeySearchFilter = @"filter";
         NSLog(@"Error: %@", error);
     }];
 }
-
 
 + (AFHTTPRequestOperation *)isFollowingUser:(UserObject *)user
                                     success:(void (^)(BOOL))success

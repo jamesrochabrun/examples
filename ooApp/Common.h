@@ -10,6 +10,7 @@
 #define _COMMON_H
 
 #import "Reachability.h"
+#import "UserObject.h"
 
 @class AppDelegate;
 #define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
@@ -42,6 +43,8 @@ extern UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  
 extern UIButton* makeRoundIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius);
 extern UIButton* makeRoundButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius);
 extern UIButton* makeButtonForAutolayout (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
+extern UIButton* makeProfileImageButton (UIView *parent,UserObject* user,id target, SEL  callback);
+
 extern UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize);
@@ -54,7 +57,7 @@ extern UIButton* makeAttributedButton (UIView *parent, NSString*  title, float f
 extern UIView* makeView (UIView *parent, UIColor* backgroundColor);
 extern UIScrollView* makeScrollView (UIView*parent, id  delegate);
 extern void addShadowTo (UIView*v);
-extern NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users,  NSUInteger  maximum);
+extern NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum,id target,SEL callback);
 
 extern NSDate* parseUTCDateFromServer(NSString *string);
 extern NSString* parseStringOrNullFromServer (id object);

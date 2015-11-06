@@ -30,8 +30,8 @@ typedef enum : int {
     TRACKING_YES=1,
     TRACKING_NO=2,
 } TrackingChoice;
+@property (nonatomic,assign) TrackingChoice dontTrackLocation;
 
-- (TrackingChoice)dontTrackLocation;
 
 @end
 

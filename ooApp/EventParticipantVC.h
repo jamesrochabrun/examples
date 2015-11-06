@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
 #import "VoteObject.h"
+#import "ParticipantsView.h"
 
 @protocol EventParticipantFirstCellDelegate
 - (void) userRequestToSubmit;
+- (void) userPressedProfilePicture: (NSUInteger)userid;
+
 @end
 
 @protocol EventParticipantVotingCellDelegate
@@ -28,7 +31,7 @@
 @interface EventParticipantEmptyCell:UITableViewCell
 @end
 
-@interface EventParticipantFirstCell: UITableViewCell
+@interface EventParticipantFirstCell: UITableViewCell <ParticipantsViewDelegate>
 @property (nonatomic,assign) id <EventParticipantFirstCellDelegate> delegate;
 - (void) provideEvent: (EventObject*)event;
 @end
