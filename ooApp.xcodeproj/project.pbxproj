@@ -87,6 +87,7 @@
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
 		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
 		36F872D91B919BC200006C29 /* ListObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F872D81B919BC200006C29 /* ListObject.m */; };
+		36FAB82E1BEC2DBA00B20EA1 /* FeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FAB82C1BEC2DBA00B20EA1 /* FeedVC.m */; settings = {ASSET_TAGS = (); }; };
 		36FDA6F61B585F650029D29D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6F51B585F650029D29D /* main.m */; };
 		36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6F81B585F650029D29D /* AppDelegate.m */; };
 		36FDA6FC1B585F650029D29D /* WhatsNewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA6FB1B585F650029D29D /* WhatsNewVC.m */; };
@@ -266,6 +267,8 @@
 		36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HoursOpen.m; sourceTree = "<group>"; };
 		36F872D71B919BC200006C29 /* ListObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListObject.h; sourceTree = "<group>"; };
 		36F872D81B919BC200006C29 /* ListObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListObject.m; sourceTree = "<group>"; };
+		36FAB82C1BEC2DBA00B20EA1 /* FeedVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedVC.m; sourceTree = "<group>"; };
+		36FAB82D1BEC2DBA00B20EA1 /* FeedVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedVC.h; sourceTree = "<group>"; };
 		36FDA6F01B585F650029D29D /* Oomami.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Oomami.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36FDA6F41B585F650029D29D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		36FDA6F51B585F650029D29D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -614,6 +617,8 @@
 				365F175C1B91046B00015D5D /* DefaultVC.m */,
 				36FDA6FD1B585F650029D29D /* PlayVC.h */,
 				36FDA6FE1B585F650029D29D /* PlayVC.m */,
+				36FAB82C1BEC2DBA00B20EA1 /* FeedVC.m */,
+				36FAB82D1BEC2DBA00B20EA1 /* FeedVC.h */,
 				3621F1191B8E6A06004537B6 /* MenuTVC.h */,
 				3621F11A1B8E6A06004537B6 /* MenuTVC.m */,
 				36250BDA1B82679A00F456B5 /* LoginVC.h */,
@@ -693,7 +698,6 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
-				3BABB11624ECA35CA6762BF1 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -840,21 +844,6 @@
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
 		};
-		3BABB11624ECA35CA6762BF1 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		923BDA435A444C3D92CBD745 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -949,6 +938,7 @@
 				96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */,
 				96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */,
 				964BC8211B97A4E700760C83 /* LocationManager.m in Sources */,
+				36FAB82E1BEC2DBA00B20EA1 /* FeedVC.m in Sources */,
 				3621F12C1B901D24004537B6 /* BaseVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

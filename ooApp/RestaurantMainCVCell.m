@@ -522,7 +522,7 @@
                                                  });
                                              }];
         });
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ON_MAIN_THREAD(^ {
             weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
             [weakSelf setNeedsUpdateConstraints];

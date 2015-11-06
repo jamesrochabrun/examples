@@ -14,6 +14,7 @@
 #import "SettingsVC.h"
 #import "WhatsNewVC.h"
 #import "DefaultVC.h"
+#import "FeedVC.h"
 #import "PlayVC.h"
 #import "DiscoverVC.h"
 #import "DiagnosticVC.h"
@@ -58,7 +59,7 @@
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconFeed;
     menuItem.name = @"FRIEND FEED";
-    menuItem.type = kMenuItemPlay;
+    menuItem.type = kMenuItemFeed;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
@@ -194,8 +195,8 @@
         fvc = [[SearchVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
-    } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
-        fvc = [[PlayVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemFeed]) {
+        fvc = [[FeedVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {
         fvc = [[DiagnosticVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemMeet]) {

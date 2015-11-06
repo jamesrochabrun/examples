@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 extern NSString *const kMenuItemPlay;
+extern NSString *const kMenuItemFeed;
 extern NSString *const kMenuItemConnect;
 extern NSString *const kMenuItemProfile;
 extern NSString *const kMenuItemDiscover;

@@ -83,7 +83,7 @@ static NSString * const cellIdentifier = @"listCell";
         ON_MAIN_THREAD( ^{
             [self gotLists];
         });
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }

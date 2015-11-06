@@ -269,7 +269,7 @@
                                                                    setImageWithURL:[NSURL URLWithString:link]
                                                                    placeholderImage:placeholder];
                                                               });
-                                                          } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                           }];
     }
 }
@@ -304,7 +304,7 @@
                                                   // XX:  need to force event list to reload
                                               }];
                     }
-                    failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                    failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                         message( @"Failed to delete event.");
                     }];
                    
@@ -554,7 +554,7 @@
     [OOAPI reviseEvent: event
                success:^(id responseObject) {
                    NSLog (@"REVISION SUCCESSFUL");
-               } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+               } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                    NSLog (@"REVISION FAILED %@",e);
                }];
 }

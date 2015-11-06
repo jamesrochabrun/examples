@@ -248,7 +248,7 @@
     
     [OOAPI clearUsernameWithSuccess:^(NSArray *names) {
         message( @"success");
-    } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
         NSString *s = [NSString stringWithFormat: @"error %@",e.localizedDescription];
         message(s);
     } ];

@@ -238,7 +238,7 @@
                                                                                                        ;
                                                                                                    }];
                                                                 
-                                                            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                                                            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                                 [weakSelf.thumbnail setImage:placeholder];
                                                             }];
             }
@@ -274,7 +274,7 @@
                                                                                              } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
                                                                                                  ;
                                                                                              }];
-                                                      } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                           [weakSelf.thumbnail setImage:placeholder];
                                                       }];
         

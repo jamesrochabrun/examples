@@ -128,7 +128,7 @@
             });
             
         }
-                                   failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                   failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                        NSLog  (@"EVENT FETCHING FAILED  %@",e);
                                    }
          ];
@@ -165,7 +165,7 @@
                 [weakSelf.table  reloadData];
             });
         }
-                        failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                        failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                             NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
                         }
          ];
@@ -419,7 +419,7 @@
                                                       
                                                   }
                                               }
-                                          } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                          } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                               weakSelf.doingTransition= NO;
                                               [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
                                               message( @"Unable to contact the cloud.");
@@ -491,7 +491,7 @@
                     [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
                     
                 }
-                failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                     NSLog  (@"%@", error);
                     message( @"backend was unable to create a new event");
                 }];

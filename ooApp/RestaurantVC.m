@@ -117,7 +117,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                         }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     [self createListNamed:_createListAC.textFields[0].text];
+                                                     NSString *name = [_createListAC.textFields[0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                                                     
+                                                     if ([name length]) {
+                                                         [self createListNamed:name];
+                                                     }
                                                  }];
     
     [_createListAC addAction:cancel];
@@ -135,7 +139,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         if (listObject.listID) {
             [weakSelf addRestaurantToList:listObject];
         }
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Could not create list: %@", error);
     }];
 }
@@ -147,7 +151,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         ON_MAIN_THREAD(^{
             [weakSelf getListsForRestaurant];
         });
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Could add restaurant to list: %@", error);
     }];
 }
@@ -219,7 +223,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self showShare:link];
                 });
-            } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 ;
             }];
         } else {
@@ -297,7 +301,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         _restaurant = restaurant;
         [weakSelf getListsForRestaurant];
         [weakSelf getMediaItemsForRestaurant];
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }
@@ -327,7 +331,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                         [weakSelf displayListButtons];
                     });
                 }
-                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
                 }];
 }
@@ -340,7 +344,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         ON_MAIN_THREAD(^{
             [weakSelf gotMediaItems];
         });
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 
@@ -414,7 +418,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         ON_MAIN_THREAD(^{
             [weakSelf getListsForRestaurant];
         });
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }
@@ -425,7 +429,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeFavorites success:^(id response) {
         [weakSelf getListsForRestaurant];
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }
@@ -436,7 +440,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeToTry success:^(id response) {
         [weakSelf getListsForRestaurant];
-    } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }
@@ -623,7 +627,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                      }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     [self createListNamed:_createListAC.textFields[0].text];
+                                                     NSLog(@"Cancel");
                                                  }];
     
 

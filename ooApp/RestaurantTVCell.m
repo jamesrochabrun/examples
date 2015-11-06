@@ -51,7 +51,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];
             });
-        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
     }
