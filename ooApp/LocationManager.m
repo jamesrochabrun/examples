@@ -36,7 +36,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
     return sharedInstance;
 }
 
-- (void) dealloc
+- (void) dealloc6
 {
     [self stopTrackingLocation];
 }
@@ -143,7 +143,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
     if (TRACKING_NO == [self dontTrackLocation]) {
 //        return CLLocationCoordinate2DMake(37.775,-122.4183333); // San Francisco
         return CLLocationCoordinate2DMake(21.3069444,-157.8583333); // Honolulu Hawaii
-        
+        // XX: In future we want to convert the user's IP address to a location.
     }
     if (!self.locationManager) {
         [self startTrackingLocation];

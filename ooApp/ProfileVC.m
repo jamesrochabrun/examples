@@ -45,33 +45,38 @@
 {
     self = [super init];
     if (self) {
-        self.buttonFollow= makeButton(self,  @"FOLLOW",
-                                      kGeomFontSizeHeader,BLACK, CLEAR,
-                                      self,
-                                      @selector (userPressedFollow:), 1);
-        
-        [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        
-        self.buttonNewList= makeButton(self,  @"NEW LIST",
-                                       kGeomFontSizeHeader,BLACK, CLEAR,
-                                       self,
-                                       @selector (userPressedNewList:), 0);
-        self.buttonNewListIcon= makeButton(self,kFontIconAdd,
-                                           kGeomFontSizeHeader,BLACK, CLEAR,
-                                           self,
-                                           @selector (userPressedNewList:), 0);
-        [_buttonNewListIcon.titleLabel setFont:
-         [UIFont fontWithName:kFontIcons size:kGeomFontSizeHeader]];
-        
         _userInfo = u;
         _userID = u.userID ;
         
         // Ascertain whether reviewing our own profile.
         UserObject *currentUser= [Settings sharedInstance].userObject;
         NSUInteger ownUserIdentifier= [currentUser userID];
-        _viewingOwnProfile = _userID == ownUserIdentifier;
+        _viewingOwnProfile = u.userID == ownUserIdentifier;
         if ( _viewingOwnProfile) {
             _buttonFollow.hidden= YES;
+        }
+        
+        if (!_viewingOwnProfile) {
+            
+            self.buttonFollow= makeButton(self,  @"FOLLOW",
+                                          kGeomFontSizeHeader,BLACK, CLEAR,
+                                          self,
+                                          @selector (userPressedFollow:), 1);
+            
+            [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
+            
+        } else {
+            self.buttonNewList= makeButton(self,  @"NEW LIST",
+                                           kGeomFontSizeHeader,BLACK, CLEAR,
+                                           self,
+                                           @selector (userPressedNewList:), 0);
+            self.buttonNewListIcon= makeButton(self,kFontIconAdd,
+                                               kGeomFontSizeHeader,BLACK, CLEAR,
+                                               self,
+                                               @selector (userPressedNewList:), 0);
+            [_buttonNewListIcon.titleLabel setFont:
+             [UIFont fontWithName:kFontIcons size:kGeomFontSizeHeader]];
+            
         }
         
         self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
@@ -255,15 +260,17 @@
     }
     
     // Place the new list buttons
-    x = kGeomSpaceEdge;
-    [_buttonNewListIcon sizeToFit];
-    float iconWith= _buttonNewListIcon.frame.size.width;
-    _buttonNewListIcon.frame=CGRectMake(x,y, iconWith, kGeomHeightButton);
-    x += iconWith + spacer;
-    [_buttonNewList sizeToFit];
-    float textWidth= _buttonNewList.frame.size.width;
-    _buttonNewList.frame=CGRectMake(x,y,textWidth, kGeomHeightButton);
-    y +=  kGeomHeightButton + spacer;
+    if ( _viewingOwnProfile) {
+        x = kGeomSpaceEdge;
+        [_buttonNewListIcon sizeToFit];
+        float iconWith= _buttonNewListIcon.frame.size.width;
+        _buttonNewListIcon.frame=CGRectMake(x,y, iconWith, kGeomHeightButton);
+        x += iconWith + spacer;
+        [_buttonNewList sizeToFit];
+        float textWidth= _buttonNewList.frame.size.width;
+        _buttonNewList.frame=CGRectMake(x,y,textWidth, kGeomHeightButton);
+        y +=  kGeomHeightButton + spacer;
+    }
     
     self.spaceNeededForFirstCell = y;
 }
@@ -361,7 +368,6 @@
     
     _lists = [NSArray array];
     
-    // NOTE:  these will later be stored in user defaults.
     _headerCell = [[ProfileTableFirstRow alloc] initWithUserInfo:_profileOwner];
     _headerCell.vc = self;
     _headerCell.navigationController = self.navigationController;
