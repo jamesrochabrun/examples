@@ -24,6 +24,7 @@
 #import "PieView.h"
 #import "VotingResultsVC.h"
 #import "EventParticipantVC.h"
+#import "ParticipantsView.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -78,8 +79,8 @@
 @property (nonatomic,strong) NSTimer *timerForUpdating;
 @property (nonatomic,assign) BOOL transitioning;
 
-@property (nonatomic,strong) NSMutableArray* viewsForFaces;
-@property (nonatomic,strong)  UILabel*labelEllipsis;
+@property (nonatomic,strong) ParticipantsView *participantsView;
+
 @end
 
 @implementation EventCoordinatorVC
@@ -175,10 +176,10 @@
     _viewContainer2.layer.borderColor= GRAY.CGColor;
     self.viewVerticalLine1= makeView(self.viewContainer2, BLACK);
     self.viewVerticalLine2= makeView(self.viewContainer2, BLACK);
-    self.labelEllipsis= makeLabel(self.viewContainer2,  @"...", kGeomFontSizeHeader);
-
+    self.participantsView= [[ ParticipantsView alloc] init];
+    [_viewContainer2 addSubview: _participantsView];
+    
     self.viewContainer3= makeView(self.scrollView, WHITE);
-//    self.labelWhen = makeAttributedLabel(self.viewContainer3, @"DATE\rTIME", kGeomFontSizeHeader);
     _viewContainer3.layer.borderWidth= 1;
     _viewContainer3.layer.borderColor= GRAY.CGColor;
     
@@ -448,17 +449,7 @@
     _labelWhoResponded.attributedText= attributedStringOf(countsStringResponded,  kGeomFontSizeHeader);
     _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
     
-    if  (e.users.count ) {
-        if (_viewsForFaces ) {
-            for (UIView* v  in  _viewsForFaces) {
-                [v removeFromSuperview];
-            }
-            [self.viewsForFaces removeAllObjects];
-        }
-        NSInteger nBubbles=  ([UIScreen  mainScreen].bounds.size.width -2*kGeomSpaceEdge)/(kGeomFaceBubbleDiameter +kGeomFaceBubbleSpacing);
-        self.viewsForFaces= makeImageViewsForUsers(_viewContainer2, e.users, nBubbles);
-        [self doLayout];
-    }
+    [self.participantsView setEvent:e];
 }
 
 - (void) updateWhereBoxAnimated:(id)animated
@@ -777,24 +768,7 @@
     float y2=_viewContainer4.frame.origin.y;
     _venuesCollectionView.frame = CGRectMake(x2,y2 ,boxWidth,kGeomEventCoordinatorBoxHeight);
     
-    if ( self.viewsForFaces.count) {
-        NSUInteger count=self.viewsForFaces.count;
-        NSUInteger totalPeople=  [APP.eventBeingEdited totalUsers ];
-        y=subBoxHeight+kGeomEventCoordinatorBoxHeight/6-kGeomFaceBubbleDiameter/2-kGeomStripHeaderHeight/2;
-        x= (boxWidth-count*kGeomFaceBubbleDiameter-(count-1)*kGeomFaceBubbleSpacing)/2;
-        NSInteger i= 0;
-        for (UIImageView*iv  in self.viewsForFaces) {
-            if  (i >= _viewsForFaces.count-1  && _viewsForFaces.count < totalPeople  ) {
-                _labelEllipsis.frame=CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-                iv.frame= CGRectZero;
-            } else {
-                iv.frame= CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-                _labelEllipsis.frame=CGRectZero;
-            }
-            x+= kGeomFaceBubbleDiameter+kGeomFaceBubbleSpacing;
-            i++;
-        }
-    }
+    _participantsView.frame = CGRectMake(0,subBoxHeight,boxWidth,subBoxHeight/2);
 }
 
 #pragma mark - Collection View stuff

@@ -269,7 +269,6 @@ NSString *const kKeyEventMediaItem = @"media_item";
                            weakSelf.numberOfPeople= event.numberOfPeople;
                            weakSelf.numberOfPeopleResponded= event.numberOfPeopleResponded;
                            weakSelf.numberOfPeopleVoted= event.numberOfPeopleVoted;
-                           weakSelf.hasBeenAltered= YES;
                           success();
                        } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
                            failure();
@@ -285,11 +284,10 @@ NSString *const kKeyEventMediaItem = @"media_item";
     return [OOAPI getParticipantsInEvent:self
                                  success:^(NSArray *users) {
                                      
-                                     [self.users removeAllObjects];
+                                     [weakSelf.users removeAllObjects];
                                      for (UserObject *user in users) {
-                                         [self.users addObject:user];
+                                         [weakSelf.users addObject:user];
                                      }
-                                     weakSelf.hasBeenAltered= YES;
 
                                      success();
                                  } failure:^(AFHTTPRequestOperation* operation, NSError *error) {
@@ -357,7 +355,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                 if  (imageReference ) {
                     self.primaryVenueImageIdentifier= imageReference;
                     if (!originalImageIdentifier ||  ![imageReference isEqualToString:originalImageIdentifier] ) {
-                        self.hasBeenAltered= YES;
+//                        self.hasBeenAltered= YES;
                     }
                     break;
                 }
@@ -399,7 +397,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
                                   [self.votes removeAllObjects];
                                   [self.votes addObjectsFromArray: votes ];
                               }
-                              weakSelf.hasBeenAltered= YES;
+//                              weakSelf.hasBeenAltered= YES;
 
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
                               success();

@@ -17,6 +17,8 @@
 #import "UIImageView+AFNetworking.h"
 #import "ListTVCell.h"
 #import "EventWhenVC.h"
+#import "ParticipantsView.h"
+
 #import  <QuartzCore/CALayer.h>
 
 @interface EventParticipantEmptyCell()
@@ -52,9 +54,7 @@
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) EventObject *event;
 @property (nonatomic, strong) NSTimer  *timerCountdown;
-
-@property (nonatomic,strong) NSMutableArray* viewsForFaces;
-@property (nonatomic,strong)  UILabel*labelEllipsis;
+@property (nonatomic,strong) ParticipantsView* participantsView;
 @end
 
 @implementation  EventParticipantFirstCell
@@ -67,6 +67,9 @@
 
         self.clipsToBounds= NO;
         self.backgroundColor= CLEAR;
+        
+        self.participantsView= [[ParticipantsView alloc] init];
+        [self  addSubview: _participantsView];
         
         self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
         self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
@@ -89,10 +92,7 @@
                                       YELLOW,  UIColorRGBA(0x80000000), self, @selector(doSubmitVote:), 0);
         _buttonSubmitVote.titleLabel.font= [UIFont fontWithName:kFontLatoBold
                                                            size:kGeomFontSizeSubheader];
-        _labelEllipsis= makeLabel(self,  @"...", kGeomFontSizeHeader);
-        _labelEllipsis.textColor=WHITE;
-        
-        
+
     }
     return self;
 }
@@ -126,28 +126,7 @@
     
     _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
     
-    if ( self.viewsForFaces.count) {
-        float subBoxHeight= _buttonSubmitVote.frame.origin.y - spacing- 20;
-        float x;
-
-        NSUInteger count=self.viewsForFaces.count;
-        NSUInteger totalPeople=  [self.event totalUsers ];
-        y=subBoxHeight+kGeomEventCoordinatorBoxHeight/6-kGeomFaceBubbleDiameter/2-kGeomStripHeaderHeight/2;
-        x= (w-count*kGeomFaceBubbleDiameter-(count-1)*kGeomFaceBubbleSpacing)/2;
-        NSInteger i= 0;
-        for (UIImageView*iv  in self.viewsForFaces) {
-            
-            if  (i >= _viewsForFaces.count-1  && _viewsForFaces.count < totalPeople  ) {
-                _labelEllipsis.frame=CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-                iv.frame= CGRectZero;
-            } else {
-                iv.frame= CGRectMake(x, y, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-                _labelEllipsis.frame=CGRectZero;
-            }
-            x+= kGeomFaceBubbleDiameter+kGeomFaceBubbleSpacing;
-            i++;
-        }
-    }
+    [self.participantsView setNeedsLayout];
 }
 
 - (void) provideEvent: (EventObject*)event;
@@ -223,15 +202,8 @@
     __weak EventParticipantFirstCell *weakSelf = self;
     
     [self.event refreshUsersFromServerWithSuccess:^{
-        if (weakSelf.viewsForFaces ) {
-            for (UIView* v  in  weakSelf.viewsForFaces) {
-                [v removeFromSuperview];
-            }
-            [weakSelf.viewsForFaces removeAllObjects];
-        }
-        NSInteger nBubbles=  ([UIScreen  mainScreen].bounds.size.width -2*kGeomSpaceEdge)/(kGeomFaceBubbleDiameter +kGeomFaceBubbleSpacing);
-        weakSelf.viewsForFaces= makeImageViewsForUsers(self,  weakSelf.event.users, nBubbles);
-        [weakSelf performSelectorOnMainThread:@selector(layoutSubviews) withObject:nil waitUntilDone:NO];
+        [weakSelf.participantsView setEvent: weakSelf.event];
+
     } failure:^{
         NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
     }];

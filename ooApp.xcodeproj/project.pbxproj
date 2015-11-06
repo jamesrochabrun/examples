@@ -114,6 +114,7 @@
 		96CA59D21BE14E2200618B57 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96CA59D11BE14E2200618B57 /* MessageUI.framework */; };
 		96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96CC3A201BE97E1C00A43A04 /* PieView.m */; };
 		96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D175B91BA76926000C88AC /* NSString+MD5.m */; };
+		96D2C4791BEC21020060EDB8 /* ParticipantsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D2C4781BEC21020060EDB8 /* ParticipantsView.m */; };
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
 		96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E127B51BB32C6E00A8445E /* EmptyListVC.m */; };
 		96E270AF1BDAC001005BC4EC /* VotingResultsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E270AE1BDAC001005BC4EC /* VotingResultsVC.m */; };
@@ -314,6 +315,8 @@
 		96CC3A201BE97E1C00A43A04 /* PieView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PieView.m; sourceTree = "<group>"; };
 		96D175B91BA76926000C88AC /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 		96D175BA1BA76926000C88AC /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
+		96D2C4771BEC21020060EDB8 /* ParticipantsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticipantsView.h; sourceTree = "<group>"; };
+		96D2C4781BEC21020060EDB8 /* ParticipantsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticipantsView.m; sourceTree = "<group>"; };
 		96D35F7B1B9F879200A18A23 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		96D35F7C1B9F879200A18A23 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
 		96E127B41BB32C6E00A8445E /* EmptyListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyListVC.h; sourceTree = "<group>"; };
@@ -578,6 +581,8 @@
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				96CC3A1F1BE97E1C00A43A04 /* PieView.h */,
 				96CC3A201BE97E1C00A43A04 /* PieView.m */,
+				96D2C4771BEC21020060EDB8 /* ParticipantsView.h */,
+				96D2C4781BEC21020060EDB8 /* ParticipantsView.m */,
 				9606C5631BBF08C400CB06FE /* EventsListVC.h */,
 				9606C5641BBF08C400CB06FE /* EventsListVC.m */,
 				96E49E721BC5E14B008B70AF /* EventWhenVC.h */,
@@ -887,6 +892,7 @@
 				96E270AF1BDAC001005BC4EC /* VotingResultsVC.m in Sources */,
 				3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */,
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
+				96D2C4791BEC21020060EDB8 /* ParticipantsView.m in Sources */,
 				96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */,
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
 				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
