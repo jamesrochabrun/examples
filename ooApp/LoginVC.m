@@ -299,8 +299,6 @@
     
     [self fetchProfilePhoto];
     
-    [[LocationManager sharedInstance] askUserWhetherToTrack];
-
     UserObject* userInfo = [Settings sharedInstance].userObject;
    
     //---------------------------------------------------

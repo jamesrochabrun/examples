@@ -19,7 +19,8 @@
 #define RUN_AFTER(MS,BLK) {dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW,MS * 1000000);dispatch_after(delayTime, dispatch_get_main_queue(), BLK); }
 #define IS_IPAD ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad )
 
-extern NSString *const kNotificationLocationAvailable;
+extern NSString *const kNotificationLocationBecameAvailable;
+extern NSString *const kNotificationLocationBecameUnavailable;
 
 extern void message (NSString *str);
 extern void message2 (NSString *str, NSString*string);

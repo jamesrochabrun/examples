@@ -12,7 +12,8 @@
 #import "UserObject.h"
 #import "AppDelegate.h"
 
-NSString *const kNotificationLocationAvailable=  @"notificationLocationAvailable";
+NSString *const kNotificationLocationBecameAvailable= @"notificationLocationAvailable";
+NSString *const kNotificationLocationBecameUnavailable= @"notificationLocationUnavailable";
 
 //NSString *const kOOURL= @"www.oomamiapp.com/api/v1";
 NSString *const kOOURL= @"stage.oomamiapp.com/api/v1";

@@ -12,7 +12,6 @@
 #import "DebugUtilities.h"
 #import "LoginVC.h"
 #import "Settings.h"
-#import "LocationManager.h"
 #import <GoogleMaps/GoogleMaps.h>
 
 @interface AppDelegate ()

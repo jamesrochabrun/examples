@@ -117,13 +117,20 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list.name = @"Tandoor";
     [_lists addObject:list];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(locationBecameAvailable:)
-                                                 name:kNotificationLocationAvailable object:nil];
 }
 
 - (void) locationBecameAvailable:(id)notification
 {
+    NSLog (@"LOCATION BECAME AVAILABLE FROM iOS");
+    __weak  WhatsNewVC *weakSelf = self;
+    ON_MAIN_THREAD(^{
+        [weakSelf.tableView  reloadData];
+    });
+}
+
+- (void) locationBecameUnavailable:(id)notification
+{
+    NSLog  (@"LOCATION IS NOT AVAILABLE FROM iOS");
     __weak  WhatsNewVC *weakSelf = self;
     ON_MAIN_THREAD(^{
         [weakSelf.tableView  reloadData];
@@ -147,11 +154,22 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(locationBecameAvailable:)
+                                                 name:kNotificationLocationBecameAvailable object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(locationBecameUnavailable:)
+                                                 name:kNotificationLocationBecameUnavailable object:nil];
+    
+    [[LocationManager sharedInstance] askUserWhetherToTrack];
+
 }
 
 - (void)viewWillDisappear :(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
+
     [super viewWillDisappear:animated];
 }
 

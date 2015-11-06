@@ -111,10 +111,14 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 
 - (void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    [self setUserLocationTrackingChoice: status==kCLAuthorizationStatusDenied ? TRACKING_NO : TRACKING_YES];
-    
-    if ( status!=kCLAuthorizationStatusDenied) {
-        [[NSNotificationCenter defaultCenter] postNotificationName: kNotificationLocationAvailable object:nil];
+    if ( status==kCLAuthorizationStatusAuthorizedAlways && status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+        [[NSNotificationCenter defaultCenter] postNotificationName: kNotificationLocationBecameAvailable object:nil];
+        
+        [self setUserLocationTrackingChoice: TRACKING_YES];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName: kNotificationLocationBecameUnavailable object:nil];
+        
+        [self setUserLocationTrackingChoice: TRACKING_NO ];
     }
 }
 
@@ -137,7 +141,9 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 - (CLLocationCoordinate2D) currentUserLocation
 {
     if (TRACKING_NO == [self dontTrackLocation]) {
-        return CLLocationCoordinate2DMake(0,0);
+//        return CLLocationCoordinate2DMake(37.775,-122.4183333); // San Francisco
+        return CLLocationCoordinate2DMake(21.3069444,-157.8583333); // Honolulu Hawaii
+        
     }
     if (!self.locationManager) {
         [self startTrackingLocation];
