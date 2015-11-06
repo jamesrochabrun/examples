@@ -116,6 +116,18 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list = [[ListObject alloc] init];
     list.name = @"Tandoor";
     [_lists addObject:list];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(locationBecameAvailable:)
+                                                 name:kNotificationLocationAvailable object:nil];
+}
+
+- (void) locationBecameAvailable:(id)notification
+{
+    __weak  WhatsNewVC *weakSelf = self;
+    ON_MAIN_THREAD(^{
+        [weakSelf.tableView  reloadData];
+    });
 }
 
 - (void)updateViewConstraints {
@@ -135,6 +147,12 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
+}
+
+- (void)viewWillDisappear :(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [super viewWillDisappear:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated
