@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 
-@interface FeedVC : BaseVC
+@interface FeedVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 
 
 @end
