@@ -20,5 +20,6 @@
 @interface EventCoordinatorVC : SubBaseVC <UIScrollViewDelegate,UICollectionViewDataSource,
                     UICollectionViewDelegate,EventWhenVCDelegate, ParticipantsViewDelegate, EventWhoVCDelegate>
 @property (nonatomic,assign) id <EventCoordinatorVCDelegate> delegate;
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 @end
 

@@ -195,7 +195,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (void)gotRestaurants
 {
-    NSLog(@"%@: %lu", _listItem.name, [_restaurants count]);
+    NSLog(@"%@: %lu", _listItem.name, (unsigned long)[_restaurants count]);
     [_tableView reloadData];
 
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];

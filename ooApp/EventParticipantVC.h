@@ -25,7 +25,7 @@
                 EventParticipantFirstCellDelegate,EventParticipantVotingCellDelegate>
 
 @property (nonatomic,strong) NSString *eventName;
-
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 @end
 
 @interface EventParticipantEmptyCell:UITableViewCell

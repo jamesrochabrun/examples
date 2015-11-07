@@ -265,13 +265,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)addToEvent
 {
-    [APP.eventBeingEdited addVenue:_restaurant];
+    [self.eventBeingEdited addVenue:_restaurant];
     [self.navigationController  popViewControllerAnimated:YES];
 }
 
 - (void)removeFromEvent
 {
-    [APP.eventBeingEdited removeVenue:_restaurant];
+    [self.eventBeingEdited removeVenue:_restaurant];
     [self.navigationController  popViewControllerAnimated:YES];
 }
 

@@ -327,7 +327,7 @@ NSString *const kKeyEventMediaItem = @"media_item";
 
 - (void)sendDatesToServer;
 {
-    [OOAPI reviseEvent:APP.eventBeingEdited
+    [OOAPI reviseEvent: self
                success:^(id foo) {
                    NSLog  (@"UPDATED BACKEND WITH NEW DATES.");
                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -393,13 +393,13 @@ NSString *const kKeyEventMediaItem = @"media_item";
     __weak EventObject *weakSelf = self;
     return [OOAPI getVoteForEvent:self
                           success:^(NSArray *votes) {
-                              @synchronized(_votes) {
-                                  [self.votes removeAllObjects];
-                                  [self.votes addObjectsFromArray: votes ];
+                              @synchronized(weakSelf.votes) {
+                                  [weakSelf.votes removeAllObjects];
+                                  [weakSelf.votes addObjectsFromArray: votes ];
                               }
 //                              weakSelf.hasBeenAltered= YES;
 
-                              NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)self.eventID);
+                              NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)weakSelf.eventID);
                               success();
                           }
                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {

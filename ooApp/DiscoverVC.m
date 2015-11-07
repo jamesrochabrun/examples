@@ -280,7 +280,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)gotRestaurants
 {
-    NSLog(@"%lu", [_restaurants count]);
+    NSLog(@"%lu", (unsigned long)[_restaurants count]);
     if (![_restaurants count]) {
         NSLog (@"Received no restaurants.");
     }

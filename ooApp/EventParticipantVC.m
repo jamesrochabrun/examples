@@ -76,11 +76,11 @@
         self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
         _backgroundImageView.clipsToBounds= YES;
 
-        self.labelDateTime= makeLabel( self, expressLocalDateTime( APP.eventBeingEdited.date), kGeomFontSizeSubheader);
+        self.labelDateTime= makeLabel( self, expressLocalDateTime( self.event.date), kGeomFontSizeSubheader);
         _labelDateTime.textColor= WHITE;
         _labelDateTime.font= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
         
-        self.labelTitle= makeLabel( self, APP.eventBeingEdited.name,
+        self.labelTitle= makeLabel( self, self.event.name,
                                    kGeomEventHeadingFontSize);
         _labelTitle.textColor= WHITE;
         _labelTitle.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
@@ -353,7 +353,7 @@
     self.vote.eventID= event.eventID;
 
     if  (!venue) {
-        NSLog (@"VENUE ID %ld APPEARS TO BE BOGUS.",venueID);
+        NSLog (@"VENUE ID %ld APPEARS TO BE BOGUS.",(long)venueID);
         self.labelName.text=  @"Unknown restaurant.";
         self.thumbnail.image= nil;
     }
@@ -399,7 +399,7 @@
     ENTRY;
    [super viewDidLoad];
     
-    NSString* eventName= APP.eventBeingEdited.name;
+    NSString* eventName= self.eventBeingEdited.name;
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
     
@@ -438,15 +438,15 @@
 {
     [super viewWillAppear:animated];
     
-    if (! [APP.eventBeingEdited totalVenues ]) {
-        /* _venueOperation=*/ [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+    if (! [self.eventBeingEdited totalVenues ]) {
+        /* _venueOperation=*/ [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
             [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
         } failure:^{
             NSLog (@"FAILED TO FETCH VENUES");
         }];
     }
     
-    /* _voteOperation=*/ [APP.eventBeingEdited refreshVotesFromServerWithSuccess:^{
+    /* _voteOperation=*/ [self.eventBeingEdited refreshVotesFromServerWithSuccess:^{
         [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
     } failure:^{
         NSLog  (@"FAILED TO FETCH VOTES");
@@ -455,7 +455,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    EventObject* event=APP.eventBeingEdited;
+    EventObject* event=self.eventBeingEdited;
     
     NSInteger row=  indexPath.row;
     if  (!row) {
@@ -508,7 +508,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    EventObject* event=APP.eventBeingEdited;
+    EventObject* event=self.eventBeingEdited;
     NSInteger total= [event totalVenues];
     if (!total) {
         return 2;

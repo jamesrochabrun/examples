@@ -540,9 +540,8 @@ typedef enum: char {
 {
     float h = self.view.bounds.size.height;
     float w = self.view.bounds.size.width;
-    float spacing = kGeomSpaceInter;
+
     float y = 0;
-    float x = 0;
     
     _searchBar.frame=  CGRectMake(0,y,w-kGeomButtonWidth,kGeomHeightSearchBar);
     

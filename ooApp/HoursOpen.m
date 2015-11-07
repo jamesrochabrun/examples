@@ -53,11 +53,11 @@ NSString *const kKeyHoursTime = @"time";
         newTime = time - 1200;
         NSUInteger hours = newTime / 100;
         NSUInteger minutes = newTime - (hours*100);
-        return [NSString stringWithFormat:@"%lu:%02lupm", hours, minutes];
+        return [NSString stringWithFormat:@"%lu:%02lupm",(unsigned long) hours,(unsigned long) minutes];
     } else if (time > 0) {
         NSUInteger hours = newTime / 100;
         NSUInteger minutes = newTime - (hours*100);
-        return [NSString stringWithFormat:@"%lu:%02luam", hours, minutes];
+        return [NSString stringWithFormat:@"%lu:%02luam",(unsigned long) hours, (unsigned long)minutes];
     }
     return @"";
 }

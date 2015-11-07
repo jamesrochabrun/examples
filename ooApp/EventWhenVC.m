@@ -75,12 +75,12 @@
     _pickerEventDate.datePickerMode= UIDatePickerModeDateAndTime;
     _pickerEventVotingDate.datePickerMode= UIDatePickerModeDateAndTime;
     
-    if ( APP.eventBeingEdited.date) {
-        _pickerEventDate.date= APP.eventBeingEdited.date;
+    if ( self.eventBeingEdited.date) {
+        _pickerEventDate.date= self.eventBeingEdited.date;
 
     }
-    if (APP.eventBeingEdited.dateWhenVotingClosed ) {
-        _pickerEventDate.date= APP.eventBeingEdited.dateWhenVotingClosed;
+    if (self.eventBeingEdited.dateWhenVotingClosed ) {
+        _pickerEventDate.date= self.eventBeingEdited.dateWhenVotingClosed;
     }
     
     _pickerEventDate.hidden= YES;
@@ -88,10 +88,10 @@
     
     self.navigationItem.leftBarButtonItem= nil;
     
-    if (APP.eventBeingEdited.date ) {
+    if (self.eventBeingEdited.date ) {
         [self expressUpperDate];
     }
-    if ( APP.eventBeingEdited.dateWhenVotingClosed) {
+    if ( self.eventBeingEdited.dateWhenVotingClosed) {
         [self expressLowerDate];
     }
 
@@ -111,7 +111,7 @@
 }
 - (void)expressUpperDate
 {
-    NSDate* gmtTime= APP.eventBeingEdited.date;
+    NSDate* gmtTime= self.eventBeingEdited.date;
 
     [_buttonEventDate setTitle: expressLocalDateTime(gmtTime)
                       forState:UIControlStateNormal];
@@ -119,7 +119,7 @@
 
 - (void)expressLowerDate
 {
-    NSDate* gmtTime= APP.eventBeingEdited.dateWhenVotingClosed;
+    NSDate* gmtTime= self.eventBeingEdited.dateWhenVotingClosed;
     
     [_buttonEventVoting setTitle:expressLocalDateTime (gmtTime)
                         forState:UIControlStateNormal];
@@ -156,16 +156,16 @@
 - (void)extractDateTimeFromUpperPicker
 {
     NSDate *gmtTime= _pickerEventDate.date;
-    APP.eventBeingEdited.date= gmtTime;
-    APP.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date method
+    self.eventBeingEdited.date= gmtTime;
+    self.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date method
     [self expressUpperDate];
 }
 
 - (void)extractDateTimeFromLowerPicker
 {
     NSDate *gmtTime= _pickerEventVotingDate.date;
-    APP.eventBeingEdited.dateWhenVotingClosed= gmtTime;
-    APP.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date when voting method
+    self.eventBeingEdited.dateWhenVotingClosed= gmtTime;
+    self.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date when voting method
     [self expressLowerDate];
 }
 

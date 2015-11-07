@@ -232,7 +232,7 @@
     NSUInteger userid= userInfo.userID;
     
     NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%lu",
-                   kOOURL, userid];
+                   kOOURL, (unsigned long)userid];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
 

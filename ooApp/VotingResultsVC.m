@@ -242,7 +242,7 @@
 
     self.arrayOfVenues= [NSMutableArray new];
     
-    NSString* eventName= APP.eventBeingEdited.name;
+    NSString* eventName= self.eventBeingEdited.name;
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
     
@@ -257,8 +257,8 @@
     self.automaticallyAdjustsScrollViewInsets= NO;
     
     __weak VotingResultsVC *weakSelf = self;
-    if (! [APP.eventBeingEdited totalVenues ]) {
-        /* _venueOperation=*/ [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+    if (! [self.eventBeingEdited totalVenues ]) {
+        /* _venueOperation=*/ [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
             [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
             [weakSelf fetchTallies];
         }
@@ -274,7 +274,7 @@
 - (void)fetchTallies
 {
     __weak VotingResultsVC *weakSelf = self;
-    [OOAPI getVoteTalliesForEvent:APP.eventBeingEdited.eventID
+    [OOAPI getVoteTalliesForEvent:self.eventBeingEdited.eventID
                           success:^(NSArray *venues) {
                               [weakSelf.arrayOfVenues removeAllObjects];
                               [weakSelf.arrayOfVenues addObjectsFromArray:venues];
@@ -307,7 +307,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    EventObject* event=APP.eventBeingEdited;
+    EventObject* event=self.eventBeingEdited;
     
     NSInteger row=  indexPath.row;
     if  (!row) {
@@ -355,6 +355,7 @@
     RestaurantObject* venue= _arrayOfVenues[row-1];
     RestaurantVC*vc= [[RestaurantVC alloc] init];
     vc.restaurant= venue;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController  pushViewController:vc animated:YES];
 }
 

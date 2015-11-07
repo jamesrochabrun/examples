@@ -58,7 +58,7 @@
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= WHITE;
     
-    APP.eventBeingEdited= nil;
+    self.eventBeingEdited= nil;
     
     _tableSectionNames= @[
                           @"YOUR EVENTS",
@@ -97,7 +97,7 @@
     
     // RULE:  only re-fetch if it's the first time, or if the user altered an event.
     
-    EventObject*e=APP.eventBeingEdited;
+    EventObject*e=self.eventBeingEdited;
     
     // NOTE: Currently the addition of restaurants to an event is not easily detected except using the boolean.
     if  (_needToRefreshEventList || !self.didGetInitialResponse || e.hasBeenAltered) {
@@ -497,6 +497,7 @@
         // RULE: Curated events are never editable.
         if (section == 2) {
             EventParticipantVC *vc= [[EventParticipantVC alloc] init];
+            vc.eventBeingEdited= self.eventBeingEdited;
             [self.navigationController pushViewController:vc animated:YES];
             return;
         }
@@ -525,23 +526,23 @@
                                               if (!isSubmitted && allowed && !votingIsDone) {
                                                   NSLog(@"EDITING ALLOWED");
                                                   
-                                                  APP.eventBeingEdited= event;
                                                   EventCoordinatorVC *vc= [[EventCoordinatorVC alloc] init];
+                                                  vc.eventBeingEdited= event;
                                                   vc.delegate= weakSelf;
                                                   [weakSelf.navigationController pushViewController:vc animated:YES ];
                                               } else {
                                                   NSLog(@"EDITING PROHIBITED");
                                                   
                                                   if ( votingIsDone ) {
-                                                      APP.eventBeingEdited= event;
                                                       VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
-                                                      [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                      vc.eventBeingEdited= event;
+                                                     [weakSelf.navigationController pushViewController:vc animated:YES ];
 
                                                   } else {
-                                                      
-                                                      APP.eventBeingEdited= event;
+                                                    
                                                       EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-                                                      [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                      vc.eventBeingEdited= event;
+                                                     [weakSelf.navigationController pushViewController:vc animated:YES ];
                                                       
                                                   }
                                               }
@@ -607,13 +608,13 @@
         e.createdAt= [NSDate date];
         e.updatedAt= [NSDate date];
         e.eventType= EVENT_TYPE_USER;
-        APP.eventBeingEdited= e;
+        self.eventBeingEdited= e;
         
         __weak EventsListVC* weakSelf= self;
         [OOAPI addEvent: e
                 success:^(NSInteger eventID) {
                     NSLog  (@" EVENT CREATED");
-                    APP.eventBeingEdited= e;
+                    self.eventBeingEdited= e;
                     e.eventID= eventID;
                     
                     weakSelf.needToRefreshEventList= YES;
@@ -631,7 +632,8 @@
 {
     EventCoordinatorVC *vc= [[EventCoordinatorVC  alloc] init ];
     vc.delegate= self;
-    [self.navigationController pushViewController:vc animated:YES];
+    vc.eventBeingEdited= self.eventBeingEdited;
+   [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)userDidAlterEvent

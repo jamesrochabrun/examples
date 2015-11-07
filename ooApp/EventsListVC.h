@@ -12,7 +12,7 @@
 #import "EventCoordinatorVC.h"
 
 @interface EventsListVC : BaseVC <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate,  EventCoordinatorVCDelegate>
-
+@property (nonatomic,strong) EventObject* eventBeingEdited;
 @end
 
 @interface EventListTableTitleView: UIView

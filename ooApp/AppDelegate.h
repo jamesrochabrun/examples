@@ -16,10 +16,8 @@
 
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic,strong) NSMutableString *diagnosticLogString;
-@property (nonatomic,strong) EventObject *eventBeingEdited;
 @property (nonatomic,assign) BOOL usingStagingServer;
 @property (nonatomic,strong)  UIImage *imageForNoProfileSilhouette;
-@property (nonatomic,strong)  UIImage *imageForNoProfileSilhouetteSmall;
 
 - (BOOL)connected;
 

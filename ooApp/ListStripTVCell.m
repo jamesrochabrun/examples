@@ -157,7 +157,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 
 - (void)gotRestaurants
 {
-    NSLog(@"%@: %lu", _listItem.name, [_restaurants count]);
+    NSLog(@"%@: %lu", _listItem.name, (unsigned long)[_restaurants count]);
     if (![_restaurants count]) {
         NSLog (@"LIST CALLED %@ HAS ZERO RESTAURANTS",_listItem.name);
     }

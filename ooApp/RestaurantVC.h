@@ -18,6 +18,7 @@
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *listToAddTo;
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 
 - (void)getRestaurant;
 

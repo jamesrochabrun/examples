@@ -296,9 +296,9 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 #endif
     
     // RULE: Find out what users are already attached to this events.
-    [APP.eventBeingEdited refreshUsersFromServerWithSuccess:^{
+    [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
         [_participants removeAllObjects];
-        self.participants= [[ NSMutableOrderedSet alloc] initWithSet: APP.eventBeingEdited.users.set];
+        self.participants= [[ NSMutableOrderedSet alloc] initWithSet: self.eventBeingEdited.users.set];
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
         
     } failure:^{
@@ -524,7 +524,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [self.delegate userDidAlterEventParticipants];
     
     [OOAPI setParticipationOf:object
-                      inEvent:APP.eventBeingEdited
+                      inEvent:self.eventBeingEdited
                            to:value
                       success:^(NSInteger eventID) {
                           NSLog  (@"SUCCESS");

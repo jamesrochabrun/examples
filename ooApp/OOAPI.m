@@ -236,7 +236,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
 
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld/feed", [OOAPI URL], userID];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/feed", [OOAPI URL], (unsigned long)userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1043,13 +1043,13 @@ NSString *const kKeySearchFilter = @"filter";
     NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
     
     NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
-    NSLog(@"img size = %ld bytes",[imageData length]);
+    NSLog(@"img size = %lu bytes",(unsigned long)[imageData length]);
     
-    NSDictionary *parameters = @{@"restaurant_id": [NSString stringWithFormat:@"%lu", restaurant.restaurantID]};
+    NSDictionary *parameters = @{@"restaurant_id": [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
     
     AFHTTPRequestOperation *op;
     
-    op = [rm POST:[NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], userID] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    op = [rm POST:[NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], (unsigned long)userID] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFileData:imageData name:@"upload" fileName:@"photo.png" mimeType:@"image/png"];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@ ***** %@", operation.responseString, responseObject);
@@ -1077,9 +1077,9 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
     NSLog (@"IMAGE DIMENSIONS=  %@", NSStringFromCGSize(image.size));
-    NSLog (@"JPEG IMAGE SIZE=  %ld bytes",[imageData length]);
+    NSLog (@"JPEG IMAGE SIZE=  %lu bytes",(unsigned long)[imageData length]);
     [APP.diagnosticLogString appendFormat: @"IMAGE DIMENSIONS=  %@\r", NSStringFromCGSize(image.size)];
-    [APP.diagnosticLogString appendFormat:@"JPEG IMAGE SIZE=  %ld bytes\r",[imageData length]];
+    [APP.diagnosticLogString appendFormat:@"JPEG IMAGE SIZE=  %lu bytes\r",(unsigned long)[imageData length]];
     
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userID= userInfo.userID;

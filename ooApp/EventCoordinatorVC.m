@@ -103,7 +103,7 @@
     ENTRY;
     [super viewDidLoad];
     
-    NSString* eventName= APP.eventBeingEdited.name;
+    NSString* eventName= self.eventBeingEdited.name;
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
@@ -150,13 +150,13 @@
     _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
     _viewContainer1.clipsToBounds= YES;
     
-    self.labelEventCover= makeLabel(self.viewContainer1, APP.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
+    self.labelEventCover= makeLabel(self.viewContainer1, self.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
     _labelEventCover.textColor= WHITE;
     _labelEventCover.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
     NSString* submitButtonMessage;
-    if  (APP.eventBeingEdited.isComplete) {
+    if  (self.eventBeingEdited.isComplete) {
         submitButtonMessage=@"EVENT SUBMITTED";
     } else {
         submitButtonMessage=@"SUBMIT EVENT";
@@ -248,7 +248,7 @@
     
     [self updateBoxes];
     
-    EventObject* e= APP.eventBeingEdited;
+    EventObject* e= self.eventBeingEdited;
     if  (e.primaryImage) {
         self.imageViewContainer1.image= e.primaryImage;
     }
@@ -312,18 +312,20 @@
 {
     
     NSDate *now= [NSDate date];
-    NSDate *end= APP.eventBeingEdited.dateWhenVotingClosed;
+    NSDate *end= self.eventBeingEdited.dateWhenVotingClosed;
     BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
     
     NSLog(@"EDITING PROHIBITED");
     
     if ( votingIsDone ) {
         VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
+        vc.eventBeingEdited= self.eventBeingEdited;
         [self.navigationController pushViewController:vc animated:YES ];
         
     } else {
         
         EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+        vc.eventBeingEdited= self.eventBeingEdited;
         [self.navigationController pushViewController:vc animated:YES ];
         
     }
@@ -362,7 +364,7 @@
 - (void)deleteEvent
 {
     [self.delegate userDidAlterEvent];
-    [OOAPI deleteEvent:APP.eventBeingEdited.eventID
+    [OOAPI deleteEvent:self.eventBeingEdited.eventID
                success:^{
                     [self dismissViewControllerAnimated:YES
                                               completion:^{
@@ -395,7 +397,7 @@
 
 - (void)datesChanged
 {
-    [APP.eventBeingEdited sendDatesToServer];
+    [self.eventBeingEdited sendDatesToServer];
     [self.delegate userDidAlterEvent];
 }
 
@@ -405,7 +407,7 @@
 //    NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
     NSString *string=nil;
     
-    EventObject* event= APP.eventBeingEdited;
+    EventObject* event= self.eventBeingEdited;
     if  (event.date ) {
         string=[NSString stringWithFormat:  @"%@", expressLocalDateTime(event.date)];
     } else {
@@ -420,7 +422,7 @@
 
 - (void) initiateUpdateOfWhoBox
 {
-    EventObject* e= APP.eventBeingEdited;
+    EventObject* e= self.eventBeingEdited;
     [e refreshParticipantStatsFromServerWithSuccess:^{
         [self performSelectorOnMainThread:@selector(updateWhoBox) withObject:nil waitUntilDone:NO];
         
@@ -440,7 +442,7 @@
 
 - (void)initiateUpdateOfWhereBox
 {
-    EventObject* e= APP.eventBeingEdited;
+    EventObject* e= self.eventBeingEdited;
     [e refreshVenuesFromServerWithSuccess:^{
         [self performSelectorOnMainThread:@selector(updateWhereBoxAnimated:) withObject:@1 waitUntilDone:NO];
     } failure:^{
@@ -451,7 +453,7 @@
 
 - (void)updateWhoBox
 {
-    EventObject* e= APP.eventBeingEdited;
+    EventObject* e= self.eventBeingEdited;
     NSInteger pending= e.numberOfPeople - e.numberOfPeopleResponded;
     NSInteger responded= e.numberOfPeopleResponded;
     NSInteger  voted= e.numberOfPeopleVoted;
@@ -478,7 +480,7 @@
 
 - (void) updateWhereBoxAnimated:(id)animated
 {
-//    EventObject *event=APP.eventBeingEdited;
+//    EventObject *event=self.eventBeingEdited;
     
     [self.venuesCollectionView reloadData ];
     if  (animated ) {
@@ -515,11 +517,11 @@
     
     // RULE: After basic info is displayed, fetch what's on the backend.
     __weak EventCoordinatorVC *weakSelf = self;
-    [APP.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-        NSInteger numberOfVenues= APP.eventBeingEdited.numberOfVenues;
-        if (numberOfVenues != [APP.eventBeingEdited totalVenues ] ) {
+    [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+        NSInteger numberOfVenues= self.eventBeingEdited.numberOfVenues;
+        if (numberOfVenues != [self.eventBeingEdited totalVenues ] ) {
             
-            NSLog  (@"VENUES FOR EVENT DID CHANGE.  (total=  %ld)", ( unsigned long)[APP.eventBeingEdited totalVenues ]);
+            NSLog  (@"VENUES FOR EVENT DID CHANGE.  (total=  %ld)", ( unsigned long)[self.eventBeingEdited totalVenues ]);
             ON_MAIN_THREAD(^(){
                 [weakSelf updateWhereBoxAnimated: @""];
             });
@@ -549,6 +551,7 @@
     
     EventWhoVC* vc= [[EventWhoVC alloc] init];
     vc.delegate= self;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 
 }
@@ -562,6 +565,7 @@
     
     EventWhenVC* vc= [[EventWhenVC alloc] init];
     vc.delegate= self;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -583,7 +587,7 @@
 //------------------------------------------------------------------------------
 - (void)doSubmit: (id) sender
 {
-    EventObject* event= APP.eventBeingEdited;
+    EventObject* event= self.eventBeingEdited;
 
     if (!event.date) {
         message( @"You need to specify a date and time when the event should take place.");
@@ -716,7 +720,7 @@
     self.labelDate5.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
     self.labelDate6.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight);
     
-    NSInteger dayNumber= getLocalDayNumber(APP.eventBeingEdited.date);
+    NSInteger dayNumber= getLocalDayNumber(self.eventBeingEdited.date);
     const float bubbleDiameter=dayCellWidth-5;
     self.viewTodayBubble.frame = CGRectMake(0,0,bubbleDiameter,bubbleDiameter);
     [self.viewContainer3 sendSubviewToBack: self.viewTodayBubble ];
@@ -732,9 +736,9 @@
 
     }
 
-    [self.pieHour setHour: getLocalHour(APP.eventBeingEdited.date)];
+    [self.pieHour setHour: getLocalHour(self.eventBeingEdited.date)];
     
-    NSUInteger u= [APP.eventBeingEdited.date timeIntervalSince1970];
+    NSUInteger u= [self.eventBeingEdited.date timeIntervalSince1970];
     if (dayNumber>0 ) {
         u-= 24*60*60*dayNumber;
     }
@@ -776,7 +780,7 @@
         }
         u += 24 *3600;
     }
-    if ( !APP.eventBeingEdited.date) {
+    if ( !self.eventBeingEdited.date) {
         self.viewTodayBubble.hidden= YES;
         self.pieHour.hidden= YES;
         _labelMonth.text= expressLocalMonth( [NSDate date]);
@@ -805,7 +809,7 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    NSInteger total= [APP.eventBeingEdited totalVenues ];
+    NSInteger total= [self.eventBeingEdited totalVenues ];
     return total ;
 }
 
@@ -820,7 +824,7 @@
                                                                 forIndexPath:indexPath];
     cvc.backgroundColor = GRAY;
     NSInteger  row= indexPath.row;
-    RestaurantObject *venue= [APP.eventBeingEdited getNthVenue:row];
+    RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
     CGRect r= cvc.frame;
     r.size=  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
@@ -832,9 +836,10 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger  row= indexPath.row;
-    RestaurantObject *venue= [APP.eventBeingEdited getNthVenue:row];
+    RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
     RestaurantVC*vc= [[RestaurantVC alloc] init];
     vc.restaurant= venue;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES ];
 }
 
