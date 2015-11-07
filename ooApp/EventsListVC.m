@@ -639,6 +639,5 @@
 - (void)userDidAlterEvent
 {
     self.needToRefreshEventList= YES;
-    [self refetchEvents];
 }
 @end

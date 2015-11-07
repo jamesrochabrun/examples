@@ -80,7 +80,7 @@
 
     }
     if (self.eventBeingEdited.dateWhenVotingClosed ) {
-        _pickerEventDate.date= self.eventBeingEdited.dateWhenVotingClosed;
+        _pickerEventVotingDate.date= self.eventBeingEdited.dateWhenVotingClosed;
     }
     
     _pickerEventDate.hidden= YES;
