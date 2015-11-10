@@ -569,7 +569,17 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         NSUInteger row = indexPath.row;
         MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:self];
         [photoBrowser setCurrentPhotoIndex:row];
-        [self.navigationController pushViewController:photoBrowser animated:YES];
+        __weak MediaItemObject *mio = [_mediaItems objectAtIndex:row];
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        [api getRestaurantImageWithMediaItem:[_mediaItems objectAtIndex:row] maxWidth:width(self.view) maxHeight:0 success:^(NSString *link) {
+            mio.url = link;
+            ON_MAIN_THREAD(^ {
+                  [self.navigationController pushViewController:photoBrowser animated:YES];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
     }
 }
 
@@ -585,19 +595,23 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         MWPhoto *photo;
         if (mio.url) {
             photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mio.url]];
+            [photo performLoadUnderlyingImageAndNotify];
             return photo;
         } else if (mio.source == kMediaItemTypeGoogle && mio.reference) {
             OOAPI *api = [[OOAPI alloc] init];
+            NSLog(@"mio reference= %@", mio.reference);
             
-            __weak MediaItemObject *weakmio = mio;
+            __weak MWPhotoBrowser *weakPhotoBrowser = photoBrowser;
             
             [api getRestaurantImageWithMediaItem:mio
                                        maxWidth:width(self.view)
                                       maxHeight:0
                                         success:^(NSString *link) {
-                                            weakmio.url = link;
+                                            mio.url = link;
                                             ON_MAIN_THREAD(^ {
-                                                [photoBrowser reloadData];
+                                                if (link) {
+                                                    [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser photoAtIndex:index];
+                                                }
                                             });
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 ;
