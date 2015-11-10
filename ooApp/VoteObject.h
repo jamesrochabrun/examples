@@ -13,5 +13,11 @@
 
 + (instancetype)voteFromDictionary:(NSDictionary *)dictionary;
 
+enum  {
+    VOTE_STATE_DONT_CARE= 0,
+    VOTE_STATE_YES= 1,
+    VOTE_STATE_NO=  -1,
+};
+
 @end
 

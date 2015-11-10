@@ -18,6 +18,7 @@
 #import "ListTVCell.h"
 #import "EventWhenVC.h"
 #import "ProfileVC.h"
+#import "RestaurantVC.h"
 
 #import  <QuartzCore/CALayer.h>
 
@@ -41,6 +42,8 @@
     _labelCentered.frame= self.bounds;
 }
 @end
+
+//==============================================================================
 
 @interface EventParticipantFirstCell ()
 
@@ -85,12 +88,12 @@
         _labelTitle.textColor= WHITE;
         _labelTitle.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
 
-        self.labelTimeLeft= makeLabel( self,  @"TIME UNTIL\rVOTING CLOSES", kGeomFontSizeSubheader);
-        _labelTimeLeft.textColor= WHITE;
-        _labelTimeLeft.backgroundColor= UIColorRGBA(0x80000000);
+        self.labelTimeLeft= makeLabel( self,  @"until voting closes", kGeomFontSizeSubheader);
+        _labelTimeLeft.textColor= BLACK;
+        _labelTimeLeft.backgroundColor= YELLOW;
         
         _buttonSubmitVote= makeButton(self,  @"SUBMIT VOTE", kGeomFontSizeSubheader,
-                                      YELLOW,  UIColorRGBA(0x80000000), self, @selector(doSubmitVote:), 0);
+                                      WHITE,  BLACK, self, @selector(doSubmitVote:), 0);
         _buttonSubmitVote.titleLabel.font= [UIFont fontWithName:kFontLatoBold
                                                            size:kGeomFontSizeSubheader];
 
@@ -120,7 +123,7 @@
     y+= kGeomFontSizeSubheader +spacing;
     _labelPersonIcon.frame = CGRectMake(0,y, w, kGeomHeightButton);
     
-    float distanceBetweenButtons= 4;
+    float distanceBetweenButtons= 0;
     float biggerButtonWidth= (w-2*margin-distanceBetweenButtons)/2;
 
     _buttonSubmitVote.frame=  CGRectMake(  margin, h-kGeomEventParticipantButtonHeight, biggerButtonWidth,kGeomEventParticipantButtonHeight);
@@ -234,33 +237,19 @@
 
 //==============================================================================
 
-@interface EventParticipantVotingCell ()
+@interface EventParticipantVotingSubCell ()
 @property (nonatomic,strong) UIButton* radioButton;
-@property (nonatomic,strong)  UIImageView *thumbnail;
-@property (nonatomic, strong) UIView *viewShadow;
-@property (nonatomic,strong)   UILabel *labelName;
 @property (nonatomic,strong) EventObject* event;
-@property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
-
+@property (nonatomic,assign)  int radioButtonState;
+@property (nonatomic,assign) id <EventParticipantVotingSubCellDelegate>delegate;
 @end
 
-@implementation EventParticipantVotingCell
-- (instancetype)  initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+@implementation EventParticipantVotingSubCell
+
+- (instancetype) initWithRadioButtonState:( int) value
 {
-    self = [super initWithStyle: style reuseIdentifier:reuseIdentifier];
+    self = [super init ];
     if (self) {
-        self.viewShadow= makeView( self, WHITE);
-        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
-        _viewShadow.layer.shadowColor= BLACK.CGColor;
-        _viewShadow.layer.shadowOpacity= .5;
-        _viewShadow.layer.shadowRadius= 4;
-        _viewShadow.clipsToBounds= NO;
-        _viewShadow.layer.borderColor= GRAY.CGColor;
-        _viewShadow.layer.borderWidth= .5;
-        
-        self.clipsToBounds= NO;
-        self.backgroundColor= CLEAR;
-        
         _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressedRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
         _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
@@ -268,22 +257,52 @@
         _thumbnail= makeImageView(self, nil);
         
         _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
-        self.textLabel.hidden= YES;
-        self.imageView.hidden= YES;
+
         _thumbnail.layer.borderColor= GRAY.CGColor;
         _thumbnail.layer.borderWidth= 1;
         
+        self.clipsToBounds= YES;
+        self.backgroundColor= CLEAR;
+        [ self setRadioButtonState:_radioButton to:value];
     }
     return self;
 }
 
+- (void) installImage: ( UIImage*)image;
+{
+    self.thumbnail.image= image;
+}
+
+- (void)setRadioButtonState: (UIButton*)button  to: (int)state
+{
+    switch (state) {
+        case VOTE_STATE_DONT_CARE:
+            [button setTitle: @"don't\rcare" forState:UIControlStateNormal];
+            _radioButton.titleLabel.numberOfLines=0;
+            _radioButton.titleLabel.font= [UIFont fontWithName:kFontLatoRegular size: 6];
+            _radioButton.titleLabel.textAlignment= NSTextAlignmentCenter;
+            _radioButton.titleLabel.layer.cornerRadius= kGeomButtonWidth/2;
+            _radioButton.titleLabel.layer.borderWidth= 1;
+            _radioButton.titleLabel.layer.borderColor= GRAY.CGColor;
+            self.backgroundColor= WHITE;
+            break;
+        case VOTE_STATE_YES:
+            [button setTitle: kFontIconCheckmark forState:UIControlStateNormal];
+            _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
+            self.backgroundColor= GREEN;
+            break;
+        case VOTE_STATE_NO:
+            [button setTitle: kFontIconEmptyCircle forState:UIControlStateNormal];
+            _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
+            self.backgroundColor= RED;
+            break;
+    }
+    _radioButtonState= state;
+}
+
 - (void)userPressedRadioButton: (id) sender
 {
-    _radioButton.selected= !_radioButton.selected;
-    self.vote.vote= _radioButton.selected  ? 1:0;
-    if  ( self.delegate) {
-        [self.delegate voteChanged:self.vote  ];
-    }
+    [_delegate userPressedRadioButton:_radioButtonState];
 }
 
 - (void) layoutSubviews
@@ -293,8 +312,6 @@
     float h= self.frame.size.height;
     float x= kGeomSpaceEdge;
     h-= kGeomEventParticipantSeparatorHeight;
-
-    _viewShadow.frame = CGRectMake(x,0,w-2*kGeomSpaceEdge,h);
     
     _thumbnail.frame = CGRectMake(x,0,h,h);
     x += h+kGeomSpaceInter;
@@ -303,28 +320,111 @@
     _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
 }
 
-- (void)switchChanged: (UISwitch*)theSwitch
-{
-    self.vote.vote= theSwitch.on? 1:0;
-    if  ( self.delegate) {
-        [self.delegate voteChanged:self.vote  ];
+@end
 
+//==============================================================================
+
+@interface EventParticipantVotingCell ()
+@property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
+@property (nonatomic,assign)  int   radioButtonState;
+@property (nonatomic, strong) UIView *viewShadow;
+@property (nonatomic,strong) EventObject* event;
+@property (nonatomic,strong) UIScrollView *scrollView;
+@property (nonatomic,strong) NSArray *subcells;
+@property (nonatomic,strong)  UITapGestureRecognizer* gesture;
+@end
+
+@implementation EventParticipantVotingCell
+- (instancetype)  initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle: style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        self.scrollView= [UIScrollView new];
+        [ self  addSubview: _scrollView];
+        self.backgroundColor= WHITE;
+        
+        self.gesture= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector (userTapped:)];
+        [self addGestureRecognizer:_gesture];
+        
+        self.viewShadow= makeView( _scrollView, WHITE);
+        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
+        _viewShadow.layer.shadowColor= BLACK.CGColor;
+        _viewShadow.layer.shadowOpacity= .5;
+        _viewShadow.layer.shadowRadius= 4;
+        _viewShadow.clipsToBounds= NO;
+        _viewShadow.layer.borderColor= GRAY.CGColor;
+        _viewShadow.layer.borderWidth= .5;
+        
+        _subcells=@[
+                    [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_NO],
+                    [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_DONT_CARE],
+                    [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_YES],
+                    ];
+        
+        for (int i=0; i < 3; i++) {
+            [_scrollView  addSubview: _subcells[i]];
+            ((EventParticipantVotingSubCell*)_subcells[i]).delegate= self;
+        }
+        
+        _scrollView.pagingEnabled= YES;
+        _scrollView.delegate= self;
+        _scrollView.showsHorizontalScrollIndicator = NO;
+        
+        self.textLabel.hidden= YES;
+        self.imageView.hidden= YES;
+        
+        self.clipsToBounds= NO;
+        self.backgroundColor= CLEAR;
+        
     }
+    return self;
+}
+
+- (void)dealloc
+{
+    [self  removeGestureRecognizer:_gesture];
+    self.gesture= nil;
+    
+}
+
+- (void) layoutSubviews
+{
+    float w= self.frame.size.width;
+    float h= self.frame.size.height;
+    h-= kGeomEventParticipantSeparatorHeight;
+
+    CGRect r = CGRectMake(0,0,w,h);
+    _scrollView.frame= _viewShadow.frame= r ;
+    
+    ((EventParticipantVotingSubCell*)_subcells[0]).frame= r;
+    r.origin.x= w;
+    
+    ((EventParticipantVotingSubCell*)_subcells[1]).frame= r;
+    r.origin.x= w*2;
+    
+    ((EventParticipantVotingSubCell*)_subcells[2]).frame= r;
+    
+    _scrollView.contentSize= CGSizeMake(w*3, h);
+    _scrollView.contentOffset= CGPointMake(w, 0);
+    
+    [self scrollToCurrentStateAnimated:NO];
+}
+
+- (void)userTapped: (id) gesture
+{
+    [self.delegate userDidSelect:self.tag];
 }
 
 - (void)provideVote: (VoteObject*)vote
 {
     self.vote= vote;
-    _radioButton.selected= vote.vote != 0;
+    self.radioButtonState=  vote.vote;
 }
 
 - (void)prepareForReuse
 {
     [_imageOperation cancel];
     self.imageOperation= nil;
-    self.radioButton.selected= NO;
-    self.labelName.text= nil;
-    self.thumbnail.image= nil;
     self.vote= nil;
     self.event= nil;
 }
@@ -333,6 +433,62 @@
 {
     self.vote= [[VoteObject alloc] init];
     self.vote.venueID= venue.restaurantID;
+}
+
+- (void) userPressedRadioButton: (NSInteger)currentValue;
+{
+    switch (currentValue)  {
+        case VOTE_STATE_DONT_CARE:
+            self.radioButtonState= VOTE_STATE_YES;
+            break;
+        case VOTE_STATE_YES:
+            self.radioButtonState= VOTE_STATE_NO;
+            break;
+        case VOTE_STATE_NO:
+            self.radioButtonState= VOTE_STATE_YES;
+            break;
+    }
+    [ self scrollToCurrentStateAnimated:YES ];
+}
+
+- (void) scrollToCurrentStateAnimated: (BOOL) animated
+{
+    float w= self.frame.size.width;
+    
+    switch (_radioButtonState)  {
+        case VOTE_STATE_YES:
+            [_scrollView scrollRectToVisible: CGRectMake(w*2, 0, w,1) animated:animated];
+            break;
+            
+        case VOTE_STATE_DONT_CARE:
+            [_scrollView scrollRectToVisible: CGRectMake(w, 0, w,1) animated:animated];
+            break;
+
+        case VOTE_STATE_NO:
+            [_scrollView scrollRectToVisible: CGRectMake(0, 0, w,1) animated:animated];
+            break;
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    NSLog  (@" ended deceleration");
+    float x= _scrollView.contentOffset.x;
+    float w= self.frame.size.width;
+    if ( w<320) {
+        return;
+    }
+    int  which=  (int) floorf((x + 10)/w);
+    switch (which)  {
+        case 0: _radioButtonState=VOTE_STATE_NO; break;
+        case 1: _radioButtonState=VOTE_STATE_DONT_CARE; break;
+        case 2: _radioButtonState=VOTE_STATE_YES; break;
+    }
+    
+//    if ( _vote.vote  != _radioButtonState) {
+        _vote.vote=_radioButtonState;
+        [self.delegate voteChanged: _vote ];
+//    }
 }
 
 - (void) provideEvent: (EventObject*)event
@@ -354,11 +510,17 @@
 
     if  (!venue) {
         NSLog (@"VENUE ID %ld APPEARS TO BE BOGUS.",(long)venueID);
-        self.labelName.text=  @"Unknown restaurant.";
-        self.thumbnail.image= nil;
+        
+        for (int i=0; i < 3; i++) {
+            ((EventParticipantVotingSubCell*)_subcells[i]).labelName.text=  @"Unknown restaurant.";
+            ((EventParticipantVotingSubCell*)_subcells[i]).thumbnail.image= nil;
+        }
     }
     else {
-        self.labelName.text= venue.name;
+        for (int i=0; i < 3; i++) {
+            ((EventParticipantVotingSubCell*)_subcells[i]).labelName.text= venue.name;
+            ((EventParticipantVotingSubCell*)_subcells[i]).thumbnail.image= nil;
+        }
         
         OOAPI *api = [[OOAPI alloc] init];
         UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
@@ -370,13 +532,18 @@
                                                        maxWidth:0
                                                       maxHeight:h
                                                         success:^(NSString *link) {
-                                                            ON_MAIN_THREAD(  ^{
-                                                                [weakSelf.thumbnail
-                                                                 setImageWithURL:[NSURL URLWithString:link]
-                                                                 placeholderImage:placeholder];
-                                                            });
-                                                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                            [weakSelf.thumbnail setImage:placeholder];
+                                                                for (int i=0; i < 3; i++) {
+                                                                    ON_MAIN_THREAD( ^{
+                                                                    [((EventParticipantVotingSubCell*) weakSelf.subcells[i]).thumbnail
+                                                                            setImageWithURL:[NSURL URLWithString:link]
+                                                                            placeholderImage:placeholder];
+                                                                    });
+                                                                }
+                                                        }
+                                                    failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                        for (int i=0; i < 3; i++) {
+                                                            ((EventParticipantVotingSubCell*) weakSelf.subcells[i]).thumbnail.image= nil;
+                                                        }
                                                         }];
         }
     }
@@ -418,7 +585,8 @@
     [_table registerClass:[EventParticipantEmptyCell class] forCellReuseIdentifier:TABLE_EMPTY_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantVotingCell class] forCellReuseIdentifier:TABLE_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantFirstCell class] forCellReuseIdentifier:TABLE_REUSE_FIRST_IDENTIFIER];
-    
+    _table.showsVerticalScrollIndicator= NO;
+
     self.automaticallyAdjustsScrollViewInsets= NO;
     
 }
@@ -478,12 +646,14 @@
     cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     cell.delegate= self;
     cell.selectionStyle= UITableViewCellSelectionStyleNone;
-
+    cell.tag=  row-1;
+    
     RestaurantObject* venue= [event getNthVenue:row-1];
 
     NSUInteger venueID = venue.restaurantID;
     VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];
 
+    NSLog (@"VOTE FOR VENUE  %lu =  %lu",(unsigned long)venueID, (unsigned long)voteForRow.vote);
     if (voteForRow ) {
         [cell provideVote:voteForRow];
     } else {
@@ -502,8 +672,19 @@
     return kGeomEventParticipantRestaurantHeight +kGeomEventParticipantSeparatorHeight;
 }
 
+- (void) userDidSelect: (NSUInteger) which;
+{
+    RestaurantVC* vc= [[RestaurantVC  alloc] init];
+    
+    RestaurantObject *venue= [self.eventBeingEdited getNthVenue:which];
+    vc.restaurant= venue;
+
+    [self.navigationController  pushViewController:vc animated:YES];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+// Only the first row responds to tapping.
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

@@ -24,8 +24,8 @@
     object.eventID = parseIntegerOrNullFromServer( dictionary[@"event_id"]);
     
     // XX: Need more validation here.
-    if (object.vote != 1) {
-        object.vote= 0;
+    if (object.vote != VOTE_STATE_NO && object.vote !=  VOTE_STATE_YES) {
+        object.vote= VOTE_STATE_DONT_CARE;
     }
     
     return object;

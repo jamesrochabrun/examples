@@ -230,6 +230,7 @@
     [_scrollView addSubview: self.headerWho];
     [_scrollView addSubview: self.headerWhen];
     [_scrollView addSubview: self.headerWhere];
+    _scrollView.showsVerticalScrollIndicator= NO;
 
     [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
     
@@ -385,6 +386,7 @@
                                                               selector: @selector (updateBoxes)
                                                               userInfo:nil repeats:YES];
     }
+    
     [self updateWhenBox];
     [self initiateUpdateOfWhoBox];
     [self initiateUpdateOfWhereBox];

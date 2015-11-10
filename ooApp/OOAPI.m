@@ -13,6 +13,7 @@
 #import "EventObject.h"
 #import "GroupObject.h"
 #import "AppDelegate.h"
+#import "VoteObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -1391,7 +1392,6 @@ NSString *const kKeySearchFilter = @"filter";
                                           identifier= parseIntegerOrNullFromServer(eventID);
                                       }
                                       if (!identifier) {
-//                                          message( @"event ID is zero.");
                                           failure(nil,nil);
                                           return;
                                       }
@@ -1691,8 +1691,8 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    if  (vote != 1 ) {
-        vote= 0;
+    if  (vote != VOTE_STATE_YES && vote !=  VOTE_STATE_NO ) {
+        vote= VOTE_STATE_DONT_CARE;
     }
     
     UserObject *userInfo= [Settings sharedInstance].userObject;
