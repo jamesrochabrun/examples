@@ -200,7 +200,7 @@
     NSString* string= [NSString  stringWithFormat: @"%ld:%02ld:%02ld", hours, minutes, seconds];
     NSAttributedString* s= attributedStringOf(string, kGeomFontSizeHeader);
     NSMutableAttributedString *mas=[[NSMutableAttributedString  alloc] initWithAttributedString: s];
-    NSAttributedString* lowerString= attributedStringOf( @"\rUNTIL VOTING CLOSES", kGeomFontSizeDetail);
+    NSAttributedString* lowerString= attributedStringOf( @"\runtil voting closes", kGeomFontSizeDetail);
 
     [mas  appendAttributedString:lowerString];
     _labelTimeLeft.attributedText= mas;
@@ -255,6 +255,8 @@
         _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
         
         _thumbnail= makeImageView(self, nil);
+        _thumbnail.contentMode= UIViewContentModeScaleAspectFill;
+        _thumbnail.clipsToBounds= YES;
         
         _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
 
@@ -268,11 +270,6 @@
     return self;
 }
 
-- (void) installImage: ( UIImage*)image;
-{
-    self.thumbnail.image= image;
-}
-
 - (void)setRadioButtonState: (UIButton*)button  to: (int)state
 {
     switch (state) {
@@ -281,20 +278,24 @@
             _radioButton.titleLabel.numberOfLines=0;
             _radioButton.titleLabel.font= [UIFont fontWithName:kFontLatoRegular size: 6];
             _radioButton.titleLabel.textAlignment= NSTextAlignmentCenter;
-            _radioButton.titleLabel.layer.cornerRadius= kGeomButtonWidth/2;
-            _radioButton.titleLabel.layer.borderWidth= 1;
-            _radioButton.titleLabel.layer.borderColor= GRAY.CGColor;
+            _radioButton.layer.cornerRadius= kGeomButtonWidth/2;
+            _radioButton.layer.borderWidth= 1;
+            _radioButton.layer.borderColor= GRAY.CGColor;
             self.backgroundColor= WHITE;
             break;
         case VOTE_STATE_YES:
             [button setTitle: kFontIconCheckmark forState:UIControlStateNormal];
             _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
             self.backgroundColor= GREEN;
+            _radioButton.layer.cornerRadius= 0;
+            _radioButton.layer.borderWidth= 0;
             break;
         case VOTE_STATE_NO:
-            [button setTitle: kFontIconEmptyCircle forState:UIControlStateNormal];
+            [button setTitle: kFontIconRemove forState:UIControlStateNormal];
             _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
             self.backgroundColor= RED;
+            _radioButton.layer.cornerRadius= 0;
+            _radioButton.layer.borderWidth= 0;
             break;
     }
     _radioButtonState= state;
@@ -361,9 +362,9 @@
                     [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_YES],
                     ];
         
-        for (int i=0; i < 3; i++) {
-            [_scrollView  addSubview: _subcells[i]];
-            ((EventParticipantVotingSubCell*)_subcells[i]).delegate= self;
+        for (EventParticipantVotingSubCell *view in _subcells)  {
+            [_scrollView  addSubview: view];
+            view.delegate= self;
         }
         
         _scrollView.pagingEnabled= YES;
@@ -427,6 +428,12 @@
     self.imageOperation= nil;
     self.vote= nil;
     self.event= nil;
+    
+    UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
+    for (EventParticipantVotingSubCell *view in _subcells)  {
+        view.labelName.text= nil;
+        view.thumbnail.image= placeholder;
+    }
 }
 
 - (void)indicateMissingVoteFor: (RestaurantObject*)venue
@@ -504,47 +511,59 @@
     
     self.event= event;
     NSInteger venueID= self.vote.venueID;
-    RestaurantObject* venue = [event lookupVenueByID: venueID];
-
+    RestaurantObject* venue =nil;
+    
+    int restaurantNumber= self.tag;
+    if  (event.venues.count > restaurantNumber) {
+        venue= event.venues[restaurantNumber];
+    } else {
+        venue= [event lookupVenueByID: venueID];
+    }
+    
     self.vote.eventID= event.eventID;
+    UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
 
-    if  (!venue) {
-        NSLog (@"VENUE ID %ld APPEARS TO BE BOGUS.",(long)venueID);
+    if  (!venue  || !venue.mediaItems.count) {
+        NSLog (@"VENUE ID %ld HAS NO IMAGES.",(long)venueID);
         
-        for (int i=0; i < 3; i++) {
-            ((EventParticipantVotingSubCell*)_subcells[i]).labelName.text=  @"Unknown restaurant.";
-            ((EventParticipantVotingSubCell*)_subcells[i]).thumbnail.image= nil;
+        for (EventParticipantVotingSubCell *view in _subcells)  {
+            view.labelName.text= venue.name;
+
+            view.thumbnail.image= placeholder;
         }
     }
     else {
-        for (int i=0; i < 3; i++) {
-            ((EventParticipantVotingSubCell*)_subcells[i]).labelName.text= venue.name;
-            ((EventParticipantVotingSubCell*)_subcells[i]).thumbnail.image= nil;
+        for (EventParticipantVotingSubCell *view in _subcells)  {
+            view.labelName.text= venue.name;
+            view.thumbnail.image= placeholder;
         }
         
         OOAPI *api = [[OOAPI alloc] init];
-        UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
         float h= self.frame.size.height;
-
-        if  (event.primaryVenueImageIdentifier ) {
+        
+        MediaItemObject* media= venue.mediaItems[0];
+        if  (media.reference) {
             __weak EventParticipantVotingCell *weakSelf = self;
-            self.imageOperation= [api getRestaurantImageWithImageRef: event.primaryVenueImageIdentifier
-                                                       maxWidth:0
-                                                      maxHeight:h
-                                                        success:^(NSString *link) {
-                                                                for (int i=0; i < 3; i++) {
-                                                                    ON_MAIN_THREAD( ^{
-                                                                    [((EventParticipantVotingSubCell*) weakSelf.subcells[i]).thumbnail
-                                                                            setImageWithURL:[NSURL URLWithString:link]
-                                                                            placeholderImage:placeholder];
-                                                                    });
-                                                                }
-                                                        }
-                                                    failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                        for (int i=0; i < 3; i++) {
-                                                            ((EventParticipantVotingSubCell*) weakSelf.subcells[i]).thumbnail.image= nil;
-                                                        }
-                                                        }];
+            self.imageOperation= [api getRestaurantImageWithImageRef: media.reference
+                                                            maxWidth:0
+                                                           maxHeight:h
+                                                             success:^(NSString *link) {
+                                                                 for (EventParticipantVotingSubCell *view in weakSelf.subcells)  {
+                                                                     ON_MAIN_THREAD( ^{
+                                                                         [view.thumbnail
+                                                                          setImageWithURL:[NSURL URLWithString:link]
+                                                                          placeholderImage:placeholder];
+                                                                     });
+                                                                 }
+                                                             }
+                                                             failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                 
+                                                                 for (EventParticipantVotingSubCell *view in weakSelf.subcells)  {
+                                                                     ON_MAIN_THREAD( ^{
+                                                                         view.thumbnail.image= placeholder;
+                                                                     });
+                                                                 }
+                                                             }];
         }
     }
 }
@@ -660,6 +679,7 @@
         [cell indicateMissingVoteFor:venue ];
     }
     [cell provideEvent:event ];
+
     return cell;
 }
 
