@@ -20,6 +20,8 @@
 #import "RestaurantListVC.h"
 #import "HoursOpen.h"
 #import "OOActivityItemProvider.h"
+#import "MWPhotoBrowser.h"
+#import "MediaItemObject.h"
 #import <MapKit/MapKit.h>
 
 #import "DebugUtilities.h"
@@ -560,6 +562,51 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     // TODO: Deselect item
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == kSectionTypeMediaItems) {
+        NSUInteger row = indexPath.row;
+        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+        [photoBrowser setCurrentPhotoIndex:row];
+        [self.navigationController pushViewController:photoBrowser animated:YES];
+    }
+}
+
+#pragma MWPhotoBrowser delegates
+
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+    return [_mediaItems count];
+}
+
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+    if (index < _mediaItems.count) {
+        MediaItemObject *mio = [_mediaItems objectAtIndex:index];
+        MWPhoto *photo;
+        if (mio.url) {
+            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mio.url]];
+            return photo;
+        } else if (mio.source == kMediaItemTypeGoogle && mio.reference) {
+            OOAPI *api = [[OOAPI alloc] init];
+            
+            __weak MediaItemObject *weakmio = mio;
+            
+            [api getRestaurantImageWithMediaItem:mio
+                                       maxWidth:width(self.view)
+                                      maxHeight:0
+                                        success:^(NSString *link) {
+                                            weakmio.url = link;
+                                            ON_MAIN_THREAD(^ {
+                                                [photoBrowser reloadData];
+                                            });
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
+            return nil;
+        }
+        
+    }
+    return nil;
 }
 
 /*

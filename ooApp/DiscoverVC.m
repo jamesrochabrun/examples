@@ -138,8 +138,32 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(locationBecameAvailable:)
+                                                 name:kNotificationLocationBecameAvailable object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(locationBecameUnavailable:)
+                                                 name:kNotificationLocationBecameUnavailable object:nil];
+
 }
 
+- (void) locationBecameAvailable:(id)notification
+{
+    NSLog (@"LOCATION BECAME AVAILABLE FROM iOS");
+    __weak  DiscoverVC *weakSelf = self;
+    ON_MAIN_THREAD(^{
+        [weakSelf.tableView  reloadData];
+    });
+}
+
+- (void) locationBecameUnavailable:(id)notification
+{
+    NSLog  (@"LOCATION IS NOT AVAILABLE FROM iOS");
+    __weak  DiscoverVC *weakSelf = self;
+    ON_MAIN_THREAD(^{
+        [weakSelf.tableView  reloadData];
+    });
+}
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
