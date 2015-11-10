@@ -20,22 +20,36 @@ PODS:
   - AFNetworking/UIKit (2.6.0):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - DACircularProgress (2.3.1)
   - GoogleMaps (1.10.3)
   - HockeySDK (3.8.2):
     - HockeySDK/AllFeaturesLib (= 3.8.2)
   - HockeySDK/AllFeaturesLib (3.8.2)
+  - MBProgressHUD (0.9.1)
+  - MWPhotoBrowser (2.1.1):
+    - DACircularProgress (~> 2.3)
+    - MBProgressHUD (~> 0.9)
+    - SDWebImage (!= 3.7.2, ~> 3.7)
+  - SDWebImage (3.7.3):
+    - SDWebImage/Core (= 3.7.3)
+  - SDWebImage/Core (3.7.3)
   - TTTAttributedLabel (1.13.4)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.0)
   - GoogleMaps
   - HockeySDK (~> 3.8.2)
+  - MWPhotoBrowser
   - TTTAttributedLabel
 
 SPEC CHECKSUMS:
   AFNetworking: 79f7eb1a0fcfa7beb409332b2ca49afe9ce53b05
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   GoogleMaps: 945e4ac3b74bcca3ddada51df256eb7beddb474d
   HockeySDK: 9f4ac41263acf9d8a4d59491a7f17af16529b935
+  MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
+  MWPhotoBrowser: ba0d0c09ffda3a7ea10093518738c502c1c7141c
+  SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
 
 COCOAPODS: 0.38.2

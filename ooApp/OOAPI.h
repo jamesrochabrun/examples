@@ -50,13 +50,13 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 - (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(NSString *)imageRef
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
-                                                   success:(void (^)(NSString *imageRefs))success
+                                                   success:(void (^)(NSString *link))success
                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantImageWithMediaItem:(MediaItemObject *)mediaItem
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
-                                                   success:(void (^)(NSString *imageRefs))success
+                                                   success:(void (^)(NSString *link))success
                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID

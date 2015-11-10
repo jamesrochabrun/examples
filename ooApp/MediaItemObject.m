@@ -29,7 +29,7 @@ NSString *const kKeyMediaItemURL = @"url";
     mio.reference = [dict objectForKey:kKeyMediaItemReference];
     mio.height = [dict[kKeyMediaItemHeight] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemHeight] floatValue];
     mio.width = [dict[kKeyMediaItemWidth] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemWidth] floatValue]; 
-    mio.url = [dict objectForKey:kKeyMediaItemURL];
+    mio.url = [[dict objectForKey:kKeyMediaItemURL] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyMediaItemURL];
     return mio;
 }
 
