@@ -94,6 +94,10 @@ typedef enum: char {
     _searchBar.barTintColor = WHITE;
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.delegate= self;
+    _searchBar.keyboardAppearance=UIKeyboardAppearanceDefault;
+    _searchBar.keyboardType= UIKeyboardTypeAlphabet;
+    _searchBar.autocorrectionType= UITextAutocorrectionTypeYes;
+    
     _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
     
     self.filterView = [[OOFilterView alloc] init];
@@ -638,6 +642,7 @@ typedef enum: char {
         RestaurantVC *vc = [[RestaurantVC alloc] init];
         vc.title = trimString(ro.name);
         vc.restaurant = ro;
+        vc.eventBeingEdited= self.eventBeingEdited;
         [self.navigationController pushViewController:vc animated:YES];
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];

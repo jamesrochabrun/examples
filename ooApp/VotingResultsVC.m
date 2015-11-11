@@ -24,7 +24,6 @@
 @property (nonatomic, strong) UIButton *buttonSubmitVote;
 @property (nonatomic, strong) UIButton *buttonGears;
 @property (nonatomic, strong) UILabel *labelTimeLeft;
-@property (nonatomic, strong) UILabel *labelPersonIcon;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) EventObject *event;
 
@@ -43,7 +42,6 @@
         _labelTimeLeft.textColor= WHITE;
         _labelTimeLeft.layer.borderWidth= 1;
         _labelTimeLeft.layer.borderColor= WHITE.CGColor;
-        self.labelPersonIcon= makeIconLabel ( self,  kFontIconPerson, 25);
         
         _buttonSubmitVote= makeButton(self,  @"VOTES SUBMITTED", kGeomFontSizeHeader,
                                       WHITE, CLEAR, self, @selector(doSubmitVote:), 1);
@@ -69,7 +67,6 @@
     float x=  _buttonSubmitVote.frame.origin.x  + _buttonSubmitVote.frame.size.width;
     x += kGeomSpaceInter;
     _labelTimeLeft.frame = CGRectMake(w/2+ margin/2,h-kGeomHeightButton- margin, biggerButtonWidth, kGeomHeightButton);
-    _labelPersonIcon.frame = CGRectMake(w-kGeomButtonWidth- margin,h-kGeomHeightButton-margin, kGeomButtonWidth, kGeomHeightButton);
 }
 
 - (void) provideEvent: (EventObject*)event;
@@ -112,6 +109,7 @@
 @property (nonatomic,strong)  UIImageView *thumbnail;
 @property (nonatomic,strong)   UILabel *labelName;
 @property (nonatomic,strong) EventObject* event;
+@property (nonatomic,assign) BOOL showOnlyMessage;
 @property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
 
 @end
@@ -122,7 +120,10 @@
     self = [super initWithStyle: style reuseIdentifier:reuseIdentifier];
     if (self) {
         _thumbnail= makeImageView(self, nil);
-        _labelResult= makeLabel(self,  @"result", kGeomFontSizeHeader);
+        _thumbnail.contentMode= UIViewContentModeScaleAspectFill;
+        _thumbnail.clipsToBounds= YES;
+        
+        _labelResult= makeLabel(self,  @"", kGeomFontSizeHeader);
 
         _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
         self.textLabel.hidden= YES;
@@ -138,24 +139,31 @@
 {
     float w= self.frame.size.width;
     float h= self.frame.size.height;
-    float x= kGeomSpaceEdge;
-    _thumbnail.frame = CGRectMake(x,0,h,h);
-    x += h+kGeomSpaceInter;
-    _labelName.frame = CGRectMake(x,0,w-x-kGeomButtonWidth-2*kGeomSpaceInter,h);
-    x += _labelName.frame.size.width;
-    _labelResult.frame = CGRectMake(x,(h-kGeomButtonWidth)/2,kGeomButtonWidth,h);
-}
+    
+    if  (_showOnlyMessage ) {
+        _thumbnail.hidden= YES;
+        _labelResult.hidden= YES;
+        _labelName.frame = CGRectMake(0,0,w,h);
+        _labelName.textAlignment= NSTextAlignmentCenter;
+    } else {
+        float x= kGeomSpaceEdge;
+        _thumbnail.frame = CGRectMake(x,0,h,h);
+        x += h+kGeomSpaceInter;
+        _labelName.frame = CGRectMake(x,0,w-x-kGeomButtonWidth-2*kGeomSpaceInter,h);
+        x += _labelName.frame.size.width;
+        _labelResult.frame = CGRectMake(x,(h-kGeomHeightButton)/2,kGeomButtonWidth,kGeomHeightButton);
+        _labelName.textAlignment= NSTextAlignmentLeft;
 
-- (void)provideVote: (VoteObject*)vote
-{
-    self.vote= vote;
-    _labelResult.text= [NSString stringWithFormat: @"%lu",(unsigned long)vote. vote];
+        _thumbnail.hidden= NO;
+        _labelResult.hidden= NO;
+    }
 }
 
 - (void)prepareForReuse
 {
     [_imageOperation cancel];
     self.imageOperation= nil;
+    _showOnlyMessage= NO;
     _labelResult.text= nil;
     self.labelName.text= nil;
     self.thumbnail.image= nil;
@@ -169,50 +177,42 @@
     self.vote.venueID= venue.restaurantID;
 }
 
-- (void) provideEvent: (EventObject*)event
-{
-    if  (!event) {
-        return;
-    }
-    
-    if  (!self.vote) {
-        NSLog (@"MISSING VOTE INFORMATION");
-        return;
-    }
-    
-    self.event= event;
-    NSInteger venueID= self.vote.venueID;
-    RestaurantObject* venue = [event lookupVenueByID: venueID];
 
-    self.vote.eventID= event.eventID;
+- (void)provideVenue: (RestaurantObject*) venue
+{
+    _labelResult.text= [NSString stringWithFormat: @"%ld point%c",(  long) venue.totalVotes,venue.totalVotes != 1 ?'s':0];
+
+    NSInteger venueID= self.vote.venueID;
 
     if  (!venue) {
         NSLog (@"VENUE ID %lu APPEARS TO BE BOGUS.",( unsigned long)venueID);
-        self.labelName.text=  @"Unknown restaurant.";
+        self.labelName.text=  @"";
         self.thumbnail.image= nil;
+        return;
     }
-    else {
-        self.labelName.text= venue.name;
-        
-        OOAPI *api = [[OOAPI alloc] init];
-        UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
-        float h= self.frame.size.height;
-
-        if  (event.primaryVenueImageIdentifier ) {
-            __weak VotingResultsVotingCell *weakSelf = self;
-            self.imageOperation= [api getRestaurantImageWithImageRef: event.primaryVenueImageIdentifier
-                                                       maxWidth:0
-                                                      maxHeight:h
-                                                        success:^(NSString *link) {
-                                                            ON_MAIN_THREAD(  ^{
-                                                                [weakSelf.thumbnail
-                                                                 setImageWithURL:[NSURL URLWithString:link]
-                                                                 placeholderImage:placeholder];
-                                                            });
-                                                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                            [weakSelf.thumbnail setImage:placeholder];
-                                                        }];
-        }
+    
+    self.labelName.text= venue.name;
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
+    float h= self.frame.size.height;
+    
+    if  (venue.mediaItems.count ) {
+        __weak VotingResultsVotingCell *weakSelf = self;
+        self.imageOperation= [api getRestaurantImageWithImageRef:   ( (MediaItemObject*)venue.mediaItems[0]).reference
+                                                        maxWidth:0
+                                                       maxHeight:h
+                                                         success:^(NSString *link) {
+                                                             ON_MAIN_THREAD(  ^{
+                                                                 [weakSelf.thumbnail
+                                                                  setImageWithURL:[NSURL URLWithString:link]
+                                                                  placeholderImage:placeholder];
+                                                             });
+                                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                             [weakSelf.thumbnail setImage:placeholder];
+                                                         }];
+    } else {
+        self.thumbnail.image= placeholder;
     }
 }
 
@@ -223,7 +223,7 @@
 
 @interface VotingResultsVC ()
 @property (nonatomic,strong)  UITableView * table;
-@property (nonatomic,strong) NSMutableArray* arrayOfVenues;
+@property (nonatomic,strong) NSMutableArray* sortedArrayOfVenues;
 @end
 
 @implementation VotingResultsVC
@@ -240,7 +240,7 @@
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= [UIColor lightGrayColor];
 
-    self.arrayOfVenues= [NSMutableArray new];
+    self.sortedArrayOfVenues= [NSMutableArray new];
     
     NSString* eventName= self.eventBeingEdited.name;
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
@@ -259,7 +259,6 @@
     __weak VotingResultsVC *weakSelf = self;
     if (! [self.eventBeingEdited totalVenues ]) {
         /* _venueOperation=*/ [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-            [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
             [weakSelf fetchTallies];
         }
                                                                                failure:^{
@@ -274,23 +273,44 @@
 - (void)fetchTallies
 {
     __weak VotingResultsVC *weakSelf = self;
-    [OOAPI getVoteTalliesForEvent:self.eventBeingEdited.eventID
-                          success:^(NSArray *venues) {
-                              [weakSelf.arrayOfVenues removeAllObjects];
-                              [weakSelf.arrayOfVenues addObjectsFromArray:venues];
-                              [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
-                              
-                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                              NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
-                              
-                          }];
     
+    for (RestaurantObject* venue  in  self.eventBeingEdited.venues ) {
+        venue.totalVotes= 0;
+    }
+ 
+    [self.eventBeingEdited refreshVotesFromServerWithSuccess:^{
+        NSMutableDictionary *dictionary= [NSMutableDictionary  new];
+        for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
+            [dictionary setObject: venue forKey:[NSString stringWithFormat: @"%lu", (unsigned long) venue.restaurantID] ];
+        }
+        
+        for (VoteObject* vote  in weakSelf.eventBeingEdited.votes) {
+            NSString *index= [NSString stringWithFormat: @"%lu", (unsigned long)vote.venueID ];
+            RestaurantObject*venue= dictionary[ index];
+            venue.totalVotes += vote.vote;
+        }
+        [self.sortedArrayOfVenues removeAllObjects];
+        for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
+            [_sortedArrayOfVenues addObject: venue];
+        }
+        [_sortedArrayOfVenues sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            RestaurantObject*r1= obj1;
+            RestaurantObject*r2= obj2;
+            if ( r1.totalVotes > r2.totalVotes) {
+                return NSOrderedAscending;
+            } else if ( r1.totalVotes  < r2.totalVotes) {
+                return NSOrderedDescending;
+            } else {
+                return NSOrderedSame;
+            }
+        }];
+        
+        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+    } failure:^{
+        NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
+        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+    }];
     
-}
-
-- (void) userPressedCancel: (id) sender
-{
-    [self.navigationController popViewControllerAnimated:YES ];
 }
 
 - (void)viewWillLayoutSubviews
@@ -321,18 +341,23 @@
     VotingResultsVotingCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     cell.delegate= self;
-
-    RestaurantObject* venue= _arrayOfVenues[row-1];
-
-    NSUInteger venueID = venue.restaurantID;
-    VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];
-
-    if (voteForRow ) {
-        [cell provideVote:voteForRow];
-    } else {
-        [cell indicateMissingVoteFor:venue ];
+    
+    NSUInteger count=_sortedArrayOfVenues.count;
+    if  (!count  && !event.numberOfVenues) {
+        cell.showOnlyMessage= YES;
+        cell.labelName.text=  @"This event has no restaurants.";
+        return cell;
     }
-    [cell provideEvent:event ];
+    row--;
+    
+    if ( row  < count) {
+        RestaurantObject* venue= _sortedArrayOfVenues[row];
+        [cell provideVenue: venue ];
+        
+        NSLog  (@"ROW %d HAS VOTE %d",row,venue.totalVotes);
+    } else {
+        [cell provideVenue: nil ];
+    }
     return cell;
 }
 
@@ -352,7 +377,7 @@
     if  (!row) {
         return;
     }
-    RestaurantObject* venue= _arrayOfVenues[row-1];
+    RestaurantObject* venue= _sortedArrayOfVenues[row-1];
     RestaurantVC*vc= [[RestaurantVC alloc] init];
     vc.restaurant= venue;
     vc.eventBeingEdited= self.eventBeingEdited;
@@ -361,7 +386,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1+[_arrayOfVenues count];
+    NSUInteger count=[self.eventBeingEdited  totalVenues ];
+    if  (!count  && !self.eventBeingEdited.numberOfVenues) {
+        return 2;
+    }
+    return 1+count;
 }
 
 //------------------------------------------------------------------------------

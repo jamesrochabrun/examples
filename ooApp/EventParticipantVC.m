@@ -19,8 +19,11 @@
 #import "EventWhenVC.h"
 #import "ProfileVC.h"
 #import "RestaurantVC.h"
+#import "VotingResultsVC.h"
 
 #import  <QuartzCore/CALayer.h>
+
+NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 
 @interface EventParticipantEmptyCell()
 @property (nonatomic,strong)  UILabel *labelCentered;
@@ -61,6 +64,15 @@
 @end
 
 @implementation  EventParticipantFirstCell
+
+- (void)dealloc
+{
+    [self.timerCountdown  invalidate];
+    self.timerCountdown= nil;
+
+    self.delegate= nil;
+}
+
 - (instancetype)  initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super  initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -188,10 +200,10 @@
      long now= [[NSDate date ] timeIntervalSince1970];
      long  timeRemaining= votingEnds-now;
     if ( timeRemaining <= 0) {
-        _labelTimeLeft.attributedText=attributedStringOf( @"VOTING HAS ENDED", kGeomFontSizeHeader);
+        _labelTimeLeft.attributedText=attributedStringOf( @"VOTING ENDED", kGeomFontSizeHeader);
         [self.timerCountdown  invalidate];
         self.timerCountdown= nil;
-        return;
+        [self.delegate votingEnded];
     }
     
     unsigned long  hours= timeRemaining/3600;
@@ -621,6 +633,13 @@
     [self doLayout];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -745,8 +764,13 @@
 
 - (void) userRequestToSubmit;
 {
-    message( @"you pressed submit.");
-
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    NSString* string= [NSString  stringWithFormat: @"%@%lu", kKeySubmittedVoteUpPrefix, (unsigned long) self.eventBeingEdited.eventID];
+    [ud setBool:YES forKey:string];
+    [ud  synchronize];
+    VotingResultsVC *vc= [[VotingResultsVC  alloc] init ];
+    vc.eventBeingEdited= self.eventBeingEdited;
+    [self.navigationController  pushViewController:vc animated:YES];
 }
 
 - (void)userPressedProfilePicture: (NSUInteger)userid
@@ -765,6 +789,13 @@
                  failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                      
                  }];
+}
+
+- (void)votingEnded
+{
+    VotingResultsVC *vc= [[VotingResultsVC alloc] init];
+    vc.eventBeingEdited= self.eventBeingEdited;
+    [self.navigationController  pushViewController:vc animated:YES];
 }
 
 @end

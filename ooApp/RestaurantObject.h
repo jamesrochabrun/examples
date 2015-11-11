@@ -47,6 +47,7 @@ typedef enum {
 @property (nonatomic, strong) NSString *phone;
 @property (nonatomic, strong) NSString *address;
 @property (nonatomic, strong) NSArray *hours;
+@property (nonatomic,assign) NSInteger totalVotes;// tally of all vote values
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict;
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant;

@@ -510,6 +510,10 @@
             [cell updateHighlighting:NO];
         });
         
+        NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+        NSString* string= [NSString  stringWithFormat: @"%@%lu", kKeySubmittedVoteUpPrefix, (unsigned long) event.eventID];
+        BOOL userDidSubmitVotes=  [ud boolForKey:string];
+
         // Determine whether event can be edited by this user.
         // Then transition to the appropriate view controller.
         //
@@ -540,11 +544,16 @@
                                                      [weakSelf.navigationController pushViewController:vc animated:YES ];
 
                                                   } else {
-                                                    
-                                                      EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-                                                      vc.eventBeingEdited= event;
-                                                     [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                      UIViewController* vc;
                                                       
+                                                      if ( userDidSubmitVotes) {
+                                                          vc= [[VotingResultsVC  alloc] init ];
+                                                          ( (VotingResultsVC*)vc).eventBeingEdited= event;
+                                                      } else {
+                                                          vc= [[EventParticipantVC  alloc] init];
+                                                          ( (EventParticipantVC*)vc).eventBeingEdited= event;
+                                                      }
+                                                      [weakSelf.navigationController pushViewController:vc animated:YES ];
                                                   }
                                               }
 

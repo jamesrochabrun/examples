@@ -315,18 +315,17 @@
     NSDate *now= [NSDate date];
     NSDate *end= self.eventBeingEdited.dateWhenVotingClosed;
     BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
-    
-    NSLog(@"EDITING PROHIBITED");
+    EventObject *event= self.eventBeingEdited;
     
     if ( votingIsDone ) {
         VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
-        vc.eventBeingEdited= self.eventBeingEdited;
+        vc.eventBeingEdited= event;
         [self.navigationController pushViewController:vc animated:YES ];
         
     } else {
         
         EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-        vc.eventBeingEdited= self.eventBeingEdited;
+        vc.eventBeingEdited= event;
         [self.navigationController pushViewController:vc animated:YES ];
         
     }
@@ -580,6 +579,7 @@
     
     SearchVC* vc= [[SearchVC alloc] init];
     vc.addingRestaurantsToEvent= YES;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -618,10 +618,13 @@
         return;
     }
     
+    __weak EventCoordinatorVC *weakSelf = self;
     event.isComplete= YES;
     [OOAPI reviseEvent: event
                success:^(id responseObject) {
                    NSLog (@"REVISION SUCCESSFUL");
+                   message( @"Event submitted.");
+                   [weakSelf.navigationController  popViewControllerAnimated:YES];
                } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                    NSLog (@"REVISION FAILED %@",e);
                }];

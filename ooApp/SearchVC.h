@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
+#import "EventObject.h"
 
 @interface SearchVC : BaseVC <UISearchBarDelegate>
 @property (nonatomic,assign) BOOL addingRestaurantsToEvent;
+@property (nonatomic,strong) EventObject *eventBeingEdited;
+
 @end
 

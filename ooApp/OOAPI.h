@@ -228,7 +228,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)getVoteForEvent:(EventObject*)event
++ (AFHTTPRequestOperation *)getVotesForEvent:(EventObject*)event
                                     success:(void (^)(NSArray *votes))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 

@@ -267,7 +267,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)addToEvent
 {
-    [self.eventBeingEdited addVenue:_restaurant];
+    EventObject* e= self.eventBeingEdited;
+    [e addVenue:_restaurant];
     [self.navigationController  popViewControllerAnimated:YES];
 }
 
@@ -277,8 +278,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.navigationController  popViewControllerAnimated:YES];
 }
 
-- (void)moreButtonPressed:(id)sender {
-    [self presentViewController:_styleSheetAC animated:YES completion:nil]; // 6
+- (void)moreButtonPressed: (id)sender
+{
+    [self presentViewController:_styleSheetAC animated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning

@@ -147,6 +147,9 @@ UIImageView* makeImageView (UIView *parent, id image_)
         [iv setImageWithURL:url placeholderImage:nil];
     }
     [ parent addSubview: iv ];
+    
+    iv.contentMode= UIViewContentModeScaleAspectFill;
+    iv.clipsToBounds= YES;
     return iv;
 }
 

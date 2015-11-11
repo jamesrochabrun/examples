@@ -1621,7 +1621,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Name:    getVotesForEvent
 // Purpose:
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getVoteForEvent:(EventObject*)event
++ (AFHTTPRequestOperation *)getVotesForEvent:(EventObject*)event
                                     success:(void (^)(NSArray *votes))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {

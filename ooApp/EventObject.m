@@ -189,11 +189,9 @@ NSString *const kKeyEventMediaItem = @"media_item";
 - (RestaurantObject *)firstVenue
 {
     @synchronized(_venues)  {
-        if  (!_venues || !_venues.count) {
-            return nil;
-        }
-        return _venues[0];
+        return [_venues firstObject];
     }
+    return nil;
 }
 
 - (void)addVenue:(RestaurantObject *)venue;
@@ -391,13 +389,12 @@ NSString *const kKeyEventMediaItem = @"media_item";
                                                       failure:(void (^)())failure;
 {
     __weak EventObject *weakSelf = self;
-    return [OOAPI getVoteForEvent:self
+    return [OOAPI getVotesForEvent:self
                           success:^(NSArray *votes) {
                               @synchronized(weakSelf.votes) {
                                   [weakSelf.votes removeAllObjects];
                                   [weakSelf.votes addObjectsFromArray: votes ];
                               }
-//                              weakSelf.hasBeenAltered= YES;
 
                               NSLog  (@"GOT %ld VOTES FOR EVENT %ld.", ( long)votes.count,  (long)weakSelf.eventID);
                               success();

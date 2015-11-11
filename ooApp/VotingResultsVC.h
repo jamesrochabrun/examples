@@ -20,7 +20,6 @@
 @interface VotingResultsVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate,
                 VotingResultsFirstCellDelegate,VotingResultsVotingCellDelegate>
 @property (nonatomic,strong) EventObject *eventBeingEdited;
-@property (nonatomic,strong) NSString *eventName;
 
 @end
 
