@@ -31,7 +31,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
 
     if (self) {
-        self.backgroundColor = UIColorRGB(kColorWhite);
+        self.backgroundColor = UIColorRGB(kColorBlack);
         _thumbnail = [[UIImageView alloc] init];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFill;
         _thumbnail.backgroundColor = UIColorRGBA(kColorOffWhite);
@@ -100,18 +100,18 @@
 - (void)updateConstraints {
     [super updateConstraints];
 
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _thumbnail, _header, _subHeader1, _subHeader2, _viewShadow, _actionButton, _locationIcon);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     _shadowConstraints = [NSMutableArray array];
-    [_shadowConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [_shadowConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_viewShadow]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [_shadowConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_viewShadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:_shadowConstraints];
     
-    _tnConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    _tnConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_thumbnail]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     [self addConstraints:_tnConstraints];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_header]-(spaceEdge)-[_subHeader1]-(spaceEdge)-[_subHeader2]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -171,7 +171,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _gradient.frame = CGRectMake(kGeomSpaceEdge, kGeomSpaceEdge, 280, height(_viewShadow));
+    _gradient.frame = CGRectMake(kGeomSpaceEdge, kGeomSpaceCellPadding, 280, height(_viewShadow));
     [_gradient setStartPoint:CGPointMake(0, 0)];
     [_gradient setEndPoint:CGPointMake(1, 0)];
 }

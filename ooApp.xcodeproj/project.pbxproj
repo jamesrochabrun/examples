@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; };
 		3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE491BBA330000F1AF67 /* OOMapMarker.m */; };
-		3613BE4C1BBC641C00F1AF67 /* strip_gradient.png in Resources */ = {isa = PBXBuildFile; fileRef = 3613BE4B1BBC641C00F1AF67 /* strip_gradient.png */; };
 		3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */; };
 		3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE511BBCFB7000F1AF67 /* EmptyRestaurantTile.m */; };
 		3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE541BBDD1A600F1AF67 /* MediaItemObject.m */; };
@@ -141,7 +140,6 @@
 		3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeUtilities.m; sourceTree = "<group>"; };
 		3613BE481BBA330000F1AF67 /* OOMapMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOMapMarker.h; sourceTree = "<group>"; };
 		3613BE491BBA330000F1AF67 /* OOMapMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOMapMarker.m; sourceTree = "<group>"; };
-		3613BE4B1BBC641C00F1AF67 /* strip_gradient.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = strip_gradient.png; path = "Graphic Assets/strip_gradient.png"; sourceTree = "<group>"; };
 		3613BE4D1BBCBDF700F1AF67 /* OOTagButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOTagButton.h; sourceTree = "<group>"; };
 		3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOTagButton.m; sourceTree = "<group>"; };
 		3613BE501BBCFB7000F1AF67 /* EmptyRestaurantTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyRestaurantTile.h; sourceTree = "<group>"; };
@@ -466,7 +464,6 @@
 		367703FF1B87E41F00B594E5 /* Graphic Assets */ = {
 			isa = PBXGroup;
 			children = (
-				3613BE4B1BBC641C00F1AF67 /* strip_gradient.png */,
 				963E33941BE022E300C872D0 /* Huge.jpg */,
 				36587B6F1B93964C00D01EB5 /* Icon@2x.png */,
 				962303741BB33D2700278FA6 /* forkKnife.png */,
@@ -703,7 +700,6 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
-				926C12D989DDD93FBA13069B /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -803,7 +799,6 @@
 				367704581B8BF05100B594E5 /* Lato-HeavyItalic.ttf in Resources */,
 				3621F1251B900EC7004537B6 /* Logo.png in Resources */,
 				367704611B8BF05100B594E5 /* Lato-Thin.ttf in Resources */,
-				3613BE4C1BBC641C00F1AF67 /* strip_gradient.png in Resources */,
 				36FDA7041B585F650029D29D /* Images.xcassets in Resources */,
 				367704561B8BF05100B594E5 /* Lato-HairlineItalic.ttf in Resources */,
 				3677045F1B8BF05100B594E5 /* Lato-Semibold.ttf in Resources */,
@@ -863,21 +858,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		926C12D989DDD93FBA13069B /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

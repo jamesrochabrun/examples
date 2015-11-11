@@ -51,11 +51,11 @@
 
         _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
         _backgroundImage.clipsToBounds = YES;
-        _backgroundImage.image = [UIImage imageNamed:@"Logo2.png"];
+        _backgroundImage.image = nil;
 
-        [_name withFont:[UIFont fontWithName:kFontLatoHeavyItalic size:kGeomFontSizeBannerMain] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeBannerMain] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
         [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
-        [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeDetail] textColor:kColorYellow backgroundColor:kColorClear];
+        [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
 
         [self addSubview:_emptyTile];
         [self addSubview:_backgroundImage];
@@ -123,7 +123,7 @@
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
     _distance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
-    _rating.text = (restaurant.rating && ([restaurant.rating floatValue] > 3.5)) ? kFontIconWhatsNewFilled : @"";
+    _rating.text = (restaurant.rating && ([restaurant.rating floatValue] > 3.7)) ? kFontIconWhatsNewFilled : @"";
     
     OOAPI *api = [[OOAPI alloc] init];
     

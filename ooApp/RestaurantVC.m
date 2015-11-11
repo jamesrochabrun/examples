@@ -42,6 +42,8 @@
 @property (nonatomic) NSUInteger favoriteID;
 @property (nonatomic) NSUInteger toTryID;
 
+@property (nonatomic, strong) UIButton *addPhotoButton;
+
 @end
 
 static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
@@ -61,9 +63,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _userInfo = [Settings sharedInstance].userObject;
 
     _listButtonsContainer = [[UIView alloc] init];
-    _listButtonsContainer.backgroundColor = UIColorRGBA(kColorWhite);
+    _listButtonsContainer.backgroundColor = UIColorRGBA(kColorOffBlack);
     
-    self.view.backgroundColor = UIColorRGBA(kColorWhite);
+    self.view.backgroundColor = UIColorRGBA(kColorBlack);
     
     [self setupStyleSheetAC];
     [self setupCreateListAC];
@@ -83,19 +85,28 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [self.view addSubview:_collectionView];
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-    _collectionView.backgroundColor = UIColorRGBA(kColorWhite);
+    _collectionView.backgroundColor = UIColorRGBA(kColorBlack);
     
     _listButtons = [NSMutableSet set];
+    
+    _addPhotoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_addPhotoButton withIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector((showPickPhotoUI))];
+    [_addPhotoButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    _addPhotoButton.translatesAutoresizingMaskIntoConstraints = NO;
+    _addPhotoButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+    _addPhotoButton.layer.borderWidth = 1;
+    _addPhotoButton.layer.cornerRadius = kGeomDimensionsIconButton/2;
+    [self.view addSubview:_addPhotoButton];
     
 //    [DebugUtilities addBorderToViews:@[_listButtonsContainer]];
 }
 
 -(void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"listContainerHeight":@(_listButtonsContainerHeight)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"listContainerHeight":@(_listButtonsContainerHeight), @"buttonDimensions":@(kGeomDimensionsIconButton)};
     
     UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView, _addPhotoButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view removeConstraints:_verticalLayoutContraints];
@@ -103,6 +114,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.view addConstraints:_verticalLayoutContraints];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
 }
 
 - (void)setupCreateListAC {
@@ -166,11 +181,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _styleSheetAC.view.tintColor = [UIColor blackColor];
     
     __weak RestaurantVC *weakSelf = self;
-//    UIAlertAction *addToFavorites = [UIAlertAction actionWithTitle:@"Add to Favorites"
-//                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-//                                                     [self addToFavorites];
-//                                                 }];
-//    
+
     UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                  [self sharePressed];
@@ -199,8 +210,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                      NSLog(@"Cancel");
                                                  }];
     
-    
-//    [_styleSheetAC addAction:addToFavorites];
     [_styleSheetAC addAction:shareRestaurant];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
@@ -278,7 +287,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.navigationController  popViewControllerAnimated:YES];
 }
 
-- (void)moreButtonPressed: (id)sender
+- (void)moreButtonPressed:(id)sender
 {
     [self presentViewController:_styleSheetAC animated:YES completion:nil];
 }
@@ -499,7 +508,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         }
         case kSectionTypeLists: {
             UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            cvc.backgroundColor = UIColorRGBA(kColorBlack);
             [cvc addSubview:_listButtonsContainer];
             return cvc;
             break;
@@ -507,7 +516,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeMediaItems: {
             PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
             
-            cvc.backgroundColor = UIColorRGBA(kColorWhite);
+            cvc.backgroundColor = UIColorRGBA(kColorBlack);
             cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
 //            [DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
@@ -555,7 +564,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         OOStripHeader *header = [[OOStripHeader alloc] init];
         header.frame = CGRectMake(0, 0, width(self.view), 27);
         header.name = @"PHOTOS";
-        [header enableAddButtonWithTarget:self action:@selector(showPickPhotoUI)];
+//        [header enableAddButtonWithTarget:self action:@selector(showPickPhotoUI)];
         [reuseView addSubview:header];
         [collectionView bringSubviewToFront:reuseView];
      }

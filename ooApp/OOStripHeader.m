@@ -7,9 +7,11 @@
 //
 
 #import "OOStripHeader.h"
+#import "DebugUtilities.h"
 
 @interface OOStripHeader()
 
+@property (nonatomic, strong) UILabel *iconLabel;
 @property (nonatomic, strong) UILabel *nameLabel;
 @property (nonatomic,strong) UIButton* buttonAdd;
 
@@ -21,11 +23,18 @@
     self = [super init];
     if (self) {
         // Initialization code
+        _iconLabel = [[UILabel alloc] init];
+        _iconLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [_iconLabel withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeStripHeader] textColor:kColorYellow backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
+        _iconLabel.text = @"";
+        [self addSubview:_iconLabel];
+        
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
         [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [self addSubview:_nameLabel];
         self.backgroundColor = UIColorRGBA(kColorClear);
+//        [DebugUtilities addBorderToViews:@[_nameLabel, _iconLabel]];
     }
     return self;
 }
@@ -63,28 +72,38 @@
     [self setNeedsDisplay];
 }
 
+- (void)setIcon:(NSString *)icon {
+    if ([_icon isEqualToString:icon]) return;
+    _icon = icon;
+    _iconLabel.text = icon;
+    
+    [self bringSubviewToFront:_iconLabel];
+    [self setNeedsDisplay];
+}
+
 - (void)updateConstraints {
     [super updateConstraints];
     UIView *superview = self;
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@(self.frame.size.width), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
-    NSDictionary *views;
+    NSDictionary *views= NSDictionaryOfVariableBindings(superview, _nameLabel, _iconLabel);
     
     if (!_buttonAdd) {
-        views= NSDictionaryOfVariableBindings(superview, _nameLabel);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_nameLabel]-(>=0)-|"
+
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
-                                                         attribute:NSLayoutAttributeCenterX
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iconLabel]-spaceEdge-[_nameLabel]"
+                                                                     options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_iconLabel
+                                                         attribute:NSLayoutAttributeCenterY
                                                          relatedBy:NSLayoutRelationEqual
-                                                            toItem: self
-                                                         attribute:NSLayoutAttributeCenterX
+                                                            toItem:_nameLabel
+                                                         attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
-        
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
                                                          attribute:NSLayoutAttributeCenterY
                                                          relatedBy:NSLayoutRelationEqual
-                                                            toItem: self
+                                                            toItem:self
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
     } else {
@@ -117,14 +136,17 @@
         _buttonAdd.layer.cornerRadius= h/2;
         
         // left-right sequence
-        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem: self
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.f constant:0]
-         ];
-        
+//        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
+//                                                          attribute:NSLayoutAttributeCenterX
+//                                                          relatedBy:NSLayoutRelationEqual
+//                                                             toItem: self
+//                                                          attribute:NSLayoutAttributeCenterX
+//                                                         multiplier:1.f constant:0]
+//         ];
+
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iconLabel]-spaceEdge-[_nameLabel]"
+                                                                     options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
         [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
                                                           attribute:NSLayoutAttributeRight
                                                           relatedBy:NSLayoutRelationEqual
@@ -159,37 +181,37 @@
     [self updateConstraints];
 }
 
-- (void)drawRect:(CGRect)rect {
-    [super drawRect:rect];
-    CGSize s = [_nameLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                        _nameLabel.font, NSFontAttributeName,
-                                                         nil]];
-    if ( _buttonAdd) {
-        s.width +=kGeomHeightButton;
-    }
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 3, UIColorRGBA(kColorStripHeaderShadow).CGColor);
-    
-    CGContextBeginPath(ctx);
-    CGContextMoveToPoint   (ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) - 2);  // upper mid left
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2 - 12, CGRectGetMidY(rect) - 2);  // upper inner left
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2, CGRectGetMinY(rect));  // top left
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2, CGRectGetMinY(rect));  // top right
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2 + 12, CGRectGetMidY(rect) - 2);  // upper inner right
-    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), CGRectGetMidY(rect) - 2);  // upper mid right
-    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), CGRectGetMidY(rect) + 2);  // lower mid right
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2 + 12, CGRectGetMidY(rect) + 2);  // lower inner right
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2, CGRectGetMaxY(rect));  // bottom right
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2, CGRectGetMaxY(rect));  // bottom left
-    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2 - 12, CGRectGetMidY(rect) + 2);  // lower inner left
-    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) + 2);  // lower mid left
-    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) - 2);  // back to upper mid left
-    CGContextClosePath(ctx);
-    
-    CGContextSetRGBFillColor(ctx, 0x00/255.f, 0x00/255.f, 0x00/255.f, 1);
-    CGContextFillPath(ctx);
-}
+//- (void)drawRect:(CGRect)rect {
+//    [super drawRect:rect];
+//    CGSize s = [_nameLabel.text sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+//                                                        _nameLabel.font, NSFontAttributeName,
+//                                                         nil]];
+//    if ( _buttonAdd) {
+//        s.width +=kGeomHeightButton;
+//    }
+//    CGContextRef ctx = UIGraphicsGetCurrentContext();
+//
+//    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 3, UIColorRGBA(kColorStripHeaderShadow).CGColor);
+//    
+//    CGContextBeginPath(ctx);
+//    CGContextMoveToPoint   (ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) - 2);  // upper mid left
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2 - 12, CGRectGetMidY(rect) - 2);  // upper inner left
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2, CGRectGetMinY(rect));  // top left
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2, CGRectGetMinY(rect));  // top right
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2 + 12, CGRectGetMidY(rect) - 2);  // upper inner right
+//    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), CGRectGetMidY(rect) - 2);  // upper mid right
+//    CGContextAddLineToPoint(ctx, CGRectGetMaxX(rect), CGRectGetMidY(rect) + 2);  // lower mid right
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2 + 12, CGRectGetMidY(rect) + 2);  // lower inner right
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) + s.width/2, CGRectGetMaxY(rect));  // bottom right
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2, CGRectGetMaxY(rect));  // bottom left
+//    CGContextAddLineToPoint(ctx, CGRectGetMidX(rect) - s.width/2 - 12, CGRectGetMidY(rect) + 2);  // lower inner left
+//    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) + 2);  // lower mid left
+//    CGContextAddLineToPoint(ctx, CGRectGetMinX(rect), CGRectGetMidY(rect) - 2);  // back to upper mid left
+//    CGContextClosePath(ctx);
+//    
+//    CGContextSetRGBFillColor(ctx, 0x00/255.f, 0x00/255.f, 0x00/255.f, 1);
+//    CGContextFillPath(ctx);
+//}
 
 @end
 

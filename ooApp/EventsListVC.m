@@ -56,7 +56,7 @@
 
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= WHITE;
+    self.view.backgroundColor= UIColorRGBA(kColorBlack);
     
     self.eventBeingEdited= nil;
     
@@ -76,6 +76,7 @@
     _table.sectionFooterHeight = 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     _table.showsVerticalScrollIndicator= NO;
+    _table.backgroundColor = UIColorRGBA(kColorBlack);
 }
 
 //------------------------------------------------------------------------------
@@ -290,7 +291,7 @@
         }
     }
     
-    cell.backgroundColor = WHITE;
+    cell.backgroundColor = UIColorRGBA(kColorBlack);
     
     return cell;
 }

@@ -654,15 +654,15 @@
     y += kGeomEventCoordinatorBoxHeightTopmost + vspacing;
     
     _viewContainer2.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    self.headerWho.frame= CGRectMake(x, y-13, boxWidth, 27);
+    self.headerWho.frame= CGRectMake(x, y-27, boxWidth, 27);
     y += kGeomEventCoordinatorBoxHeight + vspacing;
     
     _viewContainer3.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    self.headerWhen.frame= CGRectMake(x, y-13, boxWidth, 27);
+    self.headerWhen.frame= CGRectMake(x, y-27, boxWidth, 27);
     y += kGeomEventCoordinatorBoxHeight + vspacing;
     
     _viewContainer4.frame= CGRectMake(x, y, boxWidth, kGeomEventCoordinatorBoxHeight);
-    self.headerWhere.frame= CGRectMake(x, y-13, boxWidth, 27);
+    self.headerWhere.frame= CGRectMake(x, y-27, boxWidth, 27);
     y += kGeomEventCoordinatorBoxHeight + vspacing;
     
     [self.view bringSubviewToFront:self.headerWho];

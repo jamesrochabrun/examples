@@ -43,6 +43,7 @@ static NSString * const cellIdentifier = @"listCell";
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     _requestOperation = nil;
+    _tableView.backgroundColor = UIColorRGBA(kColorBlack);
 }
 
 - (void)updateViewConstraints

@@ -58,7 +58,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _nameHeader.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"strip_gradient.png"]];
+        self.backgroundColor = UIColorRGBA(kColorBlack);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 //        [DebugUtilities addBorderToViews:@[_name,_actionButton]];
@@ -93,16 +93,16 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameHeader);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(labelY)-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameHeader
-                                                     attribute:NSLayoutAttributeCenterX
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:_nameHeader.superview
-                                                     attribute:NSLayoutAttributeCenterX
-                                                    multiplier:1.f constant:0.f]];
+//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameHeader
+//                                                     attribute:NSLayoutAttributeCenterX
+//                                                     relatedBy:NSLayoutRelationEqual
+//                                                        toItem:_nameHeader.superview
+//                                                     attribute:NSLayoutAttributeCenterX
+//                                                    multiplier:1.f constant:0.f]];
 
 }
 
@@ -117,6 +117,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     }
     _listItem = listItem;
     _nameHeader.name = _listItem.name;
+    _nameHeader.icon = kFontIconList;
     _restaurants = nil;
     if (_listItem)
         [self getRestaurants];

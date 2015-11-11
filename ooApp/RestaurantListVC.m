@@ -57,6 +57,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     } else {
         self.moreButton.hidden = YES;
     }
+    self.tableView.backgroundColor = UIColorRGBA(kColorBlack);
 }
 
 - (void)updateViewConstraints {

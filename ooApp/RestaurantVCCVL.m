@@ -70,7 +70,7 @@
             xOffset = kGeomSpaceEdge;
             UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
             suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
-            yOffset +=13;
+            yOffset += 27;
             [itemAttributes addObject:suppattributes];
         } else {
             numberOfColumnsInRow = 1;
