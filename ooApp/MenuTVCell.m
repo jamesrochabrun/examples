@@ -27,9 +27,9 @@
     if (self) {
         _menuItem = [[MenuObject alloc] init];
         _icon = [[UILabel alloc] init];
-        [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorBlack backgroundColor:kColorClear];
+        [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorWhite backgroundColor:kColorClear];
         _name = [[UILabel alloc] init];
-        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorBlack backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
     
         [self addSubview:_icon];
         [self addSubview:_name];
@@ -42,7 +42,7 @@
         bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
         [self setSelectedBackgroundView:bgColorView];
         
-        self.backgroundColor = UIColorRGBA(kColorWhite);
+        self.backgroundColor = UIColorRGBA(kColorBlack);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
