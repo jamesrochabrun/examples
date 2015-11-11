@@ -40,13 +40,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
     
     UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
     _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
     _moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
     [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
+    [_moreButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
 
     bbi.customView = _moreButton;
     self.navigationItem.rightBarButtonItems = @[bbi];

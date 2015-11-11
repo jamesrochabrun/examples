@@ -128,6 +128,7 @@ typedef enum: char {
     [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     
     [self changeFilter: FILTER_PLACES];
+    _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
 //------------------------------------------------------------------------------

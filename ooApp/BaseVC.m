@@ -42,7 +42,7 @@
         [self.leftNavButton setTitle:kFontIconMenu];
         [self.leftNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                            [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
-                                           UIColorRGB(kColorBlack), NSForegroundColorAttributeName,
+                                           UIColorRGB(kColorWhite), NSForegroundColorAttributeName,
                                            nil] forState:UIControlStateNormal];
         [self.leftNavButton setTarget:self.revealViewController];
         [self.leftNavButton setAction:@selector(revealToggle:)];
@@ -59,6 +59,7 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     
     self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorWhite);
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
 }
 
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {

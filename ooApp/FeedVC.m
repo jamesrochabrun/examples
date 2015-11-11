@@ -31,6 +31,7 @@ static NSString * const FeedCellID = @"FeedCell";
     _tableView.dataSource = self;
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_tableView];
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [_tableView registerClass:[EventTVCell class] forCellReuseIdentifier:FeedCellID];
     
