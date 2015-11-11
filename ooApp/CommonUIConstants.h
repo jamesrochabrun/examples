@@ -25,7 +25,7 @@
 //
 static NSUInteger kColorBlack = 0xFF000000;
 static NSUInteger kColorButtonSelected = 0xFF0000FF;
-static NSUInteger kColorCellSelected = 0xFFF9FF00;
+static NSUInteger kColorCellSelected =  0xFF323232;//0xFFF9FF00;
 static NSUInteger kColorClear = 0x00000000;
 static NSUInteger kColorGray = 0xFFE5E5E5;
 static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;

@@ -24,6 +24,7 @@
 @property (nonatomic, strong) UILabel *priceRange;
 @property (nonatomic, strong) UILabel *isOpen;
 @property (nonatomic, strong) UILabel *distance;
+@property (nonatomic, strong) UILabel *cuisine;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIView *imageOverlay;
 @property (nonatomic, strong) UIButton *locationButton;
@@ -135,6 +136,11 @@
         _priceRange.translatesAutoresizingMaskIntoConstraints = NO;
         [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         [self addSubview:_priceRange];
+
+        _cuisine = [[UILabel alloc] init];
+        _cuisine.translatesAutoresizingMaskIntoConstraints = NO;
+        [_cuisine withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        [self addSubview:_cuisine];
         
         _distance = [[UILabel alloc] init];
         _distance.translatesAutoresizingMaskIntoConstraints = NO;
@@ -215,7 +221,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"spaceInterX2": @(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange, _name, _address, _website, _phoneNumber, _distance, _toTryButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _horizontalLine1, _horizontalLine2);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange, _name, _address, _website, _phoneNumber, _distance, _cuisine, _toTryButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _horizontalLine1, _horizontalLine2);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];

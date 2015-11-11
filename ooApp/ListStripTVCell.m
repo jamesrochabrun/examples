@@ -48,7 +48,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         
         _cvl = [[ListCVFL alloc] init];
         [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-        [_cvl setItemSize:CGSizeMake(kGeomHeightStripListCell, kGeomHeightStripListCell)];
+        [_cvl setItemSize:CGSizeMake(kGeomHeightStripListCell*1.3, kGeomHeightStripListCell)];
 
         _fcvl = [[ListCVFL alloc] init];
         [_fcvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];

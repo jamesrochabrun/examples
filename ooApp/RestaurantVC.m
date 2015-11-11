@@ -41,7 +41,6 @@
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic) NSUInteger favoriteID;
 @property (nonatomic) NSUInteger toTryID;
-
 @property (nonatomic, strong) UIButton *addPhotoButton;
 
 @end

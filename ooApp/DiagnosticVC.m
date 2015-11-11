@@ -174,7 +174,7 @@
 //------------------------------------------------------------------------------
 - (void)doPhotoHugeUpload: (id) sender
 {
-    self.hugeImage= [ UIImage  imageNamed: @"Huge.jpg"];
+    self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];//@"Huge.jpg"]; got rid of the big image 
     [OOAPI uploadUserPhoto:self.hugeImage success:^{
         NSLog  (@"Uploaded huge photo.");
         [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];

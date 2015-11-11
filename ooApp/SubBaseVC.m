@@ -50,6 +50,8 @@
 
     bbi.customView = _moreButton;
     self.navigationItem.rightBarButtonItems = @[bbi];
+    
+    
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {

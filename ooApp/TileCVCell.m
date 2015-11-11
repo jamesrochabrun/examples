@@ -130,9 +130,22 @@
     if ([restaurant.mediaItems count]) {
         MediaItemObject *mediaItem = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]);
         _requestOperation = [api getRestaurantImageWithMediaItem:mediaItem maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
-            });
+            __weak UIImageView *weakIV = _backgroundImage;
+            __weak TileCVCell *weakSelf = self;
+            [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]] placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                ON_MAIN_THREAD(^ {
+                    [weakIV setAlpha:0.0];
+                    weakIV.image = image;
+                    [UIView beginAnimations:nil context:NULL];
+                    [UIView setAnimationDuration:0.3];
+                    [weakIV setAlpha:1.0];
+                    [UIView commitAnimations];
+                    [weakSelf setNeedsUpdateConstraints];
+                    [weakSelf setNeedsLayout];
+                });
+            } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                ;
+            }];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
@@ -140,9 +153,22 @@
         NSString *imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
         if (imageRef) {
             _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_backgroundImage setImageWithURL:[NSURL URLWithString:link]];
-                });
+                __weak UIImageView *weakIV = _backgroundImage;
+                __weak TileCVCell *weakSelf = self;
+                [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]] placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                    ON_MAIN_THREAD(^ {
+                        [weakIV setAlpha:0.0];
+                        weakIV.image = image;
+                        [UIView beginAnimations:nil context:NULL];
+                        [UIView setAnimationDuration:0.3];
+                        [weakIV setAlpha:1.0];
+                        [UIView commitAnimations];
+                        [weakSelf setNeedsUpdateConstraints];
+                        [weakSelf setNeedsLayout];
+                    });
+                } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                    ;
+                }];
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 ;
             }];
