@@ -27,6 +27,7 @@ NSString *const kKeyRestaurantAddress = @"address";
 NSString *const kKeyRestaurantPhone = @"phone";
 NSString *const kKeyRestaurantWebsite = @"website";
 NSString *const kKeyRestaurantHours = @"hours";
+NSString *const kKeyRestaurantCuisine = @"cuisine";
 
 @implementation RestaurantObject
 
@@ -48,6 +49,7 @@ NSString *const kKeyRestaurantHours = @"hours";
     restaurant.phone = [[dict objectForKey:kKeyRestaurantPhone] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantPhone];
     restaurant.address = [[dict objectForKey:kKeyRestaurantAddress] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantAddress];
     restaurant.isOpen = ([[dict objectForKey:kKeyRestaurantOpenNow] isKindOfClass:[NSNull class]]) ? NO : [[dict objectForKey:kKeyRestaurantOpenNow] boolValue];
+    restaurant.cuisine = [[dict objectForKey:kKeyRestaurantCuisine] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantCuisine];
     
     NSArray *imageRefs = [dict objectForKey:kKeyRestaurantImageRef];
     restaurant.imageRefs = [NSMutableArray array];

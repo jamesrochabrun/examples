@@ -27,7 +27,7 @@
     _restaurant = restaurant;
     self.thumbnail.image = nil;
     self.header.text = _restaurant.name;
-    self.subHeader1.text = (_restaurant.isOpen) ? @"Open Now" : @"Not Open";
+    self.subHeader1.text = [NSString stringWithFormat:@"%@", (_restaurant.isOpen) ? @"Open Now" : @"Not Open"];
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     
@@ -40,13 +40,41 @@
     OOAPI *api = [[OOAPI alloc] init];
     
     NSString *imageRef;
+    MediaItemObject *mio;
     if ([restaurant.mediaItems count]) {
-        imageRef = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]).reference;
+        mio = [restaurant.mediaItems objectAtIndex:0];
     } else if ([restaurant.imageRefs count]) {
         imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
     }
     
-    if (imageRef) {
+    if (mio) {
+        self.requestOperation = [api getRestaurantImageWithMediaItem:mio
+                                                            maxWidth:width(self)
+                                                           maxHeight:0
+                                                             success:^(NSString *link) {
+            __weak UIImageView *weakIV = self.thumbnail;
+            __weak RestaurantTVCell *weakSelf = self;
+            [self.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                  placeholderImage:nil
+                                           success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                               ON_MAIN_THREAD(^ {
+                                                   [weakIV setAlpha:0.0];
+                                                   weakIV.image = image;
+                                                   [UIView beginAnimations:nil context:NULL];
+                                                   [UIView setAnimationDuration:0.3];
+                                                   [weakIV setAlpha:1.0];
+                                                   [UIView commitAnimations];
+                                                   [weakSelf setNeedsUpdateConstraints];
+                                                   [weakSelf setNeedsLayout];
+                                               });
+                                           }
+                                           failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                               ;
+                                           }];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    } else if (imageRef) {
         self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];

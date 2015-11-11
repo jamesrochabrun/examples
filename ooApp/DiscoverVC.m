@@ -53,7 +53,7 @@ static NSString * const ListRowID = @"HLRCell";
         _mapView.settings.scrollGestures = YES;
         _mapView.settings.zoomGestures = YES;
         _mapView.delegate = self;
-        [_mapView setMinZoom:3 maxZoom:15];
+        [_mapView setMinZoom:1 maxZoom:16];
     }
     return self;
 }
@@ -147,27 +147,28 @@ static NSString * const ListRowID = @"HLRCell";
 
 }
 
-- (void) locationBecameAvailable:(id)notification
+- (void)locationBecameAvailable:(id)notification
 {
-    NSLog (@"LOCATION BECAME AVAILABLE FROM iOS");
-    __weak  DiscoverVC *weakSelf = self;
+    NSLog(@"LOCATION BECAME AVAILABLE FROM iOS");
+    __weak DiscoverVC *weakSelf = self;
     ON_MAIN_THREAD(^{
-        [weakSelf.tableView  reloadData];
+        [weakSelf getRestaurants];
     });
 }
 
-- (void) locationBecameUnavailable:(id)notification
+- (void)locationBecameUnavailable:(id)notification
 {
-    NSLog  (@"LOCATION IS NOT AVAILABLE FROM iOS");
-    __weak  DiscoverVC *weakSelf = self;
+    NSLog(@"LOCATION IS NOT AVAILABLE FROM iOS");
+    __weak DiscoverVC *weakSelf = self;
     ON_MAIN_THREAD(^{
-        [weakSelf.tableView  reloadData];
+        [weakSelf getRestaurants];
     });
 }
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [self verifyTrackingIsOkay];
+    [self updateLocation];
 }
 
 - (void)verifyTrackingIsOkay
@@ -247,7 +248,7 @@ static NSString * const ListRowID = @"HLRCell";
                                            andLocation:_desiredLocation
                                              andFilter:@""
                                            andOpenOnly:_openOnly
-                                                  andSort:kSearchSortTypeDistance
+                                                  andSort:kSearchSortTypeBestMatch
                                                success:^(NSArray *r) {
         _restaurants = r;
         dispatch_async(dispatch_get_main_queue(), ^{
