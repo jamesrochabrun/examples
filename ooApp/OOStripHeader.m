@@ -33,8 +33,6 @@
         _nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
         [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [self addSubview:_nameLabel];
-        self.backgroundColor = UIColorRGBA(kColorClear);
-//        [DebugUtilities addBorderToViews:@[_nameLabel, _iconLabel]];
     }
     return self;
 }
@@ -91,7 +89,7 @@
 
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iconLabel]-spaceEdge-[_nameLabel]"
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInter-[_iconLabel]-spaceEdge-[_nameLabel]"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_iconLabel
@@ -178,7 +176,20 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    [self updateConstraints];
+    CGRect frame = self.frame;
+    frame.size.width = CGRectGetMaxX(_nameLabel.frame) + kGeomSpaceInter;
+    self.frame = frame;
+    
+    UIBezierPath *maskPath;
+    maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bounds
+                                     byRoundingCorners:(UIRectCornerTopRight)
+                                           cornerRadii:CGSizeMake(7, 7)];
+    
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.layer.mask = maskLayer;
+    [self updateConstraintsIfNeeded];
 }
 
 //- (void)drawRect:(CGRect)rect {

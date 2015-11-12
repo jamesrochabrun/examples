@@ -29,7 +29,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = UIColorRGBA(kColorWhite);
+    self.view.backgroundColor = UIColorRGBA(kColorBlack);
     
     _leftNavButton = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _leftNavButton;
@@ -59,7 +59,17 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
+    [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [self.navigationController.navigationBar setTranslucent:YES];
+
+    
+//    [self.navigationController.navigationBar setTintColor:UIColorRGBA(kColorNavBar)];
+    
+//    [self.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+//    [self.navigationBar setShadowImage:[UIImage new]];
+//    [self.navigationBar setTranslucent:YES];
+    
+//    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
 
 }
 

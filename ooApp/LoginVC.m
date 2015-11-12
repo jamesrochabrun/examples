@@ -394,7 +394,7 @@
                                                  
                                                  [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                              } else {
-                                                 message ( @"A backend error has occurred.");
+                                                 message ( @"Oomami is temporarily down, but we are working on it! Try again in a few minutes.");
                                                  NSLog  (@"OTHER NETWORK ERROR: %ld", (long)statusCode);
                                                  LOGSN(@"BACKEND ERROR",statusCode);
                                              }

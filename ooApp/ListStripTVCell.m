@@ -44,8 +44,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _requestOperation = nil;
         _listItem = [[ListObject alloc] init];
         
-        _nameHeader = [[OOStripHeader alloc] init];
-        
         _cvl = [[ListCVFL alloc] init];
         [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
         [_cvl setItemSize:CGSizeMake(kGeomHeightStripListCell*1.3, kGeomHeightStripListCell)];
@@ -53,15 +51,18 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _fcvl = [[ListCVFL alloc] init];
         [_fcvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
 
+        _nameHeader = [[OOStripHeader alloc] init];
         [self addSubview:_nameHeader];
-        
         _nameHeader.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        _nameHeader.layer.borderWidth = 1;
+        _nameHeader.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+        _nameHeader.backgroundColor = UIColorRGBA(kColorOffBlack);
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = UIColorRGBA(kColorBlack);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
-//        [DebugUtilities addBorderToViews:@[_name,_actionButton]];
     }
     
     return self;
@@ -87,13 +88,13 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     [super updateConstraints];
 //    CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_nameHeader.font}];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)/2), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)/2), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameHeader);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
@@ -118,6 +119,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     _listItem = listItem;
     _nameHeader.name = _listItem.name;
     _nameHeader.icon = kFontIconList;
+
     _restaurants = nil;
     if (_listItem)
         [self getRestaurants];

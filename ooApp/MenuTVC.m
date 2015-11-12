@@ -33,7 +33,7 @@
     [super viewDidLoad];
     
     [self.tableView registerClass:[MenuTVCell class] forCellReuseIdentifier:@"menuCell"];
-    self.tableView.backgroundColor = UIColorRGBA(kColorBlack);
+    self.tableView.backgroundColor = UIColorRGBA(kColorNavBar);
     
     MenuObject *menuItem;
     _menuItems = [NSMutableArray array];

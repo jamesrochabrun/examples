@@ -539,7 +539,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             return _listButtonsContainerHeight;
             break;
         case kSectionTypeMain:
-            return 160;
+            return 180;
             break;
         case kSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];

@@ -20,6 +20,7 @@ extern NSString *const kKeyMediaItemID;
 extern NSString *const kKeyMediaItemHeight;
 extern NSString *const kKeyMediaItemWidth;
 extern NSString *const kKeyMediaItemURL;
+extern NSString *const kKeyMediaItemSourceUserID;
 
 @interface MediaItemObject : NSObject
 
@@ -30,6 +31,7 @@ extern NSString *const kKeyMediaItemURL;
 @property (nonatomic, strong) NSString *url;
 @property (nonatomic) CGFloat width;
 @property (nonatomic) CGFloat height;
+@property (nonatomic) NSUInteger sourceUserID;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
 

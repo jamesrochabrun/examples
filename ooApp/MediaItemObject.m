@@ -15,6 +15,7 @@ NSString *const kKeyMediaItemID = @"media_item_id";
 NSString *const kKeyMediaItemHeight = @"height";
 NSString *const kKeyMediaItemWidth = @"width";
 NSString *const kKeyMediaItemURL = @"url";
+NSString *const kKeyMediaItemSourceUserID = @"source_user_id";
 
 @implementation MediaItemObject
 
@@ -30,6 +31,7 @@ NSString *const kKeyMediaItemURL = @"url";
     mio.height = [dict[kKeyMediaItemHeight] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemHeight] floatValue];
     mio.width = [dict[kKeyMediaItemWidth] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemWidth] floatValue]; 
     mio.url = [[dict objectForKey:kKeyMediaItemURL] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyMediaItemURL];
+    mio.sourceUserID = [dict[kKeyMediaItemSourceUserID] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemSourceUserID] unsignedIntegerValue];
     return mio;
 }
 
