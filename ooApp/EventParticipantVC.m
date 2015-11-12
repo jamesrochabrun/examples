@@ -19,11 +19,9 @@
 #import "EventWhenVC.h"
 #import "ProfileVC.h"
 #import "RestaurantVC.h"
-#import "VotingResultsVC.h"
 
 #import  <QuartzCore/CALayer.h>
 
-NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 
 @interface EventParticipantEmptyCell()
 @property (nonatomic,strong)  UILabel *labelCentered;
@@ -35,7 +33,6 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _labelCentered= makeLabel(self, @"This event has no restaurants.", kGeomFontSizeHeader);
-
     }
     return self;
 }
@@ -49,13 +46,12 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 //==============================================================================
 
 @interface EventParticipantFirstCell ()
-
+@property (nonatomic,assign)  int mode;
 @property (nonatomic, strong) UIButton *buttonSubmitVote;
 @property (nonatomic, strong) UIButton *buttonGears;
 @property (nonatomic, strong) UILabel *labelTimeLeft;
 @property (nonatomic, strong) UILabel *labelTitle;
 @property (nonatomic, strong) UILabel *labelDateTime;
-@property (nonatomic, strong) UILabel *labelPersonIcon;
 @property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) EventObject *event;
@@ -69,7 +65,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 {
     [self.timerCountdown  invalidate];
     self.timerCountdown= nil;
-
+    
     self.delegate= nil;
 }
 
@@ -79,36 +75,36 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     if (self) {
         self.viewShadow= makeView( self, WHITE);
         addShadowTo (_viewShadow);
-
+        
         self.clipsToBounds= NO;
         self.backgroundColor= CLEAR;
+        
+        self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
+        self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
+        _backgroundImageView.clipsToBounds= YES;
+        
+        self.labelDateTime= makeLabel( self,nil, kGeomFontSizeSubheader);
+        _labelDateTime.textColor= WHITE;
+        _labelDateTime.font= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
+        
+        self.labelTitle= makeLabel( self, nil,
+                                   kGeomEventHeadingFontSize);
+        _labelTitle.textColor= WHITE;
+        _labelTitle.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
+        
+        self.labelTimeLeft= makeLabel( self, nil, kGeomFontSizeSubheader);
+        _labelTimeLeft.textColor= BLACK;
+        _labelTimeLeft.backgroundColor= YELLOW;
         
         self.participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
         _participantsView.delegate= self;
         
-        self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
-        self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
-        _backgroundImageView.clipsToBounds= YES;
-
-        self.labelDateTime= makeLabel( self, expressLocalDateTime( self.event.date), kGeomFontSizeSubheader);
-        _labelDateTime.textColor= WHITE;
-        _labelDateTime.font= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-        
-        self.labelTitle= makeLabel( self, self.event.name,
-                                   kGeomEventHeadingFontSize);
-        _labelTitle.textColor= WHITE;
-        _labelTitle.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
-
-        self.labelTimeLeft= makeLabel( self,  @"until voting closes", kGeomFontSizeSubheader);
-        _labelTimeLeft.textColor= BLACK;
-        _labelTimeLeft.backgroundColor= YELLOW;
-        
         _buttonSubmitVote= makeButton(self,  @"SUBMIT VOTE", kGeomFontSizeSubheader,
                                       WHITE,  BLACK, self, @selector(doSubmitVote:), 0);
         _buttonSubmitVote.titleLabel.font= [UIFont fontWithName:kFontLatoBold
                                                            size:kGeomFontSizeSubheader];
-
+        
     }
     return self;
 }
@@ -124,23 +120,32 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     
     _backgroundImageView.frame = CGRectMake(margin,0,w-2*margin,h);
     _viewShadow.frame=  _backgroundImageView.frame;
-
-#define kGeomEventParticipantButtonHeight 33
     
-    float y= kGeomEventParticipantFirstBoxHeight- kGeomEventParticipantButtonHeight
-        - kGeomEventHeadingFontSize-kGeomFontSizeSubheader-kGeomHeightButton - 3*spacing;
-    _labelTitle.frame = CGRectMake(0,y,w,kGeomEventHeadingFontSize);
+    float y;
+    if  (self.mode  != VOTING_MODE_SHOW_RESULTS ) {
+        y=   (h- kGeomEventParticipantButtonHeight -kGeomFaceBubbleDiameter
+              - kGeomEventHeadingFontSize-kGeomFontSizeSubheader - 3*spacing)/2;
+    } else {
+        y=   (h- kGeomEventParticipantButtonHeight/2 -kGeomFaceBubbleDiameter
+              - kGeomEventHeadingFontSize-kGeomFontSizeSubheader - 3*spacing)/2;
+    }
+    
+    _labelTitle.frame = CGRectMake( margin,y,w-2*margin,kGeomEventHeadingFontSize);
     y += kGeomEventHeadingFontSize +spacing;
-    _labelDateTime.frame = CGRectMake(0,y,w,kGeomFontSizeSubheader);
+    _labelDateTime.frame = CGRectMake( margin,y,w-2*margin,kGeomFontSizeSubheader);
     y+= kGeomFontSizeSubheader +spacing;
-    _labelPersonIcon.frame = CGRectMake(0,y, w, kGeomHeightButton);
+    _participantsView.frame = CGRectMake(margin,y,w-2*margin, kGeomFaceBubbleDiameter);
     
     float distanceBetweenButtons= 0;
     float biggerButtonWidth= (w-2*margin-distanceBetweenButtons)/2;
-
-    _buttonSubmitVote.frame=  CGRectMake(  margin, h-kGeomEventParticipantButtonHeight, biggerButtonWidth,kGeomEventParticipantButtonHeight);
     
-    _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
+    if  (self.mode==VOTING_MODE_ALLOW_VOTING ) {
+        _buttonSubmitVote.frame=  CGRectMake(  margin, h-kGeomEventParticipantButtonHeight, biggerButtonWidth,kGeomEventParticipantButtonHeight);
+        _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
+    } else {
+        _labelTimeLeft.frame = CGRectMake(margin,h-kGeomEventParticipantButtonHeight/2,w-2*margin, kGeomEventParticipantButtonHeight/2);
+        _buttonSubmitVote.alpha= 0;
+    }
     
     [self.participantsView setNeedsLayout];
 }
@@ -153,7 +158,8 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 - (void) provideEvent: (EventObject*)event;
 {
     self.event= event;
- 
+    self.labelTitle.text= event.name;
+    
     NSDate* dv=self.event.dateWhenVotingClosed;
     unsigned long votingEnds= [dv timeIntervalSince1970];
     if (!votingEnds) {
@@ -161,17 +167,19 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
         return;
     }
     
+    self.labelDateTime.text= event.date ? expressLocalDateTime( event.date) :  @"Date not set.";
+    
     unsigned long now= [[NSDate date ] timeIntervalSince1970];
     if  ( now < votingEnds) {
         self.timerCountdown= [ NSTimer  scheduledTimerWithTimeInterval:1
                                                                 target:self
                                                               selector:@selector(callbackCountdown:)
                                                               userInfo:nil repeats:YES];
-
+        
     }
     
     __weak EventParticipantFirstCell *weakSelf = self;
-
+    
     if  (event.primaryImage) {
         self.backgroundImageView.image= event.primaryImage;
     }
@@ -194,15 +202,45 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     [self refreshUsers];
 }
 
+
+- (void)setMode:(int)mode
+{
+    _mode= mode;
+    
+    switch ( mode) {
+        case VOTING_MODE_ALLOW_VOTING:
+            _buttonSubmitVote.enabled= YES;
+            _buttonSubmitVote.alpha= 1;
+            break;
+            
+        case VOTING_MODE_NO_VOTING:
+            [self killTimer];
+            _buttonSubmitVote.enabled= NO;
+            _buttonSubmitVote.alpha= 0;
+            break;
+            
+        case VOTING_MODE_SHOW_RESULTS:
+            [self killTimer];
+            _buttonSubmitVote.enabled= NO;
+            _buttonSubmitVote.alpha= 0;
+            _labelTimeLeft.text=  @"voting has ended";
+            break;
+            
+        default:
+            break;
+    }
+    
+    [self setNeedsLayout];
+}
+
 - (void)callbackCountdown: ( NSTimer *) timer
 {
-     long votingEnds= [self.event.dateWhenVotingClosed timeIntervalSince1970];
-     long now= [[NSDate date ] timeIntervalSince1970];
-     long  timeRemaining= votingEnds-now;
+    long votingEnds= [self.event.dateWhenVotingClosed timeIntervalSince1970];
+    long now= [[NSDate date ] timeIntervalSince1970];
+    long  timeRemaining= votingEnds-now;
     if ( timeRemaining <= 0) {
         _labelTimeLeft.attributedText=attributedStringOf( @"VOTING ENDED", kGeomFontSizeHeader);
-        [self.timerCountdown  invalidate];
-        self.timerCountdown= nil;
+        [self killTimer];
         [self.delegate votingEnded];
     }
     
@@ -213,7 +251,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     NSAttributedString* s= attributedStringOf(string, kGeomFontSizeHeader);
     NSMutableAttributedString *mas=[[NSMutableAttributedString  alloc] initWithAttributedString: s];
     NSAttributedString* lowerString= attributedStringOf( @"\runtil voting closes", kGeomFontSizeDetail);
-
+    
     [mas  appendAttributedString:lowerString];
     _labelTimeLeft.attributedText= mas;
 }
@@ -224,7 +262,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     
     [self.event refreshUsersFromServerWithSuccess:^{
         [weakSelf.participantsView setEvent: weakSelf.event];
-
+        
     } failure:^{
         NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
     }];
@@ -239,10 +277,15 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     [_delegate userRequestToSubmit];
 }
 
-- (void)prepareForReuse
+- (void)killTimer
 {
     [_timerCountdown  invalidate];
     self.timerCountdown= nil;
+}
+
+- (void)prepareForReuse
+{
+    [self killTimer];
     self.event= nil;
 }
 @end
@@ -250,9 +293,10 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 //==============================================================================
 
 @interface EventParticipantVotingSubCell ()
+@property (nonatomic,assign)  int  mode;
 @property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong) EventObject* event;
-@property (nonatomic,assign)  int radioButtonState;
+@property (nonatomic,assign) int radioButtonState;
 @property (nonatomic,assign) id <EventParticipantVotingSubCellDelegate>delegate;
 @end
 
@@ -271,7 +315,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
         _thumbnail.clipsToBounds= YES;
         
         _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
-
+        
         _thumbnail.layer.borderColor= GRAY.CGColor;
         _thumbnail.layer.borderWidth= 1;
         
@@ -284,13 +328,20 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 
 - (void)setRadioButtonState: (UIButton*)button  to: (int)state
 {
+    if  (_mode==VOTING_MODE_SHOW_RESULTS ) {
+        _radioButton.titleLabel.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
+        NSString  * string= [NSString stringWithFormat: @"%ld", (long)self.tag];
+        [_radioButton setTitle:string forState:UIControlStateNormal];
+        return;
+    }
+    
     switch (state) {
         case VOTE_STATE_DONT_CARE:
             [button setTitle: @"don't\rcare" forState:UIControlStateNormal];
             _radioButton.titleLabel.numberOfLines=0;
             _radioButton.titleLabel.font= [UIFont fontWithName:kFontLatoRegular size: 6];
             _radioButton.titleLabel.textAlignment= NSTextAlignmentCenter;
-            _radioButton.layer.cornerRadius= kGeomButtonWidth/2;
+            _radioButton.layer.cornerRadius= 22;
             _radioButton.layer.borderWidth= 1;
             _radioButton.layer.borderColor= GRAY.CGColor;
             self.backgroundColor= WHITE;
@@ -333,11 +384,40 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
 }
 
+- (void)setMode:(int)mode
+{
+    _mode= mode;
+    
+    switch ( mode) {
+        case VOTING_MODE_ALLOW_VOTING:
+            _radioButton.enabled= YES;
+            break;
+            
+        case VOTING_MODE_NO_VOTING:
+            _radioButton.enabled= NO;
+            _radioButton.layer.borderWidth= 0;
+            [_radioButton setTitle: @"" forState:UIControlStateNormal];
+            break;
+            
+        case VOTING_MODE_SHOW_RESULTS:
+            _radioButton.enabled= NO;
+            _radioButton.layer.borderWidth= 0;
+            [_radioButton setTitle: @"" forState:UIControlStateNormal];
+            break;
+            
+        default:
+            break;
+    }
+    
+    _radioButton.selected= NO;
+}
+             
 @end
 
 //==============================================================================
 
 @interface EventParticipantVotingCell ()
+@property (nonatomic,assign)  int  mode;
 @property (nonatomic,strong)  AFHTTPRequestOperation *imageOperation;
 @property (nonatomic,assign)  int   radioButtonState;
 @property (nonatomic, strong) UIView *viewShadow;
@@ -400,12 +480,43 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     
 }
 
+- (void)setMode:(int)mode
+{
+    _mode= mode;
+    float w= self.frame.size.width;
+    
+    for (EventParticipantVotingSubCell *view in _subcells)  {
+        [view setMode:mode];
+    }
+    
+    switch ( mode) {
+        case VOTING_MODE_ALLOW_VOTING:
+            [_scrollView setScrollEnabled:YES];
+            break;
+            
+        case VOTING_MODE_NO_VOTING:
+            [_scrollView scrollRectToVisible: CGRectMake(w, 0, w,1) animated:NO];
+            [_scrollView setScrollEnabled:NO];
+            break;
+            
+        case VOTING_MODE_SHOW_RESULTS:
+            [_scrollView scrollRectToVisible: CGRectMake(w, 0, w,1) animated:NO];
+            [_scrollView setScrollEnabled:NO];
+            break;
+            
+        default:
+            break;
+    }
+    
+    [self setNeedsLayout];
+}
+
 - (void) layoutSubviews
 {
     float w= self.frame.size.width;
     float h= self.frame.size.height;
     h-= kGeomEventParticipantSeparatorHeight;
-
+    
     CGRect r = CGRectMake(0,0,w,h);
     _scrollView.frame= _viewShadow.frame= r ;
     
@@ -473,6 +584,9 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 - (void) scrollToCurrentStateAnimated: (BOOL) animated
 {
     float w= self.frame.size.width;
+    if ( _mode != VOTING_MODE_ALLOW_VOTING) {
+        return;
+    }
     
     switch (_radioButtonState)  {
         case VOTE_STATE_YES:
@@ -482,7 +596,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
         case VOTE_STATE_DONT_CARE:
             [_scrollView scrollRectToVisible: CGRectMake(w, 0, w,1) animated:animated];
             break;
-
+            
         case VOTE_STATE_NO:
             [_scrollView scrollRectToVisible: CGRectMake(0, 0, w,1) animated:animated];
             break;
@@ -504,10 +618,10 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
         case 2: _radioButtonState=VOTE_STATE_YES; break;
     }
     
-//    if ( _vote.vote  != _radioButtonState) {
-        _vote.vote=_radioButtonState;
-        [self.delegate voteChanged: _vote ];
-//    }
+    //    if ( _vote.vote  != _radioButtonState) {
+    _vote.vote=_radioButtonState;
+    [self.delegate voteChanged: _vote ];
+    //    }
 }
 
 - (void) provideEvent: (EventObject*)event
@@ -534,13 +648,13 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     
     self.vote.eventID= event.eventID;
     UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
-
+    
     if  (!venue  || !venue.mediaItems.count) {
         NSLog (@"VENUE ID %ld HAS NO IMAGES.",(long)venueID);
         
         for (EventParticipantVotingSubCell *view in _subcells)  {
             view.labelName.text= venue.name;
-
+            view.tag= self.tag;
             view.thumbnail.image= placeholder;
         }
     }
@@ -548,6 +662,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
         for (EventParticipantVotingSubCell *view in _subcells)  {
             view.labelName.text= venue.name;
             view.thumbnail.image= placeholder;
+            view.tag= self.tag;
         }
         
         OOAPI *api = [[OOAPI alloc] init];
@@ -586,6 +701,8 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 
 @interface EventParticipantVC ()
 @property (nonatomic,strong)  UITableView * table;
+@property (nonatomic,assign) int mode;
+@property (nonatomic,strong) NSMutableArray* sortedArrayOfVenues;
 @end
 
 @implementation EventParticipantVC
@@ -595,7 +712,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 - (void)viewDidLoad
 {
     ENTRY;
-   [super viewDidLoad];
+    [super viewDidLoad];
     
     NSString* eventName= self.eventBeingEdited.name;
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
@@ -607,17 +724,19 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= [UIColor lightGrayColor];
     
+    self.sortedArrayOfVenues= [NSMutableArray new];
+    
     _table= makeTable( self.view,  self);
-#define TABLE_REUSE_IDENTIFIER  @"participantsCell"  
+#define TABLE_REUSE_IDENTIFIER  @"participantsCell"
 #define TABLE_REUSE_FIRST_IDENTIFIER @"participantsCell1st"
 #define TABLE_EMPTY_REUSE_IDENTIFIER  @"participantsEmpty"
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
-
+    
     [_table registerClass:[EventParticipantEmptyCell class] forCellReuseIdentifier:TABLE_EMPTY_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantVotingCell class] forCellReuseIdentifier:TABLE_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantFirstCell class] forCellReuseIdentifier:TABLE_REUSE_FIRST_IDENTIFIER];
     _table.showsVerticalScrollIndicator= NO;
-
+    
     self.automaticallyAdjustsScrollViewInsets= NO;
     
 }
@@ -636,7 +755,6 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
     
 }
 
@@ -667,9 +785,10 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     if  (!row) {
         EventParticipantFirstCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_FIRST_IDENTIFIER forIndexPath:indexPath];
+        [cell setMode:_mode];
         cell.delegate= self;
         cell.selectionStyle= UITableViewCellSelectionStyleNone;
-       [cell provideEvent: event];
+        [cell provideEvent: event];
         return cell;
     }
     
@@ -680,17 +799,25 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
         return cell;
     }
     
+    row--;
+    
     EventParticipantVotingCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    [cell setMode:_mode];
     cell.delegate= self;
     cell.selectionStyle= UITableViewCellSelectionStyleNone;
-    cell.tag=  row-1;
+    cell.tag=  row;
     
-    RestaurantObject* venue= [event getNthVenue:row-1];
-
+    RestaurantObject* venue= nil;
+    if ( _mode == VOTING_MODE_SHOW_RESULTS) {
+        venue= self.sortedArrayOfVenues[row];
+    } else {
+        venue = [event getNthVenue:row];
+    }
+    
     NSUInteger venueID = venue.restaurantID;
     VoteObject *voteForRow=[event lookupVoteByVenueID:venueID];
-
+    
     NSLog (@"VOTE FOR VENUE  %lu =  %lu",(unsigned long)venueID, (unsigned long)voteForRow.vote);
     if (voteForRow ) {
         [cell provideVote:voteForRow];
@@ -698,7 +825,7 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
         [cell indicateMissingVoteFor:venue ];
     }
     [cell provideEvent:event ];
-
+    
     return cell;
 }
 
@@ -706,6 +833,9 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 {
     NSInteger row = indexPath.row;
     if  (!row) {
+        if ( _mode == VOTING_MODE_SHOW_RESULTS) {
+            return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight-kGeomHeightButton;
+        }
         return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight;
     }
     return kGeomEventParticipantRestaurantHeight +kGeomEventParticipantSeparatorHeight;
@@ -717,23 +847,34 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
     
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:which];
     vc.restaurant= venue;
-
+    
     [self.navigationController  pushViewController:vc animated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-// Only the first row responds to tapping.
+    // Only the first row responds to tapping.
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    EventObject* event=self.eventBeingEdited;
-    NSInteger total= [event totalVenues];
-    if (!total) {
-        return 2;
+    switch (_mode) {
+        case VOTING_MODE_ALLOW_VOTING:
+        case VOTING_MODE_NO_VOTING:{
+            EventObject* event=self.eventBeingEdited;
+            NSInteger total= [event totalVenues];
+            if (!total) {
+                return 2;
+            }
+            return 1+total ;
+        }
+            
+        case VOTING_MODE_SHOW_RESULTS: {
+            NSUInteger  total= [self.sortedArrayOfVenues  count];
+            return 1+total ;
+        }
     }
-    return 1+total ;
+    return 1;
 }
 
 - (void) voteChanged:(VoteObject*) object;
@@ -764,38 +905,98 @@ NSString *const kKeySubmittedVoteUpPrefix = @"submitted_votes_";
 
 - (void) userRequestToSubmit;
 {
-    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    NSString* string= [NSString  stringWithFormat: @"%@%lu", kKeySubmittedVoteUpPrefix, (unsigned long) self.eventBeingEdited.eventID];
-    [ud setBool:YES forKey:string];
-    [ud  synchronize];
-    VotingResultsVC *vc= [[VotingResultsVC  alloc] init ];
-    vc.eventBeingEdited= self.eventBeingEdited;
-    [self.navigationController  pushViewController:vc animated:YES];
+    //    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    //    NSString* string= [NSString  stringWithFormat: @"%@%lu", kKeySubmittedVoteUpPrefix, (unsigned long) self.eventBeingEdited.eventID];
+    //    [ud setBool:YES forKey:string];
+    //    [ud  synchronize];
+    //
+    self.votingIsDone= YES;
+    
+    message( @"Need to modify UI in response to user pressing button.");
 }
 
 - (void)userPressedProfilePicture: (NSUInteger)userid
 {
     __weak EventParticipantVC *weakSelf = self;
-
+    
     [OOAPI lookupUserByID: userid
                   success:^(UserObject *user) {
                       if ( user) {
-                         ProfileVC* vc= [[ProfileVC alloc] init];
-                         vc.userInfo= user;
-                         vc.userID= userid;
-                         [weakSelf.navigationController  pushViewController:vc animated:YES];
-                     }
-                 }
-                 failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                     
-                 }];
+                          ProfileVC* vc= [[ProfileVC alloc] init];
+                          vc.userInfo= user;
+                          vc.userID= userid;
+                          [weakSelf.navigationController  pushViewController:vc animated:YES];
+                      }
+                  }
+                  failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      
+                  }];
 }
 
 - (void)votingEnded
 {
-    VotingResultsVC *vc= [[VotingResultsVC alloc] init];
-    vc.eventBeingEdited= self.eventBeingEdited;
-    [self.navigationController  pushViewController:vc animated:YES];
+    [self setMode: VOTING_MODE_SHOW_RESULTS];
 }
 
+- (void)setMode:(int)mode
+{
+    _mode=  mode;
+    
+    switch ( mode) {
+        case VOTING_MODE_ALLOW_VOTING:
+            [self.table  reloadData ];
+            break;
+            
+        case VOTING_MODE_NO_VOTING:
+            [self.table  reloadData ];
+            break;
+            
+        case VOTING_MODE_SHOW_RESULTS:
+            [self fetchTallies];
+            break;
+    }
+}
+
+- (void)fetchTallies
+{
+    __weak EventParticipantVC *weakSelf = self;
+    
+    for (RestaurantObject* venue  in  self.eventBeingEdited.venues ) {
+        venue.totalVotes= 0;
+    }
+    
+    [self.eventBeingEdited refreshVotesFromServerWithSuccess:^{
+        NSMutableDictionary *dictionary= [NSMutableDictionary  new];
+        for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
+            [dictionary setObject: venue forKey:[NSString stringWithFormat: @"%lu", (unsigned long) venue.restaurantID] ];
+        }
+        
+        for (VoteObject* vote  in weakSelf.eventBeingEdited.votes) {
+            NSString *index= [NSString stringWithFormat: @"%lu", (unsigned long)vote.venueID ];
+            RestaurantObject*venue= dictionary[ index];
+            venue.totalVotes += vote.vote;
+        }
+        [self.sortedArrayOfVenues removeAllObjects];
+        for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
+            [_sortedArrayOfVenues addObject: venue];
+        }
+        [_sortedArrayOfVenues sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            RestaurantObject*r1= obj1;
+            RestaurantObject*r2= obj2;
+            if ( r1.totalVotes > r2.totalVotes) {
+                return NSOrderedAscending;
+            } else if ( r1.totalVotes  < r2.totalVotes) {
+                return NSOrderedDescending;
+            } else {
+                return NSOrderedSame;
+            }
+        }];
+        
+        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+    } failure:^{
+        NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
+        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+    }];
+    
+}
 @end

@@ -170,7 +170,6 @@
     LOGS2( @"TOKEN", value);
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    fetchEmailFromFacebookFor
 // Purpose:
@@ -675,11 +674,6 @@
                                        parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
-             //profile photo link
-             //10152388406186153/picture?type=large
-             //fields
-             //me?fields=first_name,age_range,last_name,id,gender,email
-             
              NSLog(@"fetched user:%@", result);
          } else {
              
@@ -692,14 +686,15 @@
 
 //------------------------------------------------------------------------------
 // Name:    fetchProfilePhoto
-// Purpose: Get the user's photo URL from Facebook.
+// Purpose: Get the user's photo URL from Facebook. If the URL has changed then
+//          fetch the new image.
 //------------------------------------------------------------------------------
 -(void)fetchProfilePhoto
 {
     ENTRY;
 
-    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email,picture"
-                                       parameters:nil]
+    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/picture?width=1080&height=1080&redirect=false"
+                                       parameters: nil ]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
              NSDictionary* dictionary=  result;
@@ -709,36 +704,37 @@
              
              NSLog(@"FACEBOOK USER DICTIONARY:%@",  dictionary);
              
-             NSDictionary* pictureDictionary= dictionary[ @"picture"];
-             if ( pictureDictionary) {
-                 NSDictionary* pictureData= pictureDictionary[ @"data"];
-                 if  (pictureData ) {
-                     NSString* urlString= pictureData[ @"url"];
-                     if  ( urlString ) {
-                         UserObject* userInfo= [Settings sharedInstance].userObject;
-                         NSString* existingURL= userInfo.imageURLString;
-                         if (!existingURL  ||  ![existingURL isEqualToString: urlString]) {
-                             userInfo.imageURLString=  urlString;
-                             [[Settings sharedInstance] save ];
-                             
-                             NSLog (@"NEW PROFILE PICTURE URL: %@", urlString);
-                             
-                             // NOTE: We are no longer in the main thread.
-                             
-                             NSURL *url= [ NSURL  URLWithString: urlString];
-                             if  (url ) {
-                                 NSData *data= [NSData dataWithContentsOfURL:url];
-                                 if  ( data) {
-                                     UIImage *image= [ UIImage imageWithData:data];
-                                     if  (image ) {
-                                         [userInfo setUserProfilePhoto:image];
-                                     }
+             NSDictionary* pictureData= dictionary[ @"data"];
+             if  (pictureData ) {
+                 NSString* urlString= pictureData[ @"url"];
+                 if  ( urlString ) {
+                     UserObject* userInfo= [Settings sharedInstance].userObject;
+                     NSString* existingURL= userInfo.imageURLString;
+                     if (!existingURL  ||  ![existingURL isEqualToString: urlString]) {
+                         
+                         // RULE: Only fetch, store and upload the profile image if the URL has changed.
+                         
+                         userInfo.imageURLString=  urlString;
+                         [[Settings sharedInstance] save ];
+                         
+                         NSLog (@"NEW PROFILE PICTURE URL: %@", urlString);
+                         
+                         NSURL *url= [ NSURL  URLWithString: urlString];
+                         if  (url ) {
+                             NSData *data= [NSData dataWithContentsOfURL:url];
+                             if  ( data) {
+                                 UIImage *image= [ UIImage imageWithData:data];
+                                 if  (image ) {
+                                     [userInfo setUserProfilePhoto:image];
+                                     NSLog  (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@",NSStringFromCGSize(image.size));
                                  }
                              }
                          }
                      }
                  }
              }
+         } else {
+             NSLog (@"FACEBOOK ERROR %@",error);
          }
      }];
 }

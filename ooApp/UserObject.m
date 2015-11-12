@@ -120,13 +120,15 @@ NSString *const kKeyParticipantState = @"participant_state";
     }
     
     profilePhoto= userProfilePhoto;
-//    [OOAPI uploadUserPhoto:profilePhoto //NOTE: upoading the photo everytime floods S3 with images we don't need
-//                   success:^() {
-//                       
-//                   }
-//                   failure:^(NSError *e) {
-//                       
-//                   }];
+#if 0
+    [OOAPI uploadUserPhoto:profilePhoto //NOTE: upoading the photo everytime floods S3 with images we don't need
+                   success:^() {
+                       NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
+                   }
+                   failure:^(NSError *e) {
+                       NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
+                   }];
+#endif
 }
 
 - (UIImage *)userProfilePhoto;

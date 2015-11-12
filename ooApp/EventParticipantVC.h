@@ -25,6 +25,8 @@
 @interface EventParticipantVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate,
                 EventParticipantFirstCellDelegate,EventParticipantVotingCellDelegate>
 
+- (void)setMode:(int)mode;
+@property (nonatomic,assign) BOOL votingIsDone;
 @property (nonatomic,strong) NSString *eventName;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
 @end
@@ -41,11 +43,19 @@
 - (void) userPressedRadioButton: (NSInteger)currentValue;
 @end
 
+enum  {
+    VOTING_MODE_ALLOW_VOTING= 0,
+    VOTING_MODE_NO_VOTING= 1,
+    VOTING_MODE_SHOW_RESULTS= 2,
+};
+
 @interface EventParticipantVotingSubCell : UIView
 
 @property (nonatomic,strong)  UIImageView *thumbnail;
 @property (nonatomic,strong)   UILabel *labelName;
 @property (nonatomic,strong) VoteObject  *vote;
+- (void)setMode:(int)mode;
+
 @end
 
 @interface EventParticipantVotingCell: UITableViewCell <EventParticipantVotingSubCellDelegate, UIScrollViewDelegate>
@@ -53,6 +63,6 @@
 @property (nonatomic,assign) id <EventParticipantVotingCellDelegate> delegate;
 
 - (void) scrollToCurrentStateAnimated: (BOOL) animated;
-
+- (void)setMode:(int)mode;
 @end
 

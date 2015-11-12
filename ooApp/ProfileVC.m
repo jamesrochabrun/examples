@@ -101,22 +101,27 @@
         
         self.backgroundColor = WHITE;
         
-        // Get this user's image.
-        //
-        if (_userInfo.imageIdentifier && [_userInfo.imageIdentifier length]) {
-            self.requestOperation = [OOAPI getUserImageWithImageID: _userInfo.imageIdentifier
-                                                         maxWidth:self.frame.size.width
-                                                        maxHeight:0 success:^(NSString *link) {
+        UIImage *photoOfSelf= [_userInfo userProfilePhoto];
+        if ( _viewingOwnProfile  && photoOfSelf) {
+            _iv.image=  photoOfSelf;
+        } else {
+            // Get this user's image.
+            //
+            if (_userInfo.imageIdentifier && [_userInfo.imageIdentifier length]) {
+                self.requestOperation = [OOAPI getUserImageWithImageID: _userInfo.imageIdentifier
+                                                              maxWidth:self.frame.size.width
+                                                             maxHeight:0 success:^(NSString *link) {
+                                                                 ON_MAIN_THREAD( ^{
+                                                                     [_iv setImageWithURL:[NSURL URLWithString:link]];
+                                                                 });
+                                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                 ;
+                                                             }];
+            } else if (_userInfo.imageURLString) {
                 ON_MAIN_THREAD( ^{
-                    [_iv setImageWithURL:[NSURL URLWithString:link]];
+                    [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
                 });
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
-            }];
-        } else if (_userInfo.imageURLString) {
-            ON_MAIN_THREAD( ^{
-                [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
-            });
+            }
         }
         
         // Find out if current user is following this user.

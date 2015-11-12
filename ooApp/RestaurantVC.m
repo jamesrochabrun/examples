@@ -60,7 +60,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _favoriteID = 0;
     
     _userInfo = [Settings sharedInstance].userObject;
-
+    
     _listButtonsContainer = [[UIView alloc] init];
     _listButtonsContainer.backgroundColor = UIColorRGBA(kColorOffBlack);
     
@@ -71,11 +71,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     RestaurantVCCVL *cvl = [[RestaurantVCCVL alloc] init];
     cvl.delegate = self;
-
+    
     _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:cvl];
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
-
+    
     
     [_collectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantListsCellIdentifier];
@@ -97,7 +97,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _addPhotoButton.layer.cornerRadius = kGeomDimensionsIconButton/2;
     [self.view addSubview:_addPhotoButton];
     
-//    [DebugUtilities addBorderToViews:@[_listButtonsContainer]];
+    //    [DebugUtilities addBorderToViews:@[_listButtonsContainer]];
 }
 
 -(void)updateViewConstraints {
@@ -116,7 +116,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
+    
 }
 
 - (void)setupCreateListAC {
@@ -129,8 +129,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                        }];
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      NSString *name = [_createListAC.textFields[0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -174,45 +174,52 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)setupStyleSheetAC {
     _styleSheetAC = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
-                                                           message:@"What would you like to do with this restaurant."
-                                                    preferredStyle:UIAlertControllerStyleActionSheet]; // 1
+                                                        message:@"What would you like to do with this restaurant."
+                                                 preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
     _styleSheetAC.view.tintColor = [UIColor blackColor];
     
     __weak RestaurantVC *weakSelf = self;
-
+    
     UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
-                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                 [self sharePressed];
-                                                             }];
-
+                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                  [self sharePressed];
+                                                              }];
+    
     UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add to List"
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     [self addToList];
-                                                 }];
-    UIAlertAction *addToEvent = [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"Add to Event");
-                                                     [weakSelf addToEvent];
-                                                 }];
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [self addToList];
+                                                        }];
+    UIAlertAction *addToEvent = nil;
+    if ( self.eventBeingEdited) {
+        addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
+                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                 NSLog(@"Add to Event");
+                                                 [weakSelf addToEvent];
+                                             }];
+    }
+    
     UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"Add to New Event");
-                                                 }];
+                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                NSLog(@"Add to New Event");
+                                                            }];
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"New List..."
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"Add to New List");
-                                                     [weakSelf createListPressed];
-                                                 }];
+                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                               NSLog(@"Add to New List");
+                                                               [weakSelf createListPressed];
+                                                           }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                 style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
-                                                     NSLog(@"Cancel");
-                                                 }];
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                         NSLog(@"Cancel");
+                                                     }];
     
     [_styleSheetAC addAction:shareRestaurant];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
-    [_styleSheetAC addAction:addToEvent];
+    if (addToEvent ) {
+        [_styleSheetAC addAction:addToEvent];
+    }
+    
     [_styleSheetAC addAction:addToNewEvent];
     [_styleSheetAC addAction:cancel];
     
@@ -248,7 +255,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     NSURL *nsURL = [NSURL URLWithString:url];
     NSData *data = [NSData dataWithContentsOfURL:nsURL];
     UIImage *img = [UIImage imageWithData:data];
-
+    
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;
     
@@ -270,7 +277,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
         NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
     };
-
+    
 }
 
 - (void)addToEvent
@@ -361,9 +368,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
-
+    
 }
-     
+
 - (void)gotMediaItems {
     [_collectionView reloadData];
 }
@@ -385,7 +392,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceInter;
             frame.origin.x = kGeomSpaceInter;
         }
-
+        
         b.frame = frame;
         
         origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
@@ -398,7 +405,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)viewDidLayoutSubviews {
     _listButtonsContainer.frame = CGRectMake(kGeomSpaceEdge, 0, width(self.view)-2*kGeomSpaceEdge, _listButtonsContainerHeight);
-//    NSLog(@"_listButtonsContainer=%@", _listButtonsContainer);
+    //    NSLog(@"_listButtonsContainer=%@", _listButtonsContainer);
 }
 
 - (void)showList:(id)sender {
@@ -501,7 +508,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             [cvc setToTry:(_toTryID) ? YES: NO];
             [cvc setFavorite:(_favoriteID) ? YES: NO];
             cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
-
+            
             return cvc;
             break;
         }
@@ -517,14 +524,14 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             
             cvc.backgroundColor = UIColorRGBA(kColorBlack);
             cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
-//            [DebugUtilities addBorderToViews:@[cvc]];
+            //            [DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
         }
         default:
             break;
     }
-
+    
     return nil;
 }
 
@@ -533,7 +540,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(RestaurantVCCVL *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath {
-
+    
     switch (indexPath.section) {
         case kSectionTypeLists:
             return _listButtonsContainerHeight;
@@ -563,10 +570,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         OOStripHeader *header = [[OOStripHeader alloc] init];
         header.frame = CGRectMake(0, 0, width(self.view), 27);
         header.name = @"PHOTOS";
-//        [header enableAddButtonWithTarget:self action:@selector(showPickPhotoUI)];
+        //        [header enableAddButtonWithTarget:self action:@selector(showPickPhotoUI)];
         [reuseView addSubview:header];
         [collectionView bringSubviewToFront:reuseView];
-     }
+    }
     return reuseView;
 }
 
@@ -585,7 +592,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         [api getRestaurantImageWithMediaItem:[_mediaItems objectAtIndex:row] maxWidth:width(self.view) maxHeight:0 success:^(NSString *link) {
             mio.url = link;
             ON_MAIN_THREAD(^ {
-                  [self.navigationController pushViewController:photoBrowser animated:YES];
+                [self.navigationController pushViewController:photoBrowser animated:YES];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
@@ -614,18 +621,18 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             __weak MWPhotoBrowser *weakPhotoBrowser = photoBrowser;
             
             [api getRestaurantImageWithMediaItem:mio
-                                       maxWidth:width(self.view)
-                                      maxHeight:0
-                                        success:^(NSString *link) {
-                                            mio.url = link;
-                                            ON_MAIN_THREAD(^ {
-                                                if (link) {
-                                                    [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser photoAtIndex:index];
-                                                }
-                                            });
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
-            }];
+                                        maxWidth:width(self.view)
+                                       maxHeight:0
+                                         success:^(NSString *link) {
+                                             mio.url = link;
+                                             ON_MAIN_THREAD(^ {
+                                                 if (link) {
+                                                     [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser photoAtIndex:index];
+                                                 }
+                                             });
+                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             ;
+                                         }];
             return nil;
         }
         
@@ -634,14 +641,14 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 #pragma mark -
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {
@@ -686,24 +693,24 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ? YES : NO;
     havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary] ? YES : NO;
     UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Add Photo for %@", _restaurant.name]
-                                                        message:[NSString stringWithFormat:@"Take a photo with your camera or add one from your photo library."]
-                                                 preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"Camera"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                         [self showCameraUI];
-                                                     }];
-
-    UIAlertAction *libraryUI = [UIAlertAction actionWithTitle:@"Library"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                         [self showPhotoLibraryUI];
-                                                     }];
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"Cancel");
-                                                 }];
+                                                                      message:[NSString stringWithFormat:@"Take a photo with your camera or add one from your photo library."]
+                                                               preferredStyle:UIAlertControllerStyleAlert];
     
-
+    UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"Camera"
+                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                           [self showCameraUI];
+                                                       }];
+    
+    UIAlertAction *libraryUI = [UIAlertAction actionWithTitle:@"Library"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [self showPhotoLibraryUI];
+                                                        }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                         NSLog(@"Cancel");
+                                                     }];
+    
+    
     if (haveCamera) [addPhoto addAction:cameraUI];
     if (havePhotoLibrary) [addPhoto addAction:libraryUI];
     [addPhoto addAction:cancel];
@@ -725,7 +732,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     picker.delegate = self;
     picker.allowsEditing = YES;
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-
+    
     [self presentViewController:picker animated:YES completion:NULL];
 }
 
@@ -739,9 +746,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [OOAPI uploadPhoto:image forRestaurant:_restaurant
                success:^{
                    [self getMediaItemsForRestaurant];
-    } failure:^(NSError *error) {
-        ;
-    }];
+               } failure:^(NSError *error) {
+                   ;
+               }];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
