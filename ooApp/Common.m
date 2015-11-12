@@ -518,6 +518,9 @@ NSMutableAttributedString *createPeopleIconString (NSInteger count)
 
 NSString* expressLocalDateTime(NSDate* date)
 {
+    if (!date) {
+        return  @"";
+    }
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"MMM dd, h:mmaa";
     NSTimeZone *gmt = [NSTimeZone localTimeZone];
@@ -528,6 +531,9 @@ NSString* expressLocalDateTime(NSDate* date)
 
 NSString* expressLocalTime(NSDate* date)
 {
+    if (!date) {
+        return  @"";
+    }
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"h:mmaa";
     NSTimeZone *gmt = [NSTimeZone localTimeZone];
@@ -538,6 +544,9 @@ NSString* expressLocalTime(NSDate* date)
 
 NSInteger getLocalHour (NSDate* date)
 {
+    if (!date) {
+        return 0;
+    }
     NSCalendar *calender = [NSCalendar currentCalendar];
     NSTimeZone *gmt = [NSTimeZone localTimeZone];
     NSDateComponents *dateComponents = [calender components:NSCalendarUnitHour fromDate: date];
@@ -548,6 +557,9 @@ NSInteger getLocalHour (NSDate* date)
 
 NSInteger getLocalDayOfMonth (NSDate* date)
 {
+    if (!date) {
+        return 0;
+    }
     NSCalendar *calender = [NSCalendar currentCalendar];
     NSTimeZone *gmt = [NSTimeZone localTimeZone];
     NSDateComponents *dateComponents = [calender components:NSCalendarUnitDay fromDate: date];
@@ -558,6 +570,9 @@ NSInteger getLocalDayOfMonth (NSDate* date)
 
 NSInteger getLocalDayNumber(NSDate* date)
 {
+    if (!date) {
+        return 0;
+    }
     NSCalendar *calender = [NSCalendar currentCalendar];
     NSTimeZone *gmt = [NSTimeZone localTimeZone];
     NSDateComponents *dateComponents = [calender components:NSCalendarUnitWeekday fromDate: date];
@@ -568,6 +583,9 @@ NSInteger getLocalDayNumber(NSDate* date)
 
 NSString* expressLocalMonth(NSDate* date)
 {
+    if (!date) {
+        return  @"";
+    }
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"MMMM";
     NSTimeZone *gmt = [NSTimeZone localTimeZone];

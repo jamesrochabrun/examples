@@ -22,7 +22,6 @@
 #import "RestaurantVC.h"
 #import "OOStripHeader.h"
 #import "PieView.h"
-#import "VotingResultsVC.h"
 #import "EventParticipantVC.h"
 #import "ProfileVC.h"
 
@@ -317,19 +316,10 @@
     BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
     EventObject *event= self.eventBeingEdited;
     
-    if ( votingIsDone ) {
-        VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
-        vc.eventBeingEdited= event;
-        [self.navigationController pushViewController:vc animated:YES ];
-        
-    } else {
-        
-        EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-        vc.eventBeingEdited= event;
-        [self.navigationController pushViewController:vc animated:YES ];
-        
-    }
-    
+    EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+    vc.eventBeingEdited= event;
+    vc.votingIsDone= votingIsDone;
+    [self.navigationController pushViewController:vc animated:YES ];
 }
 
 - (void) userPressedMenuButton: (id) sender
@@ -725,7 +715,9 @@
     self.labelDate5.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight); x += dayCellWidth;
     self.labelDate6.frame = CGRectMake(x,y,dayCellWidth,dayCellHeight);
     
-    NSInteger dayNumber= getLocalDayNumber(self.eventBeingEdited.date);
+    NSDate* dateToDisplay= self.eventBeingEdited.date ?: [NSDate date];
+    
+    NSInteger dayNumber= getLocalDayNumber(dateToDisplay);
     const float bubbleDiameter=dayCellWidth-5;
     self.viewTodayBubble.frame = CGRectMake(0,0,bubbleDiameter,bubbleDiameter);
     [self.viewContainer3 sendSubviewToBack: self.viewTodayBubble ];
@@ -741,9 +733,9 @@
 
     }
 
-    [self.pieHour setHour: getLocalHour(self.eventBeingEdited.date)];
+    [self.pieHour setHour: getLocalHour(dateToDisplay)];
     
-    NSUInteger u= [self.eventBeingEdited.date timeIntervalSince1970];
+    NSUInteger u= [dateToDisplay timeIntervalSince1970];
     if (dayNumber>0 ) {
         u-= 24*60*60*dayNumber;
     }

@@ -23,7 +23,6 @@
 #import "EventCoordinatorVC.h"
 #import "EventParticipantVC.h"
 #import "OOStripHeader.h"
-#import "VotingResultsVC.h"
 
 #define EVENTS_TABLE_REUSE_IDENTIFIER  @"eventListCell"
 
@@ -511,9 +510,8 @@
             [cell updateHighlighting:NO];
         });
         
-        NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-        NSString* string= [NSString  stringWithFormat: @"%@%lu", kKeySubmittedVoteUpPrefix, (unsigned long) event.eventID];
-        BOOL userDidSubmitVotes=  [ud boolForKey:string];
+       
+        BOOL userDidSubmitVotes=  NO;// XX: ooapi callo
 
         // Determine whether event can be edited by this user.
         // Then transition to the appropriate view controller.
@@ -539,23 +537,19 @@
                                               } else {
                                                   NSLog(@"EDITING PROHIBITED");
                                                   
-                                                  if ( votingIsDone ) {
-                                                      VotingResultsVC* vc= [[VotingResultsVC  alloc] init];
-                                                      vc.eventBeingEdited= event;
-                                                     [weakSelf.navigationController pushViewController:vc animated:YES ];
-
+                                                  EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+                                                  vc.eventBeingEdited= event;
+                                                  if ( votingIsDone) {
+                                                      [vc setMode: VOTING_MODE_SHOW_RESULTS];
                                                   } else {
-                                                      UIViewController* vc;
-                                                      
-                                                      if ( userDidSubmitVotes) {
-                                                          vc= [[VotingResultsVC  alloc] init ];
-                                                          ( (VotingResultsVC*)vc).eventBeingEdited= event;
+                                                      if (userDidSubmitVotes ) {
+                                                          [vc setMode: VOTING_MODE_NO_VOTING];
                                                       } else {
-                                                          vc= [[EventParticipantVC  alloc] init];
-                                                          ( (EventParticipantVC*)vc).eventBeingEdited= event;
+                                                          [vc setMode: VOTING_MODE_ALLOW_VOTING];
                                                       }
-                                                      [weakSelf.navigationController pushViewController:vc animated:YES ];
                                                   }
+                                                  [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                  
                                               }
 
                                               [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
