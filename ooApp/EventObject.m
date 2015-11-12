@@ -35,6 +35,7 @@ NSString *const kKeyNumberOfPeopleVoted = @"num_voted";
 NSString *const kKeyMediaURL = @"media_url";
 NSString *const kKeyNumberOfVenues=  @"num_restaurants";
 NSString *const kKeyEventMediaItem = @"media_item";
+NSString *const kKeyAdministrators=  @"admin_ids";
 
 @implementation EventObject
 
@@ -53,64 +54,89 @@ NSString *const kKeyEventMediaItem = @"media_item";
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 {
     EventObject *e= [[EventObject  alloc] init];
-    if  ([dictionary isKindOfClass:[NSDictionary class]] ) {
-        e.eventID = [dictionary [kKeyEventID] intValue];
-        e.creatorID = [dictionary [kKeyCreatorID] intValue];
-        
-        id price=dictionary[ kKeyTotalPrice ];
-        if  ([price isKindOfClass:[NSNumber class]] ) {
-            e.totalPrice= [ ( (NSNumber*)price) doubleValue];
+    if  (![dictionary isKindOfClass:[NSDictionary class]] )
+        return e;
+    
+    e.eventID = [dictionary [kKeyEventID] intValue];
+    e.creatorID = [dictionary [kKeyCreatorID] intValue];
+    
+    id price=dictionary[ kKeyTotalPrice ];
+    if  ([price isKindOfClass:[NSNumber class]] ) {
+        e.totalPrice= [ ( (NSNumber*)price) doubleValue];
+    }
+    
+    e.isComplete = parseIntegerOrNullFromServer(dictionary[kKeyIsComplete ]) ? YES : NO;
+    e.eventType = parseIntegerOrNullFromServer(dictionary[kKeyEventType]);
+    e.date= parseUTCDateFromServer ( dictionary[ kKeyEventDate]);
+    e.dateWhenVotingClosed=parseUTCDateFromServer ( dictionary[ kKeyWhenVotingCloses]);
+    e.name= parseStringOrNullFromServer ( dictionary[ kKeyName]);
+    e.friendRecommendationAge = parseNumberOrNullFromServer ( dictionary[ kKeyFriendRecommendationAge]);
+    e.reviewSite= parseStringOrNullFromServer ( dictionary[ kKeyReviewSite]);
+    e.specialEvent= parseStringOrNullFromServer ( dictionary[ kKeySpecialEvent]);
+    e.comment=  parseStringOrNullFromServer(dictionary[ kKeyComment]);
+    e.createdAt= parseUTCDateFromServer ( dictionary[ kKeyCreatedAt]);
+    e.updatedAt= parseUTCDateFromServer( dictionary[ kKeyUpdatedAt]);
+    
+    e.numberOfVenues= parseIntegerOrNullFromServer( dictionary[kKeyNumberOfVenues ]);
+    e.numberOfPeople = parseIntegerOrNullFromServer (  dictionary[kKeyNumberOfPeople ]);
+    e.numberOfPeopleResponded = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleResponded]);
+    e.numberOfPeopleVoted = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleVoted]);
+    
+    e.eventCoverImageURL = parseStringOrNullFromServer (  dictionary[kKeyMediaURL ]);
+    
+    NSMutableArray* results=[NSMutableArray new];
+    e.keywords= results;
+    NSArray* array=dictionary[ kKeyKeywords];
+    if (array) {
+        for (NSString* string  in  array) {
+            [results  addObject:string];
         }
-        
-        e.isComplete = parseIntegerOrNullFromServer(dictionary[kKeyIsComplete ]) ? YES : NO;
-        e.eventType = parseIntegerOrNullFromServer(dictionary[kKeyEventType]);
-        e.date= parseUTCDateFromServer ( dictionary[ kKeyEventDate]);
-        e.dateWhenVotingClosed=parseUTCDateFromServer ( dictionary[ kKeyWhenVotingCloses]);
-        e.name= parseStringOrNullFromServer ( dictionary[ kKeyName]);
-        e.friendRecommendationAge = parseNumberOrNullFromServer ( dictionary[ kKeyFriendRecommendationAge]);
-        e.reviewSite= parseStringOrNullFromServer ( dictionary[ kKeyReviewSite]);
-        e.specialEvent= parseStringOrNullFromServer ( dictionary[ kKeySpecialEvent]);
-        e.comment=  parseStringOrNullFromServer(dictionary[ kKeyComment]);
-        e.createdAt= parseUTCDateFromServer ( dictionary[ kKeyCreatedAt]);
-        e.updatedAt= parseUTCDateFromServer( dictionary[ kKeyUpdatedAt]);
-        
-        e.numberOfVenues= parseIntegerOrNullFromServer( dictionary[kKeyNumberOfVenues ]);
-        e.numberOfPeople = parseIntegerOrNullFromServer (  dictionary[kKeyNumberOfPeople ]);
-        e.numberOfPeopleResponded = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleResponded]);
-        e.numberOfPeopleVoted = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleVoted]);
+    }
+    
+    NSDictionary* mediaDictionary= dictionary[kKeyEventMediaItem];
+    if (mediaDictionary ) {
+        NSLog  (@"EVENT INCLUDED MEDIA ITEM FOR %@",e.name);
+        e.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
+    }
+    
+    // NOTE: We need to know early as possible whether the current user can edit this event.
+#if 0
+    __weak EventObject *weakEvent = e;
+    [OOAPI determineIfCurrentUserCanEditEvent: e
+                                      success:^(bool allowed) {
+                                          if  (allowed ) {
+                                              weakEvent.currentUserCanEdit= EVENT_USER_CAN_EDIT;
+                                          } else {
+                                              weakEvent.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
+                                          }
+                                      } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
+                                          
+                                          NSLog ( @"Unable to contact the cloud.");
+                                      }];
+#else
+    NSMutableOrderedSet* administrators=[NSMutableOrderedSet new];
+    e.administrators= administrators;
+    e.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
 
-        e.eventCoverImageURL = parseStringOrNullFromServer (  dictionary[kKeyMediaURL ]);
-
-        NSMutableArray* results=[NSMutableArray new];
-        e.keywords= results;
-        NSArray* array=dictionary[ kKeyKeywords];
-        if (array) {
-            for (NSString* string  in  array) {
-                [results  addObject:string];
+    array=dictionary[ kKeyAdministrators];
+    if (array) {
+        UserObject*user= [Settings sharedInstance].userObject;
+        if ( user) {
+            NSUInteger currentUserID=user.userID;
+            
+            for (NSNumber* number  in  array) {
+                [results  addObject: number];
+                
+                NSUInteger userid= [number  unsignedLongValue];
+                if  (userid== currentUserID) {
+                    e.currentUserCanEdit= EVENT_USER_CAN_EDIT;
+                    NSLog  (@"USER CAN EDIT EVENT.");
+                }
             }
         }
-        
-        NSDictionary* mediaDictionary= dictionary[kKeyEventMediaItem];
-        if (mediaDictionary ) {
-            NSLog  (@"EVENT INCLUDED MEDIA ITEM FOR %@",e.name);
-            e.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
-        }
-        
-        // RULE: As early as possible find out whether the current user can edit this event.
-        __weak EventObject *weakEvent = e;
-        [OOAPI determineIfCurrentUserCanEditEvent: e
-                                          success:^(bool allowed) {
-                                              if  (allowed ) {
-                                                  weakEvent.currentUserCanEdit= EVENT_USER_CAN_EDIT;
-                                              } else {
-                                                  weakEvent.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
-                                              }
-                                          } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                                              
-                                              NSLog ( @"Unable to contact the cloud.");
-                                          }];
-        
     }
+#endif
+
     return e;
 }
 

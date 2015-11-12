@@ -1200,6 +1200,7 @@ NSString *const kKeySearchFilter = @"filter";
                failure(operation, error);
            }];
 }
+
 //------------------------------------------------------------------------------
 // Name:    getEventByID
 // Purpose: Obtain a list of user events that are either complete or incomplete.

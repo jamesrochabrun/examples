@@ -37,6 +37,7 @@ typedef enum : char {
 @property (nonatomic, assign) NSInteger numberOfPeopleResponded;
 @property (nonatomic, strong) NSMutableArray *keywords;
 @property (nonatomic, strong) NSMutableOrderedSet *users;
+@property (nonatomic, strong) NSMutableOrderedSet *administrators;
 @property (nonatomic, strong) NSMutableOrderedSet *venues;
 @property (nonatomic, strong) NSMutableArray *votes;
 @property (nonatomic, strong) NSString *reviewSite;
