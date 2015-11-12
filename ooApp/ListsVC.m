@@ -13,7 +13,7 @@
 #import "LocationManager.h"
 #import "UIImageView+AFNetworking.h"
 #import "ListObject.h"
-#import "RestaurantVC.h"
+#import "RestaurantListVC.h"
 
 @interface ListsVC ()
 
@@ -129,6 +129,7 @@ static NSString * const cellIdentifier = @"listCell";
     
     RestaurantListVC *vc = [[RestaurantListVC alloc] init];
     vc.listItem = list;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

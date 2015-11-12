@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "ListObject.h"
 #import "SubBaseVC.h"
+#import "EventObject.h"
 
 @interface RestaurantListVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) ListObject *listItem;
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 
 - (void)getRestaurants;
 

@@ -65,29 +65,23 @@ typedef enum: char {
     
     _arrayOfFilterNames=  @[
                             LOCAL(@"None"),
-                             LOCAL(@"Places"),
-                             LOCAL(@"People"),
-                             LOCAL(@"Lists"),
-                             LOCAL(@"You")
-                             ];
+                            LOCAL(@"Places"),
+                            LOCAL(@"People"),
+                            LOCAL(@"Lists"),
+                            LOCAL(@"You")
+                            ];
     
     _currentFilter=FILTER_NONE;
     
     NavTitleObject *nto;
-    if  (_addingRestaurantsToEvent ) {
-        nto= [[NavTitleObject alloc]
-              initWithHeader:LOCAL( @"Search")
-              subHeader: nil];
-    } else {
-        nto= [[NavTitleObject alloc]
-              initWithHeader:LOCAL( @"Search")
-              subHeader: LOCAL(@"for restaurants and people")];
-    }
+    nto= [[NavTitleObject alloc]
+          initWithHeader:LOCAL( @"Search")
+          subHeader: LOCAL(@"for restaurants and people")];
     
     self.navTitle = nto;
-
-	_searchBar= [ UISearchBar new];
-	[ self.view  addSubview:_searchBar];
+    
+    _searchBar= [ UISearchBar new];
+    [ self.view  addSubview:_searchBar];
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
     _searchBar.backgroundColor = WHITE;
     _searchBar.placeholder = LOCAL( @"Type your search here");
@@ -112,15 +106,11 @@ typedef enum: char {
     self.tableRestaurants= makeTable (self.view,self);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
               forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
-
+    
     self.tablePeople= makeTable (self.view,self);
     [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
     _tablePeople.backgroundColor=  UIColorRGB(0xfff8f8f8);
-    
-    if ( _addingRestaurantsToEvent) {
-        self.navigationItem.leftBarButtonItem=nil;
-    }
     
     self.activityView=[UIActivityIndicatorView new];
     [self.view addSubview: _activityView ];

@@ -1217,7 +1217,6 @@ NSString *const kKeySearchFilter = @"filter";
            success:^(id responseObject) {
                NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
                if ( [responseObject isKindOfClass:[NSDictionary  class]]) {
-                   
                    EventObject *e=[EventObject eventFromDictionary: responseObject];
                    NSLog  (@"EVENT  %@",responseObject);
                    

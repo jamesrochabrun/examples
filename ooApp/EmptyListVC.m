@@ -95,6 +95,7 @@
 {
     ListsVC *vc= [[ListsVC alloc] init];
     vc.listToAddTo = _listItem;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [vc getLists];
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -107,6 +108,7 @@
 {
     DiscoverVC *vc = [[DiscoverVC  alloc] init];
     vc.listToAddTo = _listItem;
+    vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -140,36 +142,9 @@
 //    y +=kGeomHeightButton+ spacer;
 }
 
-//-(void) layout
-//{
-//    [super layout];
-//    
-//    NSDictionary *metrics = @{@"buttonHeight":@(kGeomHeightButton),
-//                              @"width":@200.0,
-//                              @"margin":@(kGeomSpaceEdge),
-//                              @"spacing": @(kGeomSpaceInter)
-//                              };
-//    
-//    NSDictionary *views = NSDictionaryOfVariableBindings(_textView, _buttonDiscover, _buttonLists, _label);
-//    
-//    [self.view addConstraints:
-//     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_label]-[_textView]-[_buttonDiscover]-[_buttonLists]-|"
-//                                             options:NSLayoutFormatDirectionLeadingToTrailing
-//                                             metrics:metrics
-//                                               views:views]];
-//    
-//    [self.view addConstraints:
-//     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_textView]-|"
-//                                             options:NSLayoutFormatDirectionLeadingToTrailing
-//                                             metrics:metrics
-//                                               views:views]];
-//    [self.view setNeedsLayout];
-//}
-
 - (void) viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-
     [self doLayout];
 }
 

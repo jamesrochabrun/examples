@@ -229,6 +229,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     
     RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.eventBeingEdited= self.eventBeingEdited;
     vc.restaurant = restaurant;
     [self.navigationController pushViewController:vc animated:YES];
     

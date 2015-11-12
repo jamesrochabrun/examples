@@ -24,6 +24,7 @@
 #import "PieView.h"
 #import "EventParticipantVC.h"
 #import "ProfileVC.h"
+#import "EmptyListVC.h"
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
@@ -310,7 +311,6 @@
 
 - (void)castVote
 {
-    
     NSDate *now= [NSDate date];
     NSDate *end= self.eventBeingEdited.dateWhenVotingClosed;
     BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
@@ -342,6 +342,7 @@
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                         
                                                      }];
     [a addAction:delete];
     [a addAction:vote];
@@ -394,8 +395,6 @@
 
 - (void) updateWhenBox
 {
-//    NSAttributedString *title= attributedStringOf(LOCAL( @"WHEN"),  kGeomEventHeadingFontSize);
-//    NSMutableAttributedString* a= [[NSMutableAttributedString alloc] initWithAttributedString: title];
     NSString *string=nil;
     
     EventObject* event= self.eventBeingEdited;
@@ -449,8 +448,6 @@
     NSInteger responded= e.numberOfPeopleResponded;
     NSInteger  voted= e.numberOfPeopleVoted;
     
-//    _labelPersonIcon.attributedText= createPeopleIconString(totalPeople);
-    
     NSString *countsStringPending= [NSString stringWithFormat: @"%lu\r%@",
                                     (unsigned long) pending,  LOCAL( @"PENDING")
                                     ];
@@ -482,7 +479,7 @@
                          }
                          completion:^(BOOL finished) {
                          }];
-    }else {
+    } else {
         [self doLayout];
     }
     
@@ -567,8 +564,7 @@
     }
     _transitioning= YES;
     
-    SearchVC* vc= [[SearchVC alloc] init];
-    vc.addingRestaurantsToEvent= YES;
+    EmptyListVC* vc= [[EmptyListVC alloc] init];
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 }

@@ -10,11 +10,13 @@
 #import "SubBaseVC.h"
 #import "RestaurantObject.h"
 #import "ListObject.h"
+#import "EventObject.h"
 
 @interface ListsVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurantToAdd;
 @property (nonatomic, strong) ListObject *listToAddTo;
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 
 - (void)getLists;
 

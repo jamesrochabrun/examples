@@ -510,55 +510,68 @@
             [cell updateHighlighting:NO];
         });
         
-       
+        
         BOOL userDidSubmitVotes=  NO;// XX: ooapi callo
-
+        
         // Determine whether event can be edited by this user.
         // Then transition to the appropriate view controller.
+        // This requires fetching the full and complete the event,
+        // which getEventsForUser does not provide.
         //
         __weak EventsListVC *weakSelf = self;
-        _doingTransition= YES;
-        [OOAPI determineIfCurrentUserCanEditEvent:event
-                                          success:^(bool allowed) {
-                                              weakSelf.doingTransition= NO;
-                                            
-                                              NSDate *now= [NSDate date];
-                                              NSDate *end= event.dateWhenVotingClosed;
-                                              BOOL isSubmitted = event.isComplete;
-                                              BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
-                                              
-                                              if (!isSubmitted && allowed && !votingIsDone) {
-                                                  NSLog(@"EDITING ALLOWED");
-                                                  
-                                                  EventCoordinatorVC *vc= [[EventCoordinatorVC alloc] init];
-                                                  vc.eventBeingEdited= event;
-                                                  vc.delegate= weakSelf;
-                                                  [weakSelf.navigationController pushViewController:vc animated:YES ];
-                                              } else {
-                                                  NSLog(@"EDITING PROHIBITED");
-                                                  
-                                                  EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
-                                                  vc.eventBeingEdited= event;
-                                                  if ( votingIsDone) {
-                                                      [vc setMode: VOTING_MODE_SHOW_RESULTS];
-                                                  } else {
-                                                      if (userDidSubmitVotes ) {
-                                                          [vc setMode: VOTING_MODE_NO_VOTING];
-                                                      } else {
-                                                          [vc setMode: VOTING_MODE_ALLOW_VOTING];
-                                                      }
-                                                  }
-                                                  [weakSelf.navigationController pushViewController:vc animated:YES ];
-                                                  
-                                              }
-
-                                              [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
-                                          } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                                              weakSelf.doingTransition= NO;
-                                              [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
-                                              message( @"Unable to contact the cloud.");
-                                          }];
-    }
+        NSUInteger eventID= event.eventID;
+        [OOAPI getEventByID:eventID
+                    success:^(EventObject *event) {
+                        _doingTransition= YES;
+                        [OOAPI determineIfCurrentUserCanEditEvent:event
+                                                          success:^(bool allowed) {
+                                                              weakSelf.doingTransition= NO;
+                                                              
+                                                              NSDate *now= [NSDate date];
+                                                              NSDate *end= event.dateWhenVotingClosed;
+                                                              BOOL isSubmitted = event.isComplete;
+                                                              BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
+                                                              
+                                                              if (!isSubmitted && allowed && !votingIsDone) {
+                                                                  NSLog(@"EDITING ALLOWED");
+                                                                  
+                                                                  EventCoordinatorVC *vc= [[EventCoordinatorVC alloc] init];
+                                                                  vc.eventBeingEdited= event;
+                                                                  vc.delegate= weakSelf;
+                                                                  [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                              } else {
+                                                                  NSLog(@"EDITING PROHIBITED");
+                                                                  
+                                                                  EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
+                                                                  vc.eventBeingEdited= event;
+                                                                  if ( votingIsDone) {
+                                                                      [vc setMode: VOTING_MODE_SHOW_RESULTS];
+                                                                  } else {
+                                                                      if (userDidSubmitVotes ) {
+                                                                          [vc setMode: VOTING_MODE_NO_VOTING];
+                                                                      } else {
+                                                                          [vc setMode: VOTING_MODE_ALLOW_VOTING];
+                                                                      }
+                                                                  }
+                                                                  [weakSelf.navigationController pushViewController:vc animated:YES ];
+                                                                  
+                                                              }
+                                                              
+                                                              [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
+                                                          }
+                                                          failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                              weakSelf.doingTransition= NO;
+                                                              [weakSelf.table deselectRowAtIndexPath:indexPath animated:NO];
+                                                              message( @"Unable to contact the cloud.");
+                                                          }
+                         ];
+                    }
+                    failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        NSLog  (@"NETWORK APPEARS TO BE DOWN");
+                        message( @"Cannot access the server.");
+                    }
+         ];
+    } // @sync
 }
 
 //------------------------------------------------------------------------------
@@ -607,10 +620,12 @@
             string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
         }
         
-        EventObject *e= [[EventObject  alloc] init];
+        NSUInteger userid= [Settings sharedInstance].userObject.userID;
+        EventObject *e= [[EventObject alloc] init];
         e.name=  string;
         e.numberOfPeople= 1;
         e.createdAt= [NSDate date];
+        e.creatorID= userid;
         e.updatedAt= [NSDate date];
         e.eventType= EVENT_TYPE_USER;
         self.eventBeingEdited= e;
@@ -618,7 +633,7 @@
         __weak EventsListVC* weakSelf= self;
         [OOAPI addEvent: e
                 success:^(NSInteger eventID) {
-                    NSLog  (@" EVENT CREATED");
+                    NSLog  (@"EVENT %lu CREATED FOR USER %lu", (unsigned long)eventID, ( unsigned long)userid);
                     self.eventBeingEdited= e;
                     e.eventID= eventID;
                     

@@ -7,12 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #import "BaseVC.h"
 #import "ListObject.h"
+#import "EventObject.h"
 
 @interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) ListObject *listToAddTo;
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 
 - (void)getRestaurants;
 

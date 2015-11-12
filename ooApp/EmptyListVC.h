@@ -10,7 +10,9 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "SubBaseVC.h"
 #import "ListObject.h"
+#import "EventObject.h"
 
 @interface EmptyListVC : SubBaseVC
+@property (nonatomic,strong) EventObject *eventBeingEdited;
 @property (nonatomic, strong) ListObject* listItem;
 @end

@@ -88,7 +88,7 @@ static NSString * const ListRowID = @"HLRCell";
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
     self.navTitle = nto;
 
-    if (_listToAddTo) {
+    if (_listToAddTo || _eventBeingEdited) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
     self.view.backgroundColor = UIColorRGBA(kColorBlack);
@@ -352,7 +352,8 @@ static NSString * const ListRowID = @"HLRCell";
     [self.navigationController pushViewController:vc animated:YES];
     vc.title = ro.name;
     vc.restaurant = ro;
-    vc.listToAddTo = (_listToAddTo) ? _listToAddTo : nil;
+    vc.eventBeingEdited= self.eventBeingEdited;
+    vc.listToAddTo = _listToAddTo;
     [vc getRestaurant];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

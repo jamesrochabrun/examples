@@ -46,7 +46,6 @@ NSString *const kKeyAdministrators=  @"admin_ids";
         _venues= [NSMutableOrderedSet new];
         _users= [NSMutableOrderedSet new];
         _votes= [NSMutableArray new];
-        
     }
     return self;
 }
@@ -201,6 +200,9 @@ NSString *const kKeyAdministrators=  @"admin_ids";
     if (_dateWhenVotingClosed) dictionary[kKeyWhenVotingCloses] = _dateWhenVotingClosed;
     if (_friendRecommendationAge > 0) dictionary[kKeyFriendRecommendationAge] = @(_friendRecommendationAge);
     if (_totalPrice > 0) dictionary[kKeyTotalPrice] = @(_totalPrice);
+    if ( _creatorID>0) {
+        dictionary[kKeyCreatorID]= @(_creatorID);
+    }
     
     return [NSDictionary dictionaryWithDictionary:dictionary];
 }
