@@ -83,10 +83,10 @@
         [self addSubview:_hoursButton];
 
         _locationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_locationButton withIcon:kFontIconLocation fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorWhite target:self selector:@selector(showOnMap)];
+        [_locationButton withIcon:kFontIconLocation fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOnMap)];
         _locationButton.layer.cornerRadius = 0;
         [self addSubview:_locationButton];
-        [_locationButton setTitleColor:UIColorRGBA(kColorBlack) forState:UIControlStateNormal];
+        [_locationButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         _locationButton.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursScroll = [[UIScrollView alloc] init];
@@ -104,15 +104,15 @@
         _hoursView.translatesAutoresizingMaskIntoConstraints = NO;
         
         _favoriteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorWhite target:self selector:@selector(listButtonTapped:)];
+        [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(listButtonTapped:)];
         _favoriteButton.layer.cornerRadius = 0;
         
         _toTryButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_toTryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorWhite target:self selector:@selector(listButtonTapped:)];
+        [_toTryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(listButtonTapped:)];
         _toTryButton.layer.cornerRadius = 0;
         
-        [_toTryButton setTitleColor:UIColorRGB(kColorBlack) forState:UIControlStateNormal];
-        [_favoriteButton setTitleColor:UIColorRGB(kColorBlack) forState:UIControlStateNormal];
+        [_toTryButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        [_favoriteButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
         [_toTryButton setTitle:kFontIconToTryFilled forState:UIControlStateSelected];
         [_favoriteButton setTitle:kFontIconFavoriteFilled forState:UIControlStateSelected];
         
@@ -121,7 +121,7 @@
         [self addSubview:_toTryButton];
         
         _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _toTryButton.layer.borderWidth = 1;
-        _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _toTryButton.layer.borderColor = UIColorRGBA(kColorOffWhite).CGColor;
+        _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _toTryButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
         
 //        _name = [[UILabel alloc] init];
 //        _name.translatesAutoresizingMaskIntoConstraints = NO;
@@ -182,7 +182,7 @@
 }
 
 - (void)showOnMap {
-    
+    [_delegate restaurantMainCVCell:self showMapTapped:_restaurant.location];
 }
 
 - (void)listButtonTapped:(id)sender {

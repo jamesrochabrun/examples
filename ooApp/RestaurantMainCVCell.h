@@ -20,6 +20,9 @@
                        gotoURL:(NSURL *)url;
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
                 listButtonTapped:(ListType)listType;
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
+               showMapTapped:(CLLocationCoordinate2D)coordinate;
+
 @end
 
 @interface RestaurantMainCVCell : UICollectionViewCell <TTTAttributedLabelDelegate>

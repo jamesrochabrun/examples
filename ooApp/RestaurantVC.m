@@ -672,6 +672,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }
 }
 
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell showMapTapped:(CLLocationCoordinate2D)coordinate {
+    [self showOnMap:coordinate];
+}
+
 - (void)showOnMap:(CLLocationCoordinate2D)location {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?center=%f,%f",location.latitude, location.longitude]];
     if (![[UIApplication sharedApplication] canOpenURL:url]) {
@@ -679,7 +683,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         //Apple Maps, using the MKMapItem class
         MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:location addressDictionary:nil];
         MKMapItem *item = [[MKMapItem alloc] initWithPlacemark:placemark];
-        item.name = @"ReignDesign Office";
+        item.name = _restaurant.name;
         [item openInMapsWithLaunchOptions:nil];
         //left as an exercise for the reader: open the Google Maps mobile website instead!
     } else {
