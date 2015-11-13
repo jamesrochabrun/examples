@@ -12,5 +12,6 @@
 @interface TileCVCell : UICollectionViewCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
+@property (nonatomic) ListDisplayType displayType;
 
 @end

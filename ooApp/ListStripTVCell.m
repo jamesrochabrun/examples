@@ -31,7 +31,6 @@
 
 @end
 
-
 static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
 static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantCell";
 
@@ -46,7 +45,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         
         _cvl = [[ListCVFL alloc] init];
         [_cvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-        [_cvl setItemSize:CGSizeMake(kGeomHeightStripListCell*1.3, kGeomHeightStripListCell)];
 
         _fcvl = [[ListCVFL alloc] init];
         [_fcvl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
@@ -55,14 +53,12 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         [self addSubview:_nameHeader];
         _nameHeader.translatesAutoresizingMaskIntoConstraints = NO;
         
-        _nameHeader.layer.borderWidth = 1;
-        _nameHeader.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
-        _nameHeader.backgroundColor = UIColorRGBA(kColorOffBlack);
-        
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = UIColorRGBA(kColorBlack);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
+
+//        [DebugUtilities addBorderToViews:@[_nameHeader]];
     }
     
     return self;
@@ -86,40 +82,60 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 
 - (void)updateConstraints {
     [super updateConstraints];
-//    CGSize labelSize = [@"Abc" sizeWithAttributes:@{NSFontAttributeName:_nameHeader.font}];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)/2), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)-27), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"leftSpacing":@((width(self)-width(_nameHeader))/2)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameHeader);
     
-    // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_nameHeader(27)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameHeader
-//                                                     attribute:NSLayoutAttributeCenterX
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_nameHeader.superview
-//                                                     attribute:NSLayoutAttributeCenterX
-//                                                    multiplier:1.f constant:0.f]];
-
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(leftSpacing)-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_nameHeader
+                             attribute:NSLayoutAttributeCenterY
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:self
+                             attribute:NSLayoutAttributeCenterY
+                             multiplier:1
+                             constant:0]];
+    } else {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-labelY-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    }
 }
 
 - (void)setListItem:(ListObject *)listItem
 {
     if (_listItem == listItem) return;
     
-    if (_listItem == kListDisplayTypeFeatured) {
-        [_featuredCollectionView reloadData];
-    } else {
-        [_collectionView reloadData];
-    }
     _listItem = listItem;
     _nameHeader.name = _listItem.name;
-    _nameHeader.icon = kFontIconList;
+    
+    if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
+        [_collectionView removeFromSuperview];
+        _collectionView = nil;
+        [self.featuredCollectionView reloadData];
+        _nameHeader.backgroundColor = UIColorRGBA(kColorClear);
+        _nameHeader.icon = @"";
+        [_nameHeader setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader]];
+//        [DebugUtilities addBorderToViews:@[self] withColors:kColorRed];
+    } else {
+        [_featuredCollectionView removeFromSuperview];
+        _featuredCollectionView = nil;
+        [self.collectionView reloadData];
+        _nameHeader.backgroundColor = UIColorRGBA(kColorOffBlack);
+        _nameHeader.icon = kFontIconList;
+        [_nameHeader setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader]];
+//        [DebugUtilities addBorderToViews:@[_collectionView] withColors:kColorBlue];
+    }
 
+    NSLog(@"nameHeader after setting %@ rect=%@", _nameHeader.name, NSStringFromCGRect(_nameHeader.frame));
+    [self setNeedsUpdateConstraints];
+    
     _restaurants = nil;
     if (_listItem)
         [self getRestaurants];
@@ -161,10 +177,11 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 - (void)gotRestaurants
 {
     NSLog(@"%@: %lu", _listItem.name, (unsigned long)[_restaurants count]);
+    
     if (![_restaurants count]) {
         NSLog (@"LIST CALLED %@ HAS ZERO RESTAURANTS",_listItem.name);
     }
-    //    [self addSubview:_collectionView];
+    
     if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
         self.featuredCollectionView.delegate = self;
         self.featuredCollectionView.dataSource = self;
@@ -174,7 +191,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         self.collectionView.dataSource = self;
         [self.collectionView reloadData];
     }
-//    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
 
 - (void)awakeFromNib
@@ -208,6 +224,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     } else {
         restaurantCell = [collectionView dequeueReusableCellWithReuseIdentifier:RestaurantCellIdentifier forIndexPath:indexPath];
     }
+
+    restaurantCell.displayType = _listItem.listDisplayType;
     restaurantCell.restaurant = [_restaurants objectAtIndex:indexPath.row];
     return restaurantCell;
 }
@@ -235,19 +253,18 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     return 5;
 }
 
-
-
-
 #pragma lazy load some stuff
 
 - (UICollectionView *)collectionView
 {
     if (!_collectionView) {
+        [_cvl setItemSize:CGSizeMake(kGeomHeightStripListCell*1.3, kGeomHeightStripListCell)];
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(kGeomSpaceEdge, kGeomHeightStripListRow-kGeomHeightStripListCell, self.frame.size.width-2*kGeomSpaceEdge, self.frame.size.height-(kGeomHeightStripListRow-kGeomHeightStripListCell)) collectionViewLayout:_cvl];
         [_collectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
         _collectionView.backgroundColor = UIColorRGBA(kColorClear);
         [self addSubview:_collectionView];
         [self bringSubviewToFront:_nameHeader];
+//        [DebugUtilities addBorderToViews:@[_collectionView] withColors:kColorRed];
     }
     return _collectionView;
 }
@@ -255,13 +272,14 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 - (UICollectionView *)featuredCollectionView
 {
     if (!_featuredCollectionView) {
-        [_fcvl setItemSize:CGSizeMake(self.frame.size.width-2*kGeomSpaceEdge, kGeomHeightFeaturedCellHeight)];
-        _featuredCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(kGeomSpaceEdge, kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight, self.frame.size.width-2*kGeomSpaceEdge, self.frame.size.height-(kGeomHeightFeaturedRow-kGeomHeightFeaturedCellHeight)) collectionViewLayout:_fcvl];
+        [_fcvl setItemSize:CGSizeMake(self.frame.size.width-2*kGeomSpaceEdge, kGeomHeightFeaturedRow-2*kGeomSpaceEdge)];
+        _featuredCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(kGeomSpaceEdge, kGeomSpaceInter, self.frame.size.width-2*kGeomSpaceEdge, self.frame.size.height-kGeomSpaceInter) collectionViewLayout:_fcvl];
         [_featuredCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:FeaturedRestaurantCellIdentifier];
         _featuredCollectionView.backgroundColor = UIColorRGBA(kColorClear);
         _featuredCollectionView.pagingEnabled = YES;
         [self addSubview:_featuredCollectionView];
         [self bringSubviewToFront:_nameHeader];
+//        [DebugUtilities addBorderToViews:@[_featuredCollectionView] withColors:kColorRed];
     }
     return _featuredCollectionView;
 }

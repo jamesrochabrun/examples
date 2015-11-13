@@ -52,7 +52,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     ListObject *list;
     
     list = [[ListObject alloc] init];
-    list.name = @"Drinks";
+    list.name = @"Party";
     list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
     
@@ -62,32 +62,8 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
-    list.name = @"Chinese";
-    list.listDisplayType = KListDisplayTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
     list.name = @"Vegetarian";
-    list.listDisplayType = kListDisplayTypeFeatured;
-    [_lists addObject:list];
-
-    list = [[ListObject alloc] init];
-    list.name = @"Burgers";
     list.listDisplayType = KListDisplayTypeStrip;
-    [_lists addObject:list];
-
-    list = [[ListObject alloc] init];
-    list.name = @"Vietnamese";
-    list.listDisplayType = KListDisplayTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"New";
-    list.listDisplayType = kListDisplayTypeFeatured;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mexican";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
@@ -96,10 +72,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     
     list = [[ListObject alloc] init];
     list.name = @"Delivery";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Party";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
@@ -113,11 +85,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list = [[ListObject alloc] init];
     list.name = @"Indian";
     [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Tandoor";
-    [_lists addObject:list];
-    
 }
 
 - (void) locationBecameAvailable:(id)notification
@@ -219,6 +186,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     
     cell.navigationController = self.navigationController;
     cell.listItem = list;
+    
     return cell;
 }
 

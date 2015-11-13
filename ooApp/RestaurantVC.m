@@ -89,7 +89,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _listButtons = [NSMutableSet set];
     
     _addPhotoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_addPhotoButton withIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector((showPickPhotoUI))];
+    [_addPhotoButton withIcon:kFontIconPhoto fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector((showPickPhotoUI))];
     [_addPhotoButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
     _addPhotoButton.translatesAutoresizingMaskIntoConstraints = NO;
     _addPhotoButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
