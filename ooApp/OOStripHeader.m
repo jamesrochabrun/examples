@@ -67,7 +67,12 @@
     _nameLabel.text = _name;
     
     [self bringSubviewToFront:_nameLabel];
-    [self setNeedsDisplay];
+    [self setNeedsLayout];
+}
+
+- (void)setFont:(UIFont *)font {
+    [_nameLabel setFont:font];
+    [self setNeedsLayout];
 }
 
 - (void)setIcon:(NSString *)icon {
@@ -76,7 +81,7 @@
     _iconLabel.text = icon;
     
     [self bringSubviewToFront:_iconLabel];
-    [self setNeedsDisplay];
+    [self setNeedsLayout];
 }
 
 - (void)updateConstraints {
@@ -85,19 +90,32 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@(self.frame.size.width), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     NSDictionary *views= NSDictionaryOfVariableBindings(superview, _nameLabel, _iconLabel);
     
-    if (!_buttonAdd) {
-
+    if (!_buttonAdd && [_icon length]) {
+        [self removeConstraints:self.constraints];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInter-[_iconLabel]-spaceEdge-[_nameLabel]"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
+        
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_iconLabel
                                                          attribute:NSLayoutAttributeCenterY
                                                          relatedBy:NSLayoutRelationEqual
                                                             toItem:_nameLabel
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1.f constant:0.f]];
+    } else if (!_buttonAdd && ![_icon length]) {
+        [self removeConstraints:self.constraints];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
+                                                                     options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInter-[_nameLabel]"
+                                                                     options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
                                                          attribute:NSLayoutAttributeCenterY
                                                          relatedBy:NSLayoutRelationEqual
@@ -177,7 +195,7 @@
 {
     [super layoutSubviews];
     CGRect frame = self.frame;
-    frame.size.width = CGRectGetMaxX(_nameLabel.frame) + kGeomSpaceInter;
+    frame.size.width = (_buttonAdd) ? width(self) : CGRectGetMaxX(_nameLabel.frame) + kGeomSpaceInter;
     self.frame = frame;
     
     UIBezierPath *maskPath;

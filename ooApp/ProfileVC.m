@@ -16,6 +16,7 @@
 #import "RestaurantListVC.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
+#import "DebugUtilities.h"
 
 @interface ProfileTableFirstRow ()
 @property (nonatomic, assign) NSInteger userID;
@@ -34,6 +35,8 @@
 @property (nonatomic, assign) float spaceNeededForFirstCell;
 @property (nonatomic, assign) UINavigationController *navigationController;
 @end
+
+static NSString * const ListRowID = @"ListRowCell";
 
 @implementation ProfileTableFirstRow
 
@@ -59,7 +62,7 @@
         if (!_viewingOwnProfile) {
             
             self.buttonFollow= makeButton(self,  @"FOLLOW",
-                                          kGeomFontSizeHeader,BLACK, CLEAR,
+                                          kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
                                           self,
                                           @selector (userPressedFollow:), 1);
             
@@ -67,11 +70,11 @@
             
         } else {
             self.buttonNewList= makeButton(self,  @"NEW LIST",
-                                           kGeomFontSizeHeader,BLACK, CLEAR,
+                                           kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
                                            self,
                                            @selector (userPressedNewList:), 0);
             self.buttonNewListIcon= makeButton(self,kFontIconAdd,
-                                               kGeomFontSizeHeader,BLACK, CLEAR,
+                                               kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
                                                self,
                                                @selector (userPressedNewList:), 0);
             [_buttonNewListIcon.titleLabel setFont:
@@ -95,11 +98,15 @@
         self.labelDescription = makeLabelLeft(self, description,kGeomFontSizeHeader);
         self.labelRestaurants = makeLabelLeft(self, restaurants,kGeomFontSizeHeader);
         
+        _labelUsername.textColor = UIColorRGBA(kColorWhite);
+        _labelDescription.textColor = UIColorRGBA(kColorWhite);
+        _labelRestaurants.textColor = UIColorRGBA(kColorWhite);
+        
         self.iv.layer.borderColor = GRAY.CGColor;
         self.iv.layer.borderWidth = 1;
         self.iv.contentMode = UIViewContentModeScaleAspectFit;
         
-        self.backgroundColor = WHITE;
+        self.backgroundColor = UIColorRGBA(kColorBlack);
         
         UIImage *photoOfSelf= [_userInfo userProfilePhoto];
         if ( _viewingOwnProfile  && photoOfSelf) {
@@ -292,7 +299,6 @@
     return self.spaceNeededForFirstCell;
 }
 
-
 - (void)prepareForReuse
 {
     [super prepareForReuse];
@@ -383,6 +389,7 @@
     [self.view addSubview:_table];
     self.table.backgroundColor=[UIColor clearColor];
     self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
+    [_table registerClass:[ListStripTVCell class] forCellReuseIdentifier:ListRowID];
     
     NSString *first = _profileOwner.firstName ?:  @"";
     NSString *last = _profileOwner.lastName ?:  @"";
@@ -398,9 +405,7 @@
 - (void)viewWillLayoutSubviews
 {
     // NOTE:  this is just temporary
-    
     [super viewWillLayoutSubviews];
-  
     self.table.frame = self.view.bounds;
 }
 
@@ -466,22 +471,24 @@
 // Name:    cellForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (UITableViewCell *)tableView:(UITableView *)tableView
-         cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *cellIdentifier = @"pcell";
-    
     NSInteger row = indexPath.row;
     
     if  (!row) {
         return _headerCell;
     }
     
-    ListStripTVCell* cell = [[ListStripTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    ListStripTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
 
-    NSArray* a= self.lists;
-    cell.listItem = a[indexPath.row-1];
+    NSArray *a = self.lists;
+    ListObject *listItem = a[indexPath.row-1];
+    listItem.listDisplayType = KListDisplayTypeStrip;
+    
+    cell.listItem = listItem;
     cell.navigationController = self.navigationController;
+    
+//    [DebugUtilities addBorderToViews:@[cell]];
     return cell;
 }
 
