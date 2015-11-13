@@ -96,6 +96,12 @@
         _labelTimeLeft.textColor= BLACK;
         _labelTimeLeft.backgroundColor= YELLOW;
         
+        _labelTitle.shadowColor = BLACK;
+        _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
+        
+        _labelDateTime.shadowColor = BLACK;
+        _labelDateTime.shadowOffset = CGSizeMake(0, -1.0);
+        
         self.participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
         _participantsView.delegate= self;
@@ -139,7 +145,7 @@
     float distanceBetweenButtons= 0;
     float biggerButtonWidth= (w-2*margin-distanceBetweenButtons)/2;
     
-    if  (self.mode==VOTING_MODE_ALLOW_VOTING ) {
+    if  (self.mode  != VOTING_MODE_SHOW_RESULTS ) {
         _buttonSubmitVote.frame=  CGRectMake(  margin, h-kGeomEventParticipantButtonHeight, biggerButtonWidth,kGeomEventParticipantButtonHeight);
         _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
     } else {
@@ -211,12 +217,14 @@
         case VOTING_MODE_ALLOW_VOTING:
             _buttonSubmitVote.enabled= YES;
             _buttonSubmitVote.alpha= 1;
+            [_buttonSubmitVote setTitle: @"SUBMIT VOTE" forState:UIControlStateNormal];
             break;
             
         case VOTING_MODE_NO_VOTING:
             [self killTimer];
             _buttonSubmitVote.enabled= NO;
-            _buttonSubmitVote.alpha= 0;
+            _buttonSubmitVote.alpha= 1;
+            [_buttonSubmitVote setTitle: @"VOTE SUBMITTED" forState:UIControlStateNormal];
             break;
             
         case VOTING_MODE_SHOW_RESULTS:

@@ -190,6 +190,9 @@
     self.pieHour= [[PieView alloc] init];
     [self.viewContainer3  addSubview: _pieHour];
     
+    _labelEventCover.shadowColor = BLACK;
+    _labelEventCover.shadowOffset = CGSizeMake(0, -1.0);
+    
     self.labelDay0= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
     self.labelDay1= makeLabel(self.viewContainer3,  @"M", kGeomFontSizeHeader);
     self.labelDay2= makeLabel(self.viewContainer3,  @"T", kGeomFontSizeHeader);
