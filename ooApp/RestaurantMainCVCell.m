@@ -13,6 +13,7 @@
 #import "DebugUtilities.h"
 #import "HoursOpen.h"
 #import "UIImageEffects.h"
+#import "RestaurantListVC.h"
 
 @interface RestaurantMainCVCell()
 
@@ -24,7 +25,7 @@
 @property (nonatomic, strong) UILabel *priceRange;
 @property (nonatomic, strong) UILabel *isOpen;
 @property (nonatomic, strong) UILabel *distance;
-@property (nonatomic, strong) UILabel *cuisine;
+@property (nonatomic, strong) UIButton *cuisine;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIView *imageOverlay;
 @property (nonatomic, strong) UIButton *locationButton;
@@ -133,9 +134,8 @@
         [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         [self addSubview:_priceRange];
 
-        _cuisine = [[UILabel alloc] init];
+        _cuisine = [UIButton buttonWithType:UIButtonTypeCustom];
         _cuisine.translatesAutoresizingMaskIntoConstraints = NO;
-        [_cuisine withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         _cuisine.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_cuisine];
         
@@ -235,7 +235,7 @@
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_locationButton(actionButtonWidth)][_favoriteButton(actionButtonWidth)][_toTryButton(actionButtonWidth)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton][_favoriteButton(actionButtonWidth)][_toTryButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_priceRange]-spaceInter-[_verticalLine1(1)]-spaceInter-[_distance]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_phoneNumber]-[_verticalLine2(1)]-[_website]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -424,7 +424,12 @@
     _address.text = _restaurant.address;
     _website.text = @"Website";
     _phoneNumber.text = _restaurant.phone;
-    _cuisine.text = _restaurant.cuisine;
+    if (_restaurant.cuisine) {
+        [_cuisine withText:[NSString stringWithFormat:@"#%@", _restaurant.cuisine] fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(doCuisineSearch:)];
+    } else {
+        [_cuisine setTitle:@"" forState:UIControlStateNormal];
+    }
+    [_cuisine setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
     
     _priceRange.text = [_restaurant priceRangeText];
     
@@ -453,13 +458,6 @@
                                      [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader], NSFontAttributeName,
                                      UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
                                      nil]];
-
-//    range = [_address.text rangeOfString:_address.text];
-
-//    [_address setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-//                                 [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader], NSFontAttributeName,
-//                                 UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
-//                                 nil]];
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     [gregorian setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
@@ -499,6 +497,10 @@
 
 - (void)setFavorite:(BOOL)on {
     [_favoriteButton setSelected:on];
+}
+
+- (void)doCuisineSearch:(id)sender {
+    [_delegate restaurantMainCVCell:self showListSearchingKeywords:@[_restaurant.cuisine]];
 }
 
 - (void)prepareForReuse {

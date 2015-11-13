@@ -11,15 +11,15 @@
 NSString *const kMealCategoryBreakfast = @"breakfast";
 NSString *const kMealCategoryLunch = @"lunch";
 NSString *const kMealCategoryDinner = @"dinner";
-NSString *const kMealCategoryBar = @"bar+restaurant";
+NSString *const kMealCategoryBar = @"(bar)OR(restaurant)";
 
 @implementation TimeUtilities
 
 /////////////
 // Given a time determine if we are looking for breakfast, lunch, dinner or bars
 /////////////
-+ (NSString *)categorySearchString:(NSDate *)date {
-    NSString *category = @"restaurant";
++ (NSArray *)categorySearchTerms:(NSDate *)date {
+    NSArray *category = @[@"restaurant"];
 
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
 
@@ -37,21 +37,21 @@ NSString *const kMealCategoryBar = @"bar+restaurant";
     if (([dayStart compare:date] == NSOrderedAscending ||
         [dayStart compare:date] == NSOrderedSame) &&
         [breakfastStart compare:date] == NSOrderedDescending) {
-        category = kMealCategoryBar;
+        category = @[kMealCategoryBar];
     } else if (([breakfastStart compare:date] == NSOrderedAscending ||
                [breakfastStart compare:date] == NSOrderedSame) &&
                [lunchStart compare:date] == NSOrderedDescending) {
-        category = kMealCategoryBreakfast;
+        category = @[kMealCategoryBreakfast];
     } else if (([lunchStart compare:date] == NSOrderedAscending ||
                 [lunchStart compare:date] == NSOrderedSame) &&
                [dinnerStart compare:date] == NSOrderedDescending) {
-        category = kMealCategoryLunch;
+        category = @[kMealCategoryLunch];
     } else if (([dinnerStart compare:date] == NSOrderedAscending ||
                  [dinnerStart compare:date] == NSOrderedSame) &&
                 [barStart compare:date] == NSOrderedDescending) {
-        category = kMealCategoryDinner;
+        category = @[kMealCategoryDinner];
     } else {
-        category = kMealCategoryBar;
+        category = @[kMealCategoryBar];
     }
     
     return category;

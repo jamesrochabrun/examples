@@ -39,7 +39,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                          success:(void (^)(RestaurantObject *restaurants))success
                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
+- (AFHTTPRequestOperation *)getRestaurantsWithKeywords:(NSArray *)keywords
                                           andLocation:(CLLocationCoordinate2D)location
                                             andFilter:(NSString *)filterName
                                           andOpenOnly:(BOOL)openOnly

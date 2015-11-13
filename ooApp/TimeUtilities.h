@@ -10,6 +10,6 @@
 
 @interface TimeUtilities : NSObject
 
-+ (NSString *)categorySearchString:(NSDate *)date;
++ (NSArray *)categorySearchTerms:(NSDate *)date;
 
 @end

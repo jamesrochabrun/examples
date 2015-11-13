@@ -12,19 +12,19 @@
 
 const NSInteger kHashUser= 0x40000000;
 
-NSString *const kKeyID = @"user_id";
-NSString *const kKeyFirstName = @"first_name";
-NSString *const kKeyLastName = @"last_name";
-NSString *const kKeyMiddleName = @"middle_name";
-NSString *const kKeyEmail = @"email";
-NSString *const kKeyPhoneNumber = @"phone_number";
-NSString *const kKeyUsername = @"username";
-NSString *const kKeyToken = @"backend_auth_token";
-NSString *const kKeyGender = @"gender";
-NSString *const kKeyImageURL = @"image_url";
-NSString *const kKeyImageIdentifier = @"image_identifier";
-NSString *const kKeyParticipantType = @"participant_type";
-NSString *const kKeyParticipantState = @"participant_state";
+NSString *const kKeyUserID = @"user_id";
+NSString *const kKeyUserFirstName = @"first_name";
+NSString *const kKeyUserLastName = @"last_name";
+NSString *const kKeyUserMiddleName = @"middle_name";
+NSString *const kKeyUserEmail = @"email";
+NSString *const kKeyUserPhoneNumber = @"phone_number";
+NSString *const kKeyUserUsername = @"username";
+NSString *const kKeyUserToken = @"backend_auth_token";
+NSString *const kKeyUserGender = @"gender";
+NSString *const kKeyUserImageURL = @"image_url";
+NSString *const kKeyUserImageIdentifier = @"image_identifier";
+NSString *const kKeyUserParticipantType = @"participant_type";
+NSString *const kKeyUserParticipantState = @"participant_state";
 
 @interface UserObject()
 
@@ -60,19 +60,19 @@ NSString *const kKeyParticipantState = @"participant_state";
 + (UserObject *)userFromDict:(NSDictionary *)dict
 {
     UserObject *user =[[UserObject alloc] init];
-    user.userID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyID] );
-    user.firstName = parseStringOrNullFromServer( [dict objectForKey:kKeyFirstName] );
-    user.middleName = parseStringOrNullFromServer( [dict objectForKey:kKeyMiddleName] );
-    user.lastName = parseStringOrNullFromServer( [dict objectForKey:kKeyLastName] );
-    user.email = parseStringOrNullFromServer( [dict objectForKey:kKeyEmail] );
-    user.phoneNumber = parseStringOrNullFromServer( [dict objectForKey:kKeyPhoneNumber]);
-    user.backendAuthorizationToken = parseStringOrNullFromServer( [dict objectForKey:kKeyToken]);
-    user.gender =parseStringOrNullFromServer( [dict objectForKey:kKeyGender] );
-    user.username= parseStringOrNullFromServer( [dict objectForKey:kKeyUsername] );
-    user.imageURLString= parseStringOrNullFromServer( [dict objectForKey:kKeyImageURL] );
-    user.imageIdentifier= parseStringOrNullFromServer( [dict objectForKey:kKeyImageIdentifier] );
-    user.participantType = parseIntegerOrNullFromServer(dict [kKeyParticipantType]);
-    user.participantState =parseIntegerOrNullFromServer(dict [kKeyParticipantState]);
+    user.userID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyUserID] );
+    user.firstName = parseStringOrNullFromServer( [dict objectForKey:kKeyUserFirstName] );
+    user.middleName = parseStringOrNullFromServer( [dict objectForKey:kKeyUserMiddleName] );
+    user.lastName = parseStringOrNullFromServer( [dict objectForKey:kKeyUserLastName] );
+    user.email = parseStringOrNullFromServer( [dict objectForKey:kKeyUserEmail] );
+    user.phoneNumber = parseStringOrNullFromServer( [dict objectForKey:kKeyUserPhoneNumber]);
+    user.backendAuthorizationToken = parseStringOrNullFromServer( [dict objectForKey:kKeyUserToken]);
+    user.gender =parseStringOrNullFromServer( [dict objectForKey:kKeyUserGender] );
+    user.username= parseStringOrNullFromServer( [dict objectForKey:kKeyUserUsername] );
+    user.imageURLString= parseStringOrNullFromServer( [dict objectForKey:kKeyUserImageURL] );
+    user.imageIdentifier= parseStringOrNullFromServer( [dict objectForKey:kKeyUserImageIdentifier] );
+    user.participantType = parseIntegerOrNullFromServer(dict [kKeyUserParticipantType]);
+    user.participantState =parseIntegerOrNullFromServer(dict [kKeyUserParticipantState]);
     
     // RULE: If the server referred to the current user and
     // we have more information about the current user then fill it in.
@@ -94,19 +94,19 @@ NSString *const kKeyParticipantState = @"participant_state";
 - (NSDictionary *)dictionaryFromUser;
 {
     return @{
-             kKeyID : @(self.userID ),
-             kKeyMiddleName:self.middleName ?: @"",
-             kKeyFirstName:self.firstName ?: @"",
-             kKeyLastName:self.lastName ?: @"",
-             kKeyEmail: self.email ?: @"",
-             kKeyPhoneNumber:self.phoneNumber ?: @"",
-             kKeyToken:self.backendAuthorizationToken ?: @"",
-             kKeyGender:self.gender ?: @"",
-             kKeyUsername:self.username ?: @"",
-             kKeyImageIdentifier:self.imageIdentifier ?: @"",
-             kKeyImageURL:self.imageURLString ?: @"",
-             kKeyParticipantType: @(self.participantType),
-             kKeyParticipantState: @(self.participantState)
+             kKeyUserID : @(self.userID ),
+             kKeyUserMiddleName:self.middleName ?: @"",
+             kKeyUserFirstName:self.firstName ?: @"",
+             kKeyUserLastName:self.lastName ?: @"",
+             kKeyUserEmail: self.email ?: @"",
+             kKeyUserPhoneNumber:self.phoneNumber ?: @"",
+             kKeyUserToken:self.backendAuthorizationToken ?: @"",
+             kKeyUserGender:self.gender ?: @"",
+             kKeyUserUsername:self.username ?: @"",
+             kKeyUserImageIdentifier:self.imageIdentifier ?: @"",
+             kKeyUserImageURL:self.imageURLString ?: @"",
+             kKeyUserParticipantType: @(self.participantType),
+             kKeyUserParticipantState: @(self.participantState)
              
              // Some data are not uploaded.
              

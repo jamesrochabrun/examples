@@ -22,6 +22,8 @@
                 listButtonTapped:(ListType)listType;
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
                showMapTapped:(CLLocationCoordinate2D)coordinate;
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
+               showListSearchingKeywords:(NSArray *)keywords;
 
 @end
 

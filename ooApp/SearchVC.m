@@ -274,7 +274,7 @@ typedef enum: char {
             
             OOAPI *api= [[OOAPI  alloc] init];
             
-            self.fetchOperation= [api getRestaurantsWithKeyword:_searchBar.text
+            self.fetchOperation= [api getRestaurantsWithKeywords:@[_searchBar.text]
                                                     andLocation:location
                                                       andFilter:[self currentFilterName]
                                                     andOpenOnly:NO

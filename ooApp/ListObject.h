@@ -20,7 +20,7 @@ typedef enum {
 } ListType;
 
 extern NSString *const kKeyListID;
-extern NSString *const kKeyUserID;
+extern NSString *const kKeyListUserID;
 extern NSString *const kKeyListName;
 extern NSString *const kKeyListType;
 extern NSString *const kKeyListMediaItem;

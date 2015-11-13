@@ -158,7 +158,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
             ;
         }];
     } else {
-        self.requestOperation = [api getRestaurantsWithKeyword:_listItem.name
+        self.requestOperation = [api getRestaurantsWithKeywords:@[_listItem.name]
                                                    andLocation:[[LocationManager sharedInstance] currentUserLocation]
                                                      andFilter:@""
                                                     andOpenOnly:NO

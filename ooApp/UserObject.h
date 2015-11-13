@@ -24,6 +24,20 @@ typedef enum: int {
     PARTICIPANT_STATE_MAYBE = 4,
 } ParticipantState;
 
+extern NSString *const kKeyUserID;
+extern NSString *const kKeyUserFirstName;
+extern NSString *const kKeyUserLastName;
+extern NSString *const kKeyUserMiddleName;
+extern NSString *const kKeyUserEmail;
+extern NSString *const kKeyUserPhoneNumber;
+extern NSString *const kKeyUserUsername;
+extern NSString *const kKeyUserToken;
+extern NSString *const kKeyUserGender;
+extern NSString *const kKeyUserImageURL;
+extern NSString *const kKeyUserImageIdentifier;
+extern NSString *const kKeyUserParticipantType;
+extern NSString *const kKeyUserParticipantState;
+
 @interface UserObject : NSObject
 
 @property (nonatomic, assign) NSUInteger userID;

@@ -17,6 +17,7 @@
 
 @interface TileCVCell ()
 
+@property (nonatomic, strong) UILabel *priceRange;
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UILabel *distance;
 @property (nonatomic, strong) UILabel *rating;
@@ -40,8 +41,10 @@
         _backgroundImage = [[UIImageView alloc] init];
         _overlay = [[UIView alloc] init];
         _emptyTile = [[EmptyRestaurantTile alloc] init];
+        _priceRange = [[UILabel alloc] init];
         _requestOperation = nil;
         
+        _priceRange.translatesAutoresizingMaskIntoConstraints =
         _overlay.translatesAutoresizingMaskIntoConstraints =
         _backgroundImage.translatesAutoresizingMaskIntoConstraints =
         _name.translatesAutoresizingMaskIntoConstraints =
@@ -56,6 +59,7 @@
         [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeBannerMain] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
         [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
         [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
+        [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear];
 
         [self addSubview:_emptyTile];
         [self addSubview:_backgroundImage];
@@ -63,6 +67,7 @@
         [self addSubview:_distance];
         [self addSubview:_rating];
         [self addSubview:_name];
+        [self addSubview:_priceRange];
         
         _gradient = [CAGradientLayer layer];
         NSMutableDictionary *newActions = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
@@ -91,7 +96,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-labelSize.height)/2), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"featuredNameY": @(kGeomHeightFeaturedRow/2 + kGeomSpaceInter)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _emptyTile, _backgroundImage, _rating, _distance, _overlay);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _emptyTile, _backgroundImage, _rating, _distance, _overlay, _priceRange);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -102,19 +107,20 @@
     
     if (_displayType == kListDisplayTypeFeatured) {
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_overlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_distance]-[_rating]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_distance]-spaceCellPadding-[_rating]-spaceCellPadding-[_priceRange]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_name]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_name attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(featuredNameY)-[_name]-spaceCellPadding-[_distance]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_distance attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_rating attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     } else {
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_overlay(50)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_rating]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_priceRange][_rating(0)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_distance]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_name]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_name][_distance]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     }
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_rating attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_distance attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_priceRange attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_distance attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 
 }
 
@@ -122,7 +128,7 @@
     _displayType = displayType;
     
     if (_displayType == kListDisplayTypeFeatured) {
-        _overlay.backgroundColor = UIColorRGBA(kColorOverlay40);
+        _overlay.backgroundColor = UIColorRGBA(kColorOverlay50);
         [_gradient removeFromSuperlayer];
         [_name setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeDetail]];
     } else {
@@ -140,6 +146,7 @@
 //    NSLog(@"restaurant name = %@", restaurant.name);
     _name.text = _restaurant.name;
     _backgroundImage.image = nil;
+    _priceRange.text = [_restaurant priceRangeText];
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     

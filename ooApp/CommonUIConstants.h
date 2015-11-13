@@ -38,6 +38,7 @@ static NSUInteger kColorOverlay25 = 0xC0000000;
 static NSUInteger kColorOverlay30 = 0xB3000000;
 static NSUInteger kColorOverlay35 = 0xA6000000;
 static NSUInteger kColorOverlay40 = 0x99000000;
+static NSUInteger kColorOverlay50 = 0x7F000000;
 static NSUInteger kColorWhite = 0xFFFFFFFF;
 static NSUInteger kColorRed = 0xFFFF0000;
 static NSUInteger kColorGreen = 0xFF00FF00;

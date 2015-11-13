@@ -647,7 +647,7 @@
     NSInteger venueID= self.vote.venueID;
     RestaurantObject* venue =nil;
     
-    int restaurantNumber= self.tag;
+    NSInteger restaurantNumber= self.tag;
     if  (event.venues.count > restaurantNumber) {
         venue= event.venues[restaurantNumber];
     } else {

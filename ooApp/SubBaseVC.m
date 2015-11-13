@@ -46,12 +46,10 @@
     _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
     _moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
     [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
-    [_moreButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    [_moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
     bbi.customView = _moreButton;
     self.navigationItem.rightBarButtonItems = @[bbi];
-    
-    
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {

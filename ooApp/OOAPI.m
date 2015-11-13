@@ -71,7 +71,6 @@ NSString *const kKeySearchFilter = @"filter";
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *mediaItems = [NSMutableArray array];
         for (id dict in responseObject) {
-            NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
             [mediaItems addObject:[MediaItemObject mediaItemFromDict:dict]];
         }
         success(mediaItems);
@@ -180,7 +179,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Name:    getRestaurantsWithKeyword andLocation
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation *)getRestaurantsWithKeyword:(NSString *)keyword
+- (AFHTTPRequestOperation *)getRestaurantsWithKeywords:(NSArray *)keywords
                                           andLocation:(CLLocationCoordinate2D)location
                                             andFilter:(NSString*)filterName
                                           andOpenOnly:(BOOL)openOnly
@@ -188,9 +187,19 @@ NSString *const kKeySearchFilter = @"filter";
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    if (!keyword) {
+    NSMutableString *searchTerms = [[NSMutableString alloc] init];
+    
+    if (!keywords || ![keywords count]) {
         failure(nil,nil);
         return nil;
+    } else {
+        [keywords enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *s = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
+            if ([searchTerms length]) {
+                [searchTerms appendString:@"OR"];
+            }
+            [searchTerms appendString:s];
+        }];
     }
     
     if (!filterName) {
@@ -204,7 +213,7 @@ NSString *const kKeySearchFilter = @"filter";
     double radius= [Settings sharedInstance].searchRadius;
     
     NSString *urlString = [NSString stringWithFormat:@"https://%@/search", [OOAPI URL]];
-    NSDictionary *parameters = @{@"keyword":keyword,
+    NSDictionary *parameters = @{@"keyword":searchTerms,
                                  kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
                                  kKeySearchRadius:[NSNumber numberWithUnsignedInteger:radius],
                                  kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
@@ -214,7 +223,7 @@ NSString *const kKeySearchFilter = @"filter";
                                  kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly],
                                  kKeySearchFilter:filterName};
     
-    //    NSLog (@" URL= %@",urlString);
+    NSLog(@"search URL = %@", urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     

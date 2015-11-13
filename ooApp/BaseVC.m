@@ -42,7 +42,7 @@
         [self.leftNavButton setTitle:kFontIconMenu];
         [self.leftNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                            [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
-                                           UIColorRGB(kColorWhite), NSForegroundColorAttributeName,
+                                           UIColorRGB(kColorYellow), NSForegroundColorAttributeName,
                                            nil] forState:UIControlStateNormal];
         [self.leftNavButton setTarget:self.revealViewController];
         [self.leftNavButton setAction:@selector(revealToggle:)];

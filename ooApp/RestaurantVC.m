@@ -676,6 +676,17 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self showOnMap:coordinate];
 }
 
+- (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell showListSearchingKeywords:(NSArray *)keywords {
+    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+    ListObject *list = [[ListObject alloc] init];
+    list.name = [keywords firstObject];
+    list.listDisplayType = KListDisplayTypeStrip;
+    
+    vc.listItem = list;
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
 - (void)showOnMap:(CLLocationCoordinate2D)location {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"comgooglemaps://?center=%f,%f",location.latitude, location.longitude]];
     if (![[UIApplication sharedApplication] canOpenURL:url]) {
@@ -747,14 +758,15 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         image = info[@"UIImagePickerControllerEditedImage"];
     }
     
+    __weak RestaurantVC *weakSelf = self;
     [OOAPI uploadPhoto:image forRestaurant:_restaurant
                success:^{
-                   [self getMediaItemsForRestaurant];
+                   [weakSelf getMediaItemsForRestaurant];
                } failure:^(NSError *error) {
-                   ;
+
                }];
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
+
+    [weakSelf dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker

@@ -47,17 +47,6 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
-    [self testAPI];
-}
-
-- (void)testAPI {
-    
-}
-
-- (void)printRestaurants {
-    [_restaurants enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSLog(@"rest name = %@",  (RestaurantObject *)obj);
-    }];
 }
 
 - (void)didReceiveMemoryWarning {
