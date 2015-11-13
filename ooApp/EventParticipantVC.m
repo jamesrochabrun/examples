@@ -449,9 +449,9 @@
         _viewShadow.layer.borderWidth= .5;
         
         _subcells=@[
-                    [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_NO],
+                    [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_YES ],
                     [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_DONT_CARE],
-                    [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_YES],
+                    [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_NO],
                     ];
         
         for (EventParticipantVotingSubCell *view in _subcells)  {
@@ -590,7 +590,7 @@
     
     switch (_radioButtonState)  {
         case VOTE_STATE_YES:
-            [_scrollView scrollRectToVisible: CGRectMake(w*2, 0, w,1) animated:animated];
+            [_scrollView scrollRectToVisible: CGRectMake(0, 0, w,1) animated:animated];
             break;
             
         case VOTE_STATE_DONT_CARE:
@@ -598,7 +598,7 @@
             break;
             
         case VOTE_STATE_NO:
-            [_scrollView scrollRectToVisible: CGRectMake(0, 0, w,1) animated:animated];
+            [_scrollView scrollRectToVisible: CGRectMake(w*2, 0, w,1) animated:animated];
             break;
     }
 }
@@ -613,9 +613,9 @@
     }
     int  which=  (int) floorf((x + 10)/w);
     switch (which)  {
-        case 0: _radioButtonState=VOTE_STATE_NO; break;
+        case 0: _radioButtonState=VOTE_STATE_YES; break;
         case 1: _radioButtonState=VOTE_STATE_DONT_CARE; break;
-        case 2: _radioButtonState=VOTE_STATE_YES; break;
+        case 2: _radioButtonState=VOTE_STATE_NO ; break;
     }
     
     //    if ( _vote.vote  != _radioButtonState) {
@@ -905,14 +905,8 @@
 
 - (void) userRequestToSubmit;
 {
-    //    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    //    NSString* string= [NSString  stringWithFormat: @"%@%lu", kKeySubmittedVoteUpPrefix, (unsigned long) self.eventBeingEdited.eventID];
-    //    [ud setBool:YES forKey:string];
-    //    [ud  synchronize];
-    //
     self.votingIsDone= YES;
-    
-    message( @"Need to modify UI in response to user pressing button.");
+    [self setMode: VOTING_MODE_NO_VOTING];
 }
 
 - (void)userPressedProfilePicture: (NSUInteger)userid
