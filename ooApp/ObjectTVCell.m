@@ -56,7 +56,7 @@
         [self addSubview:_locationIcon];
         
         _header = [[UILabel alloc] init];
-        [_header withFont:[UIFont fontWithName:kFontLatoBoldItalic size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
+        [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
         
         _subHeader1 = [[UILabel alloc] init];
         [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];

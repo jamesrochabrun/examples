@@ -26,6 +26,7 @@
 @property (nonatomic, strong) UILabel *isOpen;
 @property (nonatomic, strong) UILabel *distance;
 @property (nonatomic, strong) UIButton *cuisine;
+@property (nonatomic, strong) UIButton *menuButton;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIView *imageOverlay;
 @property (nonatomic, strong) UIButton *locationButton;
@@ -55,7 +56,8 @@
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         
         _imageOverlay = [[UIView alloc] init];
-        _imageOverlay.backgroundColor = UIColorRGBA(kColorOverlay35);
+        _imageOverlay.backgroundColor = UIColorRGBA(kColorOverlay50);
+//        _imageOverlay.alpha = 1;
         [_backgroundImage addSubview:_imageOverlay];
         _imageOverlay.translatesAutoresizingMaskIntoConstraints = NO;
         
@@ -69,7 +71,7 @@
         [self addSubview:_verticalLine4];
         
         _verticalLine1.backgroundColor = _verticalLine2.backgroundColor = UIColorRGBA(kColorWhite);
-        _verticalLine3.backgroundColor = _verticalLine4.backgroundColor = UIColorRGBA(kColorGray);
+        _verticalLine3.backgroundColor = _verticalLine4.backgroundColor = UIColorRGBA(kColorWhite);
         _verticalLine1.translatesAutoresizingMaskIntoConstraints =
         _verticalLine2.translatesAutoresizingMaskIntoConstraints =
         _verticalLine3.translatesAutoresizingMaskIntoConstraints =
@@ -126,7 +128,7 @@
         
 //        _name = [[UILabel alloc] init];
 //        _name.translatesAutoresizingMaskIntoConstraints = NO;
-//        [_name withFont:[UIFont fontWithName:kFontLatoHeavyItalic size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+//        [_name withFont:[UIFont fontWithName:kFontLatoHeavy size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
 //        [self addSubview:_name];
         
         _priceRange = [[UILabel alloc] init];
@@ -136,9 +138,12 @@
 
         _cuisine = [UIButton buttonWithType:UIButtonTypeCustom];
         _cuisine.translatesAutoresizingMaskIntoConstraints = NO;
-        _cuisine.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_cuisine];
-        
+
+        _menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _menuButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:_menuButton];
+
         _distance = [[UILabel alloc] init];
         _distance.translatesAutoresizingMaskIntoConstraints = NO;
         [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
@@ -148,18 +153,18 @@
         _phoneNumber = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
         _phoneNumber.delegate = self;
         _phoneNumber.enabledTextCheckingTypes = NSTextCheckingTypePhoneNumber;
-        [_phoneNumber withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
+        [_phoneNumber withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
         _phoneNumber.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_phoneNumber];
 
         _website = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
-        [_website withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
+        [_website withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorYellow backgroundColor:kColorClear];
         _website.translatesAutoresizingMaskIntoConstraints = NO;
         _website.delegate = self;
         [self addSubview:_website];
         
         _address = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
-        [_address withFont:[UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_address withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         _address.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_address];
         self.backgroundColor = UIColorRGBA(kColorWhite);
@@ -170,7 +175,7 @@
         [self addSubview:_hoursScroll]; //should appear above everything
         
         self.backgroundColor = UIColorRGBA(kColorBlack);
-//        [DebugUtilities addBorderToViews:@[_locationButton]];
+//        [DebugUtilities addBorderToViews:@[_cuisine, _menuButton]];
     }
     return self;
 }
@@ -179,6 +184,11 @@
     _hoursScroll.hidden = !_hoursScroll.hidden;
     [self setNeedsUpdateConstraints];
     [self updateConstraintsIfNeeded];
+}
+
+- (void)goToMenuURL {
+    NSURL *url = [NSURL URLWithString:_restaurant.mobileMenuURL];
+    [_delegate restaurantMainCVCell:self gotoURL:url];
 }
 
 - (void)showOnMap {
@@ -219,7 +229,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange,/* _name*/ _address, _website, _phoneNumber, _distance, _cuisine, _toTryButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange,/* _name*/ _address, _website, _phoneNumber, _distance, _cuisine, _toTryButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -227,7 +237,7 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_cuisine]-[_priceRange]-(spaceInter)-[_hoursButton]-(spaceInter)-[_address]-[_phoneNumber]-[_locationButton(iconButtonDimensions)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_verticalLine3]-[_priceRange]-(spaceInter)-[_hoursButton]-(spaceInter)-[_address]-[_phoneNumber]-[_locationButton(iconButtonDimensions)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_hoursButton(25)][_hoursScroll]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
@@ -284,8 +294,11 @@
                          multiplier:1
                          constant:0]];
     
-
-    [self addConstraint:[NSLayoutConstraint
+    if (!_restaurant.cuisine && !_restaurant.mobileMenuURL) {
+        
+    } else if (_restaurant.cuisine && !_restaurant.mobileMenuURL) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_cuisine]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_cuisine
                          attribute:NSLayoutAttributeCenterX
                          relatedBy:NSLayoutRelationEqual
@@ -293,6 +306,46 @@
                          attribute:NSLayoutAttributeCenterX
                          multiplier:1
                          constant:0]];
+    } else if (!_restaurant.cuisine && _restaurant.mobileMenuURL) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_menuButton]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_menuButton
+                             attribute:NSLayoutAttributeCenterX
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:self
+                             attribute:NSLayoutAttributeCenterX
+                             multiplier:1
+                             constant:0]];
+    } else {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_cuisine]-(spaceInter)-[_verticalLine3(1)]-(spaceInter)-[_menuButton]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_cuisine
+                             attribute:NSLayoutAttributeCenterY
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:_verticalLine3
+                             attribute:NSLayoutAttributeCenterY
+                             multiplier:1
+                             constant:0]];
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_menuButton
+                             attribute:NSLayoutAttributeCenterY
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:_verticalLine3
+                             attribute:NSLayoutAttributeCenterY
+                             multiplier:1
+                             constant:0]];
+
+        
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_verticalLine3
+                             attribute:NSLayoutAttributeCenterX
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:self
+                             attribute:NSLayoutAttributeCenterX
+                             multiplier:1
+                             constant:0]];
+    }
     
     //distance line
     [self addConstraint:[NSLayoutConstraint
@@ -424,13 +477,21 @@
     _address.text = _restaurant.address;
     _website.text = @"Website";
     _phoneNumber.text = _restaurant.phone;
+    
     if (_restaurant.cuisine) {
         [_cuisine withText:[NSString stringWithFormat:@"#%@", _restaurant.cuisine] fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(doCuisineSearch:)];
     } else {
         [_cuisine setTitle:@"" forState:UIControlStateNormal];
     }
     [_cuisine setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-    
+
+    if (_restaurant.mobileMenuURL) {
+        [_menuButton withText:@"Menu" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(goToMenuURL)];
+    } else {
+        [_menuButton setTitle:@"" forState:UIControlStateNormal];
+    }
+    [_menuButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+
     _priceRange.text = [_restaurant priceRangeText];
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
@@ -448,14 +509,14 @@
     [_phoneNumber addLinkToPhoneNumber:_restaurant.phone withRange:range];
     [_phoneNumber setTextColor:UIColorRGBA(kColorYellow)];
     [_phoneNumber setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                    [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader], NSFontAttributeName,
+                                    [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSFontAttributeName,
                                     UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
                                      nil]];
 
     range = [_website.text rangeOfString:_website.text];
     [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
     [_website setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                     [UIFont fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeSubheader], NSFontAttributeName,
+                                     [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSFontAttributeName,
                                      UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
                                      nil]];
     
@@ -526,8 +587,10 @@
             [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                     placeholderImage:nil
                                              success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                                 weakIV.image = [UIImageEffects imageByApplyingBlurToImage:image withRadius:10 tintColor:[UIColor colorWithWhite:0 alpha:0.4] saturationDeltaFactor:0.7 maskImage:nil];
+                                                 
                                                  ON_MAIN_THREAD(^ {
-                                                     weakIV.image = image;
+//                                                     weakIV.image = image;
                                                      
                                                      [weakSelf setNeedsUpdateConstraints];
                                                      [weakSelf setNeedsLayout];

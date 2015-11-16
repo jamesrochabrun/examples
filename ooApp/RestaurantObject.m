@@ -28,6 +28,7 @@ NSString *const kKeyRestaurantPhone = @"phone";
 NSString *const kKeyRestaurantWebsite = @"website";
 NSString *const kKeyRestaurantHours = @"hours";
 NSString *const kKeyRestaurantCuisine = @"cuisine";
+NSString *const kKeyRestaurantMobileMenuURL = @"mobile_menu_url";
 
 @implementation RestaurantObject
 
@@ -94,6 +95,11 @@ NSString *const kKeyRestaurantCuisine = @"cuisine";
         }
         restaurant.hours = restaurantHours;
     }
+    
+    restaurant.mobileMenuURL = [[dict objectForKey:kKeyRestaurantMobileMenuURL] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantMobileMenuURL];
+    
+    //*****set the mobile menu url for testing
+//    restaurant.mobileMenuURL = @"https://foursquare.com/v/4acab395f964a520d8c220e3/device_menu";
     
     return restaurant;
 }

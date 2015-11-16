@@ -24,7 +24,7 @@
         [_xLabel withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorBlack backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
 
         _nameLabel = [[UILabel alloc] init];
-        [_nameLabel withFont:[UIFont fontWithName:kFontLatoMediumItalic size:kGeomFontSizeRemoveButton] textColor:kColorBlack backgroundColor:kColorClear];
+        [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeListButton] textColor:kColorBlack backgroundColor:kColorClear];
         
         [self addSubview:_nameLabel];
         [self addSubview:_xLabel];

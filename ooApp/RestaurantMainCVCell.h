@@ -31,7 +31,7 @@
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;
-@property (nonatomic, strong) id<RestaurantMainCVCellDelegate>delegate;
+@property (nonatomic, weak) id<RestaurantMainCVCellDelegate>delegate;
 
 - (void)setToTry:(BOOL)on;
 - (void)setFavorite:(BOOL)on;

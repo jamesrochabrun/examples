@@ -29,7 +29,7 @@
         _currentLine = [[UIView alloc] init];
         _currentLine.backgroundColor = UIColorRGBA(kColorYellow);
         [self addSubview:_currentLine];
-        self.backgroundColor = UIColorRGBA(kColorOffWhite);
+        self.backgroundColor = UIColorRGBA(kColorOffBlack);
     }
     return  self;
 }
@@ -58,6 +58,7 @@
     
     UIButton *filterControl = [UIButton buttonWithType:UIButtonTypeCustom];
     [filterControl withText:name fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(filterPressed:)];
+    [filterControl setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
     filterControl.tag = [_filterControls count];
     [_filterControls addObject:filterControl];
     
@@ -85,12 +86,13 @@
         if (idx == _current) currentFrame = bFrame;
     }];
     
-//    CGRect lineFrame = _currentLine.frame;
-//    lineFrame.size.height = 2;
-//    lineFrame.size.width = filterSize.width *0.7;
-//    lineFrame.origin.y = CGRectGetHeight(frame) - 5;
-//    lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
-    _currentLine.frame = currentFrame;
+    CGRect lineFrame = _currentLine.frame;
+    lineFrame.size.height = 4;
+    lineFrame.size.width = filterSize.width *0.7;
+    lineFrame.origin.y = CGRectGetHeight(frame) - 8;
+    lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
+//    _currentLine.frame = currentFrame;
+    _currentLine.frame = lineFrame;
 }
 
 - (void)selectFilter:(NSUInteger)which {

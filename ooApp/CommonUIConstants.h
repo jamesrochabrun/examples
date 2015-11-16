@@ -43,7 +43,7 @@ static NSUInteger kColorWhite = 0xFFFFFFFF;
 static NSUInteger kColorRed = 0xFFFF0000;
 static NSUInteger kColorGreen = 0xFF00FF00;
 static NSUInteger kColorBlue = 0xFF0000FF;
-static NSUInteger kColorYellow = 0xFFF9FF00;
+static NSUInteger kColorYellow = 0xFF0076ff;//0xFFF9FF00;
 static NSUInteger kColorStripHeaderShadow = 0x88898989;
 static NSUInteger kColorIconSelected = 0xFFFFFFFF;
 
@@ -51,7 +51,7 @@ static NSUInteger kColorIconSelected = 0xFFFFFFFF;
 static CGFloat kGeomCornerRadius = 3.0;
 static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 13;
-static NSUInteger kGeomFontSizeRemoveButton = 13;
+static NSUInteger kGeomFontSizeListButton = 12;
 static NSUInteger kGeomFontSizeStripHeader = 13;
 static NSUInteger kGeomFontSizeBannerMain = 12;
 static NSUInteger kGeomFontSizeDetail = 11;

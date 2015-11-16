@@ -36,14 +36,14 @@
                         success:(void (^)(id responseObject))success
                         failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure
 {
-    NSLog  (@"GET:  %@", path);
+//    NSLog(@"GET:  %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString* token= userInfo.backendAuthorizationToken;
-    if  (token  &&  token.lowercaseString.length ) {
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSString *token= userInfo.backendAuthorizationToken;
+    if  (token && token.lowercaseString.length ) {
         [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
     } else {
         NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN (NOT NEEDED FOR GET)");
@@ -60,7 +60,7 @@
                          success:(void (^)(id responseObject))success
                          failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure
 {
-    NSLog  (@"POST:  %@", path);
+    NSLog(@"POST: %@", path);
     OONetworkManager *nm = [OONetworkManager sharedRequestManager];
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
@@ -68,11 +68,13 @@
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSString* token= userInfo.backendAuthorizationToken;
     if  (token  &&  token.length ) {
-        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
-    }else {
+        [nm.requestManager.requestSerializer setValue:token.lowercaseString forHTTPHeaderField:@"authorization"];
+    } else {
         NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
     }
     
+//    [nm.requestManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
     NSLog (@"POST PARAMETERS:  %@",parameters);
     NSLog (@"SERIALIZER SAYS HEADERS:  %@", nm.requestManager.requestSerializer.HTTPRequestHeaders);
     NSLog (@"SERIALIZER SAYS TIMEOUT:   %g", nm.requestManager.requestSerializer.timeoutInterval);
