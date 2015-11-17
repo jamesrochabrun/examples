@@ -78,7 +78,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 
 - (void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if ( status==kCLAuthorizationStatusAuthorizedAlways && status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+    if ( status==kCLAuthorizationStatusAuthorizedAlways ||  status == kCLAuthorizationStatusAuthorizedWhenInUse) {
         [[NSNotificationCenter defaultCenter] postNotificationName: kNotificationLocationBecameAvailable object:nil];
         
         self.dontTrackLocation=TRACKING_YES;

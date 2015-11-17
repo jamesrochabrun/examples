@@ -189,6 +189,7 @@ static const double kDefaultSearchRadius = 10000; // meters
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud setDouble:coord.latitude forKey:kDefaultsUserLocationLastKnownLatitude];
     [ud setDouble:coord.longitude forKey:kDefaultsUserLocationLastKnownLongitude];
+    [ud synchronize];
 }
 
 - (double)searchRadius
