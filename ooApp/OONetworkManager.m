@@ -48,6 +48,9 @@
     } else {
         NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN (NOT NEEDED FOR GET)");
     }
+    
+    [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    
     return [nm.requestManager GET:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         success(responseObject);
@@ -73,8 +76,8 @@
         NSLog (@"NOT A PROBLEM FOR POST: MISSING BACKEND AUTHORIZATION TOKEN");
     }
     
-//    [nm.requestManager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    
     NSLog (@"POST PARAMETERS:  %@",parameters);
     NSLog (@"SERIALIZER SAYS HEADERS:  %@", nm.requestManager.requestSerializer.HTTPRequestHeaders);
     NSLog (@"SERIALIZER SAYS TIMEOUT:   %g", nm.requestManager.requestSerializer.timeoutInterval);
@@ -103,6 +106,9 @@
     } else {
         NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
     }
+    
+    [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    
     return [nm.requestManager PUT:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         //        NSLog(@"JSON: %@", responseObject);;
         success(responseObject);
@@ -130,6 +136,8 @@
         NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
     }
     
+    [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    
     return [nm.requestManager DELETE:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -155,6 +163,9 @@
     } else {
         NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN");
     }
+    
+    [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    
     return [nm.requestManager PATCH:path parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         //        NSLog(@"JSON: %@", responseObject);;
         success(responseObject);
