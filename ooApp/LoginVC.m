@@ -710,7 +710,7 @@
                  if  ( urlString ) {
                      UserObject* userInfo= [Settings sharedInstance].userObject;
                      NSString* existingURL= userInfo.imageURLString;
-                     if (!existingURL  ||  ![existingURL isEqualToString: urlString]) {
+                     if ( !existingURL  ||  ![existingURL isEqualToString: urlString]) {
                          
                          // RULE: Only fetch, store and upload the profile image if the URL has changed.
                          

@@ -121,15 +121,16 @@ NSString *const kKeyUserParticipantState = @"participant_state";
     
     profilePhoto= userProfilePhoto;
     
-#if 0
-    [OOAPI uploadUserPhoto:profilePhoto
-                   success:^() {
-                       NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
-                   }
-                   failure:^(NSError *e) {
-                       NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
-                   }];
-#endif
+    // NOTE: The caller makes sure this is seldomly called.
+    [OOAPI uploadPhoto:profilePhoto
+                    to:UPLOAD_DESTINATION_USER_PROFILE
+            identifier:0
+               success:^() {
+                   NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
+               }
+               failure:^(NSError *e) {
+                   NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
+               }];
 }
 
 - (UIImage *)userProfilePhoto;

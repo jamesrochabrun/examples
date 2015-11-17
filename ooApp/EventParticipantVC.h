@@ -1,5 +1,5 @@
 //
-//  EventParticipantVC.h E2
+//  EventParticipantVC.h E2 and E13
 //  ooApp
 //
 //  Created by Zack Smith on 9/16/15.
@@ -10,6 +10,7 @@
 #import "SubBaseVC.h"
 #import "VoteObject.h"
 #import "ParticipantsView.h"
+#import "EventCoordinatorVC.h"
 
 @protocol EventParticipantFirstCellDelegate
 - (void) userRequestToSubmit;
@@ -22,25 +23,32 @@
 - (void) userDidSelect: (NSUInteger) which;
 @end
 
+@protocol EventParticipantVotingSubCellDelegate
+- (void) userPressedRadioButton: (NSInteger)currentValue;
+@end
+
+//------------------------------------------------------------------------------
+
 @interface EventParticipantVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate,
-                EventParticipantFirstCellDelegate,EventParticipantVotingCellDelegate>
+                EventParticipantFirstCellDelegate,EventParticipantVotingCellDelegate,EventCoordinatorVCDelegate>
 
 - (void)setMode:(int)mode;
 @property (nonatomic,assign) BOOL votingIsDone;
 @property (nonatomic,strong) NSString *eventName;
+@property (nonatomic,strong) UIViewController *previousVC;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
 @end
+
+//------------------------------------------------------------------------------
 
 @interface EventParticipantEmptyCell:UITableViewCell
 @end
 
+//------------------------------------------------------------------------------
+
 @interface EventParticipantFirstCell: UITableViewCell <ParticipantsViewDelegate>
 @property (nonatomic,assign) id <EventParticipantFirstCellDelegate> delegate;
 - (void) provideEvent: (EventObject*)event;
-@end
-
-@protocol EventParticipantVotingSubCellDelegate
-- (void) userPressedRadioButton: (NSInteger)currentValue;
 @end
 
 enum  {
@@ -48,6 +56,8 @@ enum  {
     VOTING_MODE_NO_VOTING= 1,
     VOTING_MODE_SHOW_RESULTS= 2,
 };
+
+//------------------------------------------------------------------------------
 
 @interface EventParticipantVotingSubCell : UIView
 
@@ -57,6 +67,8 @@ enum  {
 - (void)setMode:(int)mode;
 
 @end
+
+    //------------------------------------------------------------------------------
 
 @interface EventParticipantVotingCell: UITableViewCell <EventParticipantVotingSubCellDelegate, UIScrollViewDelegate>
 @property (nonatomic,strong) VoteObject  *vote;

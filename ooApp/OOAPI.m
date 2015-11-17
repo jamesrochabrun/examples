@@ -711,7 +711,7 @@ NSString *const kKeySearchFilter = @"filter";
         restaurantIDs = [NSMutableArray array];
         [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             RestaurantObject *ro = (RestaurantObject *)obj;
-            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu", ro.restaurantID]];
+            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu", (unsigned long)ro.restaurantID]];
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -885,7 +885,7 @@ NSString *const kKeySearchFilter = @"filter";
 //------------------------------------------------------------------------------
 // Name:    setParticipationInEvent
 // Purpose:
-// Note:    If user is nil then it is the current user.h
+// Note:    If user is nil then it is the current user.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)setParticipationOf:(UserObject*) user
                                        inEvent:(EventObject *)event
@@ -912,44 +912,27 @@ NSString *const kKeySearchFilter = @"filter";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    //    NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
+    NSNumber *theNewStateValue= participating?  @1: @2;
     
     AFHTTPRequestOperation *op;
-    if (participating) {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users", [OOAPI URL],  (unsigned long)eventID];
-        NSLog (@"POST %@", urlString);
-        op = [rm POST:urlString parameters: @{
-                                              @"user_ids":  @(user.userID)
-                                              }
-              success:^(id responseObject) {
-                  NSInteger identifier= 0;
-                  if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                      NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
-                      identifier= parseIntegerOrNullFromServer(eventID);
-                  }
-                  success(identifier);
-              } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-                  failure(operation, error);
-              }];
-    } else {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users/%lu",
-                               [OOAPI URL],
-                               (unsigned long)eventID, (unsigned long)user.userID];
-        
-        NSLog (@"DELETE %@", urlString);
-        op = [rm DELETE:urlString parameters: nil
-                success:^(id responseObject) {
-                    NSInteger identifier= 0;
-                    if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                        NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
-                        identifier= parseIntegerOrNullFromServer(eventID);
-                    }
-                    success(identifier);
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-                    failure(operation, error);
-                }];
-        
-    }
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users/%lu",
+                           [OOAPI URL],
+                           (unsigned long)eventID, (unsigned long)user.userID];
+    NSLog (@"PATCH %@", urlString);
+    op = [rm PATCH:urlString parameters: @{
+                                           @"participant_state":theNewStateValue
+                                               }
+          
+           success:^(id responseObject) {
+               NSInteger identifier= 0;
+               if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                   NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                   identifier= parseIntegerOrNullFromServer(eventID);
+               }
+               success(identifier);
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               failure(operation, error);
+           }];
     
     return op;
 }
@@ -1034,7 +1017,7 @@ NSString *const kKeySearchFilter = @"filter";
 
 //------------------------------------------------------------------------------
 // Name:    uploadPhoto
-// Purpose: This is the native approach.
+// Purpose: This is the AFNetworking approach.
 //------------------------------------------------------------------------------
 + (void)uploadPhoto:(UIImage *)image
       forRestaurant:(RestaurantObject *)restaurant
@@ -1073,12 +1056,16 @@ NSString *const kKeySearchFilter = @"filter";
 
 
 //------------------------------------------------------------------------------
-// Name:    uploadUserPhoto
+// Name:    uploadPhoto
 // Purpose: This is the native approach.
+// Note:    This uploads the image for the current user.
 //------------------------------------------------------------------------------
-+ (void)uploadUserPhoto:(UIImage *)image
-                success:(void (^)(void))success
-                failure:(void (^)( NSError *error))failure;
+
++ (void)uploadPhoto:(UIImage *)image
+                 to: (UploadDestination )destination
+         identifier: (NSUInteger) identifier
+            success:(void (^)(void))success
+            failure:(void (^)( NSError *error))failure;
 {
     if (!image) {
         failure(nil);
@@ -1091,9 +1078,43 @@ NSString *const kKeySearchFilter = @"filter";
     [APP.diagnosticLogString appendFormat: @"IMAGE DIMENSIONS=  %@\r", NSStringFromCGSize(image.size)];
     [APP.diagnosticLogString appendFormat:@"JPEG IMAGE SIZE=  %lu bytes\r",(unsigned long)[imageData length]];
     
+    NSString *urlString= nil;
+    NSString *postParameter=  @"";
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userID= userInfo.userID;
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], (unsigned long)userID];
+    switch ( destination) {
+        case UPLOAD_DESTINATION_USER_PROFILE:
+            postParameter= @"user_id";
+            if ( !identifier) {
+                identifier=  userInfo.userID;
+            }
+            urlString = [NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            break;
+            
+        case UPLOAD_DESTINATION_RESTAURANT:
+            postParameter= @"restaurant_id";
+            urlString = [NSString stringWithFormat:@"https://%@/restaurants/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            break;
+            
+        case UPLOAD_DESTINATION_EVENT:
+            postParameter= @"event_id";
+            urlString = [NSString stringWithFormat:@"https://%@/events/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            break;
+            
+        case UPLOAD_DESTINATION_LIST:
+            postParameter= @"list_id";
+            urlString = [NSString stringWithFormat:@"https://%@/lists/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            break;
+            
+        case UPLOAD_DESTINATION_GROUP:
+            postParameter= @"group_id";
+            urlString = [NSString stringWithFormat:@"https://%@/groups/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            break;
+            
+        case UPLOAD_DESTINATION_DIAGNOSTIC:
+            postParameter= @"diagnostic";
+            urlString = [NSString stringWithFormat:@"https://%@/users/%lu/diagnostic", [OOAPI URL], (unsigned long) userInfo.userID];
+            break;
+    }
     
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString:urlString]];
     if (!request) {
@@ -1125,6 +1146,12 @@ NSString *const kKeySearchFilter = @"filter";
         [body appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
     }
     
+    // Add the userid as a POST parameter.
+    [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", postParameter] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"%lu\r\n", (unsigned long) identifier] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // All done.
     [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary]
                       dataUsingEncoding:NSUTF8StringEncoding]];
     [request setHTTPBody:body];

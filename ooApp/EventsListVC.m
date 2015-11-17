@@ -143,7 +143,6 @@
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
         });
-        
     }
                                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
                                    NSLog  (@"EVENT FETCHING FAILED  %@",e);
@@ -290,7 +289,7 @@
         }
     }
     
-    cell.backgroundColor = UIColorRGBA(kColorBlack);
+//    cell.backgroundColor = UIColorRGBA(kColorBlack);Fox
     
     return cell;
 }
@@ -499,6 +498,7 @@
         if (section == 2) {
             EventParticipantVC *vc= [[EventParticipantVC alloc] init];
             vc.eventBeingEdited= self.eventBeingEdited;
+            vc.previousVC=  self;
             [self.navigationController pushViewController:vc animated:YES];
             return;
         }
@@ -544,6 +544,7 @@
                                                                   
                                                                   EventParticipantVC* vc= [[EventParticipantVC  alloc] init];
                                                                   vc.eventBeingEdited= event;
+                                                                  vc.previousVC=  self;
                                                                   if ( votingIsDone) {
                                                                       [vc setMode: VOTING_MODE_SHOW_RESULTS];
                                                                   } else {
