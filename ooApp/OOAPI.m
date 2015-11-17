@@ -1033,7 +1033,7 @@ NSString *const kKeySearchFilter = @"filter";
 
 
 //------------------------------------------------------------------------------
-// Name:    uploadUserPhoto
+// Name:    uploadPhoto
 // Purpose: This is the native approach.
 //------------------------------------------------------------------------------
 + (void)uploadPhoto:(UIImage *)image
@@ -1055,7 +1055,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
     NSLog(@"img size = %lu bytes",(unsigned long)[imageData length]);
     
-    NSDictionary *parameters = @{@"restaurant_id": [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
+    NSDictionary *parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
     
     AFHTTPRequestOperation *op;
     

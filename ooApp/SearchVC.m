@@ -34,17 +34,17 @@ typedef enum: char {
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 
 @interface SearchVC ()
-@property (nonatomic,strong) UISearchBar* searchBar;
-@property (nonatomic,strong) OOFilterView* filterView;
-@property (nonatomic,strong) UIButton* buttonCancel;
-@property (nonatomic,strong) UITableView*  tableRestaurants;
-@property (nonatomic,strong) UITableView*  tablePeople;
+@property (nonatomic,strong) UISearchBar *searchBar;
+@property (nonatomic,strong) OOFilterView *filterView;
+@property (nonatomic,strong) UIButton *buttonCancel;
+@property (nonatomic,strong) UITableView *tableRestaurants;
+@property (nonatomic,strong) UITableView *tablePeople;
 @property (nonatomic,assign) FilterType currentFilter;
-@property (nonatomic,strong) NSArray* restaurantsArray;
-@property (nonatomic,strong) NSArray* peopleArray;
+@property (nonatomic,strong) NSArray *restaurantsArray;
+@property (nonatomic,strong) NSArray *peopleArray;
 @property (atomic,assign) BOOL doingSearchNow;
-@property (nonatomic,strong) AFHTTPRequestOperation* fetchOperation;
-@property (nonatomic,strong) NSArray* arrayOfFilterNames;
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
+@property (nonatomic,strong) NSArray *arrayOfFilterNames;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
 @end
 
@@ -59,9 +59,9 @@ typedef enum: char {
     ENTRY;
     [super viewDidLoad];
     
-    self.automaticallyAdjustsScrollViewInsets= NO;
-    self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= WHITE;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.view.autoresizesSubviews = NO;
+    self.view.backgroundColor = UIColorRGBA(kColorBlack);
     
     _arrayOfFilterNames=  @[
                             LOCAL(@"None"),
@@ -80,19 +80,21 @@ typedef enum: char {
     
     self.navTitle = nto;
     
-    _searchBar= [ UISearchBar new];
-    [ self.view  addSubview:_searchBar];
+    _searchBar= [UISearchBar new];
+    [ self.view addSubview:_searchBar];
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
-    _searchBar.backgroundColor = WHITE;
+    _searchBar.backgroundColor = UIColorRGBA(kColorBlack);
     _searchBar.placeholder = LOCAL( @"Type your search here");
-    _searchBar.barTintColor = WHITE;
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
+    _searchBar.barTintColor = UIColorRGBA(kColorBlack);
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
-    _searchBar.delegate= self;
-    _searchBar.keyboardAppearance=UIKeyboardAppearanceDefault;
-    _searchBar.keyboardType= UIKeyboardTypeAlphabet;
-    _searchBar.autocorrectionType= UITextAutocorrectionTypeYes;
+    _searchBar.delegate = self;
+    _searchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
+    _searchBar.keyboardType = UIKeyboardTypeAlphabet;
+    _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
-    _buttonCancel=makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedCancel:), .5);
+    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), CLEAR, self, @selector(userPressedCancel:), .5);
+    [_buttonCancel setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
     
     self.filterView = [[OOFilterView alloc] init];
     [ self.view addSubview:_filterView];
@@ -103,22 +105,24 @@ typedef enum: char {
     _currentFilter = FILTER_PLACES;
     [_filterView setCurrent:2];
     
-    self.tableRestaurants= makeTable (self.view,self);
+    self.tableRestaurants = makeTable(self.view,self);
+    _tableRestaurants.backgroundColor = UIColorRGBA(kColorBlack);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
               forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
     
-    self.tablePeople= makeTable (self.view,self);
+    self.tablePeople = makeTable(self.view,self);
+    _tablePeople.backgroundColor = UIColorRGBA(kColorBlack);
     [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
-    _tablePeople.backgroundColor=  UIColorRGB(0xfff8f8f8);
+//    _tablePeople.backgroundColor = UIColorRGB(0xff000000);
     
     self.activityView=[UIActivityIndicatorView new];
-    [self.view addSubview: _activityView ];
-    _activityView.hidden= YES;
+    [self.view addSubview:_activityView];
+    _activityView.hidden =  YES;
     [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     
-    [self changeFilter: FILTER_PLACES];
-    _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self changeFilter:FILTER_PLACES];
+    _tablePeople.separatorStyle = _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
 //------------------------------------------------------------------------------
