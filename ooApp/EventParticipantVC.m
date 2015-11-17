@@ -1,5 +1,5 @@
 //
-//  EventParticipantVC.m E13
+//  EventParticipantVC.m E2 and E13
 //  ooApp
 //
 //  Created by Zack Smith on 9/16/15.
@@ -19,9 +19,9 @@
 #import "EventWhenVC.h"
 #import "ProfileVC.h"
 #import "RestaurantVC.h"
+#import "EventCoordinatorVC.h"
 
 #import  <QuartzCore/CALayer.h>
-
 
 @interface EventParticipantEmptyCell()
 @property (nonatomic,strong)  UILabel *labelCentered;
@@ -181,6 +181,7 @@
                                                                 target:self
                                                               selector:@selector(callbackCountdown:)
                                                               userInfo:nil repeats:YES];
+        [ self callbackCountdown:nil];
         
     }
     
@@ -255,13 +256,21 @@
     unsigned long  hours= timeRemaining/3600;
     unsigned long  minutes=  (timeRemaining/60)% 60;
     unsigned long  seconds=  timeRemaining% 60;
-    NSString* string= [NSString  stringWithFormat: @"%ld:%02ld:%02ld", hours, minutes, seconds];
-    NSAttributedString* s= attributedStringOf(string, kGeomFontSizeHeader);
-    NSMutableAttributedString *mas=[[NSMutableAttributedString  alloc] initWithAttributedString: s];
     NSAttributedString* lowerString= attributedStringOf( @"\runtil voting closes", kGeomFontSizeDetail);
-    
-    [mas  appendAttributedString:lowerString];
-    _labelTimeLeft.attributedText= mas;
+
+    if ( hours < 48) {
+        NSString* string= [NSString  stringWithFormat: @"%ld:%02ld:%02ld", hours, minutes, seconds];
+        NSAttributedString* s= attributedStringOf(string, kGeomFontSizeHeader);
+        NSMutableAttributedString *mas=[[NSMutableAttributedString  alloc] initWithAttributedString: s];
+        [mas  appendAttributedString:lowerString];
+        _labelTimeLeft.attributedText= mas;
+    } else {
+        NSString* string= [NSString  stringWithFormat: @"%ld days", hours/24];
+        NSAttributedString* s= attributedStringOf(string, kGeomFontSizeHeader);
+        NSMutableAttributedString *mas=[[NSMutableAttributedString  alloc] initWithAttributedString: s];
+        [mas  appendAttributedString:lowerString];
+        _labelTimeLeft.attributedText= mas;
+    }
 }
 
 - (void) refreshUsers
@@ -349,7 +358,7 @@
             _radioButton.titleLabel.numberOfLines=0;
             _radioButton.titleLabel.font= [UIFont fontWithName:kFontLatoRegular size: 6];
             _radioButton.titleLabel.textAlignment= NSTextAlignmentCenter;
-            _radioButton.layer.cornerRadius= 22;
+            _radioButton.layer.cornerRadius= 50;
             _radioButton.layer.borderWidth= 1;
             _radioButton.layer.borderColor= GRAY.CGColor;
             self.backgroundColor= WHITE;
@@ -739,7 +748,6 @@
 #define TABLE_REUSE_FIRST_IDENTIFIER @"participantsCell1st"
 #define TABLE_EMPTY_REUSE_IDENTIFIER  @"participantsEmpty"
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
-    
     [_table registerClass:[EventParticipantEmptyCell class] forCellReuseIdentifier:TABLE_EMPTY_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantVotingCell class] forCellReuseIdentifier:TABLE_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantFirstCell class] forCellReuseIdentifier:TABLE_REUSE_FIRST_IDENTIFIER];
@@ -747,6 +755,19 @@
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     
+    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize
+                   width:kGeomWidthMenuButton
+                  height:kGeomWidthMenuButton
+         backgroundColor:kColorClear
+                  target:self
+                selector:@selector(userPressedMenuButton:)];
+    bbi.customView = moreButton;
+    [moreButton setTitleColor:BLUE forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItems = @[bbi];
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
@@ -783,6 +804,45 @@
     } failure:^{
         NSLog  (@"FAILED TO FETCH VOTES");
     }];
+}
+
+- (void) userPressedMenuButton: (id) sender
+{
+    __weak EventParticipantVC *weakSelf = self;
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
+                                                              message:nil
+                                                       preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *actionMore = [UIAlertAction actionWithTitle:@"Accept or reject invitation"
+                                                     style:UIAlertActionStyleDestructive
+                                                   handler:^(UIAlertAction * action) {
+                                                       [weakSelf transitionToE3L];
+                                                   }];
+    
+    UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                         
+                                                     }];
+    [a addAction:actionMore];
+    [a addAction:actionCancel];
+    
+    [self presentViewController:a animated:YES completion:nil];
+}
+
+- (void) transitionToE3L
+{
+    EventCoordinatorVC*vc= [[EventCoordinatorVC alloc] init];
+    [vc  enableE3LMode];
+    vc.eventBeingEdited=  self.eventBeingEdited;
+    vc.delegate=  self;
+    [self.navigationController pushViewController:vc animated:YES ];
+}
+
+- (void)userDidDeclineEvent
+{
+    self.eventBeingEdited.hasBeenAltered= YES;// XX:  kludge done to force a reload of the event list
+    
+    [self.navigationController popToViewController: self.previousVC animated:YES ];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

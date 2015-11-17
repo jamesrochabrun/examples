@@ -16,4 +16,5 @@
 @interface EventWhenVC : SubBaseVC
 @property (nonatomic,assign) id<EventWhenVCDelegate> delegate;
 @property (nonatomic,strong) EventObject* eventBeingEdited;
+@property (nonatomic,assign) BOOL  editable;
 @end

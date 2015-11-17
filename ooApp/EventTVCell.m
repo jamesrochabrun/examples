@@ -77,10 +77,17 @@
 
 - (void)setMessageMode:(NSString *)message;
 {
+    self.thumbnail.image= nil;
+    self.viewShadow.backgroundColor= CLEAR;
+    self.thumbnail.backgroundColor = CLEAR;
     self.header.text=  message;
     [self hideShadow];
     _isMessage= YES;
-    self.header.textColor= BLACK;
+    self.backgroundColor= CLEAR;
+    self.header.textColor= WHITE;
+    self.header.layer.shadowRadius= 0;
+    self.header.layer.shadowOffset= CGSizeZero;
+    self.header.layer.shadowColor= CLEAR.CGColor;
 }
 
 - (void)setIsFirst

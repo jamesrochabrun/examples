@@ -1,5 +1,5 @@
 //
-//  EventCoordinatorVC.m E3
+//  EventCoordinatorVC.m E3 and E3L.
 //  ooApp
 //
 //  Created by Zack Smith on 9/16/15.
@@ -28,6 +28,8 @@
 
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UIButton* buttonSubmit;
+@property (nonatomic,strong)  UIButton* buttonAccept;
+@property (nonatomic,strong)  UIButton* buttonDecline;
 @property (nonatomic,strong)  UIScrollView* scrollView;
 
 @property (nonatomic,strong)  UIView *viewContainer1;
@@ -77,7 +79,7 @@
 @property (nonatomic,strong) UICollectionViewFlowLayout *cvLayout;
 
 @property (nonatomic,strong) NSTimer *timerForUpdating;
-@property (nonatomic,assign) BOOL transitioning;
+@property (nonatomic,assign) BOOL transitioning,userDidDecide;
 
 @property (nonatomic,strong) ParticipantsView *participantsView;
 
@@ -85,6 +87,7 @@
 
 @implementation EventCoordinatorVC
 {
+    BOOL inE3LMode;
 }
 
 - (void)dealloc
@@ -96,6 +99,11 @@
     [_viewContainer2 removeGestureRecognizer:_tap2];
     [_viewContainer3 removeGestureRecognizer:_tap3];
     [_viewContainer4 removeGestureRecognizer:_tap4];
+}
+
+- (void) enableE3LMode;
+{
+    inE3LMode= YES;
 }
 
 - (void)viewDidLoad
@@ -121,6 +129,7 @@
     moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
     [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:self selector:@selector(userPressedMenuButton:)];
     bbi.customView = moreButton;
+    [moreButton setTitleColor:BLUE forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItems = @[bbi];
     
     self.viewContainer4= makeView(self.scrollView, WHITE);
@@ -155,18 +164,26 @@
     _labelEventCover.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
     _viewContainer1.layer.borderWidth= 1;
     _viewContainer1.layer.borderColor= GRAY.CGColor;
-    NSString* submitButtonMessage;
-    if  (self.eventBeingEdited.isComplete) {
-        submitButtonMessage=@"EVENT SUBMITTED";
+
+    if  (inE3LMode ) {
+        _buttonAccept= makeButton(self.viewContainer1,  @"Accept",kGeomFontSizeHeader, YELLOW, BLACK, self, @selector(doAccept:), 0);
+        _buttonDecline= makeButton(self.viewContainer1,  @"Decline",kGeomFontSizeHeader, YELLOW, BLACK, self, @selector(doDecline:), 0);
     } else {
-        submitButtonMessage=@"SUBMIT EVENT";
-    }
-    _buttonSubmit= makeButton(self.viewContainer1, submitButtonMessage,
-                              kGeomFontSizeHeader, YELLOW, UIColorRGBA(0xb0000000), self, @selector(doSubmit:), 0);
-    _buttonSubmit.titleLabel.numberOfLines= 0;
-    _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
-    _buttonSubmit.enabled= NO;
+        NSString* submitButtonMessage;
+        if  (self.eventBeingEdited.isComplete) {
+            submitButtonMessage=@"EVENT SUBMITTED";
+        } else {
+            submitButtonMessage=@"SUBMIT EVENT";
+        }
     
+        _buttonSubmit= makeButton(self.viewContainer1, submitButtonMessage,
+                                  kGeomFontSizeHeader, YELLOW, UIColorRGBA(0xb0000000), self, @selector(doSubmit:), 0);
+        _buttonSubmit.titleLabel.numberOfLines= 0;
+        _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
+        _buttonSubmit.enabled= NO;
+    }
+    
+    // Second box.
     self.viewContainer2= makeView(self.scrollView, WHITE);
     self.labelWhoPending = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
     self.labelWhoResponded = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
@@ -542,6 +559,7 @@
     
     EventWhoVC* vc= [[EventWhoVC alloc] init];
     vc.delegate= self;
+    vc.editable= !inE3LMode;
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 
@@ -556,6 +574,7 @@
     
     EventWhenVC* vc= [[EventWhenVC alloc] init];
     vc.delegate= self;
+    vc.editable= !inE3LMode;
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -570,6 +589,69 @@
     EmptyListVC* vc= [[EmptyListVC alloc] init];
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+//------------------------------------------------------------------------------
+// Name:    doAccept
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doAccept: (id) sender
+{
+    if ( _userDidDecide) {
+        return;
+    }
+    
+    EventObject* event= self.eventBeingEdited;
+    
+    _userDidDecide=YES;
+    __weak EventCoordinatorVC *weakSelf = self;
+
+    [OOAPI setParticipationOf:nil inEvent:event
+                           to:YES
+                      success:^(NSInteger eventID) {
+                          NSLog (@"USER DID ACCEPT EVENT");
+
+                          ON_MAIN_THREAD(^{
+                              [UIView animateWithDuration: 0.4 animations:^{
+                                  [ weakSelf  doLayout];
+                                  [weakSelf.buttonAccept setTitle: @"Accepted" forState:UIControlStateNormal];
+                              } completion:^(BOOL finished) {
+                              }
+                               ];
+                          });
+                          
+                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          weakSelf.userDidDecide= NO;
+                          
+                          NSLog (@"ERROR WHILE ACCEPTING: %@", error);
+                      }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    doDecline
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doDecline: (id) sender
+{
+    if ( _userDidDecide) {
+        return;
+    }
+    
+    EventObject* event= self.eventBeingEdited;
+    _userDidDecide=YES;
+    
+    UserObject *currentUser= [Settings sharedInstance].userObject;
+    
+    __weak EventCoordinatorVC *weakSelf = self;
+    
+    [OOAPI setParticipationOf:currentUser inEvent:event
+                           to:NO
+                      success:^(NSInteger eventID) {
+                          NSLog (@"USER DID REJECT EVENT");
+                          [weakSelf.delegate userDidDeclineEvent];
+                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          ;
+                      }];
 }
 
 //------------------------------------------------------------------------------
@@ -661,9 +743,22 @@
     _scrollView.contentSize= CGSizeMake(w-1, y);
     
     y=  0;
-    _buttonSubmit.frame=  CGRectMake(0, _viewContainer1.frame.size.height-kGeomHeightButton,
-                                     boxWidth,kGeomHeightButton);
-    _labelEventCover.frame = CGRectMake(0,0,boxWidth,_buttonSubmit.frame.origin.y);
+    
+    float yButtons= _viewContainer1.frame.size.height-kGeomHeightButton;
+    if ( inE3LMode) {
+        const  float separatorWidth= 2;
+        if ( _userDidDecide) {
+            _buttonAccept.frame = CGRectMake(0, yButtons,boxWidth, kGeomHeightButton);
+            _buttonDecline.hidden=  YES;
+        } else {
+            _buttonDecline.hidden=  NO;
+           _buttonAccept.frame = CGRectMake(0, yButtons,boxWidth/2-separatorWidth/2, kGeomHeightButton);
+            _buttonDecline.frame = CGRectMake(boxWidth/2+separatorWidth/2, yButtons,boxWidth/2-separatorWidth/2, kGeomHeightButton);
+        }
+    } else {
+        _buttonSubmit.frame=  CGRectMake(0, yButtons,boxWidth,kGeomHeightButton);
+    }
+    _labelEventCover.frame = CGRectMake(0,0,boxWidth,kGeomHeightButton);
     
     float subBoxWidth= boxWidth/3;
     float subBoxHeight= 2*kGeomEventCoordinatorBoxHeight/3;
@@ -835,7 +930,12 @@
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
     RestaurantVC*vc= [[RestaurantVC alloc] init];
     vc.restaurant= venue;
-    vc.eventBeingEdited= self.eventBeingEdited;
+    
+    // RULE: If we are in the E3L mode, the user cannot remove the restaurant from the event.
+    if  (!inE3LMode) {
+        vc.eventBeingEdited= self.eventBeingEdited;
+    }
+    
     [self.navigationController pushViewController:vc animated:YES ];
 }
 

@@ -13,7 +13,9 @@
 #import "EventWhoVC.h"
 
 @protocol EventCoordinatorVCDelegate
+@optional
 - (void) userDidAlterEvent;
+- (void) userDidDeclineEvent;
 
 @end
 
@@ -21,5 +23,8 @@
                     UICollectionViewDelegate,EventWhenVCDelegate, ParticipantsViewDelegate, EventWhoVCDelegate>
 @property (nonatomic,assign) id <EventCoordinatorVCDelegate> delegate;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
+
+- (void) enableE3LMode;
+
 @end
 

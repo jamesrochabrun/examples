@@ -136,9 +136,20 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
                                         success:(void (^)(NSArray *users))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
-+ (void)uploadUserPhoto:(UIImage *)image
+
+typedef enum:NSUInteger  {
+    UPLOAD_DESTINATION_USER_PROFILE = 1,
+    UPLOAD_DESTINATION_RESTAURANT = 2,
+    UPLOAD_DESTINATION_EVENT = 3,
+    UPLOAD_DESTINATION_LIST = 4,
+    UPLOAD_DESTINATION_GROUP = 5,
+    UPLOAD_DESTINATION_DIAGNOSTIC = 6,
+} UploadDestination;
++ (void)uploadPhoto:(UIImage *)image
+                     to: (UploadDestination )destination
+             identifier: (NSUInteger) identifier
                 success:(void (^)(void))success
-                failure:(void (^)(NSError *error))failure;
+                failure:(void (^)( NSError *error))failure;
 
 + (void)uploadPhoto:(UIImage *)image
       forRestaurant:(RestaurantObject *)restaurant

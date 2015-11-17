@@ -305,38 +305,41 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         NSLog (@"FAILED TO DETERMINE USERS ALREADY ATTACHED TO6 EVENT");
     }];
     
-    // RULE: Identify follower users we could potentially attach this event.
-    [OOAPI getFollowingWithSuccess:^(NSArray *users) {
-        NSLog  (@"USER IS FOLLOWING %lu USERS.", ( unsigned long)users.count);
-        @synchronized(weakSelf.setOfPotentialParticipants) {
-            for (UserObject* user in users) {
-                if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
-                    [self.setOfPotentialParticipants  addObject: user];
-                }
-            }
-        }
-        [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
-    }
-                           failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                               NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
-                           }];
-    
-    // XX:  just at all the users
-    [  OOAPI getAllUsersWithSuccess:^(NSArray *users) {
-        @synchronized(weakSelf.setOfPotentialParticipants) {
-            for (UserObject* user  in  users) {
-                if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
-                    [weakSelf.setOfPotentialParticipants addObject: user];
+    if  (self.editable) {
+        
+        // RULE: Identify follower users we could potentially attach this event.
+        [OOAPI getFollowingWithSuccess:^(NSArray *users) {
+            NSLog  (@"USER IS FOLLOWING %lu USERS.", ( unsigned long)users.count);
+            @synchronized(weakSelf.setOfPotentialParticipants) {
+                for (UserObject* user in users) {
+                    if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
+                        [self.setOfPotentialParticipants  addObject: user];
+                    }
                 }
             }
             [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+        }
+                               failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                   NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
+                               }];
+        
+        // XX:  just at all the users
+        [  OOAPI getAllUsersWithSuccess:^(NSArray *users) {
+            @synchronized(weakSelf.setOfPotentialParticipants) {
+                for (UserObject* user  in  users) {
+                    if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
+                        [weakSelf.setOfPotentialParticipants addObject: user];
+                    }
+                }
+                [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+                
+            }
             
         }
-        
+                                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                    NSLog  (@"CANNOT GET USER LISTING.  %@",error);
+                                }];
     }
-                            failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                NSLog  (@"CANNOT GET USER LISTING.  %@",error);
-                            }];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -407,6 +410,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)addTheirEmailAddress: (NSString*)emailAddress
 {
+    if ( !self.editable) {
+        return;
+    }
+    
     @synchronized(_setOfPotentialParticipants) {
         UserObject *user= makeEmailOnlyUserObject(emailAddress);
         [_setOfPotentialParticipants  addObject: user];
@@ -512,6 +519,9 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 - (void) radioButtonChanged: (BOOL)value for: (id)object;
 {
     if (!object) {
+        return;
+    }
+    if  (!self.editable) {
         return;
     }
     

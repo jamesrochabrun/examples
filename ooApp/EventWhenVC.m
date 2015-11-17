@@ -55,17 +55,15 @@
     self.buttonEventVoting=makeButton(self.view, @"Press here to set.", kGeomFontSizeHeader,  BLACK, CLEAR,
                                     self, @selector(userPressedLowerButton:), 0);
     
-//    self.buttonDuration1= makeButton(self.view,  @"1 HOUR FOR VOTING",
-//                                     kGeomFontSizeHeader,
-//                                     BLACK, CLEAR, self, @selector(userPressDurationButton1:) , 1);
-    
     self.pickerEventDate= [[UIDatePicker  alloc] init];
     self.pickerEventVotingDate= [[UIDatePicker  alloc] init];
     [self.view addSubview: _pickerEventDate ];
     [self.view addSubview: _pickerEventVotingDate];
     _pickerEventDate.backgroundColor= WHITE;
     _pickerEventVotingDate.backgroundColor= WHITE;
-    
+//    _pickerEventDate.enabled= self.editable;
+//    _pickerEventVotingDate.enabled= self.editable;
+
     addShadowTo(_pickerEventDate);
     addShadowTo(_pickerEventVotingDate);
     
@@ -77,10 +75,18 @@
     
     if ( self.eventBeingEdited.date) {
         _pickerEventDate.date= self.eventBeingEdited.date;
-
+        if (!self.editable) {
+            _pickerEventDate.minimumDate= self.eventBeingEdited.date;
+            _pickerEventDate.maximumDate= self.eventBeingEdited.date;
+        }
     }
+    
     if (self.eventBeingEdited.dateWhenVotingClosed ) {
         _pickerEventVotingDate.date= self.eventBeingEdited.dateWhenVotingClosed;
+        if (!self.editable) {
+            _pickerEventVotingDate.minimumDate= self.eventBeingEdited.dateWhenVotingClosed;
+            _pickerEventVotingDate.maximumDate= self.eventBeingEdited.dateWhenVotingClosed;
+        }
     }
     
     _pickerEventDate.hidden= YES;
@@ -127,17 +133,19 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    if  (_lowerDateWasModified ) {
-        [self extractDateTimeFromLowerPicker];
+    if ( self.editable) {
+        
+        if  (_lowerDateWasModified ) {
+            [self extractDateTimeFromLowerPicker];
+        }
+        if ( _upperDateWasModified) {
+            [self extractDateTimeFromUpperPicker];
+        }
+        
+        if ( self.delegate  && (_upperDateWasModified || _lowerDateWasModified)) {
+            [self.delegate datesChanged];
+        }
     }
-    if ( _upperDateWasModified) {
-        [self extractDateTimeFromUpperPicker];
-    }
-    
-    if ( self.delegate  && (_upperDateWasModified || _lowerDateWasModified)) {
-        [self.delegate datesChanged];
-    }
-    
     [super viewWillDisappear:animated];
 }
 

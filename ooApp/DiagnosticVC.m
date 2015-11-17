@@ -82,9 +82,9 @@
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonUploadHugePhoto= makeButton(self.view,  @"UPLOAD HUGE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoHugeUpload:), 1);
-    _buttonUploadHugePhoto.titleLabel.numberOfLines= 0;
-    _buttonUploadHugePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+//    self.buttonUploadHugePhoto= makeButton(self.view,  @"UPLOAD HUGE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoHugeUpload:), 1);
+//    _buttonUploadHugePhoto.titleLabel.numberOfLines= 0;
+//    _buttonUploadHugePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
     _buttonUploadPhoto.titleLabel.numberOfLines= 0;
@@ -174,13 +174,16 @@
 //------------------------------------------------------------------------------
 - (void)doPhotoHugeUpload: (id) sender
 {
-    self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];//@"Huge.jpg"]; got rid of the big image 
-    [OOAPI uploadUserPhoto:self.hugeImage success:^{
-        NSLog  (@"Uploaded huge photo.");
-        [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
-    } failure:^(NSError *error) {
-        NSLog  (@"Failed to upload huge photo. %@",error);
-    }];
+    self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];
+    [OOAPI uploadPhoto:self.hugeImage
+                    to:UPLOAD_DESTINATION_DIAGNOSTIC
+            identifier:0
+               success:^{
+                   NSLog  (@"Uploaded huge photo.");
+                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
+               } failure:^(NSError *error) {
+                   NSLog  (@"Failed to upload huge photo. %@",error);
+               }];
 }
 
 //------------------------------------------------------------------------------
@@ -193,13 +196,16 @@
         message( @"Please take a photo first.");
         return;
     }
-    [OOAPI uploadUserPhoto: _hugeImage success:^{
-        NSLog  (@"Uploaded photo.");
-        
-        [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
-    } failure:^(NSError *error) {
-        NSLog  (@"Failed to upload photo.");
-    }];
+    [OOAPI uploadPhoto: _hugeImage
+                    to:UPLOAD_DESTINATION_DIAGNOSTIC
+            identifier:0
+               success:^{
+                   NSLog  (@"Uploaded photo.");
+                   
+                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
+               } failure:^(NSError *error) {
+                   NSLog  (@"Failed to upload photo.");
+               }];
     
 }
 
@@ -284,8 +290,8 @@
     y+=  spacing +kGeomHeightButton;
     _buttonUploadPhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-    y+=  spacing +kGeomHeightButton;
+//    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+//    y+=  spacing +kGeomHeightButton;
     
     x += buttonWidth+ spacing;
     y= margin;
