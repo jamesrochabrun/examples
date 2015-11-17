@@ -74,8 +74,8 @@ typedef enum: char {
     _currentFilter=FILTER_NONE;
     
     NavTitleObject *nto;
-    nto= [[NavTitleObject alloc]
-          initWithHeader:LOCAL( @"Search")
+    nto = [[NavTitleObject alloc]
+          initWithHeader:LOCAL(@"Search")
           subHeader: LOCAL(@"for restaurants and people")];
     
     self.navTitle = nto;
@@ -103,7 +103,7 @@ typedef enum: char {
     [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];
     [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];
     _currentFilter = FILTER_PLACES;
-    [_filterView setCurrent:2];
+    [_filterView setCurrent:FILTER_PLACES];
     
     self.tableRestaurants = makeTable(self.view,self);
     _tableRestaurants.backgroundColor = UIColorRGBA(kColorBlack);
@@ -114,7 +114,6 @@ typedef enum: char {
     _tablePeople.backgroundColor = UIColorRGBA(kColorBlack);
     [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
-//    _tablePeople.backgroundColor = UIColorRGB(0xff000000);
     
     self.activityView=[UIActivityIndicatorView new];
     [self.view addSubview:_activityView];
@@ -144,7 +143,6 @@ typedef enum: char {
     [super viewWillAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
-    
 }
 
 //------------------------------------------------------------------------------
@@ -163,7 +161,7 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (NSString *)currentFilterName
 {
-    return _arrayOfFilterNames [_currentFilter ];
+    return _arrayOfFilterNames[_currentFilter];
 }
 
 //------------------------------------------------------------------------------
@@ -172,8 +170,8 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)keyboardHidden:(NSNotification *)not
 {
-    _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
-    _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
+    _tableRestaurants.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    _tablePeople.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -205,12 +203,12 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)showSpinner: (id)show
 {
-    float h=  self.view.bounds.size.height;
-    float w=  self.view.bounds.size.width;
-    CGRect r= CGRectMake(w/2-50,h/3,100,100);
-    _activityView.frame= r;
-    _activityView.hidden=  show ? NO:YES;
-    if ( show) {
+    float h =  self.view.bounds.size.height;
+    float w =  self.view.bounds.size.width;
+    CGRect r = CGRectMake(w/2-50,h/3,100,100);
+    _activityView.frame = r;
+    _activityView.hidden =  show ? NO:YES;
+    if (show) {
         [_activityView startAnimating];
     } else {
         [_activityView stopAnimating];
@@ -224,12 +222,12 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)doSearch
 {
-    if ( self.doingSearchNow) {
+    if (self.doingSearchNow) {
         NSLog (@"CANNOT SEARCH NOW");
         return;
     }
     self.doingSearchNow= YES;
-    __weak SearchVC* weakSelf= self;
+    __weak SearchVC *weakSelf= self;
     
     switch (_currentFilter) {
         case  FILTER_NONE:
@@ -255,7 +253,7 @@ typedef enum: char {
                                                                                 waitUntilDone:NO];
                                                     }
                                   ];
-        }break;
+        } break;
             
         case FILTER_LISTS: {
 
@@ -263,7 +261,7 @@ typedef enum: char {
             
         case FILTER_YOU: {
 
-        }break;
+        } break;
             
         case  FILTER_PLACES: {
             [self showSpinner: @""];
@@ -305,15 +303,15 @@ typedef enum: char {
 // Name:    changeFilter
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)changeFilter: (FilterType)which
+- (void)changeFilter:(FilterType)which
 {
-    if  (which ==_currentFilter ) {
+    if  (which == _currentFilter ) {
         return;
     }
     
     [_filterView selectFilter:which];
     
-    self.currentFilter=  which;
+    self.currentFilter = which;
     
     [self updateWhichTableIsVisible];
     
@@ -332,19 +330,19 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    NSString* text= _searchBar.text;
+    NSString* text = _searchBar.text;
     if (!text.length) {
         // Clear the appropriate table; no need to start a search.
         
-        if  (_currentFilter==FILTER_PEOPLE ) {
-            [self  loadPeople: @[]];
+        if (_currentFilter == FILTER_PEOPLE ) {
+            [self loadPeople:@[]];
         } else {
-            [self  loadRestaurants: @[]];
+            [self loadRestaurants:@[]];
         }
         return;
     }
     
-    if ( self.doingSearchNow) {
+    if (self.doingSearchNow) {
         [self cancelSearch];
     }
     [self doSearch];
@@ -356,21 +354,21 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void) updateWhichTableIsVisible
 {
-    if  (_currentFilter==FILTER_PEOPLE ) {
-        _tablePeople.hidden= NO;
-        _tableRestaurants.hidden= YES;
+    if (_currentFilter == FILTER_PEOPLE ) {
+        _tablePeople.hidden = NO;
+        _tableRestaurants.hidden = YES;
     } else {
-        _tablePeople.hidden= YES;
-        _tableRestaurants.hidden= NO;
+        _tablePeople.hidden = YES;
+        _tableRestaurants.hidden = NO;
     }
 }
 
 - (void)clearResultsTables
 {
-    self.restaurantsArray= nil;
+    self.restaurantsArray = nil;
     [self.tableRestaurants reloadData];
     
-    self.peopleArray= nil;
+    self.peopleArray = nil;
     [self.tablePeople reloadData];
 }
 
@@ -380,17 +378,17 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)loadRestaurants: (NSArray*)array
 {
-    [ self showSpinner:nil];
-    self.doingSearchNow= NO;
-    self.fetchOperation= nil;
+    [self showSpinner:nil];
+    self.doingSearchNow = NO;
+    self.fetchOperation = nil;
     
-    self.restaurantsArray= array;
+    self.restaurantsArray = array;
     [self.tableRestaurants reloadData];
     
-    self.peopleArray= nil;
+    self.peopleArray = nil;
     [self.tablePeople reloadData];
 
-    _tablePeople.hidden= YES;
+    _tablePeople.hidden = YES;
     _tableRestaurants.hidden= NO;
 }
 
@@ -401,17 +399,17 @@ typedef enum: char {
 - (void)loadPeople:(NSArray *)array
 {
     [self showSpinner:nil];
-    self.doingSearchNow= NO;
-    self.fetchOperation= nil;
+    self.doingSearchNow = NO;
+    self.fetchOperation = nil;
     
-    self.peopleArray= array;
+    self.peopleArray = array;
     [self.tablePeople reloadData];
     
-    self.restaurantsArray= nil;
+    self.restaurantsArray = nil;
     [self.tableRestaurants reloadData];
 
-    _tablePeople.hidden= NO;
-    _tableRestaurants.hidden= YES;
+    _tablePeople.hidden = NO;
+    _tableRestaurants.hidden = YES;
 }
 
 //------------------------------------------------------------------------------
@@ -420,10 +418,10 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)cancelSearch
 {
-    [ self showSpinner:nil];
-   [self.fetchOperation  cancel];
-    self.fetchOperation= nil;
-    self.doingSearchNow= NO;
+    [self showSpinner:nil];
+    [self.fetchOperation cancel];
+    self.fetchOperation = nil;
+    self.doingSearchNow = NO;
 }
 
 //------------------------------------------------------------------------------
@@ -520,12 +518,12 @@ typedef enum: char {
         return;
     }
     _currentFilter = FILTER_YOU;
-    if  (self.doingSearchNow) {
+    if (self.doingSearchNow) {
         [self cancelSearch];
     }
     
     // RULE: If there is a search string then redo the current search for the new context.
-    if ( _searchBar.text.length) {
+    if (_searchBar.text.length) {
         [self clearResultsTables];
         [self doSearch];
     }
@@ -542,19 +540,19 @@ typedef enum: char {
 
     float y = 0;
     
-    _searchBar.frame=  CGRectMake(0,y,w-kGeomButtonWidth,kGeomHeightSearchBar);
+    _searchBar.frame = CGRectMake(0, y, w-kGeomButtonWidth, kGeomHeightSearchBar);
     
-    _buttonCancel.frame=  CGRectMake( w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
+    _buttonCancel.frame = CGRectMake(w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
                                      y+kGeomCancelButtonInteriorPadding,
                                      kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
                                      kGeomHeightSearchBar+-2*kGeomCancelButtonInteriorPadding);
     y += kGeomHeightSearchBar;
     
-    _filterView.frame=  CGRectMake(0,  y,w,kGeomHeightFilters);
+    _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     y += kGeomHeightButton;
 
-    _tableRestaurants.frame=  CGRectMake(0,y,w, h-y);
-    _tablePeople.frame=  CGRectMake(0,y,w, h-y);
+    _tableRestaurants.frame = CGRectMake(0, y, w, h-y);
+    _tablePeople.frame = CGRectMake(0, y, w, h-y);
 }
 
 //------------------------------------------------------------------------------
@@ -563,11 +561,11 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ( tableView==_tableRestaurants) {
+    if (tableView ==_tableRestaurants) {
         RestaurantTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         if (!cell) {
-            cell=  [[RestaurantTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER ];
+            cell= [[RestaurantTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER ];
         }
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
@@ -585,7 +583,7 @@ typedef enum: char {
         }
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
-            UserObject *user=_peopleArray[row];
+            UserObject *user = _peopleArray[row];
             [cell setUser: user];
         }
         [cell updateConstraintsIfNeeded];
@@ -600,7 +598,7 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
 {
-    if ( UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad )
+    if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad)
         [_searchBar resignFirstResponder];
 }
 
@@ -625,9 +623,9 @@ typedef enum: char {
         return;
     }
     
-    NSInteger row= indexPath.row;
+    NSInteger row = indexPath.row;
     
-    if ( tableView==_tableRestaurants) {
+    if ( tableView == _tableRestaurants) {
         if  (row >= _restaurantsArray.count ) {
             return;
         }
@@ -637,7 +635,7 @@ typedef enum: char {
         RestaurantVC *vc = [[RestaurantVC alloc] init];
         vc.title = trimString(ro.name);
         vc.restaurant = ro;
-        vc.eventBeingEdited= self.eventBeingEdited;
+        vc.eventBeingEdited = self.eventBeingEdited;
         [self.navigationController pushViewController:vc animated:YES];
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -649,12 +647,11 @@ typedef enum: char {
         
         UserObject *u = [_peopleArray objectAtIndex:indexPath.row];
         
-        ProfileVC *vc= [[ProfileVC  alloc]   init];
-        vc.userID= u.userID;
-        vc.userInfo= u;
+        ProfileVC *vc = [[ProfileVC  alloc]   init];
+        vc.userID = u.userID;
+        vc.userInfo = u;
         
         [self.navigationController pushViewController:vc animated:YES];
-       
     }
 }
 
@@ -664,11 +661,11 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if  (self.doingSearchNow) {
+    if (self.doingSearchNow) {
         return 0;
     }
     
-    if ( tableView==_tableRestaurants) {
+    if ( tableView ==_tableRestaurants) {
         return self.restaurantsArray.count;
     }  else {
         return self.peopleArray.count;
