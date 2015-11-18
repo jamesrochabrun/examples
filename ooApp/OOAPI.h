@@ -36,16 +36,16 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
-                                         success:(void (^)(RestaurantObject *restaurants))success
-                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                        success:(void (^)(RestaurantObject *restaurants))success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantsWithKeywords:(NSArray *)keywords
-                                          andLocation:(CLLocationCoordinate2D)location
-                                            andFilter:(NSString *)filterName
-                                          andOpenOnly:(BOOL)openOnly
-                                                 andSort:(SearchSortType)sort
-                                              success:(void (^)(NSArray *restaurants))success
-                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                           andLocation:(CLLocationCoordinate2D)location
+                                             andFilter:(NSString *)filterName
+                                           andOpenOnly:(BOOL)openOnly
+                                               andSort:(SearchSortType)sort
+                                               success:(void (^)(NSArray *restaurants))success
+                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(NSString *)imageRef
                                                   maxWidth:(NSUInteger)maxWidth
@@ -54,10 +54,10 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantImageWithMediaItem:(MediaItemObject *)mediaItem
-                                                  maxWidth:(NSUInteger)maxWidth
-                                                 maxHeight:(NSUInteger)maxHeight
-                                                   success:(void (^)(NSString *link))success
-                                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                                   maxWidth:(NSUInteger)maxWidth
+                                                  maxHeight:(NSUInteger)maxHeight
+                                                    success:(void (^)(NSString *link))success
+                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)deleteRestaurant:(NSUInteger)restaurantID fromList:(NSUInteger)listID
                                      success:(void (^)(NSArray *lists))success
@@ -88,20 +88,20 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getListsOfUser:(NSUInteger)userID withRestaurant:(NSUInteger)restaurantID
-                                  success:(void (^)(NSArray *lists))success
-                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                   success:(void (^)(NSArray *lists))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
-                                            success:(void (^)(NSArray *restaurants))success
-                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                             success:(void (^)(NSArray *restaurants))success
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getMediaItemsForRestaurant:(RestaurantObject *)restaurant
                                                success:(void (^)(NSArray *mediaItems))success
                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)deleteList:(NSUInteger)listID
-                                     success:(void (^)(NSArray *lists))success
-                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                               success:(void (^)(NSArray *lists))success
+                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 
 //------------------------------------------------------------------------------
@@ -119,19 +119,19 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)isFollowingUser:(UserObject *) user
-                                     success:(void (^)(BOOL))success
-                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                    success:(void (^)(BOOL))success
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)lookupUserByID:(NSUInteger)userID
                                    success:(void (^)(UserObject *user))success
-                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getFollowersOf: (unsigned long)userid
                                    success:(void (^)(NSArray *users))success
-                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
-                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getUsersWithKeyword:(NSString *)keyword
                                         success:(void (^)(NSArray *users))success
@@ -146,10 +146,10 @@ typedef enum:NSUInteger  {
     UPLOAD_DESTINATION_DIAGNOSTIC = 6,
 } UploadDestination;
 + (void)uploadPhoto:(UIImage *)image
-                     to: (UploadDestination )destination
-             identifier: (NSUInteger) identifier
-                success:(void (^)(void))success
-                failure:(void (^)( NSError *error))failure;
+                 to: (UploadDestination )destination
+         identifier: (NSUInteger) identifier
+            success:(void (^)(void))success
+            failure:(void (^)( NSError *error))failure;
 
 + (void)uploadPhoto:(UIImage *)image
       forRestaurant:(RestaurantObject *)restaurant
@@ -161,8 +161,8 @@ typedef enum:NSUInteger  {
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure;
 
 + (AFHTTPRequestOperation *)lookupUserByEmail:(NSString *)emailString
-                                   success:(void (^)(UserObject *))success
-                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure;
+                                      success:(void (^)(UserObject *))success
+                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure;
 
 + (AFHTTPRequestOperation *)fetchSampleUsernamesFor:(NSString *)emailAddressString
                                             success:(void (^)(NSArray *names))success
@@ -237,11 +237,11 @@ typedef enum:NSUInteger  {
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
-                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getVotesForEvent:(EventObject*)event
-                                    success:(void (^)(NSArray *votes))success
-                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                     success:(void (^)(NSArray *votes))success
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)setVoteTo:(NSInteger)  vote
                              forEvent:(NSUInteger) eventID
@@ -253,7 +253,8 @@ typedef enum:NSUInteger  {
                                            success:(void (^)(NSArray *venues))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)getFeed:(void (^)(NSArray *feedItems))success
-                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getFeedItemsNewerThan:(time_t)timestamp
+                                          success:(void (^)(NSArray *feedItems))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 @end

@@ -14,6 +14,7 @@
 #import "GroupObject.h"
 #import "AppDelegate.h"
 #import "VoteObject.h"
+#import "FeedObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -240,30 +241,35 @@ NSString *const kKeySearchFilter = @"filter";
     }];
 }
 
-+ (AFHTTPRequestOperation *)getFeed:(void (^)(NSArray *feedItems))success
-                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
++ (AFHTTPRequestOperation *)getFeedItemsNewerThan:(time_t)timestamp
+                                          success:(void (^)(NSArray *feedItems))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
-
+    
     NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/feed", [OOAPI URL], (unsigned long)userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        NSMutableArray *feedItems = [NSMutableArray array];
-        for (id dict in responseObject) {
-            EventObject *eo = [EventObject eventFromDictionary:dict];
-            if (eo) {
-                NSLog(@"parsed event: %@", eo.name);
-                [feedItems addObject:eo];
-            }
-        }
-        success(feedItems);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-        NSLog(@"Error: %@", error);
-        failure(operation, error);
-    }];
+    return [rm GET:urlString parameters: @{
+                                           @"timestamp": @(timestamp)
+                                           }
+           success:^(id responseObject) {
+               NSMutableArray *feedItems = [NSMutableArray array];
+               for (id dict in responseObject) {
+                   FeedObject *item = [FeedObject feedObjectFromDictionary:dict];
+                   if (item) {
+                       NSLog(@"parsed feed item: %@", item.textToDisplay);
+                       [feedItems addObject: item];
+                   }
+               }
+               success(feedItems);
+           }
+           failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               NSLog(@"Error: %@", error);
+               failure(operation, error);
+           }];
 }
 
 //------------------------------------------------------------------------------
@@ -1279,7 +1285,7 @@ NSString *const kKeySearchFilter = @"filter";
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
+//        NSLog  (@"RESPONSE TO EVENTS QUERY: %@",responseObject);
         if ( [responseObject isKindOfClass:[NSArray class]]) {
             NSMutableArray *events = [NSMutableArray array];
             for (id dict in responseObject) {

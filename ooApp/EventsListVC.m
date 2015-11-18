@@ -59,6 +59,10 @@
     
     self.eventBeingEdited= nil;
     
+    self.yourEventsArray= @[];
+    self.curatedEventsArray= @[];
+    self.incompleteEventsArray= @[];
+    
     _tableSectionNames= @[
                           @"YOUR EVENTS",
                           @"INCOMPLETE EVENTS",
@@ -145,7 +149,7 @@
         });
     }
                                failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                                   NSLog  (@"EVENT FETCHING FAILED  %@",e);
+                                   NSLog  (@"CURATED EVENT FETCHING FAILED  %@",e);
                                }
      ];
     
@@ -289,8 +293,6 @@
         }
     }
     
-//    cell.backgroundColor = UIColorRGBA(kColorBlack);Fox
-    
     return cell;
 }
 
@@ -300,8 +302,7 @@
 //------------------------------------------------------------------------------
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
-//    return 3;
+    return 3;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
