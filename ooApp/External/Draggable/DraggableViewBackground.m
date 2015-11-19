@@ -32,8 +32,8 @@
 //this makes it so only two cards are loaded at a time to
 //avoid performance and memory costs
 static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any given time, must be greater than 1
-static const float CARD_HEIGHT = 386; //%%% height of the draggable card
-static const float CARD_WIDTH = 290; //%%% width of the draggable card
+//static const float CARD_HEIGHT = 386; //%%% height of the draggable card
+//static const float CARD_WIDTH = 290; //%%% width of the draggable card
 
 //@synthesize exampleCardLabels; //%%% all the labels I'm using as example data at the moment
 @synthesize allCards;//%%% all the cards
@@ -61,6 +61,7 @@ static const float CARD_WIDTH = 290; //%%% width of the draggable card
     [api getRestaurantsWithKeywords:@[@"thai",@"mexican",@"burgers"]
                         andLocation:[[LocationManager sharedInstance] currentUserLocation]
                           andFilter:@""
+                          andRadius:15000
                         andOpenOnly:NO
                             andSort:kSearchSortTypeBestMatch
                             success:^(NSArray *r) {

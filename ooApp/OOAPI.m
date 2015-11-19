@@ -43,7 +43,7 @@ NSString *const kKeySearchFilter = @"filter";
                                           success:(void (^)(NSArray *restaurants))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants", kHTTPProtocol, [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -66,7 +66,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                success:(void (^)(NSArray *mediaItems))success
                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%lu/photos", [self ooURL], ( unsigned long) restaurant.restaurantID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL], ( unsigned long) restaurant.restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -90,7 +90,7 @@ NSString *const kKeySearchFilter = @"filter";
 {
     if (!restaurantId) return nil;
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/%@?source=%lu", [self ooURL], restaurantId,( unsigned long) source];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@?source=%lu", kHTTPProtocol, [self ooURL], restaurantId,( unsigned long) source];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -120,7 +120,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                    success:(void (^)(NSString *link))success
                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/photos", kHTTPProtocol, [self ooURL]];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -148,7 +148,7 @@ NSString *const kKeySearchFilter = @"filter";
                                                    success:(void (^)(NSString *link))success
                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants/photos", [self ooURL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/photos", kHTTPProtocol, [self ooURL]];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
 
@@ -183,6 +183,7 @@ NSString *const kKeySearchFilter = @"filter";
 - (AFHTTPRequestOperation *)getRestaurantsWithKeywords:(NSArray *)keywords
                                           andLocation:(CLLocationCoordinate2D)location
                                             andFilter:(NSString*)filterName
+                                             andRadius:(CGFloat)radius
                                           andOpenOnly:(BOOL)openOnly
                                               andSort:(SearchSortType)sort
                                               success:(void (^)(NSArray *restaurants))success
@@ -211,9 +212,11 @@ NSString *const kKeySearchFilter = @"filter";
         sort = kSearchSortTypeBestMatch;
     }
     
-    double radius= [Settings sharedInstance].searchRadius;
+    if (!radius) {
+        radius = [Settings sharedInstance].searchRadius;
+    }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/search", [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/search", kHTTPProtocol, [OOAPI URL]];
     NSDictionary *parameters = @{@"keyword":searchTerms,
                                  kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
                                  kKeySearchRadius:[NSNumber numberWithUnsignedInteger:radius],
@@ -248,7 +251,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/feed", [OOAPI URL], (unsigned long)userID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/feed", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -279,7 +282,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)getAllUsersWithSuccess:(void (^)(NSArray *users))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users", [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users", kHTTPProtocol, [OOAPI URL]];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -312,7 +315,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/search/users", [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/search/users", kHTTPProtocol, [OOAPI URL]];
     NSDictionary *parameters = @{
                                  @"keyword":keyword,
                                  };
@@ -347,7 +350,7 @@ NSString *const kKeySearchFilter = @"filter";
         failure (nil,nil);
         return nil;
     }
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu", [OOAPI URL],  (unsigned long)userID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:  nil
@@ -368,7 +371,7 @@ NSString *const kKeySearchFilter = @"filter";
                                     success:(void (^)(NSArray *dishes))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/dishes", [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/dishes", kHTTPProtocol, [OOAPI URL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     
@@ -400,7 +403,7 @@ NSString *const kKeySearchFilter = @"filter";
     if (restaurantID) {
         restaurantResource = [NSString stringWithFormat:@"/restaurants/%ld", (long)restaurantID];
     }
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%ld%@/lists",
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%ld%@/lists", kHTTPProtocol,
                            [OOAPI URL], (long)userID, restaurantResource];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -424,7 +427,7 @@ NSString *const kKeySearchFilter = @"filter";
                                      success:(void (^)(NSArray *lists))success
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu/restaurants/%lu",
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu/restaurants/%lu", kHTTPProtocol,
                            [OOAPI URL], (unsigned long)listID, (unsigned long)restaurantID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -451,7 +454,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/emails/%@",
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/emails/%@", kHTTPProtocol,
                            [OOAPI URL], emailString];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -479,7 +482,7 @@ NSString *const kKeySearchFilter = @"filter";
                                success:(void (^)(NSArray *))success
                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu",
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu", kHTTPProtocol,
                            [OOAPI URL], (unsigned long)listID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -505,7 +508,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/usernames/%@",
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/usernames/%@", kHTTPProtocol,
                            [OOAPI URL], string];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -536,7 +539,7 @@ NSString *const kKeySearchFilter = @"filter";
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
     
-    NSString *requestString =[NSString stringWithFormat:@"https://%@/users/%lu", [OOAPI URL], (unsigned long)userID];
+    NSString *requestString =[NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
     requestString = [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
     
@@ -561,7 +564,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/usernames?email=%@",
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/usernames?email=%@", kHTTPProtocol,
                            [OOAPI URL], emailAddressString];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -579,7 +582,7 @@ NSString *const kKeySearchFilter = @"filter";
                                              success:(void (^)(NSArray *restaurants))success
                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%ld/restaurants",
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%ld/restaurants", kHTTPProtocol,
                            [OOAPI URL],
                            (long)listID];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
@@ -609,7 +612,7 @@ NSString *const kKeySearchFilter = @"filter";
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/restaurants", [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants", kHTTPProtocol, [OOAPI URL]];
     
     AFHTTPRequestOperation *op = [rm POST:urlString
                                parameters:[RestaurantObject dictFromRestaurant:restaurant]
@@ -641,7 +644,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/lists", [OOAPI URL], (unsigned long)userID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/lists", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     NSDictionary *parameters = @{
                                  @"name":listName,
                                  @"type":[NSString stringWithFormat:@"%d", kListTypeUser],
@@ -684,7 +687,7 @@ NSString *const kKeySearchFilter = @"filter";
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/lists/%lu/restaurants", [OOAPI URL], (unsigned long)listID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)listID];
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
@@ -730,9 +733,9 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSString *urlString;
     if (listType == kListTypeFavorites) {
-        urlString = [NSString stringWithFormat:@"https://%@/users/%lu/favorites/restaurants", [OOAPI URL], (unsigned long)userID];
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/favorites/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     } else if (listType == kListTypeToTry) {
-        urlString = [NSString stringWithFormat:@"https://%@/users/%lu/totry/restaurants", [OOAPI URL], (unsigned long)userID];
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/totry/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     } else {
         failure(nil,nil);
         return nil;
@@ -765,7 +768,7 @@ NSString *const kKeySearchFilter = @"filter";
                                             success:(void (^)(NSString *link))success
                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/photos", [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/photos", kHTTPProtocol, [OOAPI URL]];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -813,7 +816,7 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/follow/%lu", [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/follow/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
     
     return [rm GET:urlString parameters:nil
            success:^(id responseObject) {
@@ -865,7 +868,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     AFHTTPRequestOperation *op;
     if (following) {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following", [OOAPI URL], (unsigned long)selfUserID];
+        NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/following", kHTTPProtocol, [OOAPI URL], (unsigned long)selfUserID];
         op = [rm POST: urlString parameters: @{
                                                @"user_id": @(otherUserID)
                                               }
@@ -875,7 +878,7 @@ NSString *const kKeySearchFilter = @"filter";
                  failure(operation, error);
              }];
     } else {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following/%lu", [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
+        NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/following/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
         op = [rm DELETE: urlString parameters:nil
                 success:^(id responseObject) {
                     success(responseObject);
@@ -921,8 +924,8 @@ NSString *const kKeySearchFilter = @"filter";
     NSNumber *theNewStateValue= participating?  @1: @2;
     
     AFHTTPRequestOperation *op;
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users/%lu",
-                           [OOAPI URL],
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users/%lu",
+                           kHTTPProtocol, [OOAPI URL],
                            (unsigned long)eventID, (unsigned long)user.userID];
     NSLog (@"PATCH %@", urlString);
     op = [rm PATCH:urlString parameters: @{
@@ -954,7 +957,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSInteger eventID = eo.eventID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/restaurants", [OOAPI URL], (unsigned long)eventID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%ld/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)eventID];
     
     AFHTTPRequestOperation *op;
     
@@ -998,7 +1001,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSInteger eventID = eo.eventID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users", [OOAPI URL], (unsigned long)eventID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users", kHTTPProtocol, [OOAPI URL], (unsigned long)eventID];
     
     AFHTTPRequestOperation *op;
     
@@ -1048,7 +1051,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     AFHTTPRequestOperation *op;
     
-    op = [rm POST:[NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], (unsigned long)userID] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    op = [rm POST:[NSString stringWithFormat:@"%@://%@/users/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long)userID] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFileData:imageData name:@"upload" fileName:@"photo.png" mimeType:@"image/png"];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@ ***** %@", operation.responseString, responseObject);
@@ -1093,32 +1096,32 @@ NSString *const kKeySearchFilter = @"filter";
             if ( !identifier) {
                 identifier=  userInfo.userID;
             }
-            urlString = [NSString stringWithFormat:@"https://%@/users/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
             break;
             
         case UPLOAD_DESTINATION_RESTAURANT:
             postParameter= @"restaurant_id";
-            urlString = [NSString stringWithFormat:@"https://%@/restaurants/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
             break;
             
         case UPLOAD_DESTINATION_EVENT:
             postParameter= @"event_id";
-            urlString = [NSString stringWithFormat:@"https://%@/events/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
             break;
             
         case UPLOAD_DESTINATION_LIST:
             postParameter= @"list_id";
-            urlString = [NSString stringWithFormat:@"https://%@/lists/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
             break;
             
         case UPLOAD_DESTINATION_GROUP:
             postParameter= @"group_id";
-            urlString = [NSString stringWithFormat:@"https://%@/groups/%lu/photos", [OOAPI URL], (unsigned long) identifier];
+            urlString = [NSString stringWithFormat:@"%@://%@/groups/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
             break;
             
         case UPLOAD_DESTINATION_DIAGNOSTIC:
             postParameter= @"diagnostic";
-            urlString = [NSString stringWithFormat:@"https://%@/users/%lu/diagnostic", [OOAPI URL], (unsigned long) userInfo.userID];
+            urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/diagnostic", kHTTPProtocol, [OOAPI URL], (unsigned long) userInfo.userID];
             break;
     }
     
@@ -1197,8 +1200,8 @@ NSString *const kKeySearchFilter = @"filter";
         failure (nil,nil);
         return nil;
     }
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu",
-                           [OOAPI URL], (unsigned long)eventID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu",
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)eventID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -1217,7 +1220,7 @@ NSString *const kKeySearchFilter = @"filter";
                                      success:(void (^)(NSArray *events))success
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/events",[OOAPI URL], (unsigned long)identifier];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/events", kHTTPProtocol, [OOAPI URL], (unsigned long)identifier];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1251,7 +1254,7 @@ NSString *const kKeySearchFilter = @"filter";
                                  success:(void (^)(EventObject *event))success
                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu",[OOAPI URL], (unsigned long)identifier];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)identifier];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1280,7 +1283,7 @@ NSString *const kKeySearchFilter = @"filter";
 + (AFHTTPRequestOperation *)getCuratedEventsWithSuccess:(void (^)(NSArray *events))success
                                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events",[OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events", kHTTPProtocol, [OOAPI URL]];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1343,7 +1346,7 @@ NSString *const kKeySearchFilter = @"filter";
     }
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/restaurants", [OOAPI URL],
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/restaurants", kHTTPProtocol, [OOAPI URL],
                            (unsigned long)event.eventID];
     
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
@@ -1390,7 +1393,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/restaurants", [OOAPI URL],
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/restaurants", kHTTPProtocol, [OOAPI URL],
                            (unsigned long)event.eventID];
     
     AFHTTPRequestOperation *op = [rm DELETE: urlString parameters:parameters
@@ -1422,7 +1425,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/events", [OOAPI URL], (unsigned long)userid];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/events", kHTTPProtocol, [OOAPI URL], (unsigned long)userid];
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
     
@@ -1465,7 +1468,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu", [OOAPI URL],  (unsigned long)eo.eventID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu", kHTTPProtocol, [OOAPI URL],  (unsigned long)eo.eventID];
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
     
@@ -1487,7 +1490,7 @@ NSString *const kKeySearchFilter = @"filter";
                                    success:(void (^)(NSArray *users))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/followers", [OOAPI URL], (unsigned long)userid];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/followers", kHTTPProtocol, [OOAPI URL], (unsigned long)userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1518,7 +1521,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following", [OOAPI URL], (unsigned long)userid];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/following", kHTTPProtocol, [OOAPI URL], (unsigned long)userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1549,8 +1552,8 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/groups",
-                           [OOAPI URL], (unsigned long)userid];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/groups",
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)userid];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil
@@ -1586,8 +1589,8 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/groups/%lu/users",
-                           [OOAPI URL], (unsigned long)groupID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/groups/%lu/users",
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)groupID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil
@@ -1624,8 +1627,8 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%lu/users/%lu",
-                           [OOAPI URL],
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users/%lu",
+                           kHTTPProtocol, [OOAPI URL],
                            (unsigned long)event.eventID,
                            ( unsigned long) userID];
     
@@ -1668,7 +1671,7 @@ NSString *const kKeySearchFilter = @"filter";
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes", [OOAPI URL], (unsigned long)event.eventID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%ld/votes", kHTTPProtocol, [OOAPI URL], (unsigned long)event.eventID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1697,7 +1700,7 @@ NSString *const kKeySearchFilter = @"filter";
                                            success:(void (^)(NSArray *venues))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/events/%ld/votes/results", [OOAPI URL], (unsigned long)eventID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%ld/votes/results", kHTTPProtocol, [OOAPI URL], (unsigned long)eventID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1747,7 +1750,7 @@ NSString *const kKeySearchFilter = @"filter";
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     AFHTTPRequestOperation *op;
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/votes", [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/votes", kHTTPProtocol, [OOAPI URL]];
     
     op = [rm POST:urlString parameters: @{
                                           @"user_id": @(userID),

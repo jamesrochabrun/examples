@@ -42,6 +42,7 @@ static NSString* const kPhotoUploadPath=  @"/users/picture";
 - (AFHTTPRequestOperation *)getRestaurantsWithKeywords:(NSArray *)keywords
                                            andLocation:(CLLocationCoordinate2D)location
                                              andFilter:(NSString *)filterName
+                                             andRadius:(CGFloat)radius
                                            andOpenOnly:(BOOL)openOnly
                                                andSort:(SearchSortType)sort
                                                success:(void (^)(NSArray *restaurants))success

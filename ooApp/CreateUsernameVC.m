@@ -231,7 +231,7 @@
     UserObject* userInfo= [Settings sharedInstance].userObject;
     NSUInteger userid= userInfo.userID;
     
-    NSString *requestString=[NSString stringWithFormat: @"https://%@/users/%lu",
+    NSString *requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
                    kOOURL, (unsigned long)userid];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];

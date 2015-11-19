@@ -327,7 +327,7 @@
     md5 = [md5 lowercaseString];
     seekingToken= YES;
     
-    requestString = [NSString stringWithFormat:  @"https://%@/users?needtoken=%@&device=%@", kOOURL, md5,
+    requestString = [NSString stringWithFormat:  @"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol, kOOURL, md5,
                      [Settings sharedInstance].uniqueDeviceKey
                      ];
     
@@ -564,7 +564,7 @@
         UserObject* userInfo= [Settings sharedInstance].userObject;
         NSUInteger userid= userInfo.userID;
         
-        requestString=[NSString stringWithFormat: @"https://%@/users/%lu",
+        requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
                        kOOURL,( unsigned long) userid];
         
         requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
@@ -596,7 +596,7 @@
 
     }else {
         
-        NSString* requestString=[NSString stringWithFormat: @"https://%@/users",
+        NSString* requestString=[NSString stringWithFormat: @"%@://%@/users", kHTTPProtocol,
                                  kOOURL
                                  ];
         NSLog (@"requestString  %@",requestString);
