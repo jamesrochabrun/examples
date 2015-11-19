@@ -116,20 +116,21 @@
     }
     _nameHeader = header;
     [self addSubview: header];
+    _nameHeader.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
 - (void)updateConstraints {
     [super updateConstraints];
-    
-    [self removeConstraints:self.tnConstraints];
-    
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
-    
-    UIView *superview = self, *tn = self.thumbnail, *shadow = self.viewShadow;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn, shadow);
-
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[shadow]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tn]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
+//    
+//    UIView *superview = self, *tn = self.thumbnail, *shadow = self.viewShadow;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn, shadow);
+//
+//    [self removeConstraints:self.tnConstraints];
+//    [self removeConstraints:self.shadowConstraints];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[shadow]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tn]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)layoutSubviews
