@@ -56,7 +56,7 @@
 
 -(void)setupView
 {
-    self.layer.cornerRadius = 4;
+    self.layer.cornerRadius = kGeomCornerRadius;
     self.layer.shadowRadius = 3;
     self.layer.shadowOpacity = 0.2;
     self.layer.shadowOffset = CGSizeMake(1, 1);
@@ -124,15 +124,19 @@
 }
 
 //%%% checks to see if you are moving right or left and applies the correct overlay image
--(void)updateOverlay:(CGFloat)distance
+- (void)updateOverlay:(CGFloat)distance
 {
+    CGRect frame = overlayView.frame;
     if (distance > 0) {
         overlayView.mode = GGOverlayViewModeRight;
+        frame.origin = CGPointMake(width(self) - width(overlayView) -  20, 20);
     } else {
         overlayView.mode = GGOverlayViewModeLeft;
+        frame.origin = CGPointMake(20, 20);
     }
+    overlayView.frame = frame;
     
-    overlayView.alpha = MIN(fabs(distance)/100, 0.4);
+    overlayView.alpha = MIN(fabs(distance)/100, 0.9);
 }
 
 //%%% called when the card is let go
@@ -153,7 +157,7 @@
 }
 
 //%%% called when a swipe exceeds the ACTION_MARGIN to the right
--(void)rightAction
+- (void)rightAction
 {
     CGPoint finishPoint = CGPointMake(500, 2*yFromCenter +self.originalPoint.y);
     [UIView animateWithDuration:0.3
@@ -169,7 +173,7 @@
 }
 
 //%%% called when a swip exceeds the ACTION_MARGIN to the left
--(void)leftAction
+- (void)leftAction
 {
     CGPoint finishPoint = CGPointMake(-500, 2*yFromCenter +self.originalPoint.y);
     [UIView animateWithDuration:0.3
@@ -181,10 +185,10 @@
     
     [delegate cardSwipedLeft:self];
     
-    NSLog(@"NO");
+    NSLog(@"TODO: add to don't show again list");
 }
 
--(void)rightClickAction
+- (void)rightClickAction
 {
     CGPoint finishPoint = CGPointMake(600, self.center.y);
     [UIView animateWithDuration:0.3
@@ -197,10 +201,10 @@
     
     [delegate cardSwipedRight:self];
     
-    NSLog(@"YES");
+    NSLog(@"TODO: add to wish list");
 }
 
--(void)leftClickAction
+- (void)leftClickAction
 {
     CGPoint finishPoint = CGPointMake(-600, self.center.y);
     [UIView animateWithDuration:0.3

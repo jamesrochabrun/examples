@@ -61,7 +61,7 @@ typedef enum: char {
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
-    self.view.backgroundColor = UIColorRGBA(kColorBlack);
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _arrayOfFilterNames=  @[
                             LOCAL(@"None"),
@@ -83,7 +83,7 @@ typedef enum: char {
     _searchBar= [UISearchBar new];
     [ self.view addSubview:_searchBar];
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
-    _searchBar.backgroundColor = UIColorRGBA(kColorBlack);
+    _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _searchBar.placeholder = LOCAL( @"Type your search here");
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
     _searchBar.barTintColor = UIColorRGBA(kColorBlack);
@@ -106,12 +106,12 @@ typedef enum: char {
     [_filterView setCurrent:FILTER_PLACES];
     
     self.tableRestaurants = makeTable(self.view,self);
-    _tableRestaurants.backgroundColor = UIColorRGBA(kColorBlack);
+    _tableRestaurants.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
               forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
     
     self.tablePeople = makeTable(self.view,self);
-    _tablePeople.backgroundColor = UIColorRGBA(kColorBlack);
+    _tablePeople.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
     

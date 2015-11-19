@@ -42,7 +42,7 @@
         bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
         [self setSelectedBackgroundView:bgColorView];
         
-        self.backgroundColor = UIColorRGBA(kColorNavBar);
+        self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 

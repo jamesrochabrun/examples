@@ -55,7 +55,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _nameHeader.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = UIColorRGBA(kColorBlack);
+        self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 

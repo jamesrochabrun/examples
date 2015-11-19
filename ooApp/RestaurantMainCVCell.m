@@ -86,7 +86,7 @@
         [self addSubview:_hoursButton];
 
         _locationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_locationButton withIcon:kFontIconLocation fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOnMap)];
+        [_locationButton withIcon:kFontIconLocation fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showOnMap)];
         _locationButton.layer.cornerRadius = 0;
         [self addSubview:_locationButton];
         [_locationButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
@@ -107,11 +107,11 @@
         _hoursView.translatesAutoresizingMaskIntoConstraints = NO;
         
         _favoriteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(listButtonTapped:)];
+        [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
         _favoriteButton.layer.cornerRadius = 0;
         
         _toTryButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_toTryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(listButtonTapped:)];
+        [_toTryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
         _toTryButton.layer.cornerRadius = 0;
         
         [_toTryButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
@@ -174,7 +174,7 @@
         _hoursScroll.hidden = YES;
         [self addSubview:_hoursScroll]; //should appear above everything
         
-        self.backgroundColor = UIColorRGBA(kColorBlack);
+        self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 //        [DebugUtilities addBorderToViews:@[_cuisine, _menuButton]];
     }
     return self;

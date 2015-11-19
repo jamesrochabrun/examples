@@ -40,7 +40,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     _tableView.dataSource = self;
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableView.backgroundColor = UIColorRGBA(kColorBlack);
+    _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:ListRowID];
     [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:FeaturedRowID];

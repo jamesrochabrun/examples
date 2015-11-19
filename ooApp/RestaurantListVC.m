@@ -57,7 +57,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     } else {
         self.moreButton.hidden = YES;
     }
-    self.tableView.backgroundColor = UIColorRGBA(kColorBlack);
+    self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 }
 
 - (void)updateViewConstraints {
@@ -77,7 +77,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                            message:@"What would you like to do with this list."
                                                     preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
-    _alertController.view.tintColor = [UIColor blackColor];
+    _alertController.view.tintColor = UIColorRGBA(kColorBlack);
 
     UIAlertAction *addRestaurantsFromDiscover = [UIAlertAction actionWithTitle:@"Add Restaurants from Discover"
                                                                          style:UIAlertActionStyleDefault

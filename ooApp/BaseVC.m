@@ -29,7 +29,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = UIColorRGBA(kColorBlack);
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _leftNavButton = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _leftNavButton;
@@ -62,14 +62,13 @@
     [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
     [self.navigationController.navigationBar setTranslucent:YES];
 
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+//                                                  forBarMetrics:UIBarMetricsDefault]; //UIImageNamed:@"transparent.png"
+//    self.navigationController.navigationBar.shadowImage = [UIImage new];////UIImageNamed:@"transparent.png"
+//    self.navigationController.navigationBar.translucent = YES;
+//    self.navigationController.view.backgroundColor = [UIColor clearColor];
     
-//    [self.navigationController.navigationBar setTintColor:UIColorRGBA(kColorNavBar)];
-    
-//    [self.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-//    [self.navigationBar setShadowImage:[UIImage new]];
-//    [self.navigationBar setTranslucent:YES];
-    
-//    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
+
 
 }
 

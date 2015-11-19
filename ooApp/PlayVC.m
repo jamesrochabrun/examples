@@ -19,7 +19,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:@"please"];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:nil];
     self.navTitle = nto;
     
     self.view = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];

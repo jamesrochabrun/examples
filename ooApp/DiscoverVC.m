@@ -54,7 +54,7 @@ static NSString * const ListRowID = @"HLRCell";
         _mapView.settings.zoomGestures = YES;
         _mapView.delegate = self;
         [_mapView setMinZoom:1 maxZoom:16];
-        _mapView.backgroundColor = UIColorRGBA(kColorBlack);
+        _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     }
     return self;
 }
@@ -70,7 +70,7 @@ static NSString * const ListRowID = @"HLRCell";
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableView.rowHeight = kGeomHeightHorizontalListRow;
-    _tableView.backgroundColor = UIColorRGBA(kColorBlack);
+    _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
@@ -91,7 +91,7 @@ static NSString * const ListRowID = @"HLRCell";
     if (_listToAddTo || _eventBeingEdited) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
-    self.view.backgroundColor = UIColorRGBA(kColorBlack);
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 }
 
 - (void)selectNow {

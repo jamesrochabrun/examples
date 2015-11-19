@@ -64,7 +64,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _listButtonsContainer = [[UIView alloc] init];
     _listButtonsContainer.backgroundColor = UIColorRGBA(kColorOffBlack);
     
-    self.view.backgroundColor = UIColorRGBA(kColorBlack);
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     [self setupStyleSheetAC];
     [self setupCreateListAC];
@@ -84,7 +84,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [self.view addSubview:_collectionView];
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-    _collectionView.backgroundColor = UIColorRGBA(kColorBlack);
+    _collectionView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _listButtons = [NSMutableSet set];
     
@@ -177,7 +177,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                         message:@"What would you like to do with this restaurant."
                                                  preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
-    _styleSheetAC.view.tintColor = [UIColor blackColor];
+    _styleSheetAC.view.tintColor = UIColorRGBA(kColorBlack);
     
     __weak RestaurantVC *weakSelf = self;
     
@@ -514,7 +514,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         }
         case kSectionTypeLists: {
             UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
-            cvc.backgroundColor = UIColorRGBA(kColorBlack);
+            cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
             [cvc addSubview:_listButtonsContainer];
             return cvc;
             break;
@@ -522,7 +522,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeMediaItems: {
             PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
             
-            cvc.backgroundColor = UIColorRGBA(kColorBlack);
+            cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
             cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
             //            [DebugUtilities addBorderToViews:@[cvc]];
             return cvc;

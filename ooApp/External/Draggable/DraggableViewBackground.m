@@ -81,26 +81,17 @@ static const float CARD_WIDTH = 290; //%%% width of the draggable card
 -(void)setupView
 {
     self.backgroundColor = UIColorRGBA(kColorBlack);
-//    menuButton = [[UIButton alloc]initWithFrame:CGRectMake(17, 25, 22, 15)];
-//    [menuButton setImage:[UIImage imageNamed:@"menuButton"] forState:UIControlStateNormal];
-//    messageButton = [[UIButton alloc]initWithFrame:CGRectMake(284, 25, 18, 18)];
-//    [messageButton setImage:[UIImage imageNamed:@"messageButton"] forState:UIControlStateNormal];
 
     _xButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_xButton withIcon:kFontIconRemove fontSize:40 width:45 height:45 backgroundColor:kColorClear
                target:self selector:@selector(swipeLeft)];
-    [_xButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    [_xButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
     _tryButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_tryButton withIcon:kFontIconToTry fontSize:40 width:45 height:45 backgroundColor:kColorClear
+    [_tryButton withIcon:kFontIconToTry fontSize:kGeomPlayIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
                target:self selector:@selector(swipeRight)];
-    [_tryButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    [_tryButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
-    
-
-    
-//    [self addSubview:menuButton];
-//    [self addSubview:messageButton];
     _xButton.translatesAutoresizingMaskIntoConstraints = _tryButton.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:_xButton];
@@ -112,7 +103,9 @@ static const float CARD_WIDTH = 290; //%%% width of the draggable card
 // to get rid of it (eg: if you are building cards from data from the internet)
 -(DraggableView *)createDraggableViewWithDataAtIndex:(NSInteger)index
 {
-    DraggableView *draggableView = [[DraggableView alloc]initWithFrame:CGRectMake((self.frame.size.width - CARD_WIDTH)/2, (self.frame.size.height - CARD_HEIGHT)/2, CARD_WIDTH, CARD_HEIGHT)];
+    CGFloat cardWidth = 0.8*width(self), cardHeight = 0.7*height(self);
+    
+    DraggableView *draggableView = [[DraggableView alloc]initWithFrame:CGRectMake((self.frame.size.width - cardWidth)/2, (self.frame.size.height - cardHeight)/2, cardWidth, cardHeight)];
     draggableView.information.text = ((RestaurantObject *)[_playItems objectAtIndex:index]).name; //%%% placeholder for card-specific information
     draggableView.delegate = self;
     return draggableView;
@@ -126,10 +119,10 @@ static const float CARD_WIDTH = 290; //%%% width of the draggable card
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _xButton, _tryButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_xButton]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_tryButton]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_xButton]-20-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_tryButton]-20-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_xButton]-(>=0)-[_tryButton]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-20-[_xButton]-(>=0)-[_tryButton]-20-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 //%%% loads all the cards and puts the first x in the "loaded cards" array

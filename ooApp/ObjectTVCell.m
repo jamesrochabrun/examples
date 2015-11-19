@@ -31,7 +31,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
 
     if (self) {
-        self.backgroundColor = UIColorRGB(kColorBlack);
+        self.backgroundColor = UIColorRGB(kColorBackgroundTheme);
         _thumbnail = [[UIImageView alloc] init];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFill;
         _thumbnail.backgroundColor = UIColorRGBA(kColorOffWhite);

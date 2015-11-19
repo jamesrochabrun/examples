@@ -24,6 +24,7 @@
 // NOTE: Correct hex format for RGBA is 0xAARRGGBB on little-endian systems.
 //
 static NSUInteger kColorBlack = 0xFF000000;
+static NSUInteger kColorBackgroundTheme = 0xFF171717;
 static NSUInteger kColorButtonSelected = 0xFF0000FF;
 static NSUInteger kColorCellSelected =  0xFF323232;//0xFFF9FF00;
 static NSUInteger kColorClear = 0x00000000;
@@ -72,6 +73,8 @@ static CGFloat kGeomHeightStripListRow = 150.0;
 static CGFloat kGeomHeightStripListCell = 100.0;
 static CGFloat kGeomHeightHorizontalListRow = 100.0;
 static NSUInteger kGeomIconSize = 20;
+static NSUInteger kGeomPlayIconSize = 45;
+static NSUInteger kGeomPlayButtonSize = 60;
 static CGFloat kGeomSpaceCellPadding = 3;
 static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceIcon = 5.0;

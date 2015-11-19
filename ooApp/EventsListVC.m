@@ -58,7 +58,7 @@
 
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= UIColorRGBA(kColorBlack);
+    self.view.backgroundColor= UIColorRGBA(kColorBackgroundTheme);
     
     self.eventBeingEdited= nil;
     
@@ -82,7 +82,7 @@
     _table.sectionFooterHeight = 10;
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     _table.showsVerticalScrollIndicator= NO;
-    _table.backgroundColor = UIColorRGBA(kColorBlack);
+    _table.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _createEventButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_createEventButton withIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedAdd:)];

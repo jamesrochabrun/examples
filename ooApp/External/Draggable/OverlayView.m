@@ -8,7 +8,7 @@
 //  @cwRichardKim for updates and requests
 
 #import "OverlayView.h"
-
+#import "DebugUtilities.h"
 
 @interface OverlayView ()
 @property (nonatomic, strong) UILabel *actionHint;
@@ -20,11 +20,18 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor purpleColor];
+        self.backgroundColor = UIColorRGBA(kColorClear);
         _actionHint = [[UILabel alloc] init];
-        [_actionHint withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorWhite backgroundColor:kColorClear];
+        [_actionHint withFont:[UIFont fontWithName:kFontIcons size:kGeomPlayIconSize] textColor:kColorWhite backgroundColor:kColorClear];
+        _actionHint.text = kFontIconRemove;
+        [_actionHint setTextAlignment:NSTextAlignmentCenter];
         [self addSubview:_actionHint];
-        _actionHint.translatesAutoresizingMaskIntoConstraints = NO;
+        CGRect frame = _actionHint.frame;
+        frame.size = CGSizeMake(kGeomPlayButtonSize, kGeomPlayButtonSize);
+        _actionHint.frame = frame;
+
+        //_actionHint.translatesAutoresizingMaskIntoConstraints = NO;
+        //[DebugUtilities addBorderToViews:@[_actionHint]];
     }
     return self;
 }
@@ -47,7 +54,6 @@
 -(void)layoutSubviews
 {
     [super layoutSubviews];
-    _actionHint.frame = CGRectMake(50, CGRectGetHeight(self.frame) - 100, 100, 100);
 }
 
 /*
