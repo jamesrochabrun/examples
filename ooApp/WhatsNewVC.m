@@ -87,7 +87,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_lists addObject:list];
 }
 
-- (void) locationBecameAvailable:(id)notification
+- (void)locationBecameAvailable:(id)notification
 {
     NSLog (@"LOCATION BECAME AVAILABLE FROM iOS");
     __weak  WhatsNewVC *weakSelf = self;
@@ -96,7 +96,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     });
 }
 
-- (void) locationBecameUnavailable:(id)notification
+- (void)locationBecameUnavailable:(id)notification
 {
     NSLog  (@"LOCATION IS NOT AVAILABLE FROM iOS");
     __weak  WhatsNewVC *weakSelf = self;

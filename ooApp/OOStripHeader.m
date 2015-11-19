@@ -88,8 +88,8 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@(self.frame.size.width), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     NSDictionary *views= NSDictionaryOfVariableBindings(superview, _nameLabel, _iconLabel);
     
-    if (!_buttonAdd && [_icon length]) {
-        [self removeConstraints:self.constraints];
+    if (/*!_buttonAdd && */[_icon length]) {
+//        [self removeConstraints:self.constraints];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInter-[_iconLabel]-spaceEdge-[_nameLabel]"
@@ -107,8 +107,8 @@
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
-    } else if (!_buttonAdd && ![_icon length]) {
-        [self removeConstraints:self.constraints];
+    } else if (/*!_buttonAdd && */![_icon length]) {
+//        [self removeConstraints:self.constraints];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInter-[_nameLabel]"

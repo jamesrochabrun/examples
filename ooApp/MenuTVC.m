@@ -20,6 +20,8 @@
 #import "DiagnosticVC.h"
 #import "SearchVC.h"
 #import "EventsListVC.h"
+#import "Common.h"
+#import "AppDelegate.h"
 
 @interface MenuTVC ()
 
@@ -66,6 +68,12 @@
     menuItem.icon = kFontIconEvent;
     menuItem.name = @"EVENTS";
     menuItem.type = kMenuItemMeet;
+    [_menuItems addObject:menuItem];
+
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconPlay;
+    menuItem.name = @"PLAY";
+    menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
@@ -195,8 +203,12 @@
         fvc = [[SearchVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
+        fvc = [[PlayVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemFeed]) {
         fvc = [[FeedVC alloc] init];
+        //TODO: if we have not already asked for remote notifications then ask here...also ask when the user submits and event
+        //[APP registerForPushNotifications];
     } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {
         fvc = [[DiagnosticVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemMeet]) {

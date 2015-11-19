@@ -182,14 +182,14 @@
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
-    [super setHighlighted:highlighted animated:animated];
-    [_nameHeader unHighlightButton];
+//    [super setHighlighted:highlighted animated:animated];
+//    [_nameHeader unHighlightButton];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    [super setSelected:selected animated:animated];
-    [_nameHeader unHighlightButton];
+//    [super setSelected:selected animated:animated];
+//    [_nameHeader unHighlightButton];
 }
 
 - (void)setEvent:(EventObject *)eo

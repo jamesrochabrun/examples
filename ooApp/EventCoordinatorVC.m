@@ -120,10 +120,170 @@
 {
     self.eventBeingEdited= e;
     
+//<<<<<<< HEAD
     float w= self.frame.size.width;
     if  (!w) {
         w= [UIScreen  mainScreen ].bounds.size.width;
     }
+//=======
+//    NSString* eventName= self.eventBeingEdited.name;
+//    
+//    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
+//    self.navTitle = nto;
+//    
+//    self.view.backgroundColor= [UIColor lightGrayColor];
+//    self.automaticallyAdjustsScrollViewInsets= NO;
+//    self.view.autoresizesSubviews= NO;
+//    
+//    _scrollView= makeScrollView(self.view, self);
+//    [_scrollView setCanCancelContentTouches:YES];
+//    
+//    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+//    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+//    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+//    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:self selector:@selector(userPressedMenuButton:)];
+//    bbi.customView = moreButton;
+//    [moreButton setTitleColor:BLUE forState:UIControlStateNormal];
+//    self.navigationItem.rightBarButtonItems = @[bbi];
+//    
+//    self.viewContainer4= makeView(self.scrollView, WHITE);
+//    _viewContainer4.layer.borderWidth= 1;
+//    _viewContainer4.layer.borderColor= GRAY.CGColor;
+//    _viewContainer4.tag=4;
+//    
+//    self.cvLayout= [[UICollectionViewFlowLayout alloc] init];
+//    self.cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+//    
+//    CGRect r = self.view.window.bounds;
+//    r.size.height=200;
+//    self.venuesCollectionView = [[UICollectionView alloc] initWithFrame: r collectionViewLayout: _cvLayout];
+//    _venuesCollectionView.delegate = self;
+//    _venuesCollectionView.dataSource = self;
+//    _venuesCollectionView.showsHorizontalScrollIndicator = NO;
+//    _venuesCollectionView.showsVerticalScrollIndicator = NO;
+//    _venuesCollectionView.alwaysBounceHorizontal = YES;
+//    _venuesCollectionView.allowsSelection = YES;
+//    _venuesCollectionView.backgroundColor= CLEAR;
+//    [_scrollView addSubview: _venuesCollectionView];
+//#define CV_CELL_REUSE_IDENTIFER @"E3_CV"
+//    [_venuesCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
+//    
+//    self.viewContainer1= makeView(self.scrollView, WHITE);
+//    _imageViewContainer1= makeImageView(_viewContainer1,  @"background-image.jpg");
+//    _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
+//    _viewContainer1.clipsToBounds= YES;
+//    
+//    self.labelEventCover= makeLabel(self.viewContainer1, self.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
+//    _labelEventCover.textColor= WHITE;
+//    _labelEventCover.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
+//    _viewContainer1.layer.borderWidth= 1;
+//    _viewContainer1.layer.borderColor= GRAY.CGColor;
+//
+//    if  (inE3LMode ) {
+//        _buttonAccept= makeButton(self.viewContainer1,  @"Accept",kGeomFontSizeHeader, YELLOW, BLACK, self, @selector(doAccept:), 0);
+//        _buttonDecline= makeButton(self.viewContainer1,  @"Decline",kGeomFontSizeHeader, YELLOW, BLACK, self, @selector(doDecline:), 0);
+//    } else {
+//        NSString* submitButtonMessage;
+//        if  (self.eventBeingEdited.isComplete) {
+//            submitButtonMessage=@"EVENT SUBMITTED";
+//        } else {
+//            submitButtonMessage=@"SUBMIT EVENT";
+//        }
+//    
+//        _buttonSubmit= makeButton(self.viewContainer1, submitButtonMessage,
+//                                  kGeomFontSizeHeader, YELLOW, UIColorRGBA(0xb0000000), self, @selector(doSubmit:), 0);
+//        _buttonSubmit.titleLabel.numberOfLines= 0;
+//        _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
+//        _buttonSubmit.enabled= NO;
+//    }
+//    
+//    // Second box.
+//    self.viewContainer2= makeView(self.scrollView, WHITE);
+//    self.labelWhoPending = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
+//    self.labelWhoResponded = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
+//    self.labelWhoVoted = makeAttributedLabel(self.viewContainer2, @"", kGeomFontSizeHeader);
+//
+//    _viewContainer2.layer.borderWidth= 1;
+//    _viewContainer2.layer.borderColor= GRAY.CGColor;
+//    self.viewVerticalLine1= makeView(self.viewContainer2, BLACK);
+//    self.viewVerticalLine2= makeView(self.viewContainer2, BLACK);
+//    self.participantsView= [[ ParticipantsView alloc] init];
+//    [_viewContainer2 addSubview: _participantsView];
+//    _participantsView.delegate= self;
+//
+//    self.viewContainer3= makeView(self.scrollView, WHITE);
+//    _viewContainer3.layer.borderWidth= 1;
+//    _viewContainer3.layer.borderColor= GRAY.CGColor;
+//    
+//    self.labelTime= makeLabel(self.viewContainer3,  @"", 18);
+//    self.labelTime.font= [UIFont  fontWithName: kFontLatoBold  size:18];
+//    
+//    self.pieHour= [[PieView alloc] init];
+//    [self.viewContainer3  addSubview: _pieHour];
+//    
+//    _labelEventCover.shadowColor = BLACK;
+//    _labelEventCover.shadowOffset = CGSizeMake(0, -1.0);
+//    
+//    self.labelDay0= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
+//    self.labelDay1= makeLabel(self.viewContainer3,  @"M", kGeomFontSizeHeader);
+//    self.labelDay2= makeLabel(self.viewContainer3,  @"T", kGeomFontSizeHeader);
+//    self.labelDay3= makeLabel(self.viewContainer3,  @"W", kGeomFontSizeHeader);
+//    self.labelDay4= makeLabel(self.viewContainer3,  @"R", kGeomFontSizeHeader);
+//    self.labelDay5= makeLabel(self.viewContainer3,  @"F", kGeomFontSizeHeader);
+//    self.labelDay6= makeLabel(self.viewContainer3,  @"S", kGeomFontSizeHeader);
+//    _labelDay0.textColor= UIColorRGB(0xff808080);
+//    _labelDay1.textColor= UIColorRGB(0xff808080);
+//    _labelDay2.textColor= UIColorRGB(0xff808080);
+//    _labelDay3.textColor= UIColorRGB(0xff808080);
+//    _labelDay4.textColor= UIColorRGB(0xff808080);
+//    _labelDay5.textColor= UIColorRGB(0xff808080);
+//    _labelDay6.textColor= UIColorRGB(0xff808080);
+//    
+//    self.labelDate0= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    self.labelDate1= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    self.labelDate2= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    self.labelDate3= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    self.labelDate4= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    self.labelDate5= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    self.labelDate6= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    self.viewTodayBubble= makeView(self.viewContainer3, BLACK);
+//
+//    self.labelMonth= makeLabel(self.viewContainer3,  @"", kGeomFontSizeHeader);
+//    _labelMonth.font= [UIFont  fontWithName: kFontLatoBold  size:kGeomFontSizeHeader];
+//    
+//    self.viewhorizontalLine=makeView(self.viewContainer3, GRAY);
+//    _viewhorizontalLine.backgroundColor= UIColorRGB(0xff808080);
+//    
+//    self.headerWho= [[OOStripHeader alloc] init];
+//    self.headerWhen= [[OOStripHeader alloc] init];
+//    self.headerWhere= [[OOStripHeader alloc] init];
+//    
+//    [self.headerWho setName: @"WHO" ];
+//    [self.headerWhen setName: @"WHEN" ];
+//    [self.headerWhere setName: @"WHERE" ];
+//    [_scrollView addSubview: self.headerWho];
+//    [_scrollView addSubview: self.headerWhen];
+//    [_scrollView addSubview: self.headerWhere];
+//    _scrollView.showsVerticalScrollIndicator= NO;
+//
+////    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
+//    
+//    UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
+//    [self.viewContainer2 addGestureRecognizer:tap2 ];
+//    UITapGestureRecognizer *tap3= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhenBox:)];
+//    [self.viewContainer3 addGestureRecognizer:tap3 ];
+//    UITapGestureRecognizer *tap4= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhereBox:)];
+//    [self.viewContainer4 addGestureRecognizer:tap4 ];
+//    
+//    addShadowTo (_viewContainer1);
+//    addShadowTo (_viewContainer2);
+//    addShadowTo (_viewContainer3);
+//    addShadowTo (_viewContainer4);
+//    _imageViewContainer1.clipsToBounds= YES;
+//    
+//    [self updateBoxes];
+//>>>>>>> master
     
     if  (e.primaryImage) {
         self.imageViewContainer1.image= e.primaryImage;
@@ -669,7 +829,25 @@
         [self.contentView addSubview: _nameHeader];
         [self.nameHeader setName: @"WHEN"];
     }
+//<<<<<<< HEAD
     return self;
+//=======
+//    
+//    __weak EventCoordinatorVC *weakSelf = self;
+//    event.isComplete= YES;
+//    [OOAPI reviseEvent: event
+//               success:^(id responseObject) {
+//                   NSLog (@"REVISION SUCCESSFUL");
+//                   message( @"Event submitted.");
+//                   
+//                   //TODO: if we have not already asked for remote notifications then ask here on the MAIN THREAD
+//                   //[APP registerForPushNotifications];
+//                   
+//                   [weakSelf.navigationController  popViewControllerAnimated:YES];
+//               } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+//                   NSLog (@"REVISION FAILED %@",e);
+//               }];
+//>>>>>>> master
 }
 
 - (void) provideEvent: (EventObject*)e;

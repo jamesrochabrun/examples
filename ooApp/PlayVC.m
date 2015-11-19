@@ -7,6 +7,7 @@
 //
 
 #import "PlayVC.h"
+#import "DraggableViewBackground.h"
 
 @interface PlayVC ()
 
@@ -20,6 +21,9 @@
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:@"please"];
     self.navTitle = nto;
+    
+    self.view = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];
+    
 }
 
 - (void)didReceiveMemoryWarning {

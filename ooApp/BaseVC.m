@@ -38,7 +38,7 @@
     revealViewController.delegate = self;
 
     if (revealViewController) {
-        revealViewController.rearViewRevealWidth = self.view.frame.size.width - 60;
+        revealViewController.rearViewRevealWidth = kGeomSideBarRevealWidth;
         [self.leftNavButton setTitle:kFontIconMenu];
         [self.leftNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                            [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
