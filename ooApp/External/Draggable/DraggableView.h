@@ -33,6 +33,7 @@
 
 #import <UIKit/UIKit.h>
 #import "OverlayView.h"
+#import "RestaurantObject.h"
 
 @protocol DraggableViewDelegate <NSObject>
 
@@ -48,7 +49,7 @@
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nonatomic) CGPoint originalPoint;
 @property (nonatomic, strong) OverlayView *overlayView;
-@property (nonatomic, strong) UILabel *information;
+@property (nonatomic, strong) RestaurantObject *restaurant;
 
 - (void)leftClickAction;
 - (void)rightClickAction;

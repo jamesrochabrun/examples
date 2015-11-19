@@ -80,7 +80,7 @@ static const float CARD_WIDTH = 290; //%%% width of the draggable card
 //%%% sets up the extra buttons on the screen
 -(void)setupView
 {
-    self.backgroundColor = UIColorRGBA(kColorBlack);
+    self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
     _xButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_xButton withIcon:kFontIconRemove fontSize:40 width:45 height:45 backgroundColor:kColorClear
@@ -106,8 +106,9 @@ static const float CARD_WIDTH = 290; //%%% width of the draggable card
     CGFloat cardWidth = 0.8*width(self), cardHeight = 0.7*height(self);
     
     DraggableView *draggableView = [[DraggableView alloc]initWithFrame:CGRectMake((self.frame.size.width - cardWidth)/2, (self.frame.size.height - cardHeight)/2, cardWidth, cardHeight)];
-    draggableView.information.text = ((RestaurantObject *)[_playItems objectAtIndex:index]).name; //%%% placeholder for card-specific information
+    draggableView.restaurant = ((RestaurantObject *)[_playItems objectAtIndex:index]);
     draggableView.delegate = self;
+
     return draggableView;
 }
 

@@ -16,6 +16,14 @@
 
 
 #import "DraggableView.h"
+#import "OOAPI.h"
+
+@interface DraggableView ()
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) UILabel *name;
+@property (nonatomic, strong) UIImageView *thumbnail;
+@property (nonatomic, strong) NSArray *mediaItems;
+@end
 
 @implementation DraggableView {
     CGFloat xFromCenter;
@@ -26,7 +34,6 @@
 @synthesize delegate;
 
 @synthesize panGestureRecognizer;
-@synthesize information;
 @synthesize overlayView;
 
 - (id)initWithFrame:(CGRect)frame
@@ -35,17 +42,25 @@
     if (self) {
         [self setupView];
         
-        information = [[UILabel alloc]initWithFrame:CGRectMake(0, 50, self.frame.size.width, 100)];
-        information.text = @"no info given";
-        [information setTextAlignment:NSTextAlignmentCenter];
-        information.textColor = [UIColor blueColor];
+        _name = [[UILabel alloc]initWithFrame:CGRectMake(0, 50, self.frame.size.width, 100)];
+        _name.text = @"no info given";
+        [_name setTextAlignment:NSTextAlignmentCenter];
+        _name.textColor = UIColorRGBA(kColorWhite);
+        _name.translatesAutoresizingMaskIntoConstraints = NO;
         
-        self.backgroundColor = [UIColor redColor];
+        _thumbnail = [[UIImageView alloc] init];
+        _thumbnail.backgroundColor = UIColorRGBA(kColorBlack);
+        _thumbnail.contentMode = UIViewContentModeScaleAspectFill;
+        _thumbnail.clipsToBounds = YES;
+        _thumbnail.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
         panGestureRecognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(beingDragged:)];
         
         [self addGestureRecognizer:panGestureRecognizer];
-        [self addSubview:information];
+        [self addSubview:_name];
+        [self addSubview:_thumbnail];
         
         overlayView = [[OverlayView alloc]initWithFrame:CGRectMake(self.frame.size.width/2-100, 0, 100, 100)];
         overlayView.alpha = 0;
@@ -60,6 +75,37 @@
     self.layer.shadowRadius = 3;
     self.layer.shadowOpacity = 0.2;
     self.layer.shadowOffset = CGSizeMake(1, 1);
+}
+
+- (void)updateConstraints {
+    [super updateConstraints];
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
+    
+    UIView *superview = self;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _thumbnail);
+    
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[_name(30)]-(>=spaceInter)-[_thumbnail]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_thumbnail]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_name]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    //name line
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_name
+                         attribute:NSLayoutAttributeCenterX
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:self
+                         attribute:NSLayoutAttributeCenterX
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_thumbnail
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:self
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
 }
 
 /*
@@ -220,6 +266,86 @@
     NSLog(@"NO");
 }
 
+- (void)setRestaurant:(RestaurantObject *)restaurant {
+    if (_restaurant == restaurant) return;
+    _restaurant = restaurant;
+    _name.text = restaurant.name;
+    [self getRestaurant];
+}
+
+- (void)getRestaurant {
+    __weak DraggableView *weakSelf = self;
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
+        _restaurant = restaurant;
+        ON_MAIN_THREAD(^ {
+            [weakSelf updateCard:restaurant];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)getMediaItemsForRestaurant {
+    OOAPI *api =[[OOAPI alloc] init];
+    __weak DraggableView *weakSelf = self;
+    [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
+        _mediaItems = mediaItems;
+        ON_MAIN_THREAD(^{
+            [weakSelf gotMediaItems];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)gotMediaItems {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak UIImageView *weakIV  = _thumbnail;
+    __weak DraggableView *weakSelf = self;
+    
+    if ([_mediaItems count]) {
+        MediaItemObject *mio = [_mediaItems objectAtIndex:0];
+        _requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                        placeholderImage:nil
+                                                 success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                                     weakIV.image = image;
+
+                                                     ON_MAIN_THREAD(^ {
+                                                         [weakSelf setNeedsUpdateConstraints];
+                                                         [weakSelf setNeedsLayout];
+                                                     });
+                                                 }
+                                                 failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                                     ON_MAIN_THREAD(^ {
+                                                         weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
+                                                         [weakSelf setNeedsUpdateConstraints];
+                                                         [weakSelf setNeedsLayout];
+                                                     });
+                                                 }];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ON_MAIN_THREAD(^ {
+                weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
+                [weakSelf setNeedsUpdateConstraints];
+                [weakSelf setNeedsLayout];
+            });
+        }];
+    } else {
+        _thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
+    }
+}
+
+- (void)updateCard:(id)object {
+    if ([object isKindOfClass:[RestaurantObject class]]) {
+        RestaurantObject *r = (RestaurantObject *)object;
+        [self getMediaItemsForRestaurant];
+    }
+    
+}
 
 
 @end
