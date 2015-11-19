@@ -28,7 +28,7 @@
 
 @interface EventsListVC ()
 
-@property (nonatomic, strong)  UIButton *buttonAdd;
+//@property (nonatomic, strong)  UIButton *buttonAdd;
 
 @property (nonatomic, strong)  UITableView *table;
 
@@ -40,6 +40,9 @@
 
 @property (nonatomic, assign) BOOL doingTransition, didGetInitialResponse, needToRefreshEventList;
 @property (nonatomic,strong)  NSTimer *refreshTimer;
+
+@property (nonatomic, strong) UIButton *createEventButton;
+
 @end
 
 @implementation EventsListVC
@@ -76,6 +79,15 @@
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     _table.showsVerticalScrollIndicator= NO;
     _table.backgroundColor = UIColorRGBA(kColorBlack);
+    
+    _createEventButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_createEventButton withIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedAdd:)];
+    [_createEventButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    _createEventButton.layer.cornerRadius = kGeomDimensionsIconButton/2;
+    _createEventButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+    _createEventButton.layer.borderWidth = 1;
+    
+    [self.view addSubview:_createEventButton];
 }
 
 //------------------------------------------------------------------------------
@@ -213,7 +225,7 @@
 // Name:    userPressedAdd
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)userPressedAdd: (id) sender
+- (void)userPressedAdd:(id)sender
 {
     UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Event")
                                                      message:LOCAL(@"Enter a name for the new event")
@@ -235,6 +247,11 @@
     CGFloat y = kGeomSpaceEdge;
 
     _table.frame = CGRectMake(kGeomSpaceEdge, y, w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
+    
+    CGRect frame  = _createEventButton.frame;
+    frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+    frame.origin = CGPointMake(self.view.bounds.size.width - kGeomDimensionsIconButton - 30, self.view.bounds.size.height - kGeomDimensionsIconButton - 30);
+    _createEventButton.frame = frame;
 }
 
 //------------------------------------------------------------------------------
@@ -280,9 +297,9 @@
         if (!row) {
             cell.nameHeader= [[OOStripHeader alloc] init];
             [cell.nameHeader setName:_tableSectionNames[section]];
-            if (section == 0) {
-                [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
-            }
+//            if (section == 0) {
+//                [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
+//            }
             [cell setIsFirst];
         } else {
             cell.nameHeader= nil;
@@ -506,8 +523,8 @@
         EventTVCell *cell= [tableView cellForRowAtIndexPath:indexPath];
         [cell updateHighlighting:YES];
         RUN_AFTER(400, ^{
-            [cell.nameHeader unHighlightButton];
-            [cell updateHighlighting:NO];
+//            [cell.nameHeader unHighlightButton];
+//            [cell updateHighlighting:NO];
         });
         
         

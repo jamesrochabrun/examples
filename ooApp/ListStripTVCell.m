@@ -28,6 +28,7 @@
 @property (nonatomic, strong) UICollectionViewFlowLayout *fcvl;
 
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) NSArray *constraintsToRemember;
 
 @end
 
@@ -91,7 +92,10 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_nameHeader(27)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(leftSpacing)-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self removeConstraints:_constraintsToRemember];
+        _constraintsToRemember = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(leftSpacing)-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+
+        [self addConstraints:_constraintsToRemember];
         
         [self addConstraint:[NSLayoutConstraint
                              constraintWithItem:_nameHeader

@@ -20,6 +20,7 @@
 @property (nonatomic,strong)  UIImage *imageForNoProfileSilhouette;
 
 - (BOOL)connected;
+- (void)registerForPushNotifications;
 
 // Later, remove from production
 #define ENTRY { [APP.diagnosticLogString appendFormat:  @"Entered %s\r",__FUNCTION__]; }

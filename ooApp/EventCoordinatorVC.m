@@ -252,7 +252,7 @@
     [_scrollView addSubview: self.headerWhere];
     _scrollView.showsVerticalScrollIndicator= NO;
 
-    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
+//    [self.headerWhere enableAddButtonWithTarget: self action:@selector(userTappedWhereBox:)];
     
     UITapGestureRecognizer *tap2= [[UITapGestureRecognizer  alloc] initWithTarget: self action: @selector(userTappedWhoBox:)];
     [self.viewContainer2 addGestureRecognizer:tap2 ];
@@ -695,6 +695,10 @@
                success:^(id responseObject) {
                    NSLog (@"REVISION SUCCESSFUL");
                    message( @"Event submitted.");
+                   
+                   //TODO: if we have not already asked for remote notifications then ask here on the MAIN THREAD
+                   //[APP registerForPushNotifications];
+                   
                    [weakSelf.navigationController  popViewControllerAnimated:YES];
                } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                    NSLog (@"REVISION FAILED %@",e);

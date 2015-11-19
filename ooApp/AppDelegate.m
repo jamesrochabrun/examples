@@ -53,6 +53,9 @@
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
+    //TODO: If we asked the user for remote notifications already then register for remote notifications. This needs to be done every lauch to get a new token
+    //[self registerForPushNotifications];
+    
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4be2767211390447c381617f13fc2437"];
     // Do some additional configuration if needed here
     [[BITHockeyManager sharedHockeyManager] startManager];
@@ -63,6 +66,33 @@
 
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (void)registerForPushNotifications {
+    UIUserNotificationType types = UIUserNotificationTypeBadge |
+    UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+    
+    UIUserNotificationSettings *mySettings =
+    [UIUserNotificationSettings settingsForTypes:types categories:nil];
+    
+    [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
+
+// Delegation methods
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
+    NSLog(@"device token: %@", devToken);
+//    const void *devTokenBytes = [devToken bytes];
+
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userid = userInfo.userID;
+
+//    TODO: store that we asked in settings so that we can register again on launch in the future
+//    TODO: send the device token and user ID to the OO server using OOAPI
+}
+
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+    NSLog(@"Error in remote notification registration. Error: %@", err);
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation

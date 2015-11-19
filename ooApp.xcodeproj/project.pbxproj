@@ -26,6 +26,9 @@
 		36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36250BDB1B82679A00F456B5 /* LoginVC.m */; };
 		36250BDF1B82704300F456B5 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */; };
 		36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */; };
+		3629F0C61BFCF42500E2D912 /* DraggableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C11BFCF42500E2D912 /* DraggableView.m */; settings = {ASSET_TAGS = (); }; };
+		3629F0C71BFCF42500E2D912 /* DraggableViewBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C31BFCF42500E2D912 /* DraggableViewBackground.m */; settings = {ASSET_TAGS = (); }; };
+		3629F0C81BFCF42500E2D912 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C51BFCF42500E2D912 /* OverlayView.m */; settings = {ASSET_TAGS = (); }; };
 		3637E93B1BB439290074A01C /* RestaurantTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3637E93A1BB439290074A01C /* RestaurantTVCell.m */; };
 		3637E93D1BB5B6D10074A01C /* CommonConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3637E93C1BB5B6D10074A01C /* CommonConstants.m */; };
 		363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C01B6AC15400987A1B /* RestaurantObject.m */; };
@@ -168,6 +171,12 @@
 		36250BDB1B82679A00F456B5 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKShareKit.framework"; sourceTree = "<group>"; };
+		3629F0C01BFCF42500E2D912 /* DraggableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableView.h; sourceTree = "<group>"; };
+		3629F0C11BFCF42500E2D912 /* DraggableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DraggableView.m; sourceTree = "<group>"; };
+		3629F0C21BFCF42500E2D912 /* DraggableViewBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableViewBackground.h; sourceTree = "<group>"; };
+		3629F0C31BFCF42500E2D912 /* DraggableViewBackground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DraggableViewBackground.m; sourceTree = "<group>"; };
+		3629F0C41BFCF42500E2D912 /* OverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlayView.h; sourceTree = "<group>"; };
+		3629F0C51BFCF42500E2D912 /* OverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OverlayView.m; sourceTree = "<group>"; };
 		3637E9391BB439290074A01C /* RestaurantTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantTVCell.h; sourceTree = "<group>"; };
 		3637E93A1BB439290074A01C /* RestaurantTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantTVCell.m; sourceTree = "<group>"; };
 		3637E93C1BB5B6D10074A01C /* CommonConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonConstants.m; sourceTree = "<group>"; };
@@ -381,6 +390,20 @@
 			name = Cells;
 			sourceTree = "<group>";
 		};
+		3629F0BF1BFCF42500E2D912 /* Draggable */ = {
+			isa = PBXGroup;
+			children = (
+				3629F0C01BFCF42500E2D912 /* DraggableView.h */,
+				3629F0C11BFCF42500E2D912 /* DraggableView.m */,
+				3629F0C21BFCF42500E2D912 /* DraggableViewBackground.h */,
+				3629F0C31BFCF42500E2D912 /* DraggableViewBackground.m */,
+				3629F0C41BFCF42500E2D912 /* OverlayView.h */,
+				3629F0C51BFCF42500E2D912 /* OverlayView.m */,
+			);
+			name = Draggable;
+			path = External/Draggable;
+			sourceTree = "<group>";
+		};
 		363B60BE1B6AC13900987A1B /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -520,6 +543,7 @@
 		367704651B8CFE2400B594E5 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				3629F0BF1BFCF42500E2D912 /* Draggable */,
 				368649091BE04B0C003BF98B /* UIImageEffects */,
 				366B623C1B8D14A200B9F1C5 /* SMRevealViewController */,
 			);
@@ -692,7 +716,6 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
-				4DADB5AA607BEDDE433A7CB8 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -837,21 +860,6 @@
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
 		};
-		4DADB5AA607BEDDE433A7CB8 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		923BDA435A444C3D92CBD745 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -886,6 +894,7 @@
 				96D2C4791BEC21020060EDB8 /* ParticipantsView.m in Sources */,
 				96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */,
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
+				3629F0C71BFCF42500E2D912 /* DraggableViewBackground.m in Sources */,
 				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
 				366BBC971BA9304900292F80 /* SubBaseVC.m in Sources */,
 				367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */,
@@ -938,11 +947,13 @@
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
 				965A1A971BBA05B500727773 /* SearchVC.m in Sources */,
+				3629F0C81BFCF42500E2D912 /* OverlayView.m in Sources */,
 				962B00C31BD95D22008790FD /* VoteObject.m in Sources */,
 				3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
 				96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */,
 				366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */,
+				3629F0C61BFCF42500E2D912 /* DraggableView.m in Sources */,
 				96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */,
 				96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */,
 				964BC8211B97A4E700760C83 /* LocationManager.m in Sources */,

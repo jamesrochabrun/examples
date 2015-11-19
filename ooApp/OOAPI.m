@@ -887,7 +887,7 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose:
 // Note:    If user is nil then it is the current user.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)setParticipationOf:(UserObject*) user
++ (AFHTTPRequestOperation *)setParticipationOf:(UserObject *)user
                                        inEvent:(EventObject *)event
                                             to:(BOOL) participating
                                        success:(void (^)(NSInteger eventID))success
