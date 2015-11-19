@@ -16,7 +16,7 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *operation;
 @property (nonatomic, strong) AFHTTPRequestOperation *imageOperation;
 @property (nonatomic, assign) BOOL isFirst, isMessage;
-@property (nonatomic,strong)  ParticipantsView* participantsView;
+@property (nonatomic, strong)  ParticipantsView *participantsView;
 @end
 
 @implementation EventTVCell

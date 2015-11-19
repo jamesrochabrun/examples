@@ -659,23 +659,23 @@
 
 - (void)doLayout
 {
-    float w= self.bounds.size.width;
-    float h= self.bounds.size.height;
-    float margin= kGeomSpaceEdge;
-    float vspacing= kGeomSeparatorHeight;
+    float w = width(self);
+    float h = height(self);
+    float margin = kGeomSpaceEdge;
+    float vspacing = kGeomSeparatorHeight;
     h-= vspacing;
     self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
 
     // RULE: If no restaurants have been added then did label should take up the entire height.
-    float x2= self.frame.origin.x;
-    float y2=self.frame.origin.y;
-    _venuesCollectionView.frame = CGRectMake(x2,y2 ,w,h);
+    float x2 = self.frame.origin.x;
+    float y2 = self.frame.origin.y;
+    _venuesCollectionView.frame = CGRectMake(x2, y2, w, h);
     
 }
 
 - (void)initiateUpdateOfWhereBox
 {
-    EventObject* e= self.eventBeingEdited;
+    EventObject *e = self.eventBeingEdited;
     [e refreshVenuesFromServerWithSuccess:^{
         [self performSelectorOnMainThread:@selector(updateWhereBoxAnimated:) withObject:@1 waitUntilDone:NO];
     } failure:^{
@@ -684,10 +684,10 @@
     
 }
 
-- (void) updateWhereBoxAnimated:(id)animated
+- (void)updateWhereBoxAnimated:(id)animated
 {
     [self.venuesCollectionView reloadData ];
-    if  (animated ) {
+    if  (animated) {
         __weak EventCoordinatorWhereCell *weakSelf = self;
         [UIView animateWithDuration:.4
                          animations:^{
@@ -709,7 +709,7 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    NSInteger total= [self.eventBeingEdited totalVenues ];
+    NSInteger total = [self.eventBeingEdited totalVenues];
     return total ;
 }
 
@@ -723,22 +723,22 @@
     TileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
                                                                 forIndexPath:indexPath];
     cvc.backgroundColor = GRAY;
-    NSInteger  row= indexPath.row;
+    NSInteger row= indexPath.row;
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
-    CGRect r= cvc.frame;
-    r.size=  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
-    cvc.frame= r;
+    CGRect r = cvc.frame;
+    r.size =  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
+    cvc.frame = r;
     
     return cvc;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger  row= indexPath.row;
+    NSInteger row = indexPath.row;
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
-    RestaurantVC*vc= [[RestaurantVC alloc] init];
-    vc.restaurant= venue;
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = venue;
     
     // RULE: If we are in the E3L mode, the user cannot remove the restaurant from the event.
     if  (!self.inE3LMode) {
@@ -754,27 +754,27 @@
 //------------------------------------------------------------------------------
 
 @interface EventCoordinatorWhenCell()
-@property (nonatomic,strong) OOStripHeader *nameHeader;
-@property (nonatomic,strong) EventObject *eventBeingEdited;
-@property (nonatomic,strong)  UILabel *labelTime;
-@property (nonatomic,strong)  UILabel *labelMonth;
-@property (nonatomic,strong)  UILabel *labelDay0;
-@property (nonatomic,strong)  UILabel *labelDay1;
-@property (nonatomic,strong)  UILabel *labelDay2;
-@property (nonatomic,strong)  UILabel *labelDay3;
-@property (nonatomic,strong)  UILabel *labelDay4;
-@property (nonatomic,strong)  UILabel *labelDay5;
-@property (nonatomic,strong)  UILabel *labelDay6;
-@property (nonatomic,strong)  UILabel *labelDate0;
-@property (nonatomic,strong)  UILabel *labelDate1;
-@property (nonatomic,strong)  UILabel *labelDate2;
-@property (nonatomic,strong)  UILabel *labelDate3;
-@property (nonatomic,strong)  UILabel *labelDate4;
-@property (nonatomic,strong)  UILabel *labelDate5;
-@property (nonatomic,strong)  UILabel *labelDate6;
-@property (nonatomic,strong) UIView* viewTodayBubble;
-@property (nonatomic,strong) UIView* viewhorizontalLine;
-@property (nonatomic,strong) PieView *pieHour;
+@property (nonatomic, strong) OOStripHeader *nameHeader;
+@property (nonatomic, strong) EventObject *eventBeingEdited;
+@property (nonatomic, strong) UILabel *labelTime;
+@property (nonatomic, strong) UILabel *labelMonth;
+@property (nonatomic, strong) UILabel *labelDay0;
+@property (nonatomic, strong) UILabel *labelDay1;
+@property (nonatomic, strong) UILabel *labelDay2;
+@property (nonatomic, strong) UILabel *labelDay3;
+@property (nonatomic, strong) UILabel *labelDay4;
+@property (nonatomic, strong) UILabel *labelDay5;
+@property (nonatomic, strong) UILabel *labelDay6;
+@property (nonatomic, strong) UILabel *labelDate0;
+@property (nonatomic, strong) UILabel *labelDate1;
+@property (nonatomic, strong) UILabel *labelDate2;
+@property (nonatomic, strong) UILabel *labelDate3;
+@property (nonatomic, strong) UILabel *labelDate4;
+@property (nonatomic, strong) UILabel *labelDate5;
+@property (nonatomic, strong) UILabel *labelDate6;
+@property (nonatomic, strong) UIView *viewTodayBubble;
+@property (nonatomic, strong) UIView *viewhorizontalLine;
+@property (nonatomic, strong) PieView *pieHour;
 @end
 
 @implementation EventCoordinatorWhenCell
@@ -794,20 +794,20 @@
         self.pieHour= [[PieView alloc] init];
         [self  addSubview: _pieHour];
         
-        self.labelDay0= makeLabel(self,  @"S", kGeomFontSizeHeader);
-        self.labelDay1= makeLabel(self,  @"M", kGeomFontSizeHeader);
-        self.labelDay2= makeLabel(self,  @"T", kGeomFontSizeHeader);
-        self.labelDay3= makeLabel(self,  @"W", kGeomFontSizeHeader);
-        self.labelDay4= makeLabel(self,  @"R", kGeomFontSizeHeader);
-        self.labelDay5= makeLabel(self,  @"F", kGeomFontSizeHeader);
-        self.labelDay6= makeLabel(self,  @"S", kGeomFontSizeHeader);
-        _labelDay0.textColor= UIColorRGB(0xff808080);
-        _labelDay1.textColor= UIColorRGB(0xff808080);
-        _labelDay2.textColor= UIColorRGB(0xff808080);
-        _labelDay3.textColor= UIColorRGB(0xff808080);
-        _labelDay4.textColor= UIColorRGB(0xff808080);
-        _labelDay5.textColor= UIColorRGB(0xff808080);
-        _labelDay6.textColor= UIColorRGB(0xff808080);
+        self.labelDay0 = makeLabel(self, @"S", kGeomFontSizeHeader);
+        self.labelDay1 = makeLabel(self, @"M", kGeomFontSizeHeader);
+        self.labelDay2 = makeLabel(self, @"T", kGeomFontSizeHeader);
+        self.labelDay3 = makeLabel(self, @"W", kGeomFontSizeHeader);
+        self.labelDay4 = makeLabel(self, @"R", kGeomFontSizeHeader);
+        self.labelDay5 = makeLabel(self, @"F", kGeomFontSizeHeader);
+        self.labelDay6 = makeLabel(self, @"S", kGeomFontSizeHeader);
+        _labelDay0.textColor = UIColorRGB(0xff808080);
+        _labelDay1.textColor = UIColorRGB(0xff808080);
+        _labelDay2.textColor = UIColorRGB(0xff808080);
+        _labelDay3.textColor = UIColorRGB(0xff808080);
+        _labelDay4.textColor = UIColorRGB(0xff808080);
+        _labelDay5.textColor = UIColorRGB(0xff808080);
+        _labelDay6.textColor = UIColorRGB(0xff808080);
         
         self.labelDate0= makeLabel(self,  @"", kGeomFontSizeHeader);
         self.labelDate1= makeLabel(self,  @"", kGeomFontSizeHeader);
@@ -869,10 +869,10 @@
 
 - (void)doLayout
 {
-    float w= self.bounds.size.width;
-    float h= self.bounds.size.height;
-    float margin= kGeomSpaceEdge;
-    float vspacing= kGeomSeparatorHeight;
+    float w = width(self);
+    float h = height(self);
+    float margin = kGeomSpaceEdge;
+    float vspacing = kGeomSeparatorHeight;
     h-= vspacing;
     self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
 
@@ -1068,7 +1068,7 @@
     moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
     [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:self selector:@selector(userPressedMenuButton:)];
     bbi.customView = moreButton;
-    [moreButton setTitleColor:BLUE forState:UIControlStateNormal];
+    [moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItems = @[bbi];
     
     [self updateBoxes];

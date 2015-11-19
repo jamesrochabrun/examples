@@ -766,7 +766,7 @@
                   target:self
                 selector:@selector(userPressedMenuButton:)];
     bbi.customView = moreButton;
-    [moreButton setTitleColor:BLUE forState:UIControlStateNormal];
+    [moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItems = @[bbi];
 }
 
