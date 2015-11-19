@@ -21,18 +21,27 @@
 
 + (instancetype) feedObjectFromDictionary:(NSDictionary *)dictionary;
 
+
+//
+//Returnable Objects: Restaurants, Lists, Events, Profile, Photo
+//Actions: Favorite, Add to wishlist, Add to list/event, Repost, Follow, New List/Events
+
 enum{
     VERB_UNKNOWN= 0,
-	VERB_REQUESTED_TO_FOLLOW= 1,
-    VERB_UPDATED_LIST = 2,
-    VERB_ADDED_LIST = 3,
-	VERB_ADDED_VENUE= 4,
-    VERB_ADDED_PHOTOS = 5,
-    VERB_ADDED_EVENT = 6,
-    VERB_REPOSTED_PHOTO= 7,
-    VERB_REPOSTED_LIST= 8,
-    VERB_REPOSTED_VENUE = 9,
-    VERB_VOTED_ON_EVENT= 10,
+	VERB_FOLLOW= 1,
+    VERB_ADD_TO_WISHLIST = 2,
+    VERB_ADD_TO_LIST = 3,
+	VERB_ADD_TO_VENUE= 4,
+    VERB_ADD_TO_EVENT = 5,
+    VERB_NEW_PHOTOS = 6,
+    VERB_NEW_LIST = 7,
+    VERB_NEW_EVENT = 8,
+    VERB_NEW_VENUE = 9,
+    VERB_REPOST_PHOTO= 10,
+    VERB_REPOST_LIST= 11,
+    VERB_REPOST_VENUE = 12,
+    VERB_VOTE= 13,
+    VERB_FAVORITE= 14,
 
 };
 

@@ -69,7 +69,7 @@ UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString*
         iv= [ [UIImageView alloc ]initWithImage:image];
         [iv setImageWithURL:url placeholderImage:image];
     }
-
+    
     [ parent addSubview: iv ];
     return iv;
 }
@@ -81,31 +81,33 @@ UIButton* makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SE
     [b setImage:APP.imageForNoProfileSilhouette forState:UIControlStateNormal];
     b.layer.cornerRadius=kGeomFaceBubbleDiameter/2;
     b.clipsToBounds= YES;
-    
+    b.layer.borderColor= WHITE.CGColor;
+
     if ( user.imageIdentifier && user.imageIdentifier.length) {
         
-        /*self.requestOperation =*/ [OOAPI getUserImageWithImageID: user.imageIdentifier
-                                                          maxWidth: kGeomFaceBubbleDiameter
-                                                         maxHeight: 0
-                                                           success: ^(NSString *link)  {
-                                                               NSURL *url= [NSURL URLWithString: link];
-                                                               if  ( url) {
-                                                                   NSURLRequest*r= [NSURLRequest requestWithURL:url];
-                                                                   __weak UIButton *weakButton = b;
-                                                                   [b.imageView setImageWithURLRequest:r
-                                                                                      placeholderImage:APP.imageForNoProfileSilhouette
-                                                                                               success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                                                                                   ON_MAIN_THREAD( ^{
-                                                                                                       [weakButton setImage:image forState:UIControlStateNormal];
-                                                                                                   });
-                                                                                                   
-                                                                                               } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                                                                                   ;
-                                                                                               }];
-                                                               }
-                                                           }
-                                                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                           }];
+        /*self.requestOperation =*/
+        [OOAPI getUserImageWithImageID: user.imageIdentifier
+                              maxWidth: kGeomFaceBubbleDiameter
+                             maxHeight: 0
+                               success: ^(NSString *link)  {
+                                   NSURL *url= [NSURL URLWithString: link];
+                                   if  ( url) {
+                                       NSURLRequest*r= [NSURLRequest requestWithURL:url];
+                                       __weak UIButton *weakButton = b;
+                                       [b.imageView setImageWithURLRequest:r
+                                                          placeholderImage:APP.imageForNoProfileSilhouette
+                                                                   success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                                                       ON_MAIN_THREAD( ^{
+                                                                           [weakButton setImage:image forState:UIControlStateNormal];
+                                                                       });
+                                                                       
+                                                                   } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                                       ;
+                                                                   }];
+                                   }
+                               }
+                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                               }];
     }
     else if (user.imageURLString  && user.imageURLString.length) {//  Facebook photo
         NSURL *url= [NSURL URLWithString: user.imageURLString];
@@ -163,7 +165,6 @@ NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*user
         b.backgroundColor= WHITE;
 
         b.frame = CGRectMake(0,0, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-        b.layer.borderColor= GREEN.CGColor;
         
         [array addObject: b];
         i++;
@@ -180,7 +181,8 @@ UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize)
     [ parent addSubview: l ];
     l.numberOfLines= 0;
     l.textAlignment= NSTextAlignmentCenter;
-    l.attributedText= attributedStringOf(text, fontSize) ;
+    if (text)
+        l.attributedText= attributedStringOf(text, fontSize) ;
 
     return l;
 }
@@ -405,6 +407,17 @@ NSAttributedString* attributedStringOf(NSString* string,double fontSize)
                             attributes: @{
                                           NSFontAttributeName:
                                               [UIFont fontWithName: kFontLatoRegular size:fontSize]
+                                          }];
+    return a;
+}
+
+NSAttributedString* attributedIconStringOf(NSString* string,double fontSize)
+{
+    NSAttributedString* a= [[NSAttributedString alloc]
+                            initWithString:string ?: @""
+                            attributes: @{
+                                          NSFontAttributeName:
+                                              [UIFont fontWithName: kFontIcons size:fontSize]
                                           }];
     return a;
 }

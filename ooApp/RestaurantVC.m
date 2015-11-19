@@ -568,7 +568,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     if (indexPath.section == kSectionTypeMediaItems) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
-        header.frame = CGRectMake(0, 0, width(self.view), 27);
+        header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
         header.name = @"PHOTOS";
         //        [header enableAddButtonWithTarget:self action:@selector(showPickPhotoUI)];
         [reuseView addSubview:header];

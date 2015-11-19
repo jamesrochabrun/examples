@@ -314,7 +314,7 @@
 @property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong) EventObject* event;
 @property (nonatomic,assign) int radioButtonState;
-@property (nonatomic,assign) id <EventParticipantVotingSubCellDelegate>delegate;
+@property (nonatomic,weak) id <EventParticipantVotingSubCellDelegate>delegate;
 @end
 
 @implementation EventParticipantVotingSubCell

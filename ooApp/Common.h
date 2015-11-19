@@ -35,6 +35,7 @@ extern unsigned long msTime (void);
 extern NSAttributedString* attributedStringOf(NSString*,double fontSize);
 extern NSAttributedString* underlinedAttributedStringOf(NSString* ,double fontSize);
 extern NSMutableAttributedString *createPeopleIconString (NSInteger count);
+extern NSAttributedString* attributedIconStringOf(NSString* string,double fontSize);
 
 extern UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius);
 extern UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName);

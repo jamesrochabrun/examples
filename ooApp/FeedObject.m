@@ -11,7 +11,7 @@
 @implementation FeedObject
 
 NSString*const kVerbRequestsToFollow=  @"request_follow";
-NSString*const kVerbUpdatedList=  @"updated_list";
+NSString*const kVerbFavorite=  @"favorite";
 NSString*const kVerbAddedList=  @"added_list";
 NSString*const kVerbAddedRestaurant=  @"added_restaurant";
 NSString*const kVerbAddedEvent=  @"added_event";
@@ -41,34 +41,34 @@ NSString*const kVerbVotedOnEvent=  @"voted";
     NSString* verbString= dictionary[@"description"] ?:  @"";
     object.verb = VERB_UNKNOWN;
     if ( [verbString isEqualToString: kVerbRequestsToFollow]) {
-        object.verb= VERB_REQUESTED_TO_FOLLOW;
+        object.verb= VERB_FOLLOW;
     }
-    else if ([verbString isEqualToString: kVerbUpdatedList]) {
-        object.verb= VERB_UPDATED_LIST;
+    else if ([verbString isEqualToString: kVerbFavorite]) {
+        object.verb= VERB_FAVORITE;
     }
     else if ([verbString isEqualToString: kVerbAddedList]) {
-        object.verb= VERB_ADDED_LIST;
+        object.verb= VERB_NEW_LIST;
     }
     else if ([verbString isEqualToString: kVerbAddedRestaurant]) {
-        object.verb= VERB_ADDED_VENUE;
+        object.verb= VERB_NEW_VENUE;
     }
     else if ([verbString isEqualToString: kVerbAddedEvent]) {
-        object.verb= VERB_ADDED_EVENT;
+        object.verb= VERB_NEW_EVENT;
     }
     else if ([verbString isEqualToString: kVerbAddedPhotos]) {
-        object.verb= VERB_ADDED_PHOTOS;
+        object.verb= VERB_NEW_PHOTOS;
     }
     else if ([verbString isEqualToString: kVerbRepostedList]) {
-        object.verb= VERB_REPOSTED_LIST;
+        object.verb= VERB_REPOST_LIST;
     }
     else if ([verbString isEqualToString: kVerbRepostedPhoto]) {
-        object.verb= VERB_REPOSTED_PHOTO;
+        object.verb= VERB_REPOST_PHOTO;
     }
     else if ([verbString isEqualToString: kVerbRepostedRestaurant]) {
-        object.verb= VERB_REPOSTED_VENUE;
+        object.verb= VERB_REPOST_VENUE;
     }
     else if ([verbString isEqualToString: kVerbVotedOnEvent]) {
-        object.verb= VERB_VOTED_ON_EVENT;
+        object.verb= VERB_VOTE;
     }
     
     return object;

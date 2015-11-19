@@ -7,5 +7,5 @@
 @interface ParticipantsView:UIView
 - (void)clearFaces;
 - (void) setEvent: (EventObject*)event;
-@property (nonatomic,assign) id <ParticipantsViewDelegate> delegate;
+@property (nonatomic,weak) id <ParticipantsViewDelegate> delegate;
 @end

@@ -47,7 +47,7 @@
 //------------------------------------------------------------------------------
 
 @interface EventParticipantFirstCell: UITableViewCell <ParticipantsViewDelegate>
-@property (nonatomic,assign) id <EventParticipantFirstCellDelegate> delegate;
+@property (nonatomic,weak) id <EventParticipantFirstCellDelegate> delegate;
 - (void) provideEvent: (EventObject*)event;
 @end
 
@@ -72,7 +72,7 @@ enum  {
 
 @interface EventParticipantVotingCell: UITableViewCell <EventParticipantVotingSubCellDelegate, UIScrollViewDelegate>
 @property (nonatomic,strong) VoteObject  *vote;
-@property (nonatomic,assign) id <EventParticipantVotingCellDelegate> delegate;
+@property (nonatomic,weak) id <EventParticipantVotingCellDelegate> delegate;
 
 - (void) scrollToCurrentStateAnimated: (BOOL) animated;
 - (void)setMode:(int)mode;

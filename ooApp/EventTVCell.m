@@ -141,7 +141,7 @@
     const float lowerGradientHeight =  8;
     float thumbHeight,y;
     
-    _nameHeader.frame = CGRectMake(0,0,w, 27);
+    _nameHeader.frame = CGRectMake(0,0,w, kGeomStripHeaderHeight);
     
     if (!_isMessage) {
         // RULE: If the cell is the first one then leave space for the header.

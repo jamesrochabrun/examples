@@ -23,5 +23,5 @@
 - (void)setMessageMode:(NSString *)message;
 
 @property (nonatomic,strong) OOStripHeader *nameHeader;
-@property (nonatomic,assign) id <EventTVCellDelegate> delegate;
+@property (nonatomic,weak) id <EventTVCellDelegate> delegate;
 @end

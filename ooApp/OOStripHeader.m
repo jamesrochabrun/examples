@@ -52,11 +52,9 @@
     }
 
     self.buttonAdd = makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
-                                        YELLOW, BLACK, target, action,
-                                        0, kGeomFontSizeHeader/2.);
-
-    _buttonAdd.layer.borderColor= WHITE.CGColor;
-    _buttonAdd.layer.borderWidth= .5;
+                                        YELLOW, CLEAR, target, action,
+                                                      1, kGeomStripHeaderHeight/2.);
+//    _buttonAdd.layer.borderWidth= .5;
     [self setNeedsLayout];
 }
 
@@ -149,7 +147,9 @@
                                                          multiplier:1.f constant: 0]
          ];
         float h= self.frame.size.height;
-        _buttonAdd.layer.cornerRadius= h/2;
+        if ( h>0) {
+                    _buttonAdd.layer.cornerRadius= h/2;
+        }
         
         // left-right sequence
 //        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
