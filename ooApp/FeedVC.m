@@ -43,8 +43,6 @@
 
 - (void)layoutSubviews
 {
-    [ super layoutSubviews];
-    
     CGFloat h = height(self);
     CGFloat w = width(self);
     _iconImageView.frame = CGRectMake(kGeomSpaceEdge,0,h,h);

@@ -10,6 +10,40 @@
 
 @implementation FeedObject
 
+//{
+//publisher_id: 1
+//publisher_username: "Walt"
+//message: "following"
+//parameters: "Weaver_Mollie"
+//action: "none"
+//media_item: {
+//}
+//published_at: "2015-11-20T18:28:54.379Z"
+//}
+//-
+//1:  {
+//publisher_id: 1
+//publisher_username: "Walt"
+//message: "following"
+//parameters: "Becker_Eugenia"
+//action: "none"
+//media_item: {
+//media_item_id: 107
+//restaurant_id: 29
+//type: 1
+//reference: "CmRdAAAAQ4xNUKj3gCZg2sqLGJ3dWxkFuLqO3IalUieYA4DXTOrAnKktq44kTsA0WO0xRDpEsrg1WMiey2CRqzCICTfZn2GugcDoyk-N7dmPMQePP56dnivBo7SSKjPQYsi3yRY7EhBBGXgMSK4ugEoFR6d3gOydGhRaMCJm44ipdEzR-ArKE7-Z09bTtA"
+//created_at: "2015-11-15T18:36:07.000Z"
+//updated_at: "2015-11-15T18:36:07.000Z"
+//source: 2
+//source_user_id: null
+//height: 400
+//width: 300
+//url: null
+//}
+//    -
+//published_at: "2015-11-20T18:28:50.756Z"
+//}
+
 NSString*const kVerbRequestsToFollow=  @"request_follow";
 NSString*const kVerbFavorite=  @"favorite";
 NSString*const kVerbAddedList=  @"added_list";

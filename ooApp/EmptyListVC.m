@@ -23,10 +23,12 @@
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UIButton *buttonDiscover;
 @property (nonatomic, strong) UIButton *buttonLists;
-
+@property (nonatomic,strong)  UIImageView* imageViewBackground;
 @end
 
-@implementation EmptyListVC
+@implementation EmptyListVC  {
+    float heightForText;
+}
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -41,39 +43,64 @@
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
-    self.buttonLists= makeButton( self.view, LOCAL(@"LISTS") , kGeomFontSizeHeader,
-                                 BLACK, CLEAR, self,
+    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
+    bbi.customView = moreButton;
+    [moreButton setTitleColor:CLEAR forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItems = @[bbi];
+    
+    float borderWidth= 0;
+    if  ([UIScreen  mainScreen].bounds.size.height  < 481 ) {
+        borderWidth= .5;
+    }
+    
+    self.imageViewBackground= makeImageView( self.view,  @"Gradient Background.png");
+    
+    self.buttonLists= makeButton( self.view, LOCAL(@"LISTS") , kGeomFontSizeSubheader,
+                                 YELLOW, BLACK, self,
                                  @selector(userPressedListsButton:),
-                                 1);
+                                 borderWidth);
     
-    self.buttonDiscover= makeButton( self.view, LOCAL(@"DISCOVER") , kGeomFontSizeHeader,
-                                    BLACK, CLEAR, self,
+    self.buttonDiscover= makeButton( self.view, LOCAL(@"DISCOVER") , kGeomFontSizeSubheader,
+                                    YELLOW, BLACK, self,
                                     @selector(userPressedDiscoverButton:),
-                                    1);
+                                    borderWidth);
     
-    self.labelUpper= makeLabel ( self.view,  @"This list is hungry\rfor some restaurants.", kGeomFontSizeSubheader);
+    addShadowTo(self.buttonLists);
+    addShadowTo(self.buttonDiscover);
+   
+    self.labelUpper= makeLabel ( self.view,  @"This list is hungry\rfor some restaurants.", kGeomFontSizeHeader);
     self.labelPacMan= makeIconLabel ( self.view,  kFontIconProfile, kGeomForkImageSize);
-
-    UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-    UIFont* lowerFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
     
+    _labelUpper.textColor= WHITE;
+    _labelPacMan.textColor= WHITE;
+
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
-    NSAttributedString *part1=  attributedStringOf( @"Tap the ", kGeomFontSizeHeader);
-    NSAttributedString *part2=  attributedIconStringOf( kFontIconAdd, kGeomFontSizeHeader);
-    NSAttributedString *part3=  attributedStringOf( @" icon next to a restaurant you like, and select ", kGeomFontSizeHeader);
-    NSAttributedString *part4=  attributedStringOf( @"ADD TO LIST.", kGeomFontSizeHeader);
-
+    NSAttributedString *part1=  attributedStringWithColorOf( @"Tap the ", kGeomFontSizeSubheader,WHITE);
+    NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
+    textAttachment.image = [UIImage imageNamed:@"yellowPlus.png"];
+    textAttachment.bounds=  CGRectMake(0,-5,22,22);
+    NSAttributedString *part2 = [NSAttributedString attributedStringWithAttachment:textAttachment];
+    NSAttributedString *part3=  attributedStringWithColorOf( @" icon next to a restaurant you like, and select ", kGeomFontSizeSubheader,WHITE);
+    NSAttributedString *part4=  attributedBoldStringWithColorOf( @"ADD TO LIST.", kGeomFontSizeSubheader,WHITE);
+    
     NSMutableAttributedString* aString= [NSMutableAttributedString  new];
     [aString appendAttributedString:part1];
     [aString appendAttributedString:part2];
     [aString appendAttributedString:part3];
     [aString appendAttributedString:part4];
-
+    
+    [aString  addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, aString.length)];
+    
     self.textView=  makeTextView(self.view, CLEAR, NO);
-    _textView.textColor= BLACK;
+    _textView.textColor= WHITE;
     _textView.attributedText= aString;
+    heightForText= aString.size.height;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
                            initWithHeader:_listItem.name
@@ -116,29 +143,37 @@
 {
     CGFloat h = height(self.view);
     CGFloat w = width(self.view);
+    float vspace= kGeomVerticalSpaceCreateList;
+    if  ([UIScreen  mainScreen].bounds.size.height  < 481 ) {
+        vspace/= 2;
+    }
+    
+    self.imageViewBackground.frame=  self.view.bounds;
     
     [self.textView sizeToFit];
-    float heightForText = _textView.intrinsicContentSize.height;
+    [_labelUpper sizeToFit];
+    [_labelPacMan sizeToFit];
+
+    heightForText = _textView.frame.size.height;
     const float spacer = kGeomSpaceInter;
     
-    float totalHeightNeeded= _labelUpper.intrinsicContentSize.height +_labelPacMan.intrinsicContentSize.height + 2*kGeomHeightButton;
+    float totalHeightNeeded= _labelUpper.frame.size.height +_labelPacMan.frame.size.height + kGeomHeightCreateListButton;
     totalHeightNeeded += heightForText;
-    totalHeightNeeded += 3*spacer;
+    totalHeightNeeded += 3* vspace;
     
     float y= (h-totalHeightNeeded)/2;
     _labelUpper.frame= CGRectMake(0, y, w, _labelUpper.intrinsicContentSize.height);
-    y += _labelUpper.intrinsicContentSize.height+ spacer;
+    y += _labelUpper.intrinsicContentSize.height+ vspace;
     _labelPacMan.frame= CGRectMake(0, y, w, _labelPacMan.intrinsicContentSize.height);
-    y +=  _labelPacMan.intrinsicContentSize.height+ spacer;
+    y +=  _labelPacMan.intrinsicContentSize.height+ vspace;
     
     _textView.frame=CGRectMake((w-kGeomEmptyTextViewWidth)/2, y, kGeomEmptyTextViewWidth, heightForText);
-    y+= heightForText+ spacer;
+    y+= heightForText+ vspace;
     
-    _buttonDiscover.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
-    y +=kGeomHeightButton+ spacer;
-    
-    _buttonLists.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
-//    y +=kGeomHeightButton+ spacer;
+    float x=  (w-2*kGeomButtonWidth-spacer)/2;
+    _buttonDiscover.frame=CGRectMake (x,y,kGeomButtonWidth,kGeomHeightCreateListButton);
+    x +=kGeomButtonWidth+spacer;
+    _buttonLists.frame=CGRectMake (x,y,kGeomButtonWidth,kGeomHeightCreateListButton);
 }
 
 - (void) viewWillLayoutSubviews

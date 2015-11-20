@@ -189,7 +189,11 @@ static NSString * const ListRowID = @"ListRowCell";
         [api addList:string
              success:^(ListObject *list) {
                  ON_MAIN_THREAD(^{
-                     [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
+                     if ( list) {
+                         [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
+                     } else {
+                         message( @"That list name is already in use.");
+                     }
                  });
              }
              failure:^(AFHTTPRequestOperation *operation, NSError * error) {

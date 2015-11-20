@@ -37,6 +37,9 @@ extern NSAttributedString* attributedStringOf(NSString*,double fontSize);
 extern NSAttributedString* underlinedAttributedStringOf(NSString* ,double fontSize);
 extern NSMutableAttributedString *createPeopleIconString (NSInteger count);
 extern NSAttributedString* attributedIconStringOf(NSString* string,double fontSize);
+extern NSAttributedString* attributedStringWithColorOf(NSString* string,double fontSize, UIColor*color);
+extern NSAttributedString* attributedIconStringWithColorOf(NSString* string,double fontSize, UIColor*color);
+extern NSAttributedString* attributedBoldStringWithColorOf(NSString* string,double fontSize, UIColor*color);
 
 extern UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius);
 extern UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName);
@@ -50,6 +53,7 @@ extern UIButton* makeProfileImageButton (UIView *parent,UserObject* user,id targ
 extern UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize);
 extern UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize);
+extern UILabel* makeAttributedLabelWithColor (UIView *parent, NSString*  text, float fontSize,UIColor*color);
 extern UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize);
 extern UITextView* makeTextView (UIView*parent, UIColor *bg, BOOL editable);
 extern UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize);

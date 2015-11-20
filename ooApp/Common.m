@@ -185,7 +185,19 @@ UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize)
     l.textAlignment= NSTextAlignmentCenter;
     if (text)
         l.attributedText= attributedStringOf(text, fontSize) ;
+    
+    return l;
+}
 
+UILabel* makeAttributedLabelWithColor (UIView *parent, NSString*  text, float fontSize,UIColor*color)
+{
+    UILabel* l= [ [ UILabel alloc ]init ];
+    [ parent addSubview: l ];
+    l.numberOfLines= 0;
+    l.textAlignment= NSTextAlignmentCenter;
+    if (text)
+        l.attributedText= attributedStringWithColorOf(text, fontSize,color) ;
+    
     return l;
 }
 
@@ -413,13 +425,47 @@ NSAttributedString* attributedStringOf(NSString* string,double fontSize)
     return a;
 }
 
+NSAttributedString* attributedBoldStringWithColorOf(NSString* string,double fontSize, UIColor*color)
+{
+    NSAttributedString* a= [[NSAttributedString alloc]
+                            initWithString:string ?: @""
+                            attributes: @{
+                                          NSFontAttributeName:[UIFont fontWithName: kFontLatoBold size:fontSize],
+                                          NSForegroundColorAttributeName:color
+                                          }];
+    return a;
+}
+
+NSAttributedString* attributedStringWithColorOf(NSString* string,double fontSize, UIColor*color)
+{
+    NSAttributedString* a= [[NSAttributedString alloc]
+                            initWithString:string ?: @""
+                            attributes: @{
+                                          NSFontAttributeName:[UIFont fontWithName: kFontLatoRegular size:fontSize],
+                                          NSForegroundColorAttributeName:color
+                                          }];
+    return a;
+}
+
+NSAttributedString* attributedIconStringWithColorOf(NSString* string,double fontSize, UIColor*color)
+{
+    NSAttributedString* a= [[NSAttributedString alloc]
+                            initWithString:string ?: @""
+                            attributes: @{
+                                          NSFontAttributeName: [UIFont fontWithName: kFontIcons size:fontSize],
+                                          NSForegroundColorAttributeName:color
+                                          
+                                          }];
+    return a;
+}
+
 NSAttributedString* attributedIconStringOf(NSString* string,double fontSize)
 {
     NSAttributedString* a= [[NSAttributedString alloc]
                             initWithString:string ?: @""
                             attributes: @{
-                                          NSFontAttributeName:
-                                              [UIFont fontWithName: kFontIcons size:fontSize]
+                                          NSFontAttributeName: [UIFont fontWithName: kFontIcons size:fontSize],
+
                                           }];
     return a;
 }
