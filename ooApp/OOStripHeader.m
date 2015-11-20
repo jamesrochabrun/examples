@@ -195,7 +195,7 @@
 {
     [super layoutSubviews];
     CGRect frame = self.frame;
-    frame.size.width = (_buttonAdd) ? width(self) : CGRectGetMaxX(_nameLabel.frame) + kGeomSpaceInter;
+    frame.size.width = CGRectGetMaxX(_nameLabel.frame) + kGeomSpaceInter;
     self.frame = frame;
     
     UIBezierPath *maskPath;

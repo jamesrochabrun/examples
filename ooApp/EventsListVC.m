@@ -85,12 +85,7 @@
     _table.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _createEventButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_createEventButton withIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedAdd:)];
-    [_createEventButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-    _createEventButton.layer.cornerRadius = kGeomDimensionsIconButton/2;
-    _createEventButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
-    _createEventButton.layer.borderWidth = 1;
-    
+    [_createEventButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedAdd:)];
     [self.view addSubview:_createEventButton];
 }
 

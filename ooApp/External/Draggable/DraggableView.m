@@ -50,7 +50,7 @@
         
         _thumbnail = [[UIImageView alloc] init];
         _thumbnail.backgroundColor = UIColorRGBA(kColorBlack);
-        _thumbnail.contentMode = UIViewContentModeScaleAspectFill;
+        _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         _thumbnail.clipsToBounds = YES;
         _thumbnail.translatesAutoresizingMaskIntoConstraints = NO;
         
@@ -65,6 +65,7 @@
         overlayView = [[OverlayView alloc]initWithFrame:CGRectMake(self.frame.size.width/2-100, 0, 100, 100)];
         overlayView.alpha = 0;
         [self addSubview:overlayView];
+        //self.clipsToBounds = YES;
     }
     return self;
 }
@@ -77,37 +78,57 @@
     self.layer.shadowOffset = CGSizeMake(1, 1);
 }
 
-- (void)updateConstraints {
-    [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
-    
-    UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _thumbnail);
-    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[_name(30)]-(>=spaceInter)-[_thumbnail]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_thumbnail]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_name]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    //name line
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_name
-                         attribute:NSLayoutAttributeCenterX
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:self
-                         attribute:NSLayoutAttributeCenterX
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_thumbnail
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:self
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
+//- (void)updateConstraints {
+//    [super updateConstraints];
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
+//    
+//    UIView *superview = self;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _name, _thumbnail);
+//    
+//    // Vertical layout - note the options for aligning the top and bottom of all views
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[_name(30)]-(>=spaceInter)-[_thumbnail]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_thumbnail]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_name]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    
+//    //name line
+//    [self addConstraint:[NSLayoutConstraint
+//                         constraintWithItem:_name
+//                         attribute:NSLayoutAttributeCenterX
+//                         relatedBy:NSLayoutRelationEqual
+//                         toItem:self
+//                         attribute:NSLayoutAttributeCenterX
+//                         multiplier:1
+//                         constant:0]];
+//    [self addConstraint:[NSLayoutConstraint
+//                         constraintWithItem:_thumbnail
+//                         attribute:NSLayoutAttributeCenterY
+//                         relatedBy:NSLayoutRelationEqual
+//                         toItem:self
+//                         attribute:NSLayoutAttributeCenterY
+//                         multiplier:1
+//                         constant:0]];
+//}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self updateLayout];
 }
 
+- (void)updateLayout {
+    CGRect frame;
+    
+    frame = _name.frame;
+    frame.origin = CGPointMake(0, 0);
+    frame.size = CGSizeMake(width(self) - 20, 100);
+    _name.frame = frame;
+    
+    frame = _thumbnail.frame;
+    frame.origin = CGPointMake(0, CGRectGetMaxY(_name.frame));
+    frame.size = CGSizeMake(width(self), height(self) - frame.origin.y);
+    _thumbnail.frame = frame;
+    
+    NSLog(@"selfFrame=%@, tnFrame=%@, nameFrame=%@", NSStringFromCGRect(self.frame), NSStringFromCGRect(_thumbnail.frame), NSStringFromCGRect(_name.frame));
+}
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -161,6 +182,7 @@
             //%%% let go of the card
         case UIGestureRecognizerStateEnded: {
             [self afterSwipeAction];
+            
             break;
         };
         case UIGestureRecognizerStatePossible:break;
@@ -172,15 +194,17 @@
 //%%% checks to see if you are moving right or left and applies the correct overlay image
 - (void)updateOverlay:(CGFloat)distance
 {
-    CGRect frame = overlayView.frame;
+//    CGRect frame = overlayView.frame;
     if (distance > 0) {
         overlayView.mode = GGOverlayViewModeRight;
-        frame.origin = CGPointMake(width(self) - width(overlayView) -  20, 20);
+//        frame.origin = CGPointMake(width(self) - width(overlayView) -  20, 20);
     } else {
         overlayView.mode = GGOverlayViewModeLeft;
-        frame.origin = CGPointMake(20, 20);
+//        frame.origin = CGPointMake(20, 20);
     }
-    overlayView.frame = frame;
+//    overlayView.frame = frame;
+    
+    overlayView.center = self.center;
     
     overlayView.alpha = MIN(fabs(distance)/100, 0.9);
 }
@@ -241,7 +265,7 @@
                      animations:^{
                          self.center = finishPoint;
                          self.transform = CGAffineTransformMakeRotation(1);
-                     }completion:^(BOOL complete){
+                     } completion:^(BOOL complete){
                          [self removeFromSuperview];
                      }];
     
@@ -257,7 +281,7 @@
                      animations:^{
                          self.center = finishPoint;
                          self.transform = CGAffineTransformMakeRotation(-1);
-                     }completion:^(BOOL complete){
+                     } completion:^(BOOL complete){
                          [self removeFromSuperview];
                      }];
     
