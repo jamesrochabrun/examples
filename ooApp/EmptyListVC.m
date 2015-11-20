@@ -18,8 +18,9 @@
 
 @interface EmptyListVC ()
 
+@property (nonatomic, strong) UILabel *labelUpper;
+@property (nonatomic,strong)  UILabel *labelPacMan;
 @property (nonatomic, strong) UITextView *textView;
-@property (nonatomic, strong) UILabel *label;
 @property (nonatomic, strong) UIButton *buttonDiscover;
 @property (nonatomic, strong) UIButton *buttonLists;
 
@@ -50,30 +51,25 @@
                                     @selector(userPressedDiscoverButton:),
                                     1);
     
-    _label= makeIconLabel ( self.view,  @"q", kGeomForkImageSize);
-    
+    self.labelUpper= makeLabel ( self.view,  @"This list is hungry\rfor some restaurants.", kGeomFontSizeSubheader);
+    self.labelPacMan= makeIconLabel ( self.view,  kFontIconProfile, kGeomForkImageSize);
+
     UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
     UIFont* lowerFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
+    NSAttributedString *part1=  attributedStringOf( @"Tap the ", kGeomFontSizeHeader);
+    NSAttributedString *part2=  attributedIconStringOf( kFontIconAdd, kGeomFontSizeHeader);
+    NSAttributedString *part3=  attributedStringOf( @" icon next to a restaurant you like, and select ", kGeomFontSizeHeader);
+    NSAttributedString *part4=  attributedStringOf( @"ADD TO LIST.", kGeomFontSizeHeader);
+
     NSMutableAttributedString* aString= [NSMutableAttributedString  new];
-    NSAttributedString *upperString= [[NSAttributedString  alloc]
-                                      initWithString: LOCAL(@"This list needs some \rrestaurants.\r")
-                                      attributes: @{
-                                                    NSFontAttributeName: upperFont,
-                                                    NSParagraphStyleAttributeName:paragraphStyle
-                                                    }];
-    
-    NSAttributedString *lowerString= [[NSAttributedString  alloc]
-                                      initWithString: LOCAL (@"\rTap the icon next to a \rrestaurant you like, and select\rADD TO LIST.")
-                                      attributes: @{
-                                                    NSFontAttributeName: lowerFont,
-                                                    NSParagraphStyleAttributeName:paragraphStyle
-                                                    }];
-    [aString appendAttributedString:upperString];
-    [aString appendAttributedString:lowerString];
+    [aString appendAttributedString:part1];
+    [aString appendAttributedString:part2];
+    [aString appendAttributedString:part3];
+    [aString appendAttributedString:part4];
 
     self.textView=  makeTextView(self.view, CLEAR, NO);
     _textView.textColor= BLACK;
@@ -122,15 +118,18 @@
     CGFloat w = width(self.view);
     
     [self.textView sizeToFit];
-    float heightForText = _textView.bounds.size.height;
+    float heightForText = _textView.intrinsicContentSize.height;
     const float spacer = kGeomSpaceInter;
     
-    float totalHeightNeeded= heightForText+kGeomForkImageSize + 2*kGeomHeightButton;
+    float totalHeightNeeded= _labelUpper.intrinsicContentSize.height +_labelPacMan.intrinsicContentSize.height + 2*kGeomHeightButton;
+    totalHeightNeeded += heightForText;
     totalHeightNeeded += 3*spacer;
     
     float y= (h-totalHeightNeeded)/2;
-    _label.frame= CGRectMake(0, y, w, kGeomForkImageSize);
-    y += kGeomForkImageSize+ spacer;
+    _labelUpper.frame= CGRectMake(0, y, w, _labelUpper.intrinsicContentSize.height);
+    y += _labelUpper.intrinsicContentSize.height+ spacer;
+    _labelPacMan.frame= CGRectMake(0, y, w, _labelPacMan.intrinsicContentSize.height);
+    y +=  _labelPacMan.intrinsicContentSize.height+ spacer;
     
     _textView.frame=CGRectMake((w-kGeomEmptyTextViewWidth)/2, y, kGeomEmptyTextViewWidth, heightForText);
     y+= heightForText+ spacer;

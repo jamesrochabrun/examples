@@ -134,7 +134,7 @@ extern NSString *const kFontIconFeed;
 extern NSString *const kFontIconMenu;
 extern NSString *const kFontIconMore;
 extern NSString *const kFontIconPlay;
-extern NSString *const kFontIconProfile;
+extern NSString *const kFontIconProfile;// Pac-Man
 extern NSString *const kFontIconProfileFilled;
 extern NSString *const kFontIconRemove;
 extern NSString *const kFontIconSearch;
