@@ -250,6 +250,7 @@ static NSString * const ListRowID = @"HLRCell";
     _requestOperation = [api getRestaurantsWithKeywords:searchTerms
                                            andLocation:_desiredLocation
                                              andFilter:@""
+                                              andRadius:1500
                                            andOpenOnly:_openOnly
                                                   andSort:kSearchSortTypeBestMatch
                                                success:^(NSArray *r) {

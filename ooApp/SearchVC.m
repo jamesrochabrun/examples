@@ -279,6 +279,7 @@ typedef enum: char {
             self.fetchOperation= [api getRestaurantsWithKeywords:@[_searchBar.text]
                                                     andLocation:location
                                                       andFilter:[self currentFilterName]
+                                                        andRadius:10000
                                                     andOpenOnly:NO
                                                         andSort:kSearchSortTypeBestMatch
                                                         success:^(NSArray *restaurants) {

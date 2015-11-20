@@ -26,9 +26,10 @@ extern NSString *const kNotificationLocationBecameUnavailable;
 extern void message (NSString *str);
 extern void message2 (NSString *str, NSString*string);
 
-extern NSString*const kOOURL;
+extern NSString *const kOOURL;
+extern NSString *const kHTTPProtocol;
 extern NSString *getDateString();
-extern NSString* trimString(NSString* s);
+extern NSString *trimString(NSString* s);
 extern NSString *platformString();
 extern unsigned long msTime (void);
 

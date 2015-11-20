@@ -165,6 +165,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         self.requestOperation = [api getRestaurantsWithKeywords:@[_listItem.name]
                                                    andLocation:[[LocationManager sharedInstance] currentUserLocation]
                                                      andFilter:@""
+                                                    andRadius:3000
                                                     andOpenOnly:NO
                                                           andSort:kSearchSortTypeBestMatch
                                                        success:^(NSArray *r) {
