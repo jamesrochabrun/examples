@@ -865,7 +865,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     AFHTTPRequestOperation *op;
     if (following) {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following", [OOAPI URL], (unsigned long)selfUserID];
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/followees", [OOAPI URL], (unsigned long)selfUserID];
         op = [rm POST: urlString parameters: @{
                                                @"user_id": @(otherUserID)
                                               }
@@ -875,7 +875,7 @@ NSString *const kKeySearchFilter = @"filter";
                  failure(operation, error);
              }];
     } else {
-        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following/%lu", [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
+        NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/followees/%lu", [OOAPI URL], (unsigned long)selfUserID,(unsigned long)otherUserID];
         op = [rm DELETE: urlString parameters:nil
                 success:^(id responseObject) {
                     success(responseObject);
@@ -1518,7 +1518,7 @@ NSString *const kKeySearchFilter = @"filter";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/following", [OOAPI URL], (unsigned long)userid];
+    NSString *urlString = [NSString stringWithFormat:@"https://%@/users/%lu/followees", [OOAPI URL], (unsigned long)userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     

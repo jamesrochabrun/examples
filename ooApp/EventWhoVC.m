@@ -99,7 +99,8 @@
                                                                                                        
                                                                                                        ON_MAIN_THREAD( ^{
                                                                                                            weakSelf.imageViewThumbnail.image= image;
-                                                                                                           [user setUserProfilePhoto: image];
+                                                                                                           [user setUserProfilePhoto: image
+                                                                                                            andUpload:NO];
                                                                                                        });
                                                                                                        
                                                                                                    } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
@@ -122,7 +123,8 @@
                                                             
                                                             ON_MAIN_THREAD( ^{
                                                                 weakSelf.imageViewThumbnail.image= image;
-                                                                [user setUserProfilePhoto: image];
+                                                                [user setUserProfilePhoto: image
+                                                                                andUpload:NO];
                                                             });
                                                             
                                                         } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {

@@ -113,7 +113,7 @@ NSString *const kKeyUserParticipantState = @"participant_state";
              };
 }
 
-- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto;
+- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto andUpload:(BOOL)doUpload
 {
     if (!userProfilePhoto) {
         return;
@@ -121,16 +121,19 @@ NSString *const kKeyUserParticipantState = @"participant_state";
     
     profilePhoto= userProfilePhoto;
     
-    // NOTE: The caller makes sure this is seldomly called.
-    [OOAPI uploadPhoto:profilePhoto
-                    to:UPLOAD_DESTINATION_USER_PROFILE
-            identifier:0
-               success:^() {
-                   NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
-               }
-               failure:^(NSError *e) {
-                   NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
-               }];
+    if ( doUpload) {
+        // NOTE: The caller makes sure this is seldomly called.
+        [OOAPI uploadPhoto:profilePhoto
+                        to:UPLOAD_DESTINATION_USER_PROFILE
+                identifier:0
+                   success:^() {
+                       NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
+                   }
+                   failure:^(NSError *e) {
+                       NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
+                   }];
+        
+    }
 }
 
 - (UIImage *)userProfilePhoto;

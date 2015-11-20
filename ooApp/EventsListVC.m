@@ -511,6 +511,7 @@
         }
         
         EventObject *event = [events objectAtIndex:row];
+        _eventBeingEdited= event;
         
         // RULE: Curated events are never editable.
         if (section == 2) {
@@ -525,7 +526,7 @@
         [cell updateHighlighting:YES];
         RUN_AFTER(400, ^{
 //            [cell.nameHeader unHighlightButton];
-//            [cell updateHighlighting:NO];
+            [cell updateHighlighting:NO];
         });
         
         
@@ -671,6 +672,7 @@
 {
     EventCoordinatorVC *vc= [[EventCoordinatorVC  alloc] init ];
     vc.delegate= self;
+    vc.isNewEvent= YES;
     vc.eventBeingEdited= self.eventBeingEdited;
    [self.navigationController pushViewController:vc animated:YES];
 }

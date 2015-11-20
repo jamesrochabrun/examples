@@ -36,25 +36,30 @@
 
     [super viewDidLoad];
     
+    self.view.autoresizesSubviews= NO;
+    self.view.backgroundColor= GRAY;
+    
     _wentToDiscover= NO;
     
-    _backgroundImageView = makeImageView(self.view, @"background-image.jpg");
+    _backgroundImageView = makeImageView(self.view, @"sloganHereMaybe.png");
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
+    _backgroundImageView.clipsToBounds= YES;
+    addShadowTo  (_backgroundImageView);
     
-    _logo = [[UIImageView alloc] init];
-    _logo.contentMode = UIViewContentModeScaleAspectFit;
-    _logo.backgroundColor = UIColorRGBA(kColorClear);
-    _logo.image = [UIImage imageNamed:@"Logo.png"];
+//    _logo = [[UIImageView alloc] init];
+//    _logo.contentMode = UIViewContentModeScaleAspectFit;
+//    _logo.backgroundColor = UIColorRGBA(kColorClear);
+//    _logo.image = [UIImage imageNamed:@"Logo.png"];
     
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
     _facebookLoginButton.delegate = self;
     _facebookLoginButton.layer.cornerRadius = kGeomCornerRadius;
     _facebookLoginButton.readPermissions = @[@"public_profile", @"email"];
-    
+    addShadowTo  (_facebookLoginButton);
+
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_logo];
     [self.view addSubview:_facebookLoginButton];
-    [self doLayout];
     
     self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
     [self.view addGestureRecognizer:_pinch];
@@ -77,19 +82,25 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float spacing= kGeomSpaceInter;
-    
+    const float statusBarHeight=  20;
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
-    _backgroundImageView.frame=  self.view.bounds;
+    float  margin=kGeomSpaceEdge;
+    _backgroundImageView.frame= CGRectMake( 0,  statusBarHeight,w,w);
+    float imageHeight=1.175 * w;
+    float y= imageHeight+ (h - imageHeight)/2 -kGeomHeightButton/2 ;
+    const float buttonWidth=  275;
+    float x=  (w-buttonWidth)/2;
+//    _logo.frame= CGRectMake(x, y, kGeomLogoWidth, kGeomLogoHeight);
+//    y += kGeomLogoHeight+ spacing;
+//    x=  (w-kGeomButtonWidth)/2;
+    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
+}
 
-    float requiredHeight= kGeomLogoHeight + kGeomHeightButton + kGeomLoginVerticalDisplacement+spacing;
-    float y=  (h-requiredHeight)/2;
-    float x=  (w-kGeomLogoWidth)/2;
-    _logo.frame= CGRectMake(x, y, kGeomLogoWidth, kGeomLogoHeight);
-    y += kGeomLogoHeight+ spacing;
-    x=  (w-kGeomButtonWidth)/2;
-    _facebookLoginButton.frame=  CGRectMake(x, y, kGeomButtonWidth, kGeomHeightButton);
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    [self doLayout];
 }
 
 //------------------------------------------------------------------------------
@@ -725,7 +736,7 @@
                              if  ( data) {
                                  UIImage *image= [ UIImage imageWithData:data];
                                  if  (image ) {
-                                     [userInfo setUserProfilePhoto:image];
+                                     [userInfo setUserProfilePhoto:image andUpload:YES];
                                      NSLog  (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@",NSStringFromCGSize(image.size));
                                  }
                              }

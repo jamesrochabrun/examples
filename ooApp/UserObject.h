@@ -60,7 +60,7 @@ extern NSString *const kKeyUserParticipantState;
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary *)dictionaryFromUser;
 
-- (void)setUserProfilePhoto:(UIImage *)userProfilePhoto;
+- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto andUpload:(BOOL)doUpload;
 - (UIImage *)userProfilePhoto;
 
 - (NSUInteger)hash;

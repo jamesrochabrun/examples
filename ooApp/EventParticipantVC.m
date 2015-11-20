@@ -968,7 +968,10 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    _table.frame=  self.view.bounds;
+    float margin= kGeomSpaceEdge;
+    float w= self.view.bounds.size.width;
+    float h= self.view.bounds.size.height;
+    _table.frame= CGRectMake(margin, margin,w-2* margin,h-2*margin);
 }
 
 - (void) userRequestToSubmit;

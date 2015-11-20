@@ -107,6 +107,8 @@
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		965A1A971BBA05B500727773 /* SearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965A1A961BBA05B500727773 /* SearchVC.m */; };
+		966098B91BFE9B0700B5D5B1 /* sloganHereMaybe.png in Resources */ = {isa = PBXBuildFile; fileRef = 966098B81BFE9B0700B5D5B1 /* sloganHereMaybe.png */; };
+		966098BB1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png in Resources */ = {isa = PBXBuildFile; fileRef = 966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */; };
 		966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 966E08391BC6E38800A4B866 /* EventWhoVC.m */; };
 		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; };
 		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; };
@@ -307,6 +309,8 @@
 		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		965A1A951BBA05B500727773 /* SearchVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchVC.h; sourceTree = "<group>"; };
 		965A1A961BBA05B500727773 /* SearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchVC.m; sourceTree = "<group>"; };
+		966098B81BFE9B0700B5D5B1 /* sloganHereMaybe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = sloganHereMaybe.png; path = "Graphic Assets/sloganHereMaybe.png"; sourceTree = "<group>"; };
+		966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "FB-f-Logo__white_512.png"; path = "Graphic Assets/FB-f-Logo__white_512.png"; sourceTree = "<group>"; };
 		966E08381BC6E38800A4B866 /* EventWhoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWhoVC.h; sourceTree = "<group>"; };
 		966E08391BC6E38800A4B866 /* EventWhoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWhoVC.m; sourceTree = "<group>"; };
 		967124941BB5E6A900F28904 /* DiagnosticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticVC.h; sourceTree = "<group>"; };
@@ -489,6 +493,8 @@
 			children = (
 				36587B6F1B93964C00D01EB5 /* Icon@2x.png */,
 				962303741BB33D2700278FA6 /* forkKnife.png */,
+				966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */,
+				966098B81BFE9B0700B5D5B1 /* sloganHereMaybe.png */,
 				36587B701B93964C00D01EB5 /* Icon@3x.png */,
 				3621F1231B900EC7004537B6 /* Logo.png */,
 				3621F1241B900EC7004537B6 /* Logo2.png */,
@@ -801,6 +807,7 @@
 				367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */,
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
 				96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */,
+				966098B91BFE9B0700B5D5B1 /* sloganHereMaybe.png in Resources */,
 				367704591B8BF05100B594E5 /* Lato-Italic.ttf in Resources */,
 				36587B711B93964C00D01EB5 /* Icon@2x.png in Resources */,
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
@@ -818,6 +825,7 @@
 				367704511B8BF05100B594E5 /* Lato-Black.ttf in Resources */,
 				367704531B8BF05100B594E5 /* Lato-Bold.ttf in Resources */,
 				367704581B8BF05100B594E5 /* Lato-HeavyItalic.ttf in Resources */,
+				966098BB1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png in Resources */,
 				3621F1251B900EC7004537B6 /* Logo.png in Resources */,
 				367704611B8BF05100B594E5 /* Lato-Thin.ttf in Resources */,
 				36FDA7041B585F650029D29D /* Images.xcassets in Resources */,

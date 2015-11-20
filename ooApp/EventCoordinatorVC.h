@@ -13,6 +13,7 @@
 #import "EventWhoVC.h"
 #import "EventObject.h"
 #import "ObjectTVCell.h"
+#import "RestaurantObject.h"
 
 @protocol EventCoordinatorVCDelegate
 @optional
@@ -23,11 +24,12 @@
 @protocol EventCoordinatorCoverCellDelegate
 @optional
 - (void) userDidAlterEvent;
+- (void) userDidSubmitEvent;
 - (void) userDidDeclineEvent;
 @end
 
 @protocol EventCoordinatorWhoCellDelegate
-@optional
+- (void)userPressedButtonForProfile:(NSUInteger)userid;
 @end
 
 @protocol EventCoordinatorWhenCellDelegate
@@ -35,10 +37,25 @@
 @end
 
 @protocol EventCoordinatorWhereCellDelegate
-@optional
+- (void) userTappedOnVenue:(RestaurantObject*)venue;
+- (void)updateWhereBox;
+- (void) userPressedNewRestaurant;
+@end
+
+@protocol PlusCellDelegate
+- (void) userPressedNewRestaurant;
 @end
 
 //------------------------------------------------------------------------------
+
+@interface PlusCell: UICollectionViewCell
+@property (nonatomic,weak) NSObject<PlusCellDelegate>* delegate;
+
+@end
+
+@interface EventCoordinatorNewCell: UITableViewCell
+- (void)setMessage: (NSString*)message;
+@end
 
 @interface EventCoordinatorWhoCell: UITableViewCell <ParticipantsViewDelegate>
 @property (nonatomic,assign) BOOL inE3LMode;
@@ -52,7 +69,7 @@
 @property (nonatomic,weak) NSObject<EventCoordinatorWhenCellDelegate>* delegate;
 @end
 
-@interface EventCoordinatorWhereCell: UITableViewCell  <UICollectionViewDataSource,UICollectionViewDelegate>
+@interface EventCoordinatorWhereCell: UITableViewCell  <PlusCellDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 @property (nonatomic,assign) BOOL inE3LMode;
 - (void) provideEvent: (EventObject*)event;
 @property (nonatomic,weak) NSObject<EventCoordinatorWhereCellDelegate>* delegate;
@@ -62,7 +79,8 @@
 @property (nonatomic,assign) BOOL inE3LMode;
 - (void) provideEvent: (EventObject*)event;
 - (void) setPhoto: ( UIImage*)image;
-- (void) imageUploadSuccessful;
+- (void) coverHasImageNow;
+- (void) coverDoesNotHaveImage;
 @property (nonatomic,weak) NSObject<EventCoordinatorCoverCellDelegate>* delegate;
 @end
 
@@ -72,6 +90,7 @@
 UINavigationControllerDelegate>
 @property (nonatomic,weak) id <EventCoordinatorVCDelegate> delegate;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
+@property (nonatomic,assign) BOOL isNewEvent;
 
 - (void) enableE3LMode;
 
