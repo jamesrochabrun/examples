@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ListObject.h"
+#import "MediaItemObject.h"
 
 typedef enum: int {
     PARTICIPANT_TYPE_NONE = 0,
@@ -56,6 +57,7 @@ extern NSString *const kKeyUserParticipantState;
 @property (nonatomic, strong) NSString *imageURLString;// e.g. from FB.
 @property (nonatomic, strong) NSString *imageIdentifier;// i.e. from OO.
 @property (nonatomic, assign) NSInteger participantType, participantState;
+@property (nonatomic, strong) MediaItemObject *mediaItem;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSDictionary *)dictionaryFromUser;

@@ -52,4 +52,27 @@
     //    [DebugUtilities addBorderToViews:views];
 }
 
+- (void)roundButtonWithIcon:(NSString *)icon fontSize:(NSUInteger)fontSize width:(NSUInteger)width height:(NSUInteger)height backgroundColor:(NSUInteger)backColor target:(id)target selector:(SEL)selector {
+    
+    if (!width) {
+        width = [icon sizeWithAttributes:@{NSFontAttributeName:[UIFont fontWithName:kFontIcons size:fontSize]}].width + 2*kGeomSpaceInter;
+    }
+    
+    self.frame = CGRectMake(0, 0, width, height);
+    [self addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+    [self setTitle:icon forState:UIControlStateNormal];
+    self.titleLabel.font = [UIFont fontWithName:kFontIcons size:fontSize];
+    [self setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor)] forState:UIControlStateNormal];
+    [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor & 0xFFEEEEEE)] forState:UIControlStateHighlighted];
+    [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorGrayMiddle)] forState:UIControlStateDisabled];
+    self.clipsToBounds = YES;
+    self.layer.cornerRadius = width/2;
+    self.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+    self.layer.borderWidth = 1;
+    
+    //    NSArray *views = [NSArray arrayWithObjects:self.titleLabel, nil];
+    //    [DebugUtilities addBorderToViews:views];
+}
+
 @end

@@ -1,4 +1,4 @@
-//
+ //
 //  UserObject.m
 //  Oomami
 //
@@ -25,6 +25,7 @@ NSString *const kKeyUserImageURL = @"image_url";
 NSString *const kKeyUserImageIdentifier = @"image_identifier";
 NSString *const kKeyUserParticipantType = @"participant_type";
 NSString *const kKeyUserParticipantState = @"participant_state";
+NSString *const kKeyUserMediaItem = @"media_item";
 
 @interface UserObject()
 
@@ -60,19 +61,19 @@ NSString *const kKeyUserParticipantState = @"participant_state";
 + (UserObject *)userFromDict:(NSDictionary *)dict
 {
     UserObject *user =[[UserObject alloc] init];
-    user.userID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyUserID] );
-    user.firstName = parseStringOrNullFromServer( [dict objectForKey:kKeyUserFirstName] );
-    user.middleName = parseStringOrNullFromServer( [dict objectForKey:kKeyUserMiddleName] );
-    user.lastName = parseStringOrNullFromServer( [dict objectForKey:kKeyUserLastName] );
-    user.email = parseStringOrNullFromServer( [dict objectForKey:kKeyUserEmail] );
-    user.phoneNumber = parseStringOrNullFromServer( [dict objectForKey:kKeyUserPhoneNumber]);
-    user.backendAuthorizationToken = parseStringOrNullFromServer( [dict objectForKey:kKeyUserToken]);
-    user.gender =parseStringOrNullFromServer( [dict objectForKey:kKeyUserGender] );
-    user.username= parseStringOrNullFromServer( [dict objectForKey:kKeyUserUsername] );
-    user.imageURLString= parseStringOrNullFromServer( [dict objectForKey:kKeyUserImageURL] );
-    user.imageIdentifier= parseStringOrNullFromServer( [dict objectForKey:kKeyUserImageIdentifier] );
-    user.participantType = parseIntegerOrNullFromServer(dict [kKeyUserParticipantType]);
-    user.participantState =parseIntegerOrNullFromServer(dict [kKeyUserParticipantState]);
+    user.userID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyUserID]);
+    user.firstName = parseStringOrNullFromServer([dict objectForKey:kKeyUserFirstName]);
+    user.middleName = parseStringOrNullFromServer([dict objectForKey:kKeyUserMiddleName]);
+    user.lastName = parseStringOrNullFromServer([dict objectForKey:kKeyUserLastName]);
+    user.email = parseStringOrNullFromServer([dict objectForKey:kKeyUserEmail]);
+    user.phoneNumber = parseStringOrNullFromServer([dict objectForKey:kKeyUserPhoneNumber]);
+    user.backendAuthorizationToken = parseStringOrNullFromServer([dict objectForKey:kKeyUserToken]);
+    user.gender = parseStringOrNullFromServer([dict objectForKey:kKeyUserGender]);
+    user.username = parseStringOrNullFromServer([dict objectForKey:kKeyUserUsername]);
+    user.imageURLString = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageURL]);
+    user.imageIdentifier = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageIdentifier]);
+    user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
+    user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     
     // RULE: If the server referred to the current user and
     // we have more information about the current user then fill it in.
@@ -82,6 +83,9 @@ NSString *const kKeyUserParticipantState = @"participant_state";
         if  (user.userID==currentUser.userID ) {
             user.imageURLString= currentUser.imageURLString;
         }
+    }
+    if ([dict objectForKey:kKeyUserMediaItem]) {
+        user.mediaItem = [MediaItemObject mediaItemFromDict:[dict objectForKey:kKeyUserMediaItem]];
     }
     
     return user;

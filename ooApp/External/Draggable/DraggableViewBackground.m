@@ -104,9 +104,9 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 // to get rid of it (eg: if you are building cards from data from the internet)
 -(DraggableView *)createDraggableViewWithDataAtIndex:(NSInteger)index
 {
-    CGFloat cardWidth = 0.8*width(self), cardHeight = 0.7*height(self);
+    CGFloat cardWidth = width(self) - 30, cardHeight = height(self) - 100;
     
-    DraggableView *draggableView = [[DraggableView alloc]initWithFrame:CGRectMake((self.frame.size.width - cardWidth)/2, (self.frame.size.height - cardHeight)/2, cardWidth, cardHeight)];
+    DraggableView *draggableView = [[DraggableView alloc] initWithFrame:CGRectMake((self.frame.size.width - cardWidth)/2, 15, cardWidth, cardHeight)];
     draggableView.restaurant = ((RestaurantObject *)[_playItems objectAtIndex:index]);
     draggableView.delegate = self;
 

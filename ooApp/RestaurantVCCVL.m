@@ -64,7 +64,8 @@
         itemAttributes = [NSMutableArray array];
         [_sectionAttributes addObject:itemAttributes];
         
-        if (section == kSectionTypeMediaItems) {
+        if (section == kSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
+            NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = kNumColumnsForMediaItems;
             itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
             xOffset = kGeomSpaceEdge;
@@ -72,7 +73,17 @@
             suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
+        } else if (section == kSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
+            NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            numberOfColumnsInRow = 1;
+            itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
+            UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+            suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
+            xOffset = kGeomSpaceEdge;
+            yOffset += 27;
+            [itemAttributes addObject:suppattributes];
         } else {
+            NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
             xOffset = 0;
@@ -121,13 +132,19 @@
                 // Reset values
                 column = 0;
                 xOffset = kGeomSpaceEdge;
-                yOffset += itemSize.height+kGeomSpaceEdge;
+                yOffset += /*itemSize.height+*/kGeomSpaceEdge;
             }
         }
         //done with section, set the x & y offsets for the new section appropriately
         xOffset = kGeomSpaceEdge;
-        UICollectionViewLayoutAttributes *theLastAttributes = [itemAttributes lastObject];
-        yOffset = theLastAttributes.frame.origin.y+theLastAttributes.frame.size.height + kGeomSpaceEdge;
+        UICollectionViewLayoutAttributes *theLastAttribute = [itemAttributes lastObject];
+        if (theLastAttribute) {
+            yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
+        }
+
+        NSLog(@"after section:%ld items:%ld yOffset=%f lastAttribute=%@", section, [self.collectionView numberOfItemsInSection:section], yOffset, theLastAttribute);
+            
+        
     }
     
     // Get the last item to calculate the total height of the content
