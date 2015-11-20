@@ -946,9 +946,9 @@ NSString *const kKeySearchFilter = @"filter";
     return op;
 }
 
-+ (AFHTTPRequestOperation *) getVenuesForEvent:(EventObject *)eo
-                                       success:(void (^)(NSArray *venues))success
-                                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getVenuesForEvent:(EventObject *)eo
+                                      success:(void (^)(NSArray *venues))success
+                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!eo) {
         failure(nil,nil);
@@ -961,7 +961,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     AFHTTPRequestOperation *op;
     
-    op = [rm GET : urlString parameters:nil
+    op = [rm GET:urlString parameters:nil
           success:^(id responseObject) {
               NSArray *array= responseObject;
               NSMutableArray *venues= [NSMutableArray new];
@@ -974,6 +974,49 @@ NSString *const kKeySearchFilter = @"filter";
               success(venues);
           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
               // RULE: Leave the venues unchanged.
+              failure(operation, error);
+          }];
+    
+    return op;
+}
+
+//------------------------------------------------------------------------------
+// Name:    getFolloweesForRestaurant
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getFolloweesForRestaurant:(RestaurantObject *)restaurant
+                                              success:(void (^)(NSArray *users))success
+                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!restaurant) {
+        failure(nil,nil);
+        return nil;
+    }
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
+    if (!userID) {
+        failure(nil,nil);
+        return nil;
+    }
+    NSInteger restaurantID = restaurant.restaurantID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/restaurants/%lu/followees", kHTTPProtocol, [OOAPI URL], userID, restaurantID];
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET:urlString parameters:nil
+          success:^(id responseObject) {
+              NSArray *array= responseObject;
+              NSMutableArray *users = [NSMutableArray new];
+              for (NSDictionary *d in array) {
+                  UserObject *user = [UserObject userFromDict:d];
+                  if (user) {
+                      [users addObject:user];
+                  }
+              }
+              success(users);
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
               failure(operation, error);
           }];
     

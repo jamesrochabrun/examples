@@ -185,6 +185,10 @@ typedef enum:NSUInteger  {
 + (AFHTTPRequestOperation *)getGroupsWithSuccess:(void (^)(NSArray *groups))success
                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)getFolloweesForRestaurant:(RestaurantObject *)restaurant
+                                               success:(void (^)(NSArray *users))success
+                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 //------------------------------------------------------------------------------
 // Events
 //

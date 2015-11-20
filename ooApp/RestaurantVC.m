@@ -22,6 +22,7 @@
 #import "OOActivityItemProvider.h"
 #import "MWPhotoBrowser.h"
 #import "MediaItemObject.h"
+#import "OOUserView.h"
 #import <MapKit/MapKit.h>
 
 #import "DebugUtilities.h"
@@ -42,6 +43,7 @@
 @property (nonatomic) NSUInteger favoriteID;
 @property (nonatomic) NSUInteger toTryID;
 @property (nonatomic, strong) UIButton *addPhotoButton;
+@property (nonatomic, strong) NSArray *followees;
 
 @end
 
@@ -322,6 +324,17 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         _restaurant = restaurant;
         [weakSelf getListsForRestaurant];
         [weakSelf getMediaItemsForRestaurant];
+        [weakSelf getFolloweesWithRestaurantOnList];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)getFolloweesWithRestaurantOnList {
+    __weak RestaurantVC *weakSelf = self;
+    
+    [OOAPI getFolloweesForRestaurant:_restaurant success:^(NSArray *users) {
+        weakSelf.followees = users;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -489,7 +502,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             return 1;
             break;
         case kSectionTypeLists:
-            return 1;
+            return ([_listButtons count]) ? 1 : 0;
             break;
         case kSectionTypeMediaItems:
             return [_mediaItems count];
@@ -508,7 +521,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             [cvc setToTry:(_toTryID) ? YES: NO];
             [cvc setFavorite:(_favoriteID) ? YES: NO];
             cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
-            
+            //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
         }
@@ -516,6 +529,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
             cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
             [cvc addSubview:_listButtonsContainer];
+            //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
         }
@@ -524,7 +538,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             
             cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
             cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
-            //            [DebugUtilities addBorderToViews:@[cvc]];
+            //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
         }
@@ -565,14 +579,26 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionReusableView *reuseView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:kRestaurantPhotosHeaderIdentifier forIndexPath:indexPath];
-    
+
+    [[reuseView viewWithTag:111] removeFromSuperview];
     if (indexPath.section == kSectionTypeMediaItems) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
+        header.name = @"Photos";
         header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
-        header.name = @"PHOTOS";
-        //        [header enableAddButtonWithTarget:self action:@selector(showPickPhotoUI)];
-        [reuseView addSubview:header];
+        header.tag = 111;
         [collectionView bringSubviewToFront:reuseView];
+        [reuseView addSubview:header];
+        [header setNeedsLayout];
+//        [DebugUtilities addBorderToViews:@[reuseView, header]];
+    } else if (indexPath.section == kSectionTypeLists) {
+        OOStripHeader *header = [[OOStripHeader alloc] init];
+        header.name = @"On Your Lists";
+        header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
+        header.tag = 111;
+        [collectionView bringSubviewToFront:reuseView];
+        [reuseView addSubview:header];
+        [header setNeedsLayout];
+//        [DebugUtilities addBorderToViews:@[reuseView, header]];
     }
     return reuseView;
 }

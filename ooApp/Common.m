@@ -13,8 +13,8 @@
 #import "AppDelegate.h"
 #import "OOAPI.h"
 
-NSString *const kNotificationLocationBecameAvailable= @"notificationLocationAvailable";
-NSString *const kNotificationLocationBecameUnavailable= @"notificationLocationUnavailable";
+NSString *const kNotificationLocationBecameAvailable = @"notificationLocationAvailable";
+NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationUnavailable";
 
 //NSString *const kOOURL = @"www.oomamiapp.com/api/v1";
 NSString *const kOOURL = @"stage.oomamiapp.com/api/v1";
@@ -57,26 +57,26 @@ NSString *trimString(NSString *s)
     return [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 }
 
-UIImageView* makeImageViewFromURL (UIView *parent,NSString* urlString, NSString* placeholderImageName)
+UIImageView *makeImageViewFromURL(UIView *parent, NSString *urlString, NSString *placeholderImageName)
 {
     NSURL *url= [ NSURL  URLWithString:urlString];
-    UIImageView* iv= nil;
-    UIImage* image=nil;
+    UIImageView *iv= nil;
+    UIImage *image=nil;
     if ( !url) {
         // RULE:  if the URL is bad just go with the placeholder.
-        image= [ UIImage imageNamed:placeholderImageName];
-        iv= [ [UIImageView alloc ]initWithImage:  image  ];
+        image = [UIImage imageNamed:placeholderImageName];
+        iv = [[UIImageView alloc] initWithImage:image];
     } else {
-        image= [ UIImage imageNamed:placeholderImageName];
-        iv= [ [UIImageView alloc ]initWithImage:image];
+        image = [UIImage imageNamed:placeholderImageName];
+        iv = [[UIImageView alloc] initWithImage:image];
         [iv setImageWithURL:url placeholderImage:image];
     }
     
-    [ parent addSubview: iv ];
+    [parent addSubview:iv];
     return iv;
 }
 
-UIButton* makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SEL callback)
+UIButton *makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SEL callback)
 {
     UIButton* b= makeButton( parent, nil, 0, WHITE, CLEAR,  delegate,  callback, 1);
     b.tag=  user.userID;
