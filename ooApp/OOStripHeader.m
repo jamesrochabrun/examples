@@ -13,7 +13,6 @@
 
 @property (nonatomic, strong) UILabel *iconLabel;
 @property (nonatomic, strong) UILabel *nameLabel;
-@property (nonatomic,strong) UIButton* buttonAdd;
 
 @end
 
@@ -37,27 +36,6 @@
     return self;
 }
 
-- (void) unHighlightButton;
-{
-    // Need because any button that is a subview of UITableViewCell will get highlighted when the cell is highlighted.
-    _buttonAdd.highlighted= NO;
-    _buttonAdd.selected= NO;
-    _buttonAdd.backgroundColor= BLACK;
-}
-
-- (void)enableAddButtonWithTarget:(id)target action:(SEL)action
-{
-    if  (_buttonAdd) {
-        return;
-    }
-
-    self.buttonAdd = makeRoundIconButtonForAutolayout(self, kFontIconAdd, kGeomFontSizeHeader,
-                                        YELLOW, CLEAR, target, action,
-                                                      1, kGeomStripHeaderHeight/2.);
-//    _buttonAdd.layer.borderWidth= .5;
-    [self setNeedsLayout];
-}
-
 - (void)setName:(NSString *)name {
     NSString *newName = [name uppercaseString];
     if ([_name isEqualToString:newName]) return;
@@ -65,6 +43,7 @@
     _nameLabel.text = _name;
     
     [self bringSubviewToFront:_nameLabel];
+    [self setNeedsUpdateConstraints];
     [self setNeedsLayout];
 }
 
@@ -79,6 +58,7 @@
     _iconLabel.text = icon;
     
     [self bringSubviewToFront:_iconLabel];
+    [self setNeedsUpdateConstraints];
     [self setNeedsLayout];
 }
 
@@ -88,8 +68,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@(self.frame.size.width), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     NSDictionary *views= NSDictionaryOfVariableBindings(superview, _nameLabel, _iconLabel);
     
-    if (/*!_buttonAdd && */[_icon length]) {
-//        [self removeConstraints:self.constraints];
+    if ([_icon length]) {
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInter-[_iconLabel]-spaceEdge-[_nameLabel]"
@@ -107,8 +86,7 @@
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
-    } else if (/*!_buttonAdd && */![_icon length]) {
-//        [self removeConstraints:self.constraints];
+    } else if (![_icon length]) {
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_nameLabel]-(>=0)-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceInter-[_nameLabel]"
@@ -120,74 +98,6 @@
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1.f constant:0.f]];
-    } else {
-        // widths
-        [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
-                                                          attribute:NSLayoutAttributeWidth
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:  self
-                                                          attribute:NSLayoutAttributeHeight
-                                                         multiplier:1.f constant: 0]
-         ];
-
-        // heights
-        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
-                                                          attribute:NSLayoutAttributeHeight
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem: self
-                                                          attribute:NSLayoutAttributeHeight
-                                                         multiplier:1.f constant: 0]
-         ];
-        
-        [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
-                                                          attribute:NSLayoutAttributeHeight
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem: self
-                                                          attribute:NSLayoutAttributeHeight
-                                                         multiplier:1.f constant: 0]
-         ];
-        float h= self.frame.size.height;
-        if ( h>0) {
-                    _buttonAdd.layer.cornerRadius= h/2;
-        }
-        
-        // left-right sequence
-//        [self addConstraint: [NSLayoutConstraint constraintWithItem:_nameLabel
-//                                                          attribute:NSLayoutAttributeCenterX
-//                                                          relatedBy:NSLayoutRelationEqual
-//                                                             toItem: self
-//                                                          attribute:NSLayoutAttributeCenterX
-//                                                         multiplier:1.f constant:0]
-//         ];
-
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iconLabel]-spaceEdge-[_nameLabel]"
-                                                                     options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-        [self addConstraint: [NSLayoutConstraint constraintWithItem:_buttonAdd
-                                                          attribute:NSLayoutAttributeRight
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:  self
-                                                          attribute:NSLayoutAttributeRight
-                                                         multiplier:1.f constant:0]
-         ];
-        
-        // Vertical
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_nameLabel
-                                                         attribute:NSLayoutAttributeCenterY
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem: self
-                                                         attribute:NSLayoutAttributeCenterY
-                                                        multiplier:1.f constant:0.f]
-         ];
-        
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_buttonAdd
-                                                         attribute:NSLayoutAttributeCenterY
-                                                         relatedBy:NSLayoutRelationEqual
-                                                            toItem: self
-                                                         attribute:NSLayoutAttributeCenterY
-                                                        multiplier:1.f constant:0.f]
-         ];
-        
     }
 }
 

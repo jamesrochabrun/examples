@@ -14,7 +14,6 @@
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) UILabel *emptyUserView;
 
-
 @end
 
 @implementation OOUserView
@@ -28,9 +27,13 @@
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         
         _emptyUserView = [[UILabel alloc] init];
-        [_emptyUserView withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorYellow backgroundColor:kColorBlack];
+        [_emptyUserView withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorGrayMiddle];
+        _emptyUserView.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_emptyUserView];
         _emptyUserView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.layer.borderColor = UIColorRGBA(kColorYellow).CGColor;
+        self.layer.borderWidth = 1;
+        self.clipsToBounds = YES;
     }
     return self;
 }
@@ -42,21 +45,27 @@
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _imageView, _emptyUserView);
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|_imageView|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|_imageView|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|_emptyUserView|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|_emptyUserView|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _emptyUserView.layer.cornerRadius = width(_emptyUserView)/2;
-    _imageView.layer.cornerRadius = width(_imageView)/2;
+//    _emptyUserView.layer.cornerRadius = width(_emptyUserView)/2;
+//    _imageView.layer.cornerRadius = width(_imageView)/2;
+    self.layer.cornerRadius = width(_imageView)/2;
 }
 
 - (void)setUser:(UserObject *)user {
     if (user == _user) return;
     _user = user;
+    
+    [self addTarget:self action:@selector(userTapped) forControlEvents:UIControlEventTouchUpInside];
+    
+    NSString *initials = [NSString stringWithFormat:@"%@%@", [_user.firstName substringToIndex:1], [_user.firstName substringToIndex:1]];
+    _emptyUserView.text = initials;
     
     if (_user.mediaItem) {
         OOAPI *api = [[OOAPI alloc] init];
@@ -68,21 +77,41 @@
                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
                                            ON_MAIN_THREAD(^ {
                                                [weakIV setAlpha:0.0];
+                                               [weakSelf setNeedsUpdateConstraints];
                                                weakIV.image = image;
                                                [UIView beginAnimations:nil context:NULL];
                                                [UIView setAnimationDuration:0.3];
                                                [weakIV setAlpha:1.0];
                                                [UIView commitAnimations];
-                                               [weakSelf setNeedsUpdateConstraints];
-                                               [weakSelf setNeedsLayout];
+                                               weakSelf.emptyUserView.alpha = 0;
                                            });
                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                           ;
+                                           ON_MAIN_THREAD(^{
+                                               [weakSelf displayEmptyView:YES];
+                                           });
                                        }];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+            ON_MAIN_THREAD(^{
+                [self displayEmptyView:YES];
+            });
         }];
+    } else {
+        ON_MAIN_THREAD(^{
+            [self displayEmptyView:YES];
+        });
     }
+}
+
+- (void)displayEmptyView:(BOOL)displayIt {
+    if (displayIt) {
+        _imageView.alpha = 0;
+        _emptyUserView.alpha = 1;
+        [self setNeedsUpdateConstraints];
+    }
+}
+
+- (void)userTapped {
+    [_delegate oOUserViewTapped:self forUser:_user];
 }
 
 /*

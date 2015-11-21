@@ -10,7 +10,7 @@
 
 typedef enum {
     kSectionTypeMain,
-//    kSectionTypeFollowees,
+    kSectionTypeFollowees,
     kSectionTypeLists,
     kSectionTypeMediaItems,
     kSectionTypeNumberOfSections

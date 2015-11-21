@@ -13,8 +13,6 @@
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *icon;
 
-//- (void)enableAddButtonWithTarget:(id)target action:(SEL)action;
-//- (void)unHighlightButton;
 - (void)setFont:(UIFont *)font;
 
 @end

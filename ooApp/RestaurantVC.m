@@ -23,6 +23,7 @@
 #import "MWPhotoBrowser.h"
 #import "MediaItemObject.h"
 #import "OOUserView.h"
+#import "ProfileVC.h"
 #import <MapKit/MapKit.h>
 
 #import "DebugUtilities.h"
@@ -64,7 +65,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _userInfo = [Settings sharedInstance].userObject;
     
     _listButtonsContainer = [[UIView alloc] init];
-    _listButtonsContainer.backgroundColor = UIColorRGBA(kColorOffBlack);
+    _listButtonsContainer.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
@@ -318,9 +319,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
-        [weakSelf getListsForRestaurant];
-        [weakSelf getMediaItemsForRestaurant];
-        [weakSelf getFolloweesWithRestaurantOnList];
+        ON_MAIN_THREAD(^{
+            NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeMain];
+            [_collectionView reloadData];// Sections:is];
+            [weakSelf getListsForRestaurant];
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -331,6 +334,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [OOAPI getFolloweesForRestaurant:_restaurant success:^(NSArray *users) {
         weakSelf.followees = users;
+        ON_MAIN_THREAD(^{
+            NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeFollowees];
+            [_collectionView reloadData];// Sections:is];
+            [weakSelf getMediaItemsForRestaurant];
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -381,11 +389,12 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 - (void)gotMediaItems {
-    [_collectionView reloadData];
+    NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeMediaItems];
+    [_collectionView reloadSections:is];
 }
 
 - (void)displayListButtons {
-    __block CGPoint origin = CGPointMake(kGeomSpaceInter, kGeomSpaceInter);
+    __block CGPoint origin = CGPointMake(0/*kGeomSpaceInter*/, 0 /*kGeomSpaceInter*/);
     NSArray *listButtonsArray = [_listButtons allObjects];
     _listButtonsContainerHeight = 0;
     [listButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -399,7 +408,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         
         if (CGRectGetMaxX(frame) > (CGRectGetMaxX(self.view.frame)-kGeomSpaceInter)) {
             frame.origin.y = origin.y = CGRectGetMaxY(frame) + kGeomSpaceInter;
-            frame.origin.x = kGeomSpaceInter;
+            frame.origin.x =0;// kGeomSpaceInter;
         }
         
         b.frame = frame;
@@ -407,13 +416,19 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
         _listButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
-    _listButtonsContainerHeight += (_listButtonsContainerHeight) ? kGeomSpaceInter : 0;
+    //_listButtonsContainerHeight += (_listButtonsContainerHeight) ? kGeomSpaceInter : 0;
     [self.view setNeedsUpdateConstraints];
-    [_collectionView reloadData];
+
+    ON_MAIN_THREAD(^{
+        NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeLists];
+        [_collectionView reloadData];// Sections:is];
+        [self getFolloweesWithRestaurantOnList];
+    });
+    
 }
 
 - (void)viewDidLayoutSubviews {
-    _listButtonsContainer.frame = CGRectMake(kGeomSpaceEdge, 0, width(self.view)-2*kGeomSpaceEdge, _listButtonsContainerHeight);
+    _listButtonsContainer.frame = CGRectMake(0, 0, width(self.view)-2*kGeomSpaceEdge, _listButtonsContainerHeight);
     //    NSLog(@"_listButtonsContainer=%@", _listButtonsContainer);
 }
 
@@ -503,6 +518,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeMediaItems:
             return [_mediaItems count];
             break;
+        case kSectionTypeFollowees:
+            return [_followees count];
+            break;
+            
     }
     return 0;
 }
@@ -517,6 +536,18 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             [cvc setToTry:(_toTryID) ? YES: NO];
             [cvc setFavorite:(_favoriteID) ? YES: NO];
             cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
+            //[DebugUtilities addBorderToViews:@[cvc]];
+            return cvc;
+            break;
+        }
+        case kSectionTypeFollowees: {
+            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
+            cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            OOUserView *uv = [[OOUserView alloc] init];
+            uv.delegate = self;
+            uv.user = [_followees objectAtIndex:indexPath.row];
+            uv.frame = CGRectMake(0, 0, 50, 50);
+            [cvc addSubview:uv];
             //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
@@ -555,6 +586,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeLists:
             return _listButtonsContainerHeight;
             break;
+        case kSectionTypeFollowees:
+            return 50;
+            break;
         case kSectionTypeMain:
             return 180;
             break;
@@ -585,7 +619,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         [collectionView bringSubviewToFront:reuseView];
         [reuseView addSubview:header];
         [header setNeedsLayout];
-//        [DebugUtilities addBorderToViews:@[reuseView, header]];
+        //[DebugUtilities addBorderToViews:@[reuseView, header]];
     } else if (indexPath.section == kSectionTypeLists) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
         header.name = @"On Your Lists";
@@ -594,7 +628,16 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         [collectionView bringSubviewToFront:reuseView];
         [reuseView addSubview:header];
         [header setNeedsLayout];
-//        [DebugUtilities addBorderToViews:@[reuseView, header]];
+        //[DebugUtilities addBorderToViews:@[reuseView, header]];
+    } else if (indexPath.section == kSectionTypeFollowees) {
+        OOStripHeader *header = [[OOStripHeader alloc] init];
+        header.name = @"On Your Friends' Lists";
+        header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
+        header.tag = 111;
+        [collectionView bringSubviewToFront:reuseView];
+        [reuseView addSubview:header];
+        [header setNeedsLayout];
+        //[DebugUtilities addBorderToViews:@[reuseView]];
     }
     return reuseView;
 }
@@ -673,6 +716,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
  */
 
 #pragma mark -
+- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
+    ProfileVC *vc = [[ProfileVC alloc] init];
+    vc.userID = user.userID;
+    vc.userInfo = user;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {
     SFSafariViewController *svc  = [[SFSafariViewController alloc] initWithURL:url];
     [self.navigationController pushViewController:svc animated:YES];

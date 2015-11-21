@@ -17,6 +17,7 @@
 
 #import "DraggableView.h"
 #import "OOAPI.h"
+#import "RestaurantVC.h"
 
 @interface DraggableView ()
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
@@ -65,6 +66,9 @@
         overlayView = [[OverlayView alloc]initWithFrame:CGRectMake(self.frame.size.width/2-100, 0, 100, 100)];
         overlayView.alpha = 0;
         [self addSubview:overlayView];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showObject:)];
+        [self addGestureRecognizer:tap];
         //self.clipsToBounds = YES;
     }
     return self;
@@ -189,6 +193,15 @@
         case UIGestureRecognizerStateCancelled:break;
         case UIGestureRecognizerStateFailed:break;
     }
+}
+
+- (void)showObject {
+    if (_restaurant) {
+        
+    }
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = _restaurant;
+
 }
 
 //%%% checks to see if you are moving right or left and applies the correct overlay image
@@ -365,7 +378,7 @@
 
 - (void)updateCard:(id)object {
     if ([object isKindOfClass:[RestaurantObject class]]) {
-        RestaurantObject *r = (RestaurantObject *)object;
+//        RestaurantObject *r = (RestaurantObject *)object;
         [self getMediaItemsForRestaurant];
     }
     
