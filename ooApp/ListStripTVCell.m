@@ -153,7 +153,19 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     if (_listItem.type == kListTypeToTry ||
         _listItem.type == kListTypeFavorites ||
         _listItem.type == kListTypeUser) {
+        
         self.requestOperation = [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *r) {
+            weakSelf.restaurants = r;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
+            ;
+        }];
+    } else if (_listItem.type == kListTypeTrending||
+               _listItem.type == kListTypePopular) {
+
+        self.requestOperation = [api getRestaurantsFromSystemList:_listItem.type success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];

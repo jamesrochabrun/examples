@@ -604,6 +604,40 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 //------------------------------------------------------------------------------
+// Name:    getRestaurantsWithListID
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)getRestaurantsFromSystemList:(ListType)systemListType
+                                             success:(void (^)(NSArray *restaurants))success
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *type;
+    if (systemListType == kListTypePopular) {
+        type=@"popular";
+    } else if (systemListType == kListTypeTrending) {
+        type =@"trending";
+    } else {
+        failure(nil, nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%@", kHTTPProtocol, [OOAPI URL], type];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *restaurants = [NSMutableArray array];
+        if ([responseObject count]) {
+            for (id dict in responseObject) {
+                [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+            }
+        }
+        success(restaurants);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
+
+//------------------------------------------------------------------------------
 // Name:    addRestaurant
 // Purpose:
 //------------------------------------------------------------------------------

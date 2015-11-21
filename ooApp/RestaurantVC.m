@@ -320,7 +320,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
         ON_MAIN_THREAD(^{
-            NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeMain];
             [_collectionView reloadData];// Sections:is];
             [weakSelf getListsForRestaurant];
         });
@@ -335,7 +334,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [OOAPI getFolloweesForRestaurant:_restaurant success:^(NSArray *users) {
         weakSelf.followees = users;
         ON_MAIN_THREAD(^{
-            NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeFollowees];
             [_collectionView reloadData];// Sections:is];
             [weakSelf getMediaItemsForRestaurant];
         });
@@ -420,7 +418,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.view setNeedsUpdateConstraints];
 
     ON_MAIN_THREAD(^{
-        NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeLists];
         [_collectionView reloadData];// Sections:is];
         [self getFolloweesWithRestaurantOnList];
     });

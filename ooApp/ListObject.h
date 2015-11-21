@@ -16,7 +16,9 @@ typedef enum {
     kListTypeSystem = 1,
     kListTypeUser = 2,
     kListTypeFavorites = 3,
-    kListTypeToTry = 4
+    kListTypeToTry = 4,
+    kListTypeTrending = 2000,
+    kListTypePopular = 2001
 } ListType;
 
 extern NSString *const kKeyListID;
@@ -34,10 +36,9 @@ extern NSString *const kKeyListNumRestaurants;
 @interface ListObject : NSObject
 
 @property (nonatomic) NSUInteger listID;
-//@property (nonatomic) NSUInteger userID;
 @property (nonatomic, strong) NSArray *userIDs;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, assign) NSInteger type;
+@property (nonatomic, assign) ListType type;
 @property (nonatomic, strong) NSString *imageURL;
 @property (nonatomic) NSUInteger numRestaurants;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
