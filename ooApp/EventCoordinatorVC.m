@@ -15,7 +15,7 @@
 #import "EventCoordinatorVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
-#import "TileCVCell.h"
+#import "RestaurantMainCVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
 #import "SearchVC.h"
@@ -583,7 +583,7 @@
         _venuesCollectionView.backgroundColor= CLEAR;
 #define CV_CELL_REUSE_IDENTIFER @"E3_CV"
 #define CV_CELL_REUSE_IDENTIFERP @"E3_CV_plus"
-        [_venuesCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
+        [_venuesCollectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
         [_venuesCollectionView registerClass:[PlusCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFERP];
         [self addSubview: _venuesCollectionView];
 
@@ -643,7 +643,7 @@
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
+    return CGSizeMake(kGeomEventCoordinatorBoxHeight, kGeomEventCoordinatorBoxHeight);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -654,20 +654,16 @@
         
         PlusCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFERP
                                                                     forIndexPath:indexPath];
-//        CGRect r = cvc.frame;
         cvc.delegate=  self;
-//        r.size =  CGSizeMake(kGeomEventCoordinatorRestaurantHeight, kGeomEventCoordinatorRestaurantHeight);
-//        cvc.frame = r;
 
         return cvc;
     }
     
-    TileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
+    RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
                                                                 forIndexPath:indexPath];
     cvc.backgroundColor = GRAY;
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
-    
     return cvc;
 }
 
@@ -1073,7 +1069,7 @@
     if  (!section) {
         return  kGeomEventCoordinatorBoxHeightTopmost;
     }
-    return kGeomEventParticipantRestaurantHeight ;
+    return kGeomEventCoordinatorBoxHeight ;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

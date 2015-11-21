@@ -15,7 +15,7 @@
 #import "AppDelegate.h"
 
 @interface CreateUsernameVC ()
-
+@property (nonatomic,strong)  UIImageView *imageViewBackground, *imageViewIcon;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic,strong) UILabel* labelUsernameTaken;
@@ -66,11 +66,14 @@
                                  @selector(userPressedSignUpButton:),
                                  1);
     
-    self.tableOfSuggestions=[UITableView new];
-    _tableOfSuggestions.delegate=self;
-    _tableOfSuggestions.dataSource=self;
-    [_tableOfSuggestions registerClass:[UITableViewCell class] forCellReuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER];
-    [self.view addSubview:_tableOfSuggestions];
+    self.imageViewBackground= makeImageView( self.view,  @"Gradient Background.png");
+    self.imageViewIcon= makeImageView( self.view,  @"No-Profile_Image(circled).png");
+
+//    self.tableOfSuggestions=[UITableView new];
+//    _tableOfSuggestions.delegate=self;
+//    _tableOfSuggestions.dataSource=self;
+//    [_tableOfSuggestions registerClass:[UITableViewCell class] forCellReuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER];
+//    [self.view addSubview:_tableOfSuggestions];
     
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
@@ -367,6 +370,8 @@
     _scrollView.frame=  self.view.bounds;
     _scrollView.scrollEnabled=  YES;
     
+    self.imageViewBackground.frame=  self.view.bounds;
+
     [self.textView sizeToFit ];
     float heightForText= _textView.bounds.size.height;
     
@@ -377,14 +382,18 @@
     
     float y= (h-totalHeightNeeded)/2;
 
+    float imageWidth= _imageViewIcon.image.size.width;
+    _imageViewIcon.frame = CGRectMake((w-imageWidth)/2,y,imageWidth,imageWidth);
+    y += imageWidth+ spacer;
+    
     _textView.frame=CGRectMake((w-kGeomEmptyTextViewWidth)/2, y, kGeomEmptyTextViewWidth, heightForText);
     y+= heightForText+ spacer;
    
     _fieldUsername.frame= CGRectMake((w-kGeomEmptyTextFieldWidth)/2, y, kGeomEmptyTextFieldWidth, kGeomHeightButton);
     y += kGeomHeightButton + spacer;
     
-    _tableOfSuggestions.frame= CGRectMake( (w-kGeomSampleUsernameTableWidth )/2,y,kGeomSampleUsernameTableWidth,kGeomSampleUsernameTableHeight);
-    y += spacer + kGeomSampleUsernameTableHeight;
+//    _tableOfSuggestions.frame= CGRectMake( (w-kGeomSampleUsernameTableWidth )/2,y,kGeomSampleUsernameTableWidth,kGeomSampleUsernameTableHeight);
+//    y += spacer + kGeomSampleUsernameTableHeight;
     
     _labelUsernameTaken.frame=CGRectMake (0,y,w,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;

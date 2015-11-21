@@ -25,6 +25,7 @@
 @property (nonatomic,strong)  UIButton* buttonUploadPhoto;
 @property (nonatomic,strong)  UIButton* buttonUploadHugePhoto;
 @property (nonatomic,strong)  UIButton* buttonTakePhoto;
+@property (nonatomic,strong)  UIButton* buttonCreateUsername;
 @property (nonatomic,strong)  UITextView* textviewDiagnosticLog;
 @property (nonatomic,strong)   UIImageView* ivPhoto;
 @property (nonatomic,strong)   UIImage* hugeImage;
@@ -79,6 +80,10 @@
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doTakePhoto:), 1);
+    _buttonTakePhoto.titleLabel.numberOfLines= 0;
+    _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
+    self.buttonCreateUsername= makeButton(self.view,  @"CREATE NAME", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doCreateUsername:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
@@ -209,20 +214,13 @@
     
 }
 
-//            [controller setSubject: subject];
-//    
-//    if (address) {
-//        NSArray  *ary = [NSArray arrayWithObject: address];
-//        [composeController setToRecipients: ary];
-//    }
-//    
-//    composeController.mailComposeDelegate = self;
-//    
-//    [vc presentViewController: composeController animated: YES completion: NULL ];
-//    
-//    return YES;
-    
-
+//------------------------------------------------------------------------------
+// Name:    doCreateUsername
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doCreateUsername: (id) sender
+{
+}
 
 //------------------------------------------------------------------------------
 // Name:    doSearchRadius
@@ -290,8 +288,8 @@
     y+=  spacing +kGeomHeightButton;
     _buttonUploadPhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-//    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-//    y+=  spacing +kGeomHeightButton;
+    _buttonCreateUsername.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
     
     x += buttonWidth+ spacing;
     y= margin;
