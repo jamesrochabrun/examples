@@ -17,7 +17,7 @@
 @interface CreateUsernameVC ()
 @property (nonatomic,strong)  UIImageView *imageViewBackground, *imageViewIcon;
 @property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UITextView *textView;
+@property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic,strong) UILabel* labelUsernameTaken;
 @property (nonatomic,strong) UITextField* fieldUsername;
 @property (nonatomic,strong) UIButton* buttonSignUp;
@@ -61,19 +61,14 @@
     self.scrollView= [UIScrollView  new];
     [self.view  addSubview: _scrollView ];
     
-    self.buttonSignUp= makeButton( _scrollView, LOCAL(@"SIGN UP") , kGeomFontSizeHeader,
-                                  BLACK, CLEAR, self,
-                                 @selector(userPressedSignUpButton:),
-                                 1);
-    
-    self.imageViewBackground= makeImageView( self.view,  @"Gradient Background.png");
+    self.imageViewBackground= makeImageView( self.scrollView,  @"Gradient Background.png");
     self.imageViewIcon= makeImageView( self.view,  @"No-Profile_Image(circled).png");
-
-//    self.tableOfSuggestions=[UITableView new];
-//    _tableOfSuggestions.delegate=self;
-//    _tableOfSuggestions.dataSource=self;
-//    [_tableOfSuggestions registerClass:[UITableViewCell class] forCellReuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER];
-//    [self.view addSubview:_tableOfSuggestions];
+    
+    self.buttonSignUp= makeButton( _scrollView, LOCAL(@"Create User") , kGeomFontSizeHeader,
+                                  WHITE, CLEAR, self,
+                                  @selector(userPressedSignUpButton:),
+                                  .5);
+    _buttonSignUp.layer.borderColor=GRAY.CGColor;
     
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
@@ -84,28 +79,20 @@
     [_scrollView addSubview: _fieldUsername];
     _fieldUsername.clearButtonMode = UITextFieldViewModeWhileEditing;
     
-    self.labelUsernameTaken= makeLabel(_scrollView,LOCAL(@"status: username is taken"), kGeomFontSizeDetail);
+    self.labelUsernameTaken= makeLabel(_scrollView,LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
     self.labelUsernameTaken.textColor= RED;
-    UIFont* upperFont= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader];
     _labelUsernameTaken.hidden= YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
-    NSAttributedString *aString= [[NSAttributedString  alloc]
-                                  initWithString:
-                                    LOCAL(@"We should put some introductory text here.\r")
-                                  attributes: @{
-                                                NSFontAttributeName: upperFont,
-                                                NSParagraphStyleAttributeName:paragraphStyle
-                                                }];
-    
-    self.textView=  makeTextView(_scrollView, CLEAR, NO);
-    _textView.textColor= BLACK;
-    _textView.attributedText= aString;
-    
-    NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader: LOCAL(@"Create User Name")
+    self.labelMessage=  makeLabel (_scrollView,
+                                   LOCAL(@"What should we call you?\r(Select your username)"),
+                                         kGeomFontSizeHeader);
+                                   _labelMessage.textColor= WHITE;
+                                   
+                                   NavTitleObject *nto = [[NavTitleObject alloc]
+                                                          initWithHeader: LOCAL(@"Create User")
                            subHeader:nil];
     [self setNavTitle:  nto];
     
@@ -372,28 +359,26 @@
     
     self.imageViewBackground.frame=  self.view.bounds;
 
-    [self.textView sizeToFit ];
-    float heightForText= _textView.bounds.size.height;
+    [self.labelMessage sizeToFit ];
+    float heightForText= _labelMessage.bounds.size.height;
     
     const float spacer=kGeomSpaceInter;
     
-    float totalHeightNeeded= heightForText+kGeomForkImageSize +3*kGeomHeightButton;
+    float imageSize= 240;
+
+    float totalHeightNeeded= heightForText+imageSize +3*kGeomHeightButton;
     totalHeightNeeded += 3*spacer;
     
     float y= (h-totalHeightNeeded)/2;
 
-    float imageWidth= _imageViewIcon.image.size.width;
-    _imageViewIcon.frame = CGRectMake((w-imageWidth)/2,y,imageWidth,imageWidth);
-    y += imageWidth+ spacer;
+    _imageViewIcon.frame = CGRectMake((w-imageSize)/2,y,imageSize,imageSize);
+    y += imageSize+ spacer;
     
-    _textView.frame=CGRectMake((w-kGeomEmptyTextViewWidth)/2, y, kGeomEmptyTextViewWidth, heightForText);
+    _labelMessage.frame=CGRectMake(0, y, w, heightForText);
     y+= heightForText+ spacer;
    
     _fieldUsername.frame= CGRectMake((w-kGeomEmptyTextFieldWidth)/2, y, kGeomEmptyTextFieldWidth, kGeomHeightButton);
     y += kGeomHeightButton + spacer;
-    
-//    _tableOfSuggestions.frame= CGRectMake( (w-kGeomSampleUsernameTableWidth )/2,y,kGeomSampleUsernameTableWidth,kGeomSampleUsernameTableHeight);
-//    y += spacer + kGeomSampleUsernameTableHeight;
     
     _labelUsernameTaken.frame=CGRectMake (0,y,w,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;

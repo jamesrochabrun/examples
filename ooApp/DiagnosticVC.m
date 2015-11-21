@@ -16,6 +16,7 @@
 #import "DiagnosticVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
+#import "CreateUsernameVC.h"
 
 @interface DiagnosticVC ()
 @property (nonatomic,strong)  UIButton* buttonClearUsername;
@@ -216,10 +217,12 @@
 
 //------------------------------------------------------------------------------
 // Name:    doCreateUsername
-// Purpose:
+// Purpose: Push the screen for testing purposes.
 //------------------------------------------------------------------------------
 - (void)doCreateUsername: (id) sender
 {
+    CreateUsernameVC *vc=[[CreateUsernameVC alloc]init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 //------------------------------------------------------------------------------
