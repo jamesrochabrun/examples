@@ -68,7 +68,11 @@
                                     YELLOW, BLACK, self,
                                     @selector(userPressedDiscoverButton:),
                                     borderWidth);
-    
+    if ( borderWidth>0) {
+        UIColor*gray= UIColorRGB(0x777777);
+        _buttonDiscover.layer.borderColor= gray.CGColor;
+        _buttonLists.layer.borderColor= gray.CGColor;
+    }
     addShadowTo(self.buttonLists);
     addShadowTo(self.buttonDiscover);
    
@@ -80,11 +84,12 @@
 
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
+    paragraphStyle.lineSpacing= 5;
     
     NSAttributedString *part1=  attributedStringWithColorOf( @"Tap the ", kGeomFontSizeSubheader,WHITE);
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = [UIImage imageNamed:@"yellowPlus.png"];
-    textAttachment.bounds=  CGRectMake(0,-5,22,22);
+    textAttachment.bounds=  CGRectMake(0,-3,18,18);
     NSAttributedString *part2 = [NSAttributedString attributedStringWithAttachment:textAttachment];
     NSAttributedString *part3=  attributedStringWithColorOf( @" icon next to a restaurant you like, and select ", kGeomFontSizeSubheader,WHITE);
     NSAttributedString *part4=  attributedBoldStringWithColorOf( @"ADD TO LIST.", kGeomFontSizeSubheader,WHITE);
