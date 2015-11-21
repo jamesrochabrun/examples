@@ -63,6 +63,7 @@
     for (NSUInteger section = 0; section < [self.collectionView numberOfSections]; section++) {
         itemAttributes = [NSMutableArray array];
         [_sectionAttributes addObject:itemAttributes];
+        column = 0;
         
         if (section == kSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
@@ -91,7 +92,7 @@
                 xOffset = kGeomSpaceEdge;
                 yOffset += 27;
                 [itemAttributes addObject:suppattributes];
-        } else {
+        } else {// if (section == kSectionTypeMain && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
@@ -118,10 +119,11 @@
             }
                 
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
+            if (section == kSectionTypeMediaItems) {
+                NSLog(@"attribute frame=%@, column=%ld", NSStringFromCGRect(attributes.frame), column);
+            }
             [itemAttributes addObject:attributes];
             
-//            NSLog(@"attributes = %@ maxX=%f", attributes,CGRectGetMaxX(attributes.frame));
-
             if ([lastRowAttributes count] > index%numberOfColumnsInRow &&
                 [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow]) {
                 [lastRowAttributes replaceObjectAtIndex:index%numberOfColumnsInRow withObject:attributes];
@@ -151,7 +153,7 @@
             yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
         }
 
-        NSLog(@"after section:%ld items:%ld yOffset=%f lastAttribute=%@", section, [self.collectionView numberOfItemsInSection:section], yOffset, theLastAttribute);
+        NSLog(@"after section:%ld items:%ld yOffset=%f lastAttribute=%@ numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, theLastAttribute, numberOfColumnsInRow);
             
         
     }
