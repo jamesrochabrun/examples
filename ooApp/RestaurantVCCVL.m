@@ -73,7 +73,7 @@
             suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
-        } else if ((section == kSectionTypeLists || section == kSectionTypeFollowees) && [self.collectionView numberOfItemsInSection:section]) {
+        } else if (section == kSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
@@ -82,6 +82,15 @@
             xOffset = kGeomSpaceEdge;
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
+        } else if (section == kSectionTypeFollowees && [self.collectionView numberOfItemsInSection:section]) {
+                NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
+                numberOfColumnsInRow = width(self.collectionView)/(50+kGeomSpaceEdge);
+                itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
+                UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+                suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
+                xOffset = kGeomSpaceEdge;
+                yOffset += 27;
+                [itemAttributes addObject:suppattributes];
         } else {
             NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
