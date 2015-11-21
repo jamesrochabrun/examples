@@ -50,7 +50,7 @@
     if (self) {
         _backgroundImage = [[UIImageView alloc] init];
         _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
-        _backgroundImage.image = nil;// [UIImage imageNamed:@"background-image.jpg"];
+        _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
         _backgroundImage.clipsToBounds = YES;
         [self addSubview:_backgroundImage];
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;

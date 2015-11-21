@@ -29,6 +29,10 @@
         CGRect frame = _actionHint.frame;
         frame.size = CGSizeMake(kGeomPlayButtonSize, kGeomPlayButtonSize);
         _actionHint.frame = frame;
+        
+        _actionHint.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
+        _actionHint.layer.borderWidth = 1;
+        _actionHint.layer.cornerRadius = kGeomPlayButtonSize/2;
 
         //_actionHint.translatesAutoresizingMaskIntoConstraints = NO;
         //[DebugUtilities addBorderToViews:@[_actionHint]];

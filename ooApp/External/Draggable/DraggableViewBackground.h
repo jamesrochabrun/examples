@@ -36,11 +36,10 @@
 @interface DraggableViewBackground : UIView <DraggableViewDelegate>
 
 //methods called in DraggableView
--(void)cardSwipedLeft:(UIView *)card;
--(void)cardSwipedRight:(UIView *)card;
+- (void)cardSwipedLeft:(UIView *)card;
+- (void)cardSwipedRight:(UIView *)card;
 
-//@property (retain,nonatomic)NSArray* exampleCardLabels; //%%% the labels the cards
-@property (retain,nonatomic)NSMutableArray* allCards; //%%% the labels the cards
-
+@property (strong ,nonatomic) NSMutableArray *allCards; //%%% the labels the cards
+@property (weak) UIViewController *presentingVC;
 
 @end

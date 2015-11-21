@@ -20,6 +20,6 @@
 @interface OOUserView : UIControl
 
 @property (nonatomic, strong) UserObject *user;
-@property (nonatomic, strong) id<OOUserViewDelegate> delegate;
+@property (nonatomic, weak) id<OOUserViewDelegate> delegate;
 
 @end

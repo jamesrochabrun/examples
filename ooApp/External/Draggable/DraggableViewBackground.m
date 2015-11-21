@@ -9,6 +9,7 @@
 #import "DraggableViewBackground.h"
 #import "OOAPI.h"
 #import "LocationManager.h"
+#import "RestaurantVC.h"
 #import "RestaurantObject.h"
 
 @interface DraggableViewBackground ()
@@ -196,6 +197,14 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     
     //TODO Add to wishlist
 
+}
+
+- (void)cardTapped:(DraggableView *)draggableView withObject:(id)object {
+    if ([object isKindOfClass:[RestaurantObject class]]) {
+        RestaurantVC *vc = [[RestaurantVC alloc] init];
+        vc.restaurant = (RestaurantObject*)object;
+        [_presentingVC.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 //%%% when you hit the right button, this is called and substitutes the swipe

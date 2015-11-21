@@ -11,6 +11,8 @@
 #import "VoteObject.h"
 #import "MediaItemObject.h"
 
+extern NSString *const kKeyEventEventID;
+
 @class RestaurantObject;
 
 @interface EventObject : NSObject

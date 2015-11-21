@@ -1100,17 +1100,26 @@ NSString *const kKeySearchFilter = @"filter";
     return op;
 }
 
++ (AFHTTPRequestOperation *)getTagsForUser:(NSUInteger)userID
+                                success:(void (^)())success
+                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    AFHTTPRequestOperation *op;
+    
+    return op;
+}
+
 
 //------------------------------------------------------------------------------
 // Name:    uploadPhoto
 // Purpose: This is the AFNetworking approach.
 //------------------------------------------------------------------------------
 + (void)uploadPhoto:(UIImage *)image
-      forRestaurant:(RestaurantObject *)restaurant
+      forObject:(id)object
                 success:(void (^)(void))success
                 failure:(void (^)( NSError *error))failure;
 {
-    if (!image || !restaurant) {
+    if (!image || !object) {
         failure(nil);
         return ;
     }
@@ -1123,8 +1132,26 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
     NSLog(@"img size = %lu bytes",(unsigned long)[imageData length]);
+
+    NSDictionary *parameters;
     
-    NSDictionary *parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
+    if ([object isKindOfClass:[RestaurantObject class]]) {
+        RestaurantObject *restaurant = (RestaurantObject *)object;
+        parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", restaurant.restaurantID]};
+    } else if ([object isKindOfClass:[UserObject class]]) {
+        UserObject *user = (UserObject *)object;
+        parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", user.userID]};
+    } else if ([object isKindOfClass:[ListObject class]]) {
+        ListObject *list = (ListObject *)object;
+        parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", list.listID]};
+    } else if ([object isKindOfClass:[EventObject class]]) {
+        EventObject *event = (EventObject *)object;
+        parameters = @{kKeyEventEventID : [NSString stringWithFormat:@"%lu", event.eventID]};
+    } else {
+        NSLog(@"Unhandled object type in photo upload %@", [object class]);
+        failure(nil);
+        return;
+    }
     
     AFHTTPRequestOperation *op;
     
@@ -1146,7 +1173,6 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: This is the native approach.
 // Note:    This uploads the image for the current user.
 //------------------------------------------------------------------------------
-
 + (void)uploadPhoto:(UIImage *)image
                  to: (UploadDestination )destination
          identifier: (NSUInteger) identifier

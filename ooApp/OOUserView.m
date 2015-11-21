@@ -64,7 +64,7 @@
     
     [self addTarget:self action:@selector(userTapped) forControlEvents:UIControlEventTouchUpInside];
     
-    NSString *initials = [NSString stringWithFormat:@"%@%@", [_user.firstName substringToIndex:1], [_user.firstName substringToIndex:1]];
+    NSString *initials = [NSString stringWithFormat:@"%@%@", [_user.firstName substringToIndex:1], [_user.lastName substringToIndex:1]];
     _emptyUserView.text = initials;
     
     if (_user.mediaItem) {

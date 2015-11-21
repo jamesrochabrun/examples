@@ -35,17 +35,19 @@
 #import "OverlayView.h"
 #import "RestaurantObject.h"
 
+@class DraggableView;
+
 @protocol DraggableViewDelegate <NSObject>
 
 - (void)cardSwipedLeft:(UIView *)card;
 - (void)cardSwipedRight:(UIView *)card;
+- (void)cardTapped:(DraggableView *)draggableView withObject:(id)object;
 
 @end
 
 @interface DraggableView : UIView
 
-@property (weak) id <DraggableViewDelegate> delegate;
-
+@property (weak) id<DraggableViewDelegate> delegate;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
 @property (nonatomic) CGPoint originalPoint;
 @property (nonatomic, strong) OverlayView *overlayView;

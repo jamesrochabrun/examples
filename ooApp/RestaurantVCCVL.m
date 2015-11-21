@@ -84,14 +84,14 @@
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
         } else if (section == kSectionTypeFollowees && [self.collectionView numberOfItemsInSection:section]) {
-                NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
-                numberOfColumnsInRow = width(self.collectionView)/(50+kGeomSpaceEdge);
-                itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
-                UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-                suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
-                xOffset = kGeomSpaceEdge;
-                yOffset += 27;
-                [itemAttributes addObject:suppattributes];
+            NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            numberOfColumnsInRow = width(self.collectionView)/(50+kGeomSpaceEdge);
+            itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
+            UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+            suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
+            xOffset = kGeomSpaceEdge;
+            yOffset += 27;
+            [itemAttributes addObject:suppattributes];
         } else {// if (section == kSectionTypeMain && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
@@ -153,9 +153,7 @@
             yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
         }
 
-        NSLog(@"after section:%ld items:%ld yOffset=%f lastAttribute=%@ numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, theLastAttribute, numberOfColumnsInRow);
-            
-        
+        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, numberOfColumnsInRow);
     }
     
     // Get the last item to calculate the total height of the content

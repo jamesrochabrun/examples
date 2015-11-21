@@ -387,7 +387,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 - (void)gotMediaItems {
-    NSIndexSet *is = [NSIndexSet indexSetWithIndex:kSectionTypeMediaItems];
+    NSMutableIndexSet *is = [NSMutableIndexSet indexSetWithIndex:kSectionTypeMediaItems];
+    [is addIndex:kSectionTypeMain];
     [_collectionView reloadSections:is];
 }
 
@@ -828,7 +829,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }
     
     __weak RestaurantVC *weakSelf = self;
-    [OOAPI uploadPhoto:image forRestaurant:_restaurant
+    [OOAPI uploadPhoto:image forObject:_restaurant
                success:^{
                    [weakSelf getMediaItemsForRestaurant];
                } failure:^(NSError *error) {
