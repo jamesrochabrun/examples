@@ -23,7 +23,7 @@
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UIButton *buttonDiscover;
 @property (nonatomic, strong) UIButton *buttonLists;
-@property (nonatomic,strong)  UIImageView* imageViewBackground;
+@property (nonatomic,strong)  UIImageView *imageViewBackground;
 @end
 
 @implementation EmptyListVC  {

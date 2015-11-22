@@ -672,8 +672,8 @@ NSString *const kKeySearchFilter = @"filter";
         failure(nil,nil);
         return nil;
     }
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userID= userInfo.userID;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
     if (!userID) {
         failure(nil,nil);
         return nil;

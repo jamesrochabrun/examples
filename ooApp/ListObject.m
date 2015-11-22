@@ -35,7 +35,7 @@ NSString *const kKeyListNumRestaurants = @"num_restaurants";
     }
 
     list.name = [[dict objectForKey:kKeyListName] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyListName];
-    list.type = (ListType)[[dict objectForKey:kKeyListType] unsignedIntegerValue];
+    list.type = (ListType)[[dict objectForKey:kKeyListType] integerValue];
     list.numRestaurants = (NSUInteger)[dict[kKeyListNumRestaurants] integerValue];
     NSDictionary *mediaItem = [[dict objectForKey:kKeyListMediaItem] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyListMediaItem];
     if (mediaItem && ![mediaItem isKindOfClass:[NSNull class]]) {
