@@ -9,7 +9,7 @@
 #import "TagObject.h"
 
 NSString *const kKeyTagTagID = @"tag_id";
-NSString *const kKeyTagName = @"name";
+NSString *const kKeyTagTerm = @"term";
 NSString *const kKeyTagType = @"type";
 
 @implementation TagObject
@@ -20,11 +20,20 @@ NSString *const kKeyTagType = @"type";
     }
     TagObject *tag = [[TagObject alloc] init];
     
-    tag.name = parseStringOrNullFromServer([dict objectForKey:kKeyTagName]);
+    tag.term = parseStringOrNullFromServer([dict objectForKey:kKeyTagTerm]);
     tag.tagID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyTagTagID]);
     tag.type = (TagType)parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyTagType]);
     
     return tag;
+}
+
+-(BOOL)isEqual:(id)object {
+    if (![object isKindOfClass:[TagObject class]]) return NO;
+    return (_tagID == ((TagObject *)object).tagID) ? YES : NO;
+}
+
+- (NSUInteger)hash {
+    return _tagID;
 }
 
 @end

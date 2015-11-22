@@ -47,6 +47,10 @@
 
     bbi.customView = _moreButton;
     self.navigationItem.rightBarButtonItems = @[bbi];
+    
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {

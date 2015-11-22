@@ -31,7 +31,7 @@
         _emptyUserView.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_emptyUserView];
         _emptyUserView.translatesAutoresizingMaskIntoConstraints = NO;
-        self.layer.borderColor = UIColorRGBA(kColorYellow).CGColor;
+        self.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
         self.layer.borderWidth = 1;
         self.clipsToBounds = YES;
     }

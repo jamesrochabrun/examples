@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ManageTagsVC : UIViewController
+@interface ManageTagsVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @end

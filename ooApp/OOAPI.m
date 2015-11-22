@@ -21,6 +21,11 @@ NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
 NSString *const kKeySearchFilter = @"filter";
 
+NSString *const kKeyRestaurantIDs = @"restaurant_ids";
+NSString *const kKeyUserIDs = @"user_ids";
+NSString *const kKeyEventIDs = @"event_ids";
+NSString *const kKeyTagIDs = @"tag_ids";
+
 @interface OOAPI()
 - (NSString *)ooURL;
 @end
@@ -711,7 +716,7 @@ NSString *const kKeySearchFilter = @"filter";
         restaurantIDs = [NSMutableArray array];
         [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             RestaurantObject *ro = (RestaurantObject *)obj;
-            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu",(unsigned long)ro.restaurantID]];
+            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu", ro.restaurantID]];
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -726,7 +731,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
-                                 kKeyRestaurantRestaurantIDPlural: [NSString stringWithFormat:@"[%@]", IDs]
+                                 kKeyRestaurantIDs: [NSString stringWithFormat:@"[%@]", IDs]
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
@@ -778,7 +783,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
-                                 kKeyRestaurantRestaurantIDPlural: [NSString stringWithFormat:@"[%@]", IDs]
+                                 kKeyRestaurantIDs: [NSString stringWithFormat:@"[%@]", IDs]
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
@@ -1102,7 +1107,7 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 + (AFHTTPRequestOperation *)getTagsForUser:(NSUInteger)userID
-                                success:(void (^)())success
+                                success:(void (^)(NSArray *tags))success
                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -1135,20 +1140,49 @@ NSString *const kKeySearchFilter = @"filter";
 }
 
 
-+ (AFHTTPRequestOperation *)unsetTagForUser:(NSUInteger)userID
++ (AFHTTPRequestOperation *)unsetTag:(NSUInteger)tagID
+                             forUser:(NSUInteger)userID
                                    success:(void (^)())success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    AFHTTPRequestOperation *op;
+    if  (!userID || !tagID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/tags/%lu",
+                           kHTTPProtocol, [OOAPI URL], userID, tagID];
     
-    return op;
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
 }
 
-+ (AFHTTPRequestOperation *)setTagForUser:(NSUInteger)userID
++ (AFHTTPRequestOperation *)setTag:(NSUInteger)tagID
+                           forUser:(NSUInteger)userID
                                      success:(void (^)())success
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    AFHTTPRequestOperation *op;
+    if  (!userID || !tagID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/tags",
+                           kHTTPProtocol, [OOAPI URL], userID];
+    
+    NSDictionary *parameters = @{kKeyTagIDs : [NSString stringWithFormat:@"[%lu]", tagID]};
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
     
     return op;
 }
@@ -1481,7 +1515,7 @@ NSString *const kKeySearchFilter = @"filter";
     NSMutableDictionary* parameters = @{}.mutableCopy;
     
     if (identifier) {
-        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantIDPlural];
+        [parameters setObject:identifier forKey:kKeyRestaurantIDs];
     }
     else if (googleIdentifier.length) {
         [parameters setObject:googleIdentifier forKey:kKeyRestaurantGoogleID];

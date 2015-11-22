@@ -29,12 +29,14 @@
 
 @end
 
+static NSString * const cellIdentifier = @"menuCell";
+
 @implementation MenuTVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.tableView registerClass:[MenuTVCell class] forCellReuseIdentifier:@"menuCell"];
+    [self.tableView registerClass:[MenuTVCell class] forCellReuseIdentifier:cellIdentifier];
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     MenuObject *menuItem;

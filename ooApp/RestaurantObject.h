@@ -23,7 +23,6 @@ extern NSString *const kKeyRestaurantOpenNow;
 extern NSString *const kKeyRestaurantAddress;
 extern NSString *const kKeyRestaurantPhone;
 extern NSString *const kKeyRestaurantWebsite;
-extern NSString *const kKeyRestaurantRestaurantIDPlural;
 extern NSString *const kKeyRestaurantHours;
 extern NSString *const kKeyRestaurantCuisine;
 extern NSString *const kKeyRestaurantMobileMenuURL;

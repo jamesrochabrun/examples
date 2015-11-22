@@ -265,4 +265,19 @@ typedef enum:NSUInteger  {
                                           success:(void (^)(NSArray *feedItems))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
+//Tags management
++ (AFHTTPRequestOperation *)getTagsForUser:(NSUInteger)userID
+                                   success:(void (^)(NSArray *tags))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)setTag:(NSUInteger)tagID
+                           forUser:(NSUInteger)userID
+                           success:(void (^)())success
+                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)unsetTag:(NSUInteger)tagID
+                             forUser:(NSUInteger)userID
+                             success:(void (^)())success
+                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 @end

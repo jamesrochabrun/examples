@@ -19,7 +19,7 @@ typedef enum {
 @interface TagObject : NSObject
 
 @property (nonatomic) NSUInteger tagID;
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *term;
 @property (nonatomic) TagType type;
 
 + (TagObject *)tagFromDict:(NSDictionary *)dict;

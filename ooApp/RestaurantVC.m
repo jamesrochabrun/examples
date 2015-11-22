@@ -202,7 +202,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                 NSLog(@"Add to New Event");
                                                             }];
-    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"New List..."
+    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                NSLog(@"Add to New List");
                                                                [weakSelf createListPressed];
