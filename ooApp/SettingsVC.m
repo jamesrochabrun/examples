@@ -8,10 +8,13 @@
 
 #import "SettingsVC.h"
 #import "Settings.h"
+#import "ManageTagsVC.h"
 
 @interface SettingsVC ()
 
+@property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookButton;
+@property (nonatomic, strong) UIButton *manageTags;
 
 @end
 
@@ -20,11 +23,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    _scrollView = [[UIScrollView alloc] init];
+    [self.view addSubview:_scrollView];
+    _scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    
     _facebookButton = [[FBSDKLoginButton alloc] init];
     _facebookButton.delegate = self;
-    [self.view addSubview:_facebookButton];
+    [_scrollView addSubview:_facebookButton];
     _facebookButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _manageTags = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_manageTags withText:@"Manage Tags" fontSize:kGeomFontSizeHeader width:100 height:40 backgroundColor:kColorOffWhite target:self selector:@selector(manageTags:)];
+    _manageTags.translatesAutoresizingMaskIntoConstraints = NO;
+    [_scrollView addSubview:_manageTags];
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Settings" subHeader:nil];
     self.navTitle = nto;
@@ -41,22 +52,37 @@
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _facebookButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _facebookButton, _manageTags, _scrollView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(75)-[_facebookButton(height)]-(75)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_scrollView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_scrollView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(spaceInter)-[_facebookButton(height)]-(spaceInter)-[_manageTags]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint
                                constraintsWithVisualFormat:@"H:|-(>=20)-[_facebookButton(width)]-(>=20)-|" options:0 metrics:metrics views:views]];
-    
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"H:|-(>=20)-[_manageTags(width)]-(>=20)-|" options:0 metrics:metrics views:views]];
     
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_facebookButton
                                                           attribute:NSLayoutAttributeCenterX
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:_facebookButton.superview
+                                                             toItem:_scrollView
                                                           attribute:NSLayoutAttributeCenterX
                                                          multiplier:1.f constant:0.f]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_manageTags
+                                                          attribute:NSLayoutAttributeCenterX
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_scrollView
+                                                          attribute:NSLayoutAttributeCenterX
+                                                         multiplier:1.f constant:0.f]];
+}
+
+- (void)manageTags:(id)sender {
+    ManageTagsVC *vc = [[ManageTagsVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 /*
