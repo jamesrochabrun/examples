@@ -85,6 +85,7 @@
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */; };
 		36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C39BE01B84C7CD00648879 /* DebugUtilities.m */; };
+		36C572DA1C01309900C57DA2 /* TagObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C572D91C01309900C57DA2 /* TagObject.m */; settings = {ASSET_TAGS = (); }; };
 		36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D5D2191B69DA48009EE877 /* OONetworkManager.m */; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
@@ -270,6 +271,8 @@
 		36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantVC.m; sourceTree = "<group>"; };
 		36C39BDF1B84C7CD00648879 /* DebugUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtilities.h; sourceTree = "<group>"; };
 		36C39BE01B84C7CD00648879 /* DebugUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugUtilities.m; sourceTree = "<group>"; };
+		36C572D81C01309900C57DA2 /* TagObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagObject.h; sourceTree = "<group>"; };
+		36C572D91C01309900C57DA2 /* TagObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagObject.m; sourceTree = "<group>"; };
 		36D5D2181B69DA48009EE877 /* OONetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OONetworkManager.h; sourceTree = "<group>"; };
 		36D5D2191B69DA48009EE877 /* OONetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OONetworkManager.m; sourceTree = "<group>"; };
 		36DD24241B7C88E800C6348F /* EventObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventObject.h; sourceTree = "<group>"; };
@@ -441,6 +444,8 @@
 				366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */,
 				3613BE5C1BC46BE800F1AF67 /* FilterObject.h */,
 				3613BE5D1BC46BE800F1AF67 /* FilterObject.m */,
+				36C572D81C01309900C57DA2 /* TagObject.h */,
+				36C572D91C01309900C57DA2 /* TagObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -957,6 +962,7 @@
 				3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
+				36C572DA1C01309900C57DA2 /* TagObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
 				3637E93B1BB439290074A01C /* RestaurantTVCell.m in Sources */,
 				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,
