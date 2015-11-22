@@ -1245,12 +1245,13 @@ NSString *const kKeyTagIDs = @"tag_ids";
     [op start];
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    uploadPhoto
 // Purpose: This is the native approach.
 // Note:    This uploads the image for the current user.
 //------------------------------------------------------------------------------
+
+// Might as well use the AFnetworking approach until we find problem with it
 + (void)uploadPhoto:(UIImage *)image
                  to: (UploadDestination )destination
          identifier: (NSUInteger) identifier

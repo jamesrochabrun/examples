@@ -82,8 +82,8 @@
                                                [UIView beginAnimations:nil context:NULL];
                                                [UIView setAnimationDuration:0.3];
                                                [weakIV setAlpha:1.0];
-                                               [UIView commitAnimations];
                                                weakSelf.emptyUserView.alpha = 0;
+                                               [UIView commitAnimations];
                                            });
                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
                                            ON_MAIN_THREAD(^{

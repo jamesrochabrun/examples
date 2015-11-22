@@ -117,7 +117,7 @@ NSString *const kKeyUserMediaItem = @"media_item";
              };
 }
 
-- (void) setUserProfilePhoto:(UIImage *)userProfilePhoto andUpload:(BOOL)doUpload
+- (void)setUserProfilePhoto:(UIImage *)userProfilePhoto andUpload:(BOOL)doUpload
 {
     if (!userProfilePhoto) {
         return;
@@ -125,17 +125,28 @@ NSString *const kKeyUserMediaItem = @"media_item";
     
     profilePhoto= userProfilePhoto;
     
-    if ( doUpload) {
+    if (doUpload) {
         // NOTE: The caller makes sure this is seldomly called.
+
         [OOAPI uploadPhoto:profilePhoto
-                        to:UPLOAD_DESTINATION_USER_PROFILE
-                identifier:0
+                        forObject:[Settings sharedInstance].userObject
                    success:^() {
                        NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
                    }
                    failure:^(NSError *e) {
                        NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
                    }];
+        
+// Might as well use the AFnetworking approach until we find problem with it
+//        [OOAPI uploadPhoto:profilePhoto
+//                        to:UPLOAD_DESTINATION_USER_PROFILE
+//                identifier:0
+//                   success:^() {
+//                       NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
+//                   }
+//                   failure:^(NSError *e) {
+//                       NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
+//                   }];
         
     }
 }

@@ -162,6 +162,7 @@ NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*user
     NSMutableArray* array= [NSMutableArray new];
     NSUInteger i= 0;
     for (UserObject* user  in  users) {
+        
         UIButton* b= makeProfileImageButton(parent, user, target, callback);
         
         b.backgroundColor= WHITE;

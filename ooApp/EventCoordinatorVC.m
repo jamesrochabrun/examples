@@ -1172,14 +1172,23 @@
     EventCoordinatorCoverCell *cell= [_table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
     [cell setPhoto:image];
-    [OOAPI uploadPhoto:image to:UPLOAD_DESTINATION_EVENT
-            identifier:self.eventBeingEdited.eventID
-               success:^{
-                   NSLog (@" upload of image for event successful.");
-                   [cell coverHasImageNow];
-               } failure:^(NSError *error) {
-                   NSLog (@" upload of image for event NOT successful.");
-               }];
+    [OOAPI uploadPhoto:image
+             forObject:self.eventBeingEdited success:^{
+        NSLog (@" upload of image for event successful.");
+        [cell coverHasImageNow];
+    } failure:^(NSError *error) {
+        NSLog (@" upload of image for event NOT successful.");
+    }];
+
+// Might as well use the AFnetworking approach until we find problem with it
+//    [OOAPI uploadPhoto:image to:UPLOAD_DESTINATION_EVENT
+//            identifier:self.eventBeingEdited.eventID
+//               success:^{
+//                   NSLog (@" upload of image for event successful.");
+//                   [cell coverHasImageNow];
+//               } failure:^(NSError *error) {
+//                   NSLog (@" upload of image for event NOT successful.");
+//               }];
     
     [self  dismissViewControllerAnimated:YES completion:nil];
 }

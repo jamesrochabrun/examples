@@ -136,6 +136,7 @@ typedef enum {
                                         success:(void (^)(NSArray *users))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
+// Might as well use the AFnetworking approach until we find problem with it
 typedef enum:NSUInteger  {
     UPLOAD_DESTINATION_USER_PROFILE = 1,
     UPLOAD_DESTINATION_RESTAURANT = 2,
