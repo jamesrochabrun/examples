@@ -25,4 +25,12 @@
     return image;
 }
 
++ (UIImage *)imageFromView:(UIView *)v {
+    UIGraphicsBeginImageContext(v.frame.size);
+    [v.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 @end

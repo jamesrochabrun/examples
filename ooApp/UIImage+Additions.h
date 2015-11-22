@@ -11,5 +11,6 @@
 @interface UIImage (Additions)
 
 + (UIImage *)imageWithColor:(UIColor *)color;
++ (UIImage *)imageFromView:(UIView *)v;
 
 @end

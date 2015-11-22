@@ -88,7 +88,11 @@
     
     NSAttributedString *part1=  attributedStringWithColorOf( @"Tap the ", kGeomFontSizeSubheader,WHITE);
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
-    textAttachment.image = [UIImage imageNamed:@"yellowPlus.png"];
+    
+    UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
+    [b roundButtonWithIcon:kFontIconAdd fontSize:20 width:30 height:30 backgroundColor:kColorBlack target:nil selector:nil];
+    
+    textAttachment.image = [UIImage imageFromView:b]; // [UIImage imageNamed:@"yellowPlus.png"];
     textAttachment.bounds=  CGRectMake(0,-3,18,18);
     NSAttributedString *part2 = [NSAttributedString attributedStringWithAttachment:textAttachment];
     NSAttributedString *part3=  attributedStringWithColorOf( @" icon next to a restaurant you like, and select ", kGeomFontSizeSubheader,WHITE);
