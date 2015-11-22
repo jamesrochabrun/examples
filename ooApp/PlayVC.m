@@ -22,8 +22,9 @@
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:nil];
     self.navTitle = nto;
     
-    self.view = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];
-    
+    DraggableViewBackground *draggableBackround = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];
+    draggableBackround.presentingVC = self;
+    self.view = draggableBackround;    
 }
 
 - (void)didReceiveMemoryWarning {

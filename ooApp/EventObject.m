@@ -14,28 +14,28 @@
 #import "UserObject.h"
 #import "Settings.h"
 
-NSString *const kKeyEventID = @"event_id";
-NSString *const kKeyIsComplete = @"is_complete";
-NSString *const kKeySpecialEvent = @"special_event";
-NSString *const kKeyReviewSite = @"review_site";
-NSString *const kKeyName = @"name";
-NSString *const kKeyComment = @"comment";
-NSString *const kKeyTotalPrice = @"total_price";
-NSString *const kKeyCreatedAt = @"created_at";
-NSString *const kKeyUpdatedAt = @"updated_at";
-NSString *const kKeyEventDate = @"event_date";
-NSString *const kKeyWhenVotingCloses = @"voting_closed_at";
-NSString *const kKeyEventType = @"type";
-NSString *const kKeyKeywords = @"keywords";
-NSString *const kKeyFriendRecommendationAge = @"friend_recommendation_age";
-NSString *const kKeyCreatorID = @"creator_id";
-NSString *const kKeyNumberOfPeople = @"num_people";
-NSString *const kKeyNumberOfPeopleResponded = @"num_responded";
-NSString *const kKeyNumberOfPeopleVoted = @"num_voted";
-NSString *const kKeyMediaURL = @"media_url";
-NSString *const kKeyNumberOfVenues=  @"num_restaurants";
-NSString *const kKeyEventMediaItem = @"media_item";
-NSString *const kKeyAdministrators=  @"admin_ids";
+NSString *const kKeyEventEventID = @"event_id";
+NSString *const kKeyEventIsComplete = @"is_complete";
+NSString *const kKeyEventSpecialEvent = @"special_event";
+NSString *const kKeyEventReviewSite = @"review_site";
+NSString *const kKeyEventName = @"name";
+NSString *const kKeyEventComment = @"comment";
+NSString *const kKeyEventTotalPrice = @"total_price";
+NSString *const kKeyEventCreatedAt = @"created_at";
+NSString *const kKeyEventUpdatedAt = @"updated_at";
+NSString *const kKeyEventEventDate = @"event_date";
+NSString *const kKeyEventWhenVotingCloses = @"voting_closed_at";
+NSString *const kKeyEventEventType = @"type";
+NSString *const kKeyEventKeywords = @"keywords";
+NSString *const kKeyEventFriendRecommendationAge = @"friend_recommendation_age";
+NSString *const kKeyEventCreatorID = @"creator_id";
+NSString *const kKeyEventNumberOfPeople = @"num_people";
+NSString *const kKeyEventNumberOfPeopleResponded = @"num_responded";
+NSString *const kKeyEventNumberOfPeopleVoted = @"num_voted";
+NSString *const kKeyEventMediaURL = @"media_url";
+NSString *const kKeyEventNumberOfVenues=  @"num_restaurants";
+NSString *const kKeyEventEventMediaItem = @"media_item";
+NSString *const kKeyEventAdministrators=  @"admin_ids";
 
 @implementation EventObject
 
@@ -56,43 +56,43 @@ NSString *const kKeyAdministrators=  @"admin_ids";
     if  (![dictionary isKindOfClass:[NSDictionary class]] )
         return e;
     
-    e.eventID = [dictionary [kKeyEventID] intValue];
-    e.creatorID = [dictionary [kKeyCreatorID] intValue];
+    e.eventID = [dictionary [kKeyEventEventID] intValue];
+    e.creatorID = [dictionary [kKeyEventCreatorID] intValue];
     
-    id price=dictionary[ kKeyTotalPrice ];
+    id price=dictionary[ kKeyEventTotalPrice ];
     if  ([price isKindOfClass:[NSNumber class]] ) {
         e.totalPrice= [ ( (NSNumber*)price) doubleValue];
     }
     
-    e.isComplete = parseIntegerOrNullFromServer(dictionary[kKeyIsComplete ]) ? YES : NO;
-    e.eventType = parseIntegerOrNullFromServer(dictionary[kKeyEventType]);
-    e.date= parseUTCDateFromServer ( dictionary[ kKeyEventDate]);
-    e.dateWhenVotingClosed=parseUTCDateFromServer ( dictionary[ kKeyWhenVotingCloses]);
-    e.name= parseStringOrNullFromServer ( dictionary[ kKeyName]);
-    e.friendRecommendationAge = parseNumberOrNullFromServer ( dictionary[ kKeyFriendRecommendationAge]);
-    e.reviewSite= parseStringOrNullFromServer ( dictionary[ kKeyReviewSite]);
-    e.specialEvent= parseStringOrNullFromServer ( dictionary[ kKeySpecialEvent]);
-    e.comment=  parseStringOrNullFromServer(dictionary[ kKeyComment]);
-    e.createdAt= parseUTCDateFromServer ( dictionary[ kKeyCreatedAt]);
-    e.updatedAt= parseUTCDateFromServer( dictionary[ kKeyUpdatedAt]);
+    e.isComplete = parseIntegerOrNullFromServer(dictionary[kKeyEventIsComplete ]) ? YES : NO;
+    e.eventType = parseIntegerOrNullFromServer(dictionary[kKeyEventEventType]);
+    e.date= parseUTCDateFromServer ( dictionary[ kKeyEventEventDate]);
+    e.dateWhenVotingClosed=parseUTCDateFromServer ( dictionary[ kKeyEventWhenVotingCloses]);
+    e.name= parseStringOrNullFromServer ( dictionary[ kKeyEventName]);
+    e.friendRecommendationAge = parseNumberOrNullFromServer ( dictionary[ kKeyEventFriendRecommendationAge]);
+    e.reviewSite= parseStringOrNullFromServer ( dictionary[ kKeyEventReviewSite]);
+    e.specialEvent= parseStringOrNullFromServer ( dictionary[ kKeyEventSpecialEvent]);
+    e.comment=  parseStringOrNullFromServer(dictionary[ kKeyEventComment]);
+    e.createdAt= parseUTCDateFromServer ( dictionary[ kKeyEventCreatedAt]);
+    e.updatedAt= parseUTCDateFromServer( dictionary[ kKeyEventUpdatedAt]);
     
-    e.numberOfVenues= parseIntegerOrNullFromServer( dictionary[kKeyNumberOfVenues ]);
-    e.numberOfPeople = parseIntegerOrNullFromServer (  dictionary[kKeyNumberOfPeople ]);
-    e.numberOfPeopleResponded = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleResponded]);
-    e.numberOfPeopleVoted = parseIntegerOrNullFromServer ( dictionary[ kKeyNumberOfPeopleVoted]);
+    e.numberOfVenues= parseIntegerOrNullFromServer( dictionary[kKeyEventNumberOfVenues ]);
+    e.numberOfPeople = parseIntegerOrNullFromServer (  dictionary[kKeyEventNumberOfPeople ]);
+    e.numberOfPeopleResponded = parseIntegerOrNullFromServer ( dictionary[ kKeyEventNumberOfPeopleResponded]);
+    e.numberOfPeopleVoted = parseIntegerOrNullFromServer ( dictionary[ kKeyEventNumberOfPeopleVoted]);
     
-    e.eventCoverImageURL = parseStringOrNullFromServer (  dictionary[kKeyMediaURL ]);
+    e.eventCoverImageURL = parseStringOrNullFromServer (  dictionary[kKeyEventMediaURL ]);
     
     NSMutableArray* results=[NSMutableArray new];
     e.keywords= results;
-    NSArray* array=dictionary[ kKeyKeywords];
+    NSArray* array=dictionary[ kKeyEventKeywords];
     if (array) {
         for (NSString* string  in  array) {
             [results  addObject:string];
         }
     }
     
-    NSDictionary* mediaDictionary= dictionary[kKeyEventMediaItem];
+    NSDictionary* mediaDictionary= dictionary[kKeyEventEventMediaItem];
     if (mediaDictionary ) {
         NSLog  (@"EVENT INCLUDED MEDIA ITEM FOR %@",e.name);
         e.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
@@ -117,7 +117,7 @@ NSString *const kKeyAdministrators=  @"admin_ids";
     e.administrators= administrators;
     e.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
 
-    array=dictionary[ kKeyAdministrators];
+    array=dictionary[kKeyEventAdministrators];
     if (array) {
         UserObject*user= [Settings sharedInstance].userObject;
         if ( user) {
@@ -184,24 +184,24 @@ NSString *const kKeyAdministrators=  @"admin_ids";
     }
     
     NSMutableDictionary *dictionary=  @{
-                                        kKeyCreatedAt:_createdAt,
-                                        kKeyUpdatedAt:_updatedAt,
-                                        kKeyIsComplete:@(_isComplete),
-                                        kKeyEventType:@(_eventType),// 1= user, 2= curated
+                                        kKeyEventCreatedAt:_createdAt,
+                                        kKeyEventUpdatedAt:_updatedAt,
+                                        kKeyEventIsComplete:@(_isComplete),
+                                        kKeyEventEventType:@(_eventType),// 1= user, 2= curated
                                         }.mutableCopy;
     
-    if (_reviewSite && _reviewSite.length) dictionary[kKeyReviewSite] = _reviewSite;
-    if (_name && _name.length) dictionary[kKeyName] = _name;
-    if (_comment && _comment.length) dictionary[kKeyComment] = _comment;
-    if (_specialEvent && _specialEvent.length) dictionary[kKeySpecialEvent] = _specialEvent;
-    if (_keywords && _keywords.count) dictionary[ kKeyKeywords] = _keywords;
-    if (_eventID > 0) dictionary[kKeyEventID] = @(_eventID);
-    if (_date) dictionary[kKeyEventDate] = _date;
-    if (_dateWhenVotingClosed) dictionary[kKeyWhenVotingCloses] = _dateWhenVotingClosed;
-    if (_friendRecommendationAge > 0) dictionary[kKeyFriendRecommendationAge] = @(_friendRecommendationAge);
-    if (_totalPrice > 0) dictionary[kKeyTotalPrice] = @(_totalPrice);
+    if (_reviewSite && _reviewSite.length) dictionary[kKeyEventReviewSite] = _reviewSite;
+    if (_name && _name.length) dictionary[kKeyEventName] = _name;
+    if (_comment && _comment.length) dictionary[kKeyEventComment] = _comment;
+    if (_specialEvent && _specialEvent.length) dictionary[kKeyEventSpecialEvent] = _specialEvent;
+    if (_keywords && _keywords.count) dictionary[ kKeyEventKeywords] = _keywords;
+    if (_eventID > 0) dictionary[kKeyEventEventID] = @(_eventID);
+    if (_date) dictionary[kKeyEventEventDate] = _date;
+    if (_dateWhenVotingClosed) dictionary[kKeyEventWhenVotingCloses] = _dateWhenVotingClosed;
+    if (_friendRecommendationAge > 0) dictionary[kKeyEventFriendRecommendationAge] = @(_friendRecommendationAge);
+    if (_totalPrice > 0) dictionary[kKeyEventTotalPrice] = @(_totalPrice);
     if ( _creatorID>0) {
-        dictionary[kKeyCreatorID]= @(_creatorID);
+        dictionary[kKeyEventCreatorID]= @(_creatorID);
     }
     
     return [NSDictionary dictionaryWithDictionary:dictionary];

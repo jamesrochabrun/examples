@@ -24,8 +24,6 @@ typedef enum {
     kSearchSortTypeBestMatch = 2,
 } SearchSortType;
 
-static NSString* const kPhotoUploadPath=  @"/users/picture";
-
 @interface OOAPI : NSObject
 
 //------------------------------------------------------------------------------
@@ -153,7 +151,7 @@ typedef enum:NSUInteger  {
             failure:(void (^)( NSError *error))failure;
 
 + (void)uploadPhoto:(UIImage *)image
-      forRestaurant:(RestaurantObject *)restaurant
+          forObject:(id)object
             success:(void (^)(void))success
             failure:(void (^)( NSError *error))failure;
 
@@ -174,6 +172,11 @@ typedef enum:NSUInteger  {
 
 + (AFHTTPRequestOperation *)getAllUsersWithSuccess:(void (^)(NSArray *users))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
+- (AFHTTPRequestOperation *)getRestaurantsFromSystemList:(ListType)systemListType
+                                                 success:(void (^)(NSArray *restaurants))success
+                                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 
 //------------------------------------------------------------------------------
 // Groups

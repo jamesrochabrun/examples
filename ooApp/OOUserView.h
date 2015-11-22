@@ -9,8 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "UserObject.h"
 
+@class OOUserView;
+
+@protocol OOUserViewDelegate
+
+- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user;
+
+@end
+
 @interface OOUserView : UIControl
 
 @property (nonatomic, strong) UserObject *user;
+@property (nonatomic, weak) id<OOUserViewDelegate> delegate;
 
 @end

@@ -9,6 +9,7 @@
 #import "DraggableViewBackground.h"
 #import "OOAPI.h"
 #import "LocationManager.h"
+#import "RestaurantVC.h"
 #import "RestaurantObject.h"
 
 @interface DraggableViewBackground ()
@@ -107,7 +108,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     CGFloat cardWidth = width(self) - 30, cardHeight = height(self) - 100;
     
     DraggableView *draggableView = [[DraggableView alloc] initWithFrame:CGRectMake((self.frame.size.width - cardWidth)/2, 15, cardWidth, cardHeight)];
-    draggableView.restaurant = ((RestaurantObject *)[_playItems objectAtIndex:index]);
+//    draggableView.restaurant = ((RestaurantObject *)[_playItems objectAtIndex:index]);
     draggableView.delegate = self;
 
     return draggableView;
@@ -141,6 +142,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
             
             if (i<numLoadedCardsCap) {
                 //%%% adds a small number of cards to be loaded
+                newCard.restaurant = ((RestaurantObject *)[_playItems objectAtIndex:i]);
                 [loadedCards addObject:newCard];
             }
         }
@@ -168,7 +170,9 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     [loadedCards removeObjectAtIndex:0]; //%%% card was swiped, so it's no longer a "loaded card"
     
     if (cardsLoadedIndex < [allCards count]) { //%%% if we haven't reached the end of all cards, put another into the loaded cards
-        [loadedCards addObject:[allCards objectAtIndex:cardsLoadedIndex]];
+        DraggableView *card = [allCards objectAtIndex:cardsLoadedIndex];
+        card.restaurant = (RestaurantObject *)[_playItems objectAtIndex:cardsLoadedIndex];
+        [loadedCards addObject:card];
         cardsLoadedIndex++;//%%% loaded a card, so have to increment count
         [self insertSubview:[loadedCards objectAtIndex:(MAX_BUFFER_SIZE-1)] belowSubview:[loadedCards objectAtIndex:(MAX_BUFFER_SIZE-2)]];
     }
@@ -184,13 +188,23 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     [loadedCards removeObjectAtIndex:0]; //%%% card was swiped, so it's no longer a "loaded card"
     
     if (cardsLoadedIndex < [allCards count]) { //%%% if we haven't reached the end of all cards, put another into the loaded cards
-        [loadedCards addObject:[allCards objectAtIndex:cardsLoadedIndex]];
+        DraggableView *card = [allCards objectAtIndex:cardsLoadedIndex];
+        card.restaurant = (RestaurantObject *)[_playItems objectAtIndex:cardsLoadedIndex];
+        [loadedCards addObject:card];
         cardsLoadedIndex++;//%%% loaded a card, so have to increment count
         [self insertSubview:[loadedCards objectAtIndex:(MAX_BUFFER_SIZE-1)] belowSubview:[loadedCards objectAtIndex:(MAX_BUFFER_SIZE-2)]];
     }
     
     //TODO Add to wishlist
 
+}
+
+- (void)cardTapped:(DraggableView *)draggableView withObject:(id)object {
+    if ([object isKindOfClass:[RestaurantObject class]]) {
+        RestaurantVC *vc = [[RestaurantVC alloc] init];
+        vc.restaurant = (RestaurantObject*)object;
+        [_presentingVC.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 //%%% when you hit the right button, this is called and substitutes the swipe

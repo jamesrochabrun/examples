@@ -26,9 +26,6 @@
 
         self.navigationItem.titleView = _navTitleView;
         
-        if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
-            self.edgesForExtendedLayout = UIRectEdgeNone;
-        
         _navTitleView.frame = CGRectMake(0, 0,
                                          [UIScreen mainScreen].bounds.size.width - kGeomWidthMenuButton*2,
                                          44);
@@ -40,7 +37,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+        
     UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
     _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);

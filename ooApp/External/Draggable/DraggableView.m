@@ -17,10 +17,13 @@
 
 #import "DraggableView.h"
 #import "OOAPI.h"
+#import "RestaurantVC.h"
 
 @interface DraggableView ()
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UILabel *name;
+@property (nonatomic, strong) UILabel *price;
+@property (nonatomic, strong) UILabel *cuisine;
 @property (nonatomic, strong) UIImageView *thumbnail;
 @property (nonatomic, strong) NSArray *mediaItems;
 @end
@@ -31,8 +34,6 @@
 }
 
 //delegate is instance of ViewController
-@synthesize delegate;
-
 @synthesize panGestureRecognizer;
 @synthesize overlayView;
 
@@ -43,11 +44,23 @@
         [self setupView];
         
         _name = [[UILabel alloc]initWithFrame:CGRectMake(0, 50, self.frame.size.width, 100)];
+        [_name withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
         _name.text = @"no info given";
         [_name setTextAlignment:NSTextAlignmentCenter];
-        _name.textColor = UIColorRGBA(kColorWhite);
         _name.translatesAutoresizingMaskIntoConstraints = NO;
-        
+
+        _cuisine = [[UILabel alloc]initWithFrame:CGRectMake(0, 50, self.frame.size.width, 100)];
+        [_cuisine withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        _cuisine.text = @"";
+        [_cuisine setTextAlignment:NSTextAlignmentCenter];
+        _cuisine.translatesAutoresizingMaskIntoConstraints = NO;
+
+        _price = [[UILabel alloc]initWithFrame:CGRectMake(0, 50, self.frame.size.width, 100)];
+        [_price withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        _price.text = @"";
+        [_price setTextAlignment:NSTextAlignmentCenter];
+        _price.translatesAutoresizingMaskIntoConstraints = NO;
+
         _thumbnail = [[UIImageView alloc] init];
         _thumbnail.backgroundColor = UIColorRGBA(kColorBlack);
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
@@ -59,12 +72,17 @@
         panGestureRecognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(beingDragged:)];
         
         [self addGestureRecognizer:panGestureRecognizer];
+        [self addSubview:_cuisine];
+        [self addSubview:_price];
         [self addSubview:_name];
         [self addSubview:_thumbnail];
         
         overlayView = [[OverlayView alloc]initWithFrame:CGRectMake(self.frame.size.width/2-100, 0, 100, 100)];
         overlayView.alpha = 0;
         [self addSubview:overlayView];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showObject:)];
+        [self addGestureRecognizer:tap];
         //self.clipsToBounds = YES;
     }
     return self;
@@ -117,17 +135,28 @@
 - (void)updateLayout {
     CGRect frame;
     
+    [_name sizeToFit];
+    [_cuisine sizeToFit];
+    [_price sizeToFit];
+
     frame = _name.frame;
-    frame.origin = CGPointMake(0, 0);
-    frame.size = CGSizeMake(width(self) - 20, 100);
+    frame.origin = CGPointMake((width(self)-width(_name))/2, kGeomSpaceEdge);
     _name.frame = frame;
     
+    frame = _cuisine.frame;
+    frame.origin = CGPointMake((width(self)-(width(_cuisine)+width(_price)+kGeomSpaceInter))/2, CGRectGetMaxY(_name.frame) + kGeomSpaceInter);
+    _cuisine.frame = frame;
+    
+    frame = _price.frame;
+    frame.origin = CGPointMake(CGRectGetMaxX(_cuisine.frame) + kGeomSpaceInter, _cuisine.frame.origin.y);
+    _price.frame = frame;
+    
     frame = _thumbnail.frame;
-    frame.origin = CGPointMake(0, CGRectGetMaxY(_name.frame));
+    frame.origin = CGPointMake(0, CGRectGetMaxY(_price.frame) + kGeomSpaceInter);
     frame.size = CGSizeMake(width(self), height(self) - frame.origin.y);
     _thumbnail.frame = frame;
     
-    NSLog(@"selfFrame=%@, tnFrame=%@, nameFrame=%@", NSStringFromCGRect(self.frame), NSStringFromCGRect(_thumbnail.frame), NSStringFromCGRect(_name.frame));
+//    NSLog(@"selfFrame=%@, tnFrame=%@, nameFrame=%@", NSStringFromCGRect(self.frame), NSStringFromCGRect(_thumbnail.frame), NSStringFromCGRect(_name.frame));
 }
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -191,6 +220,12 @@
     }
 }
 
+- (void)showObject:(id)sender {
+    if (_restaurant) {
+        [_delegate cardTapped:self withObject:_restaurant];
+    }
+}
+
 //%%% checks to see if you are moving right or left and applies the correct overlay image
 - (void)updateOverlay:(CGFloat)distance
 {
@@ -237,7 +272,7 @@
                          [self removeFromSuperview];
                      }];
     
-    [delegate cardSwipedRight:self];
+    [_delegate cardSwipedRight:self];
     
     NSLog(@"YES");
 }
@@ -253,7 +288,7 @@
                          [self removeFromSuperview];
                      }];
     
-    [delegate cardSwipedLeft:self];
+    [_delegate cardSwipedLeft:self];
     
     NSLog(@"TODO: add to don't show again list");
 }
@@ -269,7 +304,7 @@
                          [self removeFromSuperview];
                      }];
     
-    [delegate cardSwipedRight:self];
+    [_delegate cardSwipedRight:self];
     
     NSLog(@"TODO: add to wish list");
 }
@@ -285,7 +320,7 @@
                          [self removeFromSuperview];
                      }];
     
-    [delegate cardSwipedLeft:self];
+    [_delegate cardSwipedLeft:self];
     
     NSLog(@"NO");
 }
@@ -293,7 +328,7 @@
 - (void)setRestaurant:(RestaurantObject *)restaurant {
     if (_restaurant == restaurant) return;
     _restaurant = restaurant;
-    _name.text = restaurant.name;
+    _name.text = _restaurant.name;
     [self getRestaurant];
 }
 
@@ -303,6 +338,9 @@
     
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
+        _cuisine.text = _restaurant.cuisine;
+        _price.text = [_restaurant priceRangeText];
+
         ON_MAIN_THREAD(^ {
             [weakSelf updateCard:restaurant];
         });
@@ -365,7 +403,7 @@
 
 - (void)updateCard:(id)object {
     if ([object isKindOfClass:[RestaurantObject class]]) {
-        RestaurantObject *r = (RestaurantObject *)object;
+//        RestaurantObject *r = (RestaurantObject *)object;
         [self getMediaItemsForRestaurant];
     }
     

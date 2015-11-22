@@ -15,6 +15,7 @@
 #import "AppDelegate.h"
 #import "VoteObject.h"
 #import "FeedObject.h"
+#import "TagObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -513,12 +514,12 @@ NSString *const kKeySearchFilter = @"filter";
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        NSArray *array= responseObject;
-        NSMutableArray *users= [NSMutableArray new];
+        NSArray *array = responseObject;
+        NSMutableArray *users = [NSMutableArray new];
         for (NSDictionary* d  in  array) {
-            UserObject* user= [UserObject userFromDict:d];
-            if  (user ) {
-                [users  addObject: user];
+            UserObject *user = [UserObject userFromDict:d];
+            if  (user) {
+                [users addObject: user];
             }
         }
         success( users.count>0);
@@ -601,6 +602,40 @@ NSString *const kKeySearchFilter = @"filter";
     
     
     //return [rm GET:urlString parameters:nil success:success failure:failure];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getRestaurantsWithListID
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)getRestaurantsFromSystemList:(ListType)systemListType
+                                             success:(void (^)(NSArray *restaurants))success
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *type;
+    if (systemListType == kListTypePopular) {
+        type=@"popular";
+    } else if (systemListType == kListTypeTrending) {
+        type =@"trending";
+    } else {
+        failure(nil, nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%@", kHTTPProtocol, [OOAPI URL], type];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *restaurants = [NSMutableArray array];
+        if ([responseObject count]) {
+            for (id dict in responseObject) {
+                [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+            }
+        }
+        success(restaurants);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
 }
 
 //------------------------------------------------------------------------------
@@ -963,7 +998,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     op = [rm GET:urlString parameters:nil
           success:^(id responseObject) {
-              NSArray *array= responseObject;
+              NSArray *array = responseObject;
               NSMutableArray *venues= [NSMutableArray new];
               for (NSDictionary *d in array) {
                   RestaurantObject *venue = [RestaurantObject restaurantFromDict:d];
@@ -1007,7 +1042,7 @@ NSString *const kKeySearchFilter = @"filter";
     
     op = [rm GET:urlString parameters:nil
           success:^(id responseObject) {
-              NSArray *array= responseObject;
+              NSArray *array = responseObject;
               NSMutableArray *users = [NSMutableArray new];
               for (NSDictionary *d in array) {
                   UserObject *user = [UserObject userFromDict:d];
@@ -1048,9 +1083,9 @@ NSString *const kKeySearchFilter = @"filter";
     
     AFHTTPRequestOperation *op;
     
-    op = [rm GET : urlString parameters:nil
+    op = [rm GET:urlString parameters:nil
           success:^(id responseObject) {
-              NSArray *array= responseObject;
+              NSArray *array = responseObject;
               NSMutableArray *users= [NSMutableArray new];
               for (NSDictionary *d in array) {
                   UserObject *user = [UserObject userFromDict:d];
@@ -1066,17 +1101,69 @@ NSString *const kKeySearchFilter = @"filter";
     return op;
 }
 
++ (AFHTTPRequestOperation *)getTagsForUser:(NSUInteger)userID
+                                success:(void (^)())success
+                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSString *urlString;
+    if (userID) {
+        urlString= [NSString stringWithFormat:@"%@://%@/users/%lu/tags", kHTTPProtocol, [OOAPI URL], userID];
+    } else {
+        urlString= [NSString stringWithFormat:@"%@://%@/tags", kHTTPProtocol, [OOAPI URL]];
+    }
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET:urlString parameters:nil
+          success:^(id responseObject) {
+              NSArray *array = responseObject;
+              NSMutableArray *tags= [NSMutableArray new];
+              for (NSDictionary *d in array) {
+                  TagObject *tag = [TagObject tagFromDict:d];
+                  if (tag) {
+                      [tags addObject:tag];
+                  }
+              }
+              success(tags);
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+              failure(operation, error);
+          }];
+    
+    return op;
+}
+
+
++ (AFHTTPRequestOperation *)unsetTagForUser:(NSUInteger)userID
+                                   success:(void (^)())success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    AFHTTPRequestOperation *op;
+    
+    return op;
+}
+
++ (AFHTTPRequestOperation *)setTagForUser:(NSUInteger)userID
+                                     success:(void (^)())success
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    AFHTTPRequestOperation *op;
+    
+    return op;
+}
+
 
 //------------------------------------------------------------------------------
 // Name:    uploadPhoto
 // Purpose: This is the AFNetworking approach.
 //------------------------------------------------------------------------------
 + (void)uploadPhoto:(UIImage *)image
-      forRestaurant:(RestaurantObject *)restaurant
+      forObject:(id)object
                 success:(void (^)(void))success
                 failure:(void (^)( NSError *error))failure;
 {
-    if (!image || !restaurant) {
+    if (!image || !object) {
         failure(nil);
         return ;
     }
@@ -1089,8 +1176,26 @@ NSString *const kKeySearchFilter = @"filter";
     
     NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
     NSLog(@"img size = %lu bytes",(unsigned long)[imageData length]);
+
+    NSDictionary *parameters;
     
-    NSDictionary *parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
+    if ([object isKindOfClass:[RestaurantObject class]]) {
+        RestaurantObject *restaurant = (RestaurantObject *)object;
+        parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", restaurant.restaurantID]};
+    } else if ([object isKindOfClass:[UserObject class]]) {
+        UserObject *user = (UserObject *)object;
+        parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", user.userID]};
+    } else if ([object isKindOfClass:[ListObject class]]) {
+        ListObject *list = (ListObject *)object;
+        parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", list.listID]};
+    } else if ([object isKindOfClass:[EventObject class]]) {
+        EventObject *event = (EventObject *)object;
+        parameters = @{kKeyEventEventID : [NSString stringWithFormat:@"%lu", event.eventID]};
+    } else {
+        NSLog(@"Unhandled object type in photo upload %@", [object class]);
+        failure(nil);
+        return;
+    }
     
     AFHTTPRequestOperation *op;
     
@@ -1112,7 +1217,6 @@ NSString *const kKeySearchFilter = @"filter";
 // Purpose: This is the native approach.
 // Note:    This uploads the image for the current user.
 //------------------------------------------------------------------------------
-
 + (void)uploadPhoto:(UIImage *)image
                  to: (UploadDestination )destination
          identifier: (NSUInteger) identifier

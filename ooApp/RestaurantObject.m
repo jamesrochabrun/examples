@@ -33,14 +33,12 @@ NSString *const kKeyRestaurantMobileMenuURL = @"mobile_menu_url";
 @implementation RestaurantObject
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {
-    if (!dict) {
+    if (!dict || ![dict isKindOfClass:[NSDictionary class]]) {
         return nil;
     }
-    if  (![dict isKindOfClass:[NSDictionary class]]) {
-        return nil;
-    }
-//    NSLog(@"dict=%@", dict);
-    RestaurantObject *restaurant =[[RestaurantObject alloc] init];
+
+    //    NSLog(@"dict=%@", dict);
+    RestaurantObject *restaurant = [[RestaurantObject alloc] init];
     restaurant.googleID = [dict objectForKey:kKeyRestaurantGoogleID];
     restaurant.placeID = [dict objectForKey:kKeyRestaurantPlaceID];
     restaurant.restaurantID = [[dict objectForKey:kKeyRestaurantRestaurantID] unsignedIntegerValue];

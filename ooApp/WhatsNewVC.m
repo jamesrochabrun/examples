@@ -32,7 +32,8 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.    
+    // Do any additional setup after loading the view, typically from a nib.
+    self.view.backgroundColor = UIColorRGBA(kColorClear);
     
     _tableView = [[UITableView alloc] init];
     [self.view addSubview:_tableView];
@@ -40,7 +41,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     _tableView.dataSource = self;
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _tableView.backgroundColor = UIColorRGBA(kColorClear);
     
     [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:ListRowID];
     [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:FeaturedRowID];
@@ -49,12 +50,28 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     self.navTitle = nto;
     
     _lists = [NSMutableArray array];
+    [self addLists];
+}
+
+- (void)addLists {
+
     ListObject *list;
-    
     list = [[ListObject alloc] init];
     list.name = @"Party";
     list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
+    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Trending";
+//    list.type = kListTypeTrending;
+//    list.listDisplayType = KListDisplayTypeStrip;
+//    [_lists addObject:list];
+//    
+//    list = [[ListObject alloc] init];
+//    list.name = @"Popular";
+//    list.type = kListTypePopular;
+//    list.listDisplayType = KListDisplayTypeStrip;
+//    [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Thai";
@@ -64,10 +81,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list = [[ListObject alloc] init];
     list.name = @"Vegetarian";
     list.listDisplayType = KListDisplayTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Peruvian";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
@@ -85,6 +98,8 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list = [[ListObject alloc] init];
     list.name = @"Indian";
     [_lists addObject:list];
+    
+    [_tableView reloadData];
 }
 
 - (void)locationBecameAvailable:(id)notification

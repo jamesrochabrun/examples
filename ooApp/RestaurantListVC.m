@@ -51,7 +51,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     NSUInteger userID = userInfo.userID;
     
     if (_listItem.type == kListTypeUser &&
-        _listItem.userID == userID) {
+        [_listItem isListOwner:userID]) {
         [self setupAlertController];
         self.moreButton.hidden = NO;
     } else {
