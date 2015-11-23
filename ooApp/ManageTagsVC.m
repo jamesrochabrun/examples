@@ -10,6 +10,7 @@
 #import "TagObject.h"
 #import "OOAPI.h"
 #import "Settings.h"
+#import "NavTitleObject.h"
 
 @interface ManageTagsVC ()
 @property (nonatomic, strong) UITableView *tableView;
@@ -30,6 +31,11 @@ static NSString * const cellIdentifier = @"tagCell";
     _tableView.delegate = self;
     [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
     [self.view addSubview:_tableView];
+    
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Manage Tags" subHeader:nil];
+    [self setNavTitle:nto];
+    
+    self.moreButton.hidden = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -73,7 +79,6 @@ static NSString * const cellIdentifier = @"tagCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

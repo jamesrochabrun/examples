@@ -108,8 +108,10 @@ static CGFloat kGeomEventCoordinatorBoxHeightTopmost = 230;
 static CGFloat kGeomHeightEventWhoTableCellHeight = 100;
 static CGFloat kGeomHeightEventWhoTableCellImageHeight = 84;
 static CGFloat kGeomSideBarRevealWidth = 235;
-static CGFloat kGeomHeightCreateListButton= 23;
-static CGFloat kGeomVerticalSpaceCreateList= 31;
+static CGFloat kGeomHeightCreateListButton = 23;
+static CGFloat kGeomVerticalSpaceCreateList = 31;
+static CGFloat kGeomHeightDropDownListRow = 40;
+static CGFloat kNumDropDownListRows = 5;
 
 // Images
 extern NSString *const kImageNoProfileImage;

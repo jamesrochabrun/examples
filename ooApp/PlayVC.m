@@ -8,9 +8,13 @@
 
 #import "PlayVC.h"
 #import "DraggableViewBackground.h"
+#import "OOAPI.h"
+#import "Settings.h"
+#import "TagObject.h"
 
 @interface PlayVC ()
-
+@property (nonatomic, strong) NavTitleObject *nto;
+@property (nonatomic, strong) DraggableViewBackground *draggableBackround;
 @end
 
 @implementation PlayVC
@@ -19,17 +23,41 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:nil];
-    self.navTitle = nto;
+    _nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:@"restaurants and bars"];
+    self.navTitle = _nto;
     
-    DraggableViewBackground *draggableBackround = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];
-    draggableBackround.presentingVC = self;
-    self.view = draggableBackround;    
+    _draggableBackround = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];
+    _draggableBackround.presentingVC = self;
+    self.view = _draggableBackround;
+    [self populateOptions];
+}
+
+- (void)populateOptions {
+    __weak PlayVC *weakSelf = self;
+    
+    self.dropDownList.delegate = self;
+    
+    [OOAPI getTagsForUser:[Settings sharedInstance].userObject.userID success:^(NSArray *tags) {
+        weakSelf.dropDownList.options = tags;
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dropDownList:(DropDownListTVC *)dropDownList optionTapped:(id)object {
+    if (![object isKindOfClass:[TagObject class]]) return;
+    TagObject *tag = (TagObject *)object;
+    [_draggableBackround getPlayItems:tag];
+    
+    _nto.subheader = tag.term;
+    self.navTitle = _nto;
+    
+    [self displayDropDown:NO];
 }
 
 @end

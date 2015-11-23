@@ -32,6 +32,7 @@
 
 #import <UIKit/UIKit.h>
 #import "DraggableView.h"
+#import "TagObject.h"
 
 @interface DraggableViewBackground : UIView <DraggableViewDelegate>
 
@@ -41,5 +42,7 @@
 
 @property (strong ,nonatomic) NSMutableArray *allCards; //%%% the labels the cards
 @property (weak) UIViewController *presentingVC;
+
+- (void)getPlayItems:(TagObject *)tag;
 
 @end

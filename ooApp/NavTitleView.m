@@ -52,13 +52,6 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_headerLabel]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_subHeaderLabel]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_headerLabel
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_headerLabel.superview
-//                                                     attribute:NSLayoutAttributeCenterY
-//                                                    multiplier:1.f constant:0.f]];
-
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_headerLabel
                                                           attribute:NSLayoutAttributeCenterX
                                                           relatedBy:NSLayoutRelationEqual
@@ -76,12 +69,10 @@
 
 - (void)setNavTitle:(NavTitleObject *)navTitle
 {
-    if (_navTitle == navTitle) return;
     _navTitle = navTitle;
     
     _headerLabel.text = [_navTitle.header uppercaseString];
     _subHeaderLabel.text = _navTitle.subheader;
-    
     [_headerLabel sizeToFit];
     [_subHeaderLabel sizeToFit];
 }

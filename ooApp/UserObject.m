@@ -128,7 +128,9 @@ NSString *const kKeyUserMediaItem = @"media_item";
     if (doUpload) {
         // NOTE: The caller makes sure this is seldomly called.
 
-        [OOAPI uploadPhoto:profilePhoto
+        UserObject *user = [Settings sharedInstance].userObject;
+        if (user.userID) {
+            [OOAPI uploadPhoto:profilePhoto
                         forObject:[Settings sharedInstance].userObject
                    success:^() {
                        NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
@@ -136,6 +138,7 @@ NSString *const kKeyUserMediaItem = @"media_item";
                    failure:^(NSError *e) {
                        NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
                    }];
+        }
         
 // Might as well use the AFnetworking approach until we find problem with it
 //        [OOAPI uploadPhoto:profilePhoto

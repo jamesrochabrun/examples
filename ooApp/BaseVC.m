@@ -18,9 +18,8 @@
 
 
 @interface BaseVC ()
-
 @property (nonatomic, strong) NavTitleView *navTitleView;
-
+@property (nonatomic, strong) UIButton *displayDropDownButton;
 @end
 
 @implementation BaseVC
@@ -54,6 +53,10 @@
                                      [UIScreen mainScreen].bounds.size.width - kGeomWidthMenuButton*2,
                                      44);
     self.navigationItem.titleView = _navTitleView;
+    _displayDropDownButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _displayDropDownButton.frame = _navTitleView.bounds;
+    [_displayDropDownButton addTarget:self action:@selector(toggleDropDown) forControlEvents:UIControlEventTouchUpInside];
+    [_navTitleView addSubview:_displayDropDownButton];
 
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
         self.edgesForExtendedLayout = UIRectEdgeNone;
@@ -62,12 +65,73 @@
     [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
     [self.navigationController.navigationBar setTranslucent:YES];
     self.navigationController.view.backgroundColor = [UIColor clearColor];
+    
+    _dropDownList = [[DropDownListTVC alloc] init];
+//    _dropDownList.view.frame = CGRectMake(0, 0, width(self.view), 200);
+    _dropDownList.view.backgroundColor = UIColorRGBA(kColorOffWhite);
+    _dropDownList.view.hidden = YES;
+    
+    [self.navigationController.view addSubview:_dropDownList.view];
+    [self.navigationController.view bringSubviewToFront:self.navigationController.navigationBar];
 }
+
+- (void)toggleDropDown {
+    if (_displayDropDownButton.selected) {
+        [self displayDropDown:NO];
+    } else {
+        [self displayDropDown:YES];
+    }
+}
+
 
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
     [self.leftNavButton setTitle:icon];
     [self.leftNavButton setTarget:target];
     [self.leftNavButton setAction:selector];
+}
+
+-(void)displayDropDown:(BOOL)showIt {
+    CGRect ddlFrame = _dropDownList.view.frame;
+    
+    if (showIt) {
+        [_displayDropDownButton setSelected:YES];
+        //        [_tap addTarget:self action:@selector(closeCategoryDropdown:)];
+        //        sFrame.origin.y = dFrame.size.height+SHARED_APP_DEL_iPhone.navBarAdjustment;
+        ddlFrame.origin.y = 44 + 20;
+        //        [_dropDownList.tableView reloadData];
+        
+        //        [_mainCoverView addGestureRecognizer:_tap];
+        //        _mainCoverView.backgroundColor = [UIColor clearColor];
+        _dropDownList.view.hidden = NO;
+        [_dropDownList.tableView reloadData];
+    } else {
+        [_displayDropDownButton setSelected:NO];
+        //        [_tap removeTarget:self action:@selector(closeCategoryDropdown:)];
+        //        sFrame.origin.y = 0 + SHARED_APP_DEL_iPhone.navBarAdjustment;
+        //        if (self.navigationBarHidden)
+        //            sFrame.size.height = [self searchBarHeight] + SHARED_APP_DEL_iPhone.statusBarAdjustment;
+        ddlFrame.origin.y = 44 + 20 -_dropDownList.view.frame.size.height;
+        //        [_mainCoverView removeGestureRecognizer:_tap];
+    }
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        //        _categoryButton.enabled = NO;
+        //        _downArrow.transform = (showIt) ? CGAffineTransformMakeRotation(M_PI) : CGAffineTransformIdentity;
+        _dropDownList.view.frame = ddlFrame;
+    } completion:^(BOOL finished) {
+        if (!showIt) {
+            _dropDownList.view.hidden = YES;
+            //            _mainCoverView.backgroundColor = [UIColor clearColor];
+        } else {
+            //            _mainCoverView.backgroundColor = [UIColor clearColor];
+            //            [_categoryDropDownList.tableView flashScrollIndicators];
+            //            [_categoryDropDownList scrollToCurrent];
+        }
+        //_categoryButton.enabled = YES;
+    }];
+    
+    //    _categoryButton.selected = showIt;
+    //    _mainCoverView.hidden = !showIt;
 }
 
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
@@ -104,6 +168,7 @@
 {
     _navTitle = navTitle;
     _navTitleView.navTitle = _navTitle;
+    [_navTitleView setNeedsLayout];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -115,6 +180,10 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dropDownList:(DropDownListTVC *)dropDownList optionTapped:(id)object {
+    NSLog(@"subclass should implement this if it wants to respond to a drop down list tap");
 }
 
 /*

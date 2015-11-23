@@ -21,6 +21,7 @@
 #import "TimeUtilities.h"
 #import "OOMapMarker.h"
 #import "OOFilterView.h"
+#import "ListObject.h"
 
 @interface DiscoverVC () <GMSMapViewDelegate>
 
@@ -92,6 +93,25 @@ static NSString * const ListRowID = @"HLRCell";
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [self populateOptions];
+}
+
+- (void)populateOptions {
+    __weak DiscoverVC *weakSelf = self;
+    
+    self.dropDownList.delegate = self;
+    OOAPI *api = [[OOAPI alloc] init];
+    [api getListsOfUser:[Settings sharedInstance].userObject.userID withRestaurant:0 success:^(NSArray *lists) {
+        weakSelf.dropDownList.options = lists;
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)dropDownList:(DropDownListTVC *)dropDownList optionTapped:(id)object {
+    if (![object isKindOfClass:[ListObject class]]) return;
+    ListObject *list = (ListObject *)object;
+    
 }
 
 - (void)selectNow {
@@ -369,5 +389,6 @@ static NSString * const ListRowID = @"HLRCell";
 {
     return [_restaurants count];
 }
+
 
 @end

@@ -11,6 +11,7 @@
 #import "LocationManager.h"
 #import "RestaurantVC.h"
 #import "RestaurantObject.h"
+#import "TagObject.h"
 
 @interface DraggableViewBackground ()
 
@@ -25,19 +26,13 @@
 @implementation DraggableViewBackground {
     NSInteger cardsLoadedIndex; //%%% the index of the card you have loaded into the loadedCards array last
     NSMutableArray *loadedCards; //%%% the array of card loaded (change max_buffer_size to increase or decrease the number of cards this holds)
-    
-//    UIButton* menuButton;
-//    UIButton* messageButton;
 }
 
 //this makes it so only two cards are loaded at a time to
 //avoid performance and memory costs
 static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any given time, must be greater than 1
-//static const float CARD_HEIGHT = 386; //%%% height of the draggable card
-//static const float CARD_WIDTH = 290; //%%% width of the draggable card
 
-//@synthesize exampleCardLabels; //%%% all the labels I'm using as example data at the moment
-@synthesize allCards;//%%% all the cards
+@synthesize allCards; //%%% all the cards
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -45,21 +40,26 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     if (self) {
         [super layoutSubviews];
         [self setupView];
-//        exampleCardLabels = [[NSArray alloc]initWithObjects:@"first",@"second",@"third",@"fourth",@"last", nil]; //%%% placeholder for card-specific information
         loadedCards = [[NSMutableArray alloc] init];
         allCards = [[NSMutableArray alloc] init];
         cardsLoadedIndex = 0;
-        [self getPlayItems];
+        [self getPlayItems:nil];
     }
     return self;
 }
 
-- (void)getPlayItems {
+- (void)getPlayItems:(TagObject *)tag {
+    
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak DraggableViewBackground *weakSelf = self;
     
-    [api getRestaurantsWithKeywords:@[@"thai",@"mexican",@"burgers"]
+    NSArray *keywords = @[@"restaurant", @"bar"];
+    if (tag) {
+        keywords = @[tag.term];
+    }
+    
+    [api getRestaurantsWithKeywords:keywords
                         andLocation:[[LocationManager sharedInstance] currentUserLocation]
                           andFilter:@""
                           andRadius:15000
@@ -76,6 +76,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 }
 
 - (void)gotPlayItems {
+    [self unloadCards];
     [self loadCards];
 }
 
@@ -131,7 +132,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 //%%% loads all the cards and puts the first x in the "loaded cards" array
 -(void)loadCards
 {
-    if([_playItems count] > 0) {
+    if ([_playItems count] > 0) {
         NSInteger numLoadedCardsCap =(([_playItems count] > MAX_BUFFER_SIZE)?MAX_BUFFER_SIZE:[_playItems count]);
         //%%% if the buffer size is greater than the data size, there will be an array error, so this makes sure that doesn't happen
         
@@ -158,6 +159,15 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
             cardsLoadedIndex++; //%%% we loaded a card into loaded cards, so we have to increment
         }
     }
+}
+
+- (void)unloadCards {
+    [allCards removeAllObjects];
+    [loadedCards enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        DraggableView *dv = (DraggableView *)obj;
+        [dv removeFromSuperview];
+    }];
+    [loadedCards removeAllObjects];
 }
 
 //%%% action called when the card goes to the left.

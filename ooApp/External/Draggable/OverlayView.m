@@ -22,7 +22,7 @@
     if (self) {
         self.backgroundColor = UIColorRGBA(kColorClear);
         _actionHint = [[UILabel alloc] init];
-        [_actionHint withFont:[UIFont fontWithName:kFontIcons size:kGeomPlayIconSize] textColor:kColorWhite backgroundColor:kColorClear];
+        [_actionHint withFont:[UIFont fontWithName:kFontIcons size:kGeomPlayIconSize] textColor:kColorWhite backgroundColor:kColorOverlay40];
         _actionHint.text = kFontIconRemove;
         [_actionHint setTextAlignment:NSTextAlignmentCenter];
         [self addSubview:_actionHint];
@@ -33,6 +33,7 @@
         _actionHint.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
         _actionHint.layer.borderWidth = 1;
         _actionHint.layer.cornerRadius = kGeomPlayButtonSize/2;
+        _actionHint.clipsToBounds = YES;
 
         //_actionHint.translatesAutoresizingMaskIntoConstraints = NO;
         //[DebugUtilities addBorderToViews:@[_actionHint]];

@@ -85,7 +85,7 @@
 //    const void *devTokenBytes = [devToken bytes];
 
     UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSUInteger userid = userInfo.userID;
+    NSUInteger userID = userInfo.userID;
 
 //    TODO: store that we asked in settings so that we can register again on launch in the future
 //    TODO: send the device token and user ID to the OO server using OOAPI

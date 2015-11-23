@@ -109,6 +109,7 @@ static NSString * const ListRowID = @"ListRowCell";
         self.backgroundColor = UIColorRGBA(kColorBlack);
         
         UIImage *photoOfSelf= [_userInfo userProfilePhoto];
+        
         if ( _viewingOwnProfile  && photoOfSelf) {
             _iv.image=  photoOfSelf;
         } else {
@@ -398,8 +399,8 @@ static NSString * const ListRowID = @"ListRowCell";
     NSString *first = _profileOwner.firstName ?:  @"";
     NSString *last = _profileOwner.lastName ?:  @"";
     NSString *fullName =  [NSString stringWithFormat: @"%@ %@", first, last ];
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: fullName subHeader:nil];
-    [self setNavTitle:  nto];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:fullName subHeader:nil];
+    [self setNavTitle:nto];
 }
 
 //------------------------------------------------------------------------------

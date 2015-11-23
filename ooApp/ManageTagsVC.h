@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SubBaseVC.h"
 
-@interface ManageTagsVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface ManageTagsVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @end
