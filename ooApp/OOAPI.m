@@ -716,7 +716,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
         restaurantIDs = [NSMutableArray array];
         [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             RestaurantObject *ro = (RestaurantObject *)obj;
-            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu", ro.restaurantID]];
+            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu", (unsigned long)ro.restaurantID]];
         }];
     }
     UserObject *userInfo= [Settings sharedInstance].userObject;
@@ -961,27 +961,48 @@ NSString *const kKeyTagIDs = @"tag_ids";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSNumber *theNewStateValue= participating?  @1: @2;
-    
     AFHTTPRequestOperation *op;
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users/%lu",
-                           kHTTPProtocol, [OOAPI URL],
-                           (unsigned long)eventID, (unsigned long)user.userID];
-    NSLog (@"PATCH %@", urlString);
-    op = [rm PATCH:urlString parameters: @{
-                                           @"participant_state":theNewStateValue
+    if ( participating) {
+        
+        NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users",
+                               kHTTPProtocol, [OOAPI URL],
+                               (unsigned long)eventID  ];
+        NSLog (@"POST %@", urlString);
+        op = [rm POST:urlString parameters: @{
+                                              @"user_ids": @[@(user.userID)],
+                                               @"participant_state":@1
                                                }
-          
-           success:^(id responseObject) {
-               NSInteger identifier= 0;
-               if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                   NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
-                   identifier= parseIntegerOrNullFromServer(eventID);
-               }
-               success(identifier);
-           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-               failure(operation, error);
-           }];
+              
+               success:^(id responseObject) {
+                   NSInteger identifier= 0;
+                   if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                       NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                       identifier= parseIntegerOrNullFromServer(eventID);
+                   }
+                   success(identifier);
+               } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                   failure(operation, error);
+               }];
+    } else {
+        
+        NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users/%lu",
+                               kHTTPProtocol, [OOAPI URL],
+                               (unsigned long)eventID ,
+                               (unsigned long)user.userID];
+        NSLog (@"DELETE %@", urlString);
+        op = [rm DELETE:urlString parameters: nil
+              success:^(id responseObject) {
+                  NSInteger identifier= 0;
+                  if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                      NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                      identifier= parseIntegerOrNullFromServer(eventID);
+                  }
+                  success(identifier);
+              } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                  failure(operation, error);
+              }];
+    }
+ 
     
     return op;
 }
@@ -1041,7 +1062,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
     NSInteger restaurantID = restaurant.restaurantID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/restaurants/%lu/followees", kHTTPProtocol, [OOAPI URL], userID, restaurantID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/restaurants/%lu/followees", kHTTPProtocol, [OOAPI URL], (unsigned long)userID, (long)restaurantID];
     
     AFHTTPRequestOperation *op;
     
@@ -1114,7 +1135,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
     
     NSString *urlString;
     if (userID) {
-        urlString= [NSString stringWithFormat:@"%@://%@/users/%lu/tags", kHTTPProtocol, [OOAPI URL], userID];
+        urlString= [NSString stringWithFormat:@"%@://%@/users/%lu/tags", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     } else {
         urlString= [NSString stringWithFormat:@"%@://%@/tags", kHTTPProtocol, [OOAPI URL]];
     }
@@ -1150,7 +1171,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
         return nil;
     }
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/tags/%lu",
-                           kHTTPProtocol, [OOAPI URL], userID, tagID];
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)userID, (unsigned long)tagID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -1171,9 +1192,9 @@ NSString *const kKeyTagIDs = @"tag_ids";
         return nil;
     }
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/tags",
-                           kHTTPProtocol, [OOAPI URL], userID];
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
-    NSDictionary *parameters = @{kKeyTagIDs : [NSString stringWithFormat:@"[%lu]", tagID]};
+    NSDictionary *parameters = @{kKeyTagIDs : [NSString stringWithFormat:@"[%lu]", (unsigned long)tagID]};
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1215,16 +1236,16 @@ NSString *const kKeyTagIDs = @"tag_ids";
     
     if ([object isKindOfClass:[RestaurantObject class]]) {
         RestaurantObject *restaurant = (RestaurantObject *)object;
-        parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", restaurant.restaurantID]};
+        parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
     } else if ([object isKindOfClass:[UserObject class]]) {
         UserObject *user = (UserObject *)object;
-        parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", user.userID]};
+        parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", (unsigned long)user.userID]};
     } else if ([object isKindOfClass:[ListObject class]]) {
         ListObject *list = (ListObject *)object;
-        parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", list.listID]};
+        parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", (unsigned long)list.listID]};
     } else if ([object isKindOfClass:[EventObject class]]) {
         EventObject *event = (EventObject *)object;
-        parameters = @{kKeyEventEventID : [NSString stringWithFormat:@"%lu", event.eventID]};
+        parameters = @{kKeyEventEventID : [NSString stringWithFormat:@"%lu", (unsigned long)event.eventID]};
     } else {
         NSLog(@"Unhandled object type in photo upload %@", [object class]);
         failure(nil);

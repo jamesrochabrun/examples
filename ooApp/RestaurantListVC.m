@@ -30,6 +30,17 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 @implementation RestaurantListVC
 
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -230,6 +241,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     
     RestaurantVC *vc = [[RestaurantVC alloc] init];
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-RestaurantListVC");
     vc.eventBeingEdited= self.eventBeingEdited;
     vc.restaurant = restaurant;
     [self.navigationController pushViewController:vc animated:YES];

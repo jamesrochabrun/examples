@@ -9,6 +9,7 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#import <Google/Analytics.h>
 #import "Reachability.h"
 #import "UserObject.h"
 
@@ -84,5 +85,12 @@ static inline BOOL is_reachable(void) {
 	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;
 	return status ==ReachableViaWiFi || status==ReachableViaWWAN;
 }
+
+extern void ANALYTICS_INIT(void);
+extern void ANALYTICS_SCREEN(NSString*);
+extern void ANALYTICS_EVENT_UI (NSString*);
+extern void ANALYTICS_EVENT_CLOUD (NSString*);
+extern void ANALYTICS_EVENT_OTHER (NSString*);
+extern void ANALYTICS_FORCE_SYNC ( void);
 
 #endif

@@ -36,6 +36,17 @@
 @implementation EventWhenVC
 
 //------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
+//------------------------------------------------------------------------------
 // Name:    viewDidLoad
 // Purpose:
 //------------------------------------------------------------------------------

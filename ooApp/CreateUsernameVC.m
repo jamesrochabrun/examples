@@ -28,6 +28,17 @@
 @implementation CreateUsernameVC
 #define SUGGESTED_TABLE_REUSE_IDENTIFIER @"suggested"
 
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)dealloc
 {
     self.arrayOfSuggestions= nil;

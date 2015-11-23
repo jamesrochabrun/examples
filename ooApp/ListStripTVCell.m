@@ -254,6 +254,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     RestaurantVC *vc = [[RestaurantVC alloc] init];
     vc.title = trimString(restaurant.name);
     vc.restaurant = restaurant;
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-ListStripTVCell");
     [_navigationController pushViewController:vc animated:YES];
 }
 

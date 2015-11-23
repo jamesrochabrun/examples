@@ -169,8 +169,16 @@ static NSString * const ListRowID = @"HLRCell";
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     [self.navigationController setNavigationBarHidden:NO];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(locationBecameAvailable:)
@@ -398,7 +406,7 @@ static NSString * const ListRowID = @"HLRCell";
     vc.eventBeingEdited= self.eventBeingEdited;
     vc.listToAddTo = _listToAddTo;
     [vc getRestaurant];
-    
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Discover");
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 

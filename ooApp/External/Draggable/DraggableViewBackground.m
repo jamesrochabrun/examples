@@ -212,6 +212,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 - (void)cardTapped:(DraggableView *)draggableView withObject:(id)object {
     if ([object isKindOfClass:[RestaurantObject class]]) {
         RestaurantVC *vc = [[RestaurantVC alloc] init];
+        ANALYTICS_EVENT_UI(@"RestaurantVC-from-Draggable");
         vc.restaurant = (RestaurantObject*)object;
         [_presentingVC.navigationController pushViewController:vc animated:YES];
     }

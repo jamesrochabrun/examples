@@ -107,6 +107,8 @@
 {
     [super viewWillAppear:animated];
     
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     // RULE:  only re-fetch if it's the first time, or if the user altered an event.
     
     EventObject*e=self.eventBeingEdited;

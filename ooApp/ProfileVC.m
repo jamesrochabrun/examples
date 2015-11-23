@@ -336,9 +336,15 @@ static NSString * const ListRowID = @"ListRowCell";
     return self;
 }
 
-- (void) viewWillAppear: (BOOL) animated
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
 
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0

@@ -232,6 +232,7 @@ UITableView* makeTable (UIView *parent,id  delegate)
     }
     tv.delegate= delegate;
     tv.dataSource= delegate;
+    tv.separatorStyle= UITableViewCellSeparatorStyleNone;
     if([tv respondsToSelector:@selector(setCellLayoutMarginsFollowReadableWidth:)])
         tv.cellLayoutMarginsFollowReadableWidth = NO;
     return tv;
@@ -684,8 +685,69 @@ BOOL isValidEmailAddress (NSString *string)
 
 unsigned long msTime (void)
 {
-    struct timeval t;
-    gettimeofday (&t, NULL);
-    unsigned long ms = (t.tv_sec  * 1000) + (t.tv_usec / 1000);
-    return ms;
+	struct timeval t;
+	gettimeofday (&t, NULL);
+	unsigned long ms = (t.tv_sec  * 1000) + (t.tv_usec / 1000);
+	return ms;
+}
+
+void ANALYTICS_INIT(void)
+{
+    NSError *configureError= nil;
+    [[GGLContext sharedInstance] configureWithError:&configureError];
+    if (!configureError) {
+        return;
+    }
+    
+    GAI *gai = [GAI sharedInstance];
+    
+    [gai trackerWithTrackingId: GOOGLE_ANALYTICS_ID];
+    gai.trackUncaughtExceptions = YES;  // report uncaught exceptions
+    gai.logger.logLevel = kGAILogLevelVerbose;  // remove before app release
+
+}
+
+void ANALYTICS_SCREEN(NSString* name)
+{
+	id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+	[tracker set:kGAIScreenName value:name];
+	[tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+}
+
+void ANALYTICS_FORCE_SYNC ()
+{
+    [[GAI sharedInstance] dispatch];
+}
+
+void ANALYTICS_EVENT_OTHER (NSString*name)
+{
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    
+    [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"other"
+                                                          action:  name?:  @"unknown"
+                                                           label:@""
+                                                           value:nil] build]];
+    
+}
+
+void ANALYTICS_EVENT_CLOUD (NSString* name)
+{
+	 id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+
+        [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"cloud"
+                                                              action:  name?:  @"unknown"
+                                                               label:@""
+                                                               value:nil] build]];
+    
+}
+
+void ANALYTICS_EVENT_UI (NSString* name)
+{
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    
+    [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"ui"
+                                                          action: name ?:  @"unknown"
+                                                           label:  @""
+                                                           value:nil] build]]; 
+    
 }
