@@ -274,10 +274,16 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [self doLayout];
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     __weak EventWhoVC *weakSelf = self;
     
 #if 0

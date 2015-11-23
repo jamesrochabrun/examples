@@ -140,6 +140,9 @@ typedef enum: char {
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
 }
@@ -633,7 +636,8 @@ typedef enum: char {
         RestaurantObject *ro = [_restaurantsArray objectAtIndex:indexPath.row];
         
         RestaurantVC *vc = [[RestaurantVC alloc] init];
-        vc.title = trimString(ro.name);
+        ANALYTICS_EVENT_UI(@"RestaurantVC-from-Search");
+       vc.title = trimString(ro.name);
         vc.restaurant = ro;
         vc.eventBeingEdited = self.eventBeingEdited;
         [self.navigationController pushViewController:vc animated:YES];

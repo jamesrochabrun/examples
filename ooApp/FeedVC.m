@@ -76,6 +76,17 @@ static NSString * const FeedCellID = @"FeedCell";
 
 @implementation FeedVC
 
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

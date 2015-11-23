@@ -33,6 +33,17 @@ static NSString * const cellIdentifier = @"menuCell";
 
 @implementation MenuTVC
 
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -194,6 +205,8 @@ static NSString * const cellIdentifier = @"menuCell";
     UIViewController *newFrontController = nil;
     UIViewController *fvc;
     
+    ANALYTICS_EVENT_UI(@"Menu");
+
     if ([menuItem.type isEqualToString:kMenuItemProfile]) {
         [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
         fvc = [[ProfileVC alloc] init];

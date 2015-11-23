@@ -85,7 +85,7 @@
     const float statusBarHeight=  20;
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
-    float  margin=kGeomSpaceEdge;
+//    float  margin=kGeomSpaceEdge;
     _backgroundImageView.frame= CGRectMake( 0,  statusBarHeight,w,w);
     float imageHeight=1.175 * w;
     float y= imageHeight+ (h - imageHeight)/2 -kGeomHeightButton/2 ;
@@ -111,6 +111,8 @@
 {
     [super viewWillAppear:animated];
     
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     _wentToDiscover= NO;
 
     [self.navigationController setNavigationBarHidden:YES];

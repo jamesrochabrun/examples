@@ -22,6 +22,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    ANALYTICS_INIT();
+    
 #ifdef DEBUG
     _usingStagingServer= YES;
     self.diagnosticLogString= [NSMutableString new ];
@@ -39,7 +41,7 @@
     
     // Override point for customization after application launch.
     NSLog(@"application finished launching");
-//    [DebugUtilities displayAllFonts];
+    //    [DebugUtilities displayAllFonts];
     
     NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:10 * 1024 * 1024
                                                             diskCapacity:100 * 1024 * 1024
@@ -49,7 +51,7 @@
     CLLocationCoordinate2D location= [[Settings sharedInstance] mostRecentLocation ];
     NSLog  (@"Last known location: %g,%g", location.latitude,location.longitude);
     [_diagnosticLogString appendFormat: @"LAST LOCATION: %.6g,%.6g\r", location.latitude,location.longitude];
-
+    
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
@@ -63,7 +65,7 @@
      authenticateInstallation];
     
     self.imageForNoProfileSilhouette= [UIImage  imageNamed: @"No-Profile_Image.png"];
-
+    
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }
@@ -82,13 +84,13 @@
 // Delegation methods
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
     NSLog(@"device token: %@", devToken);
-//    const void *devTokenBytes = [devToken bytes];
-
+    //    const void *devTokenBytes = [devToken bytes];
+    
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
-
-//    TODO: store that we asked in settings so that we can register again on launch in the future
-//    TODO: send the device token and user ID to the OO server using OOAPI
+    
+    //    TODO: store that we asked in settings so that we can register again on launch in the future
+    //    TODO: send the device token and user ID to the OO server using OOAPI
 }
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
@@ -99,11 +101,12 @@
 {
     ENTRY;
     if ([[FBSDKApplicationDelegate sharedInstance] application:application
-                                                          openURL:url
-                                                sourceApplication:sourceApplication
-                                                       annotation:annotation
-            ])
+                                                       openURL:url
+                                             sourceApplication:sourceApplication
+                                                    annotation:annotation
+         ])
     {
+        ANALYTICS_EVENT_OTHER(@"FacebookLink");
         return YES;
     } else {
         return NO;
@@ -117,14 +120,16 @@
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     ENTRY;
-   // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     ENTRY;
-   [[Settings sharedInstance] save];
+    [[Settings sharedInstance] save];
+    ANALYTICS_EVENT_OTHER(@"Background");
+    ANALYTICS_FORCE_SYNC();
     
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
@@ -134,7 +139,7 @@
 {
     ENTRY;
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-
+    ANALYTICS_EVENT_OTHER(@"Foreground");
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -147,6 +152,9 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     [[Settings sharedInstance] save];
+    ANALYTICS_EVENT_OTHER(@"Terminate");
+    ANALYTICS_FORCE_SYNC();
+    
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
@@ -154,7 +162,9 @@
 {
     ENTRY;
     [[Settings sharedInstance] save];
-
+    ANALYTICS_EVENT_OTHER(@"Memory");
+    ANALYTICS_FORCE_SYNC();
+    
 }
 
 @end

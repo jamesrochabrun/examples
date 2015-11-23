@@ -44,8 +44,16 @@
     [self.view addSubview:l];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     [self.navigationController setNavigationBarHidden:NO];
 }
 

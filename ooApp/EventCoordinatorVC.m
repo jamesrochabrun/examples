@@ -614,7 +614,7 @@
 {
     float w = width(self);
     float h = height(self);
-    float margin = kGeomSpaceEdge;
+//    float margin = kGeomSpaceEdge;
 //    float heightForShadow = kGeomSeparatorHeight;
 //    h-= heightForShadow;
 //    self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
@@ -1064,7 +1064,6 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row = indexPath.row;
     NSInteger section = indexPath.section;
     if  (!section) {
         return  kGeomEventCoordinatorBoxHeightTopmost;
@@ -1329,9 +1328,16 @@
     [self doLayout];
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     __weak EventCoordinatorVC *weakSelf = self;
 
     [self updateBoxes];
@@ -1429,6 +1435,7 @@
 {
     RestaurantVC *vc = [[RestaurantVC alloc] init];
     vc.restaurant = venue;
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-EventCoordinator");
     
     // RULE: If we are in the E3L mode, the user cannot remove the restaurant from the event.
     if  (!self.inE3LMode) {

@@ -786,10 +786,16 @@
     
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     if (! [self.eventBeingEdited totalVenues ]) {
         /* _venueOperation=*/ [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
             [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
@@ -911,6 +917,7 @@
 - (void) userDidSelect: (NSUInteger) which;
 {
     RestaurantVC* vc= [[RestaurantVC  alloc] init];
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-EventParticipant");
     
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:which];
     vc.restaurant= venue;
