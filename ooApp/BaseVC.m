@@ -8,7 +8,8 @@
 
 #import "BaseVC.h"
 #import "WhatsNewVC.h"
-#import "NavTitleView.h"
+#import "DebugUtilities.h"
+#import "DropDownListTVC.h"
 
 //revealViewController.rearViewRevealWidth = 200;
 //revealViewController.rearViewRevealOverdraw = 0;// Cannot drag and see beyond width 200
@@ -18,8 +19,9 @@
 
 
 @interface BaseVC ()
-@property (nonatomic, strong) NavTitleView *navTitleView;
 @property (nonatomic, strong) UIButton *displayDropDownButton;
+@property (nonatomic, strong) UIView *mainCoverView;
+@property (nonatomic, strong) UITapGestureRecognizer *tap;
 @end
 
 @implementation BaseVC
@@ -53,6 +55,14 @@
                                      [UIScreen mainScreen].bounds.size.width - kGeomWidthMenuButton*2,
                                      44);
     self.navigationItem.titleView = _navTitleView;
+    
+    _mainCoverView = [[UIView alloc] initWithFrame:self.view.frame];
+    _mainCoverView.backgroundColor = UIColorRGBA(kColorOverlay40);
+    _mainCoverView.hidden = YES;
+    [self.view addSubview:_mainCoverView];
+    
+    _tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeDropDownList:)];
+
     _displayDropDownButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _displayDropDownButton.frame = _navTitleView.bounds;
     [_displayDropDownButton addTarget:self action:@selector(toggleDropDown) forControlEvents:UIControlEventTouchUpInside];
@@ -67,7 +77,6 @@
     self.navigationController.view.backgroundColor = [UIColor clearColor];
     
     _dropDownList = [[DropDownListTVC alloc] init];
-//    _dropDownList.view.frame = CGRectMake(0, 0, width(self.view), 200);
     _dropDownList.view.backgroundColor = UIColorRGBA(kColorOffWhite);
     _dropDownList.view.hidden = YES;
     
@@ -95,43 +104,42 @@
     
     if (showIt) {
         [_displayDropDownButton setSelected:YES];
-        //        [_tap addTarget:self action:@selector(closeCategoryDropdown:)];
-        //        sFrame.origin.y = dFrame.size.height+SHARED_APP_DEL_iPhone.navBarAdjustment;
+        [_tap addTarget:self action:@selector(closeDropDownList:)];
         ddlFrame.origin.y = 44 + 20;
-        //        [_dropDownList.tableView reloadData];
-        
-        //        [_mainCoverView addGestureRecognizer:_tap];
-        //        _mainCoverView.backgroundColor = [UIColor clearColor];
-        _dropDownList.view.hidden = NO;
         [_dropDownList.tableView reloadData];
+        [_mainCoverView addGestureRecognizer:_tap];
+        _mainCoverView.backgroundColor = UIColorRGBA(kColorClear);
+        _mainCoverView.hidden = _dropDownList.view.hidden = NO;
+        [self.view bringSubviewToFront:_mainCoverView];
     } else {
         [_displayDropDownButton setSelected:NO];
-        //        [_tap removeTarget:self action:@selector(closeCategoryDropdown:)];
-        //        sFrame.origin.y = 0 + SHARED_APP_DEL_iPhone.navBarAdjustment;
-        //        if (self.navigationBarHidden)
-        //            sFrame.size.height = [self searchBarHeight] + SHARED_APP_DEL_iPhone.statusBarAdjustment;
+        [_tap removeTarget:self action:@selector(closeDropDownList:)];
         ddlFrame.origin.y = 44 + 20 -_dropDownList.view.frame.size.height;
-        //        [_mainCoverView removeGestureRecognizer:_tap];
+        [_mainCoverView removeGestureRecognizer:_tap];
     }
     
     [UIView animateWithDuration:0.2 animations:^{
-        //        _categoryButton.enabled = NO;
-        //        _downArrow.transform = (showIt) ? CGAffineTransformMakeRotation(M_PI) : CGAffineTransformIdentity;
+        [_navTitleView setDDLState:!showIt];
+        if (showIt) {
+            _mainCoverView.backgroundColor = UIColorRGBA(kColorOverlay35);
+        } else {
+            _mainCoverView.backgroundColor = [UIColor clearColor];
+        }
         _dropDownList.view.frame = ddlFrame;
     } completion:^(BOOL finished) {
         if (!showIt) {
             _dropDownList.view.hidden = YES;
-            //            _mainCoverView.backgroundColor = [UIColor clearColor];
+            _mainCoverView.hidden = YES;
         } else {
-            //            _mainCoverView.backgroundColor = [UIColor clearColor];
-            //            [_categoryDropDownList.tableView flashScrollIndicators];
-            //            [_categoryDropDownList scrollToCurrent];
+
         }
-        //_categoryButton.enabled = YES;
     }];
     
-    //    _categoryButton.selected = showIt;
-    //    _mainCoverView.hidden = !showIt;
+    _mainCoverView.hidden = !showIt;
+}
+
+- (void)closeDropDownList:(id)sender {
+    [self displayDropDown:NO];
 }
 
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position

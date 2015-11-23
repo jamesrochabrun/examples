@@ -105,6 +105,9 @@ static NSString * const ListRowID = @"HLRCell";
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:[Settings sharedInstance].userObject.userID withRestaurant:0 success:^(NSArray *lists) {
         weakSelf.dropDownList.options = lists;
+        ON_MAIN_THREAD(^{
+            [self.navTitleView setDDLState:YES];
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -114,7 +117,7 @@ static NSString * const ListRowID = @"HLRCell";
     if (![object isKindOfClass:[ListObject class]]) return;
     _listToDisplay = (ListObject *)object;
     
-    _nto.subheader = [NSString stringWithFormat:@"place on \"%@\"", _listToDisplay.name];
+    _nto.subheader = [NSString stringWithFormat:@"your \"%@\" places", _listToDisplay.name];
     self.navTitle = _nto;
     
     [self displayDropDown:NO];

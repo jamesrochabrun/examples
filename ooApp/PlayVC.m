@@ -28,7 +28,7 @@
     
     _draggableBackround = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];
     _draggableBackround.presentingVC = self;
-    self.view = _draggableBackround;
+    [self.view addSubview:_draggableBackround];
     [self populateOptions];
 }
 
@@ -39,6 +39,9 @@
     
     [OOAPI getTagsForUser:[Settings sharedInstance].userObject.userID success:^(NSArray *tags) {
         weakSelf.dropDownList.options = tags;
+        ON_MAIN_THREAD(^{
+            [self.navTitleView setDDLState:YES]; 
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];

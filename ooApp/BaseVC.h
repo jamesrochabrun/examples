@@ -10,12 +10,14 @@
 #import "SWRevealViewController.h"
 #import "NavTitleObject.h"
 #import "DropDownListTVC.h"
+#import "NavTitleView.h"
 
 @interface BaseVC : UIViewController <SWRevealViewControllerDelegate, DropDownListTVCDelegate>
 
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *leftNavButton;
 @property (nonatomic, strong) NavTitleObject *navTitle;
 @property (nonatomic, strong) DropDownListTVC *dropDownList;
+@property (nonatomic, strong) NavTitleView *navTitleView;
 
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)targer action:(SEL)sector;
 - (void)displayDropDown:(BOOL)showIt;

@@ -13,4 +13,6 @@
 
 @property (nonatomic, strong) NavTitleObject *navTitle;
 
+- (void)setDDLState:(BOOL)open;
+
 @end
