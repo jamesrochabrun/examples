@@ -35,6 +35,8 @@
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic) BOOL openOnly;
+@property (nonatomic, strong) ListObject *listToDisplay;
+@property (nonatomic, strong) NavTitleObject *nto;
 
 @end
 
@@ -86,8 +88,8 @@ static NSString * const ListRowID = @"HLRCell";
 
     [self.view addSubview:_filterView];
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:nil];
-    self.navTitle = nto;
+    _nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:@"places around me"];
+    self.navTitle = _nto;
 
     if (_listToAddTo || _eventBeingEdited) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
@@ -110,7 +112,13 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)dropDownList:(DropDownListTVC *)dropDownList optionTapped:(id)object {
     if (![object isKindOfClass:[ListObject class]]) return;
-    ListObject *list = (ListObject *)object;
+    _listToDisplay = (ListObject *)object;
+    
+    _nto.subheader = [NSString stringWithFormat:@"place on \"%@\"", _listToDisplay.name];
+    self.navTitle = _nto;
+    
+    [self displayDropDown:NO];
+    [self getRestaurants];
     
 }
 
@@ -264,23 +272,34 @@ static NSString * const ListRowID = @"HLRCell";
     
     __weak DiscoverVC *weakSelf=self;
     
-    NSArray *searchTerms = (_openOnly) ? [TimeUtilities categorySearchTerms:[NSDate date]] : @[@"restaurant", @"bar"];
-    NSLog(@"category: %@", searchTerms);
-    
-    _requestOperation = [api getRestaurantsWithKeywords:searchTerms
-                                           andLocation:_desiredLocation
-                                             andFilter:@""
-                                              andRadius:1500
-                                           andOpenOnly:_openOnly
-                                                  andSort:kSearchSortTypeBestMatch
-                                               success:^(NSArray *r) {
-        _restaurants = r;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf gotRestaurants];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-        ;
-    }];
+    if (_listToDisplay && _listToDisplay.listID) {
+        [api getRestaurantsWithListID:_listToDisplay.listID success:^(NSArray *restaurants) {
+            _restaurants = restaurants;
+            ON_MAIN_THREAD(^ {
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    } else {
+        NSArray *searchTerms = (_openOnly) ? [TimeUtilities categorySearchTerms:[NSDate date]] : @[@"restaurant", @"bar"];
+        NSLog(@"category: %@", searchTerms);
+        
+        _requestOperation = [api getRestaurantsWithKeywords:searchTerms
+                                               andLocation:_desiredLocation
+                                                 andFilter:@""
+                                                  andRadius:1500
+                                               andOpenOnly:_openOnly
+                                                      andSort:kSearchSortTypeBestMatch
+                                                   success:^(NSArray *r) {
+            _restaurants = r;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
+            ;
+        }];
+    }
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(OOMapMarker *)marker {
