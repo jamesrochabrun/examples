@@ -961,27 +961,48 @@ NSString *const kKeyTagIDs = @"tag_ids";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSNumber *theNewStateValue= participating?  @1: @2;
-    
     AFHTTPRequestOperation *op;
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users/%lu",
-                           kHTTPProtocol, [OOAPI URL],
-                           (unsigned long)eventID, (unsigned long)user.userID];
-    NSLog (@"PATCH %@", urlString);
-    op = [rm PATCH:urlString parameters: @{
-                                           @"participant_state":theNewStateValue
+    if ( participating) {
+        
+        NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users",
+                               kHTTPProtocol, [OOAPI URL],
+                               (unsigned long)eventID  ];
+        NSLog (@"POST %@", urlString);
+        op = [rm POST:urlString parameters: @{
+                                              @"user_ids": @[@(user.userID)],
+                                               @"participant_state":@1
                                                }
-          
-           success:^(id responseObject) {
-               NSInteger identifier= 0;
-               if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                   NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
-                   identifier= parseIntegerOrNullFromServer(eventID);
-               }
-               success(identifier);
-           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-               failure(operation, error);
-           }];
+              
+               success:^(id responseObject) {
+                   NSInteger identifier= 0;
+                   if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                       NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                       identifier= parseIntegerOrNullFromServer(eventID);
+                   }
+                   success(identifier);
+               } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                   failure(operation, error);
+               }];
+    } else {
+        
+        NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users/%lu",
+                               kHTTPProtocol, [OOAPI URL],
+                               (unsigned long)eventID ,
+                               (unsigned long)user.userID];
+        NSLog (@"DELETE %@", urlString);
+        op = [rm DELETE:urlString parameters: nil
+              success:^(id responseObject) {
+                  NSInteger identifier= 0;
+                  if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                      NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                      identifier= parseIntegerOrNullFromServer(eventID);
+                  }
+                  success(identifier);
+              } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                  failure(operation, error);
+              }];
+    }
+ 
     
     return op;
 }
