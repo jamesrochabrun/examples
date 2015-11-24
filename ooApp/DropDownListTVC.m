@@ -93,9 +93,9 @@
 
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.textLabel.textColor = UIColorRGBA(kColorYellow);
-        cell.textLabel.backgroundColor = UIColorRGBA(kColorOffBlack);
-        cell.textLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeHeader];
+        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+        cell.textLabel.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
         cell.textLabel.numberOfLines = 0;
 
         cell.detailTextLabel.highlightedTextColor = UIColorRGBA(kColorYellow);
@@ -114,15 +114,13 @@
         cell.textLabel.text = o.name;
         theID = o.listID;
     }
-    
 
-    
     if (_currentOptionID == theID) {
         cell.detailTextLabel.highlighted = YES;
-        cell.contentView.backgroundColor = UIColorRGBA(kColorWhite);
+        cell.contentView.backgroundColor = UIColorRGBA(kColorOffBlack);
     } else {
         cell.detailTextLabel.highlighted = NO;
-        cell.contentView.backgroundColor = UIColorRGBA(kColorOffBlack);
+        cell.contentView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     }
     
     return cell;
