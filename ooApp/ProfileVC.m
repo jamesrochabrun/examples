@@ -426,8 +426,6 @@ static NSString * const ListRowID = @"ListRowCell";
 //------------------------------------------------------------------------------
 - (void)goToEmptyListScreen:(ListObject *)list
 {
-//     [self performSegueWithIdentifier: @"gotoEmptyList" sender:self];
-    
     EmptyListVC *vc= [[EmptyListVC alloc] init];
     vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];

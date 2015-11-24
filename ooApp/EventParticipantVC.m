@@ -183,13 +183,14 @@
         [ self callbackCountdown:nil];
         
     }
-    
+    UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
+
     __weak EventParticipantFirstCell *weakSelf = self;
-    
-    if  (event.primaryImage) {
-        self.backgroundImageView.image= event.primaryImage;
-    }
-    else if  (event.primaryVenueImageIdentifier ) {
+    if (event.primaryImageURL ) {
+        [self.backgroundImageView setImageWithURL:[NSURL URLWithString: event.primaryImageURL]
+                                 placeholderImage:placeholder];
+        
+    } else if  (event.primaryVenueImageIdentifier ) {
         OOAPI *api = [[OOAPI alloc] init];
         /* _imageOperation=*/ [api getRestaurantImageWithImageRef: event.primaryVenueImageIdentifier
                                                          maxWidth:self.frame.size.width

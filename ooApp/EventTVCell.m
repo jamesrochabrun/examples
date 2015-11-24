@@ -33,15 +33,15 @@
         self.subHeader2.textColor= WHITE;
         self.header.font= [ UIFont  fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeHeader];
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-//        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
-//        self.thumbnail.clipsToBounds= YES;
+        //        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
+        //        self.thumbnail.clipsToBounds= YES;
         
         self.header.shadowColor = BLACK;
         self.header.shadowOffset = CGSizeMake(0, -1.0);
         
         self.subHeader1.shadowColor = BLACK;
         self.subHeader1.shadowOffset = CGSizeMake(0, -1.0);
-    
+        
         self.subHeader2.shadowColor = BLACK;
         self.subHeader2.shadowOffset = CGSizeMake(0, -1.0);
         
@@ -121,16 +121,16 @@
 
 - (void)updateConstraints {
     [super updateConstraints];
-//    
-//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
-//    
-//    UIView *superview = self, *tn = self.thumbnail, *shadow = self.viewShadow;
-//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn, shadow);
-//
-//    [self removeConstraints:self.tnConstraints];
-//    [self removeConstraints:self.shadowConstraints];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[shadow]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tn]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    //
+    //    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomWidthMenuButton)};
+    //
+    //    UIView *superview = self, *tn = self.thumbnail, *shadow = self.viewShadow;
+    //    NSDictionary *views = NSDictionaryOfVariableBindings(superview, tn, shadow);
+    //
+    //    [self removeConstraints:self.tnConstraints];
+    //    [self removeConstraints:self.shadowConstraints];
+    //    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[shadow]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    //    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tn]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)layoutSubviews
@@ -183,14 +183,14 @@
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
-//    [super setHighlighted:highlighted animated:animated];
-//    [_nameHeader unHighlightButton];
+    //    [super setHighlighted:highlighted animated:animated];
+    //    [_nameHeader unHighlightButton];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-//    [super setSelected:selected animated:animated];
-//    [_nameHeader unHighlightButton];
+    //    [super setSelected:selected animated:animated];
+    //    [_nameHeader unHighlightButton];
 }
 
 - (void)setEvent:(EventObject *)eo
@@ -208,11 +208,8 @@
     OOAPI *api = [[OOAPI alloc] init];
     UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
     __weak EventTVCell *weakSelf = self;
-
-    if (_eventInfo.primaryImage ) {
-        self.thumbnail.image= _eventInfo.primaryImage;
-        NSLog (@"0x%lx set primaryImage @ %lu", (unsigned long) self,msTime());
-    } else if (!primaryVenue && _eventInfo.numberOfVenues) {
+    
+    if (!primaryVenue && _eventInfo.numberOfVenues) {
         __weak EventTVCell *weakSelf = self;
         
         self.thumbnail.image= placeholder;
@@ -226,7 +223,7 @@
                 __weak EventTVCell *weakSelf = self;
                 
                 _imageOperation=[api getRestaurantImageWithImageRef: _eventInfo.primaryVenueImageIdentifier
-                                                           maxWidth:self.frame.size.width// XX:
+                                                           maxWidth:self.frame.size.width
                                                           maxHeight:0
                                                             success:^(NSString *link) {
                                                                 NSURLRequest* request= [NSURLRequest requestWithURL:[NSURL URLWithString:link]];
@@ -234,12 +231,11 @@
                                                                 [weakSelf.thumbnail setImageWithURLRequest:request
                                                                                           placeholderImage:placeholder
                                                                                                    success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {
-                                                                                                       weakSelf.eventInfo.primaryImage= image;
                                                                                                        NSLog  (@"MANAGED TO CAPTURE IMAGE THAT WAS FETCHED.");
                                                                                                        ON_MAIN_THREAD(  ^{
                                                                                                            weakSelf.thumbnail.image= image;
                                                                                                            weakSelf.thumbnail.hidden= NO;
-
+                                                                                                           
                                                                                                        });
                                                                                                    } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
                                                                                                        ;
@@ -255,19 +251,23 @@
                                                                }];
         
     }
+    else if (_eventInfo.primaryImageURL ) {
+        [self.thumbnail setImageWithURL:[NSURL URLWithString:_eventInfo.primaryImageURL]
+                                 placeholderImage:placeholder];
+        
+    } 
     else if (_eventInfo.primaryVenueImageIdentifier) {
         _imageOperation=  [api getRestaurantImageWithImageRef: _eventInfo.primaryVenueImageIdentifier
                                                      maxWidth:self.frame.size.width
                                                     maxHeight:0
                                                       success:^(NSString *link) {
                                                           NSLog (@"0x%lx setImageWithURLRequest @ %lu", (unsigned long) self,msTime());
-
+                                                          
                                                           NSURLRequest* request= [NSURLRequest requestWithURL:[NSURL URLWithString:link]];
                                                           
                                                           [weakSelf.thumbnail setImageWithURLRequest:request
                                                                                     placeholderImage:placeholder
                                                                                              success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {
-                                                                                                 weakSelf.eventInfo.primaryImage= image;
                                                                                                  ON_MAIN_THREAD(  ^{
                                                                                                      weakSelf.thumbnail.image= image;
                                                                                                  });
@@ -284,9 +284,9 @@
         NSLog (@"EVENT %lu HAS NO PRIMARY VENUE",(unsigned long)_eventInfo.eventID);
         [self.thumbnail setImage:placeholder];
     }
-
+    
     NSLog  (@"HAVE %ld USERS", (unsigned long)[eo  totalUsers]);
-
+    
     [eo refreshUsersFromServerWithSuccess:^{
         NSLog  (@"FOUND %ld USERS", (unsigned long)[eo  totalUsers]);
         [weakSelf.participantsView setEvent:eo];

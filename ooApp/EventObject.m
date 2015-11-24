@@ -96,23 +96,12 @@ NSString *const kKeyEventAdministrators=  @"admin_ids";
     if (mediaDictionary ) {
         NSLog  (@"EVENT INCLUDED MEDIA ITEM FOR %@",e.name);
         e.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
+        e.primaryImageURL= e.mediaItem.url;
+        e.primaryVenueImageIdentifier= e.mediaItem.reference;
     }
     
     // NOTE: We need to know early as possible whether the current user can edit this event.
-#if 0
-    __weak EventObject *weakEvent = e;
-    [OOAPI determineIfCurrentUserCanEditEvent: e
-                                      success:^(bool allowed) {
-                                          if  (allowed ) {
-                                              weakEvent.currentUserCanEdit= EVENT_USER_CAN_EDIT;
-                                          } else {
-                                              weakEvent.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
-                                          }
-                                      } failure:^(AFHTTPRequestOperation* operation, NSError *e) {
-                                          
-                                          NSLog ( @"Unable to contact the cloud.");
-                                      }];
-#else
+
     NSMutableOrderedSet* administrators=[NSMutableOrderedSet new];
     e.administrators= administrators;
     e.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
@@ -134,7 +123,6 @@ NSString *const kKeyEventAdministrators=  @"admin_ids";
             }
         }
     }
-#endif
 
     return e;
 }
@@ -146,7 +134,6 @@ NSString *const kKeyEventAdministrators=  @"admin_ids";
 
 - (void)dealloc
 {
-    self.primaryImage= nil;
     [_venues removeAllObjects ];
     [_users removeAllObjects ];
     [_votes removeAllObjects ];
@@ -162,16 +149,6 @@ NSString *const kKeyEventAdministrators=  @"admin_ids";
     self.specialEvent= nil;
     self.comment= nil;
     self.mediaItem= nil;
-}
-
-- (void)setPrimaryImage:(UIImage *)primaryImage
-{
-    if (primaryImage ) {
-        _primaryImage= primaryImage;
-    } else {
-        _primaryImage= nil;
-    }
-    
 }
 
 - (NSDictionary *)dictionaryFromEvent;
@@ -333,7 +310,6 @@ NSString *const kKeyEventAdministrators=  @"admin_ids";
                 [_venues addObject:venue];
             }
         }
-        [weakSelf establishPrimaryImage];
         
         success();
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -359,35 +335,6 @@ NSString *const kKeyEventAdministrators=  @"admin_ids";
                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                    NSLog  (@"UNABLE TO UPDATE BACKEND WITH NEW DATES.");
                }];
-}
-
-- (void)establishPrimaryImage;
-{
-    NSString *originalImageIdentifier=self.primaryVenueImageIdentifier;
-    
-    self.primaryVenueImageIdentifier= nil;
-    
-    if ( self.mediaItem) {
-        if ((self.primaryVenueImageIdentifier= self.mediaItem.reference))
-            return;
-    }
-    
-    // The previous slower way.
-    @synchronized(_venues)  {
-        for (RestaurantObject* r  in  self.venues) {
-            if  (r.mediaItems.count ) {
-                MediaItemObject *media= r.mediaItems[0];
-                NSString *imageReference= media.reference;
-                if  (imageReference ) {
-                    self.primaryVenueImageIdentifier= imageReference;
-                    if (!originalImageIdentifier ||  ![imageReference isEqualToString:originalImageIdentifier] ) {
-//                        self.hasBeenAltered= YES;
-                    }
-                    break;
-                }
-            }
-        }
-    }
 }
 
 - (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;

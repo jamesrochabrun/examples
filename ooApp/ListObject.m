@@ -27,6 +27,10 @@ NSString *const kKeyListNumRestaurants = @"num_restaurants";
 }
 
 + (ListObject *)listFromDict:(NSDictionary *)dict {
+    if (!dict  || ![dict isKindOfClass:[NSDictionary class ]]) {
+        return nil;
+    }
+    
     ListObject *list = [[ListObject alloc] init];
     list.listID = [[dict objectForKey:kKeyListID] unsignedIntegerValue];
     

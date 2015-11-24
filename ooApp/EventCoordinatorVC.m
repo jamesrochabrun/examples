@@ -15,7 +15,7 @@
 #import "EventCoordinatorVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
-#import "RestaurantMainCVCell.h"
+#import "TileCVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
 #import "SearchVC.h"
@@ -186,7 +186,11 @@
 
 - (void) setPhoto: ( UIImage*)image;
 {
+    if (!image) {
+        return;
+    }
     self.imageViewContainer1.image=  image;
+    [self doLayout];
 }
 
 - (void) coverHasImageNow;
@@ -230,23 +234,25 @@
         w= [UIScreen  mainScreen ].bounds.size.width;
     }
     
-    if  ([e totalVenues] ) {
+    if  ([e totalVenues] || e.primaryImageURL ||  e.primaryVenueImageIdentifier) {
         [self  coverHasImageNow];
     } else {
         [self  coverDoesNotHaveImage];
     }
-    
-    if  (e.primaryImage) {
-        self.imageViewContainer1.image= e.primaryImage;
-    }
-    else if  (e.primaryVenueImageIdentifier ) {
-        __weak EventCoordinatorCoverCell *weakSelf = self;
-        OOAPI *api = [[OOAPI alloc] init];
-        /* _imageOperation=*/ [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
-                                                         maxWidth:w
-                                                        maxHeight:0
-                                                          success:^(NSString *link) {
-                                                              UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
+   
+    UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
+
+    if (e.primaryImageURL ) {
+        [self.imageViewContainer1 setImageWithURL:[NSURL URLWithString:e.primaryImageURL]
+                                 placeholderImage:placeholder];
+        
+    } else if  (e.primaryVenueImageIdentifier ) {
+            __weak EventCoordinatorCoverCell *weakSelf = self;
+            OOAPI *api = [[OOAPI alloc] init];
+            [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
+                                                             maxWidth:w
+                                                            maxHeight:0
+                                                              success:^(NSString *link) {
                                                               ON_MAIN_THREAD(  ^{
                                                                   [weakSelf.imageViewContainer1
                                                                    setImageWithURL:[NSURL URLWithString:link]
@@ -583,7 +589,7 @@
         _venuesCollectionView.backgroundColor= CLEAR;
 #define CV_CELL_REUSE_IDENTIFER @"E3_CV"
 #define CV_CELL_REUSE_IDENTIFERP @"E3_CV_plus"
-        [_venuesCollectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
+        [_venuesCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
         [_venuesCollectionView registerClass:[PlusCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFERP];
         [self addSubview: _venuesCollectionView];
 
@@ -659,7 +665,7 @@
         return cvc;
     }
     
-    RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
+    TileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
                                                                 forIndexPath:indexPath];
     cvc.backgroundColor = GRAY;
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
@@ -1170,24 +1176,25 @@
     
     EventCoordinatorCoverCell *cell= [_table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
-    [cell setPhoto:image];
+    __weak  EventCoordinatorVC *weakSelf = self;
     [OOAPI uploadPhoto:image
              forObject:self.eventBeingEdited success:^{
-        NSLog (@" upload of image for event successful.");
-        [cell coverHasImageNow];
-    } failure:^(NSError *error) {
-        NSLog (@" upload of image for event NOT successful.");
-    }];
+                 NSLog (@" upload of image for event successful.");
+                                 [OOAPI getEventByID:weakSelf.eventBeingEdited.eventID
+                             success:^(EventObject *event) {
+                                 weakSelf.eventBeingEdited=event;
+                                 [weakSelf.delegate userDidAlterEvent];
 
-// Might as well use the AFnetworking approach until we find problem with it
-//    [OOAPI uploadPhoto:image to:UPLOAD_DESTINATION_EVENT
-//            identifier:self.eventBeingEdited.eventID
-//               success:^{
-//                   NSLog (@" upload of image for event successful.");
-//                   [cell coverHasImageNow];
-//               } failure:^(NSError *error) {
-//                   NSLog (@" upload of image for event NOT successful.");
-//               }];
+                                 ON_MAIN_THREAD(^{
+                                    [cell provideEvent: event];
+                                 });
+                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                 NSLog (@" upload of image succeeded but refetch of event NOT successful.");
+
+                             }];
+             } failure:^(NSError *error) {
+                 NSLog (@" upload of image for event NOT successful.");
+             }];
     
     [self  dismissViewControllerAnimated:YES completion:nil];
 }
@@ -1198,7 +1205,6 @@
 //------------------------------------------------------------------------------
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    message( @"you canceled taking a photo");
     [self  dismissViewControllerAnimated:YES completion:nil];
 }
 

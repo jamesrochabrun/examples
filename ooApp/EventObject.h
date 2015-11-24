@@ -48,8 +48,8 @@ typedef enum : char {
 @property (nonatomic, strong) NSDate *createdAt;
 @property (nonatomic, strong) NSDate *updatedAt;
 @property (nonatomic, assign) NSInteger friendRecommendationAge;
+@property (nonatomic, strong) NSString *primaryImageURL;
 @property (nonatomic, strong) NSString *primaryVenueImageIdentifier;
-@property (nonatomic, strong) UIImage *primaryImage;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
 @property (nonatomic,assign) int currentUserCanEdit;
 enum {
@@ -79,7 +79,6 @@ enum {
 - (NSString *)asString;
 
 - (void)sendDatesToServer;
-- (void)establishPrimaryImage;
 
 - (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
 - (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
