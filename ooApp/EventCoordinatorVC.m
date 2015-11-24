@@ -578,6 +578,10 @@
         
         self.cvLayout= [[UICollectionViewFlowLayout alloc] init];
         self.cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        _cvLayout.itemSize = CGSizeMake(110, 127);
+        _cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        _cvLayout.minimumInteritemSpacing = 0;
+        _cvLayout.minimumLineSpacing = 0;
         
         self.venuesCollectionView = [[UICollectionView alloc] initWithFrame: CGRectZero collectionViewLayout: _cvLayout];
         _venuesCollectionView.delegate = self;
@@ -645,11 +649,6 @@
 {
     NSInteger total = [self.eventBeingEdited totalVenues];
     return 1+ total ;
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return CGSizeMake(kGeomEventCoordinatorBoxHeight, kGeomEventCoordinatorBoxHeight);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
