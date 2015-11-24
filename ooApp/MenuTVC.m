@@ -22,11 +22,10 @@
 #import "EventsListVC.h"
 #import "Common.h"
 #import "AppDelegate.h"
+#import "DebugUtilities.h"
 
 @interface MenuTVC ()
-
 @property (nonatomic, strong) NSMutableArray *menuItems;
-
 @end
 
 static NSString * const cellIdentifier = @"menuCell";
@@ -44,11 +43,13 @@ static NSString * const cellIdentifier = @"menuCell";
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
 
+static NSString * const MenuCellIdentifier = @"menuCell";
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.tableView registerClass:[MenuTVCell class] forCellReuseIdentifier:cellIdentifier];
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [self.tableView registerClass:[MenuTVCell class] forCellReuseIdentifier:MenuCellIdentifier];
     
     MenuObject *menuItem;
     _menuItems = [NSMutableArray array];
@@ -111,7 +112,7 @@ static NSString * const cellIdentifier = @"menuCell";
     
     self.tableView.layoutMargins = UIEdgeInsetsZero;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.tableView.scrollEnabled = NO;
+//    self.tableView.scrollEnabled = NO;
 //    self.tableView.separatorColor = UIColorRGBA(kColorClear);
     
     NSLog(@"tableView frame=%@", NSStringFromCGRect(self.tableView.frame));
@@ -143,8 +144,8 @@ static NSString * const cellIdentifier = @"menuCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    MenuTVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"menuCell" forIndexPath:indexPath];
-    
+    MenuTVCell *cell = [tableView dequeueReusableCellWithIdentifier:MenuCellIdentifier forIndexPath:indexPath];
+
     cell.menuItem = [_menuItems objectAtIndex:indexPath.row];
     
     return cell;

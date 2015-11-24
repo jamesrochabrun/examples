@@ -100,6 +100,7 @@
 }
 
 -(void)displayDropDown:(BOOL)showIt {
+    if (![_dropDownList.options count]) return;
     CGRect ddlFrame = _dropDownList.view.frame;
     
     if (showIt) {

@@ -37,7 +37,8 @@
     _nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:@"restaurants and bars"];
     self.navTitle = _nto;
     
-    _draggableBackround = [[DraggableViewBackground alloc] initWithFrame:self.view.bounds];
+    CGRect frame = CGRectMake(0, 0, width(self.view), height(self.view) - 64);
+    _draggableBackround = [[DraggableViewBackground alloc] initWithFrame:frame];
     _draggableBackround.presentingVC = self;
     [self.view addSubview:_draggableBackround];
     [self populateOptions];

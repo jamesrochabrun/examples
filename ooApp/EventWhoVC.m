@@ -20,15 +20,15 @@
 #import "ProfileVC.h"
 
 @interface  EventWhoTableCell ()
-@property (nonatomic,strong) UIButton *radioButton;
-@property (nonatomic,strong)  UILabel *labelName;
-@property (nonatomic,strong)  UIImageView *imageViewThumbnail;
-@property (nonatomic,strong) UIView *viewShadow;
-@property (nonatomic,strong) UserObject* user;
-@property (nonatomic,strong) GroupObject* group;
-@property (nonatomic,strong) NSString *imageIdentifierString;
-@property (nonatomic,strong) NSString *imageURLForFacebook;
-@property (nonatomic,strong) AFHTTPRequestOperation *operation;
+@property (nonatomic, strong) UIButton *radioButton;
+@property (nonatomic, strong) UILabel *labelName;
+@property (nonatomic, strong) UIImageView *imageViewThumbnail;
+@property (nonatomic, strong) UIView *viewShadow;
+@property (nonatomic, strong) UserObject* user;
+@property (nonatomic, strong) GroupObject* group;
+@property (nonatomic, strong) NSString *imageIdentifierString;
+@property (nonatomic, strong) NSString *imageURLForFacebook;
+@property (nonatomic, strong) AFHTTPRequestOperation *operation;
 @end
 
 @implementation EventWhoTableCell
