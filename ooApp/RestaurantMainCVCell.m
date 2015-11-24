@@ -504,14 +504,11 @@
 
     
     NSRange range;
-    
     range = [_phoneNumber.text rangeOfString:_phoneNumber.text];
-    [_phoneNumber addLinkToPhoneNumber:_restaurant.phone withRange:range];
+    [_phoneNumber addLinkToPhoneNumber:_phoneNumber.text withRange:range];
     [_phoneNumber setTextColor:UIColorRGBA(kColorYellow)];
-    [_phoneNumber setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                    [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSFontAttributeName,
-                                    UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
-                                     nil]];
+    [_phoneNumber setLinkAttributes:@{[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader]: NSFontAttributeName,
+                                      UIColorRGBA(kColorYellow): NSForegroundColorAttributeName}];
 
     range = [_website.text rangeOfString:_website.text];
     [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
