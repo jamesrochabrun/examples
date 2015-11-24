@@ -298,9 +298,7 @@
         if (!row) {
             cell.nameHeader= [[OOStripHeader alloc] init];
             [cell.nameHeader setName:_tableSectionNames[section]];
-//            if (section == 0) {
-//                [cell.nameHeader enableAddButtonWithTarget:self action:@selector(userPressedAdd:)];
-//            }
+
             [cell setIsFirst];
         } else {
             cell.nameHeader= nil;
@@ -522,18 +520,12 @@
         EventTVCell *cell= [tableView cellForRowAtIndexPath:indexPath];
         [cell updateHighlighting:YES];
         RUN_AFTER(400, ^{
-//            [cell.nameHeader unHighlightButton];
             [cell updateHighlighting:NO];
         });
         
         
-        BOOL userDidSubmitVotes=  NO;// XX: ooapi callo
+        BOOL userDidSubmitVotes=  NO;
         
-        // Determine whether event can be edited by this user.
-        // Then transition to the appropriate view controller.
-        // This requires fetching the full and complete the event,
-        // which getEventsForUser does not provide.
-        //
         __weak EventsListVC *weakSelf = self;
         NSUInteger eventID= event.eventID;
         [OOAPI getEventByID:eventID
