@@ -670,4 +670,5 @@
 {
     self.needToRefreshEventList= YES;
 }
+
 @end
