@@ -10,40 +10,6 @@
 
 @implementation FeedObject
 
-//{
-//publisher_id: 1
-//publisher_username: "Walt"
-//message: "following"
-//parameters: "Weaver_Mollie"
-//action: "none"
-//media_item: {
-//}
-//published_at: "2015-11-20T18:28:54.379Z"
-//}
-//-
-//1:  {
-//publisher_id: 1
-//publisher_username: "Walt"
-//message: "following"
-//parameters: "Becker_Eugenia"
-//action: "none"
-//media_item: {
-//media_item_id: 107
-//restaurant_id: 29
-//type: 1
-//reference: "CmRdAAAAQ4xNUKj3gCZg2sqLGJ3dWxkFuLqO3IalUieYA4DXTOrAnKktq44kTsA0WO0xRDpEsrg1WMiey2CRqzCICTfZn2GugcDoyk-N7dmPMQePP56dnivBo7SSKjPQYsi3yRY7EhBBGXgMSK4ugEoFR6d3gOydGhRaMCJm44ipdEzR-ArKE7-Z09bTtA"
-//created_at: "2015-11-15T18:36:07.000Z"
-//updated_at: "2015-11-15T18:36:07.000Z"
-//source: 2
-//source_user_id: null
-//height: 400
-//width: 300
-//url: null
-//}
-//    -
-//published_at: "2015-11-20T18:28:50.756Z"
-//}
-
 NSString*const kVerbRequestsToFollow=  @"request_follow";
 NSString*const kVerbFavorite=  @"favorite";
 NSString*const kVerbAddedList=  @"added_list";
@@ -55,6 +21,17 @@ NSString*const kVerbRepostedList=  @"reposted_list";
 NSString*const kVerbRepostedRestaurant=  @"reposted_restaurant";
 NSString*const kVerbVotedOnEvent=  @"voted";
 
+NSString*const kKeyFeedID=  @"feed_id";
+NSString*const kKeyPublisherID=  @"publisher_id";
+NSString*const kKeyPublisherUsername=  @"publisher_username";
+NSString*const kKeyMessage=  @"message";
+NSString*const kKeyParameters=  @"parameters";
+NSString*const kKeyAction=  @"action";
+NSString*const kKeyPublishedAt=  @"published_at";
+NSString*const kKeyMediaItem=  @"media_item";
+
+static NSDictionary *translationDictionary= nil;
+
 + (instancetype) feedObjectFromDictionary:(NSDictionary *)dictionary;
 {
     if  (!dictionary) {
@@ -62,51 +39,50 @@ NSString*const kVerbVotedOnEvent=  @"voted";
     }
     
     FeedObject *object = [[FeedObject alloc] init];
-    object.feedID=parseIntegerOrNullFromServer( dictionary[@"feed_id"]);
-    object.subjectID = parseIntegerOrNullFromServer( dictionary[@"user_id"]);
-    object.objectID = parseIntegerOrNullFromServer( dictionary[@"object_id"]);
-    object.mediaID = parseIntegerOrNullFromServer( dictionary[@"photo_id"]);
-    object.textToDisplay= trimString( dictionary[@"description"] ?:  @"");
-    object.timestamp = parseIntegerOrNullFromServer( dictionary[@"timestamp"]);
+    object.feedID=parseIntegerOrNullFromServer( dictionary[kKeyFeedID]);
+    object.publisherID = parseIntegerOrNullFromServer( dictionary[kKeyPublisherID]);
+    object.publisherUsername = parseStringOrNullFromServer( dictionary[kKeyPublisherUsername]);
+    object.message = parseStringOrNullFromServer( dictionary[kKeyMessage]);
+    object.parameters = parseStringOrNullFromServer( dictionary[kKeyParameters]);
+    object.action = parseStringOrNullFromServer( dictionary[kKeyAction]);
+    object.publishedAt = parseUTCDateFromServer( dictionary[kKeyPublishedAt ]);
     
-    NSString* typeString= dictionary[@"type"] ?:  @"";
-    object.isNotification= [typeString isEqualToString: @"notification"];
+    NSDictionary* mediaDictionary= dictionary[ kKeyMediaItem];
+    if (mediaDictionary ) {
+        object.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
+    }
     
-    NSString* verbString= dictionary[@"description"] ?:  @"";
-    object.verb = VERB_UNKNOWN;
-    if ( [verbString isEqualToString: kVerbRequestsToFollow]) {
-        object.verb= VERB_FOLLOW;
+    if  (!translationDictionary) {
+        static dispatch_once_t once=0;
+        dispatch_once(&once,
+                      ^{
+                          translationDictionary=  @{
+                                                    @"follow": @"followed",
+                                                    @"favorite": @"favorited",
+                                                    @"repost": @"reposted",
+                                                    @"vote": @"voted on your event",
+                                                    @"text": @"sent you a message"
+                                                    };
+                          
+                      });
     }
-    else if ([verbString isEqualToString: kVerbFavorite]) {
-        object.verb= VERB_FAVORITE;
-    }
-    else if ([verbString isEqualToString: kVerbAddedList]) {
-        object.verb= VERB_NEW_LIST;
-    }
-    else if ([verbString isEqualToString: kVerbAddedRestaurant]) {
-        object.verb= VERB_NEW_VENUE;
-    }
-    else if ([verbString isEqualToString: kVerbAddedEvent]) {
-        object.verb= VERB_NEW_EVENT;
-    }
-    else if ([verbString isEqualToString: kVerbAddedPhotos]) {
-        object.verb= VERB_NEW_PHOTOS;
-    }
-    else if ([verbString isEqualToString: kVerbRepostedList]) {
-        object.verb= VERB_REPOST_LIST;
-    }
-    else if ([verbString isEqualToString: kVerbRepostedPhoto]) {
-        object.verb= VERB_REPOST_PHOTO;
-    }
-    else if ([verbString isEqualToString: kVerbRepostedRestaurant]) {
-        object.verb= VERB_REPOST_VENUE;
-    }
-    else if ([verbString isEqualToString: kVerbVotedOnEvent]) {
-        object.verb= VERB_VOTE;
+    
+    if  ( object.message  ) {
+        object.translatedMessage = translationDictionary [object.message];
+        if  (object.translatedMessage ) {
+            object.translatedMessage = LOCAL(object.translatedMessage);
+        } else {
+            object.translatedMessage= object.message;
+        }
     }
     
     return object;
 }
+
+
+//
+//Returnable Objects: Restaurants, Lists, Events, Profile, Photo
+//Actions: Favorite, Add to wishlist, Add to list/event, Repost, Follow, New List/Events
 
 @end
 

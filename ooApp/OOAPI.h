@@ -262,9 +262,8 @@ typedef enum:NSUInteger  {
                                            success:(void (^)(NSArray *venues))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)getFeedItemsNewerThan:(time_t)timestamp
-                                          success:(void (^)(NSArray *feedItems))success
-                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getFeedItemsWithSuccess:(void (^)(NSArray *feedItems))success
+                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 //Tags management
 + (AFHTTPRequestOperation *)getTagsForUser:(NSUInteger)userID

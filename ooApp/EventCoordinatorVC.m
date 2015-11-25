@@ -141,7 +141,7 @@
         self.imageViewContainer1= makeImageView(self.contentView, nil);
         _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
         _imageViewContainer1.clipsToBounds= YES;
-
+        
         self.labelTitle=makeAttributedLabel(self.contentView, self.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
         
         _labelTitle.textColor= WHITE;
@@ -239,27 +239,27 @@
     } else {
         [self  coverDoesNotHaveImage];
     }
-   
+    
     UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
-
+    
     if (e.primaryImageURL ) {
         [self.imageViewContainer1 setImageWithURL:[NSURL URLWithString:e.primaryImageURL]
                                  placeholderImage:placeholder];
         
     } else if  (e.primaryVenueImageIdentifier ) {
-            __weak EventCoordinatorCoverCell *weakSelf = self;
-            OOAPI *api = [[OOAPI alloc] init];
-            [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
-                                                             maxWidth:w
-                                                            maxHeight:0
-                                                              success:^(NSString *link) {
-                                                              ON_MAIN_THREAD(  ^{
-                                                                  [weakSelf.imageViewContainer1
-                                                                   setImageWithURL:[NSURL URLWithString:link]
-                                                                   placeholderImage:placeholder];
-                                                              });
-                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                          }];
+        __weak EventCoordinatorCoverCell *weakSelf = self;
+        OOAPI *api = [[OOAPI alloc] init];
+        [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
+                                   maxWidth:w
+                                  maxHeight:0
+                                    success:^(NSString *link) {
+                                        ON_MAIN_THREAD(  ^{
+                                            [weakSelf.imageViewContainer1
+                                             setImageWithURL:[NSURL URLWithString:link]
+                                             placeholderImage:placeholder];
+                                        });
+                                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                    }];
     }
 }
 
@@ -308,8 +308,8 @@
 {
     float w= self.bounds.size.width;
     float h= self.bounds.size.height;
-//    float heightForShadow= kGeomSeparatorHeight;
-//    h-= heightForShadow;
+    //    float heightForShadow= kGeomSeparatorHeight;
+    //    h-= heightForShadow;
     _imageViewContainer1.frame= CGRectMake(0, 0, w, h);
     
     float yButtons= h-kGeomHeightButton;
@@ -340,7 +340,7 @@
         _labelTitle.frame = CGRectMake(0,0,w, yButtons);
     }
     
-
+    
 }
 
 //------------------------------------------------------------------------------
@@ -452,21 +452,21 @@
         
         self.clipsToBounds= YES;
         self.contentView.clipsToBounds= YES;
-
+        
         self.viewVerticalLine1= makeView(self, BLACK);
         self.viewVerticalLine2= makeView(self, BLACK);
         self.participantsView= [[ ParticipantsView alloc] init];
         [self.contentView addSubview: _participantsView];
         _participantsView.delegate= self;
         
-//        self.nameHeader= [[OOStripHeader alloc] init];
-//        [self addSubview: _nameHeader];
-//        [self.nameHeader setName: @"WHO"];
-
+        //        self.nameHeader= [[OOStripHeader alloc] init];
+        //        [self addSubview: _nameHeader];
+        //        [self.nameHeader setName: @"WHO"];
+        
         self.backgroundColor= UIColorRGBA( kColorCoordinatorBoxBackground);
     }
     return self;
-
+    
 }
 
 - (void)userPressedButtonForProfile:(NSUInteger)userid
@@ -536,13 +536,13 @@
     float w= self.bounds.size.width;
     float h= self.bounds.size.height;
     float margin= kGeomSpaceEdge;
-//    float heightForShadow= kGeomSeparatorHeight;
-//    h-= heightForShadow;
+    //    float heightForShadow= kGeomSeparatorHeight;
+    //    h-= heightForShadow;
     self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
     
     float subBoxWidth= w/3;
     float subBoxHeight= 2*h/3;
-     float x= 0;
+    float x= 0;
     _labelWhoResponded.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
     x+= subBoxWidth;
     _viewVerticalLine1.frame = CGRectMake(x,kGeomStripHeaderHeight/2,1,subBoxHeight-kGeomStripHeaderHeight);
@@ -575,9 +575,13 @@
     if (self) {
         self.autoresizesSubviews= NO;
         self.backgroundColor= UIColorRGBA( kColorCoordinatorBoxBackground);
-       
+        
         self.cvLayout= [[UICollectionViewFlowLayout alloc] init];
         self.cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        _cvLayout.itemSize = CGSizeMake(110, 127);
+        _cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        _cvLayout.minimumInteritemSpacing = 0;
+        _cvLayout.minimumLineSpacing = 0;
         
         self.venuesCollectionView = [[UICollectionView alloc] initWithFrame: CGRectZero collectionViewLayout: _cvLayout];
         _venuesCollectionView.delegate = self;
@@ -592,10 +596,10 @@
         [_venuesCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
         [_venuesCollectionView registerClass:[PlusCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFERP];
         [self addSubview: _venuesCollectionView];
-
-//        self.nameHeader= [[OOStripHeader alloc] init];
-//        [self addSubview: _nameHeader];
-//        [self.nameHeader setName: @"WHERE"];
+        
+        //        self.nameHeader= [[OOStripHeader alloc] init];
+        //        [self addSubview: _nameHeader];
+        //        [self.nameHeader setName: @"WHERE"];
     }
     return self;
 }
@@ -620,11 +624,6 @@
 {
     float w = width(self);
     float h = height(self);
-//    float margin = kGeomSpaceEdge;
-//    float heightForShadow = kGeomSeparatorHeight;
-//    h-= heightForShadow;
-//    self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
-
     _venuesCollectionView.frame = CGRectMake(0, 0, w, h);
 }
 
@@ -647,11 +646,6 @@
     return 1+ total ;
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    return CGSizeMake(kGeomEventCoordinatorBoxHeight, kGeomEventCoordinatorBoxHeight);
-}
-
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger total = [self.eventBeingEdited totalVenues];
@@ -659,9 +653,9 @@
     if (row== total ) {
         
         PlusCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFERP
-                                                                    forIndexPath:indexPath];
+                                                                  forIndexPath:indexPath];
         cvc.delegate=  self;
-
+        
         return cvc;
     }
     
@@ -677,7 +671,7 @@
 {
     NSInteger row = indexPath.row;
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
-
+    
     [self.delegate userTappedOnVenue: venue];
 }
 
@@ -717,9 +711,9 @@
     if (self) {
         self.autoresizesSubviews= NO;
         self.backgroundColor= UIColorRGBA( kColorCoordinatorBoxBackground);
-
+        
         self.clipsToBounds= NO;
-
+        
         self.labelTime= makeLabel(self,  @"", 18);
         self.labelTime.font= [UIFont  fontWithName: kFontLatoBold  size:18];
         _labelTime.textColor= WHITE;
@@ -750,19 +744,19 @@
         self.labelDate5= makeLabel(self,  @"", kGeomFontSizeHeader);
         self.labelDate6= makeLabel(self,  @"", kGeomFontSizeHeader);
         self.viewTodayBubble= makeView(self, BLACK);
-      
+        
         self.labelMonth= makeLabel(self,  @"", kGeomFontSizeHeader);
         _labelMonth.font= [UIFont  fontWithName: kFontLatoBold  size:kGeomFontSizeHeader];
         _labelMonth.textColor= WHITE;
-
+        
         self.viewhorizontalLine=makeView(self, GRAY);
         _viewhorizontalLine.backgroundColor= GRAY;
         
-//        self.nameHeader= [[OOStripHeader alloc] init];
-//        [self.contentView addSubview: _nameHeader];
-//        [self.nameHeader setName: @"WHEN"];
+        //        self.nameHeader= [[OOStripHeader alloc] init];
+        //        [self.contentView addSubview: _nameHeader];
+        //        [self.nameHeader setName: @"WHEN"];
     }
-
+    
     return self;
 }
 
@@ -781,10 +775,10 @@
 {
     float w = width(self);
     float h = height(self);
-//    float heightForShadow = kGeomSeparatorHeight;
-//    h-= heightForShadow;
+    //    float heightForShadow = kGeomSeparatorHeight;
+    //    h-= heightForShadow;
     self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
-
+    
     _pieHour.frame = CGRectMake(2*w/3 + w/6 - kGeomEventCoordinatorPieDiameter/2,
                                 kGeomStripHeaderHeight/2+ kGeomEventCoordinatorBoxHeight/4 - kGeomEventCoordinatorPieDiameter/2,
                                 kGeomEventCoordinatorPieDiameter, kGeomEventCoordinatorPieDiameter);
@@ -799,8 +793,8 @@
     float dayCellHeight=  floorf((h-kGeomStripHeaderHeight/2-2*kGeomSpaceEdge)/3);
     float requiredWidth= dayCellWidth * 7;
     float x0=  (2*w/3 - requiredWidth)/2;
-     float x=x0;
-     float y= kGeomStripHeaderHeight/2;
+    float x=x0;
+    float y= kGeomStripHeaderHeight/2;
     
     self.labelMonth.frame = CGRectMake(x0,y,requiredWidth,dayCellHeight);
     y+= dayCellHeight;
@@ -850,7 +844,7 @@
     
     UIColor *inactiveColor= GRAY;
     UIColor *activeColor= YELLOW;
-
+    
     for (int i=0; i < 7; i++) {
         NSDate *date= [NSDate dateWithTimeIntervalSince1970:u];
         NSInteger day= getLocalDayOfMonth( date);
@@ -900,7 +894,7 @@
         self.viewTodayBubble.hidden= NO;
         self.pieHour.hidden= NO;
     }
-
+    
 }
 
 - (void) updateWhenBox
@@ -971,13 +965,13 @@
 #define TABLE_REUSE_WHERE_IDENTIFIER @"e1where"
 #define TABLE_REUSE_WHEN_IDENTIFIER @"e1when"
 #define TABLE_REUSE_NEW_IDENTIFIER @"e1new"
-
+    
     [_table  registerClass:[ EventCoordinatorNewCell class] forCellReuseIdentifier:TABLE_REUSE_NEW_IDENTIFIER];
     [_table  registerClass:[ EventCoordinatorCoverCell class] forCellReuseIdentifier:TABLE_REUSE_COVER_IDENTIFIER];
     [_table  registerClass:[ EventCoordinatorWhoCell class] forCellReuseIdentifier:TABLE_REUSE_WHO_IDENTIFIER];
     [_table  registerClass:[ EventCoordinatorWhereCell class] forCellReuseIdentifier:TABLE_REUSE_WHERE_IDENTIFIER];
     [_table  registerClass:[ EventCoordinatorWhenCell class] forCellReuseIdentifier:TABLE_REUSE_WHEN_IDENTIFIER];
-
+    
     UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
     UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
@@ -998,7 +992,7 @@
 
 - (void)userTappedPhotoBox: (id) sender
 {
-    [self  presentCameraGallery];
+    [self  presentPhotoGallery];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -1059,8 +1053,8 @@
             cell.delegate= self;
             cell.selectionStyle= UITableViewCellSelectionStyleNone;
             [cell provideEvent: event];
-//            cell.layer.borderWidth= .5;
-//            cell.layer.borderColor=  GRAY.CGColor;
+            //            cell.layer.borderWidth= .5;
+            //            cell.layer.borderColor=  GRAY.CGColor;
             return cell;
         }
     }
@@ -1146,10 +1140,10 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    presentCameraGallery
+// Name:    presentPhotoGallery
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)presentCameraGallery
+- (void)presentPhotoGallery
 {
     if (![UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypePhotoLibrary])
     {
@@ -1180,17 +1174,17 @@
     [OOAPI uploadPhoto:image
              forObject:self.eventBeingEdited success:^{
                  NSLog (@" upload of image for event successful.");
-                                 [OOAPI getEventByID:weakSelf.eventBeingEdited.eventID
+                 [OOAPI getEventByID:weakSelf.eventBeingEdited.eventID
                              success:^(EventObject *event) {
                                  weakSelf.eventBeingEdited=event;
                                  [weakSelf.delegate userDidAlterEvent];
-
+                                 [cell setPhoto: image];
                                  ON_MAIN_THREAD(^{
-                                    [cell provideEvent: event];
+                                     [cell provideEvent: event];
                                  });
                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                  NSLog (@" upload of image succeeded but refetch of event NOT successful.");
-
+                                 
                              }];
              } failure:^(NSError *error) {
                  NSLog (@" upload of image for event NOT successful.");
@@ -1284,7 +1278,7 @@
     [a addAction:delete];
     [a addAction:vote];
     [a addAction:cancel];
-
+    
     [self presentViewController:a animated:YES completion:nil];
     
 }
@@ -1294,15 +1288,15 @@
     [self.delegate userDidAlterEvent];
     [OOAPI deleteEvent:self.eventBeingEdited.eventID
                success:^{
-                    [self dismissViewControllerAnimated:YES
-                                              completion:^{
-                                                  // XX:  need to force event list to reload
-                                              }];
-                    }
-                    failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                        message( @"Failed to delete event.");
-                    }];
-                   
+                   [self dismissViewControllerAnimated:YES
+                                            completion:^{
+                                                // XX:  need to force event list to reload
+                                            }];
+               }
+               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                   message( @"Failed to delete event.");
+               }];
+    
 }
 
 - (void)updateBoxes
@@ -1343,9 +1337,9 @@
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
-
+    
     __weak EventCoordinatorVC *weakSelf = self;
-
+    
     [self updateBoxes];
     
     if ( self.eventBeingEdited.hasBeenAltered) {
@@ -1358,18 +1352,18 @@
             
         });
     }
-                                            failure:^{
-                                                NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
-                                                
-                                            }];
+                                                                failure:^{
+                                                                    NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
+                                                                    
+                                                                }];
     
     [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
             
         });    } failure:^{
-        NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
-    }];
+            NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
+        }];
     
     // RULE: After basic info is displayed, fetch what's on the backend.
     [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
@@ -1377,7 +1371,7 @@
         NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
         ON_MAIN_THREAD(^(){
             [weakSelf.table  reloadData];
-
+            
         });
         
     } failure:^{
@@ -1388,7 +1382,7 @@
 - (void)viewDidDisappear:(BOOL)animated
 {
     _transitioning= NO;
-
+    
     if  (_timerForUpdating ) {
         [_timerForUpdating invalidate];
         self.timerForUpdating= nil;
@@ -1408,7 +1402,7 @@
     vc.editable= !self.inE3LMode;
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
-
+    
 }
 
 - (void)userTappedWhenBox: (id) sender
@@ -1458,7 +1452,8 @@
 
 - (void)userDidSubmitEvent
 {
-     [self.navigationController  popViewControllerAnimated:YES];
+    [self.delegate userDidAlterEvent];
+    [self.navigationController  popViewControllerAnimated:YES];
 }
 
 //------------------------------------------------------------------------------
