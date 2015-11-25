@@ -250,26 +250,25 @@ NSString *const kKeyTagIDs = @"tag_ids";
     }];
 }
 
-+ (AFHTTPRequestOperation *)getFeedItemsNewerThan:(time_t)timestamp
-                                          success:(void (^)(NSArray *feedItems))success
++ (AFHTTPRequestOperation *)getFeedItemsWithSuccess:(void (^)(NSArray *feedItems))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
     
+    userID=1;//For testing
+    
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/feed", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters: @{
-                                           @"timestamp": @(timestamp)
-                                           }
+    return [rm GET:urlString parameters:nil
            success:^(id responseObject) {
                NSMutableArray *feedItems = [NSMutableArray array];
                for (id dict in responseObject) {
                    FeedObject *item = [FeedObject feedObjectFromDictionary:dict];
                    if (item) {
-                       NSLog(@"parsed feed item: %@", item.textToDisplay);
+                       NSLog(@"parsed feed item: %@", item.message);
                        [feedItems addObject: item];
                    }
                }

@@ -26,9 +26,10 @@ static const double kDefaultSearchRadius = 10000; // meters
 //------------------------------------------------------------------------------
 + (instancetype)sharedInstance;
 {
-    static dispatch_once_t once;
     static id sharedInstance= nil;
-    dispatch_once(&once, ^{
+    static dispatch_once_t once=0;
+    dispatch_once(&once,
+                  ^{
         sharedInstance = [[self alloc] init];
     });
     return sharedInstance;
@@ -211,10 +212,3 @@ static const double kDefaultSearchRadius = 10000; // meters
 }
 
 @end
-
-
-
-
-
-
-

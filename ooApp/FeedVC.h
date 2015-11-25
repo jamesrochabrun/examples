@@ -9,9 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 
-@interface FeedVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
+@protocol FeedCellDelegate
+- (void) reloadCell: (NSUInteger) which;
+@end
+
+@interface FeedVC : BaseVC <UITableViewDataSource, UITableViewDelegate, FeedCellDelegate>
 @end
 
 @interface FeedCell:UITableViewCell
-
+@property (nonatomic,weak) id <FeedCellDelegate>  delegate;
 @end

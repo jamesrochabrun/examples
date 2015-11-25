@@ -305,9 +305,9 @@ NSString *const kKeyEventAdministrators=  @"admin_ids";
     __weak EventObject *weakSelf = self;
     return [OOAPI getVenuesForEvent:self success:^(NSArray *venues) {
         @synchronized(_venues)  {
-            [self.venues removeAllObjects];
+            [weakSelf.venues removeAllObjects];
             for (RestaurantObject *venue in venues) {
-                [_venues addObject:venue];
+                [weakSelf.venues addObject:venue];
             }
         }
         

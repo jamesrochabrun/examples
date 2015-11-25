@@ -624,11 +624,6 @@
 {
     float w = width(self);
     float h = height(self);
-    //    float margin = kGeomSpaceEdge;
-    //    float heightForShadow = kGeomSeparatorHeight;
-    //    h-= heightForShadow;
-    //    self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
-    
     _venuesCollectionView.frame = CGRectMake(0, 0, w, h);
 }
 
@@ -997,7 +992,7 @@
 
 - (void)userTappedPhotoBox: (id) sender
 {
-    [self  presentCameraGallery];
+    [self  presentPhotoGallery];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -1145,10 +1140,10 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    presentCameraGallery
+// Name:    presentPhotoGallery
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)presentCameraGallery
+- (void)presentPhotoGallery
 {
     if (![UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypePhotoLibrary])
     {
@@ -1183,7 +1178,7 @@
                              success:^(EventObject *event) {
                                  weakSelf.eventBeingEdited=event;
                                  [weakSelf.delegate userDidAlterEvent];
-                                 
+                                 [cell setPhoto: image];
                                  ON_MAIN_THREAD(^{
                                      [cell provideEvent: event];
                                  });
