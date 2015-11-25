@@ -56,7 +56,7 @@ static NSString * const ListRowID = @"HLRCell";
         _mapView.settings.scrollGestures = YES;
         _mapView.settings.zoomGestures = YES;
         _mapView.delegate = self;
-        [_mapView setMinZoom:1 maxZoom:16];
+        [_mapView setMinZoom:0 maxZoom:16];
         _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     }
     return self;
@@ -104,7 +104,12 @@ static NSString * const ListRowID = @"HLRCell";
     self.dropDownList.delegate = self;
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:[Settings sharedInstance].userObject.userID withRestaurant:0 success:^(NSArray *lists) {
-        weakSelf.dropDownList.options = lists;
+        ListObject *list = [[ListObject alloc] init];
+        list.listID = 0;
+        list.name = @"places around me";
+        NSMutableArray *theLists = [NSMutableArray arrayWithObject:list];
+        [theLists addObjectsFromArray:lists];
+        weakSelf.dropDownList.options = theLists;
         ON_MAIN_THREAD(^{
             [self.navTitleView setDDLState:YES];
         });
@@ -117,7 +122,11 @@ static NSString * const ListRowID = @"HLRCell";
     if (![object isKindOfClass:[ListObject class]]) return;
     _listToDisplay = (ListObject *)object;
     
-    _nto.subheader = [NSString stringWithFormat:@"your \"%@\" places", _listToDisplay.name];
+    if (_listToDisplay.listID) {
+        _nto.subheader = [NSString stringWithFormat:@"your \"%@\" places", _listToDisplay.name];
+    } else {
+        _nto.subheader = _listToDisplay.name;
+    }
     self.navTitle = _nto;
     
     [self displayDropDown:NO];
@@ -147,7 +156,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2)};
+    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
     
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _filterView);
     
@@ -157,7 +166,6 @@ static NSString * const ListRowID = @"HLRCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
 }
 
 - (void)setListToAddTo:(ListObject *)listToAddTo {
@@ -206,11 +214,13 @@ static NSString * const ListRowID = @"HLRCell";
         [weakSelf getRestaurants];
     });
 }
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [self verifyTrackingIsOkay];
-    [self updateLocation];
+    if (!_desiredLocation.longitude)
+        [self updateLocation];
 }
 
 - (void)verifyTrackingIsOkay
@@ -279,10 +289,36 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)getRestaurants
 {
+    CLLocationCoordinate2D bottomLeftCoord = _mapView.projection.visibleRegion.nearLeft;
+    CLLocationCoordinate2D bottomRightCoord = _mapView.projection.visibleRegion.nearRight;
+    CLLocationCoordinate2D topLeftCoord = _mapView.projection.visibleRegion.farLeft;
+    CLLocationCoordinate2D topRightCoord = _mapView.projection.visibleRegion.farRight;
+
+    CGFloat longitudeDelta = (bottomRightCoord.longitude- bottomLeftCoord.longitude)/2;
+    CGFloat lattitudeDelta = (bottomLeftCoord.latitude - topLeftCoord.latitude)/2;
+    
+    CLLocationCoordinate2D center = CLLocationCoordinate2DMake(topLeftCoord.latitude+lattitudeDelta, topLeftCoord.longitude+longitudeDelta);
+    CLLocationCoordinate2D topEdge = CLLocationCoordinate2DMake(topLeftCoord.latitude, center.longitude);
+
+//DEBUG math
+//    OOMapMarker *centerMarker = [[OOMapMarker alloc] init];
+//    centerMarker.position = center;
+//    centerMarker.map = _mapView;
+//   
+//    OOMapMarker *topEdgeMarker = [[OOMapMarker alloc] init];
+//    topEdgeMarker.position = topEdge;
+//    topEdgeMarker.map = _mapView;
+   
+    
+    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:center.latitude longitude:center.longitude];
+    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:topEdge.latitude longitude:topEdge.longitude];
+    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
+
+    
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak DiscoverVC *weakSelf=self;
-    
+
     if (_listToDisplay && _listToDisplay.listID) {
         [api getRestaurantsWithListID:_listToDisplay.listID success:^(NSArray *restaurants) {
             _restaurants = restaurants;
@@ -297,9 +333,9 @@ static NSString * const ListRowID = @"HLRCell";
         NSLog(@"category: %@", searchTerms);
         
         _requestOperation = [api getRestaurantsWithKeywords:searchTerms
-                                               andLocation:_desiredLocation
+                                               andLocation:center // _desiredLocation
                                                  andFilter:@""
-                                                  andRadius:1500
+                                                  andRadius:distanceInMeters
                                                andOpenOnly:_openOnly
                                                       andSort:kSearchSortTypeBestMatch
                                                    success:^(NSArray *r) {

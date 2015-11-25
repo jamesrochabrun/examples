@@ -18,7 +18,6 @@
 @property (nonatomic, strong) NSArray *playItems;
 @property (nonatomic, strong) UIButton *xButton;
 @property (nonatomic, strong) UIButton *tryButton;
-@property (nonatomic, strong) UIButton *infoButton;
 
 - (void)gotPlayItems;
 
@@ -95,19 +94,14 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     [_tryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
                target:self selector:@selector(swipeRight)];
     [_tryButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-
-    _infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-    [_infoButton setTintColor:UIColorRGBA(kColorYellow)];
-    [_infoButton addTarget:self action:@selector(showCurrentObject) forControlEvents:UIControlEventTouchUpInside];
     
-    _infoButton.translatesAutoresizingMaskIntoConstraints = _xButton.translatesAutoresizingMaskIntoConstraints = _tryButton.translatesAutoresizingMaskIntoConstraints = NO;
+    _xButton.translatesAutoresizingMaskIntoConstraints = _tryButton.translatesAutoresizingMaskIntoConstraints = NO;
     
     _tryButton.layer.borderColor = _xButton.layer.borderColor = UIColorRGBA(kColorYellow).CGColor;
     _tryButton.layer.borderWidth = _xButton.layer.borderWidth = 1;
     
     [self addSubview:_xButton];
     [self addSubview:_tryButton];
-    [self addSubview:_infoButton];
 }
 
 //%%% creates a card and returns it.  This should be customized to fit your needs.
@@ -129,7 +123,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonDimensions":@(kGeomDimensionsIconButton)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _xButton, _tryButton, _infoButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _xButton, _tryButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_xButton(buttonDimensions)]-20-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -137,8 +131,8 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-20-[_xButton(buttonDimensions)]-(>=0)-[_tryButton(buttonDimensions)]-20-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_infoButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_xButton attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_infoButton attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_infoButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_xButton attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_infoButton attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     
 }
 

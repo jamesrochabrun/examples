@@ -504,18 +504,17 @@
 
     
     NSRange range;
-    range = [_phoneNumber.text rangeOfString:_phoneNumber.text];
-    [_phoneNumber addLinkToPhoneNumber:_phoneNumber.text withRange:range];
-    [_phoneNumber setTextColor:UIColorRGBA(kColorYellow)];
-    [_phoneNumber setLinkAttributes:@{[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader]: NSFontAttributeName,
-                                      UIColorRGBA(kColorYellow): NSForegroundColorAttributeName}];
+    range = [_restaurant.phone rangeOfString:_restaurant.phone];
+    _phoneNumber.linkAttributes = @{NSFontAttributeName : [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSForegroundColorAttributeName : UIColorRGBA(kColorYellow)};
+    [_phoneNumber addLinkToPhoneNumber:_restaurant.phone withRange:range];
 
     range = [_website.text rangeOfString:_website.text];
-    [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
     [_website setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                      [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSFontAttributeName,
                                      UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
                                      nil]];
+    [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
+
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     [gregorian setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];

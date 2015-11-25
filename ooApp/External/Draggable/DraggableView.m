@@ -26,6 +26,8 @@
 @property (nonatomic, strong) UILabel *cuisine;
 @property (nonatomic, strong) UIImageView *thumbnail;
 @property (nonatomic, strong) NSArray *mediaItems;
+@property (nonatomic, strong) UIButton *infoButton;
+
 @end
 
 @implementation DraggableView {
@@ -62,10 +64,14 @@
         _price.translatesAutoresizingMaskIntoConstraints = NO;
 
         _thumbnail = [[UIImageView alloc] init];
-        _thumbnail.backgroundColor = UIColorRGBA(kColorBlack);
+        _thumbnail.backgroundColor = UIColorRGBA(kColorOffBlack);
         _thumbnail.contentMode = UIViewContentModeScaleAspectFit;
         _thumbnail.clipsToBounds = YES;
         _thumbnail.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        _infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+        [_infoButton setTintColor:UIColorRGBA(kColorYellow)];
+        [_infoButton addTarget:self action:@selector(cardTapped) forControlEvents:UIControlEventTouchUpInside];
         
         self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
@@ -76,6 +82,7 @@
         [self addSubview:_price];
         [self addSubview:_name];
         [self addSubview:_thumbnail];
+        [self addSubview:_infoButton];
         
         overlayView = [[OverlayView alloc]initWithFrame:CGRectMake(self.frame.size.width/2-100, 0, 100, 100)];
         overlayView.alpha = 0;
@@ -155,7 +162,11 @@
     frame.origin = CGPointMake(0, CGRectGetMaxY(_price.frame) + kGeomSpaceInter);
     frame.size = CGSizeMake(width(self), height(self) - frame.origin.y);
     _thumbnail.frame = frame;
-    
+
+    frame = _infoButton.frame;
+    frame.origin = CGPointMake(width(self)/2 - width(_infoButton)/2, CGRectGetMaxY(self.frame) - 50);
+    _infoButton.frame = frame;
+
 //    NSLog(@"selfFrame=%@, tnFrame=%@, nameFrame=%@", NSStringFromCGRect(self.frame), NSStringFromCGRect(_thumbnail.frame), NSStringFromCGRect(_name.frame));
 }
 /*
@@ -224,6 +235,10 @@
     if (_restaurant) {
         [_delegate cardTapped:self withObject:_restaurant];
     }
+}
+
+- (void)cardTapped {
+    [self showObject:nil];
 }
 
 //%%% checks to see if you are moving right or left and applies the correct overlay image

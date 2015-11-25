@@ -35,6 +35,7 @@ static NSString * const cellIdentifier = @"tagCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _tableView = [[UITableView alloc] init];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;

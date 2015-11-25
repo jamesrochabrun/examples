@@ -69,7 +69,7 @@
     TagObject *tag = (TagObject *)object;
     [_draggableBackround getPlayItems:tag];
     
-    _nto.subheader = tag.term;
+    _nto.subheader = [NSString stringWithFormat:@"#%@", tag.term];
     self.navTitle = _nto;
     
     [self displayDropDown:NO];

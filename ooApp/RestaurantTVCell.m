@@ -25,7 +25,7 @@
 - (void)setRestaurant:(RestaurantObject *)restaurant {
     if (restaurant == _restaurant) return;
     _restaurant = restaurant;
-    self.thumbnail.image = nil;
+    self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
     self.header.text = _restaurant.name;
     self.subHeader1.text = [NSString stringWithFormat:@"%@", (_restaurant.isOpen) ? @"Open Now" : @"Not Open"];
     
@@ -69,7 +69,7 @@
                                                });
                                            }
                                            failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-                                               ;
+                                               weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
                                            }];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
