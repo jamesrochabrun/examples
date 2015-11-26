@@ -15,7 +15,6 @@
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookButton;
 @property (nonatomic, strong) UIButton *manageTags;
-
 @end
 
 @implementation SettingsVC

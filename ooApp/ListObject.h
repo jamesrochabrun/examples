@@ -48,3 +48,5 @@ extern NSString *const kKeyListNumRestaurants;
 - (BOOL)isListOwner:(NSUInteger)userID;
 
 @end
+
+extern BOOL isListObject (id  object);

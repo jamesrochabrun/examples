@@ -85,3 +85,4 @@ enum {
 
 @end
 
+extern BOOL isEventObject (id  object);

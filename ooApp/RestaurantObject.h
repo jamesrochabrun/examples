@@ -56,3 +56,5 @@ typedef enum {
 - (NSString *)priceRangeText;
 
 @end
+
+extern BOOL isRestaurantObject (id  object);

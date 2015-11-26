@@ -250,14 +250,16 @@ NSString *const kKeyTagIDs = @"tag_ids";
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getFeedItems
+// Purpose:
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFeedItemsWithSuccess:(void (^)(NSArray *feedItems))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
-    
-    userID=1;//For testing
-    
+        
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/feed", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -268,7 +270,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
                for (id dict in responseObject) {
                    FeedObject *item = [FeedObject feedObjectFromDictionary:dict];
                    if (item) {
-                       NSLog(@"parsed feed item: %@", item.message);
+                       NSLog(@"parsed feed item: %@", item.verb);
                        [feedItems addObject: item];
                    }
                }

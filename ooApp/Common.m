@@ -39,6 +39,11 @@ void message2 (NSString *str, NSString*string)
     [alert show];
 }
 
+NSString *concatenateStrings(NSString*a,NSString*b)
+{
+    return [NSString  stringWithFormat: @"%@%@",a,b];
+}
+
 NSString *getDateString()
 {
     time_t t = time (NULL);

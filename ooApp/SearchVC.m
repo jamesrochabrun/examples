@@ -46,9 +46,18 @@ typedef enum: char {
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
 @property (nonatomic,strong) NSArray *arrayOfFilterNames;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
+
+@property (nonatomic,strong) UIView  *viewContainingAutoCompleteButtons;
+@property (nonatomic,strong) NSMutableArray  *autoCompleteButtons;
 @end
 
 @implementation SearchVC
+
+- (void)dealloc
+{
+    [_autoCompleteButtons removeAllObjects];
+    
+}
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -61,6 +70,8 @@ typedef enum: char {
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    self.autoCompleteButtons= [NSMutableArray new];
     
     _arrayOfFilterNames=  @[
                             LOCAL(@"None"),

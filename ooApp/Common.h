@@ -32,6 +32,7 @@ extern NSString *const kHTTPProtocol;
 extern NSString *getDateString();
 extern NSString *trimString(NSString* s);
 extern NSString *platformString();
+extern NSString *concatenateStrings(NSString*,NSString*);
 extern unsigned long msTime (void);
 
 extern NSAttributedString* attributedStringOf(NSString*,double fontSize);

@@ -11,6 +11,11 @@
 
 @protocol FeedCellDelegate
 - (void) reloadCell: (NSUInteger) which;
+- (void) userTappedOnUser:(NSUInteger)userid;
+- (void) userTappedOnRestaurantPhoto:(NSUInteger)restaurantID;
+- (void) userTappedOnEvent:(NSUInteger)eventID;
+- (void) userTappedOnList:(NSUInteger)listID;
+
 @end
 
 @interface FeedVC : BaseVC <UITableViewDataSource, UITableViewDelegate, FeedCellDelegate>
