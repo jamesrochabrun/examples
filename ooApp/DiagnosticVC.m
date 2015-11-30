@@ -95,7 +95,7 @@
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonCreateUsername= makeButton(self.view,  @"CREATE NAME", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doCreateUsername:), 1);
+    self.buttonCreateUsername= makeButton(self.view,  @"USER NAME", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(doCreateUsername:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     

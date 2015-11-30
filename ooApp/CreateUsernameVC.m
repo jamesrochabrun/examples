@@ -73,7 +73,7 @@
     [self.view  addSubview: _scrollView ];
     
     self.imageViewBackground= makeImageView( self.scrollView,  @"Gradient Background.png");
-    self.imageViewIcon= makeImageView( self.view,  @"No-Profile_Image(circled).png");
+    self.imageViewIcon= makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
     
     self.buttonSignUp= makeButton( _scrollView, LOCAL(@"Create User") , kGeomFontSizeHeader,
                                   WHITE, CLEAR, self,
@@ -111,21 +111,20 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString* emailAddressString= userInfo.email;
-    __weak CreateUsernameVC *weakSelf= self;
-    
-    [OOAPI fetchSampleUsernamesFor:emailAddressString
-                           success:^(NSArray *names) {
-                               NSLog  (@"SERVER PROVIDED SAMPLE USERNAMES:  %@",names);
-                               [weakSelf.arrayOfSuggestions removeAllObjects];
-                               for (NSString* string  in  names) {
-                                   [weakSelf.arrayOfSuggestions addObject: string];
-                               }
-                               [weakSelf performSelectorOnMainThread:@selector(refreshTable) withObject:nil waitUntilDone:NO ];
-                           } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                               NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
-                           }];
+//    UserObject* userInfo= [Settings sharedInstance].userObject;
+//    NSString* emailAddressString= userInfo.email;
+//    __weak CreateUsernameVC *weakSelf= self;
+//    [OOAPI fetchSampleUsernamesFor:emailAddressString
+//                           success:^(NSArray *names) {
+//                               NSLog  (@"SERVER PROVIDED SAMPLE USERNAMES:  %@",names);
+//                               [weakSelf.arrayOfSuggestions removeAllObjects];
+//                               for (NSString* string  in  names) {
+//                                   [weakSelf.arrayOfSuggestions addObject: string];
+//                               }
+//                               [weakSelf performSelectorOnMainThread:@selector(refreshTable) withObject:nil waitUntilDone:NO ];
+//                           } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+//                               NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
+//                           }];
 }
 
 - (void)refreshTable
@@ -376,6 +375,9 @@
     const float spacer=kGeomSpaceInter;
     
     float imageSize= 240;
+    if ( [UIScreen  mainScreen].bounds.size.height <= 480) {
+        imageSize=  120;
+    }
 
     float totalHeightNeeded= heightForText+imageSize +3*kGeomHeightButton;
     totalHeightNeeded += 3*spacer;
