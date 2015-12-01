@@ -137,10 +137,14 @@
 - (void)stageValueChanged: (id) sender
 {
     APP.usingStagingServer= _switchUsingStage.on;
+    NSUserDefaults *ud=[NSUserDefaults standardUserDefaults];
+    [ud setBool:APP.usingStagingServer forKey:kUserDefaultsUsingStagingServer];
+    [ud synchronize];
+    
     if  ( APP.usingStagingServer) {
-        [APP.diagnosticLogString appendString:@"Using stage.\r"];
+        [APP.diagnosticLogString appendString:@"Using stage. You can kill the app now.\r"];
     } else {
-        [APP.diagnosticLogString appendString:@"Using production.\r"];
+        [APP.diagnosticLogString appendString:@"Using production. You can kill the app now.\r"];
     }
     [self loadTextFieldAndScrollToBottom];
 }

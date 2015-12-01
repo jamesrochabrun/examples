@@ -22,4 +22,6 @@ extern NSString *const kAPIKeyGoogleMaps;
 #define SECRET_BACKEND_SALT @"48723492NaCl"
 #define GOOGLE_ANALYTICS_ID  @"UA-70502958-1"
 
+extern NSString *const kUserDefaultsUsingStagingServer;
+
 #endif

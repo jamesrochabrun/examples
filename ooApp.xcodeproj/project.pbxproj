@@ -118,6 +118,7 @@
 		966098BB1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png in Resources */ = {isa = PBXBuildFile; fileRef = 966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */; };
 		966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 966E08391BC6E38800A4B866 /* EventWhoVC.m */; };
 		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; };
+		9671433C1C0E2B2D004875FB /* LogoWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 9671433B1C0E2B2D004875FB /* LogoWhite.png */; };
 		96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */; };
 		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; };
 		96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */; };
@@ -335,6 +336,7 @@
 		966E08391BC6E38800A4B866 /* EventWhoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWhoVC.m; sourceTree = "<group>"; };
 		967124941BB5E6A900F28904 /* DiagnosticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticVC.h; sourceTree = "<group>"; };
 		967124951BB5E6A900F28904 /* DiagnosticVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiagnosticVC.m; sourceTree = "<group>"; };
+		9671433B1C0E2B2D004875FB /* LogoWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LogoWhite.png; path = "Graphic Assets/LogoWhite.png"; sourceTree = "<group>"; };
 		96AC04611C0D22E2002B1264 /* AutoCompleteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoCompleteObject.h; sourceTree = "<group>"; };
 		96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoCompleteObject.m; sourceTree = "<group>"; };
 		96ACD7851BC3331000E37DC1 /* EventTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTVCell.h; sourceTree = "<group>"; };
@@ -522,6 +524,7 @@
 				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
 				96F49C051C0CFCAD00B087AD /* LoginBackground.jpg */,
 				962303741BB33D2700278FA6 /* forkKnife.png */,
+				9671433B1C0E2B2D004875FB /* LogoWhite.png */,
 				966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */,
 				36587B701B93964C00D01EB5 /* Icon@3x.png */,
 				962DBB241BFFE08B00A8A09D /* yellowPlus.png */,
@@ -860,6 +863,7 @@
 				3677045E1B8BF05100B594E5 /* Lato-Regular.ttf in Resources */,
 				3677045C1B8BF05100B594E5 /* Lato-Medium.ttf in Resources */,
 				3677045B1B8BF05100B594E5 /* Lato-LightItalic.ttf in Resources */,
+				9671433C1C0E2B2D004875FB /* LogoWhite.png in Resources */,
 				367704511B8BF05100B594E5 /* Lato-Black.ttf in Resources */,
 				962DBB251BFFE08B00A8A09D /* yellowPlus.png in Resources */,
 				367704531B8BF05100B594E5 /* Lato-Bold.ttf in Resources */,

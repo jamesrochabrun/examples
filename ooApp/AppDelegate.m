@@ -25,8 +25,12 @@
     ANALYTICS_INIT();
 
 #ifdef DEBUG
-//    _usingStagingServer= [[NSUserDefaults standardUserDefaults] boolForKey:@"usingStage"];
-    _usingStagingServer= YES;
+    id object= [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsUsingStagingServer];
+    if  (!object) {
+        // RULE: For the debug build the default server is Staging.
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kUserDefaultsUsingStagingServer];
+    }
+    _usingStagingServer= [[NSUserDefaults standardUserDefaults] boolForKey: kUserDefaultsUsingStagingServer];
     self.diagnosticLogString= [NSMutableString new ];
     ENTRY;
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
@@ -36,7 +40,13 @@
     [_diagnosticLogString appendFormat: @"PLATFORM %@\r",platformString()];
     [_diagnosticLogString appendFormat:  @"APPLICATION %@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
 #else
-    _usingStagingServer= NO;
+    #define INTERNAL_RELEASE //XX add this to a scheme.
+
+    #ifndef INTERNAL_RELEASE
+        _usingStagingServer= NO;
+    #else
+        _usingStagingServer= YES;
+    #endif
 #endif
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     

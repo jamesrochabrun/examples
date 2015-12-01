@@ -43,15 +43,16 @@
     _wentToDiscover= NO;
     
     _backgroundImageView = makeImageView(self.view, @"LoginBackground.jpg");
-    _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
+    _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
     _backgroundImageView.clipsToBounds= YES;
     addShadowTo  (_backgroundImageView);
     
     _imageViewLogo = [[UIImageView alloc] init];
     _imageViewLogo.contentMode = UIViewContentModeScaleAspectFit;
     _imageViewLogo.backgroundColor = UIColorRGBA(kColorClear);
-     UIImage*image= [UIImage imageNamed:@"Logo.png"];
+     UIImage*image= [UIImage imageNamed:@"LogoWhite.png"];
     _imageViewLogo.image = image;
+    addShadowTo(_imageViewLogo);
     
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
     _facebookLoginButton.delegate = self;
@@ -84,27 +85,37 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    const float statusBarHeight=  20;
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
 
-    _backgroundImageView.frame= CGRectMake( 0,  statusBarHeight,w,w);
+    float backgroundImageWidth= _backgroundImageView.image.size.width;
+    float backgroundImageHeight= _backgroundImageView.image.size.height;
+    float backgroundAspect= backgroundImageHeight>0 ? backgroundImageWidth/backgroundImageHeight : 1000000;
+    float actualBackgroundImageHeight=w/backgroundAspect;
+    _backgroundImageView.frame= CGRectMake( 0,  0, w, actualBackgroundImageHeight);
+
     float imageViewLogoWidth= _imageViewLogo.image.size.width;
     float imageViewLogoHeight= _imageViewLogo.image.size.height;
-    float aspect=  imageViewLogoWidth/imageViewLogoHeight;
+    float aspect= imageViewLogoHeight>0 ? imageViewLogoWidth/imageViewLogoHeight : 1000000;
     imageViewLogoWidth= w*.75;
     if ( aspect>0) {
             imageViewLogoHeight= imageViewLogoWidth/aspect;
     }
+    
+    _backgroundImageView.clipsToBounds= YES;
 
     _imageViewLogo.frame = CGRectMake((w- imageViewLogoWidth)/2,  (w- imageViewLogoHeight)/2,imageViewLogoWidth, imageViewLogoHeight);
     
-    float imageHeight=1.175 * w;
-    float y= imageHeight+ (h - imageHeight)/2 -kGeomHeightButton/2 ;
+    float facebookButtonHeight= _facebookLoginButton.frame.size.height;
+    if  ( facebookButtonHeight<1) {
+        facebookButtonHeight=kGeomHeightButton;
+    }
+    
+    float y= actualBackgroundImageHeight+ (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
     const float buttonWidth=  275;
     float x=  (w-buttonWidth)/2;
     
-    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
+    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, facebookButtonHeight);
 }
 
 - (void)viewWillLayoutSubviews
