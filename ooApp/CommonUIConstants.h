@@ -114,7 +114,8 @@ static CGFloat kGeomHeightDropDownListRow = 40;
 static CGFloat kNumDropDownListRows = 5;
 static CGFloat kGeomHeightFeedWithImageTableCellHeight= 180;
 static CGFloat kGeomHeightFeedWithoutImageTableCellHeight=  60;
-    
+static CGFloat kGeomCreateUsernameCentralIconSize= 260;
+
 // Images
 extern NSString *const kImageNoProfileImage;
 

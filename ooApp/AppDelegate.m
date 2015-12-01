@@ -23,8 +23,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     ANALYTICS_INIT();
-    
+
 #ifdef DEBUG
+//    _usingStagingServer= [[NSUserDefaults standardUserDefaults] boolForKey:@"usingStage"];
     _usingStagingServer= YES;
     self.diagnosticLogString= [NSMutableString new ];
     ENTRY;
@@ -65,7 +66,7 @@
      authenticateInstallation];
     
     self.imageForNoProfileSilhouette= [UIImage  imageNamed: @"No-Profile_Image.png"];
-    
+
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }
@@ -86,8 +87,8 @@
     NSLog(@"device token: %@", devToken);
     //    const void *devTokenBytes = [devToken bytes];
     
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSUInteger userID = userInfo.userID;
+//    UserObject *userInfo = [Settings sharedInstance].userObject;
+//    NSUInteger userID = userInfo.userID;
     
     //    TODO: store that we asked in settings so that we can register again on launch in the future
     //    TODO: send the device token and user ID to the OO server using OOAPI

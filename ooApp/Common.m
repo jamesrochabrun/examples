@@ -16,8 +16,9 @@
 NSString *const kNotificationLocationBecameAvailable = @"notificationLocationAvailable";
 NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationUnavailable";
 
-//NSString *const kOOURL = @"www.oomamiapp.com/api/v1";
-NSString *const kOOURL = @"stage.oomamiapp.com/api/v1";
+NSString *const kOOURLStage = @"stage.oomamiapp.com/api/v1";
+NSString *const kOOURLProduction = @"www.oomamiapp.com/api/v1";
+
 //NSString *const kOOURL = @"localhost:3000/api/v1";
 NSString *const kHTTPProtocol = @"https";
 
@@ -559,6 +560,14 @@ double parseNumberOrNullFromServer (id object)
         return  (( NSString*)object).doubleValue;
     }
     return 0;
+}
+
+NSArray* parseArrayOrNullFromServer (id object)
+{
+    if  (object && [ object isKindOfClass:[NSArray class]]) {
+        return  (NSArray*)object;
+    }
+    return nil;
 }
 
 NSString* parseStringOrNullFromServer (id object)

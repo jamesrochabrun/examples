@@ -16,6 +16,7 @@
 #import "VoteObject.h"
 #import "FeedObject.h"
 #import "TagObject.h"
+#import "AutoCompleteObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -248,6 +249,37 @@ NSString *const kKeyTagIDs = @"tag_ids";
         NSLog(@"Error: %@", error);
         failure(operation, error);
     }];
+}
+
++ (AFHTTPRequestOperation *) getAutoCompleteDataForString: (NSString*)string
+                                                 location: (CLLocationCoordinate2D)location
+                                                  success:(void (^)(NSArray *results))success
+                                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/autocomplete?input=%@&latitude=%g&longitude=%g",
+                           kHTTPProtocol,
+                           [OOAPI URL],
+                           string,
+                           ( float) location.latitude, ( float) location.longitude];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               NSMutableArray *autoCompleteItems = [NSMutableArray array];
+               for (id dict in responseObject) {
+                   AutoCompleteObject *item = [AutoCompleteObject autoCompleteObjectFromDictionary: dict];
+                   if (item) {
+                       NSLog(@"parsed auto complete item: %@", item.desc);
+                       [autoCompleteItems addObject: item];
+                   }
+               }
+               success(autoCompleteItems);
+           }
+           failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               NSLog(@"Error: %@", error);
+               failure(operation, error);
+           }];
 }
 
 //------------------------------------------------------------------------------
@@ -1977,7 +2009,10 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (NSString *) URL {
-    // XX If not I want hello are you yeah that sounds good cool thanks Sia!using staging server, use production URL.
-    return kOOURL;
+    if ( APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
 }
 @end

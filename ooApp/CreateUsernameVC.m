@@ -232,7 +232,7 @@
     NSUInteger userid= userInfo.userID;
     
     NSString *requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
-                   kOOURL, (unsigned long)userid];
+                   [OOAPI URL], (unsigned long)userid];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
 
@@ -374,9 +374,9 @@
     
     const float spacer=kGeomSpaceInter;
     
-    float imageSize= 240;
-    if ( [UIScreen  mainScreen].bounds.size.height <= 480) {
-        imageSize=  120;
+    float imageSize= kGeomCreateUsernameCentralIconSize;
+    if ( IS_IPHONE4) {
+        imageSize=  180;
     }
 
     float totalHeightNeeded= heightForText+imageSize +3*kGeomHeightButton;
