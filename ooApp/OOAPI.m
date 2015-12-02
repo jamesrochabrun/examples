@@ -207,7 +207,7 @@ static NSArray*autoCompleteBlackList= nil;
         return nil;
     } else {
         [keywords enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *s = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
+            NSString *s = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
             if ([searchTerms length]) {
                 [searchTerms appendString:@"OR"];
             }
@@ -2056,7 +2056,7 @@ static NSArray*autoCompleteBlackList= nil;
 }
 
 + (NSString *) URL {
-    if ( APP.usingStagingServer) {
+    if (APP.usingStagingServer) {
         return kOOURLStage;
     } else {
         return kOOURLProduction;

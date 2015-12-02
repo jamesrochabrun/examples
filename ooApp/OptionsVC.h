@@ -13,11 +13,11 @@
 
 @protocol OptionsVCDelegate
 
-- (void)optionsVCDismiss:(OptionsVC *)optionsVC;
+- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags;
 
 @end
 
-@interface OptionsVC : BaseVC
+@interface OptionsVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, weak) id<OptionsVCDelegate> delegate;
 

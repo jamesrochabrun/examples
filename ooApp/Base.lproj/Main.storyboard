@@ -19,7 +19,11 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+<<<<<<< HEAD
                     <tabBarItem key="tabBarItem" title="First" image="1B76C21F-C57D-4541-B313-8E7BBABE3E35" id="acW-dT-cKf"/>
+=======
+                    <tabBarItem key="tabBarItem" title="First" image="311FD71C-C203-4E86-83A9-5AE44533CD98" id="acW-dT-cKf"/>
+>>>>>>> master
                     <navigationItem key="navigationItem" id="mD4-Ex-NhB"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -209,7 +213,11 @@
         </scene>
     </scenes>
     <resources>
+<<<<<<< HEAD
         <image name="1B76C21F-C57D-4541-B313-8E7BBABE3E35" width="30" height="30">
+=======
+        <image name="311FD71C-C203-4E86-83A9-5AE44533CD98" width="30" height="30">
+>>>>>>> master
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGQkNYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ERYbHCUmJygwMzY8P1UkbnVsbNQJCgsMDQ4PEFYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVwc1dOU0Nv
