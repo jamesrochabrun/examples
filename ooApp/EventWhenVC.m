@@ -97,6 +97,39 @@
     _pickerEventDate.datePickerMode= UIDatePickerModeDateAndTime;
     _pickerEventVotingDate.datePickerMode= UIDatePickerModeDateAndTime;
     
+    _pickerEventDate.hidden= YES;
+    _pickerEventVotingDate.hidden= YES;
+    
+    self.navigationItem.leftBarButtonItem= nil;
+    
+    if (self.eventBeingEdited.date ) {
+        [self expressUpperDate];
+    } else {
+        // RULE: Set up default date to be 3 hours in future.
+        NSDate *d = [NSDate date];
+        long long when= [d timeIntervalSince1970];
+        when += 3*60*60;
+        when /= 60*60;
+        when *= 60*60;
+        d = [NSDate dateWithTimeIntervalSince1970:when];
+        self.eventBeingEdited.date = d;
+        [self expressUpperDate];
+    }
+
+    if ( self.eventBeingEdited.dateWhenVotingClosed) {
+        [self expressLowerDate];
+    } else {
+        // RULE: Set up default date to be 2 hours in future.
+        NSDate *d = [NSDate date];
+        long long when= [d timeIntervalSince1970];
+        when += 2*60*60;
+        when /= 60*60;
+        when *= 60*60;
+        d = [NSDate dateWithTimeIntervalSince1970:when];
+        self.eventBeingEdited.dateWhenVotingClosed = d;
+        [self expressLowerDate];
+    }
+    
     if ( self.eventBeingEdited.date) {
         _pickerEventDate.date= self.eventBeingEdited.date;
         if (!self.editable) {
@@ -111,18 +144,6 @@
             _pickerEventVotingDate.minimumDate= self.eventBeingEdited.dateWhenVotingClosed;
             _pickerEventVotingDate.maximumDate= self.eventBeingEdited.dateWhenVotingClosed;
         }
-    }
-    
-    _pickerEventDate.hidden= YES;
-    _pickerEventVotingDate.hidden= YES;
-    
-    self.navigationItem.leftBarButtonItem= nil;
-    
-    if (self.eventBeingEdited.date ) {
-        [self expressUpperDate];
-    }
-    if ( self.eventBeingEdited.dateWhenVotingClosed) {
-        [self expressLowerDate];
     }
 
     self.headerWhen= makeLabelLeft(self.view, @" WHEN IS THIS?", kGeomFontSizeStripHeader);
