@@ -14,9 +14,10 @@
 #import "ListObject.h"
 #import "OOUserView.h"
 #import "MWPhotoBrowser.h"
+#import "PhotoCVCell.h"
 
 @interface RestaurantVC : SubBaseVC
-<UIActionSheetDelegate, UICollectionViewDataSource, RestaurantVCCollectionViewDelegate, RestaurantMainCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, MWPhotoBrowserDelegate, OOUserViewDelegate>
+<UIActionSheetDelegate, UICollectionViewDataSource, RestaurantVCCollectionViewDelegate, RestaurantMainCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate, OOUserViewDelegate, MWPhotoBrowserDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *listToAddTo;

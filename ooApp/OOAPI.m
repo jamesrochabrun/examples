@@ -209,7 +209,7 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
         return nil;
     } else {
         [keywords enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *s = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
+            NSString *s = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
             if ([searchTerms length]) {
                 [searchTerms appendString:@"OR"];
             }
@@ -1285,6 +1285,24 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
     return op;
 }
 
++ (AFHTTPRequestOperation *)deletePhoto:(MediaItemObject *)mio success:(void (^)(void))success
+            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if  (!mio) {
+        failure (nil,nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], mio.mediaItemId];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
 
 //------------------------------------------------------------------------------
 // Name:    uploadPhoto
@@ -1299,15 +1317,15 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
         failure(nil);
         return ;
     }
-    
+
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.6);
     
     NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
-    NSLog(@"img size = %lu bytes",(unsigned long)[imageData length]);
+    NSLog(@"img size = %lu bytes", [imageData length]);
 
     NSDictionary *parameters;
     
@@ -2053,7 +2071,7 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
 }
 
 + (NSString *) URL {
-    if ( APP.usingStagingServer) {
+    if (APP.usingStagingServer) {
         return kOOURLStage;
     } else {
         return kOOURLProduction;

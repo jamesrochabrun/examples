@@ -17,6 +17,7 @@
 
 #import "DraggableView.h"
 #import "OOAPI.h"
+#import "Settings.h"
 #import "RestaurantVC.h"
 
 @interface DraggableView ()
@@ -290,6 +291,7 @@
     [_delegate cardSwipedRight:self];
     
     NSLog(@"YES");
+    
 }
 
 //%%% called when a swip exceeds the ACTION_MARGIN to the left

@@ -54,6 +54,7 @@ typedef enum {
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict;
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant;
 - (NSString *)priceRangeText;
+- (NSString *)ratingText;
 
 @end
 

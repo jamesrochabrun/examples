@@ -14,11 +14,14 @@
 
 @interface BaseVC : UIViewController <SWRevealViewControllerDelegate, DropDownListTVCDelegate>
 
+@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
+
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *leftNavButton;
 @property (nonatomic, strong) NavTitleObject *navTitle;
 @property (nonatomic, strong) DropDownListTVC *dropDownList;
 @property (nonatomic, strong) NavTitleView *navTitleView;
 
+- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)targer action:(SEL)sector;
 - (void)displayDropDown:(BOOL)showIt;
 
