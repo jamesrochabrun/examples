@@ -94,6 +94,7 @@
     [ self.view addSubview: _switchUsingStage];
     _switchUsingStage.on= APP.usingStagingServer;
     self.labelUsingStage=  makeLabel( self.view,  @"USE\rSTAGE", kGeomFontSizeHeader);
+    _labelUsingStage.textColor= WHITE;
     _labelUsingStage.textAlignment= NSTextAlignmentRight;
     [_switchUsingStage addTarget:self action:@selector(stageValueChanged:)  forControlEvents:UIControlEventValueChanged];
     

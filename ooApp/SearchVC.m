@@ -46,12 +46,11 @@ typedef enum: char {
 @property (nonatomic,strong) NSArray *restaurantsArray;
 @property (nonatomic,strong) NSArray *peopleArray;
 @property (nonatomic,strong) NSArray *autoCompleteArray;
-@property (atomic,assign) BOOL doingSearchNow;
+@property (atomic,assign) BOOL doingSearchNow, doingAutoCompleteLookupNow;
 @property (atomic,assign) BOOL showingAutoCompleteLookupResults;
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
 @property (nonatomic,strong) NSArray *arrayOfFilterNames;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
-
 @end
 
 @implementation SearchVC
@@ -243,10 +242,10 @@ typedef enum: char {
 
 - (void)doAutoCompleteLookup
 {
-//    if ( self.doingAutoCompleteLookupNow) {
-//        return;
-//    }
-//    self.doingAutoCompleteLookupNow= YES;
+    if ( self.doingAutoCompleteLookupNow) {
+        return;
+    }
+    self.doingAutoCompleteLookupNow= YES;
     __weak SearchVC *weakSelf= self;
     [self showSpinner: @""];
     
@@ -258,13 +257,15 @@ typedef enum: char {
                                                          [weakSelf performSelectorOnMainThread:@selector(loadAutoComplete:)
                                                                                     withObject:results
                                                                                  waitUntilDone:NO];
-                                                         
-                                                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                         weakSelf.doingAutoCompleteLookupNow= NO;
+                                                     }
+                                                     failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                          NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
                                                          
                                                          [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
                                                                                     withObject:nil
                                                                                  waitUntilDone:NO];
+                                                         weakSelf.doingAutoCompleteLookupNow= NO;
                                                      }
                           ];
     
@@ -319,7 +320,10 @@ typedef enum: char {
             
         case  FILTER_PLACES: {
             if  (self.showingAutoCompleteLookupResults ) {
-                [self doAutoCompleteLookup];
+                _doingSearchNow=NO;
+                
+                if (_searchBar.text.length>1)
+                    [self doAutoCompleteLookup];
                 return;
             }
             
@@ -397,7 +401,11 @@ typedef enum: char {
         if (_currentFilter == FILTER_PEOPLE ) {
             [self loadPeople:@[]];
         } else {
-            [self loadRestaurants:@[]];
+            if ( self.showingAutoCompleteLookupResults) {
+                [self loadAutoComplete:@[]];
+            } else {
+                [self loadRestaurants:@[]];
+            }
         }
         return;
     }
@@ -730,6 +738,8 @@ typedef enum: char {
 {
     [_searchBar resignFirstResponder];
     
+    [_tableAutoComplete deselectRowAtIndexPath:indexPath animated:YES];
+
     if  (self.doingSearchNow) {
         return;
     }
@@ -749,8 +759,6 @@ typedef enum: char {
         vc.restaurant = ro;
         vc.eventBeingEdited = self.eventBeingEdited;
         [self.navigationController pushViewController:vc animated:YES];
-        
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     else if ( tableView == _tablePeople) {
         if  (row >= _peopleArray.count ) {
@@ -771,12 +779,24 @@ typedef enum: char {
         }
         
         AutoCompleteObject *object = [_autoCompleteArray objectAtIndex:indexPath.row];
-        [_tableAutoComplete deselectRowAtIndexPath:indexPath animated:YES];
+        NSString *googleID= object.placeIdentifier;
+        OOAPI *api=[[OOAPI alloc] init];
+        __weak SearchVC *weakSelf = self;
+        [api getRestaurantWithID:googleID
+                          source:2
+                         success:^(RestaurantObject *restaurant) {
+                             weakSelf.doingSearchNow=NO;
 
-        // XX:  need to determine whether we have a keyword or a restaurant
-        // XX:  need to look up the restaurant
-         RestaurantVC *vc = [[RestaurantVC  alloc]   init];
-        [self.navigationController pushViewController:vc animated:YES];
+                             if  (restaurant ) {
+                                 RestaurantVC *vc = [[RestaurantVC  alloc]   init];
+                                 vc.restaurant=restaurant;
+                                 [weakSelf.navigationController pushViewController:vc animated:YES];
+                             }
+                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                             message( @"Can I find that restaurant.");
+                             weakSelf.doingSearchNow=NO;
+                         }];
+        
     }
     
 }
@@ -790,7 +810,6 @@ typedef enum: char {
     if (self.doingSearchNow) {
         return 0;
     }
-    
     if  (tableView==_tableAutoComplete ) {
         return _autoCompleteArray.count;
     }

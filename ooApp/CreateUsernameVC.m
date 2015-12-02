@@ -1,5 +1,5 @@
 //
-//  CreateUsernameVC.m
+//  CreateUsernameVC.m O3
 //  ooApp
 //
 //  Created by Zack Smith on 9/23/15.
@@ -81,6 +81,8 @@
                                   .5);
     _buttonSignUp.layer.borderColor=GRAY.CGColor;
     
+    removeRightButton(self.navigationItem);
+
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
     _fieldUsername.backgroundColor= WHITE;
@@ -91,7 +93,7 @@
     _fieldUsername.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     self.labelUsernameTaken= makeLabel(_scrollView,LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
-    self.labelUsernameTaken.textColor= RED;
+    self.labelUsernameTaken.textColor= YELLOW;
     _labelUsernameTaken.hidden= YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
@@ -272,8 +274,10 @@
 
                                          }
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                             NSLog (@"PUT OF USERNAME FAILED %@",error);
-                                             [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
+                                             NSInteger statusCode= operation.response.statusCode;
+                                             NSLog (@"PUT OF USERNAME FAILED %@ w/%ld",error,statusCode);
+                                             if (statusCode==403)
+                                                 [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
 
                                          }     ];
 }
@@ -313,7 +317,12 @@
     UserObject* userInfo= [Settings sharedInstance].userObject;
     [APP.diagnosticLogString appendFormat: @"Username set to %@" ,userInfo.username];
 
-    [self performSegueWithIdentifier:@"gotoDiscoverFromCreateUsername" sender:self];
+    @try {
+        [self performSegueWithIdentifier:@"gotoDiscoverFromCreateUsername" sender:self];
+    }
+    @catch (NSException *exception) {
+        NSLog (@"CANNOT GO TO DISCOVER BY THAT ROUTE");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -372,15 +381,17 @@
     [self.labelMessage sizeToFit ];
     float heightForText= _labelMessage.bounds.size.height;
     
-    const float spacer=kGeomSpaceInter;
+    float spacer=kGeomSpaceInter;
+    if (IS_IPAD) {
+        spacer=40;
+    }
     
     float imageSize= kGeomCreateUsernameCentralIconSize;
-    if ( IS_IPHONE4) {
-        imageSize=  180;
-    }
 
     float totalHeightNeeded= heightForText+imageSize +3*kGeomHeightButton;
     totalHeightNeeded += 3*spacer;
+    if (!IS_IPHONE4)
+        totalHeightNeeded +=kGeomHeightButton;
     
     float y= (h-totalHeightNeeded)/2;
 
@@ -395,6 +406,10 @@
     
     _labelUsernameTaken.frame=CGRectMake (0,y,w,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;
+    
+    if (!IS_IPHONE4) {
+        y +=kGeomHeightButton; // NOTE: There is no room for the extra gap on the iPhone 4.
+    }
     
     _buttonSignUp.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;

@@ -705,6 +705,18 @@ unsigned long msTime (void)
 	return ms;
 }
 
+void removeRightButton (UINavigationItem*item)
+{
+    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
+    bbi.customView = moreButton;
+    [moreButton setTitleColor:CLEAR forState:UIControlStateNormal];
+    item.rightBarButtonItems = @[bbi];
+}
+
 void ANALYTICS_INIT(void)
 {
     NSError *configureError= nil;

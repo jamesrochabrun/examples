@@ -18,12 +18,12 @@
     
     AutoCompleteObject *object = [[AutoCompleteObject alloc] init];
     object.desc = parseStringOrNullFromServer( dictionary[@"description"]);
-    object.identifier = parseStringOrNullFromServer( dictionary[@"id"]);
-    object.placeIdentifier = parseStringOrNullFromServer( dictionary[@"place_id"]);
-    object.reference = parseStringOrNullFromServer( dictionary[@"reference"]);
+    object.identifier = parseStringOrNullFromServer( dictionary[@"id"]);//  Google map identifier. Deprecated.
+    object.placeIdentifier = parseStringOrNullFromServer( dictionary[@"place_id"]);//  Google ID for place details request.
+    object.reference = parseStringOrNullFromServer( dictionary[@"reference"]);// Very long string.
 
     object.terms=  parseArrayOrNullFromServer( dictionary[ @"terms"] );
-    object.types=  parseArrayOrNullFromServer( dictionary[ @"types"] );
+    object.types=  parseArrayOrNullFromServer( dictionary[ @"types"] );// E.g. establishment, geocode.
     object.matchedSubstrings=  parseArrayOrNullFromServer( dictionary[ @"matched_substrings"] );
     
     return object;

@@ -48,7 +48,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"What's New" subHeader:nil];
     self.navTitle = nto;
-    
+        
     _lists = [NSMutableArray array];
     [self addLists];
 }

@@ -5,6 +5,8 @@
 //  Created by Zack Smith on 11/30/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
+#import "RestaurantObject.h"
+
 @interface AutoCompleteObject: NSObject
 @property (nonatomic, strong) NSString* desc;
 @property (nonatomic, strong) NSArray *terms;
