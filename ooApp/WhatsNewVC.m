@@ -61,17 +61,17 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list.listDisplayType = kListDisplayTypeFeatured;
     [_lists addObject:list];
     
-//    list = [[ListObject alloc] init];
-//    list.name = @"Trending";
-//    list.type = kListTypeTrending;
-//    list.listDisplayType = KListDisplayTypeStrip;
-//    [_lists addObject:list];
-//    
-//    list = [[ListObject alloc] init];
-//    list.name = @"Popular";
-//    list.type = kListTypePopular;
-//    list.listDisplayType = KListDisplayTypeStrip;
-//    [_lists addObject:list];
+    list = [[ListObject alloc] init];
+    list.name = @"Trending";
+    list.type = kListTypeTrending;
+    list.listDisplayType = KListDisplayTypeStrip;
+    [_lists addObject:list];
+    
+    list = [[ListObject alloc] init];
+    list.name = @"Popular";
+    list.type = kListTypePopular;
+    list.listDisplayType = KListDisplayTypeStrip;
+    [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Thai";
@@ -118,6 +118,10 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     ON_MAIN_THREAD(^{
         [weakSelf.tableView  reloadData];
     });
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [self.view setNeedsUpdateConstraints];
 }
 
 - (void)updateViewConstraints {

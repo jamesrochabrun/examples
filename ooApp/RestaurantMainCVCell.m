@@ -21,7 +21,7 @@
 @property (nonatomic, strong) TTTAttributedLabel *phoneNumber;
 @property (nonatomic, strong) TTTAttributedLabel *website;
 @property (nonatomic, strong) TTTAttributedLabel *address;
-//@property (nonatomic, strong) UILabel *name;
+//@property (nonatomic, strong) UILabel *rating;
 @property (nonatomic, strong) UILabel *priceRange;
 @property (nonatomic, strong) UILabel *isOpen;
 @property (nonatomic, strong) UILabel *distance;
@@ -33,7 +33,6 @@
 @property (nonatomic, strong) UIButton *hoursButton;
 @property (nonatomic, strong) UIButton *favoriteButton;
 @property (nonatomic, strong) UIButton *toTryButton;
-@property (nonatomic, strong) UILabel *rating;
 @property (nonatomic, strong) UIScrollView *hoursScroll;
 @property (nonatomic, strong) UILabel *hoursView;
 @property (nonatomic, strong) UIView *verticalLine1;
@@ -126,10 +125,10 @@
         _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _toTryButton.layer.borderWidth = 1;
         _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _toTryButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
         
-//        _name = [[UILabel alloc] init];
-//        _name.translatesAutoresizingMaskIntoConstraints = NO;
-//        [_name withFont:[UIFont fontWithName:kFontLatoHeavy size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
-//        [self addSubview:_name];
+//        _rating = [[UILabel alloc] init];
+//        _rating.translatesAutoresizingMaskIntoConstraints = NO;
+//        [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+//        [self addSubview:_rating];
         
         _priceRange = [[UILabel alloc] init];
         _priceRange.translatesAutoresizingMaskIntoConstraints = NO;
@@ -229,7 +228,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange,/* _name*/ _address, _website, _phoneNumber, _distance, _cuisine, _toTryButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _toTryButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -473,7 +472,8 @@
     if (_restaurant == restaurant) return;
     _restaurant = restaurant;
     
-//    _name.text = _restaurant.name;
+//    _rating.text = @"JJJ";// (![_rating.text length]) ? [_restaurant ratingText] : _rating.text; //Not a fan of this, but the repsonse by getting the rest through place_id does not seem to be returning the rating
+//    NSLog(@"rating=%@", _rating.text);
     _address.text = _restaurant.address;
     _website.text = @"Website";
     _phoneNumber.text = _restaurant.phone;

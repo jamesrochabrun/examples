@@ -27,7 +27,7 @@ extern NSString *const kKeyMediaItemSourceUserID;
 @property (nonatomic, strong) NSString *reference;
 @property (nonatomic) NSUInteger type;
 @property (nonatomic) NSUInteger source;
-@property (nonatomic, strong) NSString *mediaItemId;
+@property (nonatomic) NSUInteger mediaItemId;
 @property (nonatomic, strong) NSString *url;
 @property (nonatomic) CGFloat width;
 @property (nonatomic) CGFloat height;

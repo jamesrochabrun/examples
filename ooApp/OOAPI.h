@@ -149,12 +149,15 @@ typedef enum:NSUInteger  {
                  to: (UploadDestination )destination
          identifier: (NSUInteger) identifier
             success:(void (^)(void))success
-            failure:(void (^)( NSError *error))failure;
+            failure:(void (^)(NSError *error))failure;
+
++ (AFHTTPRequestOperation *)deletePhoto:(MediaItemObject *)mio success:(void (^)(void))success
+            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (void)uploadPhoto:(UIImage *)image
           forObject:(id)object
             success:(void (^)(void))success
-            failure:(void (^)( NSError *error))failure;
+            failure:(void (^)(NSError *error))failure;
 
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                    success:(void (^)(BOOL))success

@@ -94,8 +94,26 @@ static NSString * const ListRowID = @"HLRCell";
     if (_listToAddTo || _eventBeingEdited) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
+    
+    [self setRightNavWithIcon:kFontIconPlay target:self action:@selector(showOptions)];
+    
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
+}
+
+- (void)showOptions {
+    OptionsVC *vc = [[OptionsVC alloc] init];
+    vc.delegate = self;
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    [self.navigationController presentViewController:vc animated:YES completion:^{
+        ;
+    }];
+}
+
+- (void)optionsVCDismiss:(OptionsVC *)optionsVC {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
 
 - (void)populateOptions {
@@ -301,10 +319,15 @@ static NSString * const ListRowID = @"HLRCell";
     CLLocationCoordinate2D topEdge = CLLocationCoordinate2DMake(topLeftCoord.latitude, center.longitude);
 
 //DEBUG math
-//    OOMapMarker *centerMarker = [[OOMapMarker alloc] init];
-//    centerMarker.position = center;
-//    centerMarker.map = _mapView;
-//   
+    OOMapMarker *centerMarker = [[OOMapMarker alloc] init];
+    centerMarker.position = center;
+    UILabel *locationIcon = [[UILabel alloc] init];
+    [locationIcon withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorYellow backgroundColor:kColorClear];
+    centerMarker.icon = [OOMapMarker markerImageWithColor:UIColorRGBA(kColorYellow)];
+    
+    centerMarker.map = _mapView;
+    
+    //
 //    OOMapMarker *topEdgeMarker = [[OOMapMarker alloc] init];
 //    topEdgeMarker.position = topEdge;
 //    topEdgeMarker.map = _mapView;

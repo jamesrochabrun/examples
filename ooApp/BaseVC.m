@@ -34,6 +34,11 @@
 
     _leftNavButton = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _leftNavButton;
+
+    _rightNavButton = [[UIBarButtonItem alloc] init];
+    self.navigationItem.rightBarButtonItem = _rightNavButton;
+    [self.rightNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                 [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName, UIColorRGB(kColorYellow), NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     
     SWRevealViewController *revealViewController = self.revealViewController;
     revealViewController.delegate = self;
@@ -97,6 +102,12 @@
     [self.leftNavButton setTitle:icon];
     [self.leftNavButton setTarget:target];
     [self.leftNavButton setAction:selector];
+}
+
+- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+    [self.rightNavButton setTitle:icon];
+    [self.rightNavButton setTarget:target];
+    [self.rightNavButton setAction:selector];
 }
 
 -(void)displayDropDown:(BOOL)showIt {

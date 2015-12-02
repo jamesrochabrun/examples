@@ -55,7 +55,7 @@
             __weak UIImageView *weakIV = self.thumbnail;
             __weak RestaurantTVCell *weakSelf = self;
             [self.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
-                                  placeholderImage:nil
+                                  placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
                                            success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                                                ON_MAIN_THREAD(^ {
                                                    [weakIV setAlpha:0.0];

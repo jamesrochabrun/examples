@@ -58,6 +58,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
+        
+        self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
 //        [DebugUtilities addBorderToViews:@[_nameHeader]];
     }
@@ -110,6 +112,12 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     }
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    
 }
 
 - (void)setListItem:(ListObject *)listItem
@@ -280,6 +288,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(kGeomSpaceEdge, kGeomHeightStripListRow-kGeomHeightStripListCell, self.frame.size.width-2*kGeomSpaceEdge, self.frame.size.height-(kGeomHeightStripListRow-kGeomHeightStripListCell)) collectionViewLayout:_cvl];
         [_collectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier:RestaurantCellIdentifier];
         _collectionView.backgroundColor = UIColorRGBA(kColorClear);
+//        _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_collectionView];
         [self bringSubviewToFront:_nameHeader];
 //        [DebugUtilities addBorderToViews:@[_collectionView] withColors:kColorRed];

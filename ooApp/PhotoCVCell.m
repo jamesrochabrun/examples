@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIImageView *backgroundImage;
+@property (nonatomic, strong) UIButton *takeAction;
 
 @end
 
@@ -23,21 +24,37 @@
     if (self) {
         _backgroundImage = [[UIImageView alloc] init];
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        _takeAction = [UIButton buttonWithType:UIButtonTypeCustom];
+        _takeAction.translatesAutoresizingMaskIntoConstraints = NO;
+        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:15 width:30 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOptions)];
+        
         [self addSubview:_backgroundImage];
+        [self addSubview:_takeAction];
     }
     return self;
 }
 
+- (void)showActionButton:(BOOL)show {
+    _takeAction.hidden = !show;
+}
+
+- (void)showOptions {
+    [_delegate photoCell:self showPhotoOptions:_mediaItemObject];
+}
+
 - (void)updateConstraints {
     [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage, _takeAction);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_takeAction(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_takeAction(25)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 -(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
@@ -73,53 +90,6 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
-    
-//    if (imageRef && mediaItemObject.source == 2) {
-//        _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-//            
-//            [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
-//                                     placeholderImage:nil
-//                                              success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-//                                                  ON_MAIN_THREAD(^ {
-//                                                      [weakIV setAlpha:0.0];
-//                                                      weakIV.image = image;
-//                                                      [UIView beginAnimations:nil context:NULL];
-//                                                      [UIView setAnimationDuration:0.3];
-//                                                      [weakIV setAlpha:1.0];
-//                                                      [UIView commitAnimations];
-//                                                      [weakSelf setNeedsUpdateConstraints];
-//                                                      [weakSelf setNeedsLayout];
-//                                                  });
-//                                              }
-//                                              failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-//                                                  ;
-//                                              }];
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            ;
-//        }];
-//    } else if (mediaItemObject.source == 1 && mediaItemObject.url) {
-//        NSLog(@"ooImage=%@", mediaItemObject.url);
-//        [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:mediaItemObject.url]]
-//                                placeholderImage:nil
-//                                         success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-//                                             ON_MAIN_THREAD(^ {
-//                                                 [weakIV setAlpha:0.0];
-//                                                 weakIV.image = image;
-//                                                 [UIView beginAnimations:nil context:NULL];
-//                                                 [UIView setAnimationDuration:0.3];
-//                                                 [weakIV setAlpha:1.0];
-//                                                 [UIView commitAnimations];
-//                                                 [weakSelf setNeedsUpdateConstraints];
-//                                                 [weakSelf setNeedsLayout];
-//                                                 [weakSelf setNeedsDisplay];
-//                                             });
-//                                         }
-//                                         failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-//                                             ;
-//                                         }];
-//    } else {
-//        
-//    }
 }
 
 - (void)prepareForReuse {

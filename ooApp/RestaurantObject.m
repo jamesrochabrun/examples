@@ -124,4 +124,26 @@ NSString *const kKeyRestaurantMobileMenuURL = @"mobile_menu_url";
     return text;
 }
 
+- (NSString *)ratingText {
+    CGFloat r = [_rating floatValue];
+    NSString *text;
+    
+    if (r == 5) {
+        text = [NSString stringWithFormat:@"%@%@%@%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
+    } else if (r >= 4) {
+        text = [NSString stringWithFormat:@"%@%@%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
+    } else if (r >= 3) {
+        text = [NSString stringWithFormat:@"%@%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
+    } else if (r >= 2) {
+        text = [NSString stringWithFormat:@"%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
+  
+    } else if (r >= 1) {
+        text = [NSString stringWithFormat:@"%@", kFontIconWhatsNewFilled];
+    } else {
+      text=@"";
+    }
+    
+    return text;
+}
+
 @end

@@ -1207,6 +1207,24 @@ NSString *const kKeyTagIDs = @"tag_ids";
     return op;
 }
 
++ (AFHTTPRequestOperation *)deletePhoto:(MediaItemObject *)mio success:(void (^)(void))success
+            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if  (!mio) {
+        failure (nil,nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], mio.mediaItemId];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
 
 //------------------------------------------------------------------------------
 // Name:    uploadPhoto
@@ -1221,15 +1239,15 @@ NSString *const kKeyTagIDs = @"tag_ids";
         failure(nil);
         return ;
     }
-    
+
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.6);
     
     NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
-    NSLog(@"img size = %lu bytes",(unsigned long)[imageData length]);
+    NSLog(@"img size = %lu bytes", [imageData length]);
 
     NSDictionary *parameters;
     

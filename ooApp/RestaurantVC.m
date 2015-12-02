@@ -33,6 +33,7 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIAlertController *styleSheetAC;
 @property (nonatomic, strong) UIAlertController *createListAC;
+@property (nonatomic, strong) UIAlertController *showPhotoOptions;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
 @property (nonatomic, strong) NSMutableSet *listButtons;
@@ -243,18 +244,14 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         
         OOAPI *api = [[OOAPI alloc] init];
         
-        NSString *imageRef = mio.reference;
-        
-        if (imageRef) {
-            _requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:150 maxHeight:0 success:^(NSString *link) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self showShare:link];
-                });
+        if (mio) {
+            _requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
+                [self showShare:link];
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
+                [self showShare:nil];;
             }];
         } else {
-            [self showShare:nil];
+            [self showShare:nil];;
         }
     } else {
         [self showShare:nil];
@@ -349,7 +346,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             [weakSelf getMediaItemsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
+        ON_MAIN_THREAD(^{
+            [weakSelf getMediaItemsForRestaurant];;
+        });
     }];
 }
 
@@ -380,6 +379,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                 }
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
+                    ON_MAIN_THREAD(^{
+                        [self getFolloweesWithRestaurantOnList];
+                    });
                 }];
 }
 
@@ -537,6 +539,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
+    NSUInteger userID = [Settings sharedInstance].userObject.userID;
+    
     switch (indexPath.section) {
         case kSectionTypeMain: {
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
@@ -571,9 +575,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         }
         case kSectionTypeMediaItems: {
             PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier forIndexPath:indexPath];
-            
+            cvc.delegate = self;
             cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-            cvc.mediaItemObject = [_mediaItems objectAtIndex:indexPath.row];
+            MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
+            cvc.mediaItemObject = mio;
+            [cvc showActionButton:(mio.sourceUserID == userID) ? YES : NO];
             //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
@@ -583,6 +589,59 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }
     
     return nil;
+}
+
+- (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio {
+    _showPhotoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do with this photo?" preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete"
+                                                          style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+                                                              [self deletePhoto:mio];
+                                                          }];
+    UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Tag"
+                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                              [self tagPhoto:mio];
+                                                          }];
+    UIAlertAction *flagPhoto = [UIAlertAction actionWithTitle:@"Flag"
+                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                           [self flagPhoto:mio];
+                                                       }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                         NSLog(@"Cancel");
+                                                     }];
+    [_showPhotoOptions addAction:tagPhoto];
+    [_showPhotoOptions addAction:flagPhoto];
+    [_showPhotoOptions addAction:deletePhoto];
+    [_showPhotoOptions addAction:cancel];
+    
+    [self presentViewController:_showPhotoOptions animated:YES completion:^{
+        ;
+    }];
+}
+
+- (void)tagPhoto:(MediaItemObject *)mio {
+    
+}
+
+- (void)flagPhoto:(MediaItemObject *)mio {
+    
+}
+
+- (void)deletePhoto:(MediaItemObject *)mio {
+    NSUInteger userID = [Settings sharedInstance].userObject.userID;
+    __weak RestaurantVC *weakSelf = self;
+    
+    if (mio.sourceUserID == userID) {
+        [OOAPI deletePhoto:mio success:^{
+            [weakSelf getMediaItemsForRestaurant];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    }
+}
+
+- (void)photoCell:(PhotoCVCell *)photoCell deletePhoto:(MediaItemObject *)mio {
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -604,7 +663,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/kNumColumnsForMediaItems; //NOTE: this should not happen
-            return floorf((width(self.collectionView) - (kNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kNumColumnsForMediaItems*mio.height/mio.width);
+            CGFloat height = floorf(((width(self.collectionView) - (kNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kNumColumnsForMediaItems)*mio.height/mio.width);
+            return height;
             break;
         }
         default:
@@ -658,7 +718,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == kSectionTypeMediaItems) {
         NSUInteger row = indexPath.row;
-        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+        __weak RestaurantVC *weakSelf = self;
+        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
         [photoBrowser setCurrentPhotoIndex:row];
         __weak MediaItemObject *mio = [_mediaItems objectAtIndex:row];
         
@@ -817,7 +878,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)showCameraUI {
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
-    picker.allowsEditing = YES;
+    picker.allowsEditing = NO;
     picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
     
     [self presentViewController:picker animated:YES completion:NULL];
@@ -826,7 +887,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)showPhotoLibraryUI {
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
-    picker.allowsEditing = YES;
+    picker.allowsEditing = NO;
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     [self presentViewController:picker animated:YES completion:NULL];
@@ -834,13 +895,15 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    UIImage *image = info[@"UIImagePickerControllerEditedImage"];
+    UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
     if (!image) {
-        image = info[@"UIImagePickerControllerEditedImage"];
+        image = info[@"UIImagePickerControllerOriginalImage"];
     }
+    CGSize s = image.size;
+    UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
     
     __weak RestaurantVC *weakSelf = self;
-    [OOAPI uploadPhoto:image forObject:_restaurant
+    [OOAPI uploadPhoto:newImage forObject:_restaurant
                success:^{
                    [weakSelf getMediaItemsForRestaurant];
                } failure:^(NSError *error) {

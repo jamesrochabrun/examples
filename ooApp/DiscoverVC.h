@@ -11,8 +11,9 @@
 #import "BaseVC.h"
 #import "ListObject.h"
 #import "EventObject.h"
+#import "OptionsVC.h"
 
-@interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
+@interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate, OptionsVCDelegate>
 
 @property (nonatomic, strong) ListObject *listToAddTo;
 @property (nonatomic,strong) EventObject *eventBeingEdited;

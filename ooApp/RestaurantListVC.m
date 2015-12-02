@@ -188,6 +188,17 @@ static NSString * const cellIdentifier = @"horizontalCell";
         } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
             ;
         }];
+    } else if (_listItem.type == kListTypeTrending||
+               _listItem.type == kListTypePopular) {
+        
+        self.requestOperation = [api getRestaurantsFromSystemList:_listItem.type success:^(NSArray *r) {
+            weakSelf.restaurants = r;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf gotRestaurants];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
+            ;
+        }];
     } else {
         self.requestOperation = [api getRestaurantsWithKeywords:@[_listItem.name]
                                                    andLocation:[[LocationManager sharedInstance] currentUserLocation]

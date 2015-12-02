@@ -26,6 +26,7 @@
 		36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36250BDB1B82679A00F456B5 /* LoginVC.m */; };
 		36250BDF1B82704300F456B5 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */; };
 		36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */; };
+		3625598D1C0A5102002553B4 /* OptionsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3625598C1C0A5102002553B4 /* OptionsVC.m */; settings = {ASSET_TAGS = (); }; };
 		3629F0C61BFCF42500E2D912 /* DraggableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C11BFCF42500E2D912 /* DraggableView.m */; };
 		3629F0C71BFCF42500E2D912 /* DraggableViewBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C31BFCF42500E2D912 /* DraggableViewBackground.m */; };
 		3629F0C81BFCF42500E2D912 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C51BFCF42500E2D912 /* OverlayView.m */; };
@@ -182,6 +183,8 @@
 		36250BDB1B82679A00F456B5 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKShareKit.framework"; sourceTree = "<group>"; };
+		3625598B1C0A5102002553B4 /* OptionsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVC.h; sourceTree = "<group>"; };
+		3625598C1C0A5102002553B4 /* OptionsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVC.m; sourceTree = "<group>"; };
 		3629F0C01BFCF42500E2D912 /* DraggableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableView.h; sourceTree = "<group>"; };
 		3629F0C11BFCF42500E2D912 /* DraggableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DraggableView.m; sourceTree = "<group>"; };
 		3629F0C21BFCF42500E2D912 /* DraggableViewBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableViewBackground.h; sourceTree = "<group>"; };
@@ -629,6 +632,8 @@
 				363B60BE1B6AC13900987A1B /* Models */,
 				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
+				3625598B1C0A5102002553B4 /* OptionsVC.h */,
+				3625598C1C0A5102002553B4 /* OptionsVC.m */,
 				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
 				3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */,
 				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
@@ -951,6 +956,7 @@
 				3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */,
 				3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */,
 				96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */,
+				3625598D1C0A5102002553B4 /* OptionsVC.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
 				367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */,
 				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,
