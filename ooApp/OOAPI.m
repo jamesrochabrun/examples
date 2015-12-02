@@ -35,6 +35,8 @@ NSString *const kKeyTagIDs = @"tag_ids";
 
 static NSArray*autoCompleteWhiteList= nil;
 static NSArray*autoCompleteBlackList= nil;
+static NSArray* autoCompleteSpecificNonfoodCompanies= nil;
+static NSArray*autoCompleteSpecificFoodCompanies= nil;
 
 - (id)init {
     if (self = [super init]) {
@@ -235,8 +237,9 @@ static NSArray*autoCompleteBlackList= nil;
                                  kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
 //                                 kKeyRestaurantLatitude:[NSNumber numberWithFloat:37.773972],
 //                                 kKeyRestaurantLongitude:[NSNumber numberWithFloat:-122.431297],
-                                 kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly],
-                                 kKeySearchFilter:filterName};
+                                 kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly]
+//                                 kKeySearchFilter:filterName// Not used by backend.
+                                 };
     
     NSLog(@"search URL = %@", urlString);
     
@@ -250,7 +253,8 @@ static NSArray*autoCompleteBlackList= nil;
         }
         success(restaurants);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-        NSLog(@"Error: %@", error);
+        NSInteger statusCode= operation.response.statusCode;
+        NSLog(@"Error: %@, status code %ld", error, statusCode);
         failure(operation, error);
     }];
 }
@@ -277,19 +281,30 @@ static NSArray*autoCompleteBlackList= nil;
                    NSString *desc= dict[@"description"];
                    int include=0;
                    NSArray *chunks= [[desc lowercaseString] componentsSeparatedByString:@","];
+               
                    if  (chunks.count ) {
-                       NSArray *words= [[chunks[0] lowercaseString] componentsSeparatedByString:@" "];
-                       for (NSString* string  in  words) {
-                           if ( [ autoCompleteWhiteList containsObject: string]) {
-                               include= 1;
+                       NSString *firstChunk=[chunks[0] lowercaseString];
+                       
+                       for (NSString* string  in  autoCompleteSpecificNonfoodCompanies) {
+                           if ( [ firstChunk isEqualToString: string]) {
+                               include= -1;
                                break;
                            }
                        }
-                       if  (! include ) {
+                       if  (include >= 0 ) {
+                           NSArray *words= [firstChunk componentsSeparatedByString:@" "];
                            for (NSString* string  in  words) {
-                               if ( [ autoCompleteBlackList containsObject: string]) {
-                                   include= -1;
+                               if ( [ autoCompleteWhiteList containsObject: string]) {
+                                   include= 1;
                                    break;
+                               }
+                           }
+                           if  (! include ) {
+                               for (NSString* string  in  words) {
+                                   if ( [ autoCompleteBlackList containsObject: string]) {
+                                       include= -1;
+                                       break;
+                                   }
                                }
                            }
                        }
@@ -2133,11 +2148,16 @@ static NSArray*autoCompleteBlackList= nil;
                               @"bakery",
                               @"tea",
                               @"pho",
+                              @"pan-asian",
                               @"lounge",
+                              @"crustacean",
+                              @"crawfish",
+                              @"picnic",
                               @"sandwich",
                               @"sandwiches",
                               @"pizzeria",
                               @"sushirrito",
+                              @"delices",
                               @"starbucks",
                               @"peet's",
                               @"85c",
@@ -2214,9 +2234,25 @@ static NSArray*autoCompleteBlackList= nil;
                               @"sport",
                               @"sports",
                               @"store",
+                              @"app",
+                              @"derma",
+                              @"botox",
+                              @"phone",
+                              @"phones",
+                              @"surgery",
+                              @"editor",
+                              @"news",
+                              @"newspapers",
                               @"parking",
                               @"park",
+                              @"salon",
+                              @"dds",
+                              @"m.d.",
                               @"garage",
+                              @"photo",
+                              @"photography",
+                              @"graphic",
+                              @"photon",
                               @"repair",
                               @"archery",
                               @"academy",
@@ -2258,6 +2294,12 @@ static NSArray*autoCompleteBlackList= nil;
                               @"detention",
                               @"prison",
                               ];
+    autoCompleteSpecificFoodCompanies=  @[
+                                             @"banana republic"
+                                             ];
+    autoCompleteSpecificNonfoodCompanies=  @[
+                                             @"banana republic"
+                                             ];
 }
 
 @end

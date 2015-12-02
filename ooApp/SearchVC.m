@@ -32,8 +32,11 @@ typedef enum: char {
 } FilterType;
 
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
+#define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchRestaurantsCellEmpty"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 #define SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER  @"searchAutoCompleteCell"
+
+static NSArray *keywordsArray=nil;
 
 @interface SearchVC ()
 @property (nonatomic,strong) UISearchBar *searchBar;
@@ -45,7 +48,7 @@ typedef enum: char {
 @property (nonatomic,assign) FilterType currentFilter;
 @property (nonatomic,strong) NSArray *restaurantsArray;
 @property (nonatomic,strong) NSArray *peopleArray;
-@property (nonatomic,strong) NSArray *autoCompleteArray;
+@property (nonatomic,strong) NSMutableArray *autoCompleteArray;
 @property (atomic,assign) BOOL doingSearchNow, doingAutoCompleteLookupNow;
 @property (atomic,assign) BOOL showingAutoCompleteLookupResults;
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
@@ -119,6 +122,8 @@ typedef enum: char {
     _tableRestaurants.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
               forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
+    [_tableRestaurants registerClass:[UITableViewCell class]
+              forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY];
     
     self.tablePeople = makeTable(self.view,self);
     _tablePeople.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -240,14 +245,21 @@ typedef enum: char {
     [self.view bringSubviewToFront:_activityView];
 }
 
-- (void)doAutoCompleteLookup
+- (void)doAutoCompleteLookupWithFetch:(BOOL) needFetch
 {
     if ( self.doingAutoCompleteLookupNow) {
         return;
     }
+    
+    [self showSpinner: @""];
+
+    if  (!needFetch) {
+        [self loadAutoComplete:  nil ];
+        return;
+    }
+    
     self.doingAutoCompleteLookupNow= YES;
     __weak SearchVC *weakSelf= self;
-    [self showSpinner: @""];
     
     NSString*string= _searchBar.text;
     
@@ -255,15 +267,15 @@ typedef enum: char {
                                                     location:[LocationManager sharedInstance].currentUserLocation
                                                      success:^(NSArray *results) {
                                                          [weakSelf performSelectorOnMainThread:@selector(loadAutoComplete:)
-                                                                                    withObject:results
+                                                                                    withObject: results
                                                                                  waitUntilDone:NO];
                                                          weakSelf.doingAutoCompleteLookupNow= NO;
                                                      }
                                                      failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                          NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
                                                          
-                                                         [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
-                                                                                    withObject:nil
+                                                         [weakSelf performSelectorOnMainThread:@selector(loadAutoComplete:)
+                                                                                    withObject: nil
                                                                                  waitUntilDone:NO];
                                                          weakSelf.doingAutoCompleteLookupNow= NO;
                                                      }
@@ -272,10 +284,10 @@ typedef enum: char {
 }
 
 //------------------------------------------------------------------------------
-// Name:    doSearch
+// Name:    doSearchFor
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSearch
+- (void)doSearchFor: (NSString*)expression
 {
     if (self.doingSearchNow) {
         NSLog (@"CANNOT SEARCH NOW");
@@ -322,8 +334,11 @@ typedef enum: char {
             if  (self.showingAutoCompleteLookupResults ) {
                 _doingSearchNow=NO;
                 
-                if (_searchBar.text.length>1)
-                    [self doAutoCompleteLookup];
+                if (_searchBar.text.length>2)
+                    [self doAutoCompleteLookupWithFetch:YES];
+                else
+                    [self doAutoCompleteLookupWithFetch:NO];
+                
                 return;
             }
             
@@ -339,9 +354,9 @@ typedef enum: char {
             
             OOAPI *api= [[OOAPI  alloc] init];
             
-            self.fetchOperation= [api getRestaurantsWithKeywords:@[_searchBar.text]
+            self.fetchOperation= [api getRestaurantsWithKeywords: @[ expression ]
                                                     andLocation:location
-                                                      andFilter:[self currentFilterName]
+                                                      andFilter: @"" // Not used.
                                                         andRadius:10000
                                                     andOpenOnly:NO
                                                         andSort:kSearchSortTypeBestMatch
@@ -377,14 +392,14 @@ typedef enum: char {
     
     self.currentFilter = which;
     
-    [self updateWhichTableIsVisible];
+    [self showAppropriateTable];
     
     // RULE: If the user was searching for "Fred" in the people category and
     //  then switched to the places category, then we should redo the search
     //  in the new category.
     //
     if (_searchBar.text.length) {
-        [self doSearch];
+        [self doSearchFor: _searchBar.text];
     }
 }
 
@@ -401,11 +416,10 @@ typedef enum: char {
         if (_currentFilter == FILTER_PEOPLE ) {
             [self loadPeople:@[]];
         } else {
-            if ( self.showingAutoCompleteLookupResults) {
-                [self loadAutoComplete:@[]];
-            } else {
-                [self loadRestaurants:@[]];
-            }
+            [self loadRestaurants:@[]];
+            _showingAutoCompleteLookupResults= YES;
+            [self showAppropriateTable];
+            [self loadAutoComplete: nil];
         }
         return;
     }
@@ -413,32 +427,240 @@ typedef enum: char {
     if (self.doingSearchNow) {
         [self cancelSearch];
     }
-    [self doSearch];
-    
-    
+    [self doSearchFor: text];
 }
 
-//------------------------------------------------------------------------------
-// Name:    updateWhichTableIsVisible
-// Purpose:
-//------------------------------------------------------------------------------
-- (void) updateWhichTableIsVisible
+- (void) setUpKeywordsArray
 {
-    if (_currentFilter == FILTER_PEOPLE ) {
-        _tablePeople.hidden = NO;
-        _tableRestaurants.hidden = YES;
-        _tableAutoComplete.hidden = YES;
-    } else {
-        if ( self.showingAutoCompleteLookupResults) {
-            _tableAutoComplete.hidden = NO;
-            _tablePeople.hidden = YES;
-            _tableRestaurants.hidden = YES;
-        } else {
-            _tableAutoComplete.hidden = YES;
-            _tablePeople.hidden = YES;
-            _tableRestaurants.hidden = NO;
-        }
-    }
+    if (keywordsArray)
+        return;
+    
+    keywordsArray=@[
+                    @"85c",
+                    @"applebee",
+                    @"arby",
+                    @"armenian",
+                    @"asian",
+                    @"athens",
+                    @"bakery",
+                    @"bamboo",
+                    @"banana",
+                    @"bangkok",
+                    @"banzai",
+                    @"bar",
+                    @"barcelona",
+                    @"basil",
+                    @"beijing",
+                    @"bengal",
+                    @"bistro",
+                    @"blue",
+                    @"bombay",
+                    @"butter",
+                    @"bouche",
+                    @"bowl",
+                    @"bottle",
+                    @"brasserie",
+                    @"bread",
+                    @"bean",
+                    @"brew",
+                    @"brewery",
+                    @"bread",
+                    @"britain",
+                    @"british",
+                    @"buca",
+                    @"buffet",
+                    @"burrito",
+                    @"cappuccino",
+                    @"cafe",
+                    @"caffe",
+                    @"caffeine",
+                    @"california",
+                    @"cantina",
+                    @"carniceria",
+                    @"casa",
+                    @"casita",
+                    @"chaat",
+                    @"charcuterie",
+                    @"cheese",
+                    @"chez",
+                    @"chicken",
+                    @"chipotle",
+                    @"chocolate",
+                    @"club",
+                    @"cod",
+                    @"coffee",
+                    @"cooking",
+                    @"cottage",
+                    @"country",
+                    @"cream",
+                    @"crepe",
+                    @"chips",
+                    @"creamery",
+                    @"cuisine",
+                    @"curry",
+                    @"deli",
+                    @"delices",
+                    @"delicatessen",
+                    @"delight",
+                    @"deux",
+                    @"diner",
+                    @"dining",
+                    @"dinner",
+                    @"donut",
+                    @"dough",
+                    @"dog",
+                    @"doughnut",
+                    @"duke",
+                    @"eat",
+                    @"espresso",
+                    @"edible",
+                    @"edinburg",
+                    @"elephant",
+                    @"essen",
+                    @"express",
+                    @"falafel",
+                    @"fine",
+                    @"fish",
+                    @"flavor",
+                    @"food",
+                    @"foodbag",
+                    @"french",
+                    @"fried",
+                    @"fromagerie",
+                    @"fruit",
+                    @"fry",
+                    @"fusion",
+                    @"garden",
+                    @"german",
+                    @"ginger",
+                    @"greek",
+                    @"grill",
+                    @"grounds",
+                    @"grullense",
+                    @"healthy",
+                    @"herb",
+                    @"hofbrau",
+                    @"hokkaido",
+                    @"hooters",
+                    @"house",
+                    @"indian",
+                    @"italian",
+                    @"israeli",
+                    @"italy",
+                    @"japanese",
+                    @"jasmine",
+                    @"jewish",
+                    @"king",
+                    @"korea",
+                    @"kosher",
+                    @"kitchen",
+                    @"krung",
+                    @"krungthai",
+                    @"larder",
+                    @"latte",
+                    @"lettuce",
+                    @"leaf",
+                    @"lox",
+                    @"lemon",
+                    @"little",
+                    @"lisbon",
+                    @"london",
+                    @"lounge",
+                    @"lunch",
+                    @"lyon",
+                    @"madrid",
+                    @"mangia",
+                    @"marseille",
+                    @"mcdonald",
+                    @"mekong",
+                    @"mexican",
+                    @"mexico",
+                    @"moroccan",
+                    @"morocco",
+                    @"muenchen",
+                    @"munich",
+                    @"mumbai",
+                    @"naan",
+                    @"noodle",
+                    @"nouveau",
+                    @"nouvelle",
+                    @"orchid",
+                    @"paneria",
+                    @"pantry",
+                    @"papaya",
+                    @"papa",
+                    @"paris",
+                    @"pakistani",
+                    @"pasta",
+                    @"patisserie",
+                    @"pearl",
+                    @"peet",
+                    @"pepper",
+                    @"persia",
+                    @"pho",
+                    @"pizza",
+                    @"pizzeria",
+                    @"portugal",
+                    @"portuguese",
+                    @"queen",
+                    @"restaurant",
+                    @"rice",
+                    @"ristorante",
+                    @"roma",
+                    @"royal",
+                    @"salad",
+                    @"sandwich",
+                    @"seafood",
+                    @"seoul",
+                    @"shah",
+                    @"siam",
+                    @"sicily",
+                    @"sicilian",
+                    @"soup",
+                    @"spaghetti",
+                    @"spanish",
+                    @"spice",
+                    @"sri lanka",
+                    @"starbucks",
+                    @"steak",
+                    @"steakhouse",
+                    @"sugar",
+                    @"sushi",
+                    @"syrian",
+                    @"taco",
+                    @"tapas",
+                    @"taqueria",
+                    @"taste",
+                    @"tavern",
+                    @"taverna",
+                    @"tea",
+                    @"thai",
+                    @"thailand",
+                    @"turkey",
+                    @"turkish",
+                    @"typhoon",
+                    @"vegan",
+                    @"vegetarian",
+                    @"veggie",
+                    @"vieja",
+                    @"viejo",
+                    @"vielle",
+                    @"vieux",
+                    @"viet",
+                    @"vietnam",
+                    @"vietnamese",
+                    @"village",
+                    @"vin",
+                    @"vino",
+                    @"waffle",
+                    @"wasabi",
+                    @"winery",
+                    @"wiener",
+                    @"wok",
+                    @"wraps",
+                    @"zuppa",
+
+                    ];
 }
 
 - (void)clearResultsTables
@@ -453,6 +675,25 @@ typedef enum: char {
     [self.tableAutoComplete reloadData];
 }
 
+- (NSMutableArray*)doKeywordLookup: (NSString*)expression
+{
+    if  (!keywordsArray) {
+        [self setUpKeywordsArray];
+    }
+    NSMutableArray*array= [NSMutableArray new];
+    int  counter= 0;
+    for (NSString* string  in  keywordsArray) {
+        if ( [string  containsString:expression]) {
+            [ array addObject: [NSString  stringWithFormat: @"#%@", string]];
+            counter ++;
+            if  (counter ==5 ) {
+                break;
+            }
+        }
+    }
+    return  array;
+}
+
 //------------------------------------------------------------------------------
 // Name:    loadAutoComplete
 // Purpose:
@@ -463,7 +704,18 @@ typedef enum: char {
     self.doingSearchNow = NO;
     self.fetchOperation = nil;
     
-    self.autoCompleteArray=  results;
+    NSString* searchString= _searchBar.text;
+    NSMutableArray* keywords= [self doKeywordLookup: searchString];
+    
+    NSMutableArray* combinedResults;
+    
+    combinedResults= [[NSMutableArray alloc] initWithArray:  keywords];
+
+    if  (results ) {
+        [combinedResults addObjectsFromArray:  results];
+    }
+    
+    self.autoCompleteArray=  combinedResults;
     [self.tableAutoComplete reloadData];
 
     self.restaurantsArray = nil;
@@ -472,9 +724,44 @@ typedef enum: char {
     self.peopleArray = nil;
     [self.tablePeople reloadData];
     
-    _tablePeople.hidden = YES;
-    _tableRestaurants.hidden= YES;
-    _tableAutoComplete.hidden= NO;
+    [self showAppropriateTable];
+}
+
+- (void)showAppropriateTable
+{
+    switch (_currentFilter) {
+        case FILTER_LISTS:
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden= NO;
+            _tableAutoComplete.hidden= YES;
+            break;
+        case FILTER_PEOPLE:
+            _tablePeople.hidden = NO;
+            _tableRestaurants.hidden= YES;
+            _tableAutoComplete.hidden= YES;
+            break;
+        case FILTER_YOU:
+            _tablePeople.hidden = NO;
+            _tableRestaurants.hidden= YES;
+            _tableAutoComplete.hidden= YES;
+            break;
+        case FILTER_NONE:
+        case FILTER_PLACES:
+            if ( _showingAutoCompleteLookupResults) {
+                
+                _tablePeople.hidden = YES;
+                _tableRestaurants.hidden= YES;
+                _tableAutoComplete.hidden= NO;
+            } else {
+                
+                _tablePeople.hidden = YES;
+                _tableRestaurants.hidden= NO;
+                _tableAutoComplete.hidden= YES;
+            }
+            break;
+    }
+
+    
 }
 
 //------------------------------------------------------------------------------
@@ -492,9 +779,9 @@ typedef enum: char {
     
     self.peopleArray = nil;
     [self.tablePeople reloadData];
+    
+    [self showAppropriateTable];
 
-    _tablePeople.hidden = YES;
-    _tableRestaurants.hidden= NO;
 }
 
 //------------------------------------------------------------------------------
@@ -513,8 +800,7 @@ typedef enum: char {
     self.restaurantsArray = nil;
     [self.tableRestaurants reloadData];
 
-    _tablePeople.hidden = NO;
-    _tableRestaurants.hidden = YES;
+    [self showAppropriateTable];
 }
 
 //------------------------------------------------------------------------------
@@ -527,6 +813,8 @@ typedef enum: char {
     [self.fetchOperation cancel];
     self.fetchOperation = nil;
     self.doingSearchNow = NO;
+    _showingAutoCompleteLookupResults=YES;
+    [self showAppropriateTable];
 }
 
 //------------------------------------------------------------------------------
@@ -535,15 +823,15 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)userPressedCancel:(id)sender
 {
-    [self showSpinner:nil];
+    [self cancelSearch];
+
     _searchBar.text=@"";
     [_searchBar resignFirstResponder];
-    [self.fetchOperation  cancel];
-    self.fetchOperation= nil;
+
     self.restaurantsArray= nil;
     self.peopleArray= nil;
     self.autoCompleteArray= nil;
-    self.doingSearchNow= NO;
+
     [self.tableRestaurants reloadData];
     [self.tablePeople reloadData];
     [self.tableAutoComplete reloadData];
@@ -567,7 +855,7 @@ typedef enum: char {
     // RULE: If there is a search string then redo the current search for the new context.
     if (_searchBar.text.length) {
         [self clearResultsTables];
-        [self doSearch];
+        [self doSearchFor: _searchBar.text];
     }
 }
 
@@ -589,7 +877,7 @@ typedef enum: char {
     // RULE: If there is a search string then redo the current search for the new context.
     if (_searchBar.text.length) {
         [self clearResultsTables];
-        [self doSearch];
+        [self doSearchFor: _searchBar.text];
     }
 }
 
@@ -611,7 +899,7 @@ typedef enum: char {
     // RULE: If there is a search string then redo the current search for the new context.
     if (_searchBar.text.length) {
         [self clearResultsTables];
-        [self doSearch];
+        [self doSearchFor: _searchBar.text];
     }
 }
 
@@ -632,7 +920,7 @@ typedef enum: char {
     // RULE: If there is a search string then redo the current search for the new context.
     if (_searchBar.text.length) {
         [self clearResultsTables];
-        [self doSearch];
+        [self doSearchFor: _searchBar.text];
     }
 }
 
@@ -670,6 +958,15 @@ typedef enum: char {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (tableView ==_tableRestaurants) {
+        if ( !_restaurantsArray.count) {
+            
+            UITableViewCell *cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+            cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            cell.textLabel.text=  @"No results for that search term.";
+            cell.textLabel.textColor=  WHITE;
+            return cell;
+        }
         RestaurantTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
 
@@ -700,7 +997,11 @@ typedef enum: char {
 
         NSInteger row = indexPath.row;
         AutoCompleteObject *object = _autoCompleteArray[row];
-        cell.textLabel.text=  object.desc;
+        if ( [object isKindOfClass:[AutoCompleteObject class ] ]) {
+            cell.textLabel.text=  object.desc;
+        } else {
+            cell.textLabel.text= (NSString*) object;
+        }
         cell.textLabel.textColor= WHITE;
         [cell updateConstraintsIfNeeded];
         return cell;
@@ -726,6 +1027,9 @@ typedef enum: char {
 {
     if  ( tableView==_tableAutoComplete) {
         return kGeomHeightButton;
+    }
+    if ( tableView==_tableRestaurants && !_restaurantsArray.count) {
+        return 44;
     }
     return kGeomHeightHorizontalListRow;
 }
@@ -778,25 +1082,36 @@ typedef enum: char {
             return;
         }
         
-        AutoCompleteObject *object = [_autoCompleteArray objectAtIndex:indexPath.row];
-        NSString *googleID= object.placeIdentifier;
-        OOAPI *api=[[OOAPI alloc] init];
-        __weak SearchVC *weakSelf = self;
-        [api getRestaurantWithID:googleID
-                          source:2
-                         success:^(RestaurantObject *restaurant) {
-                             weakSelf.doingSearchNow=NO;
-
-                             if  (restaurant ) {
-                                 RestaurantVC *vc = [[RestaurantVC  alloc]   init];
-                                 vc.restaurant=restaurant;
-                                 [weakSelf.navigationController pushViewController:vc animated:YES];
-                             }
-                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                             message( @"Can I find that restaurant.");
-                             weakSelf.doingSearchNow=NO;
-                         }];
-        
+        id object = [_autoCompleteArray objectAtIndex:indexPath.row];
+        if ( [object isKindOfClass:[AutoCompleteObject class]]) {
+            AutoCompleteObject *autoCompleteObject= object;
+            NSString *googleID= autoCompleteObject.placeIdentifier;
+            OOAPI *api=[[OOAPI alloc] init];
+            __weak SearchVC *weakSelf = self;
+            [api getRestaurantWithID:googleID
+                              source:2
+                             success:^(RestaurantObject *restaurant) {
+                                 weakSelf.doingSearchNow=NO;
+                                 
+                                 if  (restaurant ) {
+                                     RestaurantVC *vc = [[RestaurantVC  alloc]   init];
+                                     vc.restaurant=restaurant;
+                                     [weakSelf.navigationController pushViewController:vc animated:YES];
+                                 }
+                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                 message( @"Can I find that restaurant.");
+                                 weakSelf.doingSearchNow=NO;
+                             }];
+        } else {
+            NSString *keyword=  (NSString*)object;
+            if  ([keyword hasPrefix: @"#"] ) {
+                keyword= [ keyword stringByReplacingOccurrencesOfString:@"#" withString: @""];
+                _showingAutoCompleteLookupResults= NO;
+                [self showAppropriateTable];
+                [self doSearchFor: keyword];
+                _searchBar.text=keyword;
+            }
+        }
     }
     
 }
@@ -814,6 +1129,10 @@ typedef enum: char {
         return _autoCompleteArray.count;
     }
     else if ( tableView ==_tableRestaurants) {
+        if ( !_restaurantsArray.count) {
+            // This is the cell that tells them there are no data.
+            return 1;
+        }
         return self.restaurantsArray.count;
     }
     else {
