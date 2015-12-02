@@ -596,7 +596,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete"
                                                           style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
-                                                              [self deletePhoto:mio];
+                                                              __weak RestaurantVC *weakSelf = self;
+                                                              ON_MAIN_THREAD(^{
+                                                                [weakSelf deletePhoto:mio];
+                                                              });
+                                                              
                                                           }];
     UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Tag"
                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {

@@ -16,7 +16,7 @@
 @interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate, OptionsVCDelegate>
 
 @property (nonatomic, strong) ListObject *listToAddTo;
-@property (nonatomic,strong) EventObject *eventBeingEdited;
+@property (nonatomic, strong) EventObject *eventBeingEdited;
 
 - (void)getRestaurants;
 

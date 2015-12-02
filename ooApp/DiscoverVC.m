@@ -22,6 +22,7 @@
 #import "OOMapMarker.h"
 #import "OOFilterView.h"
 #import "ListObject.h"
+#import "TagObject.h"
 
 @interface DiscoverVC () <GMSMapViewDelegate>
 
@@ -37,6 +38,8 @@
 @property (nonatomic) BOOL openOnly;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
+@property (nonatomic, strong) GMSMarker *centerMarker;
+@property (nonatomic, strong) NSSet *tags;
 
 @end
 
@@ -58,6 +61,7 @@ static NSString * const ListRowID = @"HLRCell";
         _mapView.delegate = self;
         [_mapView setMinZoom:0 maxZoom:16];
         _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        _centerMarker = [[OOMapMarker alloc] init];
     }
     return self;
 }
@@ -95,7 +99,7 @@ static NSString * const ListRowID = @"HLRCell";
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
     
-    [self setRightNavWithIcon:kFontIconPlay target:self action:@selector(showOptions)];
+    [self setRightNavWithIcon:kFontIconDiscover target:self action:@selector(showOptions)];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
@@ -119,7 +123,9 @@ static NSString * const ListRowID = @"HLRCell";
     }];
 }
 
-- (void)optionsVCDismiss:(OptionsVC *)optionsVC {
+- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags {
+    _tags = [NSSet setWithSet:tags];
+    [self getRestaurants];
     [self dismissViewControllerAnimated:YES completion:^{
         ;
     }];
@@ -319,7 +325,7 @@ static NSString * const ListRowID = @"HLRCell";
     CLLocationCoordinate2D bottomLeftCoord = _mapView.projection.visibleRegion.nearLeft;
     CLLocationCoordinate2D bottomRightCoord = _mapView.projection.visibleRegion.nearRight;
     CLLocationCoordinate2D topLeftCoord = _mapView.projection.visibleRegion.farLeft;
-    CLLocationCoordinate2D topRightCoord = _mapView.projection.visibleRegion.farRight;
+//    CLLocationCoordinate2D topRightCoord = _mapView.projection.visibleRegion.farRight;
 
     CGFloat longitudeDelta = (bottomRightCoord.longitude- bottomLeftCoord.longitude)/2;
     CGFloat lattitudeDelta = (bottomLeftCoord.latitude - topLeftCoord.latitude)/2;
@@ -327,21 +333,19 @@ static NSString * const ListRowID = @"HLRCell";
     CLLocationCoordinate2D center = CLLocationCoordinate2DMake(topLeftCoord.latitude+lattitudeDelta, topLeftCoord.longitude+longitudeDelta);
     CLLocationCoordinate2D topEdge = CLLocationCoordinate2DMake(topLeftCoord.latitude, center.longitude);
 
-//DEBUG math
-    OOMapMarker *centerMarker = [[OOMapMarker alloc] init];
-    centerMarker.position = center;
     UILabel *locationIcon = [[UILabel alloc] init];
-    [locationIcon withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorYellow backgroundColor:kColorClear];
-    centerMarker.icon = [OOMapMarker markerImageWithColor:UIColorRGBA(kColorYellow)];
+    [locationIcon withFont:[UIFont fontWithName:kFontIcons size:20] textColor:kColorBlack backgroundColor:kColorClear];
+    locationIcon.text = kFontIconUserTag;
+    locationIcon.frame = CGRectMake(0, 0, 20, 20);
+    _centerMarker.position = center;
+    _centerMarker.icon = [UIImage imageFromView:locationIcon];
+    _centerMarker.map = _mapView;
     
-    centerMarker.map = _mapView;
-    
-    //
+//DEBUG math
 //    OOMapMarker *topEdgeMarker = [[OOMapMarker alloc] init];
 //    topEdgeMarker.position = topEdge;
 //    topEdgeMarker.map = _mapView;
    
-    
     CLLocation *locationB = [[CLLocation alloc] initWithLatitude:center.latitude longitude:center.longitude];
     CLLocation *locationA = [[CLLocation alloc] initWithLatitude:topEdge.latitude longitude:topEdge.longitude];
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
@@ -361,9 +365,17 @@ static NSString * const ListRowID = @"HLRCell";
             ;
         }];
     } else {
-        NSArray *searchTerms = (_openOnly) ? [TimeUtilities categorySearchTerms:[NSDate date]] : @[@"restaurant", @"bar"];
-        NSLog(@"category: %@", searchTerms);
-        
+        NSMutableArray *searchTerms;
+        if (_tags) {
+            searchTerms = [NSMutableArray array];
+            [_tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+                TagObject *t = (TagObject *)obj;
+                [searchTerms addObject:t.term];
+            }];
+        } else {
+            searchTerms = (_openOnly) ? [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]] : [NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]];
+            NSLog(@"category: %@", searchTerms);
+        }
         _requestOperation = [api getRestaurantsWithKeywords:searchTerms
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""

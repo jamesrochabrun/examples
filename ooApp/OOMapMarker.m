@@ -19,7 +19,7 @@
 }
 
 - (void)highLight:(BOOL)highlight {
-//    self.icon = [GMSMarker markerImageWithColor:((highlight) ? UIColorRGBA(kColorNavyBlue) : UIColorRGBA(kColorRed))];
+    self.icon = [GMSMarker markerImageWithColor:((highlight) ? UIColorRGBA(kColorNavyBlue) : UIColorRGBA(kColorRed))];
 }
 
 - (BOOL)isEqual:(OOMapMarker *)object {
