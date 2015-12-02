@@ -1,5 +1,5 @@
 //
-//  CreateUsernameVC.m
+//  CreateUsernameVC.m O3
 //  ooApp
 //
 //  Created by Zack Smith on 9/23/15.
@@ -73,7 +73,7 @@
     [self.view  addSubview: _scrollView ];
     
     self.imageViewBackground= makeImageView( self.scrollView,  @"Gradient Background.png");
-    self.imageViewIcon= makeImageView( self.view,  @"No-Profile_Image(circled).png");
+    self.imageViewIcon= makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
     
     self.buttonSignUp= makeButton( _scrollView, LOCAL(@"Create User") , kGeomFontSizeHeader,
                                   WHITE, CLEAR, self,
@@ -81,6 +81,8 @@
                                   .5);
     _buttonSignUp.layer.borderColor=GRAY.CGColor;
     
+    removeRightButton(self.navigationItem);
+
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
     _fieldUsername.backgroundColor= WHITE;
@@ -91,7 +93,7 @@
     _fieldUsername.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     self.labelUsernameTaken= makeLabel(_scrollView,LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
-    self.labelUsernameTaken.textColor= RED;
+    self.labelUsernameTaken.textColor= YELLOW;
     _labelUsernameTaken.hidden= YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
@@ -111,21 +113,20 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString* emailAddressString= userInfo.email;
-    __weak CreateUsernameVC *weakSelf= self;
-    
-    [OOAPI fetchSampleUsernamesFor:emailAddressString
-                           success:^(NSArray *names) {
-                               NSLog  (@"SERVER PROVIDED SAMPLE USERNAMES:  %@",names);
-                               [weakSelf.arrayOfSuggestions removeAllObjects];
-                               for (NSString* string  in  names) {
-                                   [weakSelf.arrayOfSuggestions addObject: string];
-                               }
-                               [weakSelf performSelectorOnMainThread:@selector(refreshTable) withObject:nil waitUntilDone:NO ];
-                           } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                               NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
-                           }];
+//    UserObject* userInfo= [Settings sharedInstance].userObject;
+//    NSString* emailAddressString= userInfo.email;
+//    __weak CreateUsernameVC *weakSelf= self;
+//    [OOAPI fetchSampleUsernamesFor:emailAddressString
+//                           success:^(NSArray *names) {
+//                               NSLog  (@"SERVER PROVIDED SAMPLE USERNAMES:  %@",names);
+//                               [weakSelf.arrayOfSuggestions removeAllObjects];
+//                               for (NSString* string  in  names) {
+//                                   [weakSelf.arrayOfSuggestions addObject: string];
+//                               }
+//                               [weakSelf performSelectorOnMainThread:@selector(refreshTable) withObject:nil waitUntilDone:NO ];
+//                           } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+//                               NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
+//                           }];
 }
 
 - (void)refreshTable
@@ -233,7 +234,7 @@
     NSUInteger userid= userInfo.userID;
     
     NSString *requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
-                   kOOURL, (unsigned long)userid];
+                   [OOAPI URL], (unsigned long)userid];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
 
@@ -273,8 +274,10 @@
 
                                          }
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                             NSLog (@"PUT OF USERNAME FAILED %@",error);
-                                             [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
+                                             NSInteger statusCode= operation.response.statusCode;
+                                             NSLog (@"PUT OF USERNAME FAILED %@ w/%ld",error,statusCode);
+                                             if (statusCode==403)
+                                                 [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
 
                                          }     ];
 }
@@ -314,7 +317,12 @@
     UserObject* userInfo= [Settings sharedInstance].userObject;
     [APP.diagnosticLogString appendFormat: @"Username set to %@" ,userInfo.username];
 
-    [self performSegueWithIdentifier:@"gotoDiscoverFromCreateUsername" sender:self];
+    @try {
+        [self performSegueWithIdentifier:@"gotoDiscoverFromCreateUsername" sender:self];
+    }
+    @catch (NSException *exception) {
+        NSLog (@"CANNOT GO TO DISCOVER BY THAT ROUTE");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -373,12 +381,17 @@
     [self.labelMessage sizeToFit ];
     float heightForText= _labelMessage.bounds.size.height;
     
-    const float spacer=kGeomSpaceInter;
+    float spacer=kGeomSpaceInter;
+    if (IS_IPAD) {
+        spacer=40;
+    }
     
-    float imageSize= 240;
+    float imageSize= kGeomCreateUsernameCentralIconSize;
 
     float totalHeightNeeded= heightForText+imageSize +3*kGeomHeightButton;
     totalHeightNeeded += 3*spacer;
+    if (!IS_IPHONE4)
+        totalHeightNeeded +=kGeomHeightButton;
     
     float y= (h-totalHeightNeeded)/2;
 
@@ -393,6 +406,10 @@
     
     _labelUsernameTaken.frame=CGRectMake (0,y,w,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;
+    
+    if (!IS_IPHONE4) {
+        y +=kGeomHeightButton; // NOTE: There is no room for the extra gap on the iPhone 4.
+    }
     
     _buttonSignUp.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;

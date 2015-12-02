@@ -16,8 +16,9 @@
 NSString *const kNotificationLocationBecameAvailable = @"notificationLocationAvailable";
 NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationUnavailable";
 
-//NSString *const kOOURL = @"www.oomamiapp.com/api/v1";
-NSString *const kOOURL = @"stage.oomamiapp.com/api/v1";
+NSString *const kOOURLStage = @"stage.oomamiapp.com/api/v1";
+NSString *const kOOURLProduction = @"www.oomamiapp.com/api/v1";
+
 //NSString *const kOOURL = @"localhost:3000/api/v1";
 NSString *const kHTTPProtocol = @"https";
 
@@ -37,6 +38,11 @@ void message2 (NSString *str, NSString*string)
                                                     delegate: nil
                                            cancelButtonTitle: @"OK" otherButtonTitles: nil ];
     [alert show];
+}
+
+NSString *concatenateStrings(NSString*a,NSString*b)
+{
+    return [NSString  stringWithFormat: @"%@%@",a,b];
 }
 
 NSString *getDateString()
@@ -556,6 +562,14 @@ double parseNumberOrNullFromServer (id object)
     return 0;
 }
 
+NSArray* parseArrayOrNullFromServer (id object)
+{
+    if  (object && [ object isKindOfClass:[NSArray class]]) {
+        return  (NSArray*)object;
+    }
+    return nil;
+}
+
 NSString* parseStringOrNullFromServer (id object)
 {
     if  (object && [ object isKindOfClass:[NSString class]]) {
@@ -689,6 +703,18 @@ unsigned long msTime (void)
 	gettimeofday (&t, NULL);
 	unsigned long ms = (t.tv_sec  * 1000) + (t.tv_usec / 1000);
 	return ms;
+}
+
+void removeRightButton (UINavigationItem*item)
+{
+    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
+    bbi.customView = moreButton;
+    [moreButton setTitleColor:CLEAR forState:UIControlStateNormal];
+    item.rightBarButtonItems = @[bbi];
 }
 
 void ANALYTICS_INIT(void)

@@ -16,6 +16,7 @@
 #import "VoteObject.h"
 #import "FeedObject.h"
 #import "TagObject.h"
+#import "AutoCompleteObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -31,6 +32,9 @@ NSString *const kKeyTagIDs = @"tag_ids";
 @end
 
 @implementation OOAPI
+
+static NSArray*autoCompleteWhiteList= nil;
+static NSArray*autoCompleteBlackList= nil;
 
 - (id)init {
     if (self = [super init]) {
@@ -96,7 +100,8 @@ NSString *const kKeyTagIDs = @"tag_ids";
 {
     if (!restaurantId) return nil;
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@?source=%lu", kHTTPProtocol, [self ooURL], restaurantId,( unsigned long) source];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@?source=%lu", kHTTPProtocol, [self ooURL],
+                           restaurantId,( unsigned long) source];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -250,14 +255,72 @@ NSString *const kKeyTagIDs = @"tag_ids";
     }];
 }
 
++ (AFHTTPRequestOperation *) getAutoCompleteDataForString: (NSString*)string
+                                                 location: (CLLocationCoordinate2D)location
+                                                  success:(void (^)(NSArray *results))success
+                                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    [self setUpAutoCompleteLists];
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/autocomplete?input=%@&latitude=%g&longitude=%g",
+                           kHTTPProtocol,
+                           [OOAPI URL],
+                           string,
+                           ( float) location.latitude, ( float) location.longitude];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               NSMutableArray *autoCompleteItems = [NSMutableArray array];
+               for (id dict in responseObject) {
+                   NSString *desc= dict[@"description"];
+                   int include=0;
+                   NSArray *chunks= [[desc lowercaseString] componentsSeparatedByString:@","];
+                   if  (chunks.count ) {
+                       NSArray *words= [[chunks[0] lowercaseString] componentsSeparatedByString:@" "];
+                       for (NSString* string  in  words) {
+                           if ( [ autoCompleteWhiteList containsObject: string]) {
+                               include= 1;
+                               break;
+                           }
+                       }
+                       if  (! include ) {
+                           for (NSString* string  in  words) {
+                               if ( [ autoCompleteBlackList containsObject: string]) {
+                                   include= -1;
+                                   break;
+                               }
+                           }
+                       }
+                       
+                       if  (include !=  -1 ) {
+                           AutoCompleteObject *item = [AutoCompleteObject autoCompleteObjectFromDictionary: dict];
+                           if (item) {
+                               NSLog(@"parsed auto complete item: %@", item.desc);
+                               [autoCompleteItems addObject: item];
+                           }
+                       }
+                   }
+               }
+               success(autoCompleteItems);
+           }
+           failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               NSLog(@"Error: %@", error);
+               failure(operation, error);
+           }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getFeedItems
+// Purpose:
+//------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)getFeedItemsWithSuccess:(void (^)(NSArray *feedItems))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     UserObject *userInfo = [Settings sharedInstance].userObject;
     NSUInteger userID = userInfo.userID;
-    
-    userID=1;//For testing
-    
+        
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/feed", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -268,7 +331,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
                for (id dict in responseObject) {
                    FeedObject *item = [FeedObject feedObjectFromDictionary:dict];
                    if (item) {
-                       NSLog(@"parsed feed item: %@", item.message);
+                       NSLog(@"parsed feed item: %@", item.verb);
                        [feedItems addObject: item];
                    }
                }
@@ -1993,7 +2056,226 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (NSString *) URL {
-    // XX If not I want hello are you yeah that sounds good cool thanks Sia!using staging server, use production URL.
-    return kOOURL;
+    if ( APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
 }
+
++ (void)setUpAutoCompleteLists
+{
+    if  (autoCompleteWhiteList ) {
+        return;
+    }
+    autoCompleteWhiteList=  @[
+                              @"bread",
+                              @"soup",
+                              @"breads",
+                              @"soups",
+                              @"cafe",
+                              @"café",
+                              @"caffe",
+                              @"caffè",
+                              @"coffee",
+                              @"deli",
+                              @"lunch",
+                              @"dinner",
+                              @"delicatessen",
+                              @"food",
+                              @"foods",
+                              @"restaurant",
+                              @"bistro",
+                              @"bar",
+                              @"grill",
+                              @"grullense",
+                              @"carniceria",
+                              @"casita",
+                              @"eats",
+                              @"mangia",
+                              @"ristorante",
+                              @"chez",
+                              @"burrito",
+                              @"burritos",
+                              @"chipotle",
+                              @"taco",
+                              @"tacos",
+                              @"taqueria",
+                              @"chaat",
+                              @"sushi",
+                              @"dining",
+                              @"cantina",
+                              @"tavern",
+                              @"salad",
+                              @"salads",
+                              @"arby's",
+                              @"mcdonald's",
+                              @"cheese",
+                              @"paneria",
+                              @"kitchen",
+                              @"flavors",
+                              @"vegan",
+                              @"vegetarian",
+                              @"patisserie",
+                              @"fromagerie",
+                              @"charcuterie",
+                              @"brasserie",
+                              @"hofbrau",
+                              @"essen",
+                              @"noodle",
+                              @"pasta",
+                              @"buca",
+                              @"bouche",
+                              @"curry",
+                              @"rice",
+                              @"cream",
+                              @"spaghetti",
+                              @"larder",
+                              @"pantry",
+                              @"fruit",
+                              @"donut",
+                              @"dough",
+                              @"doughnut",
+                              @"doughnuts",
+                              @"steak",
+                              @"steakhouse",
+                              @"fried",
+                              @"chicken",
+                              @"cuisine",
+                              @"seafood",
+                              @"fish",
+                              @"wraps",
+                              @"creamery",
+                              @"pizza",
+                              @"winery",
+                              @"bakery",
+                              @"tea",
+                              @"pho",
+                              @"lounge",
+                              @"sandwich",
+                              @"sandwiches",
+                              @"pizzeria",
+                              @"sushirrito",
+                              @"starbucks",
+                              @"peet's",
+                              @"85c",
+                              @"applebee's",
+                              @"hooters",
+                              @"waffle",
+                              @"foodbag"
+                              ];
+    autoCompleteBlackList=  @[
+                              @"supermarket",
+                              @"fry's",
+                              @"twitter",
+                              @"hotel",
+                              @"bicycle",
+                              @"group",
+                              @"paintball",
+                              @"bowling",
+                              @"tennis",
+                              @"atm",
+                              @"federal",
+                              @"martial",
+                              @"swim",
+                              @"swimming",
+                              @"museum",
+                              @"bank",
+                              @"massage",
+                              @"gamespot",
+                              @"games",
+                              @"tutors",
+                              @"hardware",
+                              @"b&b",
+                              @"auberge",
+                              @"electric",
+                              @"electronic",
+                              @"electronics",
+                              @"investments",
+                              @"barber",
+                              @"barbers",
+                              @"ymca",
+                              @"university",
+                              @"college",
+                              @"villa",
+                              @"computers",
+                              @"automotive",
+                              @"theater",
+                              @"theatre",
+                              @"shopping",
+                              @"motorcycle",
+                              @"motorcycles",
+                              @"cement",
+                              @"amphitheater",
+                              @"attorneys",
+                              @"school",
+                              @"hospital",
+                              @"clinic",
+                              @"law",
+                              @"dentist",
+                              @"dental",
+                              @"investigations",
+                              @"hair",
+                              @"nails",
+                              @"google",
+                              @"consulting",
+                              @"contractors",
+                              @"adult",
+                              @"travel",
+                              @"gym",
+                              @"trader",
+                              @"voyages",
+                              @"toys",
+                              @"buy",
+                              @"taxidermist",
+                              @"office",
+                              @"sport",
+                              @"sports",
+                              @"store",
+                              @"parking",
+                              @"park",
+                              @"garage",
+                              @"repair",
+                              @"archery",
+                              @"academy",
+                              @"pool",
+                              @"rink",
+                              @"hostel",
+                              @"tech",
+                              @"skateboard",
+                              @"manufacturing",
+                              @"aaa",
+                              @"amc",
+                              @"cinema",
+                              @"cinemas",
+                              @"aquarium",
+                              @"bungee",
+                              @"airport",
+                              @"shooting",
+                              @"guns",
+                              @"laser",
+                              @"veterinarian",
+                              @"cars",
+                              @"movie",
+                              @"moving",
+                              @"relocation",
+                              @"apartments",
+                              @"alcoholics",
+                              @"parenthood",
+                              @"daycare",
+                              @"recovery",
+                              @"books",
+                              @"magazine",
+                              @"credit",
+                              @"emergency",
+                              @"paycheck",
+                              @"psychologist",
+                              @"psychotherapy",
+                              @"abercrombie",
+                              @"police",
+                              @"detention",
+                              @"prison",
+                              ];
+}
+
 @end

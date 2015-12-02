@@ -29,6 +29,11 @@ NSString *const kKeyRestaurantHours = @"hours";
 NSString *const kKeyRestaurantCuisine = @"cuisine";
 NSString *const kKeyRestaurantMobileMenuURL = @"mobile_menu_url";
 
+BOOL isRestaurantObject (id  object)
+{
+    return [ object isKindOfClass:[RestaurantObject  class]];
+}
+
 @implementation RestaurantObject
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict {

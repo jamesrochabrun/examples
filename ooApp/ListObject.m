@@ -16,6 +16,11 @@ NSString *const kKeyListType = @"type";
 NSString *const kKeyListMediaItem = @"media_item";
 NSString *const kKeyListNumRestaurants = @"num_restaurants";
 
+BOOL isListObject (id  object)
+{
+    return [ object isKindOfClass:[ListObject  class]];
+}
+
 @implementation ListObject
 
 -(instancetype)init {

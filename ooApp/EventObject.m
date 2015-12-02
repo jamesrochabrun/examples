@@ -37,6 +37,11 @@ NSString *const kKeyEventNumberOfVenues=  @"num_restaurants";
 NSString *const kKeyEventEventMediaItem = @"media_item";
 NSString *const kKeyEventAdministrators=  @"admin_ids";
 
+BOOL isEventObject (id  object)
+{
+    return [ object isKindOfClass:[EventObject  class]];
+}
+
 @implementation EventObject
 
 - (instancetype)init

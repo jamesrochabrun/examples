@@ -27,6 +27,9 @@
 @property (nonatomic,strong)  UIButton* buttonUploadHugePhoto;
 @property (nonatomic,strong)  UIButton* buttonTakePhoto;
 @property (nonatomic,strong)  UIButton* buttonCreateUsername;
+@property (nonatomic,strong)  UISwitch* switchUsingStage;
+@property (nonatomic,strong)  UILabel* labelUsingStage;
+
 @property (nonatomic,strong)  UITextView* textviewDiagnosticLog;
 @property (nonatomic,strong)   UIImageView* ivPhoto;
 @property (nonatomic,strong)   UIImage* hugeImage;
@@ -86,7 +89,15 @@
     
     radius= [[Settings sharedInstance] searchRadius] / 1000;
     radius*= 2;
-
+    
+    self.switchUsingStage=  [UISwitch new];
+    [ self.view addSubview: _switchUsingStage];
+    _switchUsingStage.on= APP.usingStagingServer;
+    self.labelUsingStage=  makeLabel( self.view,  @"USE\rSTAGE", kGeomFontSizeHeader);
+    _labelUsingStage.textColor= WHITE;
+    _labelUsingStage.textAlignment= NSTextAlignmentRight;
+    [_switchUsingStage addTarget:self action:@selector(stageValueChanged:)  forControlEvents:UIControlEventValueChanged];
+    
     _buttonSearchRadius= makeButton(self.view, [NSString stringWithFormat:@"%dkM RADIUS", radius] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doSearchRadius:), 1);
     _buttonSearchRadius.titleLabel.numberOfLines= 0;
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
@@ -95,7 +106,7 @@
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonCreateUsername= makeButton(self.view,  @"CREATE NAME", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doCreateUsername:), 1);
+    self.buttonCreateUsername= makeButton(self.view,  @"USER NAME", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doCreateUsername:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
@@ -121,6 +132,21 @@
 {
     [super viewDidAppear:animated];
     
+    [self loadTextFieldAndScrollToBottom];
+}
+
+- (void)stageValueChanged: (id) sender
+{
+    APP.usingStagingServer= _switchUsingStage.on;
+    NSUserDefaults *ud=[NSUserDefaults standardUserDefaults];
+    [ud setBool:APP.usingStagingServer forKey:kUserDefaultsUsingStagingServer];
+    [ud synchronize];
+    
+    if  ( APP.usingStagingServer) {
+        [APP.diagnosticLogString appendString:@"Using stage. You can kill the app now.\r"];
+    } else {
+        [APP.diagnosticLogString appendString:@"Using production. You can kill the app now.\r"];
+    }
     [self loadTextFieldAndScrollToBottom];
 }
 
@@ -308,6 +334,9 @@
     x += buttonWidth+ spacing;
     y= margin;
     _buttonSendLog.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
+    _switchUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    _labelUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     
     _ivPhoto.frame = CGRectMake(0,0,w,_textviewDiagnosticLog.frame.origin.y);

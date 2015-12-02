@@ -68,3 +68,6 @@ extern NSString *const kKeyUserParticipantState;
 - (NSUInteger)hash;
 
 @end
+
+extern BOOL isUserObject (id  object);
+

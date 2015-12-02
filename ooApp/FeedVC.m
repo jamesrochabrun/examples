@@ -13,18 +13,27 @@
 #import "AppDelegate.h"
 #import "TTTAttributedLabel.h"
 #import "Settings.h"
+#import "OOFilterView.h"
+#import "ProfileVC.h"
+#import "RestaurantVC.h"
 
 //------------------------------------------------------------------------------
 @interface FeedCell()
 @property (nonatomic,strong) FeedObject* feedObject;
 @property (nonatomic,strong)  UIImageView *iconImageView;
-@property (nonatomic,strong)  UILabel* labelHeader;
-//@property (nonatomic,strong)  TTTAttributedLabel* labelSubheader;
-@property (nonatomic,strong)  UILabel* labelSubheader;
+@property (nonatomic,strong)  UILabel* labelVerb;
+//@property (nonatomic,strong) UIButton* buttonObject;
+@property (nonatomic,strong)  UILabel* labelDescription;
 @property (nonatomic,strong) UIImageView* photoImageView;
+@property (nonatomic,strong) UIButton* buttonIcon;
+@property (nonatomic,strong) UIButton* buttonPhotoArea;
+@property (nonatomic,strong) UIButton* buttonSubjectName;
 @property (nonatomic,strong) UIButton* buttonIgnore;
 @property (nonatomic,strong) UIButton* buttonAllow;
-
+@property (nonatomic,strong) UIButton* buttonObjectName;
+@property (nonatomic,strong) AFHTTPRequestOperation *restaurantImageOperation;
+@property (nonatomic,strong) AFHTTPRequestOperation *userImageOperation;
+@property (nonatomic,strong) AFHTTPRequestOperation *userObjectOperation;
 @end
 
 @implementation FeedCell
@@ -33,16 +42,17 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.backgroundColor=BLACK;
+
         self.autoresizesSubviews= NO;
         self.iconImageView= makeImageView( self.contentView, APP.imageForNoProfileSilhouette);
-        _iconImageView.backgroundColor= RED;
-        self.labelHeader= makeLabelLeft(self.contentView, @"", kGeomFontSizeHeader);
-        _labelHeader.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
-        self.labelSubheader= makeLabelLeft(self.contentView, @"", kGeomFontSizeSubheader);
-        
-//        self.labelSubheader=  [[TTTAttributedLabel alloc] initWithFrame: CGRectMake(0, 0, 100, 30)];
-//        [_labelSubheader withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:0 backgroundColor:0xff];
-//        [self.contentView addSubview: _labelSubheader];
+        _iconImageView.backgroundColor= CLEAR;
+        self.labelVerb= makeLabelLeft(self.contentView, @"", kGeomFontSizeSubheader);
+        _labelVerb.textColor= WHITE;
+        _labelVerb.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
+        self.labelDescription= makeLabelLeft(self.contentView, @"?", kGeomFontSizeSubheader);
+        _labelDescription.textColor= WHITE;
+        self.selectionStyle= UITableViewCellSelectionStyleNone;
         
         self.photoImageView=makeImageView( self.contentView, nil);
         self.clipsToBounds= YES;
@@ -50,61 +60,113 @@
         _photoImageView.clipsToBounds= YES;
         _iconImageView.contentMode= UIViewContentModeScaleAspectFill;
         _photoImageView.contentMode= UIViewContentModeScaleAspectFill;
+        
+        self.buttonSubjectName= makeButton(self.contentView, @"", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(userTappedSubject:), 0);
+        _buttonSubjectName.titleLabel.font= [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
+        _buttonSubjectName.titleLabel.textAlignment=NSTextAlignmentLeft;
+        
+        self.buttonIcon= makeButton(self.contentView, nil, 0, CLEAR, CLEAR, self, @selector(userTappedIcon:), 0);
+        self.buttonPhotoArea= makeButton(self.contentView, nil, 0, CLEAR, CLEAR, self, @selector(userTappedPhotos:), 0);
+        
+        self.buttonObjectName=makeButton(self.contentView, @"", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(userTappedObject:), 0);
+        _buttonObjectName.titleLabel.textAlignment=NSTextAlignmentLeft;
     }
     return self;
 }
 
-- (void)provideFeedObject: (FeedObject*)object
+- (void)userTappedIcon: (id) sender
 {
-    self.feedObject= object;
-    
-    NSString* verb= nil;
-    NSString* message= object.message;
-    if  ([message isEqualToString: @"follow"] ) {
-         verb= @"followed";
+    if ( self.feedObject.subjectType==FEED_OBJECT_TYPE_USER) {
+        [self.delegate userTappedOnUser: self.feedObject.subjectID];
     }
-    else if ([message isEqualToString: @"follow"]) {
-        
+}
+
+- (void)userTappedSubject: (id) sender
+{
+    if ( self.feedObject.subjectType==FEED_OBJECT_TYPE_USER) {
+        [self.delegate userTappedOnUser: self.feedObject.subjectID];
+    } else {
+        [self.delegate userTappedOnEvent: self.feedObject.subjectID];
+    }
+}
+
+- (void)userTappedObject: (id) sender
+{
+    switch (self.feedObject.subjectType) {
+        case FEED_OBJECT_TYPE_USER:
+            [self.delegate userTappedOnUser: self.feedObject.subjectID];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)userTappedPhotos: (id) sender
+{
+    [self.delegate userTappedOnRestaurantPhoto:  self.feedObject.objectID];
+}
+
+- (void)provideFeedObject: (FeedObject*)feedItem
+{
+    self.feedObject= feedItem;
+    
+    NSString* verb= feedItem.translatedMessage ?: feedItem.verb;
+    if  ([verb isEqualToString: @"follow"] ) {
+        verb= @"followed";
+        // NOTE: direct object is a person.
+    }
+    else if ([verb isEqualToString: @"update"]) {
+        // NOTE: direct object is an event.
     }
     
-    self.labelHeader.text= [NSString stringWithFormat:  @"@%@ %@",
-                            object.publisherUsername.length ? object.publisherUsername :  @"unknown",
-                            verb ?:  message];
+    if (feedItem.subjectType==FEED_OBJECT_TYPE_USER ) {
+        [self.buttonSubjectName setTitle: feedItem.subjectName.length ? concatenateStrings( @"@",feedItem.subjectName) : @"@unknown"
+                             forState:UIControlStateNormal];
+    } else {
+        [self.buttonSubjectName setTitle: feedItem.subjectName.length ? feedItem.subjectName : @"@unknown event"
+                             forState:UIControlStateNormal];
+    }
     
-    self.labelSubheader.text= [NSString stringWithFormat:  @"%@",
-                               object.parameters.length ? object.parameters :  @"unknown"];
+    self.labelVerb.text= [NSString stringWithFormat:  @"%@",
+                            verb ?:  nil];
+    
+    NSString *objectNameString= feedItem.objectName.length ? feedItem.objectName :  @"unknown";
+    [_buttonObjectName setTitle:objectNameString forState:UIControlStateNormal];
+    
+    self.labelDescription.text=  @"";
 
     NSURLRequest* req= nil;
     __weak FeedCell *weakSelf = self;
-
-    if ( object.loadedImage) {
-        self.photoImageView.image = object.loadedImage;
+    
+    if ( feedItem.loadedImage) {
+        self.photoImageView.image = feedItem.loadedImage;
     }
-    else if  (object.mediaItem.url.length  && (req= [NSURLRequest requestWithURL: [ NSURL URLWithString:object.mediaItem.url]])) {
+    else if  (feedItem.mediaItem.url.length  && (req= [NSURLRequest requestWithURL: [ NSURL URLWithString: feedItem.mediaItem.url]])) {
         
         [self.photoImageView setImageWithURLRequest:req
                                    placeholderImage:nil
                                             success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                                object.loadedImage= image;
+                                                feedItem.loadedImage= image;
                                                 
                                                 ON_MAIN_THREAD(^ {
                                                     [weakSelf.delegate reloadCell: weakSelf.tag ];
                                                 });
                                             } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                                object.mediaItem.url= nil;
+                                                feedItem.mediaItem.url= nil;
                                                 
                                                 ON_MAIN_THREAD(^ {
                                                     [weakSelf.delegate reloadCell: weakSelf.tag ];
                                                 });
                                             }];
     }
-    else if  (object.mediaItem ) {
+    else if  (feedItem.mediaItem ) {
         OOAPI *api = [[OOAPI alloc] init];
-        [api getRestaurantImageWithMediaItem:object.mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
+        self.restaurantImageOperation= [api getRestaurantImageWithMediaItem: feedItem.mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
             [_photoImageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                    placeholderImage:nil
                                             success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                                object.loadedImage= image;
+                                                feedItem.loadedImage= image;
                                                 
                                                 ON_MAIN_THREAD(^ {
                                                     [weakSelf.delegate reloadCell: weakSelf.tag ];
@@ -118,79 +180,98 @@
         }];
     }
     
-    NSUInteger  userid=  object.publisherID;
-    UserObject* currentUser= [Settings sharedInstance].userObject;
-    if  (userid== currentUser.userID) {
-        UIImage* image= [currentUser userProfilePhoto];
-        if ( image) {
-            _iconImageView.image=image;
-        }
-    } else {
-        [OOAPI lookupUserByID:userid
-                      success:^(UserObject *user) {
-                          if  (user.mediaItem ) {
-                              NSString*  urlString=user.mediaItem.url;
-                              [weakSelf.iconImageView setImageWithURL:[NSURL URLWithString:urlString]];
-// XX: 
-                          } else  if ( user.imageIdentifier) {
-                              /* self.requestOperation =*/ [OOAPI getUserImageWithImageID: user.imageIdentifier
-                                                                                 maxWidth:self.frame.size.height
-                                                                                maxHeight:0
-                                                                                  success:^(NSString *link) {
-                                                                                      ON_MAIN_THREAD( ^{
-                                                                                          [weakSelf.iconImageView setImageWithURL:[NSURL URLWithString:link]];
-                                                                                      });
-                                                                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                                      NSLog (@"CANNOT FETCH IMAGE FOR USER w/ ID  %lu", (unsigned long) userid);
-                                                                                  }];
-                              
-                          } else {
-                              NSLog (@"USER %lu HAS NO IMAGE", (unsigned long) userid);
-                          }
-                      }
-                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                          NSLog (@"CANNOT FETCH USER w/ ID  %lu", (unsigned long) userid);
-                      }
-         ];
-        
+    NSUInteger  userid=  feedItem.subjectID;
+    UserObject *currentUser= [Settings sharedInstance].userObject;
+    UIImage *currentUserImage= nil;
+    if (feedItem.subjectID==currentUser.userID  && (currentUserImage= [currentUser userProfilePhoto ])) {
+        self.photoImageView.image = currentUserImage;
+    }
+    else {
+        self.userObjectOperation= [OOAPI lookupUserByID: userid
+                                                success:^(UserObject *user) {
+                                                    if  (user.mediaItem.url ) {
+                                                        NSString*  urlString=user.mediaItem.url;
+                                                        [weakSelf.iconImageView setImageWithURL:[NSURL URLWithString:urlString]];
+                                                    }
+                                                    else if ( user.imageIdentifier) {
+                                                        self.userImageOperation=  [OOAPI getUserImageWithImageID: user.imageIdentifier
+                                                                                                        maxWidth: self.frame.size.height
+                                                                                                       maxHeight:0
+                                                                                                         success:^(NSString *link) {
+                                                                                                             ON_MAIN_THREAD( ^{
+                                                                                                                 [weakSelf.iconImageView setImageWithURL:[NSURL URLWithString:link]];
+                                                                                                             });
+                                                                                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                                                             NSLog (@"CANNOT FETCH IMAGE FOR USER w/ ID  %lu", (unsigned long) userid);
+                                                                                                         }];
+                                                    } else {
+                                                        NSLog (@"USER %lu HAS NO IMAGE", (unsigned long) userid);
+                                                    }
+                                                }
+                                                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                    NSLog (@"CANNOT FETCH USER w/ ID  %lu", (unsigned long) userid);
+                                                }
+                                   ];
     }
 }
 
 - (void)prepareForReuse
 {
+    [self.userObjectOperation  cancel];
+    self.userObjectOperation= nil;
+    
+    [_userImageOperation cancel];
+    self.userImageOperation= nil;
+    
+    [_restaurantImageOperation cancel];
+    self.restaurantImageOperation= nil;
+    
     _iconImageView.image= APP.imageForNoProfileSilhouette;
     _photoImageView.image= nil;
-    _labelHeader.text=nil;
-    _labelSubheader.text=nil;
+    _labelVerb.text=nil;
+    _labelDescription.text=nil;
+    [_buttonSubjectName setTitle:@"" forState:UIControlStateNormal];
+    [_buttonObjectName setTitle:@"" forState:UIControlStateNormal];
 }
 
 - (void)layoutSubviews
 {
     CGFloat h = height(self);
     CGFloat w = width(self);
-    float labelHeight= _labelHeader.intrinsicContentSize.height;
+    float labelHeight= _labelVerb.intrinsicContentSize.height;
     float  margin= kGeomSpaceEdge;
 
     // for testing
     float iconSize= kGeomHeightFeedWithoutImageTableCellHeight-2*margin;
     _iconImageView.frame = CGRectMake(margin,margin,iconSize,iconSize);
+    _buttonIcon.frame = _iconImageView.frame;
     
     float x=  iconSize +2*margin, y=  margin;
-    _labelHeader.frame = CGRectMake(x,y ,w-x,labelHeight);
+    [_buttonSubjectName sizeToFit];
+    float bw= _buttonSubjectName.intrinsicContentSize.width;
+    _buttonSubjectName.frame = CGRectMake(x,y ,bw,labelHeight);
+    _labelVerb.frame = CGRectMake(bw + kGeomSpaceInter +x,y ,w-x,labelHeight);
     y += labelHeight;
-    _labelSubheader.frame = CGRectMake(x,y,w-x,h/2);
-    y += labelHeight;
+    
+    [_buttonObjectName sizeToFit];
+    bw= _buttonObjectName.intrinsicContentSize.width;
+    _buttonObjectName.frame = CGRectMake(x,y,bw,labelHeight);
 
     float pictureHeight= self.feedObject.loadedImage ? h-kGeomHeightFeedWithoutImageTableCellHeight: 0;
     _photoImageView.frame = CGRectMake(0,kGeomHeightFeedWithoutImageTableCellHeight,w,pictureHeight);
+    _buttonPhotoArea.frame=_photoImageView.frame;
     
+    [self.contentView bringSubviewToFront: _buttonIcon];
+    [self.contentView bringSubviewToFront: _buttonPhotoArea];
+
 }
 
 - (void)dealloc
 {
+    self.buttonIcon= nil;
     self.iconImageView= nil;
-    self.labelHeader= nil;
-    self.labelSubheader= nil;
+    self.labelVerb= nil;
+    self.labelDescription= nil;
     self.photoImageView= nil;
     
 }
@@ -199,14 +280,14 @@
 
 //------------------------------------------------------------------------------
 @interface FeedVC ()
-@property (nonatomic,strong) UIView* viewForButtons;
-@property (nonatomic,strong) UIButton* buttonUpdates;
-@property (nonatomic,strong) UIButton* buttonNotifications;
 @property (nonatomic, strong) UITableView *tableViewUpdates;
 @property (nonatomic, strong) UITableView *tableViewNotifications;
 @property (nonatomic, strong) NSMutableOrderedSet *setOfUpdates;
 @property (nonatomic, strong) NSMutableOrderedSet *setOfNotifications;
 @property (nonatomic,assign)  time_t maximumTimestamp;
+@property (nonatomic,strong) OOFilterView *filterView;
+@property (nonatomic,assign) int currentFilter;
+
 @end
 
 static NSString * const FeedCellID = @"FeedCell";
@@ -232,22 +313,12 @@ static NSString * const FeedCellID = @"FeedCell";
     self.setOfUpdates= [NSMutableOrderedSet new];
     self.setOfNotifications= [NSMutableOrderedSet new];
     
-    self.viewForButtons= makeView(self.view, WHITE);
-    
-    self.buttonUpdates= makeButton( self.viewForButtons,  @"Updates",
-                                   kGeomFontSizeHeader,
-                                   YELLOW,  BLACK,
-                                   self, @selector(userPressedUpdates:),
-                                   0);
-    [_buttonUpdates setTitleColor:WHITE forState:UIControlStateSelected];
-    _buttonUpdates.selected= YES;
-    
-    self.buttonNotifications= makeButton( self.viewForButtons,  @"Notifications",
-                                         kGeomFontSizeHeader,
-                                         YELLOW,  BLACK,
-                                         self, @selector(userPressedNotifications:),
-                                         0);
-    [_buttonNotifications setTitleColor:WHITE forState:UIControlStateSelected];
+    self.filterView= [[OOFilterView alloc] init];
+    [ self.view addSubview:_filterView];
+    [_filterView addFilter:LOCAL(@"Updates") target:self selector:@selector(userPressedUpdates:)];
+    [_filterView addFilter:LOCAL(@"Notifications") target:self selector:@selector(userPressedNotifications:)];
+    _currentFilter= 0;
+    [_filterView setCurrent:0];
     
     self.tableViewUpdates = makeTable( self.view,  self);
 //    _tableViewUpdates.translatesAutoresizingMaskIntoConstraints = NO;
@@ -261,57 +332,16 @@ static NSString * const FeedCellID = @"FeedCell";
     _tableViewNotifications.backgroundColor = GRAY;
     [_tableViewNotifications registerClass:[FeedCell class] forCellReuseIdentifier:FeedCellID];
     
-    _tableViewUpdates.opaque= YES;
-    _tableViewNotifications.opaque= YES;
+//    _tableViewUpdates.opaque= YES;
+//    _tableViewNotifications.opaque= YES;
+    _tableViewUpdates.delaysContentTouches= NO;
+    _tableViewNotifications.delaysContentTouches= NO;
+    _tableViewUpdates.showsVerticalScrollIndicator= NO;
+    _tableViewNotifications.showsVerticalScrollIndicator= NO;
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Feed" subHeader:@""];
     self.navTitle = nto;
 }
-
-#if 0
-- (void)updateViewConstraints
-{
-    [super updateViewConstraints];
-    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"overallHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2)};
-    
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableViewUpdates,_tableViewNotifications,
-                                                         _buttonUpdates,_buttonNotifications,
-                                                         _viewForButtons);
-    
-    _tableViewUpdates.userInteractionEnabled= _buttonUpdates.selected;
-    _tableViewUpdates.alpha= _buttonUpdates.selected?1:0;
-    _tableViewNotifications.userInteractionEnabled= !_buttonUpdates.selected;
-    _tableViewNotifications.alpha= _buttonUpdates.selected?0:1;
-    _buttonNotifications.selected= !_buttonUpdates.selected;
-    
-    [self.viewForButtons addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonUpdates][_buttonNotifications(==_buttonUpdates)]|"
-                                                                                options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                                metrics:metrics
-                                                                                  views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewForButtons]|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:metrics
-                                                                        views:views]];
-    
-    if ( _buttonUpdates.selected) {
-        
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_viewForButtons(40)][_tableViewUpdates]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableViewUpdates]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        
-        
-    } else {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_viewForButtons(40)][_tableViewNotifications]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableViewNotifications]|"
-                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                          metrics:metrics
-                                                                            views:views]];
-        
-    }
-}
-#endif
 
 - (void)viewWillLayoutSubviews
 {
@@ -330,40 +360,46 @@ static NSString * const FeedCellID = @"FeedCell";
     CGFloat w = width(self.view);
     CGFloat y = 0;
     
-    _viewForButtons.frame = CGRectMake(kGeomSpaceEdge,y,w-2*kGeomSpaceEdge, kGeomHeightButton);
-    _buttonUpdates.frame = CGRectMake(0,0, (w-2*kGeomSpaceEdge)/2, kGeomHeightButton);
-    _buttonNotifications.frame = CGRectMake(_buttonUpdates.frame.size.width,0, (w-2*kGeomSpaceEdge)/2, kGeomHeightButton);
+    _filterView.frame = CGRectMake(kGeomSpaceEdge,y,w-2*kGeomSpaceEdge, kGeomHeightButton);
     y+=kGeomHeightButton;
     
     _tableViewUpdates.frame = CGRectMake(kGeomSpaceEdge, y, w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
     _tableViewNotifications.frame = CGRectMake(kGeomSpaceEdge, y, w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
+    _tableViewUpdates.backgroundColor=BLACK;
+    _tableViewNotifications.backgroundColor=BLACK;
     
-    _tableViewUpdates.userInteractionEnabled= _buttonUpdates.selected;
-    _tableViewUpdates.alpha= _buttonUpdates.selected?1:0;
-    _tableViewNotifications.userInteractionEnabled= !_buttonUpdates.selected;
-    _tableViewNotifications.alpha= _buttonUpdates.selected?0:1;
+    BOOL firstIsSelected= _currentFilter==0;
+    _tableViewUpdates.userInteractionEnabled= firstIsSelected;
+    _tableViewUpdates.alpha= firstIsSelected?1:0;
+    _tableViewNotifications.userInteractionEnabled= !firstIsSelected;
+    _tableViewNotifications.alpha= firstIsSelected?0:1;
 }
 
 - (void)userPressedUpdates: (id) sender
 {
-    if  ( self.buttonUpdates.selected) {
+    if  (!_currentFilter) {
         return;
     }
-    self.buttonUpdates.selected= YES;
-    self.buttonNotifications.selected= NO;
-    [  self doLayout];
+    
+    [UIView animateWithDuration:.4 animations:^{
+        _currentFilter= 0;
+        [  self doLayout];
+    }];
+    
     [_tableViewUpdates  reloadData];
 }
 
 - (void)userPressedNotifications: (id) sender
 {
-    if  ( !self.buttonUpdates.selected) {
+    if  (_currentFilter) {
         return;
     }
     
-    self.buttonUpdates.selected= NO;
-    self.buttonNotifications.selected= YES;
-    [  self doLayout];
+    [UIView animateWithDuration:.4 animations:^{
+        _currentFilter= 1;
+        [  self doLayout];
+    }];
+    
     [_tableViewNotifications  reloadData];
 }
 
@@ -400,7 +436,7 @@ static NSString * const FeedCellID = @"FeedCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if ( _buttonUpdates.selected) {
+    if (!_currentFilter) {
         return [_setOfUpdates count];
     } else {
         return [_setOfNotifications count];
@@ -415,7 +451,7 @@ static NSString * const FeedCellID = @"FeedCell";
     cell.delegate=  self;
 
     FeedObject*object;
-    if ( _buttonUpdates.selected) {
+    if ( !_currentFilter) {
         object= [self.setOfUpdates  objectAtIndex:row];
     } else {
         object= [self.setOfNotifications  objectAtIndex:row];
@@ -429,7 +465,7 @@ static NSString * const FeedCellID = @"FeedCell";
     NSUInteger  row=  indexPath.row;
     
     FeedObject*object;
-    if ( _buttonUpdates.selected) {
+    if ( !_currentFilter) {
         object= [self.setOfUpdates  objectAtIndex:row];
     } else {
         object= [self.setOfNotifications  objectAtIndex:row];
@@ -447,13 +483,51 @@ static NSString * const FeedCellID = @"FeedCell";
     NSIndexPath* ip = [NSIndexPath indexPathForRow:which inSection:0];
 
     UITableView* table;
-    if ( _buttonUpdates.selected) {
+    if ( !_currentFilter) {
         table= _tableViewUpdates;
     } else {
         table= _tableViewNotifications;
     }
     [table reloadRowsAtIndexPaths: @[ip]
-                                   withRowAnimation:UITableViewRowAnimationAutomatic];
+                 withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void) userTappedOnList:(NSUInteger)listID;
+{
+    NSLog  (@"USER TAPPED ON LIST THAT IS IN FEED");
+}
+
+- (void) userTappedOnUser:(NSUInteger)userid;
+{
+    __weak  FeedVC *weakSelf = self;
+    [OOAPI lookupUserByID: userid
+                  success:^(UserObject *user) {
+                      ProfileVC*vc= [[ProfileVC alloc] init];
+                      vc.userInfo= user;
+                      vc.userID=  user.userID;
+                      [weakSelf.navigationController  pushViewController:vc animated:YES];
+                  }
+                  failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      NSLog (@"CANNOT FETCH USER w/ ID  %lu", (unsigned long) userid);
+                  }
+     ];
+}
+
+- (void) userTappedOnRestaurantPhoto:(NSUInteger)restaurantID;
+{
+    NSLog  (@"USER TAPPED ON PHOTO THAT IS IN FEED");
+
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    RestaurantObject*object= [[RestaurantObject alloc] init];
+     object.name= @"Not in feed yet";
+    object.location= CLLocationCoordinate2DMake(37, -122);
+    vc.restaurant = (RestaurantObject*) object;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void) userTappedOnEvent:(NSUInteger)eventID;
+{
+    NSLog  (@"USER TAPPED ON EVENT THAT IS IN FEED");
 }
 
 - (void)didReceiveMemoryWarning

@@ -21,6 +21,7 @@
 #import "UserTVCell.h"
 #import "ProfileVC.h"
 #import "OOFilterView.h"
+#import "AutoCompleteObject.h"
 
 typedef enum: char {
     FILTER_NONE=  -1,
@@ -32,23 +33,31 @@ typedef enum: char {
 
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
+#define SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER  @"searchAutoCompleteCell"
 
 @interface SearchVC ()
 @property (nonatomic,strong) UISearchBar *searchBar;
 @property (nonatomic,strong) OOFilterView *filterView;
 @property (nonatomic,strong) UIButton *buttonCancel;
+@property (nonatomic,strong) UITableView *tableAutoComplete;
 @property (nonatomic,strong) UITableView *tableRestaurants;
 @property (nonatomic,strong) UITableView *tablePeople;
 @property (nonatomic,assign) FilterType currentFilter;
 @property (nonatomic,strong) NSArray *restaurantsArray;
 @property (nonatomic,strong) NSArray *peopleArray;
-@property (atomic,assign) BOOL doingSearchNow;
+@property (nonatomic,strong) NSArray *autoCompleteArray;
+@property (atomic,assign) BOOL doingSearchNow, doingAutoCompleteLookupNow;
+@property (atomic,assign) BOOL showingAutoCompleteLookupResults;
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
 @property (nonatomic,strong) NSArray *arrayOfFilterNames;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
 @end
 
 @implementation SearchVC
+
+- (void)dealloc
+{
+}
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -71,6 +80,8 @@ typedef enum: char {
                             ];
     
     _currentFilter=FILTER_NONE;
+    
+    self.showingAutoCompleteLookupResults= YES;
     
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
@@ -114,13 +125,22 @@ typedef enum: char {
     [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
     
+    self.tableAutoComplete=makeTable(self.view,self);
+    _tableAutoComplete.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [_tableAutoComplete registerClass:[UITableViewCell class]
+         forCellReuseIdentifier:SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER];
+    _tableAutoComplete.rowHeight= kGeomHeightButton;
+    
     self.activityView=[UIActivityIndicatorView new];
     [self.view addSubview:_activityView];
     _activityView.hidden =  YES;
     [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     
     [self changeFilter:FILTER_PLACES];
-    _tablePeople.separatorStyle = _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableAutoComplete.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
 //------------------------------------------------------------------------------
@@ -174,6 +194,7 @@ typedef enum: char {
 {
     _tableRestaurants.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     _tablePeople.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    _tableAutoComplete.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -188,6 +209,7 @@ typedef enum: char {
     ? kbSize.width : kbSize.height;
     _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
     _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
+    _tableAutoComplete.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -216,6 +238,37 @@ typedef enum: char {
         [_activityView stopAnimating];
     }
     [self.view bringSubviewToFront:_activityView];
+}
+
+- (void)doAutoCompleteLookup
+{
+    if ( self.doingAutoCompleteLookupNow) {
+        return;
+    }
+    self.doingAutoCompleteLookupNow= YES;
+    __weak SearchVC *weakSelf= self;
+    [self showSpinner: @""];
+    
+    NSString*string= _searchBar.text;
+    
+    self.fetchOperation= [OOAPI getAutoCompleteDataForString: (NSString*)string
+                                                    location:[LocationManager sharedInstance].currentUserLocation
+                                                     success:^(NSArray *results) {
+                                                         [weakSelf performSelectorOnMainThread:@selector(loadAutoComplete:)
+                                                                                    withObject:results
+                                                                                 waitUntilDone:NO];
+                                                         weakSelf.doingAutoCompleteLookupNow= NO;
+                                                     }
+                                                     failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                         NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
+                                                         
+                                                         [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
+                                                                                    withObject:nil
+                                                                                 waitUntilDone:NO];
+                                                         weakSelf.doingAutoCompleteLookupNow= NO;
+                                                     }
+                          ];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -266,6 +319,14 @@ typedef enum: char {
         } break;
             
         case  FILTER_PLACES: {
+            if  (self.showingAutoCompleteLookupResults ) {
+                _doingSearchNow=NO;
+                
+                if (_searchBar.text.length>1)
+                    [self doAutoCompleteLookup];
+                return;
+            }
+            
             [self showSpinner: @""];
     
             CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
@@ -340,7 +401,11 @@ typedef enum: char {
         if (_currentFilter == FILTER_PEOPLE ) {
             [self loadPeople:@[]];
         } else {
-            [self loadRestaurants:@[]];
+            if ( self.showingAutoCompleteLookupResults) {
+                [self loadAutoComplete:@[]];
+            } else {
+                [self loadRestaurants:@[]];
+            }
         }
         return;
     }
@@ -349,6 +414,8 @@ typedef enum: char {
         [self cancelSearch];
     }
     [self doSearch];
+    
+    
 }
 
 //------------------------------------------------------------------------------
@@ -360,9 +427,17 @@ typedef enum: char {
     if (_currentFilter == FILTER_PEOPLE ) {
         _tablePeople.hidden = NO;
         _tableRestaurants.hidden = YES;
+        _tableAutoComplete.hidden = YES;
     } else {
-        _tablePeople.hidden = YES;
-        _tableRestaurants.hidden = NO;
+        if ( self.showingAutoCompleteLookupResults) {
+            _tableAutoComplete.hidden = NO;
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden = YES;
+        } else {
+            _tableAutoComplete.hidden = YES;
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden = NO;
+        }
     }
 }
 
@@ -373,6 +448,33 @@ typedef enum: char {
     
     self.peopleArray = nil;
     [self.tablePeople reloadData];
+    
+    self.autoCompleteArray=  nil;
+    [self.tableAutoComplete reloadData];
+}
+
+//------------------------------------------------------------------------------
+// Name:    loadAutoComplete
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)loadAutoComplete: (NSArray*)results
+{
+    [self showSpinner:nil];
+    self.doingSearchNow = NO;
+    self.fetchOperation = nil;
+    
+    self.autoCompleteArray=  results;
+    [self.tableAutoComplete reloadData];
+
+    self.restaurantsArray = nil;
+    [self.tableRestaurants reloadData];
+    
+    self.peopleArray = nil;
+    [self.tablePeople reloadData];
+    
+    _tablePeople.hidden = YES;
+    _tableRestaurants.hidden= YES;
+    _tableAutoComplete.hidden= NO;
 }
 
 //------------------------------------------------------------------------------
@@ -440,9 +542,11 @@ typedef enum: char {
     self.fetchOperation= nil;
     self.restaurantsArray= nil;
     self.peopleArray= nil;
+    self.autoCompleteArray= nil;
     self.doingSearchNow= NO;
     [self.tableRestaurants reloadData];
     [self.tablePeople reloadData];
+    [self.tableAutoComplete reloadData];
 }
 
 //------------------------------------------------------------------------------
@@ -556,6 +660,7 @@ typedef enum: char {
 
     _tableRestaurants.frame = CGRectMake(0, y, w, h-y);
     _tablePeople.frame = CGRectMake(0, y, w, h-y);
+    _tableAutoComplete.frame = CGRectMake(0, y, w, h-y);
 }
 
 //------------------------------------------------------------------------------
@@ -567,9 +672,7 @@ typedef enum: char {
     if (tableView ==_tableRestaurants) {
         RestaurantTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-        if (!cell) {
-            cell= [[RestaurantTVCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER ];
-        }
+
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
             cell.restaurant= _restaurantsArray[row];
@@ -578,17 +681,27 @@ typedef enum: char {
         [cell updateConstraintsIfNeeded];
         return cell;
     }
-    else {
+    else if ( tableView == _tablePeople) {
         UserTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-        if (!cell) {
-            cell = [[UserTVCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER ];
-        }
+
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
             UserObject *user = _peopleArray[row];
             [cell setUser: user];
         }
+        [cell updateConstraintsIfNeeded];
+        return cell;
+    }
+    else {
+        UITableViewCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+
+        NSInteger row = indexPath.row;
+        AutoCompleteObject *object = _autoCompleteArray[row];
+        cell.textLabel.text=  object.desc;
+        cell.textLabel.textColor= WHITE;
         [cell updateConstraintsIfNeeded];
         return cell;
     }
@@ -611,6 +724,9 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if  ( tableView==_tableAutoComplete) {
+        return kGeomHeightButton;
+    }
     return kGeomHeightHorizontalListRow;
 }
 
@@ -622,6 +738,8 @@ typedef enum: char {
 {
     [_searchBar resignFirstResponder];
     
+    [_tableAutoComplete deselectRowAtIndexPath:indexPath animated:YES];
+
     if  (self.doingSearchNow) {
         return;
     }
@@ -641,10 +759,8 @@ typedef enum: char {
         vc.restaurant = ro;
         vc.eventBeingEdited = self.eventBeingEdited;
         [self.navigationController pushViewController:vc animated:YES];
-        
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
-    else {
+    else if ( tableView == _tablePeople) {
         if  (row >= _peopleArray.count ) {
             return;
         }
@@ -657,6 +773,32 @@ typedef enum: char {
         
         [self.navigationController pushViewController:vc animated:YES];
     }
+    else  {
+        if  (row >= _autoCompleteArray.count ) {
+            return;
+        }
+        
+        AutoCompleteObject *object = [_autoCompleteArray objectAtIndex:indexPath.row];
+        NSString *googleID= object.placeIdentifier;
+        OOAPI *api=[[OOAPI alloc] init];
+        __weak SearchVC *weakSelf = self;
+        [api getRestaurantWithID:googleID
+                          source:2
+                         success:^(RestaurantObject *restaurant) {
+                             weakSelf.doingSearchNow=NO;
+
+                             if  (restaurant ) {
+                                 RestaurantVC *vc = [[RestaurantVC  alloc]   init];
+                                 vc.restaurant=restaurant;
+                                 [weakSelf.navigationController pushViewController:vc animated:YES];
+                             }
+                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                             message( @"Can I find that restaurant.");
+                             weakSelf.doingSearchNow=NO;
+                         }];
+        
+    }
+    
 }
 
 //------------------------------------------------------------------------------
@@ -668,10 +810,13 @@ typedef enum: char {
     if (self.doingSearchNow) {
         return 0;
     }
-    
-    if ( tableView ==_tableRestaurants) {
+    if  (tableView==_tableAutoComplete ) {
+        return _autoCompleteArray.count;
+    }
+    else if ( tableView ==_tableRestaurants) {
         return self.restaurantsArray.count;
-    }  else {
+    }
+    else {
         return self.peopleArray.count;
     }
 }

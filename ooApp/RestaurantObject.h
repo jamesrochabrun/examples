@@ -57,3 +57,5 @@ typedef enum {
 - (NSString *)ratingText;
 
 @end
+
+extern BOOL isRestaurantObject (id  object);

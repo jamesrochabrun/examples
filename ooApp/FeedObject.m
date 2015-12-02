@@ -24,7 +24,8 @@ NSString*const kVerbVotedOnEvent=  @"voted";
 NSString*const kKeyFeedID=  @"feed_id";
 NSString*const kKeyPublisherID=  @"publisher_id";
 NSString*const kKeyPublisherUsername=  @"publisher_username";
-NSString*const kKeyMessage=  @"message";
+NSString*const kKeyObjectID=  @"object_id";
+NSString*const kKeyVerb=  @"message";
 NSString*const kKeyParameters=  @"parameters";
 NSString*const kKeyAction=  @"action";
 NSString*const kKeyPublishedAt=  @"published_at";
@@ -38,18 +39,91 @@ static NSDictionary *translationDictionary= nil;
         return nil;
     }
     
-    FeedObject *object = [[FeedObject alloc] init];
-    object.feedID=parseIntegerOrNullFromServer( dictionary[kKeyFeedID]);
-    object.publisherID = parseIntegerOrNullFromServer( dictionary[kKeyPublisherID]);
-    object.publisherUsername = parseStringOrNullFromServer( dictionary[kKeyPublisherUsername]);
-    object.message = parseStringOrNullFromServer( dictionary[kKeyMessage]);
-    object.parameters = parseStringOrNullFromServer( dictionary[kKeyParameters]);
-    object.action = parseStringOrNullFromServer( dictionary[kKeyAction]);
-    object.publishedAt = parseUTCDateFromServer( dictionary[kKeyPublishedAt ]);
+    FeedObject *feedItem = [[FeedObject alloc] init];
+    feedItem.subjectID = parseIntegerOrNullFromServer( dictionary[kKeyPublisherID]);
+    feedItem.subjectName = parseStringOrNullFromServer( dictionary[kKeyPublisherUsername]);
+    
+    feedItem.objectID = parseIntegerOrNullFromServer( dictionary[kKeyPublisherID]);
+    feedItem.objectName=parseStringOrNullFromServer( dictionary[kKeyParameters]);
+    
+    feedItem.verb = parseStringOrNullFromServer( dictionary[kKeyVerb]);
+    
+//    feedItem.parameters = parseStringOrNullFromServer( dictionary[kKeyParameters]);
+//    feedItem.action = parseStringOrNullFromServer( dictionary[kKeyAction]);
+    feedItem.publishedAt = parseUTCDateFromServer( dictionary[kKeyPublishedAt ]);
     
     NSDictionary* mediaDictionary= dictionary[ kKeyMediaItem];
     if (mediaDictionary ) {
-        object.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
+        feedItem.mediaItem= [MediaItemObject mediaItemFromDict:mediaDictionary];
+    }
+    
+    // Infer from verb what types the subject and object are.
+    // NOTE: These values are used in provideFeedObject.
+    //
+    NSString* verb= feedItem.verb;
+    feedItem.subjectType= FEED_OBJECT_TYPE_USER; // default subject type
+    feedItem.objectType= FEED_OBJECT_TYPE_USER; //  default object type
+    feedItem.isNotification= NO;
+
+    if ([verb isEqualToString: @"followee-updated-list"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_LIST;
+    }
+    else if ([verb isEqualToString: @"posted-photo"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_RESTAURANT;
+    }
+    else if ([verb isEqualToString: @"posted-list"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_LIST;
+    }
+    else if ([verb isEqualToString: @"posted-restaurant"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_RESTAURANT;
+    }
+    else if ([verb isEqualToString: @"followed-users"  ]) {
+    }
+    else if ([verb isEqualToString: @"follow"  ]) {
+        // This verb to be removed
+    }
+    else if ([verb isEqualToString: @"attended-event"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_EVENT;
+    }
+    else if ([verb isEqualToString: @"invited-you"  ]) {
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"voting-ended"  ]) {
+        feedItem.subjectType= FEED_OBJECT_TYPE_EVENT;
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"canceled-event"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_EVENT;
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"voted-on-event"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_EVENT;
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"event-starting"  ]) {
+        feedItem.subjectType= FEED_OBJECT_TYPE_EVENT;
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"added-restaurants-to-list"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_LIST;
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"requested-to-follow-you"  ]) {
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"accepted-follow-request"  ]) {
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"sent-you-restaurants"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_RESTAURANT;
+        feedItem.isNotification= YES;
+    }
+    else if ([verb isEqualToString: @"sent-you-lists"  ]) {
+        feedItem.objectType= FEED_OBJECT_TYPE_LIST;
+        feedItem.isNotification= YES;
+    }
+    else  {
+        NSLog  (@"UNKNOWN VERB  %@",verb);
     }
     
     if  (!translationDictionary) {
@@ -57,28 +131,27 @@ static NSDictionary *translationDictionary= nil;
         dispatch_once(&once,
                       ^{
                           translationDictionary=  @{
-                                                    @"follow": @"followed",
-                                                    @"favorite": @"favorited",
-                                                    @"repost": @"reposted",
-                                                    @"vote": @"voted on your event",
-                                                    @"text": @"sent you a message"
+                                                    @"followed-users": @"followed",
+                                                    @"posted-photo": @"posted photos",
+                                                    @"invited-you": @"invited you to",
+                                                    @"sent-you-lists": @"sent you lists"
+                                                    // XX:  more to come
                                                     };
                           
                       });
     }
     
-    if  ( object.message  ) {
-        object.translatedMessage = translationDictionary [object.message];
-        if  (object.translatedMessage ) {
-            object.translatedMessage = LOCAL(object.translatedMessage);
+    if  ( feedItem.verb  ) {
+        feedItem.translatedMessage = translationDictionary [feedItem.verb];
+        if  (feedItem.translatedMessage ) {
+            feedItem.translatedMessage = LOCAL(feedItem.translatedMessage);
         } else {
-            object.translatedMessage= object.message;
+            feedItem.translatedMessage= feedItem.verb;
         }
     }
     
-    return object;
+    return feedItem;
 }
-
 
 //
 //Returnable Objects: Restaurants, Lists, Events, Profile, Photo

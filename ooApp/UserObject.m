@@ -36,6 +36,11 @@ NSString *const kKeyUserMediaItem = @"media_item";
     UIImage *profilePhoto;
 }
 
+BOOL isUserObject (id  object)
+{
+    return [ object isKindOfClass:[UserObject  class]];
+}
+
 - (instancetype)init
 {
     self = [super init];

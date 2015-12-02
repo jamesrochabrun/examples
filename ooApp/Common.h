@@ -20,6 +20,7 @@
 #define ON_MAIN_THREAD(BLK) dispatch_async(dispatch_get_main_queue(),BLK)
 #define RUN_AFTER(MS,BLK) {dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW,MS * 1000000);dispatch_after(delayTime, dispatch_get_main_queue(), BLK); }
 #define IS_IPAD ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad )
+#define IS_IPHONE4  ( [UIScreen  mainScreen].bounds.size.height <= 480) 
 
 extern NSString *const kNotificationLocationBecameAvailable;
 extern NSString *const kNotificationLocationBecameUnavailable;
@@ -27,11 +28,13 @@ extern NSString *const kNotificationLocationBecameUnavailable;
 extern void message (NSString *str);
 extern void message2 (NSString *str, NSString*string);
 
-extern NSString *const kOOURL;
+extern NSString *const kOOURLStage;
+extern NSString *const kOOURLProduction;
 extern NSString *const kHTTPProtocol;
 extern NSString *getDateString();
 extern NSString *trimString(NSString* s);
 extern NSString *platformString();
+extern NSString *concatenateStrings(NSString*,NSString*);
 extern unsigned long msTime (void);
 
 extern NSAttributedString* attributedStringOf(NSString*,double fontSize);
@@ -71,6 +74,7 @@ extern NSString* parseStringOrNullFromServer (id object);
 extern double parseNumberOrNullFromServer (id object);
 extern NSInteger parseIntegerOrNullFromServer (id object);
 extern NSUInteger parseUnsignedIntegerOrNullFromServer (id object);
+extern NSArray* parseArrayOrNullFromServer (id object);
 
 extern BOOL isValidEmailAddress (NSString *string);
 
@@ -92,5 +96,7 @@ extern void ANALYTICS_EVENT_UI (NSString*);
 extern void ANALYTICS_EVENT_CLOUD (NSString*);
 extern void ANALYTICS_EVENT_OTHER (NSString*);
 extern void ANALYTICS_FORCE_SYNC ( void);
+
+extern void removeRightButton (UINavigationItem*item);
 
 #endif

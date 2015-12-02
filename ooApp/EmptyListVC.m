@@ -54,14 +54,7 @@
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
-    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
-    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
-    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
-    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
-    bbi.customView = moreButton;
-    [moreButton setTitleColor:CLEAR forState:UIControlStateNormal];
-    self.navigationItem.rightBarButtonItems = @[bbi];
+    removeRightButton(self.navigationItem);
     
     float borderWidth= 0;
     if  ([UIScreen  mainScreen].bounds.size.height  < 481 ) {

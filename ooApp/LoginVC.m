@@ -15,11 +15,12 @@
 #import "OONetworkManager.h"
 #import "NSString+MD5.h"
 #import "CreateUsernameVC.h"
+#import "OOAPI.h"
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
-@property (nonatomic, strong) UIImageView *logo;
+@property (nonatomic, strong) UIImageView *imageViewLogo;
 @property (nonatomic, assign) BOOL wentToDiscover;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
@@ -41,15 +42,17 @@
     
     _wentToDiscover= NO;
     
-    _backgroundImageView = makeImageView(self.view, @"sloganHereMaybe.png");
-    _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
+    _backgroundImageView = makeImageView(self.view, @"LoginBackground.jpg");
+    _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
     _backgroundImageView.clipsToBounds= YES;
     addShadowTo  (_backgroundImageView);
     
-//    _logo = [[UIImageView alloc] init];
-//    _logo.contentMode = UIViewContentModeScaleAspectFit;
-//    _logo.backgroundColor = UIColorRGBA(kColorClear);
-//    _logo.image = [UIImage imageNamed:@"Logo.png"];
+    _imageViewLogo = [[UIImageView alloc] init];
+    _imageViewLogo.contentMode = UIViewContentModeScaleAspectFit;
+    _imageViewLogo.backgroundColor = UIColorRGBA(kColorClear);
+     UIImage*image= [UIImage imageNamed:@"LogoWhite.png"];
+    _imageViewLogo.image = image;
+    addShadowTo(_imageViewLogo);
     
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
     _facebookLoginButton.delegate = self;
@@ -58,7 +61,7 @@
     addShadowTo  (_facebookLoginButton);
 
     [self.view addSubview:_backgroundImageView];
-    [self.view addSubview:_logo];
+    [self.view addSubview:_imageViewLogo];
     [self.view addSubview:_facebookLoginButton];
     
     self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
@@ -82,24 +85,42 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    const float statusBarHeight=  20;
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
-//    float  margin=kGeomSpaceEdge;
-    _backgroundImageView.frame= CGRectMake( 0,  statusBarHeight,w,w);
-    float imageHeight=1.175 * w;
-    float y= imageHeight+ (h - imageHeight)/2 -kGeomHeightButton/2 ;
+
+    float backgroundImageWidth= _backgroundImageView.image.size.width;
+    float backgroundImageHeight= _backgroundImageView.image.size.height;
+    float backgroundAspect= backgroundImageHeight>0 ? backgroundImageWidth/backgroundImageHeight : 1000000;
+    float actualBackgroundImageHeight=w/backgroundAspect;
+    _backgroundImageView.frame= CGRectMake( 0,  0, w, actualBackgroundImageHeight);
+
+    float imageViewLogoWidth= _imageViewLogo.image.size.width;
+    float imageViewLogoHeight= _imageViewLogo.image.size.height;
+    float aspect= imageViewLogoHeight>0 ? imageViewLogoWidth/imageViewLogoHeight : 1000000;
+    imageViewLogoWidth= w*.75;
+    if ( aspect>0) {
+            imageViewLogoHeight= imageViewLogoWidth/aspect;
+    }
+    
+    _backgroundImageView.clipsToBounds= YES;
+
+    _imageViewLogo.frame = CGRectMake((w- imageViewLogoWidth)/2,  (w- imageViewLogoHeight)/2,imageViewLogoWidth, imageViewLogoHeight);
+    
+    float facebookButtonHeight= _facebookLoginButton.frame.size.height;
+    if  ( facebookButtonHeight<1) {
+        facebookButtonHeight=kGeomHeightButton;
+    }
+    
+    float y= actualBackgroundImageHeight+ (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
     const float buttonWidth=  275;
     float x=  (w-buttonWidth)/2;
-//    _logo.frame= CGRectMake(x, y, kGeomLogoWidth, kGeomLogoHeight);
-//    y += kGeomLogoHeight+ spacing;
-//    x=  (w-kGeomButtonWidth)/2;
-    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
+    
+    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, facebookButtonHeight);
 }
 
 - (void)viewWillLayoutSubviews
 {
-    [super viewWillLayoutSubviews];
+//    [super viewWillLayoutSubviews];
     [self doLayout];
 }
 
@@ -340,7 +361,9 @@
     md5 = [md5 lowercaseString];
     seekingToken= YES;
     
-    requestString = [NSString stringWithFormat:  @"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol, kOOURL, md5,
+    requestString = [NSString stringWithFormat:  @"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol,
+                     [OOAPI URL],
+                     md5,
                      [Settings sharedInstance].uniqueDeviceKey
                      ];
     
@@ -578,7 +601,7 @@
         NSUInteger userid= userInfo.userID;
         
         requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
-                       kOOURL,( unsigned long) userid];
+                       [OOAPI URL],( unsigned long) userid];
         
         requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
 
@@ -610,7 +633,7 @@
     }else {
         
         NSString* requestString=[NSString stringWithFormat: @"%@://%@/users", kHTTPProtocol,
-                                 kOOURL
+                                 [OOAPI URL]
                                  ];
         NSLog (@"requestString  %@",requestString);
 
@@ -658,25 +681,15 @@
     }
 }
 
-- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
+- (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
     ENTRY;
 
-    NSLog (@"loginButtonDidLogOut: USER LOGGED OUT");
+    NSLog (@"loginButtonDidimageViewLogout: USER LOGGED OUT");
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
-
 //------------------------------------------------------------------------------
-// Name:    didCompleteWithResultnil
+// Name:    didCompleteWithResult
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
@@ -695,6 +708,13 @@
              message( string);
          }
      }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    loginButtonDidLogOut
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton{
 }
 
 //------------------------------------------------------------------------------

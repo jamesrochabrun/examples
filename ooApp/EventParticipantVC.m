@@ -735,8 +735,9 @@
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
     
-    self.navigationController.navigationItem.rightBarButtonItem= nil;
-    
+//    self.navigationController.navigationItem.rightBarButtonItem= nil;
+    removeRightButton(self.navigationItem);
+
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= [UIColor lightGrayColor];
