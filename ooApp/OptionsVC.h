@@ -17,7 +17,7 @@
 
 @end
 
-@interface OptionsVC : SubBaseVC
+@interface OptionsVC : BaseVC
 
 @property (nonatomic, weak) id<OptionsVCDelegate> delegate;
 

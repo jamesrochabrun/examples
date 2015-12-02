@@ -102,10 +102,19 @@ static NSString * const ListRowID = @"HLRCell";
 }
 
 - (void)showOptions {
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
     OptionsVC *vc = [[OptionsVC alloc] init];
     vc.delegate = self;
     vc.view.frame = CGRectMake(0, 0, 40, 44);
-    [self.navigationController presentViewController:vc animated:YES completion:^{
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+
+    [self.navigationController presentViewController:nc animated:YES completion:^{
         ;
     }];
 }

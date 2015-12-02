@@ -12,7 +12,6 @@
 @interface OptionsVC ()
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) UIButton *closeButton;
 @end
 
 @implementation OptionsVC
@@ -21,7 +20,7 @@
     [super viewDidLoad];
 
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    _nto = [[NavTitleObject alloc] initWithHeader:@"Options" subHeader:nil];
+    _nto = [[NavTitleObject alloc] initWithHeader:@"Hungry?" subHeader:@"What are you in the mood for?"];
     self.navTitle = _nto;
     
     _tableView = [[UITableView alloc] init];
@@ -29,13 +28,7 @@
     _tableView.backgroundColor = UIColorRGBA(kColorGray);
     [self.view addSubview:_tableView];
     
-    _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_closeButton withText:@"close" fontSize:12 width:100 height:40 backgroundColor:kColorBlue target:self selector:@selector(closeOptions)];
-    _closeButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_closeButton];
-    
-    
-    [self.moreButton addTarget:self action:@selector(closeOptions) forControlEvents:UIControlEventTouchUpInside];
+    [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(closeOptions)];
 }
 
 - (void)updateViewConstraints
@@ -43,12 +36,17 @@
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _closeButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
     
     
 }
