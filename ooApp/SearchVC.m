@@ -75,7 +75,7 @@ typedef enum: char {
                             LOCAL(@"None"),
                             LOCAL(@"Places"),
                             LOCAL(@"People"),
-                            LOCAL(@"Lists"),
+//                            LOCAL(@"Lists"),
                             LOCAL(@"You")
                             ];
     
@@ -108,7 +108,7 @@ typedef enum: char {
     
     self.filterView = [[OOFilterView alloc] init];
     [ self.view addSubview:_filterView];
-    [_filterView addFilter:LOCAL(@"Lists") target:self selector:@selector(doSelectList:)];
+//    [_filterView addFilter:LOCAL(@"Lists") target:self selector:@selector(doSelectList:)];
     [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];
     [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];
     [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];

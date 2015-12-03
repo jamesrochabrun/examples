@@ -46,7 +46,7 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:ListRowID];
     [_tableView registerClass:[ListStripTVCell class] forCellReuseIdentifier:FeaturedRowID];
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"What's New" subHeader:nil];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Hot Lists" subHeader:nil];
     self.navTitle = nto;
         
     _lists = [NSMutableArray array];

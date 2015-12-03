@@ -207,11 +207,18 @@ static NSArray*autoCompleteBlackList= nil;
         return nil;
     } else {
         [keywords enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *s = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
+            NSString *s = (NSString *)obj;
+            NSString *fs;
+            if ([s containsString:@" "]) {
+                fs = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
+            } else {
+                fs = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
+            }
+                
             if ([searchTerms length]) {
                 [searchTerms appendString:@"OR"];
             }
-            [searchTerms appendString:s];
+            [searchTerms appendString:fs];
         }];
     }
     
