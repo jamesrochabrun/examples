@@ -27,7 +27,7 @@ typedef enum: char {
     FILTER_NONE=  -1,
     FILTER_PLACES=  2,
     FILTER_PEOPLE=  1,
-    FILTER_LISTS=  0,
+//    FILTER_LISTS=  0,
     FILTER_YOU=  3,
 } FilterType;
 
@@ -35,7 +35,6 @@ typedef enum: char {
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchRestaurantsCellEmpty"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
-#define SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER  @"searchAutoCompleteCell"
 
 static NSArray *keywordsArray=nil;
 
@@ -44,18 +43,16 @@ static NSArray *keywordsArray=nil;
 @property (nonatomic,strong)  UILabel *labelMessageAboutGoogle;
 @property (nonatomic,strong) OOFilterView *filterView;
 @property (nonatomic,strong) UIButton *buttonCancel;
-@property (nonatomic,strong) UITableView *tableAutoComplete;
 @property (nonatomic,strong) UITableView *tableRestaurants;
 @property (nonatomic,strong) UITableView *tablePeople;
 @property (nonatomic,assign) FilterType currentFilter;
 @property (nonatomic,strong) NSArray *restaurantsArray;
 @property (nonatomic,strong) NSArray *peopleArray;
-@property (nonatomic,strong) NSMutableArray *autoCompleteArray;
-@property (atomic,assign) BOOL doingSearchNow, doingAutoCompleteLookupNow;
-@property (atomic,assign) BOOL showingAutoCompleteLookupResults;
+@property (nonatomic,strong) NSMutableArray *keywordButtonsArray;
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
 @property (nonatomic,strong) NSArray *arrayOfFilterNames;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
+@property (atomic,assign) BOOL doingSearchNow;
 @end
 
 @implementation SearchVC
@@ -85,8 +82,6 @@ static NSArray *keywordsArray=nil;
                             ];
     
     _currentFilter=FILTER_NONE;
-    
-    self.showingAutoCompleteLookupResults= YES;
     
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
@@ -137,12 +132,6 @@ static NSArray *keywordsArray=nil;
     [_tablePeople registerClass:[UITableViewCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY];
     
-    self.tableAutoComplete=makeTable(self.view,self);
-    _tableAutoComplete.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [_tableAutoComplete registerClass:[UITableViewCell class]
-               forCellReuseIdentifier:SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER];
-    _tableAutoComplete.rowHeight= kGeomHeightButton;
-    
     self.activityView=[UIActivityIndicatorView new];
     [self.view addSubview:_activityView];
     _activityView.hidden =  YES;
@@ -152,7 +141,8 @@ static NSArray *keywordsArray=nil;
     
     _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableAutoComplete.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    
 }
 
 //------------------------------------------------------------------------------
@@ -207,7 +197,6 @@ static NSArray *keywordsArray=nil;
 {
     _tableRestaurants.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     _tablePeople.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
-    _tableAutoComplete.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -222,7 +211,6 @@ static NSArray *keywordsArray=nil;
     ? kbSize.width : kbSize.height;
     _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
     _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
-    _tableAutoComplete.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -251,51 +239,6 @@ static NSArray *keywordsArray=nil;
         [_activityView stopAnimating];
     }
     [self.view bringSubviewToFront:_activityView];
-}
-
-- (void)doAutoCompleteLookupWithFetch:(BOOL) needFetch
-{
-    if ( self.doingAutoCompleteLookupNow) {
-        return;
-    }
-    
-    [self showSpinner: @""];
-    
-    if  (!needFetch) {
-        [self loadAutoComplete:  nil ];
-        return;
-    }
-    
-    self.doingAutoCompleteLookupNow= YES;
-    __weak SearchVC *weakSelf= self;
-    
-    NSString*string= _searchBar.text;
-    
-    string = (__bridge NSString *)CFURLCreateStringByAddingPercentEscapes(
-                                                                 NULL,
-                                                                 (CFStringRef) string,
-                                                                 NULL,
-                                                                 (CFStringRef)@"!*'();:@&=+$,/?%#[]",
-                                                                 kCFStringEncodingUTF8 );
-    
-    self.fetchOperation= [OOAPI getAutoCompleteDataForString: (NSString*)string
-                                                    location:[LocationManager sharedInstance].currentUserLocation
-                                                     success:^(NSArray *results) {
-                                                         [weakSelf performSelectorOnMainThread:@selector(loadAutoComplete:)
-                                                                                    withObject: results
-                                                                                 waitUntilDone:NO];
-                                                         weakSelf.doingAutoCompleteLookupNow= NO;
-                                                     }
-                                                     failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                                                         NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
-                                                         
-                                                         [weakSelf performSelectorOnMainThread:@selector(loadAutoComplete:)
-                                                                                    withObject: nil
-                                                                                 waitUntilDone:NO];
-                                                         weakSelf.doingAutoCompleteLookupNow= NO;
-                                                     }
-                          ];
-    
 }
 
 //------------------------------------------------------------------------------
@@ -338,25 +281,15 @@ static NSArray *keywordsArray=nil;
                                   ];
         } break;
             
-        case FILTER_LISTS: {
-            
-        } break;
+//        case FILTER_LISTS: {
+//            
+//        } break;
             
         case FILTER_YOU: {
             
         } break;
             
         case  FILTER_PLACES: {
-            if  (self.showingAutoCompleteLookupResults ) {
-                _doingSearchNow=NO;
-                
-                if (_searchBar.text.length>2)
-                    [self doAutoCompleteLookupWithFetch:YES];
-                else
-                    [self doAutoCompleteLookupWithFetch:NO];
-                
-                return;
-            }
             
             [self showSpinner: @""];
             _doingSearchNow=YES;
@@ -434,7 +367,6 @@ static NSArray *keywordsArray=nil;
             [self loadPeople:@[]];
         } else {
             [self loadRestaurants:@[]];
-            _showingAutoCompleteLookupResults= YES;
             [self showAppropriateTable];
             [self loadAutoComplete: nil];
         }
@@ -678,7 +610,6 @@ static NSArray *keywordsArray=nil;
                     @"wok",
                     @"wraps",
                     @"zuppa",
-                    
                     ];
 }
 
@@ -689,9 +620,6 @@ static NSArray *keywordsArray=nil;
     
     self.peopleArray = nil;
     [self.tablePeople reloadData];
-    
-    self.autoCompleteArray=  nil;
-    [self.tableAutoComplete reloadData];
 }
 
 - (NSMutableArray*)doKeywordLookup: (NSString*)expression
@@ -734,8 +662,8 @@ static NSArray *keywordsArray=nil;
         [combinedResults addObjectsFromArray:  results];
     }
     
-    self.autoCompleteArray=  combinedResults;
-    [self.tableAutoComplete reloadData];
+//    self.autoCompleteArray=  combinedResults;
+//    [self.tableAutoComplete reloadData];
     
     self.restaurantsArray = nil;
     [self.tableRestaurants reloadData];
@@ -749,34 +677,22 @@ static NSArray *keywordsArray=nil;
 - (void)showAppropriateTable
 {
     switch (_currentFilter) {
-        case FILTER_LISTS:
-            _tablePeople.hidden = YES;
-            _tableRestaurants.hidden= NO;
-            _tableAutoComplete.hidden= YES;
-            break;
+//        case FILTER_LISTS:
+//            _tablePeople.hidden = YES;
+//            _tableRestaurants.hidden= NO;
+//            break;
         case FILTER_PEOPLE:
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
-            _tableAutoComplete.hidden= YES;
             break;
         case FILTER_YOU:
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
-            _tableAutoComplete.hidden= YES;
             break;
         case FILTER_NONE:
         case FILTER_PLACES:
-            if ( _showingAutoCompleteLookupResults) {
-                
-                _tablePeople.hidden = YES;
-                _tableRestaurants.hidden= YES;
-                _tableAutoComplete.hidden= NO;
-            } else {
-                
                 _tablePeople.hidden = YES;
                 _tableRestaurants.hidden= NO;
-                _tableAutoComplete.hidden= YES;
-            }
             break;
     }
     
@@ -832,7 +748,6 @@ static NSArray *keywordsArray=nil;
     [self.fetchOperation cancel];
     self.fetchOperation = nil;
     self.doingSearchNow = NO;
-    _showingAutoCompleteLookupResults=YES;
     [self showAppropriateTable];
 }
 
@@ -849,34 +764,32 @@ static NSArray *keywordsArray=nil;
     
     self.restaurantsArray= nil;
     self.peopleArray= nil;
-    self.autoCompleteArray= nil;
     
     [self.tableRestaurants reloadData];
     [self.tablePeople reloadData];
-    [self.tableAutoComplete reloadData];
 }
 
 //------------------------------------------------------------------------------
 // Name:    doSelectList
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectList:(id)sender
-{
-    if (_currentFilter == FILTER_LISTS ) {
-        return;
-    }
-    _currentFilter = FILTER_LISTS;
-    
-    if (self.doingSearchNow) {
-        [self cancelSearch];
-    }
-    
-    // RULE: If there is a search string then redo the current search for the new context.
-    if (_searchBar.text.length) {
-        [self clearResultsTables];
-        [self doSearchFor: _searchBar.text];
-    }
-}
+//- (void)doSelectList:(id)sender
+//{
+//    if (_currentFilter == FILTER_LISTS ) {
+//        return;
+//    }
+//    _currentFilter = FILTER_LISTS;
+//    
+//    if (self.doingSearchNow) {
+//        [self cancelSearch];
+//    }
+//    
+//    // RULE: If there is a search string then redo the current search for the new context.
+//    if (_searchBar.text.length) {
+//        [self clearResultsTables];
+//        [self doSearchFor: _searchBar.text];
+//    }
+//}
 
 //------------------------------------------------------------------------------
 // Name:    doSelectPeople
@@ -974,9 +887,8 @@ static NSArray *keywordsArray=nil;
     float yMessage= h- kGeomHeightGoogleMessage;
     _labelMessageAboutGoogle.frame = CGRectMake(0,yMessage,w, kGeomHeightGoogleMessage);
     
-    _tableRestaurants.frame = CGRectMake(0, y, w, h-yMessage);
-    _tablePeople.frame = CGRectMake(0, y, w, h-yMessage);
-    _tableAutoComplete.frame = CGRectMake(0, y, w, h-yMessage);
+    _tableRestaurants.frame = CGRectMake(0, y, w, yMessage-y);
+    _tablePeople.frame = CGRectMake(0, y, w, yMessage-y);
 }
 
 //------------------------------------------------------------------------------
@@ -999,6 +911,7 @@ static NSArray *keywordsArray=nil;
             cell.textLabel.textColor=  WHITE;
             return cell;
         }
+        
         RestaurantTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         
@@ -1035,22 +948,7 @@ static NSArray *keywordsArray=nil;
         [cell updateConstraintsIfNeeded];
         return cell;
     }
-    else {
-        UITableViewCell *cell;
-        cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        
-        NSInteger row = indexPath.row;
-        AutoCompleteObject *object = _autoCompleteArray[row];
-        if ( [object isKindOfClass:[AutoCompleteObject class ] ]) {
-            cell.textLabel.text=  object.desc;
-        } else {
-            cell.textLabel.text= (NSString*) object;
-        }
-        cell.textLabel.textColor= WHITE;
-        [cell updateConstraintsIfNeeded];
-        return cell;
-    }
+    return nil;
 }
 
 //------------------------------------------------------------------------------
@@ -1070,10 +968,10 @@ static NSArray *keywordsArray=nil;
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if  ( tableView==_tableAutoComplete) {
-        return kGeomHeightButton;
-    }
     if ( tableView==_tableRestaurants && !_restaurantsArray.count) {
+        return 44;
+    }
+    if ( tableView==_tablePeople && !_peopleArray.count) {
         return 44;
     }
     return kGeomHeightHorizontalListRow;
@@ -1086,8 +984,6 @@ static NSArray *keywordsArray=nil;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [_searchBar resignFirstResponder];
-    
-    [_tableAutoComplete deselectRowAtIndexPath:indexPath animated:YES];
     
     if  (self.doingSearchNow) {
         return;
@@ -1122,47 +1018,6 @@ static NSArray *keywordsArray=nil;
         
         [self.navigationController pushViewController:vc animated:YES];
     }
-    else  {
-        if  (row >= _autoCompleteArray.count ) {
-            return;
-        }
-        
-        id object = [_autoCompleteArray objectAtIndex:indexPath.row];
-        if ( [object isKindOfClass:[AutoCompleteObject class]]) {
-            AutoCompleteObject *autoCompleteObject= object;
-            NSString *googleID= autoCompleteObject.placeIdentifier;
-            OOAPI *api=[[OOAPI alloc] init];
-            __weak SearchVC *weakSelf = self;
-            [api getRestaurantWithID:googleID
-                              source:2
-                             success:^(RestaurantObject *restaurant) {
-                                 weakSelf.doingSearchNow=NO;
-                                 
-                                 if  (restaurant ) {
-                                     RestaurantVC *vc = [[RestaurantVC  alloc]   init];
-                                     vc.restaurant=restaurant;
-                                     [weakSelf.navigationController pushViewController:vc animated:YES];
-                                 }
-                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                 message( @"Can I find that restaurant.");
-                                 weakSelf.doingSearchNow=NO;
-                             }];
-        } else {
-            NSString *keyword=  (NSString*)object;
-            if  ([keyword hasPrefix: @"#"] ) {
-                keyword= [ keyword stringByReplacingOccurrencesOfString:@"#" withString: @""];
-                
-                _showingAutoCompleteLookupResults= NO;
-                [self showAppropriateTable];
-                
-                [self doSearchFor: keyword];
-                
-                [self.tableRestaurants reloadData ];
-                
-                _searchBar.text=keyword;
-            }
-        }
-    }
     
 }
 
@@ -1175,10 +1030,8 @@ static NSArray *keywordsArray=nil;
     if (self.doingSearchNow) {
         return 0;
     }
-    if  (tableView==_tableAutoComplete ) {
-        return _autoCompleteArray.count;
-    }
-    else if ( tableView ==_tableRestaurants) {
+    
+    if ( tableView ==_tableRestaurants) {
         if ( !_restaurantsArray.count) {
             // This is the cell that tells them there are no data.
             return 1;

@@ -275,6 +275,9 @@ typedef enum:NSUInteger  {
                                    success:(void (^)(NSArray *tags))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)getAllTagsWithSuccess:(void (^)(NSArray *tags))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 + (AFHTTPRequestOperation *)setTag:(NSUInteger)tagID
                            forUser:(NSUInteger)userID
                            success:(void (^)())success
@@ -288,8 +291,8 @@ typedef enum:NSUInteger  {
 // Auto complete
 
 
-+ (AFHTTPRequestOperation *) getAutoCompleteDataForString: (NSString*)string
-                                                 location: (CLLocationCoordinate2D)location
-                                                  success:(void (^)(NSArray *results))success
-                                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+//+ (AFHTTPRequestOperation *) getAutoCompleteDataForString: (NSString*)string
+//                                                 location: (CLLocationCoordinate2D)location
+//                                                  success:(void (^)(NSArray *results))success
+//                                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 @end

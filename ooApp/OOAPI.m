@@ -33,11 +33,6 @@ NSString *const kKeyTagIDs = @"tag_ids";
 
 @implementation OOAPI
 
-static NSArray*autoCompleteWhiteList= nil;
-static NSArray*autoCompleteBlackList= nil;
-static NSArray* autoCompleteSpecificNonfoodCompanies= nil;
-static NSArray*autoCompleteSpecificFoodCompanies= nil;
-
 - (id)init {
     if (self = [super init]) {
         
@@ -247,7 +242,7 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
                                  kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly]
 //                                 kKeySearchFilter:filterName// Not used by backend.
                                  };
-    
+  
     NSLog(@"search URL = %@", urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -261,18 +256,41 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
         success(restaurants);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSInteger statusCode= operation.response.statusCode;
-        NSLog(@"Error: %@, status code %ld", error, statusCode);
+        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
         failure(operation, error);
     }];
 }
 
++ (AFHTTPRequestOperation *)getAllTagsWithSuccess:(void (^)(NSArray *tags))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/search", kHTTPProtocol, [OOAPI URL]];
+
+    NSLog(@"search URL = %@", urlString);
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+//    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
+//        NSMutableArray *restaurants = [NSMutableArray array];
+//        for (id dict in responseObject) {
+//            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
+//            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+//        }
+//        success(restaurants);
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+//        NSInteger statusCode= operation.response.statusCode;
+//        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
+//        failure(operation, error);
+//    }];
+    return nil;
+}
+
+#if 0
 + (AFHTTPRequestOperation *) getAutoCompleteDataForString: (NSString*)string
                                                  location: (CLLocationCoordinate2D)location
                                                   success:(void (^)(NSArray *results))success
                                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    [self setUpAutoCompleteLists];
-    
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/autocomplete?input=%@&latitude=%g&longitude=%g",
                            kHTTPProtocol,
                            [OOAPI URL],
@@ -332,6 +350,7 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
                failure(operation, error);
            }];
 }
+#endif
 
 //------------------------------------------------------------------------------
 // Name:    getFeedItems
@@ -2085,246 +2104,5 @@ static NSArray*autoCompleteSpecificFoodCompanies= nil;
     }
 }
 
-+ (void)setUpAutoCompleteLists
-{
-    if  (autoCompleteWhiteList ) {
-        return;
-    }
-    autoCompleteWhiteList=  @[
-                              @"bread",
-                              @"soup",
-                              @"breads",
-                              @"soups",
-                              @"cafe",
-                              @"café",
-                              @"caffe",
-                              @"caffè",
-                              @"coffee",
-                              @"deli",
-                              @"lunch",
-                              @"dinner",
-                              @"delicatessen",
-                              @"food",
-                              @"foods",
-                              @"restaurant",
-                              @"bistro",
-                              @"bar",
-                              @"grill",
-                              @"grullense",
-                              @"carniceria",
-                              @"casita",
-                              @"eats",
-                              @"mangia",
-                              @"ristorante",
-                              @"chez",
-                              @"burrito",
-                              @"burritos",
-                              @"chipotle",
-                              @"taco",
-                              @"tacos",
-                              @"taqueria",
-                              @"chaat",
-                              @"sushi",
-                              @"dining",
-                              @"cantina",
-                              @"tavern",
-                              @"salad",
-                              @"salads",
-                              @"arby's",
-                              @"mcdonald's",
-                              @"cheese",
-                              @"paneria",
-                              @"kitchen",
-                              @"flavors",
-                              @"vegan",
-                              @"vegetarian",
-                              @"patisserie",
-                              @"fromagerie",
-                              @"charcuterie",
-                              @"brasserie",
-                              @"hofbrau",
-                              @"essen",
-                              @"noodle",
-                              @"pasta",
-                              @"buca",
-                              @"bouche",
-                              @"curry",
-                              @"rice",
-                              @"cream",
-                              @"spaghetti",
-                              @"larder",
-                              @"pantry",
-                              @"fruit",
-                              @"donut",
-                              @"dough",
-                              @"doughnut",
-                              @"doughnuts",
-                              @"steak",
-                              @"steakhouse",
-                              @"fried",
-                              @"chicken",
-                              @"cuisine",
-                              @"seafood",
-                              @"fish",
-                              @"wraps",
-                              @"creamery",
-                              @"pizza",
-                              @"winery",
-                              @"bakery",
-                              @"tea",
-                              @"pho",
-                              @"pan-asian",
-                              @"lounge",
-                              @"crustacean",
-                              @"crawfish",
-                              @"picnic",
-                              @"sandwich",
-                              @"sandwiches",
-                              @"pizzeria",
-                              @"sushirrito",
-                              @"delices",
-                              @"starbucks",
-                              @"peet's",
-                              @"85c",
-                              @"applebee's",
-                              @"hooters",
-                              @"waffle",
-                              @"foodbag"
-                              ];
-    autoCompleteBlackList=  @[
-                              @"supermarket",
-                              @"fry's",
-                              @"twitter",
-                              @"hotel",
-                              @"bicycle",
-                              @"group",
-                              @"paintball",
-                              @"bowling",
-                              @"tennis",
-                              @"atm",
-                              @"federal",
-                              @"martial",
-                              @"swim",
-                              @"swimming",
-                              @"museum",
-                              @"bank",
-                              @"massage",
-                              @"gamespot",
-                              @"games",
-                              @"tutors",
-                              @"hardware",
-                              @"b&b",
-                              @"auberge",
-                              @"electric",
-                              @"electronic",
-                              @"electronics",
-                              @"investments",
-                              @"barber",
-                              @"barbers",
-                              @"ymca",
-                              @"university",
-                              @"college",
-                              @"villa",
-                              @"computers",
-                              @"automotive",
-                              @"theater",
-                              @"theatre",
-                              @"shopping",
-                              @"motorcycle",
-                              @"motorcycles",
-                              @"cement",
-                              @"amphitheater",
-                              @"attorneys",
-                              @"school",
-                              @"hospital",
-                              @"clinic",
-                              @"law",
-                              @"dentist",
-                              @"dental",
-                              @"investigations",
-                              @"hair",
-                              @"nails",
-                              @"google",
-                              @"consulting",
-                              @"contractors",
-                              @"adult",
-                              @"travel",
-                              @"gym",
-                              @"trader",
-                              @"voyages",
-                              @"toys",
-                              @"buy",
-                              @"taxidermist",
-                              @"office",
-                              @"sport",
-                              @"sports",
-                              @"store",
-                              @"app",
-                              @"derma",
-                              @"botox",
-                              @"phone",
-                              @"phones",
-                              @"surgery",
-                              @"editor",
-                              @"news",
-                              @"newspapers",
-                              @"parking",
-                              @"park",
-                              @"salon",
-                              @"dds",
-                              @"m.d.",
-                              @"garage",
-                              @"photo",
-                              @"photography",
-                              @"graphic",
-                              @"photon",
-                              @"repair",
-                              @"archery",
-                              @"academy",
-                              @"pool",
-                              @"rink",
-                              @"hostel",
-                              @"tech",
-                              @"skateboard",
-                              @"manufacturing",
-                              @"aaa",
-                              @"amc",
-                              @"cinema",
-                              @"cinemas",
-                              @"aquarium",
-                              @"bungee",
-                              @"airport",
-                              @"shooting",
-                              @"guns",
-                              @"laser",
-                              @"veterinarian",
-                              @"cars",
-                              @"movie",
-                              @"moving",
-                              @"relocation",
-                              @"apartments",
-                              @"alcoholics",
-                              @"parenthood",
-                              @"daycare",
-                              @"recovery",
-                              @"books",
-                              @"magazine",
-                              @"credit",
-                              @"emergency",
-                              @"paycheck",
-                              @"psychologist",
-                              @"psychotherapy",
-                              @"abercrombie",
-                              @"police",
-                              @"detention",
-                              @"prison",
-                              ];
-    autoCompleteSpecificFoodCompanies=  @[
-                                             @"banana republic"
-                                             ];
-    autoCompleteSpecificNonfoodCompanies=  @[
-                                             @"banana republic"
-                                             ];
-}
 
 @end
