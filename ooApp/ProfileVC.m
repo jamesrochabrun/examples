@@ -17,6 +17,7 @@
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
+#import "OOUserView.h"
 
 @interface ProfileTableFirstRow ()
 @property (nonatomic, assign) NSInteger userID;
@@ -25,7 +26,8 @@
 @property (nonatomic, assign) ProfileVC *vc;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
-@property (nonatomic, strong) UIImageView *iv;
+@property (nonatomic, strong) OOUserView *userView;
+//@property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UILabel *labelUsername;
@@ -34,6 +36,7 @@
 @property (nonatomic, strong) UIButton *buttonNewListIcon;
 @property (nonatomic, assign) float spaceNeededForFirstCell;
 @property (nonatomic, assign) UINavigationController *navigationController;
+
 @end
 
 static NSString * const ListRowID = @"ListRowCell";
@@ -82,7 +85,11 @@ static NSString * const ListRowID = @"ListRowCell";
             
         }
         
-        self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
+//        self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
+
+        _userView = [[OOUserView alloc] init];
+        _userView.user = u;
+        [self addSubview:_userView];
         
         NSString *username= nil;
         if  (_userInfo.username.length) {
@@ -102,35 +109,35 @@ static NSString * const ListRowID = @"ListRowCell";
         _labelDescription.textColor = UIColorRGBA(kColorWhite);
         _labelRestaurants.textColor = UIColorRGBA(kColorWhite);
         
-        self.iv.layer.borderColor = GRAY.CGColor;
-        self.iv.layer.borderWidth = 1;
-        self.iv.contentMode = UIViewContentModeScaleAspectFit;
+//        self.iv.layer.borderColor = GRAY.CGColor;
+//        self.iv.layer.borderWidth = 1;
+//        self.iv.contentMode = UIViewContentModeScaleAspectFit;
         
         self.backgroundColor = UIColorRGBA(kColorBlack);
         
         UIImage *photoOfSelf= [_userInfo userProfilePhoto];
         
-        if ( _viewingOwnProfile  && photoOfSelf) {
-            _iv.image=  photoOfSelf;
-        } else {
-            // Get this user's image.
-            //
-            if (_userInfo.imageIdentifier && [_userInfo.imageIdentifier length]) {
-                self.requestOperation = [OOAPI getUserImageWithImageID: _userInfo.imageIdentifier
-                                                              maxWidth:self.frame.size.width
-                                                             maxHeight:0 success:^(NSString *link) {
-                                                                 ON_MAIN_THREAD( ^{
-                                                                     [_iv setImageWithURL:[NSURL URLWithString:link]];
-                                                                 });
-                                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                 ;
-                                                             }];
-            } else if (_userInfo.imageURLString) {
-                ON_MAIN_THREAD( ^{
-                    [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
-                });
-            }
-        }
+//        if ( _viewingOwnProfile  && photoOfSelf) {
+//            _iv.image=  photoOfSelf;
+//        } else {
+//            // Get this user's image.
+//            //
+//            if (_userInfo.imageIdentifier && [_userInfo.imageIdentifier length]) {
+//                self.requestOperation = [OOAPI getUserImageWithImageID: _userInfo.imageIdentifier
+//                                                              maxWidth:self.frame.size.width
+//                                                             maxHeight:0 success:^(NSString *link) {
+//                                                                 ON_MAIN_THREAD( ^{
+//                                                                     [_iv setImageWithURL:[NSURL URLWithString:link]];
+//                                                                 });
+//                                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                                                 ;
+//                                                             }];
+//            } else if (_userInfo.imageURLString) {
+//                ON_MAIN_THREAD( ^{
+//                    [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
+//                });
+//            }
+//        }
         
         // Find out if current user is following this user.
         if  (!_viewingOwnProfile) {
@@ -241,7 +248,8 @@ static NSString * const ListRowID = @"ListRowCell";
     const int spacer = kGeomSpaceInter;
     int x = kGeomSpaceEdge;
     int y = kGeomSpaceEdge;
-    _iv.frame = CGRectMake(x, y, kGeomProfileImageSize, kGeomProfileImageSize);
+//    _iv.frame = CGRectMake(x, y, kGeomProfileImageSize, kGeomProfileImageSize);
+    _userView.frame = CGRectMake(x, y, kGeomProfileImageSize, kGeomProfileImageSize);
     int bottomOfImage = y + kGeomProfileImageSize;
     
     // Place the image

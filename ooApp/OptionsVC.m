@@ -64,17 +64,20 @@ static NSString * const cellIdentifier = @"tagCell";
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
     [self.view setNeedsUpdateConstraints];
+    [self getAllTags];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self getAllTags];
 }
 
 - (void)getAllTags {
     __weak OptionsVC *weakSelf = self;
     [OOAPI getTagsForUser:0 success:^(NSArray *tags) {
         _tags = tags;
+        ON_MAIN_THREAD(^{
+            [weakSelf.tableView reloadData];
+        });
         [weakSelf getUsersTags];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
