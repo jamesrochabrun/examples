@@ -157,10 +157,7 @@
 {
     if (revealController.frontViewPosition == FrontViewPositionRight) {
         
-        UIViewController* topVC= [self.navigationController.viewControllers lastObject];
-        if  ([topVC respondsToSelector:@selector(menuOpened) ] ) {
-            [topVC performSelector:@selector(menuOpened) withObject:nil];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationMenuWillOpen object:self];
         
         UIView *lockingView = [UIView new];
         lockingView.translatesAutoresizingMaskIntoConstraints = NO;

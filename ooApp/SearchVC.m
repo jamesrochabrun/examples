@@ -41,6 +41,7 @@ static NSArray *keywordsArray=nil;
 
 @interface SearchVC ()
 @property (nonatomic,strong) UISearchBar *searchBar;
+@property (nonatomic,strong)  UILabel *labelMessageAboutGoogle;
 @property (nonatomic,strong) OOFilterView *filterView;
 @property (nonatomic,strong) UIButton *buttonCancel;
 @property (nonatomic,strong) UITableView *tableAutoComplete;
@@ -93,6 +94,9 @@ static NSArray *keywordsArray=nil;
            subHeader: LOCAL(@"for restaurants and people")];
     
     self.navTitle = nto;
+    
+    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is brought to you by Google.", kGeomFontSizeDetail);
+    _labelMessageAboutGoogle.textColor=  UIColorRGB(0xff808000);
     
     _searchBar= [UISearchBar new];
     [ self.view addSubview:_searchBar];
@@ -171,6 +175,7 @@ static NSArray *keywordsArray=nil;
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuOpened:) name:kNotificationMenuWillOpen object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
 }
@@ -931,7 +936,7 @@ static NSArray *keywordsArray=nil;
     }
 }
 
-- (void)menuOpened
+- (void)menuOpened:(NSNotification*)not
 {
     NSLog (@"MENU WAS OPENED.");
     [_searchBar resignFirstResponder];
@@ -949,7 +954,6 @@ static NSArray *keywordsArray=nil;
     float y = 0;
     
     _searchBar.frame = CGRectMake(0, y, w-kGeomButtonWidth, kGeomHeightSearchBar);
-    
     _buttonCancel.frame = CGRectMake(w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
                                      y+kGeomCancelButtonInteriorPadding,
                                      kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
@@ -959,9 +963,13 @@ static NSArray *keywordsArray=nil;
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     y += kGeomHeightButton;
     
-    _tableRestaurants.frame = CGRectMake(0, y, w, h-y);
-    _tablePeople.frame = CGRectMake(0, y, w, h-y);
-    _tableAutoComplete.frame = CGRectMake(0, y, w, h-y);
+    const  float kGeomHeightGoogleMessage=  14;
+    float yMessage= h- kGeomHeightGoogleMessage;
+    _labelMessageAboutGoogle.frame = CGRectMake(0,yMessage,w, kGeomHeightGoogleMessage);
+    
+    _tableRestaurants.frame = CGRectMake(0, y, w, h-yMessage);
+    _tablePeople.frame = CGRectMake(0, y, w, h-yMessage);
+    _tableAutoComplete.frame = CGRectMake(0, y, w, h-yMessage);
 }
 
 //------------------------------------------------------------------------------
