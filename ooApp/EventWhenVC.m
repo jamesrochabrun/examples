@@ -93,6 +93,8 @@
     
     _pickerEventDate.timeZone= [NSTimeZone systemTimeZone];
     _pickerEventVotingDate.timeZone= [NSTimeZone systemTimeZone];
+    _pickerEventDate.minuteInterval=15;
+    _pickerEventVotingDate.minuteInterval=15;
     
     _pickerEventDate.datePickerMode= UIDatePickerModeDateAndTime;
     _pickerEventVotingDate.datePickerMode= UIDatePickerModeDateAndTime;
@@ -108,7 +110,7 @@
         // RULE: Set up default date to be 3 hours in future.
         NSDate *d = [NSDate date];
         long long when= [d timeIntervalSince1970];
-        when += 3*60*60;
+        when += 3*60*60+59; // As per Jay, 6:15 becomes 10:00.
         when /= 60*60;
         when *= 60*60;
         d = [NSDate dateWithTimeIntervalSince1970:when];
@@ -122,7 +124,7 @@
         // RULE: Set up default date to be 2 hours in future.
         NSDate *d = [NSDate date];
         long long when= [d timeIntervalSince1970];
-        when += 2*60*60;
+        when += 2*60*60+59;
         when /= 60*60;
         when *= 60*60;
         d = [NSDate dateWithTimeIntervalSince1970:when];

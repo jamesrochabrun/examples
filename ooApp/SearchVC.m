@@ -34,6 +34,7 @@ typedef enum: char {
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchRestaurantsCellEmpty"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
+#define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
 #define SEARCH_AUTO_COMPLETE_TABLE_REUSE_IDENTIFIER  @"searchAutoCompleteCell"
 
 static NSArray *keywordsArray=nil;
@@ -129,6 +130,8 @@ static NSArray *keywordsArray=nil;
     _tablePeople.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tablePeople registerClass:[UserTVCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
+    [_tablePeople registerClass:[UITableViewCell class]
+         forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY];
     
     self.tableAutoComplete=makeTable(self.view,self);
     _tableAutoComplete.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -343,9 +346,9 @@ static NSArray *keywordsArray=nil;
                 return;
             }
             
-            [self loadRestaurants:@[]];
             [self showSpinner: @""];
-            
+            _doingSearchNow=YES;
+
             CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
             if (!location.latitude && !location.longitude) {
                 // XX
@@ -970,7 +973,7 @@ static NSArray *keywordsArray=nil;
             if ( _doingSearchNow) {
                 cell.textLabel.text=  @"Searching...";
             } else {
-                cell.textLabel.text=  @"No results for that search term.";
+                cell.textLabel.text=  @"No restaurants found for that search term.";
             }
             cell.textLabel.textColor=  WHITE;
             return cell;
@@ -987,6 +990,19 @@ static NSArray *keywordsArray=nil;
         return cell;
     }
     else if ( tableView == _tablePeople) {
+        if ( !_peopleArray.count) {
+            
+            UITableViewCell *cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+            cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            if ( _doingSearchNow) {
+                cell.textLabel.text=  @"Searching...";
+            } else {
+                cell.textLabel.text=  @"No people found for that search term.";
+            }
+            cell.textLabel.textColor=  WHITE;
+            return cell;
+        }
         UserTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         
@@ -1114,9 +1130,14 @@ static NSArray *keywordsArray=nil;
             NSString *keyword=  (NSString*)object;
             if  ([keyword hasPrefix: @"#"] ) {
                 keyword= [ keyword stringByReplacingOccurrencesOfString:@"#" withString: @""];
+                
                 _showingAutoCompleteLookupResults= NO;
                 [self showAppropriateTable];
+                
                 [self doSearchFor: keyword];
+                
+                [self.tableRestaurants reloadData ];
+                
                 _searchBar.text=keyword;
             }
         }
@@ -1144,6 +1165,10 @@ static NSArray *keywordsArray=nil;
         return self.restaurantsArray.count;
     }
     else {
+        if ( !_peopleArray.count) {
+            // This is the cell that tells them there are no data.
+            return 1;
+        }
         return self.peopleArray.count;
     }
 }

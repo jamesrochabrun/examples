@@ -241,7 +241,7 @@
     }
     
     UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
-    
+    //HERE
     if (e.primaryImageURL ) {
         [self.imageViewContainer1 setImageWithURL:[NSURL URLWithString:e.primaryImageURL]
                                  placeholderImage:placeholder];
@@ -249,6 +249,7 @@
     } else if  (e.primaryVenueImageIdentifier ) {
         __weak EventCoordinatorCoverCell *weakSelf = self;
         OOAPI *api = [[OOAPI alloc] init];
+        
         [api getRestaurantImageWithImageRef: e.primaryVenueImageIdentifier
                                    maxWidth:w
                                   maxHeight:0
@@ -1053,8 +1054,6 @@
             cell.delegate= self;
             cell.selectionStyle= UITableViewCellSelectionStyleNone;
             [cell provideEvent: event];
-            //            cell.layer.borderWidth= .5;
-            //            cell.layer.borderColor=  GRAY.CGColor;
             return cell;
         }
     }
@@ -1106,7 +1105,7 @@
 {
     NSInteger row = indexPath.row;
     NSInteger section = indexPath.section;
-    NSLog (@"USER TAPPED %ld",(long)row);    // Only the first row responds to tapping.
+    NSLog (@"USER TAPPED %ld",(long)row);   
     
     switch (section) {
         case 0:
@@ -1178,8 +1177,8 @@
                              success:^(EventObject *event) {
                                  weakSelf.eventBeingEdited=event;
                                  [weakSelf.delegate userDidAlterEvent];
-                                 [cell setPhoto: image];
                                  ON_MAIN_THREAD(^{
+                                     [cell setPhoto: image];
                                      [cell provideEvent: event];
                                  });
                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

@@ -540,7 +540,9 @@
                                                               BOOL isSubmitted = event.isComplete;
                                                               BOOL votingIsDone=end && now.timeIntervalSince1970>end.timeIntervalSince1970;
                                                               
-                                                              if (!isSubmitted && allowed && !votingIsDone) {
+                                                              if (!isSubmitted && allowed /*&& !votingIsDone*/) {
+                                                                  // NOTE: If voting date was erroneously set, but event was not submitted, event should nevertheless be editable.
+                                                                  
                                                                   NSLog(@"EDITING ALLOWED");
                                                                   
                                                                   EventCoordinatorVC *vc= [[EventCoordinatorVC alloc] init];
