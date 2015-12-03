@@ -27,7 +27,6 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 
 @property (nonatomic, strong) OOUserView *userView;
-//@property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UILabel *labelUsername;
@@ -85,8 +84,6 @@ static NSString * const ListRowID = @"ListRowCell";
             
         }
         
-//        self.iv = makeImageViewFromURL (self, u.imageURLString, kImageNoProfileImage);
-
         _userView = [[OOUserView alloc] init];
         _userView.user = u;
         [self addSubview:_userView];
@@ -109,36 +106,11 @@ static NSString * const ListRowID = @"ListRowCell";
         _labelDescription.textColor = UIColorRGBA(kColorWhite);
         _labelRestaurants.textColor = UIColorRGBA(kColorWhite);
         
-//        self.iv.layer.borderColor = GRAY.CGColor;
-//        self.iv.layer.borderWidth = 1;
-//        self.iv.contentMode = UIViewContentModeScaleAspectFit;
-        
         self.backgroundColor = UIColorRGBA(kColorBlack);
         
-        UIImage *photoOfSelf= [_userInfo userProfilePhoto];
+        [_userView setUser: u];
         
-//        if ( _viewingOwnProfile  && photoOfSelf) {
-//            _iv.image=  photoOfSelf;
-//        } else {
-//            // Get this user's image.
-//            //
-//            if (_userInfo.imageIdentifier && [_userInfo.imageIdentifier length]) {
-//                self.requestOperation = [OOAPI getUserImageWithImageID: _userInfo.imageIdentifier
-//                                                              maxWidth:self.frame.size.width
-//                                                             maxHeight:0 success:^(NSString *link) {
-//                                                                 ON_MAIN_THREAD( ^{
-//                                                                     [_iv setImageWithURL:[NSURL URLWithString:link]];
-//                                                                 });
-//                                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                                                 ;
-//                                                             }];
-//            } else if (_userInfo.imageURLString) {
-//                ON_MAIN_THREAD( ^{
-//                    [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
-//                });
-//            }
-//        }
-        
+
         // Find out if current user is following this user.
         if  (!_viewingOwnProfile) {
             self.buttonFollow.selected= NO;
@@ -248,7 +220,6 @@ static NSString * const ListRowID = @"ListRowCell";
     const int spacer = kGeomSpaceInter;
     int x = kGeomSpaceEdge;
     int y = kGeomSpaceEdge;
-//    _iv.frame = CGRectMake(x, y, kGeomProfileImageSize, kGeomProfileImageSize);
     _userView.frame = CGRectMake(x, y, kGeomProfileImageSize, kGeomProfileImageSize);
     int bottomOfImage = y + kGeomProfileImageSize;
     
@@ -316,8 +287,8 @@ static NSString * const ListRowID = @"ListRowCell";
 {
     [super prepareForReuse];
     _buttonFollow.hidden= NO;
-
 }
+
 @end
 
 //==============================================================================

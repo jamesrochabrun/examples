@@ -23,5 +23,6 @@ extern NSString *const kAPIKeyGoogleMaps;
 #define GOOGLE_ANALYTICS_ID  @"UA-70502958-1"
 
 extern NSString *const kUserDefaultsUsingStagingServer;
+extern NSString *const kNotificationMenuWillOpen;
 
 #endif

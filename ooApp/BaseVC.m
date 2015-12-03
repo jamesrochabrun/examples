@@ -97,7 +97,6 @@
     }
 }
 
-
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
     [self.leftNavButton setTitle:icon];
     [self.leftNavButton setTarget:target];
@@ -157,6 +156,9 @@
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
 {
     if (revealController.frontViewPosition == FrontViewPositionRight) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationMenuWillOpen object:self];
+        
         UIView *lockingView = [UIView new];
         lockingView.translatesAutoresizingMaskIntoConstraints = NO;
         

@@ -147,6 +147,7 @@
         _labelTitle.textColor= WHITE;
         _labelTitle.shadowColor = BLACK;
         _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
+        _labelTitle.layer.shadowRadius= 4;
         
         self.clipsToBounds= NO;
         self.contentView.clipsToBounds= NO;
@@ -309,8 +310,6 @@
 {
     float w= self.bounds.size.width;
     float h= self.bounds.size.height;
-    //    float heightForShadow= kGeomSeparatorHeight;
-    //    h-= heightForShadow;
     _imageViewContainer1.frame= CGRectMake(0, 0, w, h);
     
     float yButtons= h-kGeomHeightButton;
@@ -537,8 +536,6 @@
     float w= self.bounds.size.width;
     float h= self.bounds.size.height;
     float margin= kGeomSpaceEdge;
-    //    float heightForShadow= kGeomSeparatorHeight;
-    //    h-= heightForShadow;
     self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
     
     float subBoxWidth= w/3;
@@ -776,8 +773,6 @@
 {
     float w = width(self);
     float h = height(self);
-    //    float heightForShadow = kGeomSeparatorHeight;
-    //    h-= heightForShadow;
     self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
     
     _pieHour.frame = CGRectMake(2*w/3 + w/6 - kGeomEventCoordinatorPieDiameter/2,

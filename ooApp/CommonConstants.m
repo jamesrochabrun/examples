@@ -11,4 +11,5 @@
 
 NSString *const kAPIKeyGoogleMaps = @"AIzaSyDXafe9HUhTGZ_aWBfSo340uLYlJOpA95Q";
 
- NSString *const kUserDefaultsUsingStagingServer=  @"usingStaging";
+NSString *const kUserDefaultsUsingStagingServer=  @"usingStaging";
+NSString *const kNotificationMenuWillOpen=  @"notificationMenuWillOpen";

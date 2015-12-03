@@ -95,16 +95,6 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 #pragma mark - Facebook delegate methods
 
 - (void)viewDidLayoutSubviews {
@@ -120,8 +110,6 @@
     [[Settings sharedInstance] clearUser];
     
     [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
-    //performSegueWithIdentifier:@"loginUISegue" sender:self];
-//    [self performSegueWithIdentifier:@"loginUISegue" sender:self];
 }
 
 @end
