@@ -271,6 +271,13 @@ static NSArray *keywordsArray=nil;
     
     NSString*string= _searchBar.text;
     
+    string = (__bridge NSString *)CFURLCreateStringByAddingPercentEscapes(
+                                                                 NULL,
+                                                                 (CFStringRef) string,
+                                                                 NULL,
+                                                                 (CFStringRef)@"!*'();:@&=+$,/?%#[]",
+                                                                 kCFStringEncodingUTF8 );
+    
     self.fetchOperation= [OOAPI getAutoCompleteDataForString: (NSString*)string
                                                     location:[LocationManager sharedInstance].currentUserLocation
                                                      success:^(NSArray *results) {
