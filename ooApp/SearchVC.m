@@ -931,6 +931,12 @@ static NSArray *keywordsArray=nil;
     }
 }
 
+- (void)menuOpened
+{
+    NSLog (@"MENU WAS OPENED.");
+    [_searchBar resignFirstResponder];
+}
+
 //------------------------------------------------------------------------------
 // Name:    doLayout
 // Purpose: Programmatic equivalent of constraint equations.

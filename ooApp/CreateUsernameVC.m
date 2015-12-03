@@ -50,6 +50,8 @@
 //------------------------------------------------------------------------------
 - (void)viewWillDisappear:(BOOL)animated
 {
+    [_fieldUsername resignFirstResponder];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
 }
@@ -275,7 +277,7 @@
                                          }
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                              NSInteger statusCode= operation.response.statusCode;
-                                             NSLog (@"PUT OF USERNAME FAILED %@ w/%ld",error,statusCode);
+                                             NSLog (@"PUT OF USERNAME FAILED %@ w/%ld",error,(long)statusCode);
                                              if (statusCode==403)
                                                  [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
 

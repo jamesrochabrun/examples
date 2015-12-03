@@ -97,7 +97,6 @@
     }
 }
 
-
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
     [self.leftNavButton setTitle:icon];
     [self.leftNavButton setTarget:target];
@@ -157,6 +156,12 @@
 - (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
 {
     if (revealController.frontViewPosition == FrontViewPositionRight) {
+        
+        UIViewController* topVC= [self.navigationController.viewControllers lastObject];
+        if  ([topVC respondsToSelector:@selector(menuOpened) ] ) {
+            [topVC performSelector:@selector(menuOpened) withObject:nil];
+        }
+        
         UIView *lockingView = [UIView new];
         lockingView.translatesAutoresizingMaskIntoConstraints = NO;
         

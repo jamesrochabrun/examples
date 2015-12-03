@@ -123,11 +123,11 @@ static NSString * const ListRowID = @"ListRowCell";
                                                                      [_iv setImageWithURL:[NSURL URLWithString:link]];
                                                                  });
                                                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                 ;
+                                                                 NSLog (@"FAILED TO OBTAIN IMAGE");
                                                              }];
             } else if (_userInfo.imageURLString) {
                 ON_MAIN_THREAD( ^{
-                    [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString]];
+                    [_iv setImageWithURL:[NSURL URLWithString:_userInfo.imageURLString] placeholderImage:APP.imageForNoProfileSilhouette];
                 });
             }
         }
