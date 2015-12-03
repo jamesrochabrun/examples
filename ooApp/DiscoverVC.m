@@ -50,18 +50,7 @@ static NSString * const ListRowID = @"HLRCell";
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _openOnly = YES;
-        _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
-        _mapView.translatesAutoresizingMaskIntoConstraints = NO;
-        _mapView.mapType = kGMSTypeNormal;
-        _mapView.myLocationEnabled = YES;
-        _mapView.settings.myLocationButton = YES;
-        _mapView.settings.scrollGestures = YES;
-        _mapView.settings.zoomGestures = YES;
-        _mapView.delegate = self;
-        [_mapView setMinZoom:0 maxZoom:16];
-        _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        _centerMarker = [[OOMapMarker alloc] init];
+
     }
     return self;
 }
@@ -69,6 +58,18 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.    
+    _openOnly = YES;
+    _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
+    _mapView.translatesAutoresizingMaskIntoConstraints = NO;
+    _mapView.mapType = kGMSTypeNormal;
+    _mapView.myLocationEnabled = YES;
+    _mapView.settings.myLocationButton = YES;
+    _mapView.settings.scrollGestures = YES;
+    _mapView.settings.zoomGestures = YES;
+    _mapView.delegate = self;
+    [_mapView setMinZoom:0 maxZoom:16];
+    _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _centerMarker = [[OOMapMarker alloc] init];
     
     _tableView = [[UITableView alloc] init];
     [self.view addSubview:_tableView];

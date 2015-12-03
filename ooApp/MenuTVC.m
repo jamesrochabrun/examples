@@ -61,35 +61,29 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconWhatsNew;
-    menuItem.name = @"WHAT'S NEW";
-    menuItem.type = kMenuItemWhatsNew;
-    [_menuItems addObject:menuItem];
-
-    menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
     menuItem.name = @"DISCOVER";
     menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];
-    
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconFeed;
-    menuItem.name = @"FRIEND FEED";
-    menuItem.type = kMenuItemFeed;
-    [_menuItems addObject:menuItem];
-    
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconEvent;
-    menuItem.name = @"EVENTS";
-    menuItem.type = kMenuItemMeet;
-    [_menuItems addObject:menuItem];
 
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconWhatsNew;
+    menuItem.name = @"HOT LISTS";
+    menuItem.type = kMenuItemWhatsNew;
+    [_menuItems addObject:menuItem];
+    
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconPlay;
     menuItem.name = @"PLAY";
     menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
 
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconEvent;
+    menuItem.name = @"EVENTS";
+    menuItem.type = kMenuItemMeet;
+    [_menuItems addObject:menuItem];
+    
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconProfile;
     menuItem.name = @"PROFILE";
@@ -101,7 +95,14 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.name = @"SETTINGS";
     menuItem.type = kMenuItemSettings;
     [_menuItems addObject:menuItem];
-
+#if 0
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconFeed;
+    menuItem.name = @"FRIEND FEED";
+    menuItem.type = kMenuItemFeed;
+    [_menuItems addObject:menuItem];
+#endif
+    
 #ifdef DEBUG
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconSettings;
