@@ -44,6 +44,7 @@
         [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         
         self.separatorInset = UIEdgeInsetsZero;
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
 }
@@ -70,7 +71,7 @@
 {
     // NOTE:  the contents of the user object may have changed, therefore set user always.
     self.userInfo = user;
-    self.header.text = _userInfo.username;
+    self.header.text = [NSString stringWithFormat:@"@%@", _userInfo.username];
     self.subHeader1.text = [NSString stringWithFormat: @"%@ %@", _userInfo.firstName,_userInfo.lastName];
     _userView.user = _userInfo;
 }
