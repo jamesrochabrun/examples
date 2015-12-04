@@ -37,6 +37,8 @@ typedef enum: char {
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
 
+const NSUInteger maximumKeywords= 4;
+
 @interface SearchVC ()
 @property (nonatomic,strong) UISearchBar *searchBar;
 @property (nonatomic,strong)  UILabel *labelMessageAboutGoogle;
@@ -84,15 +86,17 @@ typedef enum: char {
     self.navTitle = nto;
     
     self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff808080));
-    for (int i=0; i <5 ; i++) {
-        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeHeader, WHITE, CLEAR,
+    self.keywordButtonsArray= [NSMutableArray new];
+    for (int i=0; i <maximumKeywords ; i++) {
+        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeSubheader, WHITE, CLEAR,
                                      self, @selector(userPressedKeyword:) , 0);
         button.tag=  i;
+        button.titleLabel.numberOfLines= 0;
+        button.titleLabel.textAlignment= NSTextAlignmentCenter;
         [_keywordButtonsArray addObject: button];
-
     }
     
-    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google.", kGeomFontSizeDetail);
+    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google(TM).", kGeomFontSizeDetail);
     _labelMessageAboutGoogle.textColor=  UIColorRGB(0xff808000);
     
     _searchBar= [UISearchBar new];
@@ -271,10 +275,6 @@ typedef enum: char {
                                   ];
         } break;
             
-//        case FILTER_LISTS: {
-//            
-//        } break;
-            
         case FILTER_YOU: {
             
         } break;
@@ -429,17 +429,19 @@ typedef enum: char {
 {
     NSMutableArray*array= [NSMutableArray new];
     int  counter= 0;
-    const unsigned maximumKeywords= 5;
     expression= [ expression lowercaseString];
-    [_keywordButtonsArray removeAllObjects];
+    _numberOfMatchingKeywords=0;
     
     for (NSString* string  in _keywordsArray) {
         NSString *lowerString= [ string lowercaseString];
-        NSLog  (@"COMPARING STRINGS %@, %@", expression,lowerString);
         if ( [lowerString  containsString:expression]) {
-            [ array addObject: [NSString  stringWithFormat: @"#%@", string]];
+            NSLog  (@"MATCHED STRINGS %@, %@", expression,lowerString);
+            NSString *hashtagString=[NSString  stringWithFormat: @"#%@", string];
+            [ array addObject: hashtagString];
+            UIButton*b= _keywordButtonsArray[counter];
+            [b setTitle:hashtagString forState:UIControlStateNormal];
             
-            counter ++;
+            counter++;
             if  (counter ==maximumKeywords ) {
                 break;
             }
@@ -451,8 +453,16 @@ typedef enum: char {
 
 - (void)userPressedKeyword: (UIButton*) button
 {
-    NSLog  (@"USER PRESSED KEYWORD BUTTON %d",button.tag);
-    message( @"user pressed keyword");
+    NSUInteger index=  button.tag;
+    NSLog  (@"USER PRESSED KEYWORD BUTTON %d",index);
+    if  (index >= _keywordButtonsArray.count ) {
+        return;
+    }
+    NSString*string=button.titleLabel.text;
+    if  ([string hasPrefix: @"#"] ) {
+        string= [ string stringByReplacingOccurrencesOfString:@"#" withString: @""];
+    }
+    [self doSearchFor:string];
 }
 
 - (void)showAppropriateTable
@@ -668,13 +678,11 @@ typedef enum: char {
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     y += kGeomHeightFilters;
     
-    NSUInteger totalButtons=_keywordButtonsArray.count;
     if ( _numberOfMatchingKeywords) {
         _viewForKeywordButtons.frame= CGRectMake(0, y, w, kGeomHeightButton);
-        if (totalButtons>5 ) {
-            totalButtons= 5;
-        }
-        float buttonWidth= w/totalButtons;
+      
+        float buttonWidth= w/_numberOfMatchingKeywords;
+        NSUInteger totalButtons= _keywordButtonsArray.count;
         for (NSInteger i=0; i <totalButtons ; i++) {
             UIButton *b= _keywordButtonsArray[i];
             float x=  floorf(i*buttonWidth);
