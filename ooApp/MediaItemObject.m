@@ -37,4 +37,24 @@ NSString *const kKeyMediaItemSourceUserID = @"source_user_id";
     return mio;
 }
 
+- (NSDictionary*) dictionaryOfMediaItem;
+{
+    return @{
+             kKeyMediaItemReference: self.reference ?:  @"",
+             kKeyMediaItemID: self.mediaItemId ?  @(self.mediaItemId) :  @(0U),
+             kKeyMediaItemType: self.type ? @(self.type) :  @(0U),
+             kKeyMediaItemSource: self.source ?  @(self.source):  @(0U),
+             kKeyMediaItemHeight: self.height ?  @(self.height):  @(0.f),
+             kKeyMediaItemWidth: self.width ?  @(self.width):  @(0.f),
+             kKeyMediaItemURL: self.url ?:  @"",
+             kKeyMediaItemSourceUserID: self.sourceUserID ?  @(self.sourceUserID): @(0U),
+             };
+}
+
 @end
+
+
+
+
+
+

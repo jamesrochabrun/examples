@@ -34,5 +34,6 @@ extern NSString *const kKeyMediaItemSourceUserID;
 @property (nonatomic) NSUInteger sourceUserID;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
+- (NSDictionary*) dictionaryOfMediaItem;
 
 @end

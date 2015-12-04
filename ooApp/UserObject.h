@@ -60,7 +60,7 @@ extern NSString *const kKeyUserParticipantState;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
-- (NSDictionary *)dictionaryFromUser;
+- (NSMutableDictionary *)dictionaryFromUser;
 
 - (void) setUserProfilePhoto:(UIImage *)userProfilePhoto andUpload:(BOOL)doUpload;
 - (UIImage *)userProfilePhoto;
