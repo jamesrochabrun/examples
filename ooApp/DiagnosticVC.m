@@ -114,9 +114,9 @@
 //    _buttonUploadHugePhoto.titleLabel.numberOfLines= 0;
 //    _buttonUploadHugePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
-    _buttonUploadPhoto.titleLabel.numberOfLines= 0;
-    _buttonUploadPhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+//    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
+//    _buttonUploadPhoto.titleLabel.numberOfLines= 0;
+//    _buttonUploadPhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     self.ivPhoto= makeImageView( self.view, nil);
     _ivPhoto.contentMode= UIViewContentModeScaleAspectFit;
@@ -218,15 +218,15 @@
 - (void)doPhotoHugeUpload: (id) sender
 {
     self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];
-    [OOAPI uploadPhoto:self.hugeImage
-                    to:UPLOAD_DESTINATION_DIAGNOSTIC
-            identifier:0
-               success:^{
-                   NSLog  (@"Uploaded huge photo.");
-                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
-               } failure:^(NSError *error) {
-                   NSLog  (@"Failed to upload huge photo. %@",error);
-               }];
+//    [OOAPI uploadPhoto:self.hugeImage
+//                    to:UPLOAD_DESTINATION_DIAGNOSTIC
+//            identifier:0
+//               success:^{
+//                   NSLog  (@"Uploaded huge photo.");
+//                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
+//               } failure:^(NSError *error) {
+//                   NSLog  (@"Failed to upload huge photo. %@",error);
+//               }];
 }
 
 //------------------------------------------------------------------------------
@@ -239,16 +239,16 @@
         message( @"Please take a photo first.");
         return;
     }
-    [OOAPI uploadPhoto: _hugeImage
-                    to:UPLOAD_DESTINATION_DIAGNOSTIC
-            identifier:0
-               success:^{
-                   NSLog  (@"Uploaded photo.");
-                   
-                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
-               } failure:^(NSError *error) {
-                   NSLog  (@"Failed to upload photo.");
-               }];
+//    [OOAPI uploadPhoto: _hugeImage
+//                    to:UPLOAD_DESTINATION_DIAGNOSTIC
+//            identifier:0
+//               success:^{
+//                   NSLog  (@"Uploaded photo.");
+//                   
+//                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
+//               } failure:^(NSError *error) {
+//                   NSLog  (@"Failed to upload photo.");
+//               }];
     
 }
 

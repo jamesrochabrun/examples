@@ -138,20 +138,9 @@ typedef enum {
                                         success:(void (^)(NSArray *users))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-// Might as well use the AFnetworking approach until we find problem with it
-typedef enum:NSUInteger  {
-    UPLOAD_DESTINATION_USER_PROFILE = 1,
-    UPLOAD_DESTINATION_RESTAURANT = 2,
-    UPLOAD_DESTINATION_EVENT = 3,
-    UPLOAD_DESTINATION_LIST = 4,
-    UPLOAD_DESTINATION_GROUP = 5,
-    UPLOAD_DESTINATION_DIAGNOSTIC = 6,
-} UploadDestination;
-+ (void)uploadPhoto:(UIImage *)image
-                 to: (UploadDestination )destination
-         identifier: (NSUInteger) identifier
-            success:(void (^)(void))success
-            failure:(void (^)(NSError *error))failure;
++ (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)identifier
+                                  success:(void (^)(UserObject *users))success
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)deletePhoto:(MediaItemObject *)mio success:(void (^)(void))success
             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;

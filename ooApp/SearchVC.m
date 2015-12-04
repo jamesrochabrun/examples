@@ -22,21 +22,20 @@
 #import "ProfileVC.h"
 #import "OOFilterView.h"
 #import "AutoCompleteObject.h"
+#import "TagObject.h"
 
 typedef enum: char {
     FILTER_NONE=  -1,
-    FILTER_PLACES=  2,
-    FILTER_PEOPLE=  1,
+    FILTER_PLACES=  1,
+    FILTER_PEOPLE=  0,
 //    FILTER_LISTS=  0,
-    FILTER_YOU=  3,
+    FILTER_YOU=  2,
 } FilterType;
 
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchRestaurantsCellEmpty"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
-
-static NSArray *keywordsArray=nil;
 
 @interface SearchVC ()
 @property (nonatomic,strong) UISearchBar *searchBar;
@@ -53,6 +52,8 @@ static NSArray *keywordsArray=nil;
 @property (nonatomic,strong) NSArray *arrayOfFilterNames;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
 @property (atomic,assign) BOOL doingSearchNow;
+@property (nonatomic,strong) NSArray *keywordsArray;
+@property (nonatomic,strong) UIView *viewForKeywordButtons;
 @end
 
 @implementation SearchVC
@@ -90,7 +91,7 @@ static NSArray *keywordsArray=nil;
     
     self.navTitle = nto;
     
-    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is brought to you by Google.", kGeomFontSizeDetail);
+    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google.", kGeomFontSizeDetail);
     _labelMessageAboutGoogle.textColor=  UIColorRGB(0xff808000);
     
     _searchBar= [UISearchBar new];
@@ -115,9 +116,9 @@ static NSArray *keywordsArray=nil;
     [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];
     [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];
     [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];
-    _currentFilter = FILTER_PLACES;
-    [_filterView setCurrent:FILTER_PLACES];
     
+    [self changeFilter:FILTER_PLACES];
+
     self.tableRestaurants = makeTable(self.view,self);
     _tableRestaurants.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tableRestaurants registerClass:[RestaurantTVCell class]
@@ -137,12 +138,10 @@ static NSArray *keywordsArray=nil;
     _activityView.hidden =  YES;
     [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     
-    [self changeFilter:FILTER_PLACES];
-    
     _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    
+    [self setUpKeywordsArray];
 }
 
 //------------------------------------------------------------------------------
@@ -338,7 +337,7 @@ static NSArray *keywordsArray=nil;
         return;
     }
     
-    [_filterView selectFilter:which];
+    [_filterView selectFilter: which];
     
     self.currentFilter = which;
     
@@ -367,8 +366,15 @@ static NSArray *keywordsArray=nil;
             [self loadPeople:@[]];
         } else {
             [self loadRestaurants:@[]];
-            [self showAppropriateTable];
-            [self loadAutoComplete: nil];
+            
+            int noKeywords=  _viewForKeywordButtons.subviews.count ?1:0;
+            [self doKeywordLookup: text];
+            int stillNoKeywords=  _viewForKeywordButtons.subviews.count ?1:0;
+            if  (noKeywords ^ stillNoKeywords ) {
+                [UIView  beginAnimations:nil context:nil];
+                [self  doLayout];
+                [UIView  commitAnimations];
+            }
         }
         return;
     }
@@ -381,236 +387,35 @@ static NSArray *keywordsArray=nil;
 
 - (void) setUpKeywordsArray
 {
-    if (keywordsArray)
+    if (_keywordsArray)
         return;
     
-    keywordsArray=@[
-                    @"85c",
-                    @"applebee",
-                    @"arby",
-                    @"armenian",
-                    @"asian",
-                    @"athens",
-                    @"bakery",
-                    @"bamboo",
-                    @"banana",
-                    @"bangkok",
-                    @"banzai",
-                    @"bar",
-                    @"barcelona",
-                    @"basil",
-                    @"beijing",
-                    @"bengal",
-                    @"bistro",
-                    @"blue",
-                    @"bombay",
-                    @"butter",
-                    @"bouche",
-                    @"bowl",
-                    @"bottle",
-                    @"brasserie",
-                    @"bread",
-                    @"bean",
-                    @"brew",
-                    @"brewery",
-                    @"bread",
-                    @"britain",
-                    @"british",
-                    @"buca",
-                    @"buffet",
-                    @"burrito",
-                    @"cappuccino",
-                    @"cafe",
-                    @"caffe",
-                    @"caffeine",
-                    @"california",
-                    @"cantina",
-                    @"carniceria",
-                    @"casa",
-                    @"casita",
-                    @"chaat",
-                    @"charcuterie",
-                    @"cheese",
-                    @"chez",
-                    @"chicken",
-                    @"chipotle",
-                    @"chocolate",
-                    @"chocolatier",
-                    @"club",
-                    @"cod",
-                    @"coffee",
-                    @"confections",
-                    @"cooking",
-                    @"cottage",
-                    @"country",
-                    @"cream",
-                    @"crepe",
-                    @"chips",
-                    @"creamery",
-                    @"cuisine",
-                    @"curry",
-                    @"deli",
-                    @"delices",
-                    @"delicatessen",
-                    @"delight",
-                    @"deux",
-                    @"diner",
-                    @"dining",
-                    @"dinner",
-                    @"donut",
-                    @"dough",
-                    @"dog",
-                    @"doughnut",
-                    @"duke",
-                    @"eat",
-                    @"espresso",
-                    @"edible",
-                    @"edinburg",
-                    @"elephant",
-                    @"essen",
-                    @"express",
-                    @"falafel",
-                    @"fine",
-                    @"fish",
-                    @"flavor",
-                    @"food",
-                    @"foodbag",
-                    @"french",
-                    @"fried",
-                    @"fromagerie",
-                    @"fruit",
-                    @"fry",
-                    @"fusion",
-                    @"garden",
-                    @"german",
-                    @"ginger",
-                    @"greek",
-                    @"grill",
-                    @"grounds",
-                    @"grullense",
-                    @"healthy",
-                    @"herb",
-                    @"hofbrau",
-                    @"hokkaido",
-                    @"hooters",
-                    @"house",
-                    @"indian",
-                    @"italian",
-                    @"israeli",
-                    @"italy",
-                    @"japanese",
-                    @"jasmine",
-                    @"jewish",
-                    @"king",
-                    @"korea",
-                    @"kosher",
-                    @"kitchen",
-                    @"krung",
-                    @"krungthai",
-                    @"larder",
-                    @"latte",
-                    @"lettuce",
-                    @"leaf",
-                    @"lox",
-                    @"lemon",
-                    @"little",
-                    @"lisbon",
-                    @"london",
-                    @"lounge",
-                    @"lunch",
-                    @"lyon",
-                    @"madrid",
-                    @"mangia",
-                    @"marseille",
-                    @"mcdonald",
-                    @"mekong",
-                    @"mexican",
-                    @"mexico",
-                    @"moroccan",
-                    @"morocco",
-                    @"muenchen",
-                    @"munich",
-                    @"mumbai",
-                    @"naan",
-                    @"noodle",
-                    @"nouveau",
-                    @"nouvelle",
-                    @"orchid",
-                    @"paneria",
-                    @"pantry",
-                    @"papaya",
-                    @"papa",
-                    @"paris",
-                    @"pakistani",
-                    @"pasta",
-                    @"patisserie",
-                    @"pearl",
-                    @"peet",
-                    @"pepper",
-                    @"persia",
-                    @"pho",
-                    @"pizza",
-                    @"pizzeria",
-                    @"portugal",
-                    @"portuguese",
-                    @"queen",
-                    @"restaurant",
-                    @"rice",
-                    @"ristorante",
-                    @"roma",
-                    @"royal",
-                    @"salad",
-                    @"sandwich",
-                    @"seafood",
-                    @"seoul",
-                    @"shah",
-                    @"siam",
-                    @"sicily",
-                    @"sicilian",
-                    @"soup",
-                    @"spaghetti",
-                    @"spanish",
-                    @"spice",
-                    @"sri lanka",
-                    @"starbucks",
-                    @"steak",
-                    @"steakhouse",
-                    @"sugar",
-                    @"sushi",
-                    @"syrian",
-                    @"taco",
-                    @"tapas",
-                    @"taqueria",
-                    @"taste",
-                    @"tavern",
-                    @"taverna",
-                    @"tea",
-                    @"thai",
-                    @"thailand",
-                    @"turkey",
-                    @"turkish",
-                    @"typhoon",
-                    @"vegan",
-                    @"vegetarian",
-                    @"veggie",
-                    @"vieja",
-                    @"viejo",
-                    @"vielle",
-                    @"vieux",
-                    @"viet",
-                    @"vietnam",
-                    @"vietnamese",
-                    @"village",
-                    @"vin",
-                    @"vino",
-                    @"waffle",
-                    @"wasabi",
-                    @"winery",
-                    @"wiener",
-                    @"wok",
-                    @"wraps",
-                    @"zuppa",
-                    ];
+    __weak SearchVC *weakSelf = self;
+    [OOAPI getAllTagsWithSuccess:^(NSArray *tags) {
+        for (TagObject* tag   in  tags) {
+            NSMutableArray *results= [NSMutableArray new];
+            NSString *tagString=tag.term;
+            if  (tagString ) {
+                [results  addObject: tagString];
+            }
+            weakSelf.keywordsArray= results;
+        }
+        if  (!weakSelf.keywordsArray.count) {
+                    [weakSelf setUpFallbackKeywords];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog  (@"FAILED TO OBTAIN TAGS.");
+        [weakSelf setUpFallbackKeywords];
+    }];
+}
+
+- (void)setUpFallbackKeywords
+{
+    // RULE: In the event of a backend problem, use the default set.
+    self.keywordsArray=  @[
+                      @"American", @"Arcade", @"Asian", @"Bagels", @"Bakery", @"Bar", @"BBQ", @"Beer Garden", @"Breakfast", @"Brewery", @"Burgers", @"Burritos", @"Café", @"Cantonese", @"Chinese", @"Churrascaria", @"Cocktail", @"Coffee Shop", @"Comfort Food", @"Cuban", @"Dim Sum", @"Diner", @"Dive Bar", @"Ethiopian", @"Event Space", @"Falafel", @"Fast Food", @"Food", @"French", @"Fried Chicken", @"Gastropub", @"Gay Bar", @"German", @"Greek", @"Himalayan", @"Hot Dogs", @"Hotel", @"Hotpot", @"Ice Cream", @"Indian", @"Irish", @"Italian", @"Japanese", @"Jazz Club", @"Jiangsu", @"Juice Bar", @"Korean", @"Latin American", @"Lounge", @"Mediterranean", @"Mexican", @"Middle Eastern", @"Molecular Gastronomy", @"Moroccan", @"New American", @"Nightclub", @"Nightlife", @"Noodles", @"Pakistani", @"Peruvian", @"Pizza", @"Pub", @"Ramen", @"Restaurant", @"Salad", @"Sandwiches", @"Seafood", @"South American", @"South Indian", @"Sports Bar", @"Steakhouse", @"Sushi", @"Tacos", @"Tapas", @"Tea Room", @"Thai", @"Turkish", @"Vegetarian / Vegan", @"Vietnamese", @"Wine Bar", @"Winery", @"Wings"
+                      ];
+    
 }
 
 - (void)clearResultsTables
@@ -622,56 +427,32 @@ static NSArray *keywordsArray=nil;
     [self.tablePeople reloadData];
 }
 
-- (NSMutableArray*)doKeywordLookup: (NSString*)expression
+- (void)doKeywordLookup: (NSString*)expression
 {
-    if  (!keywordsArray) {
-        [self setUpKeywordsArray];
-    }
     NSMutableArray*array= [NSMutableArray new];
     int  counter= 0;
-    for (NSString* string  in  keywordsArray) {
+    [_viewForKeywordButtons removeFromSuperview];
+    self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff808080));
+    const unsigned maximumKeywords= 5;
+    for (NSString* string  in _keywordsArray) {
         if ( [string  containsString:expression]) {
             [ array addObject: [NSString  stringWithFormat: @"#%@", string]];
+            UIButton *button= makeButton(self.viewForKeywordButtons,  string, kGeomFontSizeHeader, WHITE, CLEAR,
+                                         self, @selector(userPressedKeyword:) , 0);
+            button.tag=  counter;
             counter ++;
-            if  (counter ==5 ) {
+            if  (counter ==maximumKeywords ) {
                 break;
             }
         }
     }
-    return  array;
+    NSLog  (@"KEYWORDS: %@",array);
 }
 
-//------------------------------------------------------------------------------
-// Name:    loadAutoComplete
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)loadAutoComplete: (NSArray*)results
+- (void)userPressedKeyword: (UIButton*) button
 {
-    [self showSpinner:nil];
-    self.doingSearchNow = NO;
-    self.fetchOperation = nil;
+    NSLog  (@"USER PRESSED KEYWORD BUTTON %d",button.tag);
     
-    NSString* searchString= _searchBar.text;
-    NSMutableArray* keywords= [self doKeywordLookup: searchString];
-    
-    NSMutableArray* combinedResults;
-    
-    combinedResults= [[NSMutableArray alloc] initWithArray:  keywords];
-    
-    if  (results ) {
-        [combinedResults addObjectsFromArray:  results];
-    }
-    
-//    self.autoCompleteArray=  combinedResults;
-//    [self.tableAutoComplete reloadData];
-    
-    self.restaurantsArray = nil;
-    [self.tableRestaurants reloadData];
-    
-    self.peopleArray = nil;
-    [self.tablePeople reloadData];
-    
-    [self showAppropriateTable];
 }
 
 - (void)showAppropriateTable
@@ -686,14 +467,18 @@ static NSArray *keywordsArray=nil;
             _tableRestaurants.hidden= YES;
             break;
         case FILTER_YOU:
-            _tablePeople.hidden = NO;
-            _tableRestaurants.hidden= YES;
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden= NO;
             break;
-        case FILTER_NONE:
         case FILTER_PLACES:
                 _tablePeople.hidden = YES;
                 _tableRestaurants.hidden= NO;
             break;
+        case FILTER_NONE:
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden= YES;
+            break;
+
     }
     
     
@@ -881,7 +666,24 @@ static NSArray *keywordsArray=nil;
     y += kGeomHeightSearchBar;
     
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
-    y += kGeomHeightButton;
+    y += kGeomHeightFilters;
+    
+    NSUInteger totalButtons=_keywordButtonsArray.count;
+    if ( _keywordButtonsArray.count) {
+        _viewForKeywordButtons.frame= CGRectMake(0, y, w, kGeomHeightButton);
+        if (totalButtons>5 ) {
+            totalButtons= 5;
+        }
+        float buttonWidth= w/totalButtons;
+        for (NSInteger i=0; i <totalButtons ; i++) {
+            UIButton *b= _keywordButtonsArray[i];
+            float x=  floorf(i*buttonWidth);
+            b.frame = CGRectMake(x,0,buttonWidth,kGeomHeightButton);
+        }
+        y += kGeomHeightButton;
+    } else {
+        _viewForKeywordButtons.frame= CGRectMake(0, y, w, 0);
+    }
     
     const  float kGeomHeightGoogleMessage=  14;
     float yMessage= h- kGeomHeightGoogleMessage;
@@ -906,9 +708,14 @@ static NSArray *keywordsArray=nil;
             if ( _doingSearchNow) {
                 cell.textLabel.text=  @"Searching...";
             } else {
-                cell.textLabel.text=  @"No restaurants found for that search term.";
+                if (_searchBar.text.length ) {
+                    cell.textLabel.text=  @"No restaurants found for that search term.";
+                } else {
+                    cell.textLabel.text= nil;
+                }
             }
             cell.textLabel.textColor=  WHITE;
+            cell.textLabel.font= [ UIFont  fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
             return cell;
         }
         
@@ -918,7 +725,6 @@ static NSArray *keywordsArray=nil;
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
             cell.restaurant= _restaurantsArray[row];
-            
         }
         [cell updateConstraintsIfNeeded];
         return cell;
@@ -932,9 +738,14 @@ static NSArray *keywordsArray=nil;
             if ( _doingSearchNow) {
                 cell.textLabel.text=  @"Searching...";
             } else {
-                cell.textLabel.text=  @"No people found for that search term.";
+                if (_searchBar.text.length ) {
+                    cell.textLabel.text=  @"No people found for that search term.";
+                } else {
+                    cell.textLabel.text= nil;
+                }
             }
             cell.textLabel.textColor=  WHITE;
+            cell.textLabel.font= [ UIFont  fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
             return cell;
         }
         UserTVCell *cell;

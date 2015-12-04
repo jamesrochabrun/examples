@@ -97,7 +97,9 @@
 
 - (void)selectFilter:(NSUInteger)which {
     UIButton *b = (UIButton *)[_filterControls objectAtIndex:which];
-    [b sendActionsForControlEvents:UIControlEventTouchUpInside];
+    NSString *t= b.titleLabel.text;
+    NSLog (@"SWITCHING TO BUTTON %@",t);
+    [b sendActionsForControlEvents: UIControlEventTouchUpInside];
 }
 
 /*

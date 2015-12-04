@@ -144,19 +144,31 @@ BOOL isUserObject (id  object)
                        NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
                    }];
         }
-        
-// Might as well use the AFnetworking approach until we find problem with it
-//        [OOAPI uploadPhoto:profilePhoto
-//                        to:UPLOAD_DESTINATION_USER_PROFILE
-//                identifier:0
-//                   success:^() {
-//                       NSLog (@"SUCCEEDED IN UPLOADING PROFILE PHOTO.");
-//                   }
-//                   failure:^(NSError *e) {
-//                       NSLog (@"UNABLE TO UPLOAD PROFILE PHOTO.");
-//                   }];
-        
     }
+}
+
+
+- (void) refreshWithSuccess: (void (^)())success
+                    failure:(void (^)())failure;
+{
+    [OOAPI getUserWithID:self.userID
+                  success:^(UserObject *user) {
+                      self.mediaItem=user.mediaItem;
+                      self.userID= user.userID ;
+                      self.firstName=  user.firstName;
+                      self.middleName=  user.middleName;
+                      self.lastName=  user.lastName ;
+                      self.email=  user.email;
+                      self.phoneNumber=  user.phoneNumber;
+                      self.gender= user.gender;
+                      self.username= user.username;
+                      self.imageURLString= user.imageURLString;
+                      self.imageIdentifier= user.imageIdentifier;
+                    
+                      success();
+                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      failure();
+                  }];
 }
 
 - (UIImage *)userProfilePhoto;

@@ -67,6 +67,10 @@ extern NSString *const kKeyUserParticipantState;
 
 - (NSUInteger)hash;
 
+- (void) refreshWithSuccess: (void (^)())success
+                   failure:(void (^)())failure;
+
+
 @end
 
 extern BOOL isUserObject (id  object);

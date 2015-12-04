@@ -264,25 +264,26 @@ NSString *const kKeyTagIDs = @"tag_ids";
 + (AFHTTPRequestOperation *)getAllTagsWithSuccess:(void (^)(NSArray *tags))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/search", kHTTPProtocol, [OOAPI URL]];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/tags", kHTTPProtocol, [OOAPI URL]];
 
-    NSLog(@"search URL = %@", urlString);
+    NSLog(@"tags URL = %@", urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-//    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
-//        NSMutableArray *restaurants = [NSMutableArray array];
-//        for (id dict in responseObject) {
-//            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
-//            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
-//        }
-//        success(restaurants);
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-//        NSInteger statusCode= operation.response.statusCode;
-//        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
-//        failure(operation, error);
-//    }];
-    return nil;
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *tags = [NSMutableArray array];
+        for (NSDictionary* dictionary  in  tags) {
+            TagObject* tag= [TagObject tagFromDict:dictionary];
+            if ( tag) {
+                [tags  addObject: tag];
+            }
+        }
+        success(tags);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        NSInteger statusCode= operation.response.statusCode;
+        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
+        failure(operation, error);
+    }];
 }
 
 #if 0
@@ -407,6 +408,24 @@ NSString *const kKeyTagIDs = @"tag_ids";
         success(users);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)identifier
+                                   success:(void (^)(UserObject *users))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
+    
+        NSLog (@" URL = %@",urlString);
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        UserObject*object= [UserObject  userFromDict:responseObject];
+        success(object);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
 }
@@ -1385,131 +1404,6 @@ NSString *const kKeyTagIDs = @"tag_ids";
         failure(error);
     }];
     [op start];
-}
-
-//------------------------------------------------------------------------------
-// Name:    uploadPhoto
-// Purpose: This is the native approach.
-// Note:    This uploads the image for the current user.
-//------------------------------------------------------------------------------
-
-// Might as well use the AFnetworking approach until we find problem with it
-+ (void)uploadPhoto:(UIImage *)image
-                 to: (UploadDestination )destination
-         identifier: (NSUInteger) identifier
-            success:(void (^)(void))success
-            failure:(void (^)( NSError *error))failure;
-{
-    if (!image) {
-        failure(nil);
-        return ;
-    }
-    
-    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-    NSLog (@"IMAGE DIMENSIONS=  %@", NSStringFromCGSize(image.size));
-    NSLog (@"JPEG IMAGE SIZE=  %lu bytes",(unsigned long)[imageData length]);
-    [APP.diagnosticLogString appendFormat: @"IMAGE DIMENSIONS=  %@\r", NSStringFromCGSize(image.size)];
-    [APP.diagnosticLogString appendFormat:@"JPEG IMAGE SIZE=  %lu bytes\r",(unsigned long)[imageData length]];
-    
-    NSString *urlString= nil;
-    NSString *postParameter=  @"";
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    switch ( destination) {
-        case UPLOAD_DESTINATION_USER_PROFILE:
-            postParameter= @"user_id";
-            if ( !identifier) {
-                identifier=  userInfo.userID;
-            }
-            urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
-            break;
-            
-        case UPLOAD_DESTINATION_RESTAURANT:
-            postParameter= @"restaurant_id";
-            urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
-            break;
-            
-        case UPLOAD_DESTINATION_EVENT:
-            postParameter= @"event_id";
-            urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
-            break;
-            
-        case UPLOAD_DESTINATION_LIST:
-            postParameter= @"list_id";
-            urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
-            break;
-            
-        case UPLOAD_DESTINATION_GROUP:
-            postParameter= @"group_id";
-            urlString = [NSString stringWithFormat:@"%@://%@/groups/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long) identifier];
-            break;
-            
-        case UPLOAD_DESTINATION_DIAGNOSTIC:
-            postParameter= @"diagnostic";
-            urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/diagnostic", kHTTPProtocol, [OOAPI URL], (unsigned long) userInfo.userID];
-            break;
-    }
-    
-    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[ NSURL  URLWithString:urlString]];
-    if (!request) {
-        failure(nil);
-        return ;
-    }
-    [request setHTTPMethod:@"POST"];
-    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [request setHTTPShouldHandleCookies:NO];
-    
-    NSUInteger timeoutLength=5 + 5 * ([imageData length] >> 19);
-    [request setTimeoutInterval: timeoutLength];
-    NSLog (@"SETTING TIMEOUT TO: %lu seconds", ( unsigned long)timeoutLength);
-    
-    NSString*const boundary = @"----WebKitFormBoundaryPnHdnY89ti1wsHcj";
-    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
-    
-    [request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary]
-   forHTTPHeaderField:@"Content-Type"];
-    
-    NSMutableData *body = [NSMutableData new];
-    
-    if (imageData) {
-        [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"file.jpg\"\r\n", @"upload"] dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:[@"Content-Type: image/jpeg, image/png\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-        [body appendData:imageData];
-        [body appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    }
-    
-    // Add the userid as a POST parameter.
-    [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", postParameter] dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[[NSString stringWithFormat:@"%lu\r\n", (unsigned long) identifier] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    // All done.
-    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary]
-                      dataUsingEncoding:NSUTF8StringEncoding]];
-    [request setHTTPBody:body];
-    
-    NSString *postLength = [NSString stringWithFormat:@"%lu", ( unsigned long) [body length]];
-    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-    
-    NSURLSessionDataTask *task = [session dataTaskWithRequest: request
-                                            completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                if (error) {
-                                                    if (failure)
-                                                        failure(error);
-                                                } else {
-                                                    NSHTTPURLResponse *httpResp = (NSHTTPURLResponse*) response;
-                                                    NSLog (@"IMAGE UPLOAD RESPONSE:  %ld", (long)httpResp.statusCode);
-                                                    if (httpResp.statusCode == 200) {
-                                                        if (success) success();
-                                                    }else {
-                                                        if (failure)
-                                                            failure(nil);
-                                                    }
-                                                    
-                                                }
-                                            }];
-    [task resume];
 }
 
 //------------------------------------------------------------------------------
