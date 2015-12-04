@@ -107,13 +107,13 @@
     _imageViewLogo.frame = CGRectMake((w- imageViewLogoWidth)/2,  (w- imageViewLogoHeight)/2,imageViewLogoWidth, imageViewLogoHeight);
     
     float facebookButtonHeight= _facebookLoginButton.frame.size.height;
-    if  ( facebookButtonHeight<1) {
+    if  (facebookButtonHeight<1) {
         facebookButtonHeight=kGeomHeightButton;
     }
     
-    float y= actualBackgroundImageHeight+ (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
-    const float buttonWidth=  275;
-    float x=  (w-buttonWidth)/2;
+    float y = actualBackgroundImageHeight+ (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
+    const float buttonWidth =  275;
+    float x = (w-buttonWidth)/2;
     
     _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, facebookButtonHeight);
 }
@@ -132,9 +132,9 @@
 {
     [super viewWillAppear:animated];
     
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@( object_getClassName(self)));
 
-    _wentToDiscover= NO;
+    _wentToDiscover = NO;
 
     [self.navigationController setNavigationBarHidden:YES];
 }
@@ -143,30 +143,30 @@
 // Name:    updateUsername
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)updateUsername: (id) value // NOTE:  the value should be an NSString.
+- (void)updateUsername:(id)value // NOTE:  the value should be an NSString.
 {
     if (!value || ![ value isKindOfClass:[NSString class]] ) {
         return;
     }
     LOGS2(@"USERNAME",value);
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    userInfo.username= value;
-    [[Settings sharedInstance]save ];
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    userInfo.username = value;
+    [[Settings sharedInstance] save];
 }
 
 //------------------------------------------------------------------------------
 // Name:    updateUserID
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)updateUserID: (id) value // NOTE:  the value should be an NSNumber.
+- (void)updateUserID:(id)value // NOTE:  the value should be an NSNumber.
 {
     if (!value) {
         return;
     }
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    userInfo.userID= parseIntegerOrNullFromServer(value);
-    [[Settings sharedInstance]save ];
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    userInfo.userID = parseIntegerOrNullFromServer(value);
+    [[Settings sharedInstance] save];
 
 }
 
@@ -374,27 +374,27 @@
     isFirstRun= NO;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
-    NSString*  facebookID = facebookToken.userID;
-    __weak LoginVC *weakSelf= self;
+    NSString *facebookID = facebookToken.userID;
+    __weak LoginVC *weakSelf = self;
     
     [[OONetworkManager sharedRequestManager] GET:requestString
                                       parameters:nil
-                                         success:^void(id   result) {
-                                             NSLog  (@"PRE-EXISTING OO USER %@, %@",  facebookID , result);
-                                             [APP.diagnosticLogString appendFormat: @"PRE-EXISTING OO USER %@, %@\r",  facebookID , result];
+                                         success:^void(id result) {
+                                             NSLog(@"PRE-EXISTING OO USER %@, %@", facebookID, result);
+                                             [APP.diagnosticLogString appendFormat:@"PRE-EXISTING OO USER %@, %@\r", facebookID, result];
                                              
-                                             if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                                                 NSDictionary* d=  (NSDictionary*)result;
+                                             if ([result isKindOfClass:[NSDictionary class]]) {
+                                                 NSDictionary *d = (NSDictionary *)result;
                                                  
                                                  NSString* token= d[ @"token"];
                                                  [weakSelf updateAuthorizationToken: token];
                                                  
-                                                 NSDictionary* subdictionary=d[ @"user"];
+                                                 NSDictionary *subdictionary = d[ @"user"];
                                                  if (subdictionary) {
-                                                     NSString* userid= subdictionary[ @"user_id"];
-                                                     [weakSelf updateUserID: userid];
-                                                     NSString* username= subdictionary[ @"username"];
-                                                     [weakSelf updateUsername: username];
+                                                     NSString *userid = subdictionary[@"user_id"];
+                                                     [weakSelf updateUserID:userid];
+                                                     NSString* username = subdictionary[@"username"];
+                                                     [weakSelf updateUsername:username];
                                                  }                                             }
                                              else  {
                                                  NSLog  (@"result was not parsed into a dictionary.");
@@ -619,10 +619,10 @@
                                                      NSString* token= d[ @"token"];
                                                      [weakSelf updateAuthorizationToken: token];
                                                      
-                                                     NSDictionary* subdictionary=d[ @"user"];
+                                                     NSDictionary *subdictionary=d[ @"user"];
                                                      if (subdictionary) {
-                                                         NSString* userid= subdictionary[ @"user_id"];
-                                                         [weakSelf updateUserID: userid];
+                                                         NSString *userid = subdictionary[@"user_id"];
+                                                         [weakSelf updateUserID:userid];
                                                      }
                                                  }
                                              }
@@ -630,37 +630,37 @@
                                                  NSLog (@"PUT FAILED %@",error);
                                              }     ];
 
-    }else {
-        
-        NSString* requestString=[NSString stringWithFormat: @"%@://%@/users", kHTTPProtocol,
-                                 [OOAPI URL]
-                                 ];
-        NSLog (@"requestString  %@",requestString);
+    } else {
+        NSString *requestString = [NSString stringWithFormat:@"%@://%@/users", kHTTPProtocol, [OOAPI URL]];
+        NSLog(@"requestString  %@",requestString);
 
-        [[OONetworkManager sharedRequestManager] POST: requestString
-                                           parameters: parametersDictionary
-                                              success:^void(id   result) {
-                                                  NSLog  (@"POST SUCCESS");
-                                                  
+        [[OONetworkManager sharedRequestManager] POST:requestString
+                                           parameters:parametersDictionary
+                                              success:^void(id result) {
+                                                  NSLog(@"POST SUCCESS");
+                                                
                                                   if (!result) {
-                                                      NSLog  (@"RESULT WAS NULL.");
-                                                  }
-                                                  else if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                                                      NSDictionary* d=  (NSDictionary*)result;
+                                                      NSLog(@"RESULT WAS NULL.");
+                                                  } else if ([result isKindOfClass: [NSDictionary  class] ] ) {
+                                                      NSDictionary *d = (NSDictionary *)result;
                                                       
-                                                      NSString* token= d[ @"token"];
-                                                      [weakSelf updateAuthorizationToken: token];
+                                                      NSString *token = d[@"token"];
+                                                      [weakSelf updateAuthorizationToken:token];
                                                       
-                                                      NSDictionary* subdictionary=d[ @"user"];
+                                                      NSDictionary *subdictionary = d[@"user"];
                                                       if (subdictionary) {
-                                                          NSString* userid= subdictionary[ @"user_id"];
-                                                          [weakSelf updateUserID: userid];
+                                                          NSString *userid = subdictionary[@"user_id"];
+                                                          [weakSelf updateUserID:userid];
+                                                          UserObject *userInfo = [Settings sharedInstance].userObject;
+                                                          if (!userInfo.mediaItem) {
+                                                              [weakSelf uploadFacebookPhoto];
+                                                          }
                                                       }
                                                   }
+                                              } failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
+                                                  NSLog(@"POST FAILED %@", error);
                                               }
-                                              failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
-                                                  NSLog (@"POST FAILED %@",error);
-                                              }     ];
+         ];
     }
 }
 
@@ -680,6 +680,25 @@
         [self showMainUI];
     }
 }
+
+- (void)uploadFacebookPhoto {
+    UserObject *uo = [Settings sharedInstance].userObject;
+
+    if (!uo.imageURLString || !uo.userID) return; //can't upload a photo for a user if we do not have these two things...
+        
+    NSURL *url= [NSURL URLWithString:uo.imageURLString];
+    if (url) {
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        if (data) {
+            UIImage *image = [UIImage imageWithData:data];
+            if (image) {
+                [uo setUserProfilePhoto:image andUpload:YES];
+                NSLog (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@", NSStringFromCGSize(image.size));
+            }
+        }
+    }
+}
+
 
 - (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
@@ -750,17 +769,17 @@
                          
                          NSLog (@"NEW PROFILE PICTURE URL: %@", urlString);
                          
-                         NSURL *url= [NSURL URLWithString:urlString];
-                         if (url) {
-                             NSData *data = [NSData dataWithContentsOfURL:url];
-                             if (data) {
-                                 UIImage *image = [UIImage imageWithData:data];
-                                 if (image) {
-                                     [userInfo setUserProfilePhoto:image andUpload:YES];
-                                     NSLog (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@", NSStringFromCGSize(image.size));
-                                 }
-                             }
-                         }
+//                         NSURL *url= [NSURL URLWithString:urlString];
+//                         if (url) {
+//                             NSData *data = [NSData dataWithContentsOfURL:url];
+//                             if (data) {
+//                                 UIImage *image = [UIImage imageWithData:data];
+//                                 if (image) {
+//                                     [userInfo setUserProfilePhoto:image andUpload:YES];
+//                                     NSLog (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@", NSStringFromCGSize(image.size));
+//                                 }
+//                             }
+//                         }
                      }
                  }
              }
