@@ -264,26 +264,9 @@ NSString *const kKeyTagIDs = @"tag_ids";
 + (AFHTTPRequestOperation *)getAllTagsWithSuccess:(void (^)(NSArray *tags))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/tags", kHTTPProtocol, [OOAPI URL]];
-
-    NSLog(@"tags URL = %@", urlString);
+#define  ALL_USERS 0 // But does this hold for all calls?
     
-    OONetworkManager *rm = [[OONetworkManager alloc] init];
-    
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        NSMutableArray *tags = [NSMutableArray array];
-        for (NSDictionary* dictionary  in  tags) {
-            TagObject* tag= [TagObject tagFromDict:dictionary];
-            if ( tag) {
-                [tags  addObject: tag];
-            }
-        }
-        success(tags);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-        NSInteger statusCode= operation.response.statusCode;
-        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
-        failure(operation, error);
-    }];
+    return [OOAPI getTagsForUser:ALL_USERS success:success failure:failure ];
 }
 
 #if 0
@@ -1991,11 +1974,11 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (NSString *) URL {
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
         return kOOURLProduction;
-//    }
+    }
 }
 
 

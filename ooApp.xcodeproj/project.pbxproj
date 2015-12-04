@@ -27,7 +27,7 @@
 		36250BDF1B82704300F456B5 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */; };
 		36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */; };
 		3625598D1C0A5102002553B4 /* OptionsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3625598C1C0A5102002553B4 /* OptionsVC.m */; };
-		362559901C102ECD002553B4 /* TagTileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3625598F1C102ECD002553B4 /* TagTileCVCell.m */; settings = {ASSET_TAGS = (); }; };
+		362559901C102ECD002553B4 /* TagTileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3625598F1C102ECD002553B4 /* TagTileCVCell.m */; };
 		3629F0C61BFCF42500E2D912 /* DraggableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C11BFCF42500E2D912 /* DraggableView.m */; };
 		3629F0C71BFCF42500E2D912 /* DraggableViewBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C31BFCF42500E2D912 /* DraggableViewBackground.m */; };
 		3629F0C81BFCF42500E2D912 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C51BFCF42500E2D912 /* OverlayView.m */; };

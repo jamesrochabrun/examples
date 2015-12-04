@@ -363,11 +363,11 @@ static NSString * const ListRowID = @"ListRowCell";
         self.profileOwner = _userInfo;
     }
     
-//    {
-//        // This attempts to reestablish the back button but it does not work.
-//        self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
-//        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-//    }
+    NSUInteger totalControllers= self.navigationController.viewControllers.count;
+    if ( totalControllers>1) {
+                self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
+                [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    }
     
     _lists = [NSArray array];
     
