@@ -684,9 +684,9 @@
 - (void)uploadFacebookPhoto {
     UserObject *uo = [Settings sharedInstance].userObject;
 
-    if (!uo.imageURLString || !uo.userID) return; //can't upload a photo for a user if we do not have these two things...
+    if (!uo.facebookProfileImageURLString || !uo.userID) return; //can't upload a photo for a user if we do not have these two things...
         
-    NSURL *url= [NSURL URLWithString:uo.imageURLString];
+    NSURL *url= [NSURL URLWithString:uo.facebookProfileImageURLString];
     if (url) {
         NSData *data = [NSData dataWithContentsOfURL:url];
         if (data) {
