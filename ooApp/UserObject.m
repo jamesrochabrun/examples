@@ -122,7 +122,7 @@ BOOL isUserObject (id  object)
              }.mutableCopy;
     
     if  (self.mediaItem ) {
-        dictionary[kKeyUserMediaItem]= [MediaItemObject dictionaryOfMediaItem];
+        dictionary[kKeyUserMediaItem]= [self.mediaItem dictionaryOfMediaItem];
     }
     
     return dictionary;
