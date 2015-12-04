@@ -117,8 +117,8 @@ UIButton *makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SE
                                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                }];
     }
-    else if (user.imageURLString  && user.imageURLString.length) {//  Facebook photo
-        NSURL *url= [NSURL URLWithString: user.imageURLString];
+    else if (user.facebookProfileImageURLString  && user.facebookProfileImageURLString.length) {//  Facebook photo
+        NSURL *url= [NSURL URLWithString: user.facebookProfileImageURLString];
         if  ( url) {
             NSURLRequest*r= [NSURLRequest requestWithURL:url];
             __weak UIButton *weakButton = b;

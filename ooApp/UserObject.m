@@ -75,7 +75,7 @@ BOOL isUserObject (id  object)
     user.backendAuthorizationToken = parseStringOrNullFromServer([dict objectForKey:kKeyUserToken]);
     user.gender = parseStringOrNullFromServer([dict objectForKey:kKeyUserGender]);
     user.username = parseStringOrNullFromServer([dict objectForKey:kKeyUserUsername]);
-    user.imageURLString = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageURL]);
+    user.facebookProfileImageURLString = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageURL]);
     user.imageIdentifier = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageIdentifier]);
     user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
@@ -83,10 +83,10 @@ BOOL isUserObject (id  object)
     // RULE: If the server referred to the current user and
     // we have more information about the current user then fill it in.
     //
-    if  (!user.imageURLString) {
+    if  (!user.facebookProfileImageURLString) {
         UserObject* currentUser= [Settings sharedInstance].userObject;
         if  (user.userID==currentUser.userID ) {
-            user.imageURLString= currentUser.imageURLString;
+            user.facebookProfileImageURLString= currentUser.facebookProfileImageURLString;
         }
     }
     if ([dict objectForKey:kKeyUserMediaItem]) {
@@ -113,7 +113,7 @@ BOOL isUserObject (id  object)
              kKeyUserGender:self.gender ?: @"",
              kKeyUserUsername:self.username ?: @"",
              kKeyUserImageIdentifier:self.imageIdentifier ?: @"",
-             kKeyUserImageURL:self.imageURLString ?: @"",
+             kKeyUserImageURL:self.facebookProfileImageURLString ?: @"",
              kKeyUserParticipantType: @(self.participantType),
              kKeyUserParticipantState: @(self.participantState)
              
@@ -147,7 +147,6 @@ BOOL isUserObject (id  object)
     }
 }
 
-
 - (void) refreshWithSuccess: (void (^)())success
                     failure:(void (^)())failure;
 {
@@ -162,7 +161,7 @@ BOOL isUserObject (id  object)
                       self.phoneNumber=  user.phoneNumber;
                       self.gender= user.gender;
                       self.username= user.username;
-                      self.imageURLString= user.imageURLString;
+                      self.facebookProfileImageURLString= user.facebookProfileImageURLString;
                       self.imageIdentifier= user.imageIdentifier;
                     
                       success();
