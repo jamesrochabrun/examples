@@ -111,11 +111,11 @@
                                                    NSLog(@"");
                                                }];
     }
-    else if ( user.imageURLString) {
-        self.imageURLForFacebook=   user.imageURLString;
+    else if ( user.facebookProfileImageURLString) {
+        self.imageURLForFacebook=   user.facebookProfileImageURLString;
         __weak EventWhoTableCell *weakSelf = self;
         
-        NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: user.imageURLString ]];
+        NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: user.facebookProfileImageURLString ]];
         if  (request ) {
             [weakSelf.imageViewThumbnail setImageWithURLRequest:request
                                                placeholderImage:APP.imageForNoProfileSilhouette

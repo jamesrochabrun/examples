@@ -742,10 +742,10 @@
                  NSString *urlString = pictureData[@"url"];
                  if (urlString) {
                      UserObject *userInfo = [Settings sharedInstance].userObject;
-                     NSString* existingURL = userInfo.imageURLString;
+                     NSString* existingURL = userInfo.facebookProfileImageURLString;
                      if (!existingURL || ![existingURL isEqualToString:urlString]) {
                          // RULE: Only fetch, store and upload the profile image if the URL has changed.
-                         userInfo.imageURLString = urlString;
+                         userInfo.facebookProfileImageURLString = urlString;
                          [[Settings sharedInstance] save];
                          
                          NSLog (@"NEW PROFILE PICTURE URL: %@", urlString);

@@ -96,7 +96,7 @@ const NSUInteger maximumKeywords= 4;
         [_keywordButtonsArray addObject: button];
     }
     
-    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google(TM).", kGeomFontSizeDetail);
+    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google™.", kGeomFontSizeDetail);
     _labelMessageAboutGoogle.textColor=  UIColorRGB(0xff808000);
     
     _searchBar= [UISearchBar new];
@@ -347,6 +347,21 @@ const NSUInteger maximumKeywords= 4;
 // Name:    textDidChange
 // Purpose:
 //------------------------------------------------------------------------------
+- (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    _numberOfMatchingKeywords=0;
+    [UIView beginAnimations:nil context:NULL];
+    [self doLayout];
+    [UIView  commitAnimations];
+    
+    [_searchBar resignFirstResponder];
+    [self doSearchFor: _searchBar.text];
+}
+
+//------------------------------------------------------------------------------
+// Name:    textDidChange
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     NSString* text = _searchBar.text;
@@ -380,7 +395,9 @@ const NSUInteger maximumKeywords= 4;
     if (self.doingSearchNow) {
         [self cancelSearch];
     }
-    [self doSearchFor: text];
+    
+    // RULE: In order to minimize the number of Google search lookups, we only search when the user taps on Search.
+//    [self doSearchFor: text];
 }
 
 - (void) setUpKeywordsArray
