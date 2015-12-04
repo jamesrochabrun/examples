@@ -766,20 +766,7 @@
                          // RULE: Only fetch, store and upload the profile image if the URL has changed.
                          userInfo.facebookProfileImageURLString = urlString;
                          [[Settings sharedInstance] save];
-                         
-                         NSLog (@"NEW PROFILE PICTURE URL: %@", urlString);
-                         
-//                         NSURL *url= [NSURL URLWithString:urlString];
-//                         if (url) {
-//                             NSData *data = [NSData dataWithContentsOfURL:url];
-//                             if (data) {
-//                                 UIImage *image = [UIImage imageWithData:data];
-//                                 if (image) {
-//                                     [userInfo setUserProfilePhoto:image andUpload:YES];
-//                                     NSLog (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@", NSStringFromCGSize(image.size));
-//                                 }
-//                             }
-//                         }
+                         NSLog (@"NEW PROFILE PICTURE URL: %@", urlString); //Just save for now
                      }
                  }
              }
