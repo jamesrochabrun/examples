@@ -49,11 +49,11 @@ typedef enum: char {
 @property (nonatomic,strong) NSArray *peopleArray;
 @property (nonatomic,strong) NSMutableArray *keywordButtonsArray;
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
-@property (nonatomic,strong) NSArray *arrayOfFilterNames;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
 @property (atomic,assign) BOOL doingSearchNow;
 @property (nonatomic,strong) NSArray *keywordsArray;
 @property (nonatomic,strong) UIView *viewForKeywordButtons;
+@property (nonatomic,assign) NSUInteger numberOfMatchingKeywords;
 @end
 
 @implementation SearchVC
@@ -74,14 +74,6 @@ typedef enum: char {
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    _arrayOfFilterNames=  @[
-                            LOCAL(@"None"),
-                            LOCAL(@"Places"),
-                            LOCAL(@"People"),
-//                            LOCAL(@"Lists"),
-                            LOCAL(@"You")
-                            ];
-    
     _currentFilter=FILTER_NONE;
     
     NavTitleObject *nto;
@@ -90,6 +82,15 @@ typedef enum: char {
            subHeader: LOCAL(@"for restaurants and people")];
     
     self.navTitle = nto;
+    
+    self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff808080));
+    for (int i=0; i <5 ; i++) {
+        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeHeader, WHITE, CLEAR,
+                                     self, @selector(userPressedKeyword:) , 0);
+        button.tag=  i;
+        [_keywordButtonsArray addObject: button];
+
+    }
     
     self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google.", kGeomFontSizeDetail);
     _labelMessageAboutGoogle.textColor=  UIColorRGB(0xff808000);
@@ -112,10 +113,9 @@ typedef enum: char {
     
     self.filterView = [[OOFilterView alloc] init];
     [ self.view addSubview:_filterView];
-//    [_filterView addFilter:LOCAL(@"Lists") target:self selector:@selector(doSelectList:)];
-    [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];
-    [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];
-    [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];
+    [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];//  index 0
+    [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];//  index 1
+    [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];//  index 2
     
     [self changeFilter:FILTER_PLACES];
 
@@ -177,15 +177,6 @@ typedef enum: char {
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
-}
-
-//------------------------------------------------------------------------------
-// Name:    currentFilterName
-// Purpose:
-//------------------------------------------------------------------------------
-- (NSString *)currentFilterName
-{
-    return _arrayOfFilterNames[_currentFilter];
 }
 
 //------------------------------------------------------------------------------
@@ -360,23 +351,30 @@ typedef enum: char {
 {
     NSString* text = _searchBar.text;
     if (!text.length) {
-        // Clear the appropriate table; no need to start a search.
+        // Shrink the keyword area.
+        _numberOfMatchingKeywords=0;
+        [UIView  beginAnimations:nil context:nil];
+        [self  doLayout];
+        [UIView  commitAnimations];
         
+        // Clear the appropriate table; no need to start a search.
         if (_currentFilter == FILTER_PEOPLE ) {
             [self loadPeople:@[]];
         } else {
             [self loadRestaurants:@[]];
-            
-            int noKeywords=  _viewForKeywordButtons.subviews.count ?1:0;
-            [self doKeywordLookup: text];
-            int stillNoKeywords=  _viewForKeywordButtons.subviews.count ?1:0;
-            if  (noKeywords ^ stillNoKeywords ) {
-                [UIView  beginAnimations:nil context:nil];
-                [self  doLayout];
-                [UIView  commitAnimations];
-            }
         }
         return;
+    }
+    
+    int noKeywords= _numberOfMatchingKeywords ?1:0;
+    [self doKeywordLookup: text];
+    int stillNoKeywords= _numberOfMatchingKeywords ?1:0;
+    if  (noKeywords ^ stillNoKeywords ) {
+        [UIView  beginAnimations:nil context:nil];
+        [self  doLayout];
+        [UIView  commitAnimations];
+    } else {
+        [self  doLayout];
     }
     
     if (self.doingSearchNow) {
@@ -392,8 +390,8 @@ typedef enum: char {
     
     __weak SearchVC *weakSelf = self;
     [OOAPI getAllTagsWithSuccess:^(NSArray *tags) {
+        NSMutableArray *results= [NSMutableArray new];
         for (TagObject* tag   in  tags) {
-            NSMutableArray *results= [NSMutableArray new];
             NSString *tagString=tag.term;
             if  (tagString ) {
                 [results  addObject: tagString];
@@ -431,28 +429,30 @@ typedef enum: char {
 {
     NSMutableArray*array= [NSMutableArray new];
     int  counter= 0;
-    [_viewForKeywordButtons removeFromSuperview];
-    self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff808080));
     const unsigned maximumKeywords= 5;
+    expression= [ expression lowercaseString];
+    [_keywordButtonsArray removeAllObjects];
+    
     for (NSString* string  in _keywordsArray) {
-        if ( [string  containsString:expression]) {
+        NSString *lowerString= [ string lowercaseString];
+        NSLog  (@"COMPARING STRINGS %@, %@", expression,lowerString);
+        if ( [lowerString  containsString:expression]) {
             [ array addObject: [NSString  stringWithFormat: @"#%@", string]];
-            UIButton *button= makeButton(self.viewForKeywordButtons,  string, kGeomFontSizeHeader, WHITE, CLEAR,
-                                         self, @selector(userPressedKeyword:) , 0);
-            button.tag=  counter;
+            
             counter ++;
             if  (counter ==maximumKeywords ) {
                 break;
             }
         }
     }
+    _numberOfMatchingKeywords=counter;
     NSLog  (@"KEYWORDS: %@",array);
 }
 
 - (void)userPressedKeyword: (UIButton*) button
 {
     NSLog  (@"USER PRESSED KEYWORD BUTTON %d",button.tag);
-    
+    message( @"user pressed keyword");
 }
 
 - (void)showAppropriateTable
@@ -669,7 +669,7 @@ typedef enum: char {
     y += kGeomHeightFilters;
     
     NSUInteger totalButtons=_keywordButtonsArray.count;
-    if ( _keywordButtonsArray.count) {
+    if ( _numberOfMatchingKeywords) {
         _viewForKeywordButtons.frame= CGRectMake(0, y, w, kGeomHeightButton);
         if (totalButtons>5 ) {
             totalButtons= 5;
@@ -682,7 +682,7 @@ typedef enum: char {
         }
         y += kGeomHeightButton;
     } else {
-        _viewForKeywordButtons.frame= CGRectMake(0, y, w, 0);
+        _viewForKeywordButtons.frame= CGRectMake(0, y, w, 1);
     }
     
     const  float kGeomHeightGoogleMessage=  14;
