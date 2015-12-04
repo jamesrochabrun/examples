@@ -35,6 +35,7 @@
 @property (nonatomic, strong) UIButton *buttonNewListIcon;
 @property (nonatomic, assign) float spaceNeededForFirstCell;
 @property (nonatomic, assign) UINavigationController *navigationController;
+
 @end
 
 static NSString * const FirstRowID = @"profileFirstRowCell";
@@ -128,7 +129,6 @@ static NSString * const ListRowID = @"ListRowCell";
                                            @selector (userPressedNewList:), 0);
         [_buttonNewListIcon.titleLabel setFont:
          [UIFont fontWithName:kFontIcons size:kGeomFontSizeHeader]];
-        
     }
     return self;
 }

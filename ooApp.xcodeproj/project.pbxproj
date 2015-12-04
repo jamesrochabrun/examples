@@ -27,6 +27,7 @@
 		36250BDF1B82704300F456B5 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */; };
 		36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */; };
 		3625598D1C0A5102002553B4 /* OptionsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3625598C1C0A5102002553B4 /* OptionsVC.m */; };
+		362559901C102ECD002553B4 /* TagTileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3625598F1C102ECD002553B4 /* TagTileCVCell.m */; settings = {ASSET_TAGS = (); }; };
 		3629F0C61BFCF42500E2D912 /* DraggableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C11BFCF42500E2D912 /* DraggableView.m */; };
 		3629F0C71BFCF42500E2D912 /* DraggableViewBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C31BFCF42500E2D912 /* DraggableViewBackground.m */; };
 		3629F0C81BFCF42500E2D912 /* OverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3629F0C51BFCF42500E2D912 /* OverlayView.m */; };
@@ -187,6 +188,8 @@
 		36250BDE1B82704300F456B5 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKShareKit.framework"; sourceTree = "<group>"; };
 		3625598B1C0A5102002553B4 /* OptionsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVC.h; sourceTree = "<group>"; };
 		3625598C1C0A5102002553B4 /* OptionsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVC.m; sourceTree = "<group>"; };
+		3625598E1C102ECD002553B4 /* TagTileCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagTileCVCell.h; sourceTree = "<group>"; };
+		3625598F1C102ECD002553B4 /* TagTileCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagTileCVCell.m; sourceTree = "<group>"; };
 		3629F0C01BFCF42500E2D912 /* DraggableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableView.h; sourceTree = "<group>"; };
 		3629F0C11BFCF42500E2D912 /* DraggableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DraggableView.m; sourceTree = "<group>"; };
 		3629F0C21BFCF42500E2D912 /* DraggableViewBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DraggableViewBackground.h; sourceTree = "<group>"; };
@@ -421,6 +424,8 @@
 				367B45391BCE3A7200E96B69 /* PhotoCVCell.m */,
 				367B453B1BCE62BC00E96B69 /* RestaurantMainCVCell.h */,
 				367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */,
+				3625598E1C102ECD002553B4 /* TagTileCVCell.h */,
+				3625598F1C102ECD002553B4 /* TagTileCVCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -772,7 +777,6 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
-				75CF9BB5DDCD558F4A7480FF /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -924,21 +928,6 @@
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
 		};
-		75CF9BB5DDCD558F4A7480FF /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		923BDA435A444C3D92CBD745 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1035,6 +1024,7 @@
 				962B00C31BD95D22008790FD /* VoteObject.m in Sources */,
 				3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
+				362559901C102ECD002553B4 /* TagTileCVCell.m in Sources */,
 				96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */,
 				961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */,
 				366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */,
