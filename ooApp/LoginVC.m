@@ -1,3 +1,4 @@
+//------------------------------------------------------------------------------
 //
 //  LoginVC.m
 //  ooApp
@@ -5,6 +6,15 @@
 //  Created by Anuj Gujar on 8/17/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
+//------------------------------------------------------------------------------
+// USE CASES
+//
+// 1:  happy code path: user is setting up account for the first time
+//
+// 2:  user has account already, but they deleted the app
+//
+// 3:  user logs out from within the app
+//------------------------------------------------------------------------------
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 
