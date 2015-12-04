@@ -36,6 +36,7 @@
 		363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C01B6AC15400987A1B /* RestaurantObject.m */; };
 		363B60C41B6AE49F00987A1B /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C31B6AE49F00987A1B /* UserObject.m */; };
 		363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C61B6BF0CE00987A1B /* GroupObject.m */; };
+		364AD8C41C11514300F70F56 /* OptionsVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 364AD8C31C11514300F70F56 /* OptionsVCCVL.m */; settings = {ASSET_TAGS = (); }; };
 		364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */ = {isa = PBXBuildFile; fileRef = 364F9BA51BFEDE2600DBD012 /* OOUserView.m */; };
 		36587B711B93964C00D01EB5 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36587B6F1B93964C00D01EB5 /* Icon@2x.png */; };
 		36587B721B93964C00D01EB5 /* Icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36587B701B93964C00D01EB5 /* Icon@3x.png */; };
@@ -206,6 +207,8 @@
 		363B60C51B6BF0CE00987A1B /* GroupObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupObject.h; sourceTree = "<group>"; };
 		363B60C61B6BF0CE00987A1B /* GroupObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GroupObject.m; sourceTree = "<group>"; };
 		363B60C91B6C22F000987A1B /* CommonConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonConstants.h; sourceTree = "<group>"; };
+		364AD8C21C11514300F70F56 /* OptionsVCCVL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVCCVL.h; sourceTree = "<group>"; };
+		364AD8C31C11514300F70F56 /* OptionsVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVCCVL.m; sourceTree = "<group>"; };
 		364F9BA41BFEDE2600DBD012 /* OOUserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOUserView.h; sourceTree = "<group>"; };
 		364F9BA51BFEDE2600DBD012 /* OOUserView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOUserView.m; sourceTree = "<group>"; };
 		36587B6F1B93964C00D01EB5 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Graphic Assets/Icon@2x.png"; sourceTree = "<group>"; };
@@ -645,8 +648,6 @@
 				363B60BE1B6AC13900987A1B /* Models */,
 				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
-				3625598B1C0A5102002553B4 /* OptionsVC.h */,
-				3625598C1C0A5102002553B4 /* OptionsVC.m */,
 				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
 				3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */,
 				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
@@ -654,6 +655,10 @@
 				36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */,
 				367B45351BCCA9B100E96B69 /* RestaurantVCCVL.h */,
 				367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */,
+				3625598B1C0A5102002553B4 /* OptionsVC.h */,
+				3625598C1C0A5102002553B4 /* OptionsVC.m */,
+				364AD8C21C11514300F70F56 /* OptionsVCCVL.h */,
+				364AD8C31C11514300F70F56 /* OptionsVCCVL.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
 				96CC3A1F1BE97E1C00A43A04 /* PieView.h */,
@@ -1005,6 +1010,7 @@
 				3613BE581BBE278400F1AF67 /* ListTVCell.m in Sources */,
 				3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,
+				364AD8C41C11514300F70F56 /* OptionsVCCVL.m in Sources */,
 				36DD24261B7C88E800C6348F /* EventObject.m in Sources */,
 				36C572DD1C01477600C57DA2 /* ManageTagsVC.m in Sources */,
 				3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */,

@@ -84,19 +84,11 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
-    list.name = @"Delivery";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
     list.name = @"Mediterranean";
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
     list.name = @"Steak";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Indian";
     [_lists addObject:list];
     
     [_tableView reloadData];

@@ -11,15 +11,21 @@
 #import "OOAPI.h"
 #import "Settings.h"
 #import "TagObject.h"
+#import "TagTileCVCell.h"
+#import "OptionsVCCVL.h"
+#import "OOStripHeader.h"
 
 @interface OptionsVC ()
 @property (nonatomic, strong) NavTitleObject *nto;
-@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSArray *tags;
-@property (nonatomic, strong) NSMutableSet *usersTags;
+
 @end
 
-static NSString * const cellIdentifier = @"tagCell";
+static NSString * const kOptionsLocationCellIdentifier = @"LocationCellIdentifier";
+static NSString * const kOptionsPriceCellIdentifier = @"PriceCellIdentifier";
+static NSString * const kOptionsTagsCellIdentifier = @"TagsCellIdentifier";
+static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 
 @implementation OptionsVC
 
@@ -30,14 +36,26 @@ static NSString * const cellIdentifier = @"tagCell";
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Hungry?" subHeader:@"What are you in the mood for?"];
     self.navTitle = _nto;
+
+    OptionsVCCVL *cvl = [[OptionsVCCVL alloc] init];
+    cvl.delegate = self;
+    _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:cvl];
+    _collectionView.delegate = self;
+    _collectionView.dataSource = self;
+    _collectionView.allowsMultipleSelection = YES;
     
-    _tableView = [[UITableView alloc] init];
-    _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
-    _tableView.backgroundColor = UIColorRGBA(kColorGray);
-    _tableView.delegate = self;
-    _tableView.dataSource = self;
-    [self.view addSubview:_tableView];
+    _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
+    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kOptionsLocationCellIdentifier];
+    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kOptionsPriceCellIdentifier];
+    [_collectionView registerClass:[TagTileCVCell class] forCellWithReuseIdentifier:kOptionsTagsCellIdentifier];
+    [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:@"header" withReuseIdentifier:kOptionsTagsHeaderIdentifier];
+
+    _collectionView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+
+    [self.view addSubview:_collectionView];
+    _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _usersTags = [NSMutableSet set];
     
     [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(closeOptions)];
 }
@@ -47,17 +65,12 @@ static NSString * const cellIdentifier = @"tagCell";
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_collectionView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_collectionView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -76,9 +89,9 @@ static NSString * const cellIdentifier = @"tagCell";
     [OOAPI getTagsForUser:0 success:^(NSArray *tags) {
         _tags = tags;
         ON_MAIN_THREAD(^{
-            [weakSelf.tableView reloadData];
+            [weakSelf.collectionView reloadData];
         });
-        [weakSelf getUsersTags];
+//        [weakSelf getUsersTags];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -93,57 +106,123 @@ static NSString * const cellIdentifier = @"tagCell";
             [_usersTags addObject:obj];
         }];
         ON_MAIN_THREAD(^{
-            [weakSelf.tableView reloadData];
+            [weakSelf.collectionView reloadData];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [_tags count];
+#pragma mark - Collection View stuff
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    switch (section) {
+        case kOptionsSectionTypeLocation:
+            return 0;
+            break;
+        case kOptionsSectionTypePrice:
+            return 0;
+            break;
+        case kOptionsSectionTypeTags:
+            return [_tags count];
+            break;
+    }
+    return 0;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+        
+    switch (indexPath.section) {
+        case kOptionsSectionTypeLocation: {
+            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kOptionsLocationCellIdentifier forIndexPath:indexPath];
+            //[DebugUtilities addBorderToViews:@[cvc]];
+            return cvc;
+            break;
+        }
+        case kOptionsSectionTypePrice: {
+            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kOptionsPriceCellIdentifier forIndexPath:indexPath];
+            cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            //[DebugUtilities addBorderToViews:@[cvc]];
+            return cvc;
+            break;
+        }
+        case kOptionsSectionTypeTags: {
+            TagTileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kOptionsTagsCellIdentifier forIndexPath:indexPath];
+            
+            TagObject *tag = [_tags objectAtIndex:indexPath.row];
+            cvc.tagObject = tag;
+            cvc.selected = [self isUserTag:tag];
+            
+            //[DebugUtilities addBorderToViews:@[cvc]];
+            return cvc;
+            break;
+        }
+        default:
+            break;
+    }
+    
+    return nil;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return kOptionsSectionTypeNumberOfSections;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(OptionsVCCVL *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    TagObject *tag = [_tags objectAtIndex:indexPath.row];
-    
-    cell.textLabel.text = tag.term;
-    [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
-    cell.accessoryType = [self isUserTag:tag] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    
-    return cell;
+    switch (indexPath.section) {
+        case kOptionsSectionTypeLocation:
+            return 100;
+            break;
+        case kOptionsSectionTypePrice:
+            return 50;
+            break;
+        case kOptionsSectionTypeTags: {
+//            TagObject *to = [_tags objectAtIndex:indexPath.row];
+            CGFloat height = 35;
+            return height;
+            break;
+        }
+        default:
+            return 0;
+            break;
+    }
+    return 0;
 }
 
 - (BOOL)isUserTag:(TagObject *)tag {
     return [_usersTags containsObject:tag];
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    TagObject *tag = [_tags objectAtIndex:indexPath.row];
-    
-    NSUInteger userID = [[Settings sharedInstance] userObject].userID;
-    __weak OptionsVC *weakSelf = self;
-    
-    if ([self isUserTag:tag]) { //already a user tag so unset
-        [OOAPI unsetTag:tag.tagID forUser:userID success:^{
-            [weakSelf getUsersTags];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [weakSelf getUsersTags];
-        }];
-    } else { //not a user tag so set it
-        [OOAPI setTag:tag.tagID forUser:userID success:^{
-            [weakSelf getUsersTags];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [weakSelf getUsersTags];
-        }];
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == kOptionsSectionTypeTags) {
+        TagObject *tag = [_tags objectAtIndex:indexPath.row];
+        
+        if ([self isUserTag:tag]) { //already a user tag so unset
+            [_usersTags removeObject:tag];
+        } else { //not a user tag so set it
+            [_usersTags addObject:tag];
+        }
+
     }
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    
+    UICollectionReusableView *reuseView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:kOptionsTagsHeaderIdentifier forIndexPath:indexPath];
+    
+    [[reuseView viewWithTag:111] removeFromSuperview];
+
+    if (indexPath.section == kOptionsSectionTypeTags) {
+        OOStripHeader *header = [[OOStripHeader alloc] init];
+        header.name = @"Cuisine:";
+        header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
+        header.tag = 111;
+        [collectionView bringSubviewToFront:reuseView];
+        [reuseView addSubview:header];
+        [header setNeedsLayout];
+    }
+    return reuseView;
 }
 
 - (void)closeOptions {

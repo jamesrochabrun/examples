@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SubBaseVC.h"
+#import "OptionsVCCVL.h"
 
 @class OptionsVC;
 
@@ -17,8 +18,9 @@
 
 @end
 
-@interface OptionsVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
+@interface OptionsVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, OptionsVCCollectionViewDelegate>
 
 @property (nonatomic, weak) id<OptionsVCDelegate> delegate;
+@property (nonatomic, strong) NSMutableSet *usersTags;
 
 @end

@@ -25,11 +25,11 @@
 #import "TagObject.h"
 
 typedef enum: char {
-    FILTER_NONE=  -1,
-    FILTER_PLACES=  1,
-    FILTER_PEOPLE=  0,
-//    FILTER_LISTS=  0,
-    FILTER_YOU=  2,
+    FILTER_NONE = -1,
+    FILTER_PLACES = 1,
+    FILTER_PEOPLE = 0,
+//    FILTER_LISTS= 0,
+    FILTER_YOU = 2,
 } FilterType;
 
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
@@ -74,13 +74,14 @@ typedef enum: char {
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    _arrayOfFilterNames=  @[
-                            LOCAL(@"None"),
-                            LOCAL(@"Places"),
-                            LOCAL(@"People"),
-//                            LOCAL(@"Lists"),
-                            LOCAL(@"You")
-                            ];
+//    _arrayOfFilterNames=  @[
+//                            LOCAL(@"None"),
+//                            LOCAL(@"People"),
+//                            LOCAL(@"Places"),
+//
+////                            LOCAL(@"Lists"),
+//                            LOCAL(@"You")
+//                            ];
     
     _currentFilter=FILTER_NONE;
     
@@ -337,7 +338,7 @@ typedef enum: char {
         return;
     }
     
-    [_filterView selectFilter: which];
+    [_filterView setCurrent:which];
     
     self.currentFilter = which;
     
@@ -413,7 +414,7 @@ typedef enum: char {
 {
     // RULE: In the event of a backend problem, use the default set.
     self.keywordsArray=  @[
-                      @"American", @"Arcade", @"Asian", @"Bagels", @"Bakery", @"Bar", @"BBQ", @"Beer Garden", @"Breakfast", @"Brewery", @"Burgers", @"Burritos", @"Café", @"Cantonese", @"Chinese", @"Churrascaria", @"Cocktail", @"Coffee Shop", @"Comfort Food", @"Cuban", @"Dim Sum", @"Diner", @"Dive Bar", @"Ethiopian", @"Event Space", @"Falafel", @"Fast Food", @"Food", @"French", @"Fried Chicken", @"Gastropub", @"Gay Bar", @"German", @"Greek", @"Himalayan", @"Hot Dogs", @"Hotel", @"Hotpot", @"Ice Cream", @"Indian", @"Irish", @"Italian", @"Japanese", @"Jazz Club", @"Jiangsu", @"Juice Bar", @"Korean", @"Latin American", @"Lounge", @"Mediterranean", @"Mexican", @"Middle Eastern", @"Molecular Gastronomy", @"Moroccan", @"New American", @"Nightclub", @"Nightlife", @"Noodles", @"Pakistani", @"Peruvian", @"Pizza", @"Pub", @"Ramen", @"Restaurant", @"Salad", @"Sandwiches", @"Seafood", @"South American", @"South Indian", @"Sports Bar", @"Steakhouse", @"Sushi", @"Tacos", @"Tapas", @"Tea Room", @"Thai", @"Turkish", @"Vegetarian / Vegan", @"Vietnamese", @"Wine Bar", @"Winery", @"Wings"
+                      @"American", @"Asian", @"Bagels", @"Bakery", @"Bar", @"BBQ", @"Breakfast", @"Brewery", @"Burgers", @"Burritos", @"Café", @"Cantonese", @"Chinese", @"Churrascaria", @"Cocktail", @"Coffee Shop", @"Comfort Food", @"Cuban", @"Dim Sum", @"Diner", @"Dive Bar", @"Ethiopian", @"Event Space", @"Falafel", @"Fast Food", @"Food", @"French", @"Fried Chicken", @"Gastropub", @"Gay Bar", @"German", @"Greek", @"Himalayan", @"Hot Dogs", @"Hotel", @"Hotpot", @"Ice Cream", @"Indian", @"Irish", @"Italian", @"Japanese", @"Jazz Club", @"Jiangsu", @"Juice Bar", @"Korean", @"Latin American", @"Lounge", @"Mediterranean", @"Mexican", @"Middle Eastern", @"Molecular Gastronomy", @"Moroccan", @"New American", @"Nightclub", @"Nightlife", @"Noodles", @"Pakistani", @"Peruvian", @"Pizza", @"Pub", @"Ramen", @"Restaurant", @"Salad", @"Sandwiches", @"Seafood", @"South American", @"South Indian", @"Sports Bar", @"Steakhouse", @"Sushi", @"Tacos", @"Tapas", @"Tea Room", @"Thai", @"Turkish", @"Vegetarian / Vegan", @"Vietnamese", @"Wine Bar", @"Winery", @"Wings"
                       ];
     
 }

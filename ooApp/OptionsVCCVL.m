@@ -1,20 +1,19 @@
 //
-//  RestaurantVCCVL.m
+//  OptionsVCCVL.m
 //  ooApp
 //
-//  Created by Anuj Gujar on 10/12/15.
+//  Created by Anuj Gujar on 12/3/15.
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "RestaurantVCCVL.h"
-#import "OOStripHeader.h"
+#import "OptionsVCCVL.h"
 
-@interface RestaurantVCCVL ()
+@interface OptionsVCCVL ()
 @property (nonatomic) CGSize contentSize;
 @property (nonatomic, strong) NSMutableArray *sectionAttributes;
 @end
 
-@implementation RestaurantVCCVL
+@implementation OptionsVCCVL
 
 - (CGSize)collectionViewContentSize {
     return _contentSize;
@@ -26,7 +25,7 @@
     NSArray *filteredArray;
     for (NSArray *aa in _sectionAttributes) {
         filteredArray = [aa filteredArrayUsingPredicate:
-         [NSPredicate predicateWithBlock:^BOOL(UICollectionViewLayoutAttributes *evaluatedObject, NSDictionary *bindings) {
+                         [NSPredicate predicateWithBlock:^BOOL(UICollectionViewLayoutAttributes *evaluatedObject, NSDictionary *bindings) {
             CGRectIntersectsRect(rect, [evaluatedObject frame]);
             return YES;
         }]];
@@ -42,7 +41,7 @@
 
 - (void)prepareLayout {
     NSUInteger column = 0;    // Current column inside row
-
+    
     [self setSectionAttributes:nil];
     _sectionAttributes = [[NSMutableArray alloc] init];
     
@@ -63,16 +62,16 @@
         [_sectionAttributes addObject:itemAttributes];
         column = 0;
         
-        if (section == kSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
+        if (section == kOptionsSectionTypeTags && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
-            numberOfColumnsInRow = kNumColumnsForMediaItems;
+            numberOfColumnsInRow = kNumColumnsForTags;
             itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
             xOffset = kGeomSpaceEdge;
             UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
             suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
-        } else if (section == kSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
+        } else if (section == kOptionsSectionTypePrice && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
@@ -81,7 +80,7 @@
             xOffset = kGeomSpaceEdge;
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
-        } else if (section == kSectionTypeFollowees && [self.collectionView numberOfItemsInSection:section]) {
+        } else if (section == kOptionsSectionTypeLocation && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = width(self.collectionView)/(50+kGeomSpaceEdge);
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
@@ -98,7 +97,7 @@
         }
         
         NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
-
+        
         NSMutableArray *lastRowAttributes = [NSMutableArray array];
         
         // Loop through all items in section and calculate the UICollectionViewLayoutAttributes for each one
@@ -115,9 +114,9 @@
                 UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
                 yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + 2;
             }
-                
+            
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
-            if (section == kSectionTypeMediaItems) {
+            if (section == kOptionsSectionTypeTags) {
                 NSLog(@"attribute frame=%@, column=%lu", NSStringFromCGRect(attributes.frame), (unsigned long)column);
             }
             [itemAttributes addObject:attributes];
@@ -150,7 +149,7 @@
         if (theLastAttribute) {
             yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
         }
-
+        
         NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, numberOfColumnsInRow);
     }
     
@@ -159,7 +158,7 @@
     
     UICollectionViewLayoutAttributes *a;
     CGFloat y = 0, lastY;
-    for (int i=0; i<kNumColumnsForMediaItems; i++) {
+    for (int i=0; i<kNumColumnsForTags; i++) {
         NSInteger idx = [lastSectionAttributes count] - 1 - i;
         if (idx >= 0) {
             a = [lastSectionAttributes objectAtIndex:idx];

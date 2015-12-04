@@ -36,13 +36,13 @@
 
 - (void)filterPressed:(id)sender {
     UIButton *b = (UIButton *)sender;
-    NSLog(@"filter pressed");
     
     FilterObject *fo = [_filters objectAtIndex:b.tag];
     [fo.target performSelectorOnMainThread:fo.selector withObject:nil waitUntilDone:NO];
     
     CGRect frame = _currentLine.frame;
     frame.origin.x = b.frame.origin.x + (CGRectGetWidth(b.frame) - CGRectGetWidth(frame))/2;
+
     [UIView animateWithDuration:0.2 animations:^{
         _currentLine.frame = frame;
     }];
@@ -63,6 +63,7 @@
     [_filterControls addObject:filterControl];
     
     [self addSubview:filterControl];
+    [self setNeedsLayout];
 }
 
 - (void)setCurrent:(NSUInteger)current {

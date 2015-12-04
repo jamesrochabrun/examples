@@ -13,7 +13,7 @@
 @interface OOFilterView : UIView
 
 - (void)addFilter:(NSString *)name target:(id)target selector:(SEL)selector;
-- (void)selectFilter:(NSUInteger)which;
+//- (void)selectFilter:(NSUInteger)which;
 - (void)setCurrent:(NSUInteger)current;
 
 @end
