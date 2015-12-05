@@ -64,7 +64,7 @@
         column = 0;
         
         if (section == kSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            NSLog(@"section:%ld items:%d yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = kNumColumnsForMediaItems;
             itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
             xOffset = kGeomSpaceEdge;
@@ -73,7 +73,7 @@
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
         } else if (section == kSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            NSLog(@"section:%ld items:%d yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
             UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];

@@ -14,7 +14,6 @@
 @interface RestaurantTVCell : ObjectTVCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
-
 @property (nonatomic, strong) ListObject *listToAddTo;
 
 @end

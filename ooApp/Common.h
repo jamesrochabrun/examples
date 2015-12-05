@@ -99,4 +99,5 @@ extern void ANALYTICS_FORCE_SYNC ( void);
 
 extern void removeRightButton (UINavigationItem*item);
 
+extern UIImage *darkenImage(UIImage *image);
 #endif

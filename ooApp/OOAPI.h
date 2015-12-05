@@ -48,6 +48,11 @@ typedef enum {
                                                success:(void (^)(NSArray *restaurants))success
                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)getRestaurantsViaYouSearchForUser:(NSUInteger) userid
+                                                     withTerm: (NSString*)term
+                                                      success:(void (^)(NSArray *restaurants))success
+                                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 - (AFHTTPRequestOperation *)getRestaurantImageWithImageRef:(NSString *)imageRef
                                                   maxWidth:(NSUInteger)maxWidth
                                                  maxHeight:(NSUInteger)maxHeight
