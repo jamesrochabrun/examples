@@ -56,6 +56,8 @@ const NSUInteger maximumKeywords= 4;
 @property (nonatomic,strong) NSArray *keywordsArray;
 @property (nonatomic,strong) UIView *viewForKeywordButtons;
 @property (nonatomic,assign) NSUInteger numberOfMatchingKeywords;
+@property (nonatomic,strong)  UILabel *labelPreSearchInstructiveMessage;
+@property (nonatomic,assign) BOOL haveSearchedPeople, haveSearchedPlaces, haveSearchedYou;
 @end
 
 @implementation SearchVC
@@ -96,8 +98,10 @@ const NSUInteger maximumKeywords= 4;
         [_keywordButtonsArray addObject: button];
     }
     
-    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google™", kGeomFontSizeDetail);
-    _labelMessageAboutGoogle.textColor=  UIColorRGB(0xff808000);
+    self.labelPreSearchInstructiveMessage=  makeLabel( self.view,  @"", kGeomFontSizeDetail);
+    self.labelPreSearchInstructiveMessage.textColor=  UIColorRGB(0xff808000);
+    _labelPreSearchInstructiveMessage.layer.borderWidth= 1;
+    _labelPreSearchInstructiveMessage.layer.borderColor= RED.CGColor;
     
     _searchBar= [UISearchBar new];
     [ self.view addSubview:_searchBar];
@@ -117,9 +121,9 @@ const NSUInteger maximumKeywords= 4;
     
     self.filterView = [[OOFilterView alloc] init];
     [ self.view addSubview:_filterView];
-    [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(doSelectPeople:)];//  index 0
-    [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(doSelectPlaces:)];//  index 1
-    [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(doSelectYou:)];//  index 2
+    [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(userTappedOnPeopleFilter:)];//  index 0
+    [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(userTappedOnPlacesFilter:)];//  index 1
+    [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(userTappedOnYouFilter:)];//  index 2
     
     [self changeFilter:FILTER_PLACES];
 
@@ -258,6 +262,8 @@ const NSUInteger maximumKeywords= 4;
             
             NSString *searchText=_searchBar.text;
             NSLog (@"SEARCHING FOR USER:  %@",searchText);
+            self.haveSearchedPeople=YES;
+            [self showAppropriateTable];
             
             self.fetchOperation= [OOAPI getUsersWithKeyword:searchText
                                                     success:^(NSArray *users) {
@@ -279,6 +285,9 @@ const NSUInteger maximumKeywords= 4;
             
             [self showSpinner: @""];
             _doingSearchNow=YES;
+            
+            self.haveSearchedYou=YES;
+            [self showAppropriateTable];
             
             CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
             if (!location.latitude && !location.longitude) {
@@ -310,7 +319,10 @@ const NSUInteger maximumKeywords= 4;
             
             [self showSpinner: @""];
             _doingSearchNow=YES;
-
+            
+            self.haveSearchedPlaces=YES;
+            [self showAppropriateTable];
+            
             CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
             if (!location.latitude && !location.longitude) {
                 // XX
@@ -548,14 +560,35 @@ const NSUInteger maximumKeywords= 4;
         case FILTER_PEOPLE:
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
+            if  (!_haveSearchedPeople) {
+                _labelPreSearchInstructiveMessage.hidden= NO;
+                _labelPreSearchInstructiveMessage.text=  @"Find Your Foodies (Search for Users by Name)";
+            } else {
+                _labelPreSearchInstructiveMessage.hidden= YES;
+            }
+
             break;
         case FILTER_YOU:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
+            if  (!_haveSearchedYou) {
+                _labelPreSearchInstructiveMessage.hidden= NO;
+                _labelPreSearchInstructiveMessage.text=  @"Search for places to eat\rPowered by Google™";
+            } else {
+                _labelPreSearchInstructiveMessage.hidden= YES;
+            }
+
             break;
         case FILTER_PLACES:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
+            
+            if  (!_haveSearchedPlaces) {
+                _labelPreSearchInstructiveMessage.hidden= NO;
+                _labelPreSearchInstructiveMessage.text=  @"Search for places on your lists";
+            } else {
+                _labelPreSearchInstructiveMessage.hidden= YES;
+            }
             break;
         case FILTER_NONE:
             _tablePeople.hidden = YES;
@@ -677,10 +710,10 @@ const NSUInteger maximumKeywords= 4;
 //}
 
 //------------------------------------------------------------------------------
-// Name:    doSelectPeople
+// Name:    userTappedOnPeopleFilter
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectPeople:(id)sender
+- (void)userTappedOnPeopleFilter:(id)sender
 {
     if (_currentFilter == FILTER_PEOPLE) {
         return;
@@ -691,21 +724,23 @@ const NSUInteger maximumKeywords= 4;
         [self cancelSearch];
     }
     
+    _searchBar.text=@"";
+    
     [self showAppropriateTable];
     [self showOrHideKeywordsBar];
 
     // RULE: If there is a search string then redo the current search for the new context.
-    if (_searchBar.text.length) {
+//    if (_searchBar.text.length) {
         [self clearResultsTables];
-        [self doSearchFor: _searchBar.text];
-    }
+//        [self doSearchFor: _searchBar.text];
+//    }
 }
 
 //------------------------------------------------------------------------------
-// Name:    doSelectPlaces
+// Name:    userTappedOnPlacesFilter
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectPlaces:(id)sender
+- (void)userTappedOnPlacesFilter:(id)sender
 {
     if (_currentFilter == FILTER_PLACES) {
         return;
@@ -716,20 +751,23 @@ const NSUInteger maximumKeywords= 4;
     if (self.doingSearchNow) {
         [self cancelSearch];
     }
+    
+    _searchBar.text=@"";
+    
     [self showOrHideKeywordsBar];
 
     // RULE: If there is a search string then redo the current search for the new context.
-    if (_searchBar.text.length) {
+//    if (_searchBar.text.length) {
         [self clearResultsTables];
-        [self doSearchFor: _searchBar.text];
-    }
+//        [self doSearchFor: _searchBar.text];
+//    }
 }
 
 //------------------------------------------------------------------------------
-// Name:    doSelectYou
+// Name:    userTappedOnYouFilter
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doSelectYou:(id)sender
+- (void)userTappedOnYouFilter:(id)sender
 {
     if  (_currentFilter == FILTER_YOU ) {
         return;
@@ -742,11 +780,13 @@ const NSUInteger maximumKeywords= 4;
         [self cancelSearch];
     }
     
+    _searchBar.text=@"";
+    
     // RULE: If there is a search string then redo the current search for the new context.
-    if (_searchBar.text.length) {
+//    if (_searchBar.text.length) {
         [self clearResultsTables];
-        [self doSearchFor: _searchBar.text];
-    }
+//        [self doSearchFor: _searchBar.text];
+//    }
 }
 
 - (void)menuOpened:(NSNotification*)not
@@ -791,12 +831,13 @@ const NSUInteger maximumKeywords= 4;
         _viewForKeywordButtons.frame= CGRectMake(0, y, w, 1);
     }
     
-    const  float kGeomHeightGoogleMessage=  14;
-    float yMessage= h- kGeomHeightGoogleMessage;
-    _labelMessageAboutGoogle.frame = CGRectMake(0,yMessage,w, kGeomHeightGoogleMessage);
-    
-    _tableRestaurants.frame = CGRectMake(0, y, w, yMessage-y);
-    _tablePeople.frame = CGRectMake(0, y, w, yMessage-y);
+    _labelPreSearchInstructiveMessage.frame = CGRectMake((w-200)/2,y+(h-y-200)/2,200,200);
+    if  (!_labelPreSearchInstructiveMessage.hidden ) {
+        _labelPreSearchInstructiveMessage.layer.cornerRadius=  100;
+        [ self.view  bringSubviewToFront:_labelPreSearchInstructiveMessage];
+    }
+    _tableRestaurants.frame = CGRectMake(0, y, w, h-y);
+    _tablePeople.frame = CGRectMake(0, y, w, h-y);
 }
 
 //------------------------------------------------------------------------------
