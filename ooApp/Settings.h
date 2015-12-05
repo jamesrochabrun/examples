@@ -30,12 +30,16 @@ extern NSString *const kDefaultsUniqueDeviceKey;
 
 - (CLLocationCoordinate2D)mostRecentLocation;
 - (void)setMostRecentLocation:(CLLocationCoordinate2D)coord;
+- (void)removeMostRecentLocation;
+- (void)removeUser;
 
 - (NSString *)lastKnownDateString;
 - (void)saveDateString:(NSString *)string;
+- (void)removeDateString;
 
 - (double)searchRadius;
 - (void)setSearchRadius:(double)r;
+- (void)removeSearchRadius;
 
 - (NSString *)uniqueDeviceKey;
 

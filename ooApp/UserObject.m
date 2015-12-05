@@ -100,9 +100,9 @@ BOOL isUserObject (id  object)
 // Name:    dictionaryFromUser
 // Purpose: Provides dict from user object.
 //------------------------------------------------------------------------------
-- (NSDictionary *)dictionaryFromUser;
+- (NSMutableDictionary *)dictionaryFromUser;
 {
-    return @{
+    NSMutableDictionary*dictionary=  @{
              kKeyUserID : @(self.userID ),
              kKeyUserMiddleName:self.middleName ?: @"",
              kKeyUserFirstName:self.firstName ?: @"",
@@ -119,7 +119,13 @@ BOOL isUserObject (id  object)
              
              // Some data are not uploaded.
              
-             };
+             }.mutableCopy;
+    
+    if  (self.mediaItem ) {
+        dictionary[kKeyUserMediaItem]= [self.mediaItem dictionaryOfMediaItem];
+    }
+    
+    return dictionary;
 }
 
 - (void)setUserProfilePhoto:(UIImage *)userProfilePhoto andUpload:(BOOL)doUpload

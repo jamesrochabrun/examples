@@ -81,6 +81,12 @@
                                     didFinishLaunchingWithOptions:launchOptions];
 }
 
+- (void)clearCache
+{
+    NSURLCache*  cache= [NSURLCache sharedURLCache];
+    [cache  removeAllCachedResponses];
+}
+
 - (void)registerForPushNotifications {
     UIUserNotificationType types = UIUserNotificationTypeBadge |
     UIUserNotificationTypeSound | UIUserNotificationTypeAlert;

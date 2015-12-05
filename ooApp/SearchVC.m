@@ -344,15 +344,12 @@ const NSUInteger maximumKeywords= 4;
 }
 
 //------------------------------------------------------------------------------
-// Name:    textDidChange
+// Name:    searchBarSearchButtonClicked
 // Purpose:
 //------------------------------------------------------------------------------
 - (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    _numberOfMatchingKeywords=0;
-    [UIView beginAnimations:nil context:NULL];
-    [self doLayout];
-    [UIView  commitAnimations];
+    [self hideKeywordsBar];
     
     [_searchBar resignFirstResponder];
     [self doSearchFor: _searchBar.text];
@@ -366,11 +363,7 @@ const NSUInteger maximumKeywords= 4;
 {
     NSString* text = _searchBar.text;
     if (!text.length) {
-        // Shrink the keyword area.
-        _numberOfMatchingKeywords=0;
-        [UIView  beginAnimations:nil context:nil];
-        [self  doLayout];
-        [UIView  commitAnimations];
+        [self hideKeywordsBar];
         
         // Clear the appropriate table; no need to start a search.
         if (_currentFilter == FILTER_PEOPLE ) {
@@ -381,23 +374,31 @@ const NSUInteger maximumKeywords= 4;
         return;
     }
     
-    int noKeywords= _numberOfMatchingKeywords ?1:0;
-    [self doKeywordLookup: text];
-    int stillNoKeywords= _numberOfMatchingKeywords ?1:0;
-    if  (noKeywords ^ stillNoKeywords ) {
-        [UIView  beginAnimations:nil context:nil];
-        [self  doLayout];
-        [UIView  commitAnimations];
-    } else {
-        [self  doLayout];
-    }
-    
     if (self.doingSearchNow) {
         [self cancelSearch];
     }
     
-    // RULE: In order to minimize the number of Google search lookups, we only search when the user taps on Search.
-//    [self doSearchFor: text];
+    if ( _currentFilter==FILTER_PEOPLE ||  _currentFilter==FILTER_YOU) {
+        _numberOfMatchingKeywords= 0;
+        [self doSearchFor: text];
+
+    } else {
+        int noKeywords= _numberOfMatchingKeywords ?1:0;
+        [self doKeywordLookup: text];
+        int stillNoKeywords= _numberOfMatchingKeywords ?1:0;
+        if  (noKeywords ^ stillNoKeywords ) {
+            [self showKeywordsBar];
+        } else {
+            [self  doLayout];
+        }
+        
+        // RULE: In order to minimize the number of Google search lookups, we only search when the user taps on Search.
+        if ( text.length >= 3) {
+            [self doSearchFor: text];
+        } else {
+            [self clearResultsTables];
+        }
+    }
 }
 
 - (void) setUpKeywordsArray
@@ -492,23 +493,41 @@ const NSUInteger maximumKeywords= 4;
         case FILTER_PEOPLE:
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
+            [self hideKeywordsBar];
             break;
         case FILTER_YOU:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
+            [self hideKeywordsBar];
             break;
         case FILTER_PLACES:
-                _tablePeople.hidden = YES;
-                _tableRestaurants.hidden= NO;
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden= NO;
+            [self doKeywordLookup:_searchBar.text];
+            [self showKeywordsBar];
             break;
         case FILTER_NONE:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= YES;
+            [self hideKeywordsBar];
             break;
 
     }
-    
-    
+}
+
+- (void)hideKeywordsBar
+{
+    _numberOfMatchingKeywords=0;
+    [UIView beginAnimations:nil context:NULL];
+    [self doLayout];
+    [UIView  commitAnimations];
+}
+
+- (void)showKeywordsBar
+{
+    [UIView beginAnimations:nil context:NULL];
+    [self doLayout];
+    [UIView  commitAnimations];
 }
 
 //------------------------------------------------------------------------------
@@ -618,6 +637,8 @@ const NSUInteger maximumKeywords= 4;
         [self cancelSearch];
     }
     
+    [self showAppropriateTable];
+    
     // RULE: If there is a search string then redo the current search for the new context.
     if (_searchBar.text.length) {
         [self clearResultsTables];
@@ -635,7 +656,8 @@ const NSUInteger maximumKeywords= 4;
         return;
     }
     _currentFilter = FILTER_PLACES;
-    
+    [self showAppropriateTable];
+
     if (self.doingSearchNow) {
         [self cancelSearch];
     }
@@ -657,6 +679,8 @@ const NSUInteger maximumKeywords= 4;
         return;
     }
     _currentFilter = FILTER_YOU;
+    [self showAppropriateTable];
+
     if (self.doingSearchNow) {
         [self cancelSearch];
     }

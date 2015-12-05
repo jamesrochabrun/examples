@@ -9,6 +9,7 @@
 #import "SettingsVC.h"
 #import "Settings.h"
 #import "ManageTagsVC.h"
+#import "AppDelegate.h"
 
 @interface SettingsVC ()
 
@@ -107,7 +108,11 @@
 
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton
 {
-    [[Settings sharedInstance] clearUser];
+    [[Settings sharedInstance] removeUser];
+    [[Settings sharedInstance] removeMostRecentLocation];
+    [[Settings sharedInstance] removeDateString];
+    [[Settings sharedInstance] removeSearchRadius];
+    [APP clearCache];
     
     [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
 }

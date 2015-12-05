@@ -123,6 +123,28 @@ static const double kDefaultSearchRadius = 10000; // meters
     [ud synchronize];
 }
 
+- (void)removeDateString
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud removeObjectForKey:kDefaultsLastKnownDate];
+    [ud synchronize];
+}
+
+- (void)removeMostRecentLocation;
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud removeObjectForKey:kDefaultsUserLocationLastKnownLatitude];
+    [ud removeObjectForKey:kDefaultsUserLocationLastKnownLongitude];
+    [ud synchronize];
+}
+
+- (void)removeUser
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud removeObjectForKey:kDefaultsCurrentUserInfo];
+    [ud synchronize];
+}
+
 - (void)storeUser
 {
     NSDictionary *d = [self.userObject dictionaryFromUser];
@@ -209,6 +231,13 @@ static const double kDefaultSearchRadius = 10000; // meters
     }
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud setDouble:r forKey:kDefaultsSearchRadius];
+}
+
+- (void)removeSearchRadius
+{
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    [ud removeObjectForKey:kDefaultsSearchRadius];
+    [ud synchronize];
 }
 
 @end
