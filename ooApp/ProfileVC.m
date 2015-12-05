@@ -48,11 +48,11 @@ static NSString * const ListRowID = @"ListRowCell";
     _userInfo= u;
     
     // Ascertain whether reviewing our own profile.
-    UserObject *currentUser= [Settings sharedInstance].userObject;
-    NSUInteger ownUserIdentifier= [currentUser userID];
+    UserObject *currentUser = [Settings sharedInstance].userObject;
+    NSUInteger ownUserIdentifier = [currentUser userID];
     _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
     if ( _viewingOwnProfile) {
-        _buttonFollow.hidden= YES;
+        _buttonFollow.hidden = YES;
         
     } else {
         self.buttonNewList.hidden= YES;
@@ -73,7 +73,7 @@ static NSString * const ListRowID = @"ListRowCell";
         self.buttonFollow.selected= NO;
         __weak ProfileTableFirstRow *weakSelf = self;
         
-        [OOAPI  getFollowersOf: _userID
+        [OOAPI  getFollowersOf: _userInfo.userID
                        success:^(NSArray *users) {
                            for (UserObject* user   in  users) {
                                if ( user.userID==ownUserIdentifier) {

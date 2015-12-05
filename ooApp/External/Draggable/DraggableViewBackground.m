@@ -188,7 +188,16 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 -(void)cardSwipedLeft:(UIView *)card;
 {
     //do whatever you want with the card that was swiped
-    //    DraggableView *c = (DraggableView *)card;
+    DraggableView *c = (DraggableView *)card;
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    if (c.restaurant) {
+        [api addRestaurantsToSpecialList:@[c.restaurant] listType:kListTypeNotNow success:^(id response) {
+            NSLog(@"%@ added to notnow", c.restaurant.name);
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Could not add %@ to notnow: %@", c.restaurant.name, error);
+        }];
+    }
     
     [loadedCards removeObjectAtIndex:0]; //%%% card was swiped, so it's no longer a "loaded card"
     

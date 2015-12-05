@@ -881,6 +881,8 @@ NSString *const kKeyTagIDs = @"tag_ids";
         urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/favorites/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     } else if (listType == kListTypeToTry) {
         urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/totry/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
+    } else if (listType == kListTypeNotNow) {
+            urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/notnow/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     } else {
         failure(nil,nil);
         return nil;
