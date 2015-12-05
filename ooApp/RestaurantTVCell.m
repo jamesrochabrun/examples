@@ -58,12 +58,17 @@
                                   placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
                                            success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                                                ON_MAIN_THREAD(^ {
-                                                   [weakIV setAlpha:0.0];
-                                                   weakIV.image = image;
-                                                   [UIView beginAnimations:nil context:NULL];
-                                                   [UIView setAnimationDuration:0.3];
-                                                   [weakIV setAlpha:1.0];
-                                                   [UIView commitAnimations];
+                                                   //[weakIV setAlpha:0.0];
+                                                   [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                                                       weakIV.image = image;;
+                                                   } completion:^(BOOL finished) {
+                                                       ;
+                                                   }];
+//                                                   weakIV.image = image;
+//                                                   [UIView beginAnimations:nil context:NULL];
+//                                                   [UIView setAnimationDuration:0.3];
+//                                                   [weakIV setAlpha:1.0];
+//                                                   [UIView commitAnimations];
                                                    [weakSelf setNeedsUpdateConstraints];
                                                    [weakSelf setNeedsLayout];
                                                });
@@ -76,8 +81,19 @@
         }];
     } else if (imageRef) {
         self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+
+            __weak UIImageView *weakIV = self.thumbnail;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.thumbnail setImageWithURL:[NSURL URLWithString:link]];
+                [self.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                      placeholderImage:[UIImage imageNamed:@"background-image.jpg"] success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                    [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                        weakIV.image = image;;
+                    } completion:^(BOOL finished) {
+                        ;
+                    }];
+                } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                    ;
+                }];//thURL:[NSURL URLWithString:link]];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;

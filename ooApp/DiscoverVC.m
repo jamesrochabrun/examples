@@ -383,6 +383,7 @@ static NSString * const ListRowID = @"HLRCell";
                                                   andRadius:distanceInMeters
                                                andOpenOnly:_openOnly
                                                       andSort:kSearchSortTypeBestMatch
+                                                     isPlay:NO
                                                    success:^(NSArray *r) {
             _restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{

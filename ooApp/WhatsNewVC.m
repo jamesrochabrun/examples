@@ -57,8 +57,9 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
 
     ListObject *list;
     list = [[ListObject alloc] init];
-    list.name = @"Party";
+    list.name = @"Just For You";
     list.listDisplayType = kListDisplayTypeFeatured;
+    list.type = kListTypeJustForYou;
     [_lists addObject:list];
     
     list = [[ListObject alloc] init];
@@ -71,24 +72,6 @@ static NSString * const FeaturedRowID = @"FeaturedRowCell";
     list.name = @"Popular";
     list.type = kListTypePopular;
     list.listDisplayType = KListDisplayTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Thai";
-    list.listDisplayType = KListDisplayTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Vegetarian";
-    list.listDisplayType = KListDisplayTypeStrip;
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Mediterranean";
-    [_lists addObject:list];
-    
-    list = [[ListObject alloc] init];
-    list.name = @"Steak";
     [_lists addObject:list];
     
     [_tableView reloadData];

@@ -182,12 +182,13 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
             ;
         }];
     } else {
-        self.requestOperation = [api getRestaurantsWithKeywords:@[_listItem.name]
+        self.requestOperation = [api getRestaurantsWithKeywords:((_listItem.type == kListTypeJustForYou) ? @[@"restaurants"] : @[_listItem.name])
                                                    andLocation:[[LocationManager sharedInstance] currentUserLocation]
                                                      andFilter:@""
                                                     andRadius:3000
                                                     andOpenOnly:NO
                                                           andSort:kSearchSortTypeBestMatch
+                                                         isPlay:(_listItem.type == kListTypeJustForYou) ? YES : NO
                                                        success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{

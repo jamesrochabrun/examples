@@ -65,6 +65,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
                           andRadius:25000
                         andOpenOnly:NO
                             andSort:kSearchSortTypeBestMatch
+                             isPlay:YES
                             success:^(NSArray *r) {
                                 weakSelf.playItems = r;
                                 dispatch_async(dispatch_get_main_queue(), ^{

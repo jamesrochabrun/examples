@@ -45,6 +45,7 @@ typedef enum {
                                              andRadius:(CGFloat)radius
                                            andOpenOnly:(BOOL)openOnly
                                                andSort:(SearchSortType)sort
+                                                isPlay:(BOOL)isPlay
                                                success:(void (^)(NSArray *restaurants))success
                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 

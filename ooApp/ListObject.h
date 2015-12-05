@@ -19,7 +19,8 @@ typedef enum {
     kListTypeToTry = 4,
     kListTypeNotNow = 5,
     kListTypeTrending = 2000,
-    kListTypePopular = 2001
+    kListTypePopular = 2001,
+    kListTypeJustForYou = 2002
 } ListType;
 
 extern NSString *const kKeyListID;

@@ -206,7 +206,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                     andRadius:2000
                                                    andOpenOnly:NO
                                                        andSort:kSearchSortTypeBestMatch
-                                                       success:^(NSArray *r) {
+                                                         isPlay:NO
+                                                        success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];

@@ -194,6 +194,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
                                              andRadius:(CGFloat)radius
                                           andOpenOnly:(BOOL)openOnly
                                               andSort:(SearchSortType)sort
+                                               isPlay:(BOOL)isPlay
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
@@ -231,7 +232,18 @@ NSString *const kKeyTagIDs = @"tag_ids";
         radius = [Settings sharedInstance].searchRadius;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/search", kHTTPProtocol, [OOAPI URL]];
+    NSString *urlString;
+    if (isPlay) {
+        UserObject *userInfo= [Settings sharedInstance].userObject;
+        if (userInfo && userInfo.userID) {
+            urlString = [NSString stringWithFormat:@"%@://%@/search/users/%lu/play", kHTTPProtocol, [OOAPI URL], userInfo.userID];
+        } else {
+            failure(nil,nil);
+        }
+    } else {
+        urlString = [NSString stringWithFormat:@"%@://%@/search", kHTTPProtocol, [OOAPI URL]];
+    }
+    
     NSDictionary *parameters = @{@"keyword":searchTerms,
                                  kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
                                  kKeySearchRadius:[NSNumber numberWithUnsignedInteger:radius],
