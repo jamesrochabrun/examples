@@ -9,8 +9,14 @@
 #import "ObjectTVCell.h"
 #import "UserObject.h"
 #import <GoogleMaps/GoogleMaps.h>
+#import "OOUserView.h"
 
-@interface UserTVCell : UITableViewCell
+@protocol UserTVCellDelegate
+- (void) userImageTapped: (UserObject*)userid;
+@end
+
+@interface UserTVCell : UITableViewCell <OOUserViewDelegate>
 
 - (void)setUser:(UserObject *)user;
+@property (nonatomic,weak) NSObject<UserTVCellDelegate> *delegate;
 @end

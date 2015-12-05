@@ -52,9 +52,12 @@
     
     _wentToDiscover= NO;
     
-    _backgroundImageView = makeImageView(self.view, @"LoginBackground.jpg");
+    UIImage*backgroundImage= [ UIImage  imageNamed:@"LoginBackground.jpg"];
+    backgroundImage= darkenImage( backgroundImage);
+    _backgroundImageView = makeImageView(self.view,  backgroundImage);
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
     _backgroundImageView.clipsToBounds= YES;
+    _backgroundImageView.opaque= NO;
     addShadowTo  (_backgroundImageView);
     
     _imageViewLogo = [[UIImageView alloc] init];

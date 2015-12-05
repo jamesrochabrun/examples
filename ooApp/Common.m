@@ -12,6 +12,8 @@
 #import "UserObject.h"
 #import "AppDelegate.h"
 #import "OOAPI.h"
+#import <CoreGraphics/CoreGraphics.h>
+#import <CoreImage/CoreImage.h>
 
 NSString *const kNotificationLocationBecameAvailable = @"notificationLocationAvailable";
 NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationUnavailable";
@@ -774,6 +776,24 @@ void ANALYTICS_EVENT_UI (NSString* name)
     [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"ui"
                                                           action: name ?:  @"unknown"
                                                            label:  @""
-                                                           value:nil] build]]; 
-    
+                                                           value:nil] build]];
+}
+
+UIImage *darkenImage(UIImage *image)
+{
+    UIGraphicsBeginImageContext(image.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGRect area = CGRectMake(0, 0, image.size.width, image.size.height);
+    CGContextScaleCTM (context,1,-1);
+    CGContextTranslateCTM(context, 0, -area.size.height);
+    CGContextSaveGState(context);
+    CGContextClipToMask(context, area, image.CGImage);
+    CGContextSetFillColorWithColor(context, UIColorRGB(0xc0c0c0).CGColor);
+    CGContextFillRect(context, area);
+    CGContextRestoreGState(context);
+    CGContextSetBlendMode(context, kCGBlendModeMultiply);
+    CGContextDrawImage(context, area, image.CGImage);
+    UIImage *darkenedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return darkenedImage;
 }

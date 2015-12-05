@@ -715,7 +715,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getRestaurantsWithListID
+// Name:    getRestaurantsFromSystemList
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsFromSystemList:(ListType)systemListType
@@ -733,6 +733,37 @@ NSString *const kKeyTagIDs = @"tag_ids";
     }
     
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%@", kHTTPProtocol, [OOAPI URL], type];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *restaurants = [NSMutableArray array];
+        if ([responseObject count]) {
+            for (id dict in responseObject) {
+                [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+            }
+        }
+        success(restaurants);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getRestaurantsViaYouSearchForUser withTerm
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getRestaurantsViaYouSearchForUser:(NSUInteger) userid
+                                                     withTerm: (NSString*)term
+                                                      success:(void (^)(NSArray *restaurants))success
+                                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    term= [term stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/search/users/%lu/restaurants?term=%@",
+                           kHTTPProtocol,
+                           [OOAPI URL],
+                           ( unsigned long)userid,
+                           term];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {

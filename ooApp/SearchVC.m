@@ -85,10 +85,10 @@ const NSUInteger maximumKeywords= 4;
     
     self.navTitle = nto;
     
-    self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff808080));
+    self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff404040));
     self.keywordButtonsArray= [NSMutableArray new];
     for (int i=0; i <maximumKeywords ; i++) {
-        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeSubheader, WHITE, CLEAR,
+        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeSubheader, UIColorRGB(0xff808000), CLEAR,
                                      self, @selector(userPressedKeyword:) , 0);
         button.tag=  i;
         button.titleLabel.numberOfLines= 0;
@@ -96,7 +96,7 @@ const NSUInteger maximumKeywords= 4;
         [_keywordButtonsArray addObject: button];
     }
     
-    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google™.", kGeomFontSizeDetail);
+    self.labelMessageAboutGoogle=  makeLabel( self.view,  @"Search is powered by Google™", kGeomFontSizeDetail);
     _labelMessageAboutGoogle.textColor=  UIColorRGB(0xff808000);
     
     _searchBar= [UISearchBar new];
@@ -277,6 +277,33 @@ const NSUInteger maximumKeywords= 4;
             
         case FILTER_YOU: {
             
+            [self showSpinner: @""];
+            _doingSearchNow=YES;
+            
+            CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
+            if (!location.latitude && !location.longitude) {
+                // XX
+                NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
+                location.latitude = 37.775;
+                location.longitude = -122.4183333;
+            }
+            
+            UserObject*user= [Settings sharedInstance].userObject;
+            self.fetchOperation= [OOAPI getRestaurantsViaYouSearchForUser: user.userID
+                                                                 withTerm: expression
+                                                                  success:^(NSArray *restaurants) {
+                                                                      [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
+                                                                                                 withObject:restaurants
+                                                                                              waitUntilDone:NO];
+                                                                      
+                                                                  } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                                      NSLog  (@"ERROR FETCHING YOU'S RESTAURANTS: %@",e );
+                                                                      
+                                                                      [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
+                                                                                                 withObject:nil
+                                                                                              waitUntilDone:NO];
+                                                                  }
+                                  ];
         } break;
             
         case  FILTER_PLACES: {
@@ -333,6 +360,7 @@ const NSUInteger maximumKeywords= 4;
     self.currentFilter = which;
     
     [self showAppropriateTable];
+    [self showOrHideKeywordsBar];
     
     // RULE: If the user was searching for "Fred" in the people category and
     //  then switched to the places category, then we should redo the search
@@ -378,7 +406,7 @@ const NSUInteger maximumKeywords= 4;
         [self cancelSearch];
     }
     
-    if ( _currentFilter==FILTER_PEOPLE ||  _currentFilter==FILTER_YOU) {
+    if ( _currentFilter==FILTER_PEOPLE  || _currentFilter==FILTER_YOU ) {
         _numberOfMatchingKeywords= 0;
         [self doSearchFor: text];
 
@@ -483,33 +511,55 @@ const NSUInteger maximumKeywords= 4;
     [self doSearchFor:string];
 }
 
+- (void)showOrHideKeywordsBar
+{
+    switch (_currentFilter) {
+        case FILTER_PEOPLE:
+            [self hideKeywordsBar];
+            break;
+        case FILTER_YOU:
+            if (_numberOfMatchingKeywords )
+#if 0
+                [self showKeywordsBar];
+            else
+                [self hideKeywordsBar];
+#else
+            [self hideKeywordsBar];
+#endif
+            break;
+        case FILTER_PLACES:
+            [self doKeywordLookup:_searchBar.text];
+            if (_numberOfMatchingKeywords )
+                [self showKeywordsBar];
+            else
+                [self hideKeywordsBar];
+            
+            break;
+        case FILTER_NONE:
+            [self hideKeywordsBar];
+            break;
+            
+    }
+}
+
 - (void)showAppropriateTable
 {
     switch (_currentFilter) {
-//        case FILTER_LISTS:
-//            _tablePeople.hidden = YES;
-//            _tableRestaurants.hidden= NO;
-//            break;
         case FILTER_PEOPLE:
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
-            [self hideKeywordsBar];
             break;
         case FILTER_YOU:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
-            [self hideKeywordsBar];
             break;
         case FILTER_PLACES:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
-            [self doKeywordLookup:_searchBar.text];
-            [self showKeywordsBar];
             break;
         case FILTER_NONE:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= YES;
-            [self hideKeywordsBar];
             break;
 
     }
@@ -517,10 +567,13 @@ const NSUInteger maximumKeywords= 4;
 
 - (void)hideKeywordsBar
 {
+    NSUInteger previousValue= _numberOfMatchingKeywords;
     _numberOfMatchingKeywords=0;
-    [UIView beginAnimations:nil context:NULL];
+    if (previousValue )
+        [UIView beginAnimations:nil context:NULL];
     [self doLayout];
-    [UIView  commitAnimations];
+    if (previousValue )
+        [UIView  commitAnimations];
 }
 
 - (void)showKeywordsBar
@@ -580,6 +633,7 @@ const NSUInteger maximumKeywords= 4;
     self.fetchOperation = nil;
     self.doingSearchNow = NO;
     [self showAppropriateTable];
+    [ self  hideKeywordsBar];
 }
 
 //------------------------------------------------------------------------------
@@ -638,7 +692,8 @@ const NSUInteger maximumKeywords= 4;
     }
     
     [self showAppropriateTable];
-    
+    [self showOrHideKeywordsBar];
+
     // RULE: If there is a search string then redo the current search for the new context.
     if (_searchBar.text.length) {
         [self clearResultsTables];
@@ -661,7 +716,8 @@ const NSUInteger maximumKeywords= 4;
     if (self.doingSearchNow) {
         [self cancelSearch];
     }
-    
+    [self showOrHideKeywordsBar];
+
     // RULE: If there is a search string then redo the current search for the new context.
     if (_searchBar.text.length) {
         [self clearResultsTables];
@@ -680,7 +736,8 @@ const NSUInteger maximumKeywords= 4;
     }
     _currentFilter = FILTER_YOU;
     [self showAppropriateTable];
-
+    [self showOrHideKeywordsBar];
+    
     if (self.doingSearchNow) {
         [self cancelSearch];
     }
@@ -754,6 +811,8 @@ const NSUInteger maximumKeywords= 4;
             UITableViewCell *cell;
             cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
             cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            cell.textLabel.textAlignment=NSTextAlignmentCenter;
+            
             if ( _doingSearchNow) {
                 cell.textLabel.text=  @"Searching...";
             } else {
@@ -799,6 +858,7 @@ const NSUInteger maximumKeywords= 4;
         }
         UserTVCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+        cell.delegate= self;
         
         NSInteger row = indexPath.row;
         if  (!self.doingSearchNow) {
@@ -809,6 +869,20 @@ const NSUInteger maximumKeywords= 4;
         return cell;
     }
     return nil;
+}
+
+- (void)userImageTapped:(UserObject*)user
+{
+    if (!user) {
+        return;
+    }
+    
+    ProfileVC *vc = [[ProfileVC  alloc]   init];
+    vc.userID = user.userID;
+    vc.userInfo = user;
+    
+    [self.navigationController pushViewController:vc animated:YES];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -878,7 +952,6 @@ const NSUInteger maximumKeywords= 4;
         
         [self.navigationController pushViewController:vc animated:YES];
     }
-    
 }
 
 //------------------------------------------------------------------------------

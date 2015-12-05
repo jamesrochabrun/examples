@@ -36,7 +36,7 @@
         
         _userView = [[OOUserView alloc] init];
         [self addSubview:_userView];
-        
+        _userView.delegate= self;
         _header = makeLabelLeft(self, nil, kGeomFontSizeHeader);
         [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
         
@@ -65,6 +65,13 @@
     self.header.frame = CGRectMake(x,y,w-x,self.header.intrinsicContentSize.height);
     y += self.header.frame.size.height;
     self.subHeader1.frame = CGRectMake(x, y, w-x, self.subHeader1.intrinsicContentSize.height);
+}
+
+- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
+{
+    if ( self.delegate) {
+        [self.delegate userImageTapped: self.userInfo];
+    }
 }
 
 - (void)setUser:(UserObject *)user
