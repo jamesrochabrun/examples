@@ -14,10 +14,11 @@
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
-@property (nonatomic,strong) NSMutableString *diagnosticLogString;
-@property (nonatomic,assign) BOOL usingStagingServer;
-@property (nonatomic,strong)  UIImage *imageForNoProfileSilhouette;
+@property (nonatomic, strong) UIWindow *window;
+@property (nonatomic, strong) NSMutableString *diagnosticLogString;
+@property (nonatomic, assign) BOOL usingStagingServer;
+@property (nonatomic, strong) UIImage *imageForNoProfileSilhouette;
+@property (nonatomic, strong) NSDate *dateLeft;
 
 - (BOOL)connected;
 - (void)registerForPushNotifications;

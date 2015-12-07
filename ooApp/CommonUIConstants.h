@@ -70,7 +70,7 @@ static CGFloat kGeomHeightSampleUsernameRow = 180.0;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
 static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
 static CGFloat kGeomHeightFeaturedCellHeight = 150.0;
-static CGFloat kGeomHeightStripListRow = 150.0;
+static CGFloat kGeomHeightStripListRow = 135.0;
 static CGFloat kGeomHeightStripListCell = 100.0;
 static CGFloat kGeomHeightHorizontalListRow = 100.0;
 static NSUInteger kGeomPlayIconSize = 45;
@@ -121,8 +121,6 @@ extern NSString *const kImageNoProfileImage;
 
 // Custom FontsGood and yet so as
 extern NSString *const kFontIcons;
-extern NSString *const kFontSFTextRegular;
-extern NSString *const kFontSFTextLight;
 extern NSString *const kFontLatoThin;
 extern NSString *const kFontLatoRegular;
 extern NSString *const kFontLatoBold;

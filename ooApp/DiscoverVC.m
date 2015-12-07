@@ -40,6 +40,7 @@
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) GMSMarker *centerMarker;
 @property (nonatomic, strong) NSSet *tags;
+@property (nonatomic, strong) ListObject *defaultListObject;
 
 @end
 
@@ -66,6 +67,7 @@ static NSString * const ListRowID = @"HLRCell";
     _mapView.settings.myLocationButton = YES;
     _mapView.settings.scrollGestures = YES;
     _mapView.settings.zoomGestures = YES;
+    _mapView.settings.rotateGestures = NO;
     _mapView.delegate = self;
     [_mapView setMinZoom:0 maxZoom:16];
     _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -93,7 +95,7 @@ static NSString * const ListRowID = @"HLRCell";
 
     [self.view addSubview:_filterView];
     
-    _nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:@"places around me"];
+    _nto = [[NavTitleObject alloc] initWithHeader:@"Nearby" subHeader:nil];
     self.navTitle = _nto;
 
     if (_listToAddTo || _eventBeingEdited) {
@@ -104,6 +106,12 @@ static NSString * const ListRowID = @"HLRCell";
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
+}
+
+- (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
+    NSLog(@"The map became idle at %f,%f", position.target.latitude, position.target.longitude);
+    _desiredLocation = position.target;
+    [self getRestaurants];
 }
 
 - (void)showOptions {
@@ -126,6 +134,10 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags {
     _tags = [NSSet setWithSet:tags];
+    _listToDisplay = nil;
+    [_filterView setCurrent:1];
+    [_filterView setNeedsLayout];
+    _openOnly = NO;
     [self getRestaurants];
     [self dismissViewControllerAnimated:YES completion:^{
         ;
@@ -138,10 +150,12 @@ static NSString * const ListRowID = @"HLRCell";
     self.dropDownList.delegate = self;
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:[Settings sharedInstance].userObject.userID withRestaurant:0 success:^(NSArray *lists) {
-        ListObject *list = [[ListObject alloc] init];
-        list.listID = 0;
-        list.name = @"places around me";
-        NSMutableArray *theLists = [NSMutableArray arrayWithObject:list];
+
+        _defaultListObject = [[ListObject alloc] init];
+        _defaultListObject.listID = 0;
+        _defaultListObject.name = [self getFilteredListName];
+        NSMutableArray *theLists = [NSMutableArray arrayWithObject:_defaultListObject];
+        
         [theLists addObjectsFromArray:lists];
         weakSelf.dropDownList.options = theLists;
         ON_MAIN_THREAD(^{
@@ -159,7 +173,8 @@ static NSString * const ListRowID = @"HLRCell";
     if (_listToDisplay.listID) {
         _nto.subheader = [NSString stringWithFormat:@"your \"%@\" places", _listToDisplay.name];
     } else {
-        _nto.subheader = _listToDisplay.name;
+        _defaultListObject.name = [self getFilteredListName];;
+        _nto.subheader = _defaultListObject.name;
     }
     self.navTitle = _nto;
     
@@ -367,7 +382,7 @@ static NSString * const ListRowID = @"HLRCell";
         }];
     } else {
         NSMutableArray *searchTerms;
-        if (_tags) {
+        if (_tags && [_tags count]) {
             searchTerms = [NSMutableArray array];
             [_tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
                 TagObject *t = (TagObject *)obj;
@@ -377,6 +392,10 @@ static NSString * const ListRowID = @"HLRCell";
             searchTerms = (_openOnly) ? [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]] : [NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]];
             NSLog(@"category: %@", searchTerms);
         }
+        _defaultListObject.name = [self getFilteredListName];
+        _nto.subheader = _defaultListObject.name;
+        self.navTitle = _nto;
+        
         _requestOperation = [api getRestaurantsWithKeywords:searchTerms
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""
@@ -392,6 +411,19 @@ static NSString * const ListRowID = @"HLRCell";
         } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
             ;
         }];
+    }
+}
+
+- (NSString *)getFilteredListName {
+    if (_tags && [_tags count]) {
+        __block NSMutableString *terms = [NSMutableString string];
+        [_tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+            TagObject *t = (TagObject *)obj;
+            [terms appendString:[NSString stringWithFormat:@"\"%@\" ", t.term]];
+        }];
+        return terms;
+    } else {
+        return @"places around me";
     }
 }
 

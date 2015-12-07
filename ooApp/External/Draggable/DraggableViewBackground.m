@@ -62,7 +62,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     [api getRestaurantsWithKeywords:keywords
                         andLocation:[[LocationManager sharedInstance] currentUserLocation]
                           andFilter:@""
-                          andRadius:25000
+                          andRadius:5000
                         andOpenOnly:NO
                             andSort:kSearchSortTypeBestMatch
                              isPlay:YES

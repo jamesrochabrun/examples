@@ -12,15 +12,12 @@
 #import "UserObject.h"
 
 @interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
-@property (nonatomic,assign) NSInteger  userID;
-@property (nonatomic,strong) UserObject* userInfo;
+@property (nonatomic, assign) NSInteger userID;
+@property (nonatomic, strong) UserObject *userInfo;
 
-- (void) goToEmptyListScreen:(NSString*)string;
-
+- (void)goToEmptyListScreen:(NSString *)string;
 @end
 
 @interface ProfileTableFirstRow : UITableViewCell <UIAlertViewDelegate>
-
-- (void) setUserInfo: (UserObject*)userInfo;
-
+- (void)setUserInfo:(UserObject*)userInfo;
 @end

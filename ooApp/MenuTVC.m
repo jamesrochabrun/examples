@@ -62,8 +62,14 @@ static NSString * const MenuCellIdentifier = @"menuCell";
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
-    menuItem.name = @"DISCOVER";
+    menuItem.name = @"NEARBY";
     menuItem.type = kMenuItemDiscover;
+    [_menuItems addObject:menuItem];
+
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconPlay;
+    menuItem.name = @"DISCOVER";
+    menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
@@ -72,12 +78,6 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.type = kMenuItemWhatsNew;
     [_menuItems addObject:menuItem];
     
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconPlay;
-    menuItem.name = @"PLAY";
-    menuItem.type = kMenuItemPlay;
-    [_menuItems addObject:menuItem];
-
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconEvent;
     menuItem.name = @"EVENTS";
@@ -210,7 +210,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     ANALYTICS_EVENT_UI(@"Menu");
 
     if ([menuItem.type isEqualToString:kMenuItemProfile]) {
-        [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
+//        [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
         fvc = [[ProfileVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemSettings]) {
         fvc = [[SettingsVC alloc] init];

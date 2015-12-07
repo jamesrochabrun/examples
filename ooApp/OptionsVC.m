@@ -215,7 +215,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 
     if (indexPath.section == kOptionsSectionTypeTags) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
-        header.name = @"Cuisine:";
+        header.name = @"What are you looking for?";
         header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
         header.tag = 111;
         [collectionView bringSubviewToFront:reuseView];

@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 
 NSString *const kFontIcons = @"oomami-icons";
-NSString *const kFontSFTextRegular = @"SFUIText-Regular";
-NSString *const kFontSFTextLight = @"SFUIText-Light";
 NSString *const kFontLatoThin = @"Lato-Thin";
 NSString *const kFontLatoRegular = @"Lato-Regular";
 NSString *const kFontLatoBold = @"Lato-Bold";

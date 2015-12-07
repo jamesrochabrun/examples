@@ -28,13 +28,10 @@
 
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UIButton *buttonFollow;
-@property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UILabel *labelUsername;
 @property (nonatomic, strong) UILabel *labelDescription;
 @property (nonatomic, strong) UILabel *labelRestaurants;
-@property (nonatomic, strong) UIButton *buttonNewListIcon;
 @property (nonatomic, assign) float spaceNeededForFirstCell;
-@property (nonatomic, assign) UINavigationController *navigationController;
 
 @end
 
@@ -54,8 +51,6 @@ static NSString * const ListRowID = @"ListRowCell";
     if ( _viewingOwnProfile) {
         _buttonFollow.hidden = YES;
         
-    } else {
-        self.buttonNewList.hidden= YES;
     }
     
     NSString *username= nil;
@@ -66,7 +61,7 @@ static NSString * const ListRowID = @"ListRowCell";
     }
     _labelUsername.text= username;
     
-    [_userView setUser: _userInfo];
+    [_userView setUser:_userInfo];
     
     // Find out if current user is following this user.
     if  (!_viewingOwnProfile) {
@@ -111,78 +106,17 @@ static NSString * const ListRowID = @"ListRowCell";
         _labelDescription.textColor = UIColorRGBA(kColorWhite);
         _labelRestaurants.textColor = UIColorRGBA(kColorWhite);
         
-        self.backgroundColor = UIColorRGBA(kColorBlack);
+        self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
-        self.buttonFollow= makeButton(self,  @"FOLLOW",
+        self.buttonFollow= makeButton(self, @"FOLLOW",
                                       kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
                                       self,
                                       @selector (userPressedFollow:), 1);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         
-        self.buttonNewList= makeButton(self,  @"NEW LIST",
-                                       kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
-                                       self,
-                                       @selector (userPressedNewList:), 0);
-        self.buttonNewListIcon= makeButton(self,kFontIconAdd,
-                                           kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
-                                           self,
-                                           @selector (userPressedNewList:), 0);
-        [_buttonNewListIcon.titleLabel setFont:
-         [UIFont fontWithName:kFontIcons size:kGeomFontSizeHeader]];
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
-}
-
-//------------------------------------------------------------------------------
-// Name:    userPressedNewList
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)userPressedNewList:(id)sender
-{
-    if (!_navigationController) {
-        return;
-    }
-    
-    UIAlertView *alert= [[UIAlertView alloc] initWithTitle:LOCAL(@"New List")
-                                                   message:LOCAL(@"Enter a name for the new list")
-                                                  delegate:self
-                                         cancelButtonTitle:LOCAL(@"Cancel")
-                                         otherButtonTitles:LOCAL(@"Create"), nil];
-    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [alert show];
-}
-
-//------------------------------------------------------------------------------
-// Name:    clickedButtonAtIndex
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if  (1 == buttonIndex) {
-        UITextField *textField = [alertView textFieldAtIndex:0];
-        NSString *string = trimString(textField.text);
-        if  (string.length ) {
-            string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
-        }
-        
-        OOAPI *api = [[OOAPI alloc] init];
-        
-        [api addList:string
-             success:^(ListObject *list) {
-                 ON_MAIN_THREAD(^{
-                     if (list) {
-                         [self.vc performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
-                     } else {
-                         message( @"That list name is already in use.");
-                     }
-                 });
-             }
-             failure:^(AFHTTPRequestOperation *operation, NSError * error) {
-                 NSString *s = [NSString stringWithFormat:@"Error from cloud: %@", error.localizedDescription];
-                 message(s);
-             }
-         ];
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -191,10 +125,6 @@ static NSString * const ListRowID = @"ListRowCell";
 //------------------------------------------------------------------------------
 - (void)userPressedFollow:(id)sender
 {
-    if (!_navigationController) {
-        return;
-    }
-    
     __weak ProfileTableFirstRow *weakSelf = self;
     [OOAPI setFollowingUser:_userInfo
                          to: !weakSelf.buttonFollow.selected
@@ -246,27 +176,14 @@ static NSString * const ListRowID = @"ListRowCell";
     
     // Place the follow button
     if (!_viewingOwnProfile) {
-        _buttonFollow.frame=CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
+        _buttonFollow.frame = CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
         y += kGeomHeightButton + spacer;
     } else {
         _buttonFollow.hidden= YES;
     }
     
     if  (y < bottomOfImage) {
-        y= bottomOfImage;
-    }
-    
-    // Place the new list buttons
-    if ( _viewingOwnProfile) {
-        x = kGeomSpaceEdge;
-        [_buttonNewListIcon sizeToFit];
-        float iconWith= _buttonNewListIcon.frame.size.width;
-        _buttonNewListIcon.frame=CGRectMake(x,y, iconWith, kGeomHeightButton);
-        x += iconWith + spacer;
-        [_buttonNewList sizeToFit];
-        float textWidth= _buttonNewList.frame.size.width;
-        _buttonNewList.frame=CGRectMake(x,y,textWidth, kGeomHeightButton);
-        y +=  kGeomHeightButton + spacer;
+        y = bottomOfImage;
     }
     
     self.spaceNeededForFirstCell = y;
@@ -298,21 +215,56 @@ static NSString * const ListRowID = @"ListRowCell";
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject *profileOwner;
+@property (nonatomic, strong) UIButton *buttonNewList;
 @end
 
 @implementation ProfileVC
 
 //------------------------------------------------------------------------------
-// Name:    init
+// Name:    userPressedNewList
 // Purpose:
 //------------------------------------------------------------------------------
-- (instancetype) init
+- (void)userPressedNewList:(id)sender
 {
-    self = [super init];
-    if (self) {
-        _userID = 0;
-    }
-    return self;
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Create List" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Enter new list name";
+    }];
+
+    UIAlertAction *newList = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        OOAPI *api = [[OOAPI alloc] init];
+
+        NSString *name = [alert.textFields[0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+        NSString *string = trimString(name);
+        if  (string.length) {
+            string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
+        }
+        __weak ProfileVC *weakSelf = self;
+        [api addList:string
+             success:^(ListObject *list) {
+                 ON_MAIN_THREAD(^{
+                     if (list) {
+                         [weakSelf performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
+                     } else {
+                         message( @"That list name is already in use.");
+                     }
+                 });
+             }
+             failure:^(AFHTTPRequestOperation *operation, NSError * error) {
+                 NSString *s = [NSString stringWithFormat:@"Error from cloud: %@", error.localizedDescription];
+                 message(s);
+             }
+         ];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        ;
+    }];
+    
+    [alert addAction:newList];
+    [alert addAction:cancel];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 //------------------------------------------------------------------------------
@@ -325,6 +277,8 @@ static NSString * const ListRowID = @"ListRowCell";
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
+    _buttonNewList.hidden = ([self profileOfCurrentUser:_profileOwner.userID] ? NO : YES);
+    
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
                 success:^(NSArray *foundLists) {
@@ -339,7 +293,7 @@ static NSString * const ListRowID = @"ListRowCell";
 
 - (void)done:(id)sender
 {
-    [self.navigationController  popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //------------------------------------------------------------------------------
@@ -350,6 +304,11 @@ static NSString * const ListRowID = @"ListRowCell";
 {
     ENTRY;
     [super viewDidLoad];
+    
+    _userID = 0;
+    _buttonNewList = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
+    _buttonNewList.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
@@ -364,7 +323,7 @@ static NSString * const ListRowID = @"ListRowCell";
     }
     
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
-    if ( totalControllers>1) {
+    if (totalControllers > 1) {
                 self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
                 [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
@@ -397,6 +356,8 @@ static NSString * const ListRowID = @"ListRowCell";
         }
          ];
     }
+    
+    [self.view addSubview:_buttonNewList];
 }
 
 //------------------------------------------------------------------------------
@@ -408,6 +369,18 @@ static NSString * const ListRowID = @"ListRowCell";
     // NOTE:  this is just temporary
     [super viewWillLayoutSubviews];
     self.table.frame = self.view.bounds;
+    
+    // Place the new list buttons
+    CGFloat x, y, spacer;
+    if ([self profileOfCurrentUser:_profileOwner.userID]) {
+        x = kGeomSpaceEdge;
+        _buttonNewList.frame = CGRectMake(width(self.view) - (width(_buttonNewList) + 30), height(self.view) - (height(_buttonNewList) + 30), width(_buttonNewList), height(_buttonNewList));
+        y += kGeomHeightButton + spacer;
+    }
+}
+
+-(BOOL)profileOfCurrentUser:(NSUInteger)userID {
+    return (userID == [Settings sharedInstance].userObject.userID) ? YES : NO;
 }
 
 //------------------------------------------------------------------------------
@@ -478,7 +451,7 @@ static NSString * const ListRowID = @"ListRowCell";
         ProfileTableFirstRow* headerCell= [tableView dequeueReusableCellWithIdentifier:FirstRowID forIndexPath:indexPath];
         [ headerCell setUserInfo: _profileOwner];
         headerCell.vc = self;
-        headerCell.navigationController = self.navigationController;
+//        headerCell.navigationController = self.navigationController;
         return headerCell;
     }
     
