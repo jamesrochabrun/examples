@@ -79,7 +79,6 @@
     
     self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
     [self.view addGestureRecognizer:_pinch];
-    
 }
 
 - (void)loginBypass: (id) sender
@@ -254,16 +253,16 @@
              [weakSelf performSelectorOnMainThread: @selector(showMainUIForUserWithEmail:) withObject:email waitUntilDone:NO   ];
              
          } else {
-             NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
+             NSInteger code= connection.URLResponse.statusCode;
+            NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@, Code= %lu", error, ( unsigned long)code);
              LOGS2(@"ERROR FROM FACEBOOK", error);
 
              // NOTE: If we reach this point, the backend knows about the user but
              //  the Facebook server may be down.
              // QUESTION: What to do in that case?
              
-             NSInteger code= connection.URLResponse.statusCode;
-             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
-             message( string);
+//             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
+//             message( string);
          }
      }
      ];
@@ -731,12 +730,13 @@
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email"
                                        parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+         NSInteger code= connection.URLResponse.statusCode;
          if (!error) {
              NSLog(@"fetched user:%@", result);
          } else {
              
-             NSInteger code= connection.URLResponse.statusCode;
-             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
+//             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
+             NSString*string=  @"We encountered a problem logging you in via Facebook.";
              message( string);
          }
      }];
@@ -747,6 +747,7 @@
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)loginButtonDidLogOut:(FBSDKLoginButton *)loginButton{
+    NSLog (@"USER TO LOG OUT");
 }
 
 //------------------------------------------------------------------------------

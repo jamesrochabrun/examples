@@ -140,6 +140,7 @@ static const double kDefaultSearchRadius = 10000; // meters
 
 - (void)removeUser
 {
+    self.userObject= [[UserObject alloc] init];
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     [ud removeObjectForKey:kDefaultsCurrentUserInfo];
     [ud synchronize];

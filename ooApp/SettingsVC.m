@@ -52,6 +52,16 @@
     self.navTitle = nto;
 }
 
+- (void)dealloc
+{
+    [_facebookButton removeFromSuperview];
+    [_manageTags removeFromSuperview];
+    [_scrollView removeFromSuperview];
+    self.facebookButton=nil;
+    self.manageTags=nil;
+    self.scrollView=nil;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
