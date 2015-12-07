@@ -2019,11 +2019,11 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (NSString *) URL {
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
         return kOOURLProduction;
-//    }
+    }
 }
 
 
