@@ -23,6 +23,7 @@
 #import "OOFilterView.h"
 #import "ListObject.h"
 #import "TagObject.h"
+#import "AppDelegate.h"
 
 @interface DiscoverVC () <GMSMapViewDelegate>
 
@@ -243,6 +244,11 @@ static NSString * const ListRowID = @"HLRCell";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(locationBecameUnavailable:)
                                                  name:kNotificationLocationBecameUnavailable object:nil];
+    
+    if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:4 minutes:0 second:0])) {
+        [self showOptions];
+        APP.dateLeft = [NSDate date];
+    }
 
 }
 

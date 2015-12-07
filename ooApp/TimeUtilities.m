@@ -57,4 +57,9 @@ NSString *const kMealCategoryBar = @"(bar)OR(restaurant)";
     return category;
 }
 
++ (NSTimeInterval)intervalFromDays:(NSUInteger)days hours:(NSUInteger)hours minutes:(NSUInteger)minutes second:(NSUInteger)seconds {
+    NSTimeInterval ti = days*24*60*60 + hours*60*60 + minutes*60 + seconds;
+    return ti;
+}
+
 @end

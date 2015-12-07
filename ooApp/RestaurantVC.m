@@ -63,6 +63,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
@@ -298,6 +299,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 {
     [self.eventBeingEdited removeVenue:_restaurant];
     [self.navigationController  popViewControllerAnimated:YES];
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)moreButtonPressed:(id)sender

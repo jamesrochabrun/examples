@@ -11,5 +11,6 @@
 @interface TimeUtilities : NSObject
 
 + (NSArray *)categorySearchTerms:(NSDate *)date;
++ (NSTimeInterval)intervalFromDays:(NSUInteger)days hours:(NSUInteger)hours minutes:(NSUInteger)minutes second:(NSUInteger)seconds;
 
 @end

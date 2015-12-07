@@ -14,6 +14,7 @@
 @interface SubBaseVC ()
 
 @property (nonatomic, strong) NavTitleView *navTitleView;
+@property (nonatomic, strong) UIBarButtonItem *leftNavButton;
 
 @end
 
@@ -48,9 +49,24 @@
     bbi.customView = _moreButton;
     self.navigationItem.rightBarButtonItems = @[bbi];
     
+    _leftNavButton = [[UIBarButtonItem alloc] init];
+    self.navigationItem.leftBarButtonItem = _leftNavButton;
+    [self.leftNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
+                                                UIColorRGB(kColorYellow), NSForegroundColorAttributeName,
+                                                nil] forState:UIControlStateNormal];
+
+
+    
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
         self.edgesForExtendedLayout = UIRectEdgeNone;
 
+}
+
+- (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+    [self.leftNavButton setTitle:icon];
+    [self.leftNavButton setTarget:target];
+    [self.leftNavButton setAction:selector];
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {

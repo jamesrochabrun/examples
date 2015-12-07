@@ -37,8 +37,13 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
     ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)viewDidLoad
