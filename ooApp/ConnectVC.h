@@ -13,10 +13,6 @@
 #import "OOUserView.h"
 #import "UserObject.h"
 
-@interface ConnectVC : BaseVC
-
-@end
-
 @protocol ConnectTableSectionHeaderDelegate
 - (void) userTappedSectionHeader:(int)which;
 @end
@@ -24,6 +20,7 @@
 @interface ConnectTableSectionHeader : UIView
 @property (nonatomic,weak) id<ConnectTableSectionHeaderDelegate> delegate;
 @property (nonatomic,strong) UILabel *labelTitle;
+@property (nonatomic,assign) BOOL isExpanded;
 @end
 
 @protocol ConnectTableCellDelegate
@@ -33,4 +30,8 @@
 @interface ConnectTableCell : UITableViewCell <OOUserViewDelegate>
 - (void) provideStats: (NSArray*) values;
 - (void) provideUser: (UserObject*) user;
+@end
+
+@interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate,ConnectTableCellDelegate>
+
 @end

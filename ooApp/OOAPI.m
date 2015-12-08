@@ -1278,6 +1278,84 @@ NSString *const kKeyTagIDs = @"tag_ids";
     return op;
 }
 
+//------------------------------------------------------------------------------
+// Name:    getSuggestedUsersForUser
+// Purpose: Obtain suggested users for a particular user, which may be different
+//          than for other users.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getSuggestedUsersForUser:(UserObject*)user
+                                          success:(void (^)(NSArray *users))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!user) {
+        failure (nil,nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSString *urlString;
+    urlString= [NSString stringWithFormat:@"%@://%@/users/%lu/connect/suggested",
+                kHTTPProtocol, [OOAPI URL], (unsigned long)user.userID];
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET:urlString parameters:nil
+         success:^(id responseObject) {
+             NSArray *array = responseObject;
+             NSMutableArray *users= [NSMutableArray new];
+             for (NSDictionary *d in array) {
+                 UserObject *user = [UserObject userFromDict:d];
+                 if (user) {
+                     [users addObject:user];
+                 }
+             }
+             success(users);
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+             failure(operation, error);
+         }];
+    
+    return op;
+}
+
+//------------------------------------------------------------------------------
+// Name:    getFoodieUsersForUser
+// Purpose: Obtain "foodie" users for a particular user, which may be different
+//          than for other users.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getFoodieUsersForUser:(UserObject*)user
+                                          success:(void (^)(NSArray *users))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!user) {
+        failure (nil,nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSString *urlString;
+        urlString= [NSString stringWithFormat:@"%@://%@/users/%lu/connect/foodies",
+                    kHTTPProtocol, [OOAPI URL], (unsigned long)user.userID];
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET:urlString parameters:nil
+         success:^(id responseObject) {
+             NSArray *array = responseObject;
+             NSMutableArray *users= [NSMutableArray new];
+             for (NSDictionary *d in array) {
+                 UserObject *user = [UserObject userFromDict:d];
+                 if (user) {
+                     [users addObject:user];
+                 }
+             }
+             success(users);
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+             failure(operation, error);
+         }];
+    
+    return op;
+}
+
 + (AFHTTPRequestOperation *)getTagsForUser:(NSUInteger)userID
                                 success:(void (^)(NSArray *tags))success
                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure

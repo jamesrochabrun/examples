@@ -31,6 +31,10 @@ typedef enum {
 //------------------------------------------------------------------------------
 // Restaurants
 
+- (AFHTTPRequestOperation *)getRestaurantsFromSystemList:(ListType)systemListType
+                                                 success:(void (^)(NSArray *restaurants))success
+                                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 - (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIDs
                                           success:(void (^)(NSArray *restaurants))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
@@ -110,7 +114,6 @@ typedef enum {
                                success:(void (^)(NSArray *lists))success
                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-
 //------------------------------------------------------------------------------
 // Users
 //
@@ -174,11 +177,13 @@ typedef enum {
 + (AFHTTPRequestOperation *)getAllUsersWithSuccess:(void (^)(NSArray *users))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-- (AFHTTPRequestOperation *)getRestaurantsFromSystemList:(ListType)systemListType
-                                                 success:(void (^)(NSArray *restaurants))success
-                                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getFoodieUsersForUser:(UserObject*)user
+                                          success:(void (^)(NSArray *users))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-
++ (AFHTTPRequestOperation *)getSuggestedUsersForUser:(UserObject*)user
+                                             success:(void (^)(NSArray *users))success
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 //------------------------------------------------------------------------------
 // Groups
 //
