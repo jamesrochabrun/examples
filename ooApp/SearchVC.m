@@ -573,22 +573,22 @@ static const NSUInteger maximumKeywords= 4;
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
             if  (!_haveSearchedYou) {
-                _labelPreSearchInstructiveMessage.hidden= NO;
-                _labelPreSearchInstructiveMessage.text=  @"Search for places to eat\rPowered by Google™";
+                _labelPreSearchInstructiveMessage.hidden = NO;
+                _labelPreSearchInstructiveMessage.text =  @"Search for places on your lists";
             } else {
-                _labelPreSearchInstructiveMessage.hidden= YES;
+                _labelPreSearchInstructiveMessage.hidden = YES;
             }
 
             break;
         case FILTER_PLACES:
             _tablePeople.hidden = YES;
-            _tableRestaurants.hidden= NO;
+            _tableRestaurants.hidden = NO;
             
             if  (!_haveSearchedPlaces) {
-                _labelPreSearchInstructiveMessage.hidden= NO;
-                _labelPreSearchInstructiveMessage.text=  @"Search for places on your lists";
+                _labelPreSearchInstructiveMessage.hidden = NO;
+                _labelPreSearchInstructiveMessage.text =  @"Search for places to eat\rPowered by Google™";
             } else {
-                _labelPreSearchInstructiveMessage.hidden= YES;
+                _labelPreSearchInstructiveMessage.hidden = YES;
             }
             break;
         case FILTER_NONE:

@@ -69,7 +69,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     
     menuItem = [MenuObject new];
     menuItem.icon = kFontIconPlay;
-    menuItem.name = @"CONNECT";
+    menuItem.name = @"CONNECT   (in progress! :)";
     menuItem.type = kMenuItemConnect;
     [_menuItems addObject:menuItem];
     
