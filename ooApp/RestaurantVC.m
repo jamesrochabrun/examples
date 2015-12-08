@@ -228,7 +228,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [_styleSheetAC addAction:shareRestaurant];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
-    if (addToEvent ) {
+    if (addToEvent) {
         [_styleSheetAC addAction:addToEvent];
     }
     

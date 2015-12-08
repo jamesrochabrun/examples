@@ -876,6 +876,7 @@ const NSUInteger maximumKeywords= 4;
         if  (!self.doingSearchNow) {
             cell.restaurant= _restaurantsArray[row];
         }
+        cell.nc = self.navigationController;
         [cell updateConstraintsIfNeeded];
         return cell;
     }

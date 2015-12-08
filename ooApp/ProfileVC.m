@@ -92,8 +92,8 @@ static NSString * const ListRowID = @"ListRowCell";
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.userView= [[OOUserView alloc] init];
-        [self addSubview: self.userView];
+        _userView= [[OOUserView alloc] init];
+        [self addSubview:_userView];
         
         NSString *description = _userInfo.about.length? _userInfo.about: nil;
         NSString *restaurants =  nil;
