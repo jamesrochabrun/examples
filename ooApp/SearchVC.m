@@ -37,7 +37,7 @@ typedef enum: char {
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
 
-const NSUInteger maximumKeywords= 4;
+static const NSUInteger maximumKeywords= 4;
 
 @interface SearchVC ()
 @property (nonatomic,strong) UISearchBar *searchBar;

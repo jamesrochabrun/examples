@@ -23,6 +23,7 @@
 #import "Common.h"
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
+#import "ConnectVC.h"
 
 @interface MenuTVC ()
 @property (nonatomic, strong) NSMutableArray *menuItems;
@@ -65,7 +66,13 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.name = @"NEARBY";
     menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];
-
+    
+    menuItem = [MenuObject new];
+    menuItem.icon = kFontIconPlay;
+    menuItem.name = @"CONNECT";
+    menuItem.type = kMenuItemConnect;
+    [_menuItems addObject:menuItem];
+    
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconPlay;
     menuItem.name = @"DISCOVER";
@@ -218,6 +225,8 @@ static NSString * const MenuCellIdentifier = @"menuCell";
         fvc = [[WhatsNewVC alloc] init];
     }else if ([menuItem.type isEqualToString:kMenuItemSearch]) {
         fvc = [[SearchVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemConnect]) {
+        fvc = [[ConnectVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
