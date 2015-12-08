@@ -8,9 +8,12 @@
 
 #import "RestaurantTVCell.h"
 #import "LocationManager.h"
+#import "ListsVC.h"
+#import "OOActivityItemProvider.h"
 
 @interface RestaurantTVCell ()
-
+@property (nonatomic, strong) UIAlertController *restaurantOptionsAC;
+@property (nonatomic, strong) UIAlertController *createListAC;
 @end
 
 @implementation RestaurantTVCell
@@ -58,17 +61,11 @@
                                   placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
                                            success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                                                ON_MAIN_THREAD(^ {
-                                                   //[weakIV setAlpha:0.0];
                                                    [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-                                                       weakIV.image = image;;
+                                                       weakIV.image = image;
                                                    } completion:^(BOOL finished) {
                                                        ;
                                                    }];
-//                                                   weakIV.image = image;
-//                                                   [UIView beginAnimations:nil context:NULL];
-//                                                   [UIView setAnimationDuration:0.3];
-//                                                   [weakIV setAlpha:1.0];
-//                                                   [UIView commitAnimations];
                                                    [weakSelf setNeedsUpdateConstraints];
                                                    [weakSelf setNeedsLayout];
                                                });
@@ -109,22 +106,196 @@
 }
 
 - (void)setupActionButton {
-    if (_listToAddTo && _restaurant.restaurantID) {
-        self.actionButton.hidden = NO;
-        [self.actionButton setTitle:kFontIconAdd forState:UIControlStateNormal];
-        [self.actionButton addTarget:self action:@selector(addToList) forControlEvents:UIControlEventTouchUpInside];
-        
-    } else {
-        self.actionButton.hidden = YES;
-    }
+    [self.actionButton setTitle:kFontIconAdd forState:UIControlStateNormal];
+    [self.actionButton addTarget:self action:@selector(addButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    self.actionButton.hidden = NO;
 }
 
 - (void)addToList {
+    if (_listToAddTo) {
+        [self addRestaurantToList:_listToAddTo];
+    } else {
+        [self showLists];
+    }
+}
+
+- (void)showLists {
+    ListsVC *vc = [[ListsVC alloc] init];
+    vc.restaurantToAdd = _restaurant;
+    [vc getLists];
+    [self.nc pushViewController:vc animated:YES];
+}
+
+- (void)addButtonPressed {
     OOAPI *api = [[OOAPI alloc] init];
-    [api addRestaurants:@[_restaurant] toList:_listToAddTo.listID success:^(id response) {
-        ;
+    [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
+        _restaurant = restaurant;
+        ON_MAIN_THREAD(^{
+            if (_restaurant.restaurantID) {
+                [self setupRestaurantOptionsAC];
+                [self.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
+            }
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
+    }];
+}
+
+- (void)setupRestaurantOptionsAC {
+    _restaurantOptionsAC = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
+                                                        message:@"What would you like to do with this restaurant."
+                                                 preferredStyle:UIAlertControllerStyleActionSheet]; // 1
+    
+    _restaurantOptionsAC.view.tintColor = UIColorRGBA(kColorBlack);
+    
+    __weak RestaurantTVCell *weakSelf = self;
+    
+    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
+                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                  [self sharePressed];
+                                                              }];
+    
+    UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add to List"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [self addToList];
+                                                        }];
+//    UIAlertAction *addToEvent = nil;
+//    if (self.eventBeingEdited) {
+//        addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
+//                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//                                                 NSLog(@"Add to Event");
+//                                                 [weakSelf addToEvent];
+//                                             }];
+//    }
+//    
+//    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
+//                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//                                                                NSLog(@"Add to New Event");
+//                                                            }];
+    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
+                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                               NSLog(@"Add to New List");
+                                                               [weakSelf setupCreateListAC];
+                                                               [weakSelf createListPressed];
+                                                           }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                         NSLog(@"Cancel");
+                                                     }];
+    
+    [_restaurantOptionsAC addAction:shareRestaurant];
+    [_restaurantOptionsAC addAction:addToList];
+    [_restaurantOptionsAC addAction:addToNewList];
+//    if (addToEvent) {
+//        [_restaurantOptionsAC addAction:addToEvent];
+//    }
+//    
+//    [_restaurantOptionsAC addAction:addToNewEvent];
+    [_restaurantOptionsAC addAction:cancel];
+    
+//    [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)sharePressed {
+    MediaItemObject *mio;
+    NSArray *mediaItems = _restaurant.mediaItems;
+    if (mediaItems && [mediaItems count]) {
+        mio = [mediaItems objectAtIndex:0];
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        
+        if (mio) {
+            self.requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
+                [self showShare:link];
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                [self showShare:nil];;
+            }];
+        } else {
+            [self showShare:nil];;
+        }
+    } else {
+        [self showShare:nil];
+    }
+}
+
+- (void)showShare:(NSString *)url {
+    NSURL *nsURL = [NSURL URLWithString:url];
+    NSData *data = [NSData dataWithContentsOfURL:nsURL];
+    UIImage *img = [UIImage imageWithData:data];
+    
+    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aip.restaurant = _restaurant;
+    
+    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    [avc setValue:[NSString stringWithFormat:@"Take a look at %@", _restaurant.name] forKey:@"subject"];
+    [avc setExcludedActivityTypes:
+     @[UIActivityTypeAssignToContact,
+       UIActivityTypeCopyToPasteboard,
+       UIActivityTypePrint,
+       UIActivityTypeSaveToCameraRoll,
+       UIActivityTypePostToWeibo]];
+    [self.nc presentViewController:avc animated:YES completion:^{
+        ;
+    }];
+    
+    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+    };
+    
+}
+
+- (void)setupCreateListAC {
+    _createListAC = [UIAlertController alertControllerWithTitle:@"Create List"
+                                                        message:nil
+                                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    [_createListAC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Enter new list name";
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSString *name = [_createListAC.textFields[0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                                                     
+                                                     if ([name length]) {
+                                                         [self createListNamed:name];
+                                                     }
+                                                 }];
+    
+    [_createListAC addAction:cancel];
+    [_createListAC addAction:ok];
+}
+
+- (void)createListPressed {
+    [self.nc presentViewController:_createListAC animated:YES completion:nil];
+}
+
+- (void)createListNamed:(NSString *)name {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantTVCell *weakSelf = self;
+    [api addList:name success:^(ListObject *listObject) {
+        if (listObject.listID) {
+            [weakSelf addRestaurantToList:listObject];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Could not create list: %@", error);
+    }];
+}
+
+- (void)addRestaurantToList:(ListObject *)list {
+    OOAPI *api = [[OOAPI alloc] init];
+    [api addRestaurants:@[_restaurant] toList:list.listID success:^(id response) {
+        ON_MAIN_THREAD(^{
+            
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Could add restaurant to list: %@", error);
     }];
 }
 

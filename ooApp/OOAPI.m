@@ -181,6 +181,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
         success([responseObject objectForKey:@"link"]);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
+        failure(nil, nil);
     }];
 }
 
