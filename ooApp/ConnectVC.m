@@ -680,36 +680,39 @@
             return;
         }
         NSArray *arrayData= ((NSDictionary*)result) [@"data"];
-        NSUInteger  total= arrayData.count;
-        if  (!total) {
-            NSLog  (@"SUCCESSFULLY FOUND ZERO FRIENDS; BUT THAT'S OKAY");
-            [weakSelf.suggestedUsersArray removeAllObjects];
-            ON_MAIN_THREAD(^{
-                [weakSelf refreshSuggestedUsersSection ];
-            });
-        } else {
-            NSMutableArray* emailAddresses= [NSMutableArray new];
-            for (id object in arrayData) {
-                if ([object isKindOfClass: [NSDictionary  class] ] ) {
-                    
-                    NSDictionary*d= (NSDictionary*)object;
-                    
-                    NSString *firstName= d[ @"first_name"];
-                    //                    NSString *lastName= d [ @"last_name"];
-                    //                    NSString *middleName= d [ @"middle_name"];
-                    //                    NSString *gender= d [ @"gender"];
-                    NSString *email= d [ @"email"];
-                    //                    NSString *birthday= d [ @"birthday"];
-                    //                    NSString *location= d [ @"location"];
-                    //                    NSString *about= d [ @"about"];
-                    
-                    NSLog (@"FOUND FRIEND %@:  %@", firstName, email);
-                    
-                    [emailAddresses addObject: email];
+        if ([arrayData isKindOfClass: [NSArray  class] ] ) {
+            NSUInteger  total= arrayData.count;
+            if  (!total) {
+                NSLog  (@"SUCCESSFULLY FOUND ZERO FRIENDS; BUT THAT'S OKAY");
+                [weakSelf.suggestedUsersArray removeAllObjects];
+                ON_MAIN_THREAD(^{
+                    [weakSelf refreshSuggestedUsersSection ];
+                });
+            } else {
+                NSMutableArray* emailAddresses= [NSMutableArray new];
+                for (id object in arrayData) {
+                    if ([object isKindOfClass: [NSDictionary  class] ] ) {
+                        
+                        NSDictionary*d= (NSDictionary*)object;
+                        
+                        NSString *firstName= d[ @"first_name"];
+                        //                    NSString *lastName= d [ @"last_name"];
+                        //                    NSString *middleName= d [ @"middle_name"];
+                        //                    NSString *gender= d [ @"gender"];
+                        NSString *email= d [ @"email"];
+                        //                    NSString *birthday= d [ @"birthday"];
+                        //                    NSString *location= d [ @"location"];
+                        //                    NSString *about= d [ @"about"];
+                        
+                        NSLog (@"FOUND FRIEND %@:  %@", firstName, email);
+                        
+                        if (email)
+                            [emailAddresses addObject: email];
+                    }
                 }
+                
+                [self determineWhichFriendsAreNotOOUsers:emailAddresses];
             }
-            
-            [self determineWhichFriendsAreNotOOUsers:emailAddresses];
         }
         
     }

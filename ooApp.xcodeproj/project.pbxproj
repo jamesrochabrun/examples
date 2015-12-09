@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 361329781C17BE34009413D6 /* NSData+Conversion.m */; settings = {ASSET_TAGS = (); }; };
+		361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 361329781C17BE34009413D6 /* NSData+Conversion.m */; };
 		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; };
 		3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE491BBA330000F1AF67 /* OOMapMarker.m */; };
 		3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */; };
@@ -783,6 +783,7 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
+				F4FE2541BBA48B34D71D657F /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -944,6 +945,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F4FE2541BBA48B34D71D657F /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
