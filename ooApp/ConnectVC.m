@@ -265,12 +265,18 @@
 @property (nonatomic,strong) NSMutableArray *suggestedUsersArray; // section 0
 @property (nonatomic,strong) NSMutableArray *foodiesArray; // section 1
 @property (nonatomic,strong) NSMutableArray *followeesArray; // section 2
+@property (nonatomic,strong) NSMutableArray *followersArray; // section 3
 
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection1;
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection2;
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection3;
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection1; // fb
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection2; // foodies
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection3; // users you're following
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection4; // users who follow you
+
 @property (nonatomic,strong) NSArray *arraySectionHeaderViews;
-@property (nonatomic,assign) BOOL canSeeSection1Items, canSeeSection2Items, canSeeSection3Items;
+@property (nonatomic,assign) BOOL canSeeSection1Items,
+                                canSeeSection2Items,
+                                canSeeSection3Items,
+                                canSeeSection4Items;
 
 @property (nonatomic,strong) NSOperationQueue *queueForStats;
 
@@ -301,6 +307,7 @@
     self.canSeeSection1Items=YES;
     self.canSeeSection2Items=YES;
     self.canSeeSection3Items=YES;
+    self.canSeeSection4Items= YES;
     
     self.queueForStats=[[NSOperationQueue alloc] init];
     
@@ -311,10 +318,12 @@
     _suggestedUsersArray = [NSMutableArray new];
     _foodiesArray = [NSMutableArray new];
     _followeesArray = [NSMutableArray new];
+    _followersArray = [NSMutableArray new];
     
     ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] init];
     ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] init];
     ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] init];
+    ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] init];
     
     headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView1.labelTitle.text=@"Suggested Users";
@@ -325,8 +334,11 @@
     headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView3.labelTitle.text=@"Users You Follow";
     
+    headerView4.backgroundColor=UIColorRGB(kColorOffBlack);
+    headerView4.labelTitle.text=@"Users Who Follow You";
+    
     _arraySectionHeaderViews= @[
-                                headerView1, headerView2, headerView3
+                                headerView1, headerView2, headerView3, headerView4
                                 ];
     
     NavTitleObject *nto;
@@ -348,15 +360,15 @@
 {
     __weak ConnectVC *weakSelf = self;
     
-    self.fetchOperationSection1 =
+    self.fetchOperationSection3 =
     [OOAPI getFollowingWithSuccess:^(NSArray *users) {
-        @synchronized(weakSelf.suggestedUsersArray)  {
+        @synchronized(weakSelf.followeesArray)  {
             weakSelf.followeesArray= users.mutableCopy;
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
                     ( unsigned long)weakSelf.followeesArray.count);
         }
-        if (weakSelf.canSeeSection1Items) {
-            // RULE: Don't reload the section unless the suggested users are visible.
+        if (weakSelf.canSeeSection3Items) {
+            // RULE: Don't reload the section unless the followees users are visible.
             ON_MAIN_THREAD(^() {
                 [weakSelf.tableAccordion reloadData];
             });
@@ -364,6 +376,30 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog  (@"UNABLE TO FETCH FOLLOWEES");
     }     ];
+}
+
+- (void)fetchFollowers
+{
+    __weak ConnectVC *weakSelf = self;
+    UserObject* currentUser= [Settings sharedInstance].userObject;
+    
+    self.fetchOperationSection4 =
+    [OOAPI getFollowersOf:currentUser.userID
+                  success: ^(NSArray *users) {
+                      @synchronized(weakSelf.followersArray)  {
+                          weakSelf.followersArray= users.mutableCopy;
+                          NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWERS",
+                                  ( unsigned long)weakSelf.followersArray.count);
+                      }
+                      if (weakSelf.canSeeSection4Items) {
+                          // RULE: Don't reload the section unless the followers users are visible.
+                          ON_MAIN_THREAD(^() {
+                              [weakSelf.tableAccordion reloadData];
+                          });
+                      }
+                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      NSLog  (@"UNABLE TO FETCH FOLLOWERS");
+                  }     ];
 }
 
 - (void)fetchFoodies
@@ -415,6 +451,7 @@
     [self fetchUserFriendListFromFacebook];
     [self fetchFoodies];
     [self fetchFollowees];
+    [self fetchFollowers];
 }
 
 //------------------------------------------------------------------------------
@@ -478,6 +515,14 @@
             }
             break;
             
+        case 3:
+            @synchronized(self.followersArray)  {
+                if ( row<_followersArray.count) {
+                    u=_followersArray[row];
+                }
+            }
+            break;
+            
         default:
             break;
     }
@@ -508,7 +553,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    return 3;
+    return 4;
 }
 
 //------------------------------------------------------------------------------
@@ -577,6 +622,14 @@
             }
             break;
             
+        case 3:
+            @synchronized(self.followersArray)  {
+                if ( row<_followersArray.count) {
+                    u=_followersArray[row];
+                }
+            }
+            break;
+            
         default:
             break;
     }
@@ -616,6 +669,12 @@
                 return _canSeeSection3Items? MAX(1,_followeesArray.count): 0;
             }
             break;
+        case 3:
+            @synchronized(self.followersArray)  {
+                return _canSeeSection4Items? MAX(1,_followersArray.count): 0;
+            }
+            break;
+            
         default:
             break;
     }
@@ -635,6 +694,9 @@
             
         case 2:
             _canSeeSection3Items= !_canSeeSection3Items;
+            break;
+        case 3:
+            _canSeeSection4Items= !_canSeeSection4Items;
             break;
     }
     
@@ -662,8 +724,8 @@
     //
     __weak ConnectVC *weakSelf= self;
     NSMutableString *facebookRequest = [NSMutableString new];
-    [facebookRequest appendString:@"/me/friends"];
-    [facebookRequest appendString:@"?limit=200"];
+    [facebookRequest appendString:@"/me/friends?fields=id,name,email&limit=200"];
+//    [facebookRequest appendString:@"?limit=200"];
     
     FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
                                   initWithGraphPath:facebookRequest
@@ -681,37 +743,31 @@
         }
         NSArray *arrayData= ((NSDictionary*)result) [@"data"];
         if ([arrayData isKindOfClass: [NSArray  class] ] ) {
+            [weakSelf.suggestedUsersArray removeAllObjects];
             NSUInteger  total= arrayData.count;
             if  (!total) {
                 NSLog  (@"SUCCESSFULLY FOUND ZERO FRIENDS; BUT THAT'S OKAY");
-                [weakSelf.suggestedUsersArray removeAllObjects];
                 ON_MAIN_THREAD(^{
                     [weakSelf refreshSuggestedUsersSection ];
                 });
             } else {
-                NSMutableArray* emailAddresses= [NSMutableArray new];
+                NSMutableArray* facebookIDs = [NSMutableArray new];
                 for (id object in arrayData) {
                     if ([object isKindOfClass: [NSDictionary  class] ] ) {
                         
                         NSDictionary*d= (NSDictionary*)object;
                         
-                        NSString *firstName= d[ @"first_name"];
-                        //                    NSString *lastName= d [ @"last_name"];
-                        //                    NSString *middleName= d [ @"middle_name"];
-                        //                    NSString *gender= d [ @"gender"];
-                        NSString *email= d [ @"email"];
-                        //                    NSString *birthday= d [ @"birthday"];
-                        //                    NSString *location= d [ @"location"];
-                        //                    NSString *about= d [ @"about"];
+                        NSString *identifier= d[ @"id"];
+                        NSString *name= d[ @"name"];
                         
-                        NSLog (@"FOUND FRIEND %@:  %@", firstName, email);
-                        
-                        if (email)
-                            [emailAddresses addObject: email];
+                        NSLog (@"FOUND FRIEND %@: id=%@", name,  identifier);
+                        if  (identifier ) {
+                            [facebookIDs  addObject: identifier];
+                        }
                     }
                 }
                 
-                [self determineWhichFriendsAreNotOOUsers:emailAddresses];
+                [weakSelf determineWhichFriendsAreNotOOUsers:facebookIDs];
             }
         }
         
@@ -719,20 +775,41 @@
      ];
 }
 
-- (void) determineWhichFriendsAreNotOOUsers: (NSMutableArray*) arrayOfEmailAddresses
+- (void) determineWhichFriendsAreNotOOUsers: (NSMutableArray*) array
 {
+    if  (!array || ! array.count) {
+        return;
+    }
+    
+    NSString*string=  [array firstObject];
     __weak ConnectVC *weakSelf= self;
-    [OOAPI getUsersTheCurrentUserIsNotFollowingUsingEmails:arrayOfEmailAddresses
-                                                   success:^(NSArray *users) {
-                                                       @synchronized(weakSelf.suggestedUsersArray)  {
-                                                           weakSelf.suggestedUsersArray=users.mutableCopy;
-                                                       }
-                                                       ON_MAIN_THREAD(^{
-                                                           [weakSelf refreshSuggestedUsersSection];
-                                                       });
-                                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                       NSLog (@"");
-                                                   }];
+
+    if  ([string containsString:@"@"  ]) {
+        //  old code, not used
+        [OOAPI getUsersTheCurrentUserIsNotFollowingUsingEmails:  array
+                                                       success:^(NSArray *users) {
+                                                           @synchronized(weakSelf.suggestedUsersArray)  {
+                                                               weakSelf.suggestedUsersArray=users.mutableCopy;
+                                                           }
+                                                           ON_MAIN_THREAD(^{
+                                                               [weakSelf refreshSuggestedUsersSection];
+                                                           });
+                                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                           NSLog (@"FETCH OF NON-FOLLOWEES USING EMAILS FAILED");
+                                                       }];
+    } else {
+        [OOAPI getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs:  array
+                                                       success:^(NSArray *users) {
+                                                           @synchronized(weakSelf.suggestedUsersArray)  {
+                                                               weakSelf.suggestedUsersArray=users.mutableCopy;
+                                                           }
+                                                           ON_MAIN_THREAD(^{
+                                                               [weakSelf refreshSuggestedUsersSection];
+                                                           });
+                                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                           NSLog (@"FETCH OF NON-FOLLOWEES USING FB IDs FAILED");
+                                                       }];
+    }
 }
 
 - (NSOperationQueue*) requireOperationQ;
