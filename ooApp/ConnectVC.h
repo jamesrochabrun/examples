@@ -24,14 +24,16 @@
 @end
 
 @protocol ConnectTableCellDelegate
-- (void) userPressedButton:(int)which regardingUser:(UserObject*)user;
+- (void) userTappedImageOfUser:(UserObject*)user;
+- (NSOperationQueue*) requireOperationQ;
 @end
 
 @interface ConnectTableCell : UITableViewCell <OOUserViewDelegate>
-- (void) provideStats: (NSArray*) values;
 - (void) provideUser: (UserObject*) user;
+- (void)commenceFetchingStats;
+@property (nonatomic,weak) id<ConnectTableCellDelegate>delegate;
 @end
 
 @interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate,ConnectTableCellDelegate>
-
+@property (nonatomic,readonly) NSOperationQueue *queueForStats;
 @end

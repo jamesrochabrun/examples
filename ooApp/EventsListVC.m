@@ -28,8 +28,6 @@
 
 @interface EventsListVC ()
 
-//@property (nonatomic, strong)  UIButton *buttonAdd;
-
 @property (nonatomic, strong)  UITableView *table;
 
 @property (nonatomic, strong) NSArray *yourEventsArray;

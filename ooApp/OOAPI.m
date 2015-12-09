@@ -409,18 +409,36 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)identifier
-                                   success:(void (^)(UserObject *users))success
-                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                  success:(void (^)(UserObject *users))success
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
     
-        NSLog (@" URL = %@",urlString);
+    NSLog (@" URL = %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         UserObject*object= [UserObject  userFromDict:responseObject];
         success(object);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)getStatsForUser:(NSUInteger)identifier
+                                   success:(void (^)(NSDictionary *response))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/stats", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
+    
+        NSLog (@" URL = %@",urlString);
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        // XX:  this is temporary
+        success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
@@ -1279,23 +1297,29 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getSuggestedUsersForUser
-// Purpose: Obtain suggested users for a particular user, which may be different
-//          than for other users.
+// Name:    getUsersTheCurrentUserIsNotFollowingUsingEmails
+// Purpose:
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getSuggestedUsersForUser:(UserObject*)user
-                                          success:(void (^)(NSArray *users))success
-                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getUsersTheCurrentUserIsNotFollowingUsingEmails: (NSArray*)arrayOfEmailAddresses
+                                                                    success:(void (^)(NSArray *users))success
+                                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    if (!user) {
-        failure (nil,nil);
+    if (!arrayOfEmailAddresses) {
+        failure(nil,nil);
         return nil;
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSString *urlString;
-    urlString= [NSString stringWithFormat:@"%@://%@/users/%lu/connect/suggested",
-                kHTTPProtocol, [OOAPI URL], (unsigned long)user.userID];
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
+    NSMutableString *urlString= [NSMutableString stringWithFormat:@"%@://%@/users/%lu/connect/emails?",
+                                 kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
+    for (NSString* string  in  arrayOfEmailAddresses) {
+        NSString *expression= [NSString  stringWithFormat: @"emails[]=%@&", string];
+        [ urlString  appendString: expression];
+    }
+    
+    NSLog  (@"URL WITH EMAIL ADDRESSES EMBEDDED: %@", urlString);
     
     AFHTTPRequestOperation *op;
     

@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+
 #import "Common.h"
 #import "AppDelegate.h"
 #import "OOAPI.h"
@@ -16,6 +18,7 @@
 #import "ProfileVC.h"
 
 #define CONNECT_TABLE_REUSE_IDENTIFIER  @"connectTableCell"
+#define CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY  @"connectTableCellEmpty"
 
 //==============================================================================
 
@@ -24,6 +27,7 @@
 @end
 
 @implementation ConnectTableSectionHeader
+
 - (instancetype) init
 {
     self=[super init];
@@ -42,6 +46,7 @@
     [self.delegate userTappedSectionHeader:self.tag];
     
     _isExpanded=!_isExpanded;
+    
     [UIView animateWithDuration:.4
                      animations:^{
                          [self layoutSubviews];
@@ -59,7 +64,7 @@
     float labelWidth= h;
     self.labelExpander.frame = CGRectMake(w-kGeomConnectHeaderRightMargin-labelWidth,0
                                           ,labelWidth,h);
-    double  angle= _isExpanded ? M_PI/2 : 3*M_PI/2;
+    double angle = _isExpanded ? M_PI/2 : 3*M_PI/2;
     _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
 }
 
@@ -75,6 +80,7 @@
 @property (nonatomic,strong) UILabel *labelUserName;
 @property (nonatomic,strong) UILabel *labelName;
 @property (nonatomic,strong) UserObject *userInfo;
+@property (nonatomic,strong) NSBlockOperation* op;
 @end
 
 @implementation ConnectTableCell
@@ -98,6 +104,10 @@
         _labelLists.textColor=WHITE;
         _labelUserName.textColor=WHITE;
         _labelName.textColor=WHITE;
+        
+        _labelLists.alpha=0;
+        _labelFollowers.alpha=0;
+        _labelFollowing.alpha=0;
 
         _labelLists.textAlignment=NSTextAlignmentLeft;
         _labelFollowers.textAlignment=NSTextAlignmentCenter;
@@ -106,9 +116,38 @@
     return self;
 }
 
+- (void)commenceFetchingStats
+{
+    __weak ConnectTableCell *weakSelf = self;
+    NSOperationQueue *q=[self.delegate requireOperationQ];
+    if  (!q) {
+        return;
+    }
+    self.op= [NSBlockOperation blockOperationWithBlock:^{
+        [OOAPI getStatsForUser:self.userInfo.userID
+                       success:^(NSDictionary *dictionary) {
+                           NSNumber* nLists=[dictionary objectForKey:@"n_lists"];
+                           NSNumber* nFollowers=[dictionary objectForKey:@"n_followers"];
+                           NSNumber* nFollowees=[dictionary objectForKey:@"n_followees"];
+                           NSArray*parameters=@[
+                                                nLists,nFollowers,nFollowees
+                                                ];
+                           ON_MAIN_THREAD(^{
+                           [weakSelf provideStats:  parameters
+                            ];
+                           });
+                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                           NSLog (@"UNABLE TO GET STATS %@",error);
+                       }
+                                   ];
+        
+    }];
+    [q addOperation: _op];
+}
+
 - (void) oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
 {
-    message(@"image tap");
+    [self.delegate userTappedImageOfUser: user];
 }
 
 - (void) provideUser: (UserObject*) user;
@@ -130,9 +169,18 @@
 
 - (void)prepareForReuse
 {
+    [_op cancel];
     _labelUserName.text=nil;
     _labelName.text=nil;
-    [self provideStats: @[ @0,@0,@0]];
+    
+    _labelLists.alpha=0;
+    _labelFollowers.alpha=0;
+    _labelFollowing.alpha=0;
+    
+    [_labelLists setText: nil];
+    [_labelFollowers setText: nil];
+    [_labelFollowing setText: nil];
+    
 }
 
 - (void) provideStats: (NSArray*) values
@@ -143,13 +191,17 @@
     [_labelLists setText: [NSString stringWithFormat:@"%@ lists",values[0]  ]];
     [_labelFollowers setText: [NSString stringWithFormat:@"%@ followers",values[1]  ]];
     [_labelFollowing setText: [NSString stringWithFormat:@"%@ following",values[2]  ]];
+    
+    __weak ConnectTableCell *weakSelf = self;
+    [UIView animateWithDuration:.4 animations:^{
+        weakSelf.labelLists.alpha=1;
+        weakSelf.labelFollowers.alpha=1;
+        weakSelf.labelFollowing.alpha=1;
+    }];
 }
 
 - (void) layoutSubviews
 {
-//    const float kGeomConnectCellUsernameHeight=25;
-//    const float kGeomConnectCellNameHeight=20;
-    //    const float kGeomConnectCellStatsHeight=15;
     const float kGeomConnectCellMiddleGap= 7;
     
     float w=self.frame.size.width;
@@ -195,17 +247,25 @@
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection1;
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection2;
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection3;
-@property (nonatomic,strong) NSMutableArray *arraySectionHeaderViews;
+@property (nonatomic,strong) NSArray *arraySectionHeaderViews;
 @property (nonatomic,assign) BOOL canSeeSection1Items, canSeeSection2Items, canSeeSection3Items;
+
+@property (nonatomic,strong) NSOperationQueue *queueForStats;
+
 @end
 
 @implementation ConnectVC
 
 - (void)dealloc
 {
+    [_queueForStats  cancelAllOperations];
     [_suggestedUsersArray removeAllObjects];
     [_foodiesArray removeAllObjects];
     [_followeesArray removeAllObjects];
+    self.suggestedUsersArray=nil;
+    self.foodiesArray=nil;
+    self.followeesArray=nil;
+    self.arraySectionHeaderViews=nil;
 }
 
 //------------------------------------------------------------------------------
@@ -220,6 +280,8 @@
     self.canSeeSection2Items=YES;
     self.canSeeSection3Items=YES;
     
+    self.queueForStats=[[NSOperationQueue alloc] init];
+    
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -227,6 +289,23 @@
     _suggestedUsersArray = [NSMutableArray new];
     _foodiesArray = [NSMutableArray new];
     _followeesArray = [NSMutableArray new];
+    
+    ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] init];
+    ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] init];
+    ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] init];
+    
+    headerView1.backgroundColor=UIColorRGB(0xd0d0d0);
+    headerView1.labelTitle.text=@"Suggested Users";
+    
+    headerView2.backgroundColor=UIColorRGB(0xc0c0c0);
+    headerView2.labelTitle.text=@"Foodies";
+    
+    headerView3.backgroundColor=UIColorRGB(0xb0b0b0);
+    headerView3.labelTitle.text=@"Users You Follow";
+    
+    _arraySectionHeaderViews= @[
+                                headerView1, headerView2, headerView3
+                                ];
     
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
@@ -238,57 +317,31 @@
     self.tableAccordion = makeTable(self.view,self);
     _tableAccordion.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tableAccordion registerClass:[ConnectTableCell class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER];
+    [_tableAccordion registerClass:[UITableViewCell class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY];
     
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
 - (void)fetchFollowees
 {
-    UserObject*user= [Settings sharedInstance].userObject;
     __weak ConnectVC *weakSelf = self;
     
     self.fetchOperationSection1 =
     [OOAPI getFollowingWithSuccess:^(NSArray *users) {
         @synchronized(weakSelf.suggestedUsersArray)  {
-            weakSelf.suggestedUsersArray= users.mutableCopy;
+            weakSelf.followeesArray= users.mutableCopy;
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
-                    ( unsigned long)weakSelf.suggestedUsersArray.count);
+                    ( unsigned long)weakSelf.followeesArray.count);
         }
         if (weakSelf.canSeeSection1Items) {
             // RULE: Don't reload the section unless the suggested users are visible.
             ON_MAIN_THREAD(^() {
-                [weakSelf.tableAccordion reloadData];// XX: need to limit to section.
+                [weakSelf.tableAccordion reloadData];
             });
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog  (@"UNABLE TO FETCH FOLLOWEES");
     }     ];
-}
-
-- (void)fetchSuggestedUsers
-{
-    UserObject*user= [Settings sharedInstance].userObject;
-    __weak ConnectVC *weakSelf = self;
-    
-    self.fetchOperationSection1 =
-    [OOAPI getSuggestedUsersForUser:user
-                         success:^(NSArray *users) {
-                             @synchronized(weakSelf.suggestedUsersArray)  {
-                                 weakSelf.suggestedUsersArray= users.mutableCopy;
-                                 NSLog  (@"SUCCESS IN FETCHING %lu SUGGESTED USERS",
-                                         ( unsigned long)weakSelf.foodiesArray.count);
-                             }
-                             if (weakSelf.canSeeSection2Items) {
-                                 // RULE: Don't reload the section unless the foodies are visible.
-                                 ON_MAIN_THREAD(^() {
-                                     [weakSelf.tableAccordion reloadData];// XX: need to limit to section.
-                                 });
-                             }
-                         }
-                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                             NSLog  (@"UNABLE TO FETCH SUGGESTED USERS");
-                         }
-     ];
 }
 
 - (void)fetchFoodies
@@ -307,7 +360,7 @@
                              if (weakSelf.canSeeSection2Items) {
                                  // RULE: Don't reload the section unless the foodies are visible.
                                  ON_MAIN_THREAD(^() {
-                                     [weakSelf.tableAccordion reloadData];// XX: need to limit to section.
+                                     [weakSelf.tableAccordion reloadData];
                                  });
                              }
                          }
@@ -337,7 +390,7 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
-    [self fetchSuggestedUsers];
+    [self fetchUserFriendListFromFacebook];
     [self fetchFoodies];
     [self fetchFollowees];
 }
@@ -348,6 +401,8 @@
 //------------------------------------------------------------------------------
 - (void)viewWillDisappear:(BOOL)animated
 {
+    [_queueForStats  cancelAllOperations];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
 }
@@ -367,20 +422,15 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    _tableAccordion.frame = self.view.bounds;
+    _tableAccordion.frame = self.view.bounds; // Replaces 4 constraints.
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row=indexPath.row;
     NSInteger section=indexPath.section;
-    
-    ConnectTableCell *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-    cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    cell.textLabel.textAlignment=NSTextAlignmentCenter;
     UserObject*u=nil;
-    
+
     switch (section) {
         case 0:
             @synchronized(self.suggestedUsersArray)  {
@@ -388,27 +438,49 @@
                     u=_suggestedUsersArray[row];
                 }
             }
-            
+            break;
+
         case 1:
             @synchronized(self.foodiesArray)  {
                 if ( row<_foodiesArray.count) {
                     u=_foodiesArray[row];
                 }
             }
-            
+            break;
+
         case 2:
             @synchronized(self.followeesArray)  {
                 if ( row<_followeesArray.count) {
                     u=_followeesArray[row];
                 }
             }
-            
+            break;
+
         default:
             break;
     }
     
+    if (!u) {
+        UITableViewCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        cell.textLabel.textAlignment=NSTextAlignmentCenter;
+        cell.textLabel.text=  @"Alas there are none.";
+        cell.textLabel.textColor=WHITE;
+        cell.selectionStyle= UITableViewCellSeparatorStyleNone;
+        return cell;
+    }
+    
+    ConnectTableCell *cell;
+    cell = [tableView dequeueReusableCellWithIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    cell.textLabel.textAlignment=NSTextAlignmentCenter;
+    cell.selectionStyle= UITableViewCellSeparatorStyleNone;
+    cell.delegate= self;
     [cell provideUser:u];
-    [cell provideStats: @[ @1, @2, @3]];
+    
+    [cell commenceFetchingStats];
+
     return cell;
 }
 
@@ -423,18 +495,10 @@
 //------------------------------------------------------------------------------
 - (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    ConnectTableSectionHeader *view = [[ConnectTableSectionHeader alloc] init];
-    switch(section) {
-        case 0:
-            view.backgroundColor=UIColorRGB(0xd0d0d0);
-            view.labelTitle.text=@"Suggested Users"; break;
-        case 1:
-            view.backgroundColor=UIColorRGB(0xc0c0c0);
-            view.labelTitle.text=@"Foodies"; break;
-        case 2:
-            view.backgroundColor=UIColorRGB(0xb0b0b0);
-            view.labelTitle.text=@"Users You Follow"; break;
-    }
+    if (section >= _arraySectionHeaderViews.count)
+        return nil;
+    
+    ConnectTableSectionHeader *view = _arraySectionHeaderViews[section];
     view.delegate= self;
     view.tag= section;
     return view;
@@ -464,8 +528,47 @@
 //------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row = indexPath.row;
-    message(@"tapped");
+    NSInteger row=indexPath.row;
+    NSInteger section=indexPath.section;
+    UserObject*u=nil;
+    
+    switch (section) {
+        case 0:
+            @synchronized(self.suggestedUsersArray)  {
+                if ( row<_suggestedUsersArray.count) {
+                    u=_suggestedUsersArray[row];
+                }
+            }
+            
+        case 1:
+            @synchronized(self.foodiesArray)  {
+                if ( row<_foodiesArray.count) {
+                    u=_foodiesArray[row];
+                }
+            }
+            
+        case 2:
+            @synchronized(self.followeesArray)  {
+                if ( row<_followeesArray.count) {
+                    u=_followeesArray[row];
+                }
+            }
+            
+        default:
+            break;
+    }
+
+    if ( u) {
+        [self goToProfile:u];
+    }
+}
+
+- (void)goToProfile: (UserObject*)u
+{
+    ProfileVC* vc= [[ProfileVC alloc] init];
+    vc.userInfo= u;
+    vc.userID= u.userID;
+    [self.navigationController  pushViewController:vc animated:YES];
 }
 
 //------------------------------------------------------------------------------
@@ -477,17 +580,17 @@
     switch (section) {
         case 0:
             @synchronized(self.suggestedUsersArray)  {
-                return _canSeeSection1Items? _suggestedUsersArray.count: 0;
+                return _canSeeSection1Items? MAX(1,_suggestedUsersArray.count): 0;
             }
             
         case 1:
             @synchronized(self.foodiesArray)  {
-                return _canSeeSection2Items? _foodiesArray.count: 0;
+                return _canSeeSection2Items? MAX(1,_foodiesArray.count): 0;
             }
             
         case 2:
             @synchronized(self.followeesArray)  {
-                return _canSeeSection3Items? _followeesArray.count: 0;
+                return _canSeeSection3Items? MAX(1,_followeesArray.count): 0;
             }
             
         default:
@@ -498,7 +601,6 @@
 
 - (void)userTappedSectionHeader:(int)which
 {
-    [_tableAccordion beginUpdates];
    switch ( which) {
         case 0:
             _canSeeSection1Items= !_canSeeSection1Items;
@@ -512,10 +614,112 @@
             _canSeeSection3Items= !_canSeeSection3Items;
                 break;
     }
-    NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex: which];
+    
+    [_tableAccordion beginUpdates];
+    NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:  which];
     [_tableAccordion reloadSections:indexSet withRowAnimation: UITableViewRowAnimationAutomatic];
     [_tableAccordion endUpdates];
+}
 
+- (void) userTappedImageOfUser:(UserObject*)user;
+{
+    [self goToProfile:user];
+}
+
+//------------------------------------------------------------------------------
+// Name:    fetchUserFriendListFromFacebook
+// Purpose:
+//------------------------------------------------------------------------------
+- (void) fetchUserFriendListFromFacebook
+{
+    ENTRY;
+    
+    //---------------------------------------------
+    //  Make a formal request for user information.
+    //
+    __weak ConnectVC *weakSelf= self;
+    NSMutableString *facebookRequest = [NSMutableString new];
+    [facebookRequest appendString:@"/me/friends"];
+    [facebookRequest appendString:@"?limit=200"];
+    
+    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                  initWithGraphPath:facebookRequest
+                                  parameters:nil
+                                  HTTPMethod:@"GET"];
+    [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
+                                           id result, NSError *error) {
+        if (error) {
+            NSLog (@"FACEBOOK ERR %@",error);
+            return;
+        }
+        if (![result isKindOfClass: [NSDictionary class] ] ) {
+            NSLog (@"FACEBOOK RESULT NOT ARY");
+            return;
+        }
+        NSArray *arrayData= ((NSDictionary*)result) [@"data"];
+        NSUInteger  total= arrayData.count;
+        if  (!total) {
+            NSLog  (@"SUCCESSFULLY FOUND ZERO FRIENDS; BUT THAT'S OKAY");
+            [weakSelf.suggestedUsersArray removeAllObjects];
+            ON_MAIN_THREAD(^{
+                [weakSelf refreshSuggestedUsersSection ];
+            });
+        } else {
+            NSMutableArray* emailAddresses= [NSMutableArray new];
+            for (id object in arrayData) {
+                if ([object isKindOfClass: [NSDictionary  class] ] ) {
+                    
+                    NSDictionary*d= (NSDictionary*)object;
+                    
+                    NSString *firstName= d[ @"first_name"];
+//                    NSString *lastName= d [ @"last_name"];
+//                    NSString *middleName= d [ @"middle_name"];
+//                    NSString *gender= d [ @"gender"];
+                    NSString *email= d [ @"email"];
+//                    NSString *birthday= d [ @"birthday"];
+//                    NSString *location= d [ @"location"];
+//                    NSString *about= d [ @"about"];
+                    
+                    NSLog (@"FOUND FRIEND %@:  %@", firstName, email);
+                    
+                    [emailAddresses addObject: email];
+                }
+            }
+            
+            [self determineWhichFriendsAreNotOOUsers:emailAddresses];
+        }
+        
+    }
+        ];
+}
+
+- (void) determineWhichFriendsAreNotOOUsers: (NSMutableArray*) arrayOfEmailAddresses
+{
+    __weak ConnectVC *weakSelf= self;
+    [OOAPI getUsersTheCurrentUserIsNotFollowingUsingEmails:arrayOfEmailAddresses
+                                                   success:^(NSArray *users) {
+                                                       @synchronized(weakSelf.suggestedUsersArray)  {
+                                                           weakSelf.suggestedUsersArray=users.mutableCopy;
+                                                       }
+                                                       ON_MAIN_THREAD(^{
+                                                           [weakSelf refreshSuggestedUsersSection];
+                                                       });
+                                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                       NSLog (@"");
+                                                   }];
+}
+
+- (NSOperationQueue*) requireOperationQ;
+{
+    return self.queueForStats;
+}
+
+- (void)refreshSuggestedUsersSection
+{
+    // RULE: Don't reload the section unless the foodies are visible.
+    if (self.canSeeSection2Items) {
+        [self.tableAccordion reloadData];
+    }
 }
 
 @end

@@ -181,9 +181,13 @@ typedef enum {
                                           success:(void (^)(NSArray *users))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)getSuggestedUsersForUser:(UserObject*)user
-                                             success:(void (^)(NSArray *users))success
-                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getStatsForUser:(NSUInteger)identifier
+                                    success:(void (^)(NSDictionary *response))success
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)getUsersTheCurrentUserIsNotFollowingUsingEmails: (NSArray*)arrayOfEmailAddresses
+                                                                    success:(void (^)(NSArray *users))success
+                                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 //------------------------------------------------------------------------------
 // Groups
 //
