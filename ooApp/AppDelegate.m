@@ -12,6 +12,7 @@
 #import "DebugUtilities.h"
 #import "LoginVC.h"
 #import "Settings.h"
+#import "NSData+Conversion.h"
 #import <GoogleMaps/GoogleMaps.h>
 
 @interface AppDelegate ()
@@ -67,7 +68,9 @@
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
     //TODO: If we asked the user for remote notifications already then register for remote notifications. This needs to be done every lauch to get a new token
-    //[self registerForPushNotifications];
+    if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+        [self registerForPushNotifications];
+    }
     
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4be2767211390447c381617f13fc2437"];
     // Do some additional configuration if needed here
@@ -101,8 +104,12 @@
 // Delegation methods
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
     NSLog(@"device token: %@", devToken);
-    //    const void *devTokenBytes = [devToken bytes];
     
+    [OOAPI uploadAPNSDeviceToken:[devToken hexadecimalString] success:^(id response) {
+        ;
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
 //    UserObject *userInfo = [Settings sharedInstance].userObject;
 //    NSUInteger userID = userInfo.userID;
     

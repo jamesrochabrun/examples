@@ -73,7 +73,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
                                                success:(void (^)(NSArray *mediaItems))success
                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL], ( unsigned long) restaurant.restaurantID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL], restaurant.restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -2114,6 +2114,39 @@ NSString *const kKeyTagIDs = @"tag_ids";
                   identifier= parseIntegerOrNullFromServer(eventID);
               }
               success(identifier);
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+              failure(operation, error);
+          }];
+    
+    return op;
+}
+
++ (AFHTTPRequestOperation *)uploadAPNSDeviceToken:(NSString *)token
+                              success:(void (^)(id response))success
+                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!token) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSUInteger userID= userInfo.userID;
+    if (!userID) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    AFHTTPRequestOperation *op;
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/APNSDeviceToken", kHTTPProtocol, [OOAPI URL], userID];
+    
+    op = [rm POST:urlString parameters: @{
+                                          @"device_token": token
+                                          }
+          success:^(id responseObject) {
+              success(responseObject);
           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
               failure(operation, error);
           }];
