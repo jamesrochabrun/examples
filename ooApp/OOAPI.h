@@ -292,6 +292,10 @@ typedef enum {
                              success:(void (^)())success
                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)uploadAPNSDeviceToken:(NSString *)token
+                                          success:(void (^)(id response))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 // Auto complete
 
 

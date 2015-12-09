@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 361329781C17BE34009413D6 /* NSData+Conversion.m */; settings = {ASSET_TAGS = (); }; };
 		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; };
 		3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE491BBA330000F1AF67 /* OOMapMarker.m */; };
 		3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */; };
@@ -151,6 +152,8 @@
 
 /* Begin PBXFileReference section */
 		2BB75701B92FE168B3785FD8 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		361329771C17BE34009413D6 /* NSData+Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Conversion.h"; sourceTree = "<group>"; };
+		361329781C17BE34009413D6 /* NSData+Conversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Conversion.m"; sourceTree = "<group>"; };
 		3613BE451BB9CF6000F1AF67 /* TimeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeUtilities.h; sourceTree = "<group>"; };
 		3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeUtilities.m; sourceTree = "<group>"; };
 		3613BE481BBA330000F1AF67 /* OOMapMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOMapMarker.h; sourceTree = "<group>"; };
@@ -590,6 +593,8 @@
 				3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */,
 				364F9BA41BFEDE2600DBD012 /* OOUserView.h */,
 				364F9BA51BFEDE2600DBD012 /* OOUserView.m */,
+				361329771C17BE34009413D6 /* NSData+Conversion.h */,
+				361329781C17BE34009413D6 /* NSData+Conversion.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -778,7 +783,6 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
-				F16532D737B1C7E2FE2C8E19 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -942,21 +946,6 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		F16532D737B1C7E2FE2C8E19 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -998,6 +987,7 @@
 				36FDA6FC1B585F650029D29D /* WhatsNewVC.m in Sources */,
 				967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */,
 				364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */,
+				361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */,
 				9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */,
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */,
