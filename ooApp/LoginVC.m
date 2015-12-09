@@ -730,7 +730,7 @@
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email"
                                        parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-         NSInteger code= connection.URLResponse.statusCode;
+//         NSInteger code= connection.URLResponse.statusCode;
          if (!error) {
              NSLog(@"fetched user:%@", result);
          } else {

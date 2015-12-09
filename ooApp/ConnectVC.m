@@ -108,7 +108,7 @@
         _labelLists.alpha=0;
         _labelFollowers.alpha=0;
         _labelFollowing.alpha=0;
-
+        
         _labelLists.textAlignment=NSTextAlignmentLeft;
         _labelFollowers.textAlignment=NSTextAlignmentCenter;
         _labelFollowing.textAlignment=NSTextAlignmentRight;
@@ -119,27 +119,33 @@
 - (void)commenceFetchingStats
 {
     __weak ConnectTableCell *weakSelf = self;
+    NSUInteger userid=self.userInfo.userID;
     NSOperationQueue *q=[self.delegate requireOperationQ];
     if  (!q) {
         return;
     }
     self.op= [NSBlockOperation blockOperationWithBlock:^{
-        [OOAPI getStatsForUser:self.userInfo.userID
+        [OOAPI getStatsForUser: userid
                        success:^(NSDictionary *dictionary) {
-                           NSNumber* nLists=[dictionary objectForKey:@"n_lists"];
-                           NSNumber* nFollowers=[dictionary objectForKey:@"n_followers"];
-                           NSNumber* nFollowees=[dictionary objectForKey:@"n_followees"];
-                           NSArray*parameters=@[
-                                                nLists,nFollowers,nFollowees
-                                                ];
-                           ON_MAIN_THREAD(^{
-                           [weakSelf provideStats:  parameters
-                            ];
-                           });
+                           NSUInteger  identifier=  parseUnsignedIntegerOrNullFromServer(dictionary[ @"user_id"]);
+                           if  (!identifier || identifier== userid) {
+                               NSUInteger restaurantCount=parseUnsignedIntegerOrNullFromServer( dictionary[ @"restaurant_count"]);
+                               NSUInteger nLists=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey:@"list_count"]);
+                               NSUInteger nFollowers=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey:@"follower_count"]);
+                               NSUInteger nFollowees=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey:@"followee_count"]);
+                               NSArray*parameters=@[
+                                                    @(nLists),@(nFollowers),@(nFollowees),@(restaurantCount)
+                                                    ];
+                               
+                               ON_MAIN_THREAD(^{
+                                   [weakSelf provideStats:  parameters
+                                    ];
+                               });
+                           }
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            NSLog (@"UNABLE TO GET STATS %@",error);
                        }
-                                   ];
+         ];
         
     }];
     [q addOperation: _op];
@@ -177,20 +183,27 @@
     _labelFollowers.alpha=0;
     _labelFollowing.alpha=0;
     
-    [_labelLists setText: nil];
-    [_labelFollowers setText: nil];
-    [_labelFollowing setText: nil];
+    [_labelLists setText:  @""];
+    [_labelFollowers setText:  @""];
+    [_labelFollowing setText:  @""];
     
 }
 
 - (void) provideStats: (NSArray*) values
 {
-    if (values.count!=3)
+    if (values.count!=4)
         return;
-
+    
     [_labelLists setText: [NSString stringWithFormat:@"%@ lists",values[0]  ]];
     [_labelFollowers setText: [NSString stringWithFormat:@"%@ followers",values[1]  ]];
     [_labelFollowing setText: [NSString stringWithFormat:@"%@ following",values[2]  ]];
+    //    [_labelRestaurantCount setText: [NSString stringWithFormat:@"%@ following",values[3]  ]];
+    
+    _labelLists.textColor=WHITE;
+    _labelFollowers.textColor=WHITE;
+    _labelFollowing.textColor=WHITE;
+    
+    NSLog  (@" following %@",NSStringFromCGSize(_labelFollowing.frame.size));
     
     __weak ConnectTableCell *weakSelf = self;
     [UIView animateWithDuration:.4 animations:^{
@@ -215,11 +228,20 @@
     float y=margin;
     float remainingWidth=w-margin-x;
     float labelHeight=_labelUserName.intrinsicContentSize.height;
+    if  ( labelHeight<1) {
+        labelHeight= kGeomHeightButton;
+    }
     _labelUserName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
     y +=  labelHeight+ spacing;
     labelHeight=_labelName.intrinsicContentSize.height;
+    if  ( labelHeight<1) {
+        labelHeight= kGeomHeightButton;
+    }
     _labelName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
     labelHeight=_labelFollowers.intrinsicContentSize.height;
+    if  ( labelHeight<1) {
+        labelHeight= kGeomHeightButton;
+    }
     y = h-labelHeight-margin;
     if (remainingWidth>414)
         remainingWidth=414; // So it looks non-ridiculous on the iPad.
@@ -294,13 +316,13 @@
     ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] init];
     ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] init];
     
-    headerView1.backgroundColor=UIColorRGB(0xd0d0d0);
+    headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView1.labelTitle.text=@"Suggested Users";
     
-    headerView2.backgroundColor=UIColorRGB(0xc0c0c0);
+    headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";
     
-    headerView3.backgroundColor=UIColorRGB(0xb0b0b0);
+    headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView3.labelTitle.text=@"Users You Follow";
     
     _arraySectionHeaderViews= @[
@@ -402,7 +424,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [_queueForStats  cancelAllOperations];
-
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
 }
@@ -430,7 +452,7 @@
     NSInteger row=indexPath.row;
     NSInteger section=indexPath.section;
     UserObject*u=nil;
-
+    
     switch (section) {
         case 0:
             @synchronized(self.suggestedUsersArray)  {
@@ -439,7 +461,7 @@
                 }
             }
             break;
-
+            
         case 1:
             @synchronized(self.foodiesArray)  {
                 if ( row<_foodiesArray.count) {
@@ -447,7 +469,7 @@
                 }
             }
             break;
-
+            
         case 2:
             @synchronized(self.followeesArray)  {
                 if ( row<_followeesArray.count) {
@@ -455,7 +477,7 @@
                 }
             }
             break;
-
+            
         default:
             break;
     }
@@ -480,7 +502,7 @@
     [cell provideUser:u];
     
     [cell commenceFetchingStats];
-
+    
     return cell;
 }
 
@@ -514,12 +536,12 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    heightForRowAtIndexPath
+// Name:    heightForHeaderInSection6+
 // Purpose:
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 70;
+    return kGeomConnectScreenHeaderHeight;
 }
 
 //------------------------------------------------------------------------------
@@ -539,25 +561,26 @@
                     u=_suggestedUsersArray[row];
                 }
             }
-            
+            break;
         case 1:
             @synchronized(self.foodiesArray)  {
                 if ( row<_foodiesArray.count) {
                     u=_foodiesArray[row];
                 }
             }
-            
+            break;
         case 2:
             @synchronized(self.followeesArray)  {
                 if ( row<_followeesArray.count) {
                     u=_followeesArray[row];
                 }
             }
+            break;
             
         default:
             break;
     }
-
+    
     if ( u) {
         [self goToProfile:u];
     }
@@ -582,17 +605,17 @@
             @synchronized(self.suggestedUsersArray)  {
                 return _canSeeSection1Items? MAX(1,_suggestedUsersArray.count): 0;
             }
-            
+            break;
         case 1:
             @synchronized(self.foodiesArray)  {
                 return _canSeeSection2Items? MAX(1,_foodiesArray.count): 0;
             }
-            
+            break;
         case 2:
             @synchronized(self.followeesArray)  {
                 return _canSeeSection3Items? MAX(1,_followeesArray.count): 0;
             }
-            
+            break;
         default:
             break;
     }
@@ -601,18 +624,18 @@
 
 - (void)userTappedSectionHeader:(int)which
 {
-   switch ( which) {
+    switch ( which) {
         case 0:
             _canSeeSection1Items= !_canSeeSection1Items;
             break;
             
         case 1:
             _canSeeSection2Items= !_canSeeSection2Items;
-                break;
+            break;
             
         case 2:
             _canSeeSection3Items= !_canSeeSection3Items;
-                break;
+            break;
     }
     
     [_tableAccordion beginUpdates];
@@ -672,13 +695,13 @@
                     NSDictionary*d= (NSDictionary*)object;
                     
                     NSString *firstName= d[ @"first_name"];
-//                    NSString *lastName= d [ @"last_name"];
-//                    NSString *middleName= d [ @"middle_name"];
-//                    NSString *gender= d [ @"gender"];
+                    //                    NSString *lastName= d [ @"last_name"];
+                    //                    NSString *middleName= d [ @"middle_name"];
+                    //                    NSString *gender= d [ @"gender"];
                     NSString *email= d [ @"email"];
-//                    NSString *birthday= d [ @"birthday"];
-//                    NSString *location= d [ @"location"];
-//                    NSString *about= d [ @"about"];
+                    //                    NSString *birthday= d [ @"birthday"];
+                    //                    NSString *location= d [ @"location"];
+                    //                    NSString *about= d [ @"about"];
                     
                     NSLog (@"FOUND FRIEND %@:  %@", firstName, email);
                     
@@ -690,7 +713,7 @@
         }
         
     }
-        ];
+     ];
 }
 
 - (void) determineWhichFriendsAreNotOOUsers: (NSMutableArray*) arrayOfEmailAddresses

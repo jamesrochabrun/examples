@@ -237,7 +237,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
     if (isPlay) {
         UserObject *userInfo= [Settings sharedInstance].userObject;
         if (userInfo && userInfo.userID) {
-            urlString = [NSString stringWithFormat:@"%@://%@/search/users/%lu/play", kHTTPProtocol, [OOAPI URL], userInfo.userID];
+            urlString = [NSString stringWithFormat:@"%@://%@/search/users/%lu/play", kHTTPProtocol, [OOAPI URL], (unsigned long)userInfo.userID];
         } else {
             failure(nil,nil);
         }
@@ -430,7 +430,8 @@ NSString *const kKeyTagIDs = @"tag_ids";
                                    success:(void (^)(NSDictionary *response))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/stats", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
+//    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/stats", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/stats?ids[]=%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
     
         NSLog (@" URL = %@",urlString);
     
@@ -438,7 +439,17 @@ NSString *const kKeyTagIDs = @"tag_ids";
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         // XX:  this is temporary
-        success(responseObject);
+        if ([responseObject isKindOfClass:[NSArray class]])  {
+            NSArray*array= responseObject;
+            id dictionary= array.count? [array  firstObject ]:nil;
+            if ([dictionary isKindOfClass:[NSDictionary class]])  {
+                success(dictionary);
+            } else {
+                success (nil);
+            }
+        } else {
+            success (nil);
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
@@ -1469,7 +1480,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], mio.mediaItemId];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)mio.mediaItemId];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -1501,7 +1512,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
     NSData *imageData = UIImageJPEGRepresentation(image, 0.6);
     
     NSLog(@"img dims = %@", NSStringFromCGSize(image.size));
-    NSLog(@"img size = %lu bytes", [imageData length]);
+    NSLog(@"img size = %lu bytes", (unsigned long)[imageData length]);
 
     NSDictionary *parameters;
     
