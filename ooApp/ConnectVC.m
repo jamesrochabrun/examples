@@ -117,7 +117,7 @@
         _labelFollowing.textAlignment=NSTextAlignmentRight;
         
         self.buttonFollow= makeButton(self, @"FOLLOW",
-                                      kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
+                                      kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), CLEAR,
                                       self,
                                       @selector (userPressedFollow:), 1);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
@@ -278,7 +278,7 @@
     float h=self.frame.size.height;
     const float margin=kGeomSpaceEdge;
     const float spacing=kGeomSpaceInter;
-    float imageSize=h-2*margin;
+    float imageSize=kGeomConnectScreenUserImageHeight;
     _userView.frame=CGRectMake(margin, margin, imageSize, imageSize);
     
     _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, margin,kGeomButtonWidth, kGeomHeightButton);
@@ -297,11 +297,9 @@
         labelHeight= kGeomHeightButton;
     }
     _labelName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
-    labelHeight=_labelFollowers.intrinsicContentSize.height;
-    if  ( labelHeight<1) {
-        labelHeight= kGeomHeightButton;
-    }
-    y = h-labelHeight-margin;
+    
+    labelHeight= 20;
+    y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
     if (remainingWidth>414)
         remainingWidth=414; // So it looks non-ridiculous on the iPad.
     
