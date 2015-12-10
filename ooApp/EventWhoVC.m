@@ -152,6 +152,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     float w= self.frame.size.width;
     float h= self.frame.size.height;
     

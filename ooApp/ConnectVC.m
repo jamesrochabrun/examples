@@ -43,7 +43,7 @@
 
 - (void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    [self.delegate userTappedSectionHeader:self.tag];
+    [self.delegate userTappedSectionHeader:( int)self.tag];
     
     _isExpanded=!_isExpanded;
     
@@ -55,6 +55,8 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
+
     float w=self.frame.size.width;
     float h=self.frame.size.height;
     const float kGeomConnectHeaderLeftMargin=29;
@@ -194,9 +196,32 @@
     if (values.count!=4)
         return;
     
-    [_labelLists setText: [NSString stringWithFormat:@"%@ lists",values[0]  ]];
-    [_labelFollowers setText: [NSString stringWithFormat:@"%@ followers",values[1]  ]];
-    [_labelFollowing setText: [NSString stringWithFormat:@"%@ following",values[2]  ]];
+    NSNumber* numberLists=values[0];
+    NSNumber* numberFollowers=values[1];
+    NSNumber* numberFollowing=values[2];
+    NSNumber* numberRestaurantCount=values[3];
+    NSInteger lists= numberLists.integerValue;
+    NSInteger followers= numberFollowers.integerValue;
+    NSInteger following= numberFollowing.integerValue;
+    NSInteger restaurantCount= numberRestaurantCount.integerValue;
+    if  (lists ==1 ) {
+        [_labelLists setText: [NSString stringWithFormat:@"1 list"  ]];
+    } else {
+        [_labelLists setText: [NSString stringWithFormat:@"%lu lists",  lists ]];
+    }
+    
+    if  (followers==1 ) {
+        [_labelFollowers setText: [NSString stringWithFormat:@"1 follower"   ]];
+    } else {
+        [_labelFollowers setText: [NSString stringWithFormat:@"%lu followers",followers ]];
+    }
+    
+    if  (following==1 ) {
+        [_labelFollowing setText: [NSString stringWithFormat:@"1 following"   ]];
+    } else {
+        [_labelFollowing setText: [NSString stringWithFormat:@"%lu following",following ]];
+    }
+    
     //    [_labelRestaurantCount setText: [NSString stringWithFormat:@"%@ following",values[3]  ]];
     
     _labelLists.textColor=WHITE;
@@ -215,6 +240,7 @@
 
 - (void) layoutSubviews
 {
+    [super layoutSubviews];
     const float kGeomConnectCellMiddleGap= 7;
     
     float w=self.frame.size.width;
@@ -254,6 +280,8 @@
     x += rightLabelWidth;
     _labelFollowing.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
     x += rightLabelWidth;
+    
+    [_userView layoutIfNeeded];
 }
 
 @end

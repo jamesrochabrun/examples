@@ -82,6 +82,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     if ( self.viewsForFaces.count) {
         float w = self.frame.size.width;
         NSUInteger count=self.viewsForFaces.count;

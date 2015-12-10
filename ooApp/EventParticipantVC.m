@@ -39,6 +39,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     _labelCentered.frame= self.bounds;
 }
 @end
@@ -117,6 +118,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     float h=  self.bounds.size.height;
     float w=  self.bounds.size.width;
     float  margin= kGeomSpaceEdge;

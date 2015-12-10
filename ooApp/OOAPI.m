@@ -433,7 +433,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
 //    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/stats", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/stats?ids[]=%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
     
-        NSLog (@" URL = %@",urlString);
+        NSLog (@"GET STATS URL = %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -443,7 +443,15 @@ NSString *const kKeyTagIDs = @"tag_ids";
             NSArray*array= responseObject;
             id dictionary= array.count? [array  firstObject ]:nil;
             if ([dictionary isKindOfClass:[NSDictionary class]])  {
-                success(dictionary);
+                @try {
+                    success(dictionary);
+                }
+                @catch (NSException *exception) {
+                    NSLog (@"");
+                }
+                @finally {
+                    NSLog  (@"");
+                }
             } else {
                 success (nil);
             }

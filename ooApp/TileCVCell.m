@@ -85,6 +85,7 @@
 }
 
 - (void)layoutSubviews {
+    [super layoutSubviews];
     _gradient.frame = _overlay.bounds;
 }
 

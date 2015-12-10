@@ -675,7 +675,7 @@ NSString* expressLocalMonth(NSDate* date)
 
 BOOL isValidEmailAddress (NSString *string)
 {
-    if  (!string) {
+    if  (!string || ![string isKindOfClass:[NSString class ]]) {
         return NO;
     }
     

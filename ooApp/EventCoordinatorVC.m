@@ -55,6 +55,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     float w= self.bounds.size.width;
     float h= self.bounds.size.height;
     _buttonAddRestaurant.frame = CGRectMake((w-kGeomHeightButton)/2,(h-kGeomHeightButton)/2,kGeomHeightButton,kGeomHeightButton);
@@ -107,7 +108,8 @@
 
 - (void)layoutSubviews
 {
-    float w= self.bounds.size.width;
+    [super layoutSubviews];
+   float w= self.bounds.size.width;
     float h= self.bounds.size.height;
     float y= ( h-kGeomHeightButton-kGeomSpaceInter-kGeomFontSizeSubheader )/2;
     _buttonAdd.frame = CGRectMake((w-kGeomHeightButton)/2, y,kGeomHeightButton,kGeomHeightButton);
@@ -303,6 +305,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     [self doLayout];
 }
 
@@ -528,6 +531,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     [self doLayout];
 }
 
@@ -615,6 +619,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     [self doLayout];
 }
 
@@ -766,6 +771,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     [self doLayout];
 }
 
