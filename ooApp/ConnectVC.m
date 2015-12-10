@@ -35,7 +35,7 @@
         _labelTitle=makeLabelLeft (self, nil, kGeomFontSizeStripHeader);
         _labelTitle.textColor=WHITE;
         _labelExpander=makeIconLabel(self, kFontIconBack, kGeomIconSize);
-        _labelExpander.textColor=WHITE;
+        _labelExpander.textColor= UIColorRGBA(kColorYellow);
         self.backgroundColor=GRAY;
     }
     return self;
@@ -64,7 +64,7 @@
     float labelWidth= h;
     self.labelExpander.frame = CGRectMake(w-kGeomConnectHeaderRightMargin-labelWidth,0
                                           ,labelWidth,h);
-    double angle = _isExpanded ? M_PI/2 : 3*M_PI/2;
+    double angle = _isExpanded ? 3*M_PI/2 : M_PI/2;
     _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
 }
 
@@ -621,7 +621,6 @@
                 }
             }
             break;
-            
         case 3:
             @synchronized(self.followersArray)  {
                 if ( row<_followersArray.count) {
