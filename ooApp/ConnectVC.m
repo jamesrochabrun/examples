@@ -297,14 +297,15 @@
 
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection1; // fb
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection2; // foodies
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection3; // users you're following
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection4; // users who follow you
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection3; // users who follow you
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection4; // users you're following
 
 @property (nonatomic,strong) NSArray *arraySectionHeaderViews;
 @property (nonatomic,assign) BOOL canSeeSection1Items,
                                 canSeeSection2Items,
                                 canSeeSection3Items,
-                                canSeeSection4Items;
+                                canSeeSection4Items
+;
 
 @property (nonatomic,strong) NSOperationQueue *queueForStats;
 
@@ -359,11 +360,11 @@
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";
     
-    headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView3.labelTitle.text=@"Users You Follow";
-    
     headerView4.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView4.labelTitle.text=@"Users Who Follow You";
+    headerView4.labelTitle.text=@"Users You Follow";
+    
+    headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
+    headerView3.labelTitle.text=@"Users Who Follow You";
     
     _arraySectionHeaderViews= @[
                                 headerView1, headerView2, headerView3, headerView4
@@ -388,14 +389,14 @@
 {
     __weak ConnectVC *weakSelf = self;
     
-    self.fetchOperationSection3 =
+    self.fetchOperationSection4 =
     [OOAPI getFollowingWithSuccess:^(NSArray *users) {
         @synchronized(weakSelf.followeesArray)  {
             weakSelf.followeesArray= users.mutableCopy;
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
                     ( unsigned long)weakSelf.followeesArray.count);
         }
-        if (weakSelf.canSeeSection3Items) {
+        if (weakSelf.canSeeSection4Items) {
             // RULE: Don't reload the section unless the followees users are visible.
             ON_MAIN_THREAD(^() {
                 [weakSelf.tableAccordion reloadData];
@@ -475,6 +476,19 @@
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
+    [ self reload];
+}
+
+- (void)reload
+{
+    [self.fetchOperationSection1 cancel];
+    [self.fetchOperationSection2 cancel];
+    [self.fetchOperationSection3 cancel];
+    [self.fetchOperationSection4 cancel];
+    self.fetchOperationSection1= nil;
+    self.fetchOperationSection2= nil;
+    self.fetchOperationSection3= nil;
+    self.fetchOperationSection4= nil;
     
     [self fetchUserFriendListFromFacebook];
     [self fetchFoodies];
@@ -536,17 +550,17 @@
             break;
             
         case 2:
-            @synchronized(self.followeesArray)  {
-                if ( row<_followeesArray.count) {
-                    u=_followeesArray[row];
+            @synchronized(self.followersArray)  {
+                if ( row<_followersArray.count) {
+                    u=_followersArray[row];
                 }
             }
             break;
             
         case 3:
-            @synchronized(self.followersArray)  {
-                if ( row<_followersArray.count) {
-                    u=_followersArray[row];
+            @synchronized(self.followeesArray)  {
+                if ( row<_followeesArray.count) {
+                    u=_followeesArray[row];
                 }
             }
             break;
@@ -643,16 +657,16 @@
             }
             break;
         case 2:
-            @synchronized(self.followeesArray)  {
-                if ( row<_followeesArray.count) {
-                    u=_followeesArray[row];
+            @synchronized(self.followersArray)  {
+                if ( row<_followersArray.count) {
+                    u=_followersArray[row];
                 }
             }
             break;
         case 3:
-            @synchronized(self.followersArray)  {
-                if ( row<_followersArray.count) {
-                    u=_followersArray[row];
+            @synchronized(self.followeesArray)  {
+                if ( row<_followeesArray.count) {
+                    u=_followeesArray[row];
                 }
             }
             break;
@@ -692,13 +706,13 @@
             }
             break;
         case 2:
-            @synchronized(self.followeesArray)  {
-                return _canSeeSection3Items? MAX(1,_followeesArray.count): 0;
+            @synchronized(self.followersArray)  {
+                return _canSeeSection3Items? MAX(1,_followersArray.count): 0;
             }
             break;
         case 3:
-            @synchronized(self.followersArray)  {
-                return _canSeeSection4Items? MAX(1,_followersArray.count): 0;
+            @synchronized(self.followeesArray)  {
+                return _canSeeSection4Items? MAX(1,_followeesArray.count): 0;
             }
             break;
             
