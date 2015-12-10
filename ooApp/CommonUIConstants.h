@@ -120,6 +120,7 @@ static CGFloat kGeomHeightFeedWithImageTableCellHeight= 180;
 static CGFloat kGeomHeightFeedWithoutImageTableCellHeight=  60;
 static CGFloat kGeomCreateUsernameCentralIconSize= 180;
 static CGFloat kGeomConnectScreenHeaderHeight= 33;
+static CGFloat kGeomConnectScreenUserImageHeight= 82;
 
 // Images
 extern NSString *const kImageNoProfileImage;

@@ -17,6 +17,8 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *imageOperation;
 @property (nonatomic, assign) BOOL isFirst, isMessage;
 @property (nonatomic, strong)  ParticipantsView *participantsView;
+@property (nonatomic, strong) UIView *viewFadeOverlay;
+
 @end
 
 @implementation EventTVCell
@@ -35,6 +37,8 @@
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
         //        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         //        self.thumbnail.clipsToBounds= YES;
+        
+        self.viewFadeOverlay= makeView(self,  UIColorRGBA(0x80000000));
         
         self.header.shadowColor = BLACK;
         self.header.shadowOffset = CGSizeMake(0, -1.0);
@@ -157,7 +161,8 @@
         }
         
         self.viewShadow.frame = self.thumbnail.frame;
-        
+        _viewFadeOverlay.frame = self.thumbnail.frame;
+
         [self.header sizeToFit];
         [self.subHeader1 sizeToFit];
         float headerHeight= self.header.frame.size.height;
@@ -179,6 +184,12 @@
     
     self.gradient.hidden = YES;
     self.locationIcon.hidden = YES;
+    
+    [self  bringSubviewToFront:_viewFadeOverlay];
+    [self  bringSubviewToFront:self.header];
+    [self  bringSubviewToFront:self.subHeader1];
+    [self  bringSubviewToFront:self.subHeader2];
+    [self  bringSubviewToFront:self.participantsView];
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated

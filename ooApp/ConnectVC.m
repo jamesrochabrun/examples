@@ -82,7 +82,7 @@
 @property (nonatomic,strong) UILabel *labelUserName;
 @property (nonatomic,strong) UILabel *labelName;
 @property (nonatomic,strong) UserObject *userInfo;
-@property (nonatomic,strong) NSBlockOperation* op;
+@property (nonatomic,strong) AFHTTPRequestOperation* op;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @end
 
@@ -117,7 +117,7 @@
         _labelFollowing.textAlignment=NSTextAlignmentRight;
         
         self.buttonFollow= makeButton(self, @"FOLLOW",
-                                      kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
+                                      kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), CLEAR,
                                       self,
                                       @selector (userPressedFollow:), 1);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
@@ -159,12 +159,8 @@
 {
     __weak ConnectTableCell *weakSelf = self;
     NSUInteger userid=self.userInfo.userID;
-    NSOperationQueue *q=[self.delegate requireOperationQ];
-    if  (!q) {
-        return;
-    }
-    self.op= [NSBlockOperation blockOperationWithBlock:^{
-        [OOAPI getStatsForUser: userid
+
+    self.op= [OOAPI getStatsForUser: userid
                        success:^(NSDictionary *dictionary) {
                            NSUInteger  identifier=  parseUnsignedIntegerOrNullFromServer(dictionary[ @"user_id"]);
                            if  (!identifier || identifier== userid) {
@@ -184,10 +180,7 @@
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            NSLog (@"UNABLE TO GET STATS %@",error);
                        }
-         ];
-        
-    }];
-    [q addOperation: _op];
+              ];
 }
 
 - (void) oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
@@ -214,7 +207,7 @@
 
 - (void)prepareForReuse
 {
-    [_op cancel];
+//    [_op cancel];
     _labelUserName.text=nil;
     _labelName.text=nil;
     
@@ -285,7 +278,7 @@
     float h=self.frame.size.height;
     const float margin=kGeomSpaceEdge;
     const float spacing=kGeomSpaceInter;
-    float imageSize=h-2*margin;
+    float imageSize=kGeomConnectScreenUserImageHeight;
     _userView.frame=CGRectMake(margin, margin, imageSize, imageSize);
     
     _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, margin,kGeomButtonWidth, kGeomHeightButton);
@@ -304,11 +297,9 @@
         labelHeight= kGeomHeightButton;
     }
     _labelName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
-    labelHeight=_labelFollowers.intrinsicContentSize.height;
-    if  ( labelHeight<1) {
-        labelHeight= kGeomHeightButton;
-    }
-    y = h-labelHeight-margin;
+    
+    labelHeight= 20;
+    y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
     if (remainingWidth>414)
         remainingWidth=414; // So it looks non-ridiculous on the iPad.
     
@@ -347,15 +338,12 @@
                                 canSeeSection4Items
 ;
 
-@property (nonatomic,strong) NSOperationQueue *queueForStats;
-
 @end
 
 @implementation ConnectVC
 
 - (void)dealloc
 {
-    [_queueForStats  cancelAllOperations];
     [_suggestedUsersArray removeAllObjects];
     [_foodiesArray removeAllObjects];
     [_followeesArray removeAllObjects];
@@ -377,8 +365,6 @@
     self.canSeeSection2Items=YES;
     self.canSeeSection3Items=YES;
     self.canSeeSection4Items= YES;
-    
-    self.queueForStats=[[NSOperationQueue alloc] init];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -551,8 +537,6 @@
 //------------------------------------------------------------------------------
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [_queueForStats  cancelAllOperations];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
 }
@@ -800,10 +784,8 @@
             break;
     }
     
-    [_tableAccordion beginUpdates];
     NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:  which];
     [_tableAccordion reloadSections:indexSet withRowAnimation: UITableViewRowAnimationAutomatic];
-    [_tableAccordion endUpdates];
 }
 
 - (void) userTappedImageOfUser:(UserObject*)user;
@@ -885,18 +867,18 @@
     __weak ConnectVC *weakSelf= self;
 
     if  ([string containsString:@"@"  ]) {
-        //  old code, not used
-        [OOAPI getUsersTheCurrentUserIsNotFollowingUsingEmails:  array
-                                                       success:^(NSArray *users) {
-                                                           @synchronized(weakSelf.suggestedUsersArray)  {
-                                                               weakSelf.suggestedUsersArray=users.mutableCopy;
-                                                           }
-                                                           ON_MAIN_THREAD(^{
-                                                               [weakSelf refreshSuggestedUsersSection];
-                                                           });
-                                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                           NSLog (@"FETCH OF NON-FOLLOWEES USING EMAILS FAILED");
-                                                       }];
+//        //  old code, not used
+//        [OOAPI getUsersTheCurrentUserIsNotFollowingUsingEmails:  array
+//                                                       success:^(NSArray *users) {
+//                                                           @synchronized(weakSelf.suggestedUsersArray)  {
+//                                                               weakSelf.suggestedUsersArray=users.mutableCopy;
+//                                                           }
+//                                                           ON_MAIN_THREAD(^{
+//                                                               [weakSelf refreshSuggestedUsersSection];
+//                                                           });
+//                                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                                           NSLog (@"FETCH OF NON-FOLLOWEES USING EMAILS FAILED");
+//                                                       }];
     } else {
         [OOAPI getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs:  array
                                                        success:^(NSArray *users) {
@@ -910,11 +892,6 @@
                                                            NSLog (@"FETCH OF NON-FOLLOWEES USING FB IDs FAILED");
                                                        }];
     }
-}
-
-- (NSOperationQueue*) requireOperationQ;
-{
-    return self.queueForStats;
 }
 
 - (void)refreshSuggestedUsersSection
