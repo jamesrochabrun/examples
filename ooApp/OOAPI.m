@@ -1308,6 +1308,52 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 //------------------------------------------------------------------------------
+// Name:    getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs: (NSArray*) array
+                                                                    success:(void (^)(NSArray *users))success
+                                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!array.count) {
+        failure(nil,nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
+    NSMutableString *urlString= [NSMutableString stringWithFormat:@"%@://%@/users/%lu/connect/facebookIds?",
+                                 kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
+    
+    for (NSString* string  in  array) {
+        NSString *expression= [NSString  stringWithFormat: @"ids[]=%@&", string];
+        [ urlString  appendString: expression];
+    }
+    
+    NSLog  (@"URL WITH FB IDs EMBEDDED: %@", urlString);
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET:urlString parameters:nil
+         success:^(id responseObject) {
+             NSArray *array = responseObject;
+             NSMutableArray *users= [NSMutableArray new];
+             for (NSDictionary *d in array) {
+                 UserObject *user = [UserObject userFromDict:d];
+                 if (user) {
+                     [users addObject:user];
+                 }
+             }
+             success(users);
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+             failure(operation, error);
+         }];
+    
+    return op;
+}
+
+//------------------------------------------------------------------------------
 // Name:    getUsersTheCurrentUserIsNotFollowingUsingEmails
 // Purpose:
 //------------------------------------------------------------------------------

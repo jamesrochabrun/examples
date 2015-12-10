@@ -188,6 +188,10 @@ typedef enum {
 + (AFHTTPRequestOperation *)getUsersTheCurrentUserIsNotFollowingUsingEmails: (NSArray*)arrayOfEmailAddresses
                                                                     success:(void (^)(NSArray *users))success
                                                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs: (NSArray*) array
+                                                                         success:(void (^)(NSArray *users))success
+                                                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 //------------------------------------------------------------------------------
 // Groups
 //
