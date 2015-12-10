@@ -31,9 +31,7 @@
         _emptyUserView.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_emptyUserView];
         _emptyUserView.translatesAutoresizingMaskIntoConstraints = NO;
-        self.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
-        self.layer.borderWidth = 1;
-        self.clipsToBounds = YES;
+               self.clipsToBounds = YES;
     }
     return self;
 }
@@ -49,6 +47,11 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    self.layer.cornerRadius = width(_imageView)/2;
+    self.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
+    self.layer.borderWidth = 1;
+
 }
 
 - (void)layoutSubviews {
@@ -56,6 +59,7 @@
 //    _emptyUserView.layer.cornerRadius = width(_emptyUserView)/2;
 //    _imageView.layer.cornerRadius = width(_imageView)/2;
     self.layer.cornerRadius = width(_imageView)/2;
+
 }
 
 - (void)setUser:(UserObject *)user {
