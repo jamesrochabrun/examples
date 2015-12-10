@@ -83,6 +83,7 @@
 @property (nonatomic,strong) UILabel *labelName;
 @property (nonatomic,strong) UserObject *userInfo;
 @property (nonatomic,strong) NSBlockOperation* op;
+@property (nonatomic, strong) UIButton *buttonFollow;
 @end
 
 @implementation ConnectTableCell
@@ -114,8 +115,44 @@
         _labelLists.textAlignment=NSTextAlignmentLeft;
         _labelFollowers.textAlignment=NSTextAlignmentCenter;
         _labelFollowing.textAlignment=NSTextAlignmentRight;
+        
+        self.buttonFollow= makeButton(self, @"FOLLOW",
+                                      kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
+                                      self,
+                                      @selector (userPressedFollow:), 1);
+        [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
+        _buttonFollow.hidden= YES;
     }
     return self;
+}
+
+//------------------------------------------------------------------------------
+// Name:    userPressedFollow
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)userPressedFollow:(id)sender
+{
+    __weak ConnectTableCell *weakSelf = self;
+    [OOAPI setFollowingUser:_userInfo
+                         to: !weakSelf.buttonFollow.selected
+                    success:^(id responseObject) {
+                        weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected;
+                        if (weakSelf.buttonFollow.selected ) {
+                            NSLog (@"SUCCESSFULLY FOLLOWED USER");
+                        } else {
+                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
+                        }
+                        [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo];
+
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                        NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
+                    }];
+}
+
+- (void) showFollowButton: (BOOL)following
+{
+    _buttonFollow.hidden= NO;
+    _buttonFollow.selected=  following;
 }
 
 - (void)commenceFetchingStats
@@ -188,7 +225,8 @@
     [_labelLists setText:  @""];
     [_labelFollowers setText:  @""];
     [_labelFollowing setText:  @""];
-    
+   
+    _buttonFollow.hidden= YES;
 }
 
 - (void) provideStats: (NSArray*) values
@@ -249,6 +287,8 @@
     const float spacing=kGeomSpaceInter;
     float imageSize=h-2*margin;
     _userView.frame=CGRectMake(margin, margin, imageSize, imageSize);
+    
+    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, margin,kGeomButtonWidth, kGeomHeightButton);
     
     float x=margin+imageSize+kGeomConnectCellMiddleGap;
     float y=margin;
@@ -385,28 +425,6 @@
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
-- (void)fetchFollowees
-{
-    __weak ConnectVC *weakSelf = self;
-    
-    self.fetchOperationSection4 =
-    [OOAPI getFollowingWithSuccess:^(NSArray *users) {
-        @synchronized(weakSelf.followeesArray)  {
-            weakSelf.followeesArray= users.mutableCopy;
-            NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
-                    ( unsigned long)weakSelf.followeesArray.count);
-        }
-        if (weakSelf.canSeeSection4Items) {
-            // RULE: Don't reload the section unless the followees users are visible.
-            ON_MAIN_THREAD(^() {
-                [weakSelf.tableAccordion reloadData];
-            });
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog  (@"UNABLE TO FETCH FOLLOWEES");
-    }     ];
-}
-
 - (void)fetchFollowers
 {
     __weak ConnectVC *weakSelf = self;
@@ -481,19 +499,50 @@
 
 - (void)reload
 {
+    // NOTE: Need to make the call to find out who we are following before anything else is displayed.
+    
+    __weak  ConnectVC *weakSelf = self;
+    [OOAPI getFollowingWithSuccess:^(NSArray *users) {
+        @synchronized(weakSelf.followeesArray)  {
+            weakSelf.followeesArray= users.mutableCopy;
+            NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
+                    ( unsigned long)weakSelf.followeesArray.count);
+        }
+        if (weakSelf.canSeeSection4Items) {
+            // RULE: Don't reload the section unless the followees users are visible.
+            ON_MAIN_THREAD(^() {
+                [weakSelf.tableAccordion reloadData];
+            });
+        }
+        
+        [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
+    }];
+}
+
+- (void) reloadAfterDeterminingWhoWeAreFollowing
+{
     [self.fetchOperationSection1 cancel];
     [self.fetchOperationSection2 cancel];
     [self.fetchOperationSection3 cancel];
-    [self.fetchOperationSection4 cancel];
     self.fetchOperationSection1= nil;
     self.fetchOperationSection2= nil;
     self.fetchOperationSection3= nil;
-    self.fetchOperationSection4= nil;
     
     [self fetchUserFriendListFromFacebook];
     [self fetchFoodies];
-    [self fetchFollowees];
     [self fetchFollowers];
+}
+
+- (BOOL) weAreFollowingUser: (NSUInteger) identifier
+{
+    for (UserObject* user  in  _followeesArray) {
+        if ( user.userID == identifier) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 //------------------------------------------------------------------------------
@@ -587,6 +636,11 @@
     cell.selectionStyle= UITableViewCellSeparatorStyleNone;
     cell.delegate= self;
     [cell provideUser:u];
+    
+    if ( section != 3) {
+        BOOL following= [self weAreFollowingUser:u.userID];
+        [cell showFollowButton: following];
+    }
     
     [cell commenceFetchingStats];
     
@@ -721,6 +775,11 @@
             break;
     }
     return 0;
+}
+
+- (void)userTappedFollowButtonForUser:(UserObject*)user
+{
+    [self reload];
 }
 
 - (void)userTappedSectionHeader:(int)which
