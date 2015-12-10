@@ -25,12 +25,15 @@
 
 @protocol ConnectTableCellDelegate
 - (void) userTappedImageOfUser:(UserObject*)user;
+- (void) userTappedFollowButtonForUser:(UserObject*)user;
 - (NSOperationQueue*) requireOperationQ;
 @end
 
 @interface ConnectTableCell : UITableViewCell <OOUserViewDelegate>
 - (void) provideUser: (UserObject*) user;
 - (void)commenceFetchingStats;
+- (void) showFollowButton: (BOOL)following;
+
 @property (nonatomic,weak) id<ConnectTableCellDelegate>delegate;
 @end
 
