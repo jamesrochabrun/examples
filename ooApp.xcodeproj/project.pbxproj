@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 361329781C17BE34009413D6 /* NSData+Conversion.m */; };
+		361329801C196215009413D6 /* Oomami_AppStoreLogo(76x76).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */; settings = {ASSET_TAGS = (); }; };
+		361329811C196215009413D6 /* Oomami_AppStoreLogo(120x120).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297B1C196215009413D6 /* Oomami_AppStoreLogo(120x120).png */; settings = {ASSET_TAGS = (); }; };
+		361329821C196215009413D6 /* Oomami_AppStoreLogo(152x152).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297C1C196215009413D6 /* Oomami_AppStoreLogo(152x152).png */; settings = {ASSET_TAGS = (); }; };
+		361329831C196215009413D6 /* Oomami_AppStoreLogo(167x167).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */; settings = {ASSET_TAGS = (); }; };
+		361329841C196215009413D6 /* Oomami_AppStoreLogo(180x180).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */; settings = {ASSET_TAGS = (); }; };
+		361329851C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */; settings = {ASSET_TAGS = (); }; };
 		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; };
 		3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE491BBA330000F1AF67 /* OOMapMarker.m */; };
 		3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */; };
@@ -21,7 +27,6 @@
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
 		3621F1251B900EC7004537B6 /* Logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 3621F1231B900EC7004537B6 /* Logo.png */; };
-		3621F1261B900EC7004537B6 /* Logo2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3621F1241B900EC7004537B6 /* Logo2.png */; };
 		3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1281B9014DD004537B6 /* ProfileVC.m */; };
 		3621F12C1B901D24004537B6 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F12B1B901D24004537B6 /* BaseVC.m */; };
 		36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36250BDB1B82679A00F456B5 /* LoginVC.m */; };
@@ -39,8 +44,6 @@
 		363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C61B6BF0CE00987A1B /* GroupObject.m */; };
 		364AD8C41C11514300F70F56 /* OptionsVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 364AD8C31C11514300F70F56 /* OptionsVCCVL.m */; };
 		364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */ = {isa = PBXBuildFile; fileRef = 364F9BA51BFEDE2600DBD012 /* OOUserView.m */; };
-		36587B711B93964C00D01EB5 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36587B6F1B93964C00D01EB5 /* Icon@2x.png */; };
-		36587B721B93964C00D01EB5 /* Icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36587B701B93964C00D01EB5 /* Icon@3x.png */; };
 		36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B741B93C7AD00D01EB5 /* ListCVFL.m */; };
 		36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B7A1B9423D700D01EB5 /* TileCVCell.m */; };
 		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
@@ -154,6 +157,12 @@
 		2BB75701B92FE168B3785FD8 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		361329771C17BE34009413D6 /* NSData+Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Conversion.h"; sourceTree = "<group>"; };
 		361329781C17BE34009413D6 /* NSData+Conversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Conversion.m"; sourceTree = "<group>"; };
+		3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(76x76).png"; path = "Graphic Assets/Oomami_AppStoreLogo(76x76).png"; sourceTree = "<group>"; };
+		3613297B1C196215009413D6 /* Oomami_AppStoreLogo(120x120).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(120x120).png"; path = "Graphic Assets/Oomami_AppStoreLogo(120x120).png"; sourceTree = "<group>"; };
+		3613297C1C196215009413D6 /* Oomami_AppStoreLogo(152x152).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(152x152).png"; path = "Graphic Assets/Oomami_AppStoreLogo(152x152).png"; sourceTree = "<group>"; };
+		3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(167x167).png"; path = "Graphic Assets/Oomami_AppStoreLogo(167x167).png"; sourceTree = "<group>"; };
+		3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(180x180).png"; path = "Graphic Assets/Oomami_AppStoreLogo(180x180).png"; sourceTree = "<group>"; };
+		3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(1024x1024).png"; path = "Graphic Assets/Oomami_AppStoreLogo(1024x1024).png"; sourceTree = "<group>"; };
 		3613BE451BB9CF6000F1AF67 /* TimeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeUtilities.h; sourceTree = "<group>"; };
 		3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeUtilities.m; sourceTree = "<group>"; };
 		3613BE481BBA330000F1AF67 /* OOMapMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOMapMarker.h; sourceTree = "<group>"; };
@@ -179,7 +188,6 @@
 		3621F1201B8F7E7A004537B6 /* MenuObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuObject.h; sourceTree = "<group>"; };
 		3621F1211B8F7E7A004537B6 /* MenuObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuObject.m; sourceTree = "<group>"; };
 		3621F1231B900EC7004537B6 /* Logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo.png; path = "Graphic Assets/Logo.png"; sourceTree = "<group>"; };
-		3621F1241B900EC7004537B6 /* Logo2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Logo2.png; path = "Graphic Assets/Logo2.png"; sourceTree = "<group>"; };
 		3621F1271B9014DD004537B6 /* ProfileVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileVC.h; sourceTree = "<group>"; };
 		3621F1281B9014DD004537B6 /* ProfileVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileVC.m; sourceTree = "<group>"; };
 		3621F12A1B901D24004537B6 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
@@ -212,8 +220,6 @@
 		364AD8C31C11514300F70F56 /* OptionsVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVCCVL.m; sourceTree = "<group>"; };
 		364F9BA41BFEDE2600DBD012 /* OOUserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOUserView.h; sourceTree = "<group>"; };
 		364F9BA51BFEDE2600DBD012 /* OOUserView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOUserView.m; sourceTree = "<group>"; };
-		36587B6F1B93964C00D01EB5 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Graphic Assets/Icon@2x.png"; sourceTree = "<group>"; };
-		36587B701B93964C00D01EB5 /* Icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@3x.png"; path = "Graphic Assets/Icon@3x.png"; sourceTree = "<group>"; };
 		36587B731B93C7AD00D01EB5 /* ListCVFL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCVFL.h; sourceTree = "<group>"; };
 		36587B741B93C7AD00D01EB5 /* ListCVFL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListCVFL.m; sourceTree = "<group>"; };
 		36587B791B9423D700D01EB5 /* TileCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileCVCell.h; sourceTree = "<group>"; };
@@ -531,15 +537,18 @@
 		367703FF1B87E41F00B594E5 /* Graphic Assets */ = {
 			isa = PBXGroup;
 			children = (
-				36587B6F1B93964C00D01EB5 /* Icon@2x.png */,
+				3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */,
+				3613297B1C196215009413D6 /* Oomami_AppStoreLogo(120x120).png */,
+				3613297C1C196215009413D6 /* Oomami_AppStoreLogo(152x152).png */,
+				3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */,
+				3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */,
+				3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */,
 				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
 				96F49C051C0CFCAD00B087AD /* LoginBackground.jpg */,
 				962303741BB33D2700278FA6 /* forkKnife.png */,
 				9671433B1C0E2B2D004875FB /* LogoWhite.png */,
 				966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */,
-				36587B701B93964C00D01EB5 /* Icon@3x.png */,
 				3621F1231B900EC7004537B6 /* Logo.png */,
-				3621F1241B900EC7004537B6 /* Logo2.png */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
 				96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */,
 				96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */,
@@ -856,6 +865,8 @@
 			files = (
 				367704571B8BF05100B594E5 /* Lato-Heavy.ttf in Resources */,
 				3677045A1B8BF05100B594E5 /* Lato-Light.ttf in Resources */,
+				361329851C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png in Resources */,
+				361329811C196215009413D6 /* Oomami_AppStoreLogo(120x120).png in Resources */,
 				96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */,
 				3677045D1B8BF05100B594E5 /* Lato-MediumItalic.ttf in Resources */,
 				367704551B8BF05100B594E5 /* Lato-Hairline.ttf in Resources */,
@@ -863,10 +874,8 @@
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
 				96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */,
 				367704591B8BF05100B594E5 /* Lato-Italic.ttf in Resources */,
-				36587B711B93964C00D01EB5 /* Icon@2x.png in Resources */,
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
 				3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */,
-				36587B721B93964C00D01EB5 /* Icon@3x.png in Resources */,
 				962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */,
 				367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */,
 				367704631B8BF05100B594E5 /* OFL.txt in Resources */,
@@ -877,18 +886,21 @@
 				3677045E1B8BF05100B594E5 /* Lato-Regular.ttf in Resources */,
 				3677045C1B8BF05100B594E5 /* Lato-Medium.ttf in Resources */,
 				3677045B1B8BF05100B594E5 /* Lato-LightItalic.ttf in Resources */,
+				361329841C196215009413D6 /* Oomami_AppStoreLogo(180x180).png in Resources */,
 				9671433C1C0E2B2D004875FB /* LogoWhite.png in Resources */,
 				367704511B8BF05100B594E5 /* Lato-Black.ttf in Resources */,
 				367704531B8BF05100B594E5 /* Lato-Bold.ttf in Resources */,
 				367704581B8BF05100B594E5 /* Lato-HeavyItalic.ttf in Resources */,
+				361329821C196215009413D6 /* Oomami_AppStoreLogo(152x152).png in Resources */,
 				966098BB1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png in Resources */,
 				3621F1251B900EC7004537B6 /* Logo.png in Resources */,
 				367704611B8BF05100B594E5 /* Lato-Thin.ttf in Resources */,
+				361329831C196215009413D6 /* Oomami_AppStoreLogo(167x167).png in Resources */,
 				96F49C061C0CFCAD00B087AD /* LoginBackground.jpg in Resources */,
 				36FDA7041B585F650029D29D /* Images.xcassets in Resources */,
 				367704561B8BF05100B594E5 /* Lato-HairlineItalic.ttf in Resources */,
 				3677045F1B8BF05100B594E5 /* Lato-Semibold.ttf in Resources */,
-				3621F1261B900EC7004537B6 /* Logo2.png in Resources */,
+				361329801C196215009413D6 /* Oomami_AppStoreLogo(76x76).png in Resources */,
 				962303751BB33D2700278FA6 /* forkKnife.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1176,6 +1188,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
@@ -1226,6 +1239,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Oomami Inc. (XP52D9KRG4)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: Oomami Inc. (XP52D9KRG4)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Oomami Inc. (XP52D9KRG4)";
