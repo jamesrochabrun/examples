@@ -63,19 +63,13 @@ static NSString * const MenuCellIdentifier = @"menuCell";
 
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconDiscover;
-    menuItem.name = @"NEARBY";
+    menuItem.name = @"EXPLORE";
     menuItem.type = kMenuItemDiscover;
-    [_menuItems addObject:menuItem];
-    
-    menuItem = [MenuObject new];
-    menuItem.icon = kFontIconPlay;
-    menuItem.name = @"CONNECT ⁱⁿ ᵖʳᵒᵍʳᵉˢˢ ₌₎";
-    menuItem.type = kMenuItemConnect;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconPlay;
-    menuItem.name = @"DISCOVER";
+    menuItem.name = @"PLAY";
     menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
 
@@ -91,8 +85,14 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.type = kMenuItemMeet;
     [_menuItems addObject:menuItem];
     
+    menuItem = [MenuObject new];
+    menuItem.icon = kFontIconFeed;
+    menuItem.name = @"CONNECT ⁱⁿ ᵖʳᵒᵍʳᵉˢˢ ₌₎";
+    menuItem.type = kMenuItemConnect;
+    [_menuItems addObject:menuItem];
+    
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconProfile;
+    menuItem.icon = kFontIconPerson;
     menuItem.name = @"PROFILE";
     menuItem.type = kMenuItemProfile;
     [_menuItems addObject:menuItem];

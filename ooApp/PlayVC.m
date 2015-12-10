@@ -34,7 +34,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    _nto = [[NavTitleObject alloc] initWithHeader:@"Discover" subHeader:@"restaurants and bars"];
+    _nto = [[NavTitleObject alloc] initWithHeader:@"Play" subHeader:@"restaurants and bars"];
     self.navTitle = _nto;
     
     CGRect frame = CGRectMake(0, 0, width(self.view), height(self.view) - 64);

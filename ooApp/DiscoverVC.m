@@ -96,7 +96,7 @@ static NSString * const ListRowID = @"HLRCell";
 
     [self.view addSubview:_filterView];
     
-    _nto = [[NavTitleObject alloc] initWithHeader:@"Nearby" subHeader:nil];
+    _nto = [[NavTitleObject alloc] initWithHeader:@"Explore" subHeader:nil];
     self.navTitle = _nto;
 
     if (_listToAddTo || _eventBeingEdited) {

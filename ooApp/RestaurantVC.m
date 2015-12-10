@@ -373,7 +373,18 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                             _toTryID = lo.listID;
                         }
                         OOTagButton *b = [[OOTagButton alloc] init];
-                        b.icon = kFontIconList;
+                        switch (lo.type) {
+                            case kListTypeFavorites:
+                                b.icon = kFontIconFavoriteFilled;
+                                break;
+                            case kListTypeToTry:
+                                b.icon = kFontIconToTryFilled;
+                                break;
+                            default:
+                                b.icon = kFontIconList;
+                                break;
+                        }
+
                         b.name = [lo.name uppercaseString];
                         b.theId = lo.listID;
                         [_listButtons addObject:b];
