@@ -236,6 +236,7 @@
 
 - (void)layoutSubviews
 {
+    [super layoutSubviews];
     CGFloat h = height(self);
     CGFloat w = width(self);
     float labelHeight= _labelVerb.intrinsicContentSize.height;
