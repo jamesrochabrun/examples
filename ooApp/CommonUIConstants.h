@@ -32,8 +32,8 @@ static NSUInteger kColorGray = 0xFFE5E5E5;
 static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
 static NSUInteger kColorNavBar = 0xFF000000;
 static NSUInteger kColorNavyBlue = 0xFF000080;
-static NSUInteger kColorMarker = 0xDD000080;
-static NSUInteger kColorMarkerFaded = 0x33000080;
+static NSUInteger kColorMarker = 0xFF1874CD;//0xDD0000A0;
+static NSUInteger kColorMarkerFaded = 0x701874CD;//0x700000A0;
 static NSUInteger kColorOffBlack = 0xFF272727;
 static NSUInteger kColorOffWhite = 0xFFE5E5E5;
 static NSUInteger kColorOverlay20 = 0xCC000000;
@@ -77,8 +77,8 @@ static CGFloat kGeomHeightFeaturedCellHeight = 150.0;
 static CGFloat kGeomHeightStripListRow = 135.0;
 static CGFloat kGeomHeightStripListCell = 100.0;
 static CGFloat kGeomHeightHorizontalListRow = 100.0;
-static NSUInteger kGeomPlayIconSize = 45;
-static NSUInteger kGeomPlayButtonSize = 80;
+static NSUInteger kGeomPlayIconSize = 35;
+static NSUInteger kGeomPlayButtonSize = 65;
 static CGFloat kGeomSpaceCellPadding = 3;
 static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceIcon = 5.0;
@@ -166,7 +166,7 @@ extern NSString *const kFontIconFilledCircle;
 extern NSString *const kFontIconBack;
 extern NSString *const kFontIconPin;
 extern NSString *const kFontIconPinFilled;
-
+extern NSString *const kFontIconMap;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

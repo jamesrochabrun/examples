@@ -96,6 +96,7 @@
 		36C572DA1C01309900C57DA2 /* TagObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C572D91C01309900C57DA2 /* TagObject.m */; };
 		36C572DD1C01477600C57DA2 /* ManageTagsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C572DC1C01477600C57DA2 /* ManageTagsVC.m */; };
 		36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D5D2191B69DA48009EE877 /* OONetworkManager.m */; };
+		36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */; settings = {ASSET_TAGS = (); }; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
 		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
@@ -303,6 +304,8 @@
 		36C572DC1C01477600C57DA2 /* ManageTagsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManageTagsVC.m; sourceTree = "<group>"; };
 		36D5D2181B69DA48009EE877 /* OONetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OONetworkManager.h; sourceTree = "<group>"; };
 		36D5D2191B69DA48009EE877 /* OONetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OONetworkManager.m; sourceTree = "<group>"; };
+		36D887DA1C1A2CDD0002A412 /* PriceSelectorCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriceSelectorCVCell.h; sourceTree = "<group>"; };
+		36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceSelectorCVCell.m; sourceTree = "<group>"; };
 		36DD24241B7C88E800C6348F /* EventObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventObject.h; sourceTree = "<group>"; };
 		36DD24251B7C88E800C6348F /* EventObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventObject.m; sourceTree = "<group>"; };
 		36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
@@ -435,6 +438,8 @@
 				367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */,
 				3625598E1C102ECD002553B4 /* TagTileCVCell.h */,
 				3625598F1C102ECD002553B4 /* TagTileCVCell.m */,
+				36D887DA1C1A2CDD0002A412 /* PriceSelectorCVCell.h */,
+				36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -1027,6 +1032,7 @@
 				36C572DD1C01477600C57DA2 /* ManageTagsVC.m in Sources */,
 				3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
+				36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				36C572DA1C01309900C57DA2 /* TagObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
@@ -1111,8 +1117,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Oomami Inc. (XP52D9KRG4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Oomami Inc. (XP52D9KRG4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

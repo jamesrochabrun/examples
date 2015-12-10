@@ -11,9 +11,9 @@
 @class OptionsVCCVL;
 
 typedef enum {
-    kOptionsSectionTypeLocation,
-    kOptionsSectionTypePrice,
     kOptionsSectionTypeTags,
+    kOptionsSectionTypePrice,
+    kOptionsSectionTypeLocation,
     kOptionsSectionTypeNumberOfSections
 } kOptionsSectionType;
 

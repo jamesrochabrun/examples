@@ -21,6 +21,6 @@
 @interface OptionsVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, OptionsVCCollectionViewDelegate>
 
 @property (nonatomic, weak) id<OptionsVCDelegate> delegate;
-@property (nonatomic, strong) NSMutableSet *usersTags;
+@property (nonatomic, strong) NSMutableSet *userTags;
 
 @end

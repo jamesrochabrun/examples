@@ -62,7 +62,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconDiscover;
+    menuItem.icon = kFontIconMap;
     menuItem.name = @"EXPLORE";
     menuItem.type = kMenuItemDiscover;
     [_menuItems addObject:menuItem];

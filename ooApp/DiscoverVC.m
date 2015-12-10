@@ -40,7 +40,7 @@
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) GMSMarker *centerMarker;
-@property (nonatomic, strong) NSSet *tags;
+@property (nonatomic, strong) NSMutableSet *tags;
 @property (nonatomic, strong) ListObject *defaultListObject;
 
 @end
@@ -87,6 +87,8 @@ static NSString * const ListRowID = @"HLRCell";
     
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:13 bearing:0 viewingAngle:1];
     
+    _tags = [NSMutableSet set];
+    
     [self.view addSubview:_mapView];
     
     _filterView = [[OOFilterView alloc] init];
@@ -128,13 +130,15 @@ static NSString * const ListRowID = @"HLRCell";
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
 
+    vc.userTags = _tags;
+    
     [self.navigationController presentViewController:nc animated:YES completion:^{
         ;
     }];
 }
 
 - (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags {
-    _tags = [NSSet setWithSet:tags];
+    _tags = [NSMutableSet setWithSet:tags];
     _listToDisplay = nil;
     [_filterView setCurrent:1];
     [_filterView setNeedsLayout];
