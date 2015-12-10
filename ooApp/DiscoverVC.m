@@ -358,7 +358,7 @@ static NSString * const ListRowID = @"HLRCell";
 
     UILabel *locationIcon = [[UILabel alloc] init];
     [locationIcon withFont:[UIFont fontWithName:kFontIcons size:20] textColor:kColorBlack backgroundColor:kColorClear];
-    locationIcon.text = kFontIconUserTag;
+    locationIcon.text = kFontIconPerson;
     locationIcon.frame = CGRectMake(0, 0, 20, 20);
     _centerMarker.position = center;
     _centerMarker.icon = [UIImage imageFromView:locationIcon];

@@ -8,18 +8,30 @@
 
 #import "OOMapMarker.h"
 
+@interface OOMapMarker ()
+@property (nonatomic, strong) UILabel *markerIcon;
+@end
+
 @implementation OOMapMarker
 
 - (instancetype)init {
     self = [super init];
     if (self) {
         self.appearAnimation = kGMSMarkerAnimationPop;
+        
+        _markerIcon = [[UILabel alloc] init];
+        [_markerIcon withFont:[UIFont fontWithName:kFontIcons size:28] textColor:kColorBlack backgroundColor:kColorClear];
+        _markerIcon.text = kFontIconPinFilled;
+        _markerIcon.frame = CGRectMake(0, 0, 30, 30);
     }
     return self;
 }
 
 - (void)highLight:(BOOL)highlight {
-    self.icon = [GMSMarker markerImageWithColor:((highlight) ? UIColorRGBA(kColorNavyBlue) : UIColorRGBA(kColorRed))];
+    _markerIcon.textColor = (highlight) ? UIColorRGBA(kColorMarker) : UIColorRGBA(kColorMarkerFaded) ;
+    self.icon = [UIImage imageFromView:_markerIcon];
+    
+//    [GMSMarker markerImageWithColor:((highlight) ? UIColorRGBA(kColorNavyBlue) : UIColorRGBA(kColorRed))];
 }
 
 - (BOOL)isEqual:(OOMapMarker *)object {

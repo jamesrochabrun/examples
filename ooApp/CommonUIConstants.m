@@ -46,5 +46,7 @@ NSString *const kFontIconToTry = @"o";
 NSString *const kFontIconToTryFilled = @"I";
 NSString *const kFontIconList = @"p";
 NSString *const kFontIconBack = @"a";
+NSString *const kFontIconPin = @"V";
+NSString *const kFontIconPinFilled = @"U";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";

@@ -32,6 +32,8 @@ static NSUInteger kColorGray = 0xFFE5E5E5;
 static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
 static NSUInteger kColorNavBar = 0xFF000000;
 static NSUInteger kColorNavyBlue = 0xFF000080;
+static NSUInteger kColorMarker = 0xBB000080;
+static NSUInteger kColorMarkerFaded = 0x33000080;
 static NSUInteger kColorOffBlack = 0xFF272727;
 static NSUInteger kColorOffWhite = 0xFFE5E5E5;
 static NSUInteger kColorOverlay20 = 0xCC000000;
@@ -162,6 +164,9 @@ extern NSString *const kFontIconList;
 extern NSString *const kFontIconEmptyCircle;
 extern NSString *const kFontIconFilledCircle;
 extern NSString *const kFontIconBack;
+extern NSString *const kFontIconPin;
+extern NSString *const kFontIconPinFilled;
+
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

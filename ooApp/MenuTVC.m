@@ -227,6 +227,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
         fvc = [[SearchVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemConnect]) {
         fvc = [[ConnectVC alloc] init];
+        [APP registerForPushNotifications];
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {

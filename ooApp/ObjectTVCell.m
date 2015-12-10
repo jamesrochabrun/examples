@@ -50,7 +50,7 @@
         
         _locationIcon = [[UILabel alloc] init];
         [_locationIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorYellow backgroundColor:kColorClear];
-        _locationIcon.text = kFontIconLocation;
+        _locationIcon.text = kFontIconPin;
         _locationIcon.textAlignment = NSTextAlignmentCenter;
         _locationIcon.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_locationIcon];
