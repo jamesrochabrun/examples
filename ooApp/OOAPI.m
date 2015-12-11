@@ -1834,25 +1834,27 @@ NSString *const kKeyTagIDs = @"tag_ids";
         failure(nil,nil);
         return nil;
     }
-    NSString *identifier = [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID];
-    NSString *googleIdentifier = restaurant.googleID;
-    NSMutableDictionary* parameters = @{}.mutableCopy;
-    if (identifier.length) {
-        [parameters setObject:identifier forKey:kKeyRestaurantRestaurantID];
-    }
-    else if (googleIdentifier.length) {
-        [parameters setObject:googleIdentifier forKey:kKeyRestaurantGoogleID];
-    }
-    else {
-        NSLog (@"MISSING VENUE IDENTIFIER");
-        failure(nil,nil);
-        return nil;
-    }
-    OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/restaurants", kHTTPProtocol, [OOAPI URL],
-                           (unsigned long)event.eventID];
+//    NSString *identifier = [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID];
+//    NSString *googleIdentifier = restaurant.googleID;
+//    NSMutableDictionary* parameters = @{}.mutableCopy;
+//    if (identifier.length) {
+//        [parameters setObject: @(restaurant.restaurantID) forKey: kKeyRestaurantIDs];
+//    }
+//    else if (googleIdentifier.length) {
+//        [parameters setObject:googleIdentifier forKey:kKeyRestaurantGoogleID];
+//    }
+//    else {
+//        NSLog (@"MISSING VENUE IDENTIFIER");
+//        failure(nil,nil);
+//        return nil;
+//    }
     
-    AFHTTPRequestOperation *op = [rm DELETE: urlString parameters:parameters
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/restaurants/%lu", kHTTPProtocol, [OOAPI URL],
+                           (unsigned long)event.eventID,
+                           (unsigned long)restaurant.restaurantID];
+    
+    AFHTTPRequestOperation *op = [rm DELETE: urlString parameters:nil
                                     success:^(id responseObject) {
                                         success(responseObject);
                                     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {

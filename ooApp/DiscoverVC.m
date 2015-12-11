@@ -322,7 +322,7 @@ static NSString * const ListRowID = @"HLRCell";
     cell.restaurant = ro;
     cell.listToAddTo = _listToAddTo;
     cell.nc = self.navigationController;
-    
+    cell.eventBeingEdited= self.eventBeingEdited;
     [cell updateConstraintsIfNeeded];
 
     [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];

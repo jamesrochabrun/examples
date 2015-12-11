@@ -160,18 +160,29 @@
                                                             [self addToList];
                                                         }];
     UIAlertAction *addToEvent = nil;
+    UIAlertAction *removeFromEvent = nil;
     if (self.eventBeingEdited) {
-        addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
-                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                 NSLog(@"Add to Event");
-                                                 [weakSelf addToEvent];
-                                             }];
+        if (  ![self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
+            addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSLog(@"Add to Event");
+                                                     [weakSelf addToEvent];
+                                                 }];
+        } else {
+            // XX:  need ability to remove a restaurant from an event
+            removeFromEvent= [UIAlertAction actionWithTitle: LOCAL(@"Remove from Event")
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSLog(@"Remove from Event");
+                                                     [weakSelf removeFromEvent];
+                                                 }];
+
+        }
     }
     
-//    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
-//                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-//                                                                NSLog(@"Add to New Event");
-//                                                            }];
+    //    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
+    //                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    //                                                                NSLog(@"Add to New Event");
+    //                                                            }];
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                NSLog(@"Add to New List");
@@ -189,6 +200,9 @@
     if (addToEvent) {
         [_restaurantOptionsAC addAction:addToEvent];
     }
+    if ( removeFromEvent) {
+        [_restaurantOptionsAC addAction:removeFromEvent];
+    }
     
 //    [_restaurantOptionsAC addAction:addToNewEvent];
     [_restaurantOptionsAC addAction:cancel];
@@ -200,20 +214,27 @@
 {
     NSInteger remaining=kMaximumRestaurantsPerEvent-[self.eventBeingEdited numberOfVenues ];
     
-    if ( self.eventBeingEdited) {
-        if  ([self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
-            NSString*string= [NSString   stringWithFormat:  @"You've added this restaurant to %@. You can add %ld more restaurants to this event.", self.eventBeingEdited.name,
-                               (long)remaining
-                              ];
-            message(string );
-        }
-        if ( self.eventBeingEdited.numberOfVenues >= kMaximumRestaurantsPerEvent) {
-            message( @"Cannot add more restaurants to event, maximum reached.");
-            return;
-        }
+    if  ([self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
+        NSString*string= [NSString   stringWithFormat:  @"You've added this restaurant to %@. You can add %ld more restaurants to this event.", self.eventBeingEdited.name,
+                          (long)remaining
+                          ];
+        message(string );
+    }
+    if ( self.eventBeingEdited.numberOfVenues >= kMaximumRestaurantsPerEvent) {
+        message( @"Cannot add more restaurants to event, maximum reached.");
+        return;
+    }
+    
+    EventObject* e= self.eventBeingEdited;
+    [e addVenue:_restaurant];
+}
+
+- (void)removeFromEvent
+{
+    if  ([self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
         
         EventObject* e= self.eventBeingEdited;
-        [e addVenue:_restaurant];
+        [e  removeVenue:_restaurant];
     }
 }
 

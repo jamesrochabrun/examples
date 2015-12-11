@@ -203,12 +203,23 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                             [self addToList];
                                                         }];
     UIAlertAction *addToEvent = nil;
+    UIAlertAction *removeFromEvent = nil;
     if ( self.eventBeingEdited) {
-        addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
-                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                 NSLog(@"Add to Event");
-                                                 [weakSelf addToEvent];
-                                             }];
+        if (  ![self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
+            addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSLog(@"Add to Event");
+                                                     [weakSelf addToEvent];
+                                                 }];
+        } else {
+            // XX:  need ability to remove a restaurant from an event
+            removeFromEvent= [UIAlertAction actionWithTitle: LOCAL(@"Remove from Event")
+                                                      style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                          NSLog(@"Remove from Event");
+                                                          [weakSelf removeFromEvent];
+                                                      }];
+            
+        }
     }
     
     UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
@@ -230,6 +241,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [_styleSheetAC addAction:addToNewList];
     if (addToEvent) {
         [_styleSheetAC addAction:addToEvent];
+    }
+    if ( removeFromEvent) {
+        [_styleSheetAC addAction:removeFromEvent];
     }
     
     [_styleSheetAC addAction:addToNewEvent];
@@ -290,8 +304,22 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)addToEvent
 {
+    NSInteger remaining=kMaximumRestaurantsPerEvent-[self.eventBeingEdited numberOfVenues ];
+    
+    if  ([self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
+        NSString*string= [NSString   stringWithFormat:  @"You've added this restaurant to %@. You can add %ld more restaurants to this event.", self.eventBeingEdited.name,
+                          (long)remaining
+                          ];
+        message(string );
+    }
+    if ( self.eventBeingEdited.numberOfVenues >= kMaximumRestaurantsPerEvent) {
+        message( @"Cannot add more restaurants to event, maximum reached.");
+        return;
+    }
+    
     EventObject* e= self.eventBeingEdited;
     [e addVenue:_restaurant];
+    
     [self.navigationController  popViewControllerAnimated:YES];
 }
 

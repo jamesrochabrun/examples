@@ -226,7 +226,8 @@ BOOL isEventObject (id  object)
                          toEvent:self
                          success:^(id response) {
                              NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
-//                             message( @"Added.");6
+//                             message( @"Added.");
+                             self.numberOfVenues++;
                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                              NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
                              [_venues removeObject: venue];
@@ -251,7 +252,7 @@ BOOL isEventObject (id  object)
                           fromEvent:self
                             success:^(id response) {
                                 NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
-                                message( @"Removed.");
+//                                message( @"Removed.");
                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                 [_venues addObject: venue];
                                 NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
