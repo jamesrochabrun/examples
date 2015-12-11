@@ -87,12 +87,12 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
     _xButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_xButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
+    [_xButton withIcon:kFontIconRemove fontSize:kGeomPlayIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
                target:self selector:@selector(swipeLeft)];
     [_xButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
     _tryButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_tryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
+    [_tryButton withIcon:kFontIconToTry fontSize:kGeomPlayIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
                target:self selector:@selector(swipeRight)];
     [_tryButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
     
@@ -110,7 +110,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 // to get rid of it (eg: if you are building cards from data from the internet)
 -(DraggableView *)createDraggableViewWithDataAtIndex:(NSInteger)index
 {
-    CGFloat cardWidth = width(self) - 30, cardHeight = height(self) - 100;
+    CGFloat cardWidth = width(self) - 30, cardHeight = height(self) - kGeomPlayButtonSize - 50;
     
     DraggableView *draggableView = [[DraggableView alloc] initWithFrame:CGRectMake((self.frame.size.width - cardWidth)/2, 15, cardWidth, cardHeight)];
 //    draggableView.restaurant = ((RestaurantObject *)[_playItems objectAtIndex:index]);
@@ -121,7 +121,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
 
 - (void)updateConstraints {
     [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonDimensions":@(kGeomDimensionsIconButton)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonDimensions":@(kGeomPlayButtonSize)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _xButton, _tryButton);

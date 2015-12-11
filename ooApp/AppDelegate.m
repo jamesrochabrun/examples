@@ -90,6 +90,7 @@
     [cache  removeAllCachedResponses];
 }
 
+
 - (void)registerForPushNotifications {
     UIUserNotificationType types = UIUserNotificationTypeBadge |
     UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
@@ -99,6 +100,10 @@
     
     [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
     [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    
 }
 
 // Delegation methods

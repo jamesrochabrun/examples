@@ -12,6 +12,7 @@
 #import "Settings.h"
 #import "TagObject.h"
 #import "TagTileCVCell.h"
+#import "PriceSelectorCVCell.h"
 #import "OptionsVCCVL.h"
 #import "OOStripHeader.h"
 
@@ -46,7 +47,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
     
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kOptionsLocationCellIdentifier];
-    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kOptionsPriceCellIdentifier];
+    [_collectionView registerClass:[PriceSelectorCVCell class] forCellWithReuseIdentifier:kOptionsPriceCellIdentifier];
     [_collectionView registerClass:[TagTileCVCell class] forCellWithReuseIdentifier:kOptionsTagsCellIdentifier];
     [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:@"header" withReuseIdentifier:kOptionsTagsHeaderIdentifier];
 
@@ -54,8 +55,6 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 
     [self.view addSubview:_collectionView];
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    _usersTags = [NSMutableSet set];
     
     [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(closeOptions)];
 }
@@ -84,6 +83,12 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
     [super viewDidAppear:animated];
 }
 
+- (void)setUserTags:(NSMutableSet *)userTags {
+    if (_userTags == userTags) return;
+    _userTags = userTags;
+    [_collectionView reloadData];
+}
+
 - (void)getAllTags {
     __weak OptionsVC *weakSelf = self;
     [OOAPI getTagsForUser:0 success:^(NSArray *tags) {
@@ -91,27 +96,27 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
         ON_MAIN_THREAD(^{
             [weakSelf.collectionView reloadData];
         });
-//        [weakSelf getUsersTags];
+//        [weakSelf getUserTags];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
 }
 
-- (void)getUsersTags {
-    NSUInteger userID = [Settings sharedInstance].userObject.userID;
-    __weak OptionsVC *weakSelf = self;
-    [OOAPI getTagsForUser:userID success:^(NSArray *tags) {
-        _usersTags = [NSMutableSet setWithCapacity:[tags count]];
-        [tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            [_usersTags addObject:obj];
-        }];
-        ON_MAIN_THREAD(^{
-            [weakSelf.collectionView reloadData];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
-    }];
-}
+//- (void)getUserTags {
+//    NSUInteger userID = [Settings sharedInstance].userObject.userID;
+//    __weak OptionsVC *weakSelf = self;
+//    [OOAPI getTagsForUser:userID success:^(NSArray *tags) {
+//        _userTags = [NSMutableSet setWithCapacity:[tags count]];
+//        [tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//            [_userTags addObject:obj];
+//        }];
+//        ON_MAIN_THREAD(^{
+//            [weakSelf.collectionView reloadData];
+//        });
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        ;
+//    }];
+//}
 
 #pragma mark - Collection View stuff
 
@@ -121,7 +126,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
             return 0;
             break;
         case kOptionsSectionTypePrice:
-            return 0;
+            return 1;
             break;
         case kOptionsSectionTypeTags:
             return [_tags count];
@@ -153,6 +158,9 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
             cvc.tagObject = tag;
             cvc.selected = [self isUserTag:tag];
             
+            if (cvc.selected) {
+                [self.collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+            }
             //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
@@ -191,7 +199,9 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 }
 
 - (BOOL)isUserTag:(TagObject *)tag {
-    return [_usersTags containsObject:tag];
+    BOOL isUserTag = [_userTags containsObject:tag];
+    NSLog(@"tag=%@ selected:%d", tag.term, isUserTag);
+    return isUserTag;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -199,11 +209,23 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
         TagObject *tag = [_tags objectAtIndex:indexPath.row];
         
         if ([self isUserTag:tag]) { //already a user tag so unset
-            [_usersTags removeObject:tag];
+            [_userTags removeObject:tag];
         } else { //not a user tag so set it
-            [_usersTags addObject:tag];
+            [_userTags addObject:tag];
         }
+    }
+}
 
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    if (indexPath.section == kOptionsSectionTypeTags) {
+        TagObject *tag = [_tags objectAtIndex:indexPath.row];
+        
+        if ([self isUserTag:tag]) { //already a user tag so unset
+            [_userTags removeObject:tag];
+        } else { //not a user tag so set it
+            [_userTags addObject:tag];
+        }
+        
     }
 }
 
@@ -221,12 +243,20 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
         [collectionView bringSubviewToFront:reuseView];
         [reuseView addSubview:header];
         [header setNeedsLayout];
+    } else if (indexPath.section == kOptionsSectionTypePrice) {
+        OOStripHeader *header = [[OOStripHeader alloc] init];
+        header.name = @"What price range?";
+        header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
+        header.tag = 111;
+        [collectionView bringSubviewToFront:reuseView];
+        [reuseView addSubview:header];
+        [header setNeedsLayout];
     }
     return reuseView;
 }
 
 - (void)closeOptions {
-    [_delegate optionsVCDismiss:self withTags:_usersTags];
+    [_delegate optionsVCDismiss:self withTags:_userTags];
 }
 
 - (void)didReceiveMemoryWarning {
