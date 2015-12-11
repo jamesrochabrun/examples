@@ -770,6 +770,13 @@
     bbi.customView = moreButton;
     [moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItems = @[bbi];
+    
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
