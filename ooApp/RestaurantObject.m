@@ -151,4 +151,15 @@ BOOL isRestaurantObject (id  object)
     return text;
 }
 
+
+- (NSUInteger)hash;
+{
+    return kHashRestaurant + (_restaurantID & 0xffffff);
+}
+
+- (BOOL)isEqual: (NSObject*)other
+{
+    return self.hash == other.hash;
+}
+
 @end

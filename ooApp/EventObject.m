@@ -204,6 +204,13 @@ BOOL isEventObject (id  object)
     return nil;
 }
 
+- (BOOL)alreadyHasVenue:(RestaurantObject *)venue;
+{
+    @synchronized(_venues)  {
+        return [_venues containsObject: venue];
+    }
+}
+
 - (void)addVenue:(RestaurantObject *)venue;
 {
     if (!venue) {

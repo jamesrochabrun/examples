@@ -10,8 +10,6 @@
 
 @implementation GroupObject
 
-const NSInteger kHashGroup= 0x20000000;
-
 static NSString *const kKeyCreatedAt = @"created_at";
 static NSString *const kKeyUpdatedAt = @"updated_at";
 static NSString *const kKeyName = @"name";

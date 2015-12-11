@@ -159,15 +159,15 @@
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                             [self addToList];
                                                         }];
-//    UIAlertAction *addToEvent = nil;
-//    if (self.eventBeingEdited) {
-//        addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
-//                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-//                                                 NSLog(@"Add to Event");
-//                                                 [weakSelf addToEvent];
-//                                             }];
-//    }
-//    
+    UIAlertAction *addToEvent = nil;
+    if (self.eventBeingEdited) {
+        addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
+                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                 NSLog(@"Add to Event");
+                                                 [weakSelf addToEvent];
+                                             }];
+    }
+    
 //    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
 //                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
 //                                                                NSLog(@"Add to New Event");
@@ -186,14 +186,35 @@
     [_restaurantOptionsAC addAction:shareRestaurant];
     [_restaurantOptionsAC addAction:addToList];
     [_restaurantOptionsAC addAction:addToNewList];
-//    if (addToEvent) {
-//        [_restaurantOptionsAC addAction:addToEvent];
-//    }
-//    
+    if (addToEvent) {
+        [_restaurantOptionsAC addAction:addToEvent];
+    }
+    
 //    [_restaurantOptionsAC addAction:addToNewEvent];
     [_restaurantOptionsAC addAction:cancel];
     
 //    [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)addToEvent
+{
+    NSInteger remaining=kMaximumRestaurantsPerEvent-[self.eventBeingEdited numberOfVenues ];
+    
+    if ( self.eventBeingEdited) {
+        if  ([self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
+            NSString*string= [NSString   stringWithFormat:  @"You've added this restaurant to %@. You can add %ld more restaurants to this event.", self.eventBeingEdited.name,
+                               (long)remaining
+                              ];
+            message(string );
+        }
+        if ( self.eventBeingEdited.numberOfVenues >= kMaximumRestaurantsPerEvent) {
+            message( @"Cannot add more restaurants to event, maximum reached.");
+            return;
+        }
+        
+        EventObject* e= self.eventBeingEdited;
+        [e addVenue:_restaurant];
+    }
 }
 
 - (void)sharePressed {

@@ -248,7 +248,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     cell.restaurant = restaurant;
     cell.nc = self.navigationController;
-    
+    cell.eventBeingEdited=self.eventBeingEdited;
     [cell updateConstraintsIfNeeded];
     
     return cell;
