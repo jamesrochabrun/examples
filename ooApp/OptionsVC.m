@@ -12,6 +12,7 @@
 #import "Settings.h"
 #import "TagObject.h"
 #import "TagTileCVCell.h"
+#import "PriceSelectorCVCell.h"
 #import "OptionsVCCVL.h"
 #import "OOStripHeader.h"
 
@@ -46,7 +47,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
     
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kOptionsLocationCellIdentifier];
-    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kOptionsPriceCellIdentifier];
+    [_collectionView registerClass:[PriceSelectorCVCell class] forCellWithReuseIdentifier:kOptionsPriceCellIdentifier];
     [_collectionView registerClass:[TagTileCVCell class] forCellWithReuseIdentifier:kOptionsTagsCellIdentifier];
     [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:@"header" withReuseIdentifier:kOptionsTagsHeaderIdentifier];
 

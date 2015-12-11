@@ -97,6 +97,7 @@
 		36C572DD1C01477600C57DA2 /* ManageTagsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C572DC1C01477600C57DA2 /* ManageTagsVC.m */; };
 		36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D5D2191B69DA48009EE877 /* OONetworkManager.m */; };
 		36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */; settings = {ASSET_TAGS = (); }; };
+		36D887E41C1B48390002A412 /* TTRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887E11C1B48390002A412 /* TTRangeSlider.m */; settings = {ASSET_TAGS = (); }; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
 		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
@@ -306,6 +307,9 @@
 		36D5D2191B69DA48009EE877 /* OONetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OONetworkManager.m; sourceTree = "<group>"; };
 		36D887DA1C1A2CDD0002A412 /* PriceSelectorCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriceSelectorCVCell.h; sourceTree = "<group>"; };
 		36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceSelectorCVCell.m; sourceTree = "<group>"; };
+		36D887E11C1B48390002A412 /* TTRangeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TTRangeSlider.m; path = External/TTTRandSlider/TTRangeSlider.m; sourceTree = "<group>"; };
+		36D887E21C1B48390002A412 /* TTRangeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTRangeSlider.h; path = External/TTTRandSlider/TTRangeSlider.h; sourceTree = "<group>"; };
+		36D887E31C1B48390002A412 /* TTRangeSliderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTRangeSliderDelegate.h; path = External/TTTRandSlider/TTRangeSliderDelegate.h; sourceTree = "<group>"; };
 		36DD24241B7C88E800C6348F /* EventObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventObject.h; sourceTree = "<group>"; };
 		36DD24251B7C88E800C6348F /* EventObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventObject.m; sourceTree = "<group>"; };
 		36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
@@ -616,6 +620,7 @@
 		367704651B8CFE2400B594E5 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				36D887E01C1B480C0002A412 /* TTRangeSlider */,
 				3629F0BF1BFCF42500E2D912 /* Draggable */,
 				368649091BE04B0C003BF98B /* UIImageEffects */,
 				366B623C1B8D14A200B9F1C5 /* SMRevealViewController */,
@@ -630,6 +635,16 @@
 				3686490B1BE04B73003BF98B /* UIImageEffects.m */,
 			);
 			name = UIImageEffects;
+			sourceTree = "<group>";
+		};
+		36D887E01C1B480C0002A412 /* TTRangeSlider */ = {
+			isa = PBXGroup;
+			children = (
+				36D887E11C1B48390002A412 /* TTRangeSlider.m */,
+				36D887E21C1B48390002A412 /* TTRangeSlider.h */,
+				36D887E31C1B48390002A412 /* TTRangeSliderDelegate.h */,
+			);
+			name = TTRangeSlider;
 			sourceTree = "<group>";
 		};
 		36FDA6E71B585F650029D29D = {
@@ -797,7 +812,6 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
-				5FAF91B7877D12DE5A57BFBD /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -949,21 +963,6 @@
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
 		};
-		5FAF91B7877D12DE5A57BFBD /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		923BDA435A444C3D92CBD745 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1024,6 +1023,7 @@
 				9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */,
 				3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */,
 				3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */,
+				36D887E41C1B48390002A412 /* TTRangeSlider.m in Sources */,
 				96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */,
 				3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */,
 				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
