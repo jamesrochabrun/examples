@@ -62,8 +62,10 @@ enum {
 
 - (NSUInteger)totalUsers;
 
-- (void)addVenue:(RestaurantObject *)venue;
-- (void)removeVenue:(RestaurantObject *)venue;
+- (void)addVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock;
+- (void)removeVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock;
+- (void)addVenue:(RestaurantObject *)venue ;
+- (void)removeVenue:(RestaurantObject *)venue ;
 - (BOOL)alreadyHasVenue:(RestaurantObject *)venue;
 
 - (RestaurantObject *)getNthVenue:(NSInteger)index;

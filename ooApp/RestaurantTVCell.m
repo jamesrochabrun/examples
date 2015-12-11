@@ -14,7 +14,15 @@
 @interface RestaurantTVCell ()
 @property (nonatomic, strong) UIAlertController *restaurantOptionsAC;
 @property (nonatomic, strong) UIAlertController *createListAC;
+@property (nonatomic,  assign)  int  mode;
 @end
+
+enum  {
+    MODE_ADD=1,
+    MODE_REMOVE= 2,
+    MODE_MODAL= 3,
+    MODE_NONE= 0
+};
 
 @implementation RestaurantTVCell
 
@@ -96,6 +104,7 @@
             ;
         }];
     }
+    
     [self setupActionButton];
 }
 
@@ -105,9 +114,41 @@
     [self setupActionButton];
 }
 
-- (void)setupActionButton {
-    [self.actionButton setTitle:kFontIconAdd forState:UIControlStateNormal];
-    [self.actionButton addTarget:self action:@selector(addButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+- (void)prepareForReuse
+{
+    [super  prepareForReuse];
+    [self.actionButton setTitle:  @"" forState:UIControlStateNormal];
+    self.restaurant= nil;
+    self.eventBeingEdited= nil;
+    self.mode= MODE_NONE;
+}
+
+- (void)expressMode
+{
+    NSString*string=  @"";
+    if (!self.eventBeingEdited) {
+        string= kFontIconMore;
+        self.mode= MODE_MODAL;
+    } else {
+        if ( [self.eventBeingEdited alreadyHasVenue:_restaurant ]) {
+            string=kFontIconRemove;
+            self.mode= MODE_REMOVE;
+            
+        } else {
+            string= kFontIconAdd;
+            self.mode= MODE_ADD;
+            
+        }
+    }
+    
+    [self.actionButton setTitle: string forState:UIControlStateNormal];
+    
+}
+
+- (void)setupActionButton
+{
+    [self expressMode];
+    [self.actionButton addTarget:self action:@selector(userPressedActionButton) forControlEvents:UIControlEventTouchUpInside];
     self.actionButton.hidden = NO;
 }
 
@@ -126,16 +167,29 @@
     [self.nc pushViewController:vc animated:YES];
 }
 
-- (void)addButtonPressed {
+- (void)userPressedActionButton
+{
     OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantTVCell *weakSelf = self;
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
-        ON_MAIN_THREAD(^{
-            if (_restaurant.restaurantID) {
-                [self setupRestaurantOptionsAC];
-                [self.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
+        if (_restaurant.restaurantID) {
+            switch (weakSelf.mode) {
+                case MODE_ADD:
+                    [weakSelf addToEvent];
+                    break;
+                    
+                case MODE_REMOVE:
+                    [weakSelf removeFromEvent];
+                    break;
+                    
+                case MODE_MODAL:
+                    ON_MAIN_THREAD(^{
+                        [weakSelf setupRestaurantOptionsAC];
+                        [weakSelf.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
+                    });
             }
-        });
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -143,8 +197,8 @@
 
 - (void)setupRestaurantOptionsAC {
     _restaurantOptionsAC = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
-                                                        message:@"What would you like to do with this restaurant."
-                                                 preferredStyle:UIAlertControllerStyleActionSheet]; // 1
+                                                               message:@"What would you like to do with this restaurant."
+                                                        preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
     _restaurantOptionsAC.view.tintColor = UIColorRGBA(kColorBlack);
     
@@ -220,13 +274,16 @@
                           ];
         message(string );
     }
-    if ( self.eventBeingEdited.numberOfVenues >= kMaximumRestaurantsPerEvent) {
+    else if ( self.eventBeingEdited.numberOfVenues >= kMaximumRestaurantsPerEvent) {
         message( @"Cannot add more restaurants to event, maximum reached.");
         return;
     }
     
     EventObject* e= self.eventBeingEdited;
-    [e addVenue:_restaurant];
+    __weak RestaurantTVCell *weakSelf = self;
+    [e addVenue:_restaurant completionBlock:^(BOOL  success) {
+        [weakSelf expressMode];
+    }];
 }
 
 - (void)removeFromEvent
@@ -234,7 +291,10 @@
     if  ([self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
         
         EventObject* e= self.eventBeingEdited;
-        [e  removeVenue:_restaurant];
+        __weak RestaurantTVCell *weakSelf = self;
+        [e  removeVenue:_restaurant completionBlock:^(BOOL  success) {
+            [weakSelf expressMode];
+        }];
     }
 }
 
