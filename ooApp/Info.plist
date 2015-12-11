@@ -84,9 +84,9 @@
 		</dict>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Hey Kevin et al, what do we want to express here?</string>
+	<string>Oomami uses your location to find the best restaurants and events near you.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Hey Kevin et al, what do we want to have here?</string>
+	<string>Oomami uses your location to find the best restaurants and events near you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Oomami uses your location to find the best restaurants and events near you.</string>
 	<key>UIAppFonts</key>

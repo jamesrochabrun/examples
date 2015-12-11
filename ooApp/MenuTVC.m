@@ -227,19 +227,25 @@ static NSString * const MenuCellIdentifier = @"menuCell";
         fvc = [[SearchVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemConnect]) {
         fvc = [[ConnectVC alloc] init];
-        [APP registerForPushNotifications];
+        if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+            [APP registerForPushNotifications];
+        }
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
         fvc = [[DiscoverVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
         fvc = [[PlayVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemFeed]) {
         fvc = [[FeedVC alloc] init];
-        //TODO: if we have not already asked for remote notifications then ask here...also ask when the user submits and event
-        //[APP registerForPushNotifications];
+        if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+            [APP registerForPushNotifications];
+        }
     } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {
         fvc = [[DiagnosticVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemMeet]) {
         fvc = [[EventsListVC alloc] init];
+        if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+            [APP registerForPushNotifications];
+        }
     } else {
         //TODO AUG: fill in other cases
         fvc = [[DefaultVC alloc] init];
