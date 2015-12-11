@@ -7,7 +7,6 @@
 //
 
 #import "ListsVC.h"
-#import "ListTVCell.h"
 #import "RestaurantListVC.h"
 #import "OOAPI.h"
 #import "LocationManager.h"
@@ -20,6 +19,8 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) AFHTTPRequestOperation *operationToFetchAll;
+@property (nonatomic, strong) AFHTTPRequestOperation *operationToAddAll;
 
 @end
 
@@ -98,7 +99,7 @@ static NSString * const cellIdentifier = @"listCell";
     self.requestOperation = [api getListsOfUser:userInfo.userID withRestaurant:0 success:^(NSArray *lists) {
         weakSelf.lists = lists;
         ON_MAIN_THREAD( ^{
-            [self gotLists];
+            [weakSelf gotLists];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
@@ -110,6 +111,46 @@ static NSString * const cellIdentifier = @"listCell";
     NSLog(@"Got %lu lists.", (unsigned long)[_lists count]);
     [_tableView reloadData];
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
+}
+
+- (void)userPressedAddAllForList:(ListObject *)list
+{
+    if  (!list) {
+        return;
+    }
+    
+    if  (_operationToFetchAll ) {
+        return;
+    }
+    
+    OOAPI*api= [[OOAPI  alloc] init ];
+    __weak  ListsVC *weakSelf = self;
+    _operationToFetchAll=[api getRestaurantsWithListID:  list.listID
+                                               success:^(NSArray *restaurants) {
+                                                   if  (!restaurants || ! restaurants.count) {
+                                                       return;
+                                                   }
+                                                   
+                                                   weakSelf.operationToAddAll= [OOAPI addRestaurants:restaurants
+                                                                 toEvent:weakSelf.eventBeingEdited
+                                                                 success:^(id response) {
+                                                                     NSLog  (@"ADDED RESTAURANTS TO EVENT.");
+                                                                     weakSelf.operationToAddAll= nil;
+                                                                     weakSelf.eventBeingEdited.hasBeenAltered= YES;
+                                                                     message( @"Added restaurants to event.");
+                                                                     
+                                                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                     message( @"There was a problem adding the restaurants of that list to the event.");
+                                                                     NSLog  (@"CANNOT ADD RESTAURANTS TO EVENT.");
+                                                                     weakSelf.operationToAddAll= nil;
+                                                                 }];
+                                                   
+                                                   weakSelf.operationToFetchAll= nil;
+                                               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                   NSLog  (@"CANNOT GET RESTAURANT WITH LIST ID");
+                                                   weakSelf.operationToFetchAll= nil;
+
+                                               }];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -136,6 +177,12 @@ static NSString * const cellIdentifier = @"listCell";
 
     [cell updateConstraintsIfNeeded];
     
+    if ( self.eventBeingEdited  &&  list.numRestaurants) {
+        [cell addTheAddAllButton];
+        cell.delegate= self;
+        cell.listToAddTo=list;
+    }
+
     return cell;
 }
 
@@ -151,6 +198,11 @@ static NSString * const cellIdentifier = @"listCell";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+- (void)userPressedAddAllForList
+{
+    
+    
+}
 /*
 #pragma mark - Navigation
 

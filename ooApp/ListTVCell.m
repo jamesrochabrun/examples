@@ -15,6 +15,7 @@
 
 //@property (nonatomic, strong) UIButton *addButton;
 @property (nonatomic, strong) NSArray *lists;
+@property (nonatomic,strong) UIButton *buttonAddAll;
 
 @end
 
@@ -27,15 +28,50 @@
     return self;
 }
 
+- (void) addTheAddAllButton;
+{
+    _buttonAddAll= makeButton(self,  @"ADD ALL", kGeomFontSizeHeader,
+                              WHITE, CLEAR, self,
+                              @selector(userPressedAddAll:) , 1);
+    _buttonAddAll.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self bringSubviewToFront:_buttonAddAll];
+}
+
+- (void)userPressedAddAll: (id) sender
+{
+    NSLog  (@"USER PRESSED ADD ALL BUTTON");
+    [self.delegate userPressedAddAllForList:self.listToAddTo ];
+}
+
 - (void)updateConstraints {
     [super updateConstraints];
 
-//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonHeight":@(kGeomHeightButton)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonHeight":@(kGeomHeightButton)};
     
-//    UIView *superview = self;
-//    NSDictionary *views = NSDictionaryOfVariableBindings(superview);//, _addButton);
+    if  ( self.buttonAddAll) {
+        
+    UIView *superview = self;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _buttonAddAll);
     
+    [self addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=0)-[_buttonAddAll(>=80)]-(spaceEdge)-|"
+                                             options:0
+                                             metrics:metrics
+                                               views:views]];
+    [ self addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_buttonAddAll(buttonHeight)]-|"
+                                             options:NSLayoutFormatAlignAllCenterY
+                                             metrics:metrics
+                                               views:views]];
+    }
+}
 
+- (void)prepareForReuse
+{
+    [self.buttonAddAll removeFromSuperview];
+    self.buttonAddAll= nil;
+    self.listToAddTo= nil;
 }
 
 - (void)toggleListInclusion {

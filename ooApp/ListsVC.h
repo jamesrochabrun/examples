@@ -11,8 +11,9 @@
 #import "RestaurantObject.h"
 #import "ListObject.h"
 #import "EventObject.h"
+#import "ListTVCell.h"
 
-@interface ListsVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
+@interface ListsVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate, ListTVCellDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurantToAdd;
 @property (nonatomic, strong) ListObject *listToAddTo;

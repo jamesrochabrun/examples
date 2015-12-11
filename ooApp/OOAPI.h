@@ -239,6 +239,11 @@ typedef enum {
                                   success:(void (^)(id response))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants
+                                   toEvent:(EventObject *)event
+                                   success:(void (^)(id response))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 + (AFHTTPRequestOperation *)removeRestaurant:(RestaurantObject *)restaurant
                                    fromEvent:(EventObject *)event
                                      success:(void (^)(id response))success

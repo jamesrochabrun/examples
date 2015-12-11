@@ -1772,6 +1772,48 @@ NSString *const kKeyTagIDs = @"tag_ids";
     
     return op;
 }
+//------------------------------------------------------------------------------
+// Name:    addRestaurants toEvent
+// Purpose: Add a restaurant to an event.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants
+                                  toEvent:(EventObject *)event
+                                  success:(void (^)(id response))success
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!event || !restaurants) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userid = userInfo.userID;
+    if (!userid) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/restaurants", kHTTPProtocol, [OOAPI URL],
+                           (unsigned long)event.eventID];
+    
+    NSMutableArray*restaurantArray= [NSMutableArray new];
+    for (RestaurantObject* r   in  restaurants) {
+        NSUInteger identifier= r.restaurantID;
+        [restaurantArray addObject: @( identifier)];
+    }
+    AFHTTPRequestOperation *op = [rm POST:urlString
+                               parameters:@{
+                                            kKeyRestaurantIDs: restaurantArray
+                                            }
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    
+    return op;
+}
 
 //------------------------------------------------------------------------------
 // Name:    removeRestaurant fromEvent
