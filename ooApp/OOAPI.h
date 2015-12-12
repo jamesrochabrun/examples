@@ -148,7 +148,7 @@ typedef enum {
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)identifier
-                                  success:(void (^)(UserObject *users))success
+                                  success:(void (^)(UserObject *user))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)deletePhoto:(MediaItemObject *)mio success:(void (^)(void))success

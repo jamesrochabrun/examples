@@ -10,8 +10,9 @@
 #import "BaseVC.h"
 #import "ParticipantsView.h"
 #import "EventCoordinatorVC.h"
+#import "EventTVCell.h"
 
-@interface EventsListVC : BaseVC <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate,  EventCoordinatorVCDelegate>
+@interface EventsListVC : BaseVC <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, EventTVCellDelegate, EventCoordinatorVCDelegate>
 @property (nonatomic,strong) EventObject* eventBeingEdited;
 @end
 

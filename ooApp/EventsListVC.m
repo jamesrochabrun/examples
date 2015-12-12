@@ -281,6 +281,7 @@
         
         cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         cell.selectedBackgroundView = [UIView new];
+        cell.delegate= self;
         
         if (!events.count) {
             if (!_didGetInitialResponse) {
@@ -304,6 +305,20 @@
     }
     
     return cell;
+}
+
+- (void)userTappedOnProfilePicture:(NSUInteger)userid
+{
+    ProfileVC*vc= [[ProfileVC alloc] init];
+    vc.userID= userid;
+    __weak  EventsListVC *weakSelf = self;
+    [OOAPI getUserWithID:userid success:^(UserObject *user) {
+        vc.userInfo= user;
+        [weakSelf.navigationController pushViewController:vc animated:YES ];
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
 }
 
 //------------------------------------------------------------------------------

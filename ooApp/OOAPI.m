@@ -409,7 +409,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)identifier
-                                  success:(void (^)(UserObject *users))success
+                                  success:(void (^)(UserObject *user))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
