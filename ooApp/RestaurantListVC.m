@@ -211,6 +211,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                     andRadius:2000
                                                    andOpenOnly:NO
                                                        andSort:kSearchSortTypeBestMatch
+                                                       minPrice:0
+                                                       maxPrice:0
                                                          isPlay:(_listItem.type == kListTypeJustForYou) ? YES : NO
                                                         success:^(NSArray *r) {
             weakSelf.restaurants = r;

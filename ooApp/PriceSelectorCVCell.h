@@ -7,7 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TTRangeSlider.h"
 
-@interface PriceSelectorCVCell : UICollectionViewCell
+@class PriceSelectorCVCell;
+
+@protocol PriceSelectorCellDelegate
+- (void)priceSelector:(PriceSelectorCVCell *)priceSelector minPriceSelected:(NSUInteger)minPrice maxPriceSelected:(NSUInteger)maxPrice;
+@end
+
+@interface PriceSelectorCVCell : UICollectionViewCell <TTRangeSliderDelegate>
+@property (nonatomic, weak) id<PriceSelectorCellDelegate> delegate;
+@property (nonatomic, strong) UIButton *anyPriceButton;
+
+- (void)setMinPrice:(NSUInteger)minPrice maxPrice:(NSUInteger)maxPrice;
 
 @end

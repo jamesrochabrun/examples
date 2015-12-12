@@ -116,16 +116,17 @@
         [self refetchEvents];
     }
     
-    [self performSelector:@selector(startRefreshTimer)  withObject:nil afterDelay:30];
+//    [self performSelector:@selector(startRefreshTimer)  withObject:nil afterDelay:30];
 }
 
-- (void)startRefreshTimer
-{
-    self.refreshTimer=[NSTimer scheduledTimerWithTimeInterval:60
-                                                       target:self
-                                                     selector:@selector(refetchEvents)
-                                                     userInfo:nil repeats:YES];
-}
+// NOTE: We should not be polling the server. When the client needs new data it should fetch it.
+//- (void)startRefreshTimer
+//{
+//    self.refreshTimer=[NSTimer scheduledTimerWithTimeInterval:60
+//                                                       target:self
+//                                                     selector:@selector(refetchEvents)
+//                                                     userInfo:nil repeats:YES];
+//}
 
 - (void)refetchEvents
 {

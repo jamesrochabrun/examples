@@ -21,6 +21,8 @@
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
 NSString *const kKeySearchFilter = @"filter";
+NSString *const kKeySearchMinPrice = @"minprice";
+NSString *const kKeySearchMaxPrice = @"maxprice";
 
 NSString *const kKeyRestaurantIDs = @"restaurant_ids";
 NSString *const kKeyUserIDs = @"user_ids";
@@ -195,6 +197,8 @@ NSString *const kKeyTagIDs = @"tag_ids";
                                              andRadius:(CGFloat)radius
                                           andOpenOnly:(BOOL)openOnly
                                               andSort:(SearchSortType)sort
+                                              minPrice:(NSUInteger)minPrice
+                                              maxPrice:(NSUInteger)maxPrice
                                                isPlay:(BOOL)isPlay
                                               success:(void (^)(NSArray *restaurants))success
                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
@@ -245,7 +249,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
         urlString = [NSString stringWithFormat:@"%@://%@/search", kHTTPProtocol, [OOAPI URL]];
     }
     
-    NSDictionary *parameters = @{@"keyword":searchTerms,
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:@{@"keyword":searchTerms,
                                  kKeySearchSort:[NSNumber numberWithUnsignedInteger:sort],
                                  kKeySearchRadius:[NSNumber numberWithUnsignedInteger:radius],
                                  kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
@@ -254,7 +258,12 @@ NSString *const kKeyTagIDs = @"tag_ids";
 //                                 kKeyRestaurantLongitude:[NSNumber numberWithFloat:-122.431297],
                                  kKeyRestaurantOpenNow:[NSNumber numberWithBool:openOnly]
 //                                 kKeySearchFilter:filterName// Not used by backend.
-                                 };
+                                 }];
+    
+    if (minPrice || maxPrice) {
+        [parameters setObject:[NSNumber numberWithUnsignedInteger:minPrice] forKey:kKeySearchMinPrice];
+        [parameters setObject:[NSNumber numberWithUnsignedInteger:maxPrice] forKey:kKeySearchMaxPrice];
+    }
   
     NSLog(@"search URL = %@", urlString);
     
@@ -2262,11 +2271,11 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (NSString *) URL {
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
         return kOOURLProduction;
-//    }
+    }
 }
 
 

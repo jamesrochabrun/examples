@@ -339,6 +339,8 @@ static const NSUInteger maximumKeywords= 4;
                                                        andRadius:10000
                                                      andOpenOnly:NO
                                                          andSort:kSearchSortTypeBestMatch
+                                                        minPrice:0
+                                                        maxPrice:0
                                                           isPlay:NO
                                                          success:^(NSArray *restaurants) {
                                                              [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)

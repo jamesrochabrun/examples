@@ -40,8 +40,9 @@
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) GMSMarker *centerMarker;
-@property (nonatomic, strong) NSMutableSet *tags;
 @property (nonatomic, strong) ListObject *defaultListObject;
+@property (nonatomic, strong) NSMutableSet *tags;
+@property (nonatomic) NSUInteger minPrice, maxPrice;
 
 @end
 
@@ -131,14 +132,17 @@ static NSString * const ListRowID = @"HLRCell";
     nc.view.backgroundColor = [UIColor clearColor];
 
     vc.userTags = _tags;
+    [vc setMinPrice:_minPrice maxPrice:_maxPrice];
     
     [self.navigationController presentViewController:nc animated:YES completion:^{
         ;
     }];
 }
 
-- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags {
+- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags andMinPrice:(NSUInteger)minPrice andMaxPrice:(NSUInteger)maxPrice {
     _tags = [NSMutableSet setWithSet:tags];
+    _minPrice = minPrice;
+    _maxPrice = maxPrice;
     _listToDisplay = nil;
     [_filterView setCurrent:1];
     [_filterView setNeedsLayout];
@@ -253,7 +257,6 @@ static NSString * const ListRowID = @"HLRCell";
         [self showOptions];
         APP.dateLeft = [NSDate date];
     }
-
 }
 
 - (void)locationBecameAvailable:(id)notification
@@ -413,6 +416,8 @@ static NSString * const ListRowID = @"HLRCell";
                                                   andRadius:distanceInMeters
                                                andOpenOnly:_openOnly
                                                       andSort:kSearchSortTypeBestMatch
+                                                   minPrice:_minPrice
+                                                   maxPrice:_maxPrice
                                                      isPlay:NO
                                                    success:^(NSArray *r) {
             _restaurants = r;

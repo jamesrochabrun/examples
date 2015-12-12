@@ -12,7 +12,6 @@
 #import "Settings.h"
 #import "TagObject.h"
 #import "TagTileCVCell.h"
-#import "PriceSelectorCVCell.h"
 #import "OptionsVCCVL.h"
 #import "OOStripHeader.h"
 
@@ -20,7 +19,7 @@
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSArray *tags;
-
+@property (nonatomic) NSUInteger minPrice, maxPrice;
 @end
 
 static NSString * const kOptionsLocationCellIdentifier = @"LocationCellIdentifier";
@@ -89,6 +88,12 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
     [_collectionView reloadData];
 }
 
+- (void)setMinPrice:(NSUInteger)minPrice maxPrice:(NSUInteger)maxPrice {
+    _minPrice = minPrice;
+    _maxPrice = maxPrice;
+    [_collectionView reloadData];
+}
+
 - (void)getAllTags {
     __weak OptionsVC *weakSelf = self;
     [OOAPI getTagsForUser:0 success:^(NSArray *tags) {
@@ -145,8 +150,11 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
             break;
         }
         case kOptionsSectionTypePrice: {
-            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kOptionsPriceCellIdentifier forIndexPath:indexPath];
+            PriceSelectorCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kOptionsPriceCellIdentifier forIndexPath:indexPath];
             cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+//            [[cvc anyPriceButton] setSelected:(!_minPrice && !_maxPrice)? YES : NO];
+            [cvc setMinPrice:_minPrice maxPrice:_maxPrice];
+            cvc.delegate = self;
             //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
@@ -237,16 +245,16 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 
     if (indexPath.section == kOptionsSectionTypeTags) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
-        header.name = @"What are you looking for?";
-        header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
+        header.name = @"Choose type";
+        header.frame = CGRectMake(0, 0, width(self.view), 40);
         header.tag = 111;
         [collectionView bringSubviewToFront:reuseView];
         [reuseView addSubview:header];
         [header setNeedsLayout];
     } else if (indexPath.section == kOptionsSectionTypePrice) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
-        header.name = @"What price range?";
-        header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
+        header.name = @"Set price range";
+        header.frame = CGRectMake(0, 0, width(self.view), 40);
         header.tag = 111;
         [collectionView bringSubviewToFront:reuseView];
         [reuseView addSubview:header];
@@ -256,7 +264,12 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 }
 
 - (void)closeOptions {
-    [_delegate optionsVCDismiss:self withTags:_userTags];
+    [_delegate optionsVCDismiss:self withTags:_userTags andMinPrice:_minPrice andMaxPrice:_maxPrice];
+}
+
+- (void)priceSelector:(PriceSelectorCVCell *)priceSelector minPriceSelected:(NSUInteger)minPrice maxPriceSelected:(NSUInteger)maxPrice {
+    _minPrice = minPrice;
+    _maxPrice = maxPrice;
 }
 
 - (void)didReceiveMemoryWarning {
