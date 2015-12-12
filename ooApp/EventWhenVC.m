@@ -151,6 +151,7 @@
     _headerWhen.textColor=GRAY;
     _headerEndOfVoting.textColor=GRAY;
     
+    removeRightButton(self.navigationItem);
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 }
 
