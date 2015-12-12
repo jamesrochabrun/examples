@@ -101,9 +101,7 @@
     
     _pickerEventDate.hidden= YES;
     _pickerEventVotingDate.hidden= YES;
-    
-    self.navigationItem.leftBarButtonItem= nil;
-    
+        
     if (self.eventBeingEdited.date ) {
         [self expressUpperDate];
     } else {
@@ -152,6 +150,13 @@
     self.headerEndOfVoting= makeLabelLeft(self.view, @" WHEN IS VOTING CLOSED?", kGeomFontSizeStripHeader);
     _headerWhen.textColor=GRAY;
     _headerEndOfVoting.textColor=GRAY;
+    
+    removeRightButton(self.navigationItem);
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)userPressDurationButton1: (id) sender

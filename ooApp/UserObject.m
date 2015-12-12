@@ -10,8 +10,6 @@
 #import "OOAPI.h"
 #import "Settings.h"
 
-const NSInteger kHashUser= 0x40000000;
-
 NSString *const kKeyUserID = @"user_id";
 NSString *const kKeyUserFirstName = @"first_name";
 NSString *const kKeyUserLastName = @"last_name";

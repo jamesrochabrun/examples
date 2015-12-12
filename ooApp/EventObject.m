@@ -204,9 +204,29 @@ BOOL isEventObject (id  object)
     return nil;
 }
 
-- (void)addVenue:(RestaurantObject *)venue;
+- (BOOL)alreadyHasVenue:(RestaurantObject *)venue;
+{
+    @synchronized(_venues)  {
+        BOOL hasMatchingID=  [_venues containsObject: venue];
+        if ( hasMatchingID) {
+            return YES;
+        }
+        if  (venue.googleID ) {
+            NSString*goog=venue.googleID;
+            for (RestaurantObject* object  in  _venues) {
+                if  ([object.googleID isEqualToString: goog  ]) {
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
+}
+
+- (void)addVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock
 {
     if (!venue) {
+        if  (completionBlock) completionBlock (NO);
         return;
     }
     
@@ -219,19 +239,22 @@ BOOL isEventObject (id  object)
                          toEvent:self
                          success:^(id response) {
                              NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
-//                             message( @"Added.");6
+//                             message( @"Added.");
+                             self.numberOfVenues++;
+                             if  (completionBlock) completionBlock (YES);
                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                              NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
                              [_venues removeObject: venue];
-                             
+                             if  (completionBlock) completionBlock (NO);
                          }];
         }
     }
 }
 
-- (void)removeVenue:(RestaurantObject *)venue;
+- (void)removeVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock;
 {
     if (!venue) {
+        if  (completionBlock) completionBlock (NO);
         return;
     }
     
@@ -244,13 +267,28 @@ BOOL isEventObject (id  object)
                           fromEvent:self
                             success:^(id response) {
                                 NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
-                                message( @"Removed.");
+//                                message( @"Removed.");
+                                self.numberOfVenues--;
+
+                                if  (completionBlock) completionBlock (YES);
                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                 [_venues addObject: venue];
                                 NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
+                                if  (completionBlock) completionBlock (NO);
                             }];
         }
     }
+}
+
+
+- (void)addVenue:(RestaurantObject *)venue 
+{
+    [self addVenue:venue completionBlock:nil];
+}
+
+- (void)removeVenue:(RestaurantObject *)venue
+{
+    [self removeVenue:venue completionBlock:nil];
 }
 
 - (RestaurantObject *)getNthVenue:(NSInteger)index;

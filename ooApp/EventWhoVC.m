@@ -243,7 +243,12 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 #define PARTICIPANTS_TABLE_REUSE_IDENTIFIER  @"whomToInviteCell"
     [_table registerClass:[EventWhoTableCell class] forCellReuseIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER];
     
-    self.navigationItem.leftBarButtonItem= nil;
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    removeRightButton(self.navigationItem);
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (BOOL)emailAlreadyInArray: (NSString*)emailString

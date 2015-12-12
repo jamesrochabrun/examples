@@ -951,7 +951,8 @@
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
-    
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+
     self.view.backgroundColor= BLACK;
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
@@ -985,6 +986,10 @@
     
     [self updateBoxes];
     
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void) userPressedNewRestaurant;

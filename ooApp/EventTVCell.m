@@ -220,7 +220,12 @@
     UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
     __weak EventTVCell *weakSelf = self;
     
-    if (!primaryVenue && _eventInfo.numberOfVenues) {
+    if (_eventInfo.primaryImageURL ) {
+        [self.thumbnail setImageWithURL:[NSURL URLWithString:_eventInfo.primaryImageURL]
+                       placeholderImage:placeholder];
+        
+    }
+    else if (!primaryVenue && _eventInfo.numberOfVenues) {
         __weak EventTVCell *weakSelf = self;
         
         self.thumbnail.image= placeholder;
@@ -239,6 +244,7 @@
                                                             success:^(NSString *link) {
                                                                 NSURLRequest* request= [NSURLRequest requestWithURL:[NSURL URLWithString:link]];
                                                                 
+                                                                NSLog (@"EVENT %lu IMAGE LINK  %@",_eventInfo.eventID, link);
                                                                 [weakSelf.thumbnail setImageWithURLRequest:request
                                                                                           placeholderImage:placeholder
                                                                                                    success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {
@@ -262,11 +268,6 @@
                                                                }];
         
     }
-    else if (_eventInfo.primaryImageURL ) {
-        [self.thumbnail setImageWithURL:[NSURL URLWithString:_eventInfo.primaryImageURL]
-                                 placeholderImage:placeholder];
-        
-    } 
     else if (_eventInfo.primaryVenueImageIdentifier) {
         _imageOperation=  [api getRestaurantImageWithImageRef: _eventInfo.primaryVenueImageIdentifier
                                                      maxWidth:self.frame.size.width

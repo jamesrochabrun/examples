@@ -84,6 +84,7 @@
     _buttonSignUp.layer.borderColor=GRAY.CGColor;
     
     removeRightButton(self.navigationItem);
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
     self.fieldUsername= [ UITextField  new];
     _fieldUsername.delegate= self;
@@ -129,6 +130,10 @@
 //                           } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
 //                               NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
 //                           }];
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)refreshTable

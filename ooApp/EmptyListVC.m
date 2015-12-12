@@ -55,7 +55,8 @@
     self.view.autoresizesSubviews= NO;
     
     removeRightButton(self.navigationItem);
-    
+    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+
     float borderWidth= 0;
     if  ([UIScreen  mainScreen].bounds.size.height  < 481 ) {
         borderWidth= .5;
@@ -121,6 +122,10 @@
     [self setNavTitle:nto];
     
     [ self.view setNeedsLayout ];
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //------------------------------------------------------------------------------

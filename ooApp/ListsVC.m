@@ -61,6 +61,8 @@ static NSString * const cellIdentifier = @"listCell";
     
     _requestOperation = nil;
     _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    removeRightButton(self.navigationItem);
 }
 
 - (void)updateViewConstraints
@@ -172,16 +174,17 @@ static NSString * const cellIdentifier = @"listCell";
     } else if (_listToAddTo) {
         cell.listToAddTo = _listToAddTo;
     }
+    
     ListObject *list = [_lists objectAtIndex:indexPath.row];
     cell.list = list;
 
     [cell updateConstraintsIfNeeded];
     
-    if ( self.eventBeingEdited  &&  list.numRestaurants) {
-        [cell addTheAddAllButton];
-        cell.delegate= self;
-        cell.listToAddTo=list;
-    }
+//    if ( self.eventBeingEdited  &&  list.numRestaurants) {
+//        [cell addTheAddAllButton];
+//        cell.delegate= self;
+//        cell.listToAddTo=list;
+//    }
 
     return cell;
 }

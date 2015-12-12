@@ -16,5 +16,5 @@
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *listToAddTo;
 @property (nonatomic, weak) UINavigationController *nc;
-
+@property (nonatomic,strong) EventObject* eventBeingEdited;
 @end

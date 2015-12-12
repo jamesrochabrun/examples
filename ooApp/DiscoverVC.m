@@ -326,12 +326,12 @@ static NSString * const ListRowID = @"HLRCell";
     
     RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     
+    cell.eventBeingEdited= self.eventBeingEdited;
     cell.restaurant = ro;
     cell.listToAddTo = _listToAddTo;
     cell.nc = self.navigationController;
-    
     [cell updateConstraintsIfNeeded];
-
+    
     [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
     
     return cell;
