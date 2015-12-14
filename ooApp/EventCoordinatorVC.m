@@ -841,7 +841,7 @@
     
     NSUInteger u= [dateToDisplay timeIntervalSince1970];
     if (dayNumber>0 ) {
-        u-= 24*60*60*dayNumber;
+        u-= ONE_DAY*dayNumber;
     }
     
     UIColor *inactiveColor= GRAY;
@@ -883,7 +883,7 @@
             default:
                 break;
         }
-        u += 24 *3600;
+        u += ONE_DAY;
     }
     if ( !self.eventBeingEdited.date) {
         self.viewTodayBubble.hidden= YES;

@@ -13,6 +13,10 @@
 #import "Reachability.h"
 #import "UserObject.h"
 
+#define ONE_HOUR (60*60)
+#define ONE_DAY (24*ONE_HOUR)
+#define TWO_DAYS (2*ONE_DAY)
+
 @class AppDelegate;
 #define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
 

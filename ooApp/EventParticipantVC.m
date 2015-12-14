@@ -255,7 +255,7 @@
         [self.delegate votingEnded];
     }
     
-    unsigned long  hours= timeRemaining/3600;
+    unsigned long  hours= timeRemaining/ONE_HOUR;
     unsigned long  minutes=  (timeRemaining/60)% 60;
     unsigned long  seconds=  timeRemaining% 60;
     NSAttributedString* lowerString= attributedStringOf( @"\runtil voting closes", kGeomFontSizeDetail);
