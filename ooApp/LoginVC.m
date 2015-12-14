@@ -48,12 +48,12 @@
     [super viewDidLoad];
     
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= GRAY;
+    self.view.backgroundColor= UIColorRGB(kColorOffBlack);
     
     _wentToDiscover= NO;
     
-    UIImage*backgroundImage= [ UIImage  imageNamed:@"LoginBackground.jpg"];
-    backgroundImage= darkenImage( backgroundImage);
+    UIImage*backgroundImage= [ UIImage  imageNamed:@"background_image.png"];
+
     _backgroundImageView = makeImageView(self.view,  backgroundImage);
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
     _backgroundImageView.clipsToBounds= YES;
