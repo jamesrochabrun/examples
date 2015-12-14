@@ -260,7 +260,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
 //                                 kKeySearchFilter:filterName// Not used by backend.
                                  }];
     
-    if (minPrice || maxPrice) {
+    if (!(minPrice || maxPrice) || !(minPrice == 0 && maxPrice == 4)) {
         [parameters setObject:[NSNumber numberWithUnsignedInteger:minPrice] forKey:kKeySearchMinPrice];
         [parameters setObject:[NSNumber numberWithUnsignedInteger:maxPrice] forKey:kKeySearchMaxPrice];
     }
@@ -2273,11 +2273,11 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (NSString *) URL {
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
         return kOOURLProduction;
-    }
+//    }
 }
 
 

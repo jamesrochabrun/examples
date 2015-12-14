@@ -17,7 +17,7 @@
 
 @interface PriceSelectorCVCell : UICollectionViewCell <TTRangeSliderDelegate>
 @property (nonatomic, weak) id<PriceSelectorCellDelegate> delegate;
-@property (nonatomic, strong) UIButton *anyPriceButton;
+
 
 - (void)setMinPrice:(NSUInteger)minPrice maxPrice:(NSUInteger)maxPrice;
 

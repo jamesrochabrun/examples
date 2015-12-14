@@ -1304,15 +1304,15 @@
     
 }
 
+//NOTE: We should not poll the server. There should be a pull to refresh mechanism in the client and/or the server should send a push notification to clients when there is a reason to update
 - (void)updateBoxes
 {
-    if  (!_timerForUpdating) {
-        // RULE: Initially just display the basic information.
-        self.timerForUpdating= [NSTimer scheduledTimerWithTimeInterval:30 target: self.table
-                                                              selector: @selector ( reloadData)
-                                                              userInfo:nil repeats:YES];
-    }
-    
+//    if  (!_timerForUpdating) {
+//        // RULE: Initially just display the basic information.
+//        self.timerForUpdating= [NSTimer scheduledTimerWithTimeInterval:30 target: self.table
+//                                                              selector: @selector ( reloadData)
+//                                                              userInfo:nil repeats:YES];
+//    }
 }
 
 - (void)userDidAlterEventParticipants

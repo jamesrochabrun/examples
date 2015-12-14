@@ -108,6 +108,9 @@ static NSString * const ListRowID = @"HLRCell";
     
     [self setRightNavWithIcon:kFontIconDiscover target:self action:@selector(showOptions)];
     
+    _minPrice = 0;
+    _maxPrice = 4;
+    
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
 }
@@ -253,7 +256,7 @@ static NSString * const ListRowID = @"HLRCell";
                                              selector:@selector(locationBecameUnavailable:)
                                                  name:kNotificationLocationBecameUnavailable object:nil];
     
-    if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:4 minutes:0 second:0])) {
+    if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:1 minutes:30 second:0])) {
         [self showOptions];
         APP.dateLeft = [NSDate date];
     }
