@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 361329781C17BE34009413D6 /* NSData+Conversion.m */; };
-		361329801C196215009413D6 /* Oomami_AppStoreLogo(76x76).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */; settings = {ASSET_TAGS = (); }; };
-		361329811C196215009413D6 /* Oomami_AppStoreLogo(120x120).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297B1C196215009413D6 /* Oomami_AppStoreLogo(120x120).png */; settings = {ASSET_TAGS = (); }; };
-		361329821C196215009413D6 /* Oomami_AppStoreLogo(152x152).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297C1C196215009413D6 /* Oomami_AppStoreLogo(152x152).png */; settings = {ASSET_TAGS = (); }; };
-		361329831C196215009413D6 /* Oomami_AppStoreLogo(167x167).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */; settings = {ASSET_TAGS = (); }; };
-		361329841C196215009413D6 /* Oomami_AppStoreLogo(180x180).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */; settings = {ASSET_TAGS = (); }; };
-		361329851C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */; settings = {ASSET_TAGS = (); }; };
+		361329801C196215009413D6 /* Oomami_AppStoreLogo(76x76).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */; };
+		361329811C196215009413D6 /* Oomami_AppStoreLogo(120x120).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297B1C196215009413D6 /* Oomami_AppStoreLogo(120x120).png */; };
+		361329821C196215009413D6 /* Oomami_AppStoreLogo(152x152).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297C1C196215009413D6 /* Oomami_AppStoreLogo(152x152).png */; };
+		361329831C196215009413D6 /* Oomami_AppStoreLogo(167x167).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */; };
+		361329841C196215009413D6 /* Oomami_AppStoreLogo(180x180).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */; };
+		361329851C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */; };
 		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; };
 		3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE491BBA330000F1AF67 /* OOMapMarker.m */; };
 		3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE4E1BBCBDF700F1AF67 /* OOTagButton.m */; };
@@ -96,8 +96,8 @@
 		36C572DA1C01309900C57DA2 /* TagObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C572D91C01309900C57DA2 /* TagObject.m */; };
 		36C572DD1C01477600C57DA2 /* ManageTagsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C572DC1C01477600C57DA2 /* ManageTagsVC.m */; };
 		36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D5D2191B69DA48009EE877 /* OONetworkManager.m */; };
-		36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */; settings = {ASSET_TAGS = (); }; };
-		36D887E41C1B48390002A412 /* TTRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887E11C1B48390002A412 /* TTRangeSlider.m */; settings = {ASSET_TAGS = (); }; };
+		36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */; };
+		36D887E41C1B48390002A412 /* TTRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887E11C1B48390002A412 /* TTRangeSlider.m */; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
 		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
@@ -812,6 +812,7 @@
 				36FDA6EE1B585F650029D29D /* Resources */,
 				033F4D03E9A84D9A8E0A34A7 /* Copy Pods Resources */,
 				36CCCABB1BD5381300165761 /* ShellScript */,
+				7EED5400F8F6AD676E926FC3 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -962,6 +963,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
+		};
+		7EED5400F8F6AD676E926FC3 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		923BDA435A444C3D92CBD745 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
