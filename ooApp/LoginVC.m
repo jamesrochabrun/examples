@@ -29,6 +29,7 @@
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
+@property (nonatomic, strong) UIImageView *gradientImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *imageViewLogo;
 @property (nonatomic, assign) BOOL wentToDiscover;
@@ -48,11 +49,15 @@
     [super viewDidLoad];
     
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= UIColorRGB(kColorOffBlack);
+    self.view.backgroundColor= WHITE;
     
     _wentToDiscover= NO;
     
     UIImage*backgroundImage= [ UIImage  imageNamed:@"background_image.png"];
+    UIImage*gradientImage= [ UIImage  imageNamed:@"Gradient Background.png"];
+
+    self.gradientImageView=  makeImageView( self.view, gradientImage);
+    _gradientImageView.contentMode = UIViewContentModeScaleAspectFill;
 
     _backgroundImageView = makeImageView(self.view,  backgroundImage);
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -99,6 +104,9 @@
 {
     float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
+    
+    _gradientImageView.frame= self.view.bounds;
+    [ self.view  sendSubviewToBack:_gradientImageView];
 
     float backgroundImageWidth= _backgroundImageView.image.size.width;
     float backgroundImageHeight= _backgroundImageView.image.size.height;
