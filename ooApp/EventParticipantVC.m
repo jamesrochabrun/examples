@@ -627,7 +627,7 @@
     NSLog  (@" ended deceleration");
     float x= _scrollView.contentOffset.x;
     float w= self.frame.size.width;
-    if ( w<320) {
+    if ( w<1) {
         return;
     }
     int  which=  (int) floorf((x + 10)/w);
