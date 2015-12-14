@@ -171,22 +171,22 @@
     unsigned long votingEnds= [dv timeIntervalSince1970];
     if (!votingEnds) {
         _labelTimeLeft.attributedText=attributedStringOf( @"END OF VOTING\rDATE NOT SET", kGeomFontSizeSubheader);
-        return;
-    }
-    
-    self.labelDateTime.text= event.date ? expressLocalDateTime( event.date) :  @"Date not set.";
-    
-    unsigned long now= [[NSDate date ] timeIntervalSince1970];
-    if  ( now < votingEnds) {
-        self.timerCountdown= [ NSTimer  scheduledTimerWithTimeInterval:1
-                                                                target:self
-                                                              selector:@selector(callbackCountdown:)
-                                                              userInfo:nil repeats:YES];
-        [ self callbackCountdown:nil];
+    } else {
         
+        self.labelDateTime.text= event.date ? expressLocalDateTime( event.date) :  @"Date not set.";
+        
+        unsigned long now= [[NSDate date ] timeIntervalSince1970];
+        if  ( now < votingEnds) {
+            self.timerCountdown= [ NSTimer  scheduledTimerWithTimeInterval:1
+                                                                    target:self
+                                                                  selector:@selector(callbackCountdown:)
+                                                                  userInfo:nil repeats:YES];
+            [ self callbackCountdown:nil];
+        }
     }
+    
     UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
-
+    
     __weak EventParticipantFirstCell *weakSelf = self;
     if (event.primaryImageURL ) {
         [self.backgroundImageView setImageWithURL:[NSURL URLWithString: event.primaryImageURL]
@@ -201,7 +201,7 @@
                                                               ON_MAIN_THREAD(  ^{
                                                                   [weakSelf.backgroundImageView
                                                                    setImageWithURL:[NSURL URLWithString:link]
-                                                                   placeholderImage:nil];
+                                                                   placeholderImage:placeholder];
                                                               });
                                                           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                           }];
