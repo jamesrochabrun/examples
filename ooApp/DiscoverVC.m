@@ -36,7 +36,8 @@
 @property (nonatomic, strong) GMSCameraPosition *camera;
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) OOFilterView *filterView;
-@property (nonatomic) BOOL openOnly;
+@property (nonatomic, assign) BOOL openOnly;
+@property (nonatomic, assign) BOOL showHere;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) GMSMarker *centerMarker;
@@ -96,7 +97,8 @@ static NSString * const ListRowID = @"HLRCell";
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
     [_filterView addFilter:@"Open Now" target:self selector:@selector(selectNow)];
     [_filterView addFilter:@"All" target:self selector:@selector(selectLater)];
-
+    [_filterView addFilter:@"Here" target:self selector:@selector(selectHere)];
+    
     [self.view addSubview:_filterView];
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Explore" subHeader:nil];
@@ -197,6 +199,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)selectNow {
     _openOnly = YES;
+    _showHere = NO;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -207,6 +210,18 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)selectLater {
     _openOnly = NO;
+    _showHere = NO;
+    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OOMapMarker *mm = (OOMapMarker *)obj;
+        mm.map = nil;
+    }];
+    [_mapMarkers removeAllObjects];
+    [self getRestaurants];
+}
+
+- (void)selectHere {
+    _openOnly = NO;
+    _showHere = YES;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -255,8 +270,20 @@ static NSString * const ListRowID = @"HLRCell";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(locationBecameUnavailable:)
                                                  name:kNotificationLocationBecameUnavailable object:nil];
-    
-    if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:1 minutes:30 second:0])) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(showOptionsIfTimedOut)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIApplicationDidBecomeActiveNotification
+                                                  object:nil];
+}
+
+- (void)showOptionsIfTimedOut {
+    if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:1 minutes:0 second:0])) {
         [self showOptions];
         APP.dateLeft = [NSDate date];
     }
@@ -267,6 +294,7 @@ static NSString * const ListRowID = @"HLRCell";
     NSLog(@"LOCATION BECAME AVAILABLE FROM iOS");
     __weak DiscoverVC *weakSelf = self;
     ON_MAIN_THREAD(^{
+        [weakSelf updateLocation];
         [weakSelf getRestaurants];
     });
 }
@@ -274,18 +302,18 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)locationBecameUnavailable:(id)notification
 {
     NSLog(@"LOCATION IS NOT AVAILABLE FROM iOS");
-    __weak DiscoverVC *weakSelf = self;
-    ON_MAIN_THREAD(^{
-        [weakSelf getRestaurants];
-    });
+//    __weak DiscoverVC *weakSelf = self;
+//    ON_MAIN_THREAD(^{
+//        [weakSelf getRestaurants];
+//    });
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [self verifyTrackingIsOkay];
-    if (!_desiredLocation.longitude)
-        [self updateLocation];
+//    if (!_desiredLocation.longitude)
+//        [self updateLocation];
 }
 
 - (void)verifyTrackingIsOkay
@@ -416,11 +444,11 @@ static NSString * const ListRowID = @"HLRCell";
         _requestOperation = [api getRestaurantsWithKeywords:searchTerms
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""
-                                                  andRadius:distanceInMeters
+                                                  andRadius:(_showHere) ? 20 : distanceInMeters
                                                andOpenOnly:_openOnly
-                                                      andSort:kSearchSortTypeBestMatch
-                                                   minPrice:_minPrice
-                                                   maxPrice:_maxPrice
+                                                    andSort:(_showHere) ? kSearchSortTypeDistance : kSearchSortTypeBestMatch
+                                                   minPrice:_showHere ? 0 : _minPrice
+                                                   maxPrice:_showHere ? 4 : _maxPrice
                                                      isPlay:NO
                                                    success:^(NSArray *r) {
             _restaurants = r;

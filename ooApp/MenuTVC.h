@@ -10,4 +10,6 @@
 
 @interface MenuTVC : UITableViewController
 
+@property (nonatomic, strong) UIViewController *fvc;
+
 @end

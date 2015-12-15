@@ -13,6 +13,8 @@
 #import "LoginVC.h"
 #import "Settings.h"
 #import "NSData+Conversion.h"
+#import "SWRevealViewController.h"
+#import "MenuTVC.h"
 #import <GoogleMaps/GoogleMaps.h>
 
 @interface AppDelegate ()
