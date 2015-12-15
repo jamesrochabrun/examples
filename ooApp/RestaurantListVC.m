@@ -69,9 +69,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
     if (_listItem.type == kListTypeUser &&
         [_listItem isListOwner:userID]) {
         [self setupAlertController];
-        self.moreButton.hidden = NO;
+//        self.moreButton.hidden = NO;
+        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(moreButtonPressed:)];
     } else {
-        self.moreButton.hidden = YES;
+        [self setRightNavWithIcon:@"" target:nil action:nil];
+//        self.moreButton.hidden = YES;
     }
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 }
@@ -124,7 +126,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [_alertController addAction:deleteList];
     [_alertController addAction:cancel];
     
-    [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+ //   [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)moreButtonPressed:(id)sender {

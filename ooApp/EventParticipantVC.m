@@ -744,7 +744,7 @@
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
     
-    removeRightButton(self.navigationItem);
+//    removeRightButton(self.navigationItem);
 
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
@@ -764,20 +764,21 @@
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     
-    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
-    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
-    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
-    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize
-                   width:kGeomWidthMenuButton
-                  height:kGeomWidthMenuButton
-         backgroundColor:kColorClear
-                  target:self
-                selector:@selector(userPressedMenuButton:)];
-    bbi.customView = moreButton;
-    [moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-    self.navigationItem.rightBarButtonItems = @[bbi];
+//    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+//    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+//    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+//    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize
+//                   width:kGeomWidthMenuButton
+//                  height:kGeomWidthMenuButton
+//         backgroundColor:kColorClear
+//                  target:self
+//                selector:@selector(userPressedMenuButton:)];
+//    bbi.customView = moreButton;
+//    [moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+//    self.navigationItem.rightBarButtonItems = @[bbi];
     
+    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
 }

@@ -47,7 +47,8 @@ static NSString * const cellIdentifier = @"tagCell";
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Manage Tags" subHeader:nil];
     [self setNavTitle:nto];
     
-    self.moreButton.hidden = YES;
+    [self setRightNavWithIcon:@"" target:nil action:nil];
+//    self.moreButton.hidden = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {

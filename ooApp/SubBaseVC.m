@@ -15,7 +15,7 @@
 
 @property (nonatomic, strong) NavTitleView *navTitleView;
 @property (nonatomic, strong) UIBarButtonItem *leftNavButton;
-
+@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
 @end
 
 @implementation SubBaseVC
@@ -39,15 +39,20 @@
 {
     [super viewDidLoad];
         
-    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
-    _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
-    _moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
-    [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
-    [_moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+//    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
+//    _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
+//    _moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
+//    [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
+//    [_moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+//
+//    bbi.customView = _moreButton;
+//    self.navigationItem.rightBarButtonItems = @[bbi];
 
-    bbi.customView = _moreButton;
-    self.navigationItem.rightBarButtonItems = @[bbi];
+    _rightNavButton = [[UIBarButtonItem alloc] init];
+    self.navigationItem.rightBarButtonItem = _rightNavButton;
+    [self.rightNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                 [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName, UIColorRGB(kColorYellow), NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     
     _leftNavButton = [[UIBarButtonItem alloc] init];
     self.navigationItem.leftBarButtonItem = _leftNavButton;
@@ -67,6 +72,12 @@
     [self.leftNavButton setTitle:icon];
     [self.leftNavButton setTarget:target];
     [self.leftNavButton setAction:selector];
+}
+
+- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+    [self.rightNavButton setTitle:icon];
+    [self.rightNavButton setTarget:target];
+    [self.rightNavButton setAction:selector];
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {

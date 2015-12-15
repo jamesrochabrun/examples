@@ -13,8 +13,9 @@
 @interface SubBaseVC : UIViewController
 
 @property (nonatomic, strong) NavTitleObject *navTitle;
-@property (nonatomic, strong) UIButton *moreButton;
+//@property (nonatomic, strong) UIButton *moreButton;
 
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
+- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 
 @end

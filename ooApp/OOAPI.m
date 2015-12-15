@@ -2272,12 +2272,12 @@ NSString *const kKeyTagIDs = @"tag_ids";
     return op;
 }
 
-+ (NSString *) URL {
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
++ (NSString *)URL {
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
         return kOOURLProduction;
-    }
+//    }
 }
 
 

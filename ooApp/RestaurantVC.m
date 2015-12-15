@@ -249,7 +249,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [_styleSheetAC addAction:addToNewEvent];
     [_styleSheetAC addAction:cancel];
     
-    [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(moreButtonPressed:)];
 }
 
 - (void)sharePressed {
