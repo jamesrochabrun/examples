@@ -34,8 +34,6 @@
         [_priceSlider setTintColor:UIColorRGBA(kColorYellow)];
         [_priceSlider setMinValue:0];
         [_priceSlider setMaxValue:4];
-//        [_priceSlider setEnableStep:YES];
-//        [_priceSlider setStep:1];
         [_priceSlider setSelectedMaximum:4];
         [_priceSlider setSelectedMinimum:0];
         _priceSlider.delegate = self;
@@ -56,16 +54,16 @@
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _priceSlider, _controlsContainer);
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_controlsContainer]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_priceSlider(200)]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_controlsContainer(200)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_priceSlider(200)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_controlsContainer(220)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_priceSlider attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_priceSlider attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_controlsContainer attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_controlsContainer attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
     
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_priceSlider attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:height(self)]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_priceSlider attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:_controlsContainer attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_controlsContainer attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1 constant:0]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_controlsContainer attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_controlsContainer attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 }
 
 - (void)rangeSlider:(TTRangeSlider *)sender didChangeSelectedMinimumValue:(float)selectedMinimum andMaximumValue:(float)selectedMaximum {

@@ -211,48 +211,49 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     // if we are trying to push the same row or perform an operation that does not imply frontViewController replacement
     // we'll just set position and return
     MenuObject *menuItem = [_menuItems objectAtIndex:indexPath.row];
-    UIViewController *newFrontController = nil;
-    UIViewController *fvc;
+
+    UIViewController *frontViewController;
+    frontViewController = nil;
     
     ANALYTICS_EVENT_UI(@"Menu");
 
     if ([menuItem.type isEqualToString:kMenuItemProfile]) {
 //        [revealController setFrontViewPosition:FrontViewPositionRightMost animated:YES];
-        fvc = [[ProfileVC alloc] init];
+        _fvc = [[ProfileVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemSettings]) {
-        fvc = [[SettingsVC alloc] init];
+        _fvc = [[SettingsVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemWhatsNew]) {
-        fvc = [[WhatsNewVC alloc] init];
+        _fvc = [[WhatsNewVC alloc] init];
     }else if ([menuItem.type isEqualToString:kMenuItemSearch]) {
-        fvc = [[SearchVC alloc] init];
+        _fvc = [[SearchVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemConnect]) {
-        fvc = [[ConnectVC alloc] init];
+        _fvc = [[ConnectVC alloc] init];
         if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
             [APP registerForPushNotifications];
         }
     } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
-        fvc = [[DiscoverVC alloc] init];
+        _fvc = [[DiscoverVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
-        fvc = [[PlayVC alloc] init];
+        _fvc = [[PlayVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemFeed]) {
-        fvc = [[FeedVC alloc] init];
+        _fvc = [[FeedVC alloc] init];
         if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
             [APP registerForPushNotifications];
         }
     } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {
-        fvc = [[DiagnosticVC alloc] init];
+        _fvc = [[DiagnosticVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemMeet]) {
-        fvc = [[EventsListVC alloc] init];
+        _fvc = [[EventsListVC alloc] init];
         if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
             [APP registerForPushNotifications];
         }
     } else {
         //TODO AUG: fill in other cases
-        fvc = [[DefaultVC alloc] init];
+        _fvc = [[DefaultVC alloc] init];
     }
     
-    newFrontController = [[UINavigationController alloc] initWithRootViewController:fvc];
-    [revealController pushFrontViewController:newFrontController animated:YES];
+    frontViewController = [[UINavigationController alloc] initWithRootViewController:_fvc];
+    [revealController pushFrontViewController:frontViewController animated:YES];
 }
 
 
