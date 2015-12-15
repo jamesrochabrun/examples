@@ -744,6 +744,10 @@
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
     
+// NOTE: By doing this you are overriding the base class behaviour. It negates some of the beauty of OO and
+//       inheritance. By fixing the issue in the base class instead you will help create a maintainable code
+//       base.
+
 //    removeRightButton(self.navigationItem);
 
     self.automaticallyAdjustsScrollViewInsets= NO;
@@ -763,6 +767,10 @@
     _table.showsVerticalScrollIndicator= NO;
     
     self.automaticallyAdjustsScrollViewInsets= NO;
+
+// NOTE: By doing this you are overriding the base class behaviour. It negates some of the beauty of OO and
+//       inheritance. By fixing issues in the base class instead you will help create a maintainable code
+//       base.
     
 //    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
 //    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
