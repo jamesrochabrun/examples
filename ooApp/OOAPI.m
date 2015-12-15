@@ -2192,13 +2192,13 @@ NSString *const kKeyTagIDs = @"tag_ids";
 // Name:    setVoteTo forEvent andRestaurant
 // Purpose:
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)setVoteTo:(NSInteger)  vote
-                             forEvent:(NSUInteger) eventID
-                        andRestaurant: (NSUInteger) venueID
++ (AFHTTPRequestOperation *)setVoteTo:(NSInteger)vote
+                             forEvent:(NSUInteger)eventID
+                        andRestaurant:(NSUInteger)venueID
                               success:(void (^)(NSInteger eventID))success
                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    if (!eventID  || !venueID ) {
+    if (!eventID || !venueID ) {
         failure(nil,nil);
         return nil;
     }
@@ -2258,7 +2258,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     AFHTTPRequestOperation *op;
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/APNSDeviceToken", kHTTPProtocol, [OOAPI URL], userID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/APNSDeviceToken", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
     op = [rm POST:urlString parameters: @{
                                           @"device_token": token
@@ -2270,6 +2270,24 @@ NSString *const kKeyTagIDs = @"tag_ids";
           }];
     
     return op;
+}
+
+//------------------------------------------------------------------------------
+// Name:    flagMediaItem
+// Purpose: to flag a media item
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)flagMediaItem:(NSUInteger)mediaItemID
+                                  success:(void (^)(NSArray *names))success
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    NSString *requestString =[NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
+    
+    requestString = [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+    
+    return [[OONetworkManager sharedRequestManager] PUT:requestString
+                                             parameters:@{@"is_flagged":@1}
+                                                success:success
+                                                failure:failure];
 }
 
 + (NSString *)URL {

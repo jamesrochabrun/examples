@@ -577,7 +577,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         case kSectionTypeFollowees:
             return [_followees count];
             break;
-            
     }
     return 0;
 }
@@ -624,7 +623,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             cvc.mediaItemObject = mio;
-            [cvc showActionButton:(mio.sourceUserID == userID) ? YES : NO];
+            [cvc showActionButton:(mio.source == kMediaItemTypeOomami) ? YES : NO];
             //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
@@ -638,6 +637,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio {
     _showPhotoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do with this photo?" preferredStyle:UIAlertControllerStyleActionSheet];
+    
+
     
     UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete"
                                                           style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
@@ -659,9 +660,14 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                      style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }];
-    [_showPhotoOptions addAction:tagPhoto];
+    
+    UserObject *uo = [Settings sharedInstance].userObject;
+
+    if (mio.sourceUserID == uo.userID) {
+        [_showPhotoOptions addAction:tagPhoto];
+        [_showPhotoOptions addAction:deletePhoto];
+    }
     [_showPhotoOptions addAction:flagPhoto];
-    [_showPhotoOptions addAction:deletePhoto];
     [_showPhotoOptions addAction:cancel];
     
     [self presentViewController:_showPhotoOptions animated:YES completion:^{
@@ -674,7 +680,11 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 - (void)flagPhoto:(MediaItemObject *)mio {
-    
+    [OOAPI flagMediaItem:mio.mediaItemId success:^(NSArray *names) {
+        NSLog(@"photo flagged: %lu", (unsigned long)mio.mediaItemId);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"could not flag the photo: %@", error);
+    }];
 }
 
 - (void)deletePhoto:(MediaItemObject *)mio {
