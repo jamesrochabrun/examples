@@ -62,7 +62,7 @@ static NSString * const cellIdentifier = @"listCell";
     _requestOperation = nil;
     _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    removeRightButton(self.navigationItem);
+//    removeRightButton(self.navigationItem);
 }
 
 - (void)updateViewConstraints
