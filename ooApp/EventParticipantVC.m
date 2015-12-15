@@ -313,6 +313,7 @@
 
 @interface EventParticipantVotingSubCell ()
 @property (nonatomic,assign)  int  mode;
+@property (nonatomic,strong) UIView* viewOverlay;
 @property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong) EventObject* event;
 @property (nonatomic,assign) int radioButtonState;
@@ -334,6 +335,9 @@
         _thumbnail.clipsToBounds= YES;
         
         _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
+        
+        self.viewOverlay= makeView( self, CLEAR);
+        _viewOverlay.alpha=  0.5;
         
         _thumbnail.layer.borderColor= GRAY.CGColor;
         _thumbnail.layer.borderWidth= 1;
@@ -363,19 +367,19 @@
             _radioButton.layer.cornerRadius= 50;
             _radioButton.layer.borderWidth= 1;
             _radioButton.layer.borderColor= GRAY.CGColor;
-            self.backgroundColor= WHITE;
+            self.viewOverlay.backgroundColor= CLEAR;
             break;
         case VOTE_STATE_YES:
             [button setTitle: kFontIconCheckmark forState:UIControlStateNormal];
             _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
-            self.backgroundColor= GREEN;
+            self.viewOverlay.backgroundColor= GREEN;
             _radioButton.layer.cornerRadius= 0;
             _radioButton.layer.borderWidth= 0;
             break;
         case VOTE_STATE_NO:
             [button setTitle: kFontIconRemove forState:UIControlStateNormal];
             _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
-            self.backgroundColor= RED;
+            self.viewOverlay.backgroundColor= RED;
             _radioButton.layer.cornerRadius= 0;
             _radioButton.layer.borderWidth= 0;
             break;
@@ -401,6 +405,9 @@
     _labelName.frame = CGRectMake(x,0,w-x-switchSize.width-2*kGeomSpaceInter,h);
     x += _labelName.frame.size.width;
     _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
+    
+    _viewOverlay.frame= self.bounds;
+    [self  bringSubviewToFront:_viewOverlay];
 }
 
 - (void)setMode:(int)mode
