@@ -54,7 +54,6 @@
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
-    removeRightButton(self.navigationItem);
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
     float borderWidth= 0;

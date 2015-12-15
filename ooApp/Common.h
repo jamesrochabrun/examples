@@ -101,7 +101,5 @@ extern void ANALYTICS_EVENT_CLOUD (NSString*);
 extern void ANALYTICS_EVENT_OTHER (NSString*);
 extern void ANALYTICS_FORCE_SYNC ( void);
 
-extern void removeRightButton (UINavigationItem*item);
-
 extern UIImage *darkenImage(UIImage *image);
 #endif

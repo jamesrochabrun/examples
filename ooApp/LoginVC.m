@@ -430,7 +430,7 @@
                                              if (userInfo.username.length ) {
                                                  [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                              } else {
-                                                 [self performSegueWithIdentifier:@"gotofsername" sender:self];
+                                                 [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                              }
                                          }
                                          failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
