@@ -758,9 +758,6 @@
         self.viewhorizontalLine=makeView(self, GRAY);
         _viewhorizontalLine.backgroundColor= GRAY;
         
-        //        self.nameHeader= [[OOStripHeader alloc] init];
-        //        [self.contentView addSubview: _nameHeader];
-        //        [self.nameHeader setName: @"WHEN"];
     }
     
     return self;
@@ -978,17 +975,9 @@
     [_table  registerClass:[ EventCoordinatorWhereCell class] forCellReuseIdentifier:TABLE_REUSE_WHERE_IDENTIFIER];
     [_table  registerClass:[ EventCoordinatorWhenCell class] forCellReuseIdentifier:TABLE_REUSE_WHEN_IDENTIFIER];
     
-    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
-    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
-    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
-    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:self selector:@selector(userPressedMenuButton:)];
-    bbi.customView = moreButton;
-    [moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-    self.navigationItem.rightBarButtonItems = @[bbi];
+    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
     
     [self updateBoxes];
-    
 }
 
 - (void)done:(id)sender {

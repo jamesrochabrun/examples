@@ -761,28 +761,9 @@
     _table.showsVerticalScrollIndicator= NO;
     
     self.automaticallyAdjustsScrollViewInsets= NO;
-
-// NOTE: By doing this you are overriding the base class behaviour. It negates some of the beauty of OO and
-//       inheritance. By fixing issues in the base class instead you will help create a maintainable code
-//       base.
-    
-//    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
-//    UIButton *moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
-//    moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
-//    [moreButton withIcon:kFontIconMore fontSize:kGeomIconSize
-//                   width:kGeomWidthMenuButton
-//                  height:kGeomWidthMenuButton
-//         backgroundColor:kColorClear
-//                  target:self
-//                selector:@selector(userPressedMenuButton:)];
-//    bbi.customView = moreButton;
-//    [moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-//    self.navigationItem.rightBarButtonItems = @[bbi];
-    
+   
     [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-
 }
 
 - (void)done:(id)sender {

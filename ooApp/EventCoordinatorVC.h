@@ -38,7 +38,6 @@
 
 @protocol EventCoordinatorWhereCellDelegate
 - (void) userTappedOnVenue:(RestaurantObject*)venue;
-- (void)updateWhereBox;
 - (void) userPressedNewRestaurant;
 @end
 
