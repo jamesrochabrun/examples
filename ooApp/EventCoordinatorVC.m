@@ -244,7 +244,7 @@
     }
     
     UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
-    //HERE
+
     if (e.primaryImageURL ) {
         [self.imageViewContainer1 setImageWithURL:[NSURL URLWithString:e.primaryImageURL]
                                  placeholderImage:placeholder];
@@ -264,6 +264,9 @@
                                         });
                                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                     }];
+    } else {
+        // User has probably selected restaurants but we do not yet have an image to show.
+        [self.imageViewContainer1 setImage:placeholder];
     }
 }
 
@@ -1343,45 +1346,90 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
-    __weak EventCoordinatorVC *weakSelf = self;
-    
     [self updateBoxes];
+    
+    __weak EventCoordinatorVC *weakSelf = self;
     
     if ( self.eventBeingEdited.hasBeenAltered) {
         [self.delegate userDidAlterEvent];
-    }
-    
-    [self.eventBeingEdited refreshParticipantStatsFromServerWithSuccess:^{
-        ON_MAIN_THREAD(^(){
-            [weakSelf.table  reloadData];
-            
-        });
-    }
-                                                                failure:^{
-                                                                    NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
-                                                                    
-                                                                }];
-    
-    [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
-        ON_MAIN_THREAD(^(){
-            [weakSelf.table  reloadData];
-            
-        });    } failure:^{
-            NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
-        }];
-    
-    // RULE: After basic info is displayed, fetch what's on the backend.
-    [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-        NSInteger numberOfVenues= self.eventBeingEdited.numberOfVenues;
-        NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
-        ON_MAIN_THREAD(^(){
-            [weakSelf.table  reloadData];
-            
-        });
         
-    } failure:^{
-        NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
-    }];
+        // NOTE: Need to re-fetch event to get the media item..
+        [OOAPI getEventByID: weakSelf.eventBeingEdited.eventID
+                    success:^(EventObject *event) {
+                        weakSelf.eventBeingEdited= event;
+                        
+                        [weakSelf.eventBeingEdited refreshParticipantStatsFromServerWithSuccess:^{
+                            ON_MAIN_THREAD(^(){
+                                [weakSelf.table  reloadData];
+                                
+                            });
+                        }
+                                                                                    failure:^{
+                                                                                        NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
+                                                                                        
+                                                                                    }];
+                        
+                        [weakSelf.eventBeingEdited refreshUsersFromServerWithSuccess:^{
+                            ON_MAIN_THREAD(^(){
+                                [weakSelf.table  reloadData];
+                                
+                            });    } failure:^{
+                                NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
+                            }];
+                        
+                        // RULE: After basic info is displayed, fetch what's on the backend.
+                        [weakSelf.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+                            NSInteger numberOfVenues= weakSelf.eventBeingEdited.numberOfVenues;
+                            NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
+                            ON_MAIN_THREAD(^(){
+                                [weakSelf.table  reloadData];
+                                
+                            });
+                            
+                        } failure:^{
+                            NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
+                        }];
+                        
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        NSLog  (@"FAILED TO FETCH EVENT");
+                    } ];
+        
+    } else {
+        // NOTE: If we do not need the media item, we still need the rest of the secondary data.
+        
+        [self.eventBeingEdited refreshParticipantStatsFromServerWithSuccess:^{
+            ON_MAIN_THREAD(^(){
+                [weakSelf.table  reloadData];
+                
+            });
+        }
+                                                                    failure:^{
+                                                                        NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
+                                                                        
+                                                                    }];
+        
+        [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
+            ON_MAIN_THREAD(^(){
+                [weakSelf.table  reloadData];
+                
+            });    } failure:^{
+                NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
+            }];
+        
+        // RULE: After basic info is displayed, fetch what's on the backend.
+        [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+            NSInteger numberOfVenues= self.eventBeingEdited.numberOfVenues;
+            NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
+            ON_MAIN_THREAD(^(){
+                [weakSelf.table  reloadData];
+                
+            });
+            
+        } failure:^{
+            NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
+        }];
+
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
