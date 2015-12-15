@@ -97,7 +97,7 @@ static NSString * const ListRowID = @"HLRCell";
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
     [_filterView addFilter:@"Open Now" target:self selector:@selector(selectNow)];
     [_filterView addFilter:@"All" target:self selector:@selector(selectLater)];
-    [_filterView addFilter:@"Right Here" target:self selector:@selector(selectHere)];
+    [_filterView addFilter:@"Here" target:self selector:@selector(selectHere)];
     
     [self.view addSubview:_filterView];
     
