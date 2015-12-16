@@ -37,7 +37,6 @@
 @property (nonatomic, strong) NSArray *tableSectionNames;
 
 @property (nonatomic, assign) BOOL doingTransition, didGetInitialResponse, needToRefreshEventList;
-@property (nonatomic,strong)  NSTimer *refreshTimer;
 
 @property (nonatomic, strong) UIButton *createEventButton;
 
@@ -116,17 +115,7 @@
         [self refetchEvents];
     }
     
-//    [self performSelector:@selector(startRefreshTimer)  withObject:nil afterDelay:30];
 }
-
-// NOTE: We should not be polling the server. When the client needs new data it should fetch it.
-//- (void)startRefreshTimer
-//{
-//    self.refreshTimer=[NSTimer scheduledTimerWithTimeInterval:60
-//                                                       target:self
-//                                                     selector:@selector(refetchEvents)
-//                                                     userInfo:nil repeats:YES];
-//}
 
 - (void)refetchEvents
 {
@@ -196,28 +185,6 @@
                         NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
                     }
      ];
-    
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewWillDisappear
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-    [self.refreshTimer invalidate];
-    self.refreshTimer= nil;
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewDidAppear
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
     
 }
 

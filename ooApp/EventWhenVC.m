@@ -302,7 +302,7 @@ static int votingEndingValues[3]= {
     totalRequiredHeight += kGeomFontSizeHeader;
     totalRequiredHeight += 2*kGeomFontSizeHeader;
 
-    float y=  margin;
+    float y= IS_IPHONE4? 0: margin;
     _buttonEventDate.frame = CGRectMake(0,y, w, kGeomHeightButton);
     y +=kGeomHeightButton +  spacing;
     
@@ -313,6 +313,7 @@ static int votingEndingValues[3]= {
     [_labelOptions sizeToFit];
     _labelOptions.frame = CGRectMake(0,y,w,_labelOptions.frame.size.height);
     y += _labelOptions.frame.size.height;
+    y+= spacing;
 
     for (UIButton* button  in  _arrayOfVotingOptionButtons) {
          button.frame = CGRectMake( (w-kGeomWidthOptionButton)/2,y,kGeomWidthOptionButton,  kGeomHeightOptionButton);

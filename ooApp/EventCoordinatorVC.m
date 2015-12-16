@@ -912,20 +912,12 @@
 @interface EventCoordinatorVC ()
 @property (nonatomic,strong)  UITableView* table;
 
-@property (nonatomic,strong) NSTimer *timerForUpdating;
 @property (nonatomic,assign) BOOL transitioning;
 
 @property (nonatomic,assign) BOOL inE3LMode;
 @end
 
 @implementation EventCoordinatorVC
-
-- (void)dealloc
-{
-    if  (_timerForUpdating ) {
-        [_timerForUpdating invalidate];
-    }
-}
 
 - (void) enableE3LMode;
 {
@@ -967,7 +959,6 @@
     
     [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
     
-    [self updateBoxes];
 }
 
 - (void)done:(id)sender {
@@ -1286,17 +1277,6 @@
     
 }
 
-//NOTE: We should not poll the server. There should be a pull to refresh mechanism in the client and/or the server should send a push notification to clients when there is a reason to update
-- (void)updateBoxes
-{
-//    if  (!_timerForUpdating) {
-//        // RULE: Initially just display the basic information.
-//        self.timerForUpdating= [NSTimer scheduledTimerWithTimeInterval:30 target: self.table
-//                                                              selector: @selector ( reloadData)
-//                                                              userInfo:nil repeats:YES];
-//    }
-}
-
 - (void)userDidAlterEventParticipants
 {
     [self.delegate userDidAlterEvent];
@@ -1323,8 +1303,6 @@
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
-    
-    [self updateBoxes];
     
     __weak EventCoordinatorVC *weakSelf = self;
     
@@ -1397,10 +1375,6 @@
 {
     _transitioning= NO;
     
-    if  (_timerForUpdating ) {
-        [_timerForUpdating invalidate];
-        self.timerForUpdating= nil;
-    }
     [super viewDidDisappear:animated];
 }
 
