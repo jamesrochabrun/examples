@@ -32,6 +32,7 @@
 @property (nonatomic, strong) UIImageView *gradientImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *imageViewLogo;
+@property (nonatomic,strong)  UILabel* labelMessage;
 @property (nonatomic, assign) BOOL wentToDiscover;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
@@ -68,7 +69,7 @@
     _imageViewLogo = [[UIImageView alloc] init];
     _imageViewLogo.contentMode = UIViewContentModeScaleAspectFit;
     _imageViewLogo.backgroundColor = UIColorRGBA(kColorClear);
-     UIImage*image= [UIImage imageNamed:@"LogoWhite.png"];
+     UIImage*image= [UIImage imageNamed:@"Oomami_Logo_Spork(Nov24) (1) w.png"];
     _imageViewLogo.image = image;
     addShadowTo(_imageViewLogo);
     
@@ -81,6 +82,9 @@
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_imageViewLogo];
     [self.view addSubview:_facebookLoginButton];
+    
+    self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
+    _labelMessage.textColor= WHITE;
     
     self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
     [self.view addGestureRecognizer:_pinch];
@@ -124,18 +128,23 @@
     
     _backgroundImageView.clipsToBounds= YES;
 
-    _imageViewLogo.frame = CGRectMake((w- imageViewLogoWidth)/2,  (w- imageViewLogoHeight)/2,imageViewLogoWidth, imageViewLogoHeight);
+    float y= (w- imageViewLogoHeight)/2;
+    _imageViewLogo.frame = CGRectMake((w- imageViewLogoWidth)/2, y,imageViewLogoWidth, imageViewLogoHeight);
+    y +=imageViewLogoHeight;
+    y -=10; // as per Jay
+    [_labelMessage sizeToFit];
+    _labelMessage.frame = CGRectMake(0,y,w, _labelMessage.frame.size.height);
     
     float facebookButtonHeight= _facebookLoginButton.frame.size.height;
     if  (facebookButtonHeight<1) {
         facebookButtonHeight=kGeomHeightButton;
     }
     
-    float y = actualBackgroundImageHeight+ (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
+    y = actualBackgroundImageHeight+ (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
     const float buttonWidth =  275;
     float x = (w-buttonWidth)/2;
     
-    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, facebookButtonHeight);
+    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
 }
 
 - (void)viewWillLayoutSubviews
@@ -430,7 +439,7 @@
                                              if (userInfo.username.length ) {
                                                  [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                              } else {
-                                                 [self performSegueWithIdentifier:@"gotofsername" sender:self];
+                                                 [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                              }
                                          }
                                          failure:^void(AFHTTPRequestOperation *operation, NSError *error) {

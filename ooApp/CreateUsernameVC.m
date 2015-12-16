@@ -83,7 +83,6 @@
                                   .5);
     _buttonSignUp.layer.borderColor=GRAY.CGColor;
     
-    removeRightButton(self.navigationItem);
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
     self.fieldUsername= [ UITextField  new];

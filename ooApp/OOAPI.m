@@ -29,6 +29,8 @@ NSString *const kKeyUserIDs = @"user_ids";
 NSString *const kKeyEventIDs = @"event_ids";
 NSString *const kKeyTagIDs = @"tag_ids";
 
+NSString *const kKeyDeviceToken = @"device_token";
+
 @interface OOAPI()
 - (NSString *)ooURL;
 @end
@@ -1173,7 +1175,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
                success:^(id responseObject) {
                    NSInteger identifier= 0;
                    if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                       NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                       NSNumber *eventID= ((NSDictionary *)responseObject)[kKeyEventEventID];
                        identifier= parseIntegerOrNullFromServer(eventID);
                    }
                    success(identifier);
@@ -1191,7 +1193,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
               success:^(id responseObject) {
                   NSInteger identifier= 0;
                   if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                      NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                      NSNumber *eventID= ((NSDictionary *)responseObject)[kKeyEventEventID];
                       identifier= parseIntegerOrNullFromServer(eventID);
                   }
                   success(identifier);
@@ -1900,7 +1902,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
                                   success:^(id responseObject) {
                                       NSInteger identifier= 0;
                                       if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                                          NSNumber *eventID= ((NSDictionary *)responseObject)[@"event_id"];
+                                          NSNumber *eventID= ((NSDictionary *)responseObject)[kKeyEventEventID];
                                           identifier= parseIntegerOrNullFromServer(eventID);
                                       }
                                       if (!identifier) {
@@ -2222,13 +2224,13 @@ NSString *const kKeyTagIDs = @"tag_ids";
     op = [rm POST:urlString parameters: @{
                                           @"user_id": @(userID),
                                           @"restaurant_id": @(venueID),
-                                          @"event_id": @(eventID),
+                                          kKeyEventEventID: @(eventID),
                                           @"vote": @(vote)
                                           }
           success:^(id responseObject) {
               NSInteger identifier= 0;
               if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                  NSNumber *eventID= ((NSDictionary *)responseObject)[ @"event_id"];
+                  NSNumber *eventID= ((NSDictionary *)responseObject)[kKeyEventEventID];
                   identifier= parseIntegerOrNullFromServer(eventID);
               }
               success(identifier);
@@ -2261,7 +2263,7 @@ NSString *const kKeyTagIDs = @"tag_ids";
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/APNSDeviceToken", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     
     op = [rm POST:urlString parameters: @{
-                                          @"device_token": token
+                                          kKeyDeviceToken: token
                                           }
           success:^(id responseObject) {
               success(responseObject);
@@ -2291,11 +2293,15 @@ NSString *const kKeyTagIDs = @"tag_ids";
 }
 
 + (NSString *)URL {
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
+//#ifdef ADHOC
+    return kOOURLProduction;
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 

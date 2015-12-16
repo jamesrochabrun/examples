@@ -244,7 +244,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [_table registerClass:[EventWhoTableCell class] forCellReuseIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER];
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-    removeRightButton(self.navigationItem);
 }
 
 - (void)done:(id)sender {

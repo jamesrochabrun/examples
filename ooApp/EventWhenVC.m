@@ -18,7 +18,7 @@
 #import "OOStripHeader.h"
 
 static int votingEndingValues[3]= {
-    ONE_HOUR,  ONE_DAY,  TWO_DAYS
+  HALF_HOUR, ONE_DAY, ONE_WEEK
 };
 
 @interface EventWhenVC ()
@@ -85,28 +85,27 @@ static int votingEndingValues[3]= {
     _labelOptions.textColor= WHITE;
     self.lowerSelection=  -1;
 
-//    self.pickerEventVotingDate= [[UIDatePicker  alloc] init];
-//    [self.view addSubview: _pickerEventVotingDate];
-//    _pickerEventVotingDate.backgroundColor= WHITE;
-//    _pickerEventVotingDate.tintColor= WHITE;
-//    self.buttonEventVoting=makeButton(self.view, @"Press here to set.", kGeomFontSizeHeader,  WHITE, CLEAR, self, @selector(userPressedLowerButton:), 0);
-    
+    UIButton* buttonVotingOption0= makeButton( self.view,  @"30 minutes before",
+                                              kGeomFontSizeHeader, WHITE, CLEAR,
+                                              self, @selector(userPressedOption:) , 0);
+    buttonVotingOption0.tag= 0;
     UIButton* buttonVotingOption1= makeButton( self.view,  @"1 hour before",
+                                              kGeomFontSizeHeader, WHITE, CLEAR,
+                                              self, @selector(userPressedOption:) , 0);
+    buttonVotingOption1.tag= 1;
+    UIButton* buttonVotingOption2= makeButton( self.view,  @"1 week before",
                                              kGeomFontSizeHeader, WHITE, CLEAR,
                                              self, @selector(userPressedOption:) , 0);
-    buttonVotingOption1.tag= 0;
-    UIButton* buttonVotingOption2= makeButton( self.view,  @"1 day before",
-                                             kGeomFontSizeHeader, WHITE, CLEAR,
-                                             self, @selector(userPressedOption:) , 0);
-    buttonVotingOption2.tag= 1;
-    UIButton *buttonVotingOption3= makeButton( self.view,  @"2 days before",
-                                             kGeomFontSizeHeader, WHITE, CLEAR,
-                                             self, @selector(userPressedOption:) , 0);
-    buttonVotingOption3.tag= 2;
+    buttonVotingOption2.tag= 2;
+//    UIButton *buttonVotingOption3= makeButton( self.view,  @"2 days before",
+//                                             kGeomFontSizeHeader, WHITE, CLEAR,
+//                                             self, @selector(userPressedOption:) , 0);
+//    buttonVotingOption3.tag= 3;
     self.arrayOfVotingOptionButtons=  @[
+                                        buttonVotingOption0,
                                         buttonVotingOption1,
                                         buttonVotingOption2,
-                                        buttonVotingOption3
+//                                        buttonVotingOption3
                                         ];
     
     self.viewOver1 = [[UIView alloc] init];
@@ -114,22 +113,11 @@ static int votingEndingValues[3]= {
     _viewOver1.alpha = 0.5f;
     [_pickerEventDate addSubview: _viewOver1];
     
-//    self.viewOver2 = [[UIView alloc] init];
-//    _viewOver2.backgroundColor = YELLOW;
-//    _viewOver2.alpha = 0.5f;
-//    [_pickerEventVotingDate addSubview: _viewOver2];
-
     addShadowTo(_pickerEventDate);
     _pickerEventDate.timeZone= [NSTimeZone systemTimeZone];
     _pickerEventDate.minuteInterval=15;
     _pickerEventDate.datePickerMode= UIDatePickerModeDateAndTime;
 
-    //    _pickerEventVotingDate.timeZone= [NSTimeZone systemTimeZone];
-//    _pickerEventVotingDate.minuteInterval=15;
-    //    addShadowTo(_pickerEventVotingDate);
-
-//    _pickerEventVotingDate.datePickerMode= UIDatePickerModeDateAndTime;
-    
     if (self.eventBeingEdited.date ) {
         [self expressUpperDate];
     } else {
@@ -148,13 +136,13 @@ static int votingEndingValues[3]= {
         long long when= [self.eventBeingEdited.date timeIntervalSince1970];
         long long whenVotingEnds = [self.eventBeingEdited.dateWhenVotingClosed timeIntervalSince1970];
         long long difference = when-whenVotingEnds;
-        if  (difference>=ONE_HOUR-5  && difference<=ONE_HOUR+5 ) {
+        if  (difference>=HALF_HOUR-5  && difference<=HALF_HOUR+5 ) {
             _lowerSelection= 0;
         }
         else if (difference>=ONE_DAY-5  && difference<=ONE_DAY+5) {
             _lowerSelection= 1;
         }
-        else if (difference>=TWO_DAYS-5  && difference<=TWO_DAYS+5) {
+        else if (difference>=ONE_WEEK-5  && difference<=ONE_WEEK+5) {
             _lowerSelection= 2;
         }
         [self highlightSelection];
@@ -168,20 +156,12 @@ static int votingEndingValues[3]= {
             _pickerEventDate.maximumDate= self.eventBeingEdited.date;
         }
     }
-//    if (self.eventBeingEdited.dateWhenVotingClosed ) {
-//        _pickerEventVotingDate.date= self.eventBeingEdited.dateWhenVotingClosed;
-//        if (!self.editable) {
-//            _pickerEventVotingDate.minimumDate= self.eventBeingEdited.dateWhenVotingClosed;
-//            _pickerEventVotingDate.maximumDate= self.eventBeingEdited.dateWhenVotingClosed;
-//        }
-//    }
 
     self.headerWhen= makeLabelLeft(self.view, @" WHEN IS THIS?", kGeomFontSizeStripHeader);
     self.headerEndOfVoting= makeLabelLeft(self.view, @" WHEN IS VOTING CLOSED?", kGeomFontSizeStripHeader);
     _headerWhen.textColor=GRAY;
     _headerEndOfVoting.textColor=GRAY;
     
-    removeRightButton(self.navigationItem);
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 }
 
@@ -237,14 +217,6 @@ static int votingEndingValues[3]= {
                       forState:UIControlStateNormal];
 }
 
-//- (void)expressLowerDate
-//{
-//    NSDate* gmtTime= self.eventBeingEdited.dateWhenVotingClosed;
-//    
-//    [_buttonEventVoting setTitle:expressLocalDateTime (gmtTime)
-//                        forState:UIControlStateNormal];
-//}
-
 - (void)viewWillDisappear:(BOOL)animated
 {
     if ( self.editable) {
@@ -254,7 +226,6 @@ static int votingEndingValues[3]= {
         }
         
         if  (_lowerSelectionModified ) {
-//            [self extractDateTimeFromLowerPicker];
             [self updateVoteEndingDate];
         }
         
@@ -304,51 +275,9 @@ static int votingEndingValues[3]= {
     [self expressUpperDate];
 }
 
-//- (void)extractDateTimeFromLowerPicker
-//{
-//    NSDate *gmtTime= _pickerEventVotingDate.date;
-//    self.eventBeingEdited.dateWhenVotingClosed= gmtTime;
-//    self.eventBeingEdited.hasBeenAltered= YES;// XX:  need to write set date when voting method
-//    [self expressLowerDate];
-//}
-
 - (void)userPressedUpperButton: (id) sender
 {
-//    _pickerEventDate.hidden= !_pickerEventDate.hidden;
-//    if (!_pickerEventVotingDate.hidden) {
-////        [self extractDateTimeFromLowerPicker];
-//    }
-//    if (! _pickerEventDate.hidden) {
-//        _pickerEventVotingDate.hidden= YES;
-//    }else {
-//        [self extractDateTimeFromUpperPicker];
-//    }
-//    __weak EventWhenVC *weakSelf = self;
-//    [UIView animateWithDuration: 0.4 animations:^{
-//        [weakSelf doLayout];
-//    }];
-//    
-//    _upperDateWasModified= YES;
 }
-
-//- (void)userPressedLowerButton: (id) sender
-//{
-//    _pickerEventVotingDate.hidden= !_pickerEventVotingDate.hidden;
-//    if (!_pickerEventDate.hidden) {
-//        [self extractDateTimeFromUpperPicker];
-//    }
-//    if (! _pickerEventVotingDate.hidden) {
-//        _pickerEventDate.hidden= YES;
-//    }else {
-//        [self extractDateTimeFromLowerPicker];
-//    }
-//    __weak EventWhenVC *weakSelf = self;
-//    [UIView animateWithDuration: 0.4 animations:^{
-//        [weakSelf doLayout];
-//    }];
-//    
-//    _lowerDateWasModified= YES;
-//}
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
@@ -356,90 +285,14 @@ static int votingEndingValues[3]= {
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float h=  self.view.bounds.size.height;
     float w=  self.view.bounds.size.width;
-    const float kGeomSpaceInterMiddle =  15;
     float  margin= kGeomSpaceEdge;
     float  spacing= IS_IPHONE4? 5 : kGeomSpaceInter;
 
     float pickerHeight= _pickerEventDate.intrinsicContentSize.height;
-
-#if 0
-    float y=  margin;
-    BOOL bothPickersOpen= IS_IPAD;
-    if  (bothPickersOpen ) {
-        _buttonEventDate.hidden= YES;
-        _buttonEventVoting.hidden= YES;
-        _pickerEventDate.hidden = NO;
-        _pickerEventVotingDate.hidden= NO;
-    }
-    
-#define OVER_HEIGHT 34
-    if  (!bothPickersOpen ) {
-        _headerWhen.frame = CGRectMake(0,y, w, kGeomHeightButton);
-        y +=kGeomHeightButton +  spacing;
-
-        if  (_pickerEventDate.hidden  ) {
-            _buttonEventDate.hidden= NO;
-            _buttonEventDate.frame = CGRectMake(0,y, w, kGeomHeightButton);
-            _pickerEventDate.frame = CGRectMake(0,y,w, 0);
-            _viewOver1.frame = CGRectMake(0,pickerHeight/2-OVER_HEIGHT/2,w,OVER_HEIGHT);
-            y +=kGeomHeightButton +  spacing;
-        } else {
-            _buttonEventDate.frame = CGRectMake(0,y, w, 0);
-            _buttonEventDate.hidden= YES;
-            _pickerEventDate.frame = CGRectMake(0,y,w, pickerHeight);
-            _viewOver1.frame = CGRectMake(0,pickerHeight/2-OVER_HEIGHT/2,w,OVER_HEIGHT);
-            y += pickerHeight+ spacing;
-        }
-        
-        y += kGeomSpaceInterMiddle;
-        
-        _headerEndOfVoting.frame = CGRectMake(0,y, w, kGeomHeightButton);
-        y +=kGeomHeightButton +  spacing;
-
-        if  (_pickerEventVotingDate.hidden) {
-            _buttonEventVoting.hidden= NO;
-            _buttonEventVoting.frame = CGRectMake(0,y, w, kGeomHeightButton);
-            _pickerEventVotingDate.frame = CGRectMake(0,y,w, 0);
-            _viewOver2.frame = CGRectMake(0,pickerHeight/2-OVER_HEIGHT/2,w,OVER_HEIGHT);
-            y +=kGeomHeightButton +  spacing;
-        } else {
-            _buttonEventVoting.frame = CGRectMake(0,y, w, 0);
-            _buttonEventVoting.hidden= YES;
-            float pickerHeight= _pickerEventVotingDate.intrinsicContentSize.height;
-            _pickerEventVotingDate.frame = CGRectMake(0,y,w, pickerHeight);
-            _viewOver2.frame = CGRectMake(0,pickerHeight/2-OVER_HEIGHT/2,w,OVER_HEIGHT);
-            y += pickerHeight+ spacing;
-        }
-    } else {
-        
-        _headerWhen.frame = CGRectMake(0,y, w, kGeomHeightButton);
-        y +=kGeomHeightButton +  spacing;
-        _buttonEventDate.frame = CGRectMake(0,y, w, 0);
-        _buttonEventDate.hidden= YES;
-        _pickerEventDate.frame = CGRectMake(0,y,w, pickerHeight);
-        _viewOver1.frame = CGRectMake(0,pickerHeight/2-OVER_HEIGHT/2,w,OVER_HEIGHT);
-        y += pickerHeight+ spacing;
-        
-        y += kGeomSpaceInterMiddle;
-        
-        _headerEndOfVoting.frame = CGRectMake(0,y, w, kGeomHeightButton);
-        y +=kGeomHeightButton +  spacing;
-        _buttonEventVoting.frame = CGRectMake(0,y, w, 0);
-        _buttonEventVoting.hidden= YES;
-        float pickerHeight= _pickerEventVotingDate.intrinsicContentSize.height;
-        _pickerEventVotingDate.frame = CGRectMake(0,y,w, pickerHeight);
-        _viewOver2.frame = CGRectMake(0,pickerHeight/2-OVER_HEIGHT/2,w,OVER_HEIGHT);
-        y += pickerHeight+ spacing;
-    }
-    
-    _buttonDuration1.frame = CGRectMake(margin,h-kGeomHeightButton- margin,w-2*margin, kGeomHeightButton);
-#endif
-    
     const  float kGeomWidthOptionButton= 130;
-    const  float kGeomHeightOptionButton= IS_IPHONE4 ? 37 : 44;
-    float totalRequiredHeight=  pickerHeight + kGeomHeightOptionButton*_arrayOfVotingOptionButtons.count;
+    const  float kGeomHeightOptionButton= IS_IPHONE4? 37: kGeomHeightButton;
+    float totalRequiredHeight= pickerHeight + kGeomHeightOptionButton*_arrayOfVotingOptionButtons.count;
     totalRequiredHeight += kGeomFontSizeHeader;
     totalRequiredHeight += 2*kGeomFontSizeHeader;
 
@@ -459,7 +312,6 @@ static int votingEndingValues[3]= {
          button.frame = CGRectMake( (w-kGeomWidthOptionButton)/2,y,kGeomWidthOptionButton,  kGeomHeightOptionButton);
         y += kGeomHeightOptionButton;
     }
-
 }
 
 @end

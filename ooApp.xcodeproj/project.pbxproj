@@ -130,6 +130,8 @@
 		96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */; };
 		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; };
 		96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */; };
+		96B64D2F1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png in Resources */ = {isa = PBXBuildFile; fileRef = 96B64D2D1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png */; };
+		96B64D301C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png in Resources */ = {isa = PBXBuildFile; fileRef = 96B64D2E1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png */; };
 		96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */; };
 		96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */; };
 		96CA59D01BE14C2E00618B57 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96CA59CF1BE14C2E00618B57 /* UIKit.framework */; };
@@ -367,6 +369,8 @@
 		96ACD7861BC3331000E37DC1 /* EventTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTVCell.m; sourceTree = "<group>"; };
 		96ACD7881BC3487E00E37DC1 /* EventCoordinatorVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCoordinatorVC.h; sourceTree = "<group>"; };
 		96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventCoordinatorVC.m; sourceTree = "<group>"; };
+		96B64D2D1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_Logo_Spork(Nov24) (1) w.png"; path = "Graphic Assets/Oomami_Logo_Spork(Nov24) (1) w.png"; sourceTree = "<group>"; };
+		96B64D2E1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_Logo_Spork(Nov24) (1).png"; path = "Graphic Assets/Oomami_Logo_Spork(Nov24) (1).png"; sourceTree = "<group>"; };
 		96BF31211BB36C4D002BFDD2 /* CreateUsernameVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateUsernameVC.h; sourceTree = "<group>"; };
 		96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateUsernameVC.m; sourceTree = "<group>"; };
 		96C3A3F21BC5F335009689E3 /* EventParticipantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParticipantVC.h; sourceTree = "<group>"; };
@@ -556,6 +560,8 @@
 				3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */,
 				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
 				96F49C051C0CFCAD00B087AD /* LoginBackground.jpg */,
+				96B64D2D1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png */,
+				96B64D2E1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png */,
 				962303741BB33D2700278FA6 /* forkKnife.png */,
 				964DEA681C1F444C0045BA2C /* background_image.png */,
 				9671433B1C0E2B2D004875FB /* LogoWhite.png */,
@@ -893,6 +899,7 @@
 				361329811C196215009413D6 /* Oomami_AppStoreLogo(120x120).png in Resources */,
 				96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */,
 				3677045D1B8BF05100B594E5 /* Lato-MediumItalic.ttf in Resources */,
+				96B64D301C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png in Resources */,
 				367704551B8BF05100B594E5 /* Lato-Hairline.ttf in Resources */,
 				367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */,
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
@@ -915,6 +922,7 @@
 				9671433C1C0E2B2D004875FB /* LogoWhite.png in Resources */,
 				367704511B8BF05100B594E5 /* Lato-Black.ttf in Resources */,
 				367704531B8BF05100B594E5 /* Lato-Bold.ttf in Resources */,
+				96B64D2F1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png in Resources */,
 				367704581B8BF05100B594E5 /* Lato-HeavyItalic.ttf in Resources */,
 				361329821C196215009413D6 /* Oomami_AppStoreLogo(152x152).png in Resources */,
 				966098BB1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png in Resources */,
@@ -1362,6 +1370,115 @@
 			};
 			name = Release;
 		};
+		96A017D51C20CC5A0077109B /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "ADHOC=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Adhoc;
+		};
+		96A017D61C20CC5A0077109B /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2BB75701B92FE168B3785FD8 /* Pods.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"Frameworks/**",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/ooApp/ooApp.pch";
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers\"",
+					"\"${PODS_ROOT}/Headers/AFNetworking\"",
+				);
+				INFOPLIST_FILE = ooApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/build/Debug-iphoneos",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"AFNetworking\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"MobileCoreServices\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+				);
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oomamiapp.oomami;
+				PRODUCT_NAME = Oomami;
+				PROVISIONING_PROFILE = "";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+			};
+			name = Adhoc;
+		};
+		96A017D71C20CC5A0077109B /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ooAppTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.oomami.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ooApp.app/ooApp";
+			};
+			name = Adhoc;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1370,6 +1487,7 @@
 			buildConfigurations = (
 				36FDA7141B585F650029D29D /* Debug */,
 				36FDA7151B585F650029D29D /* Release */,
+				96A017D51C20CC5A0077109B /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1379,6 +1497,7 @@
 			buildConfigurations = (
 				36FDA7171B585F650029D29D /* Debug */,
 				36FDA7181B585F650029D29D /* Release */,
+				96A017D61C20CC5A0077109B /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1388,6 +1507,7 @@
 			buildConfigurations = (
 				36FDA71A1B585F650029D29D /* Debug */,
 				36FDA71B1B585F650029D29D /* Release */,
+				96A017D71C20CC5A0077109B /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -324,8 +324,8 @@ static NSString * const ListRowID = @"ListRowCell";
     
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers > 1) {
-                self.navigationController.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc]initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(done:)] ;
-                [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+        [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(done:)];
     }
     
     _lists = [NSArray array];
