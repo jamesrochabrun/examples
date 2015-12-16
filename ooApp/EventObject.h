@@ -82,10 +82,12 @@ enum {
                                                       failure:(void (^)())failure;
 - (NSString *)asString;
 
-- (void)sendDatesToServer;
+- (void)sendDatesToServerWithCompletionBlock:(void (^)())completionBlock;
 
 - (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
 - (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
+
+- (BOOL)userIsAdministrator: (NSUInteger)userid;
 
 @end
 

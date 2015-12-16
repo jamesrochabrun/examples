@@ -781,12 +781,6 @@
     [self doLayout];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-}
-
 //------------------------------------------------------------------------------
 // Name:    viewWillAppear
 // Purpose:
@@ -814,16 +808,28 @@
 
 - (void) userPressedMenuButton: (id) sender
 {
+    UserObject*user= [Settings sharedInstance].userObject;
+
     __weak EventParticipantVC *weakSelf = self;
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction *actionMore = [UIAlertAction actionWithTitle:@"Accept or reject invitation"
-                                                     style:UIAlertActionStyleDestructive
-                                                   handler:^(UIAlertAction * action) {
-                                                       [weakSelf transitionToE3L];
-                                                   }];
+    UIAlertAction *actionMore= nil;
+    if  ([self.eventBeingEdited userIsAdministrator: user.userID] ) {
+        actionMore= [UIAlertAction actionWithTitle:@"Modify or Cancel Event"
+                                             style:UIAlertActionStyleDestructive
+                                           handler:^(UIAlertAction * action) {
+                                               [weakSelf transitionToE3];
+                                           }];
+        
+    } else {
+        actionMore= [UIAlertAction actionWithTitle:@"Accept or Reject invitation"
+                                             style:UIAlertActionStyleDestructive
+                                           handler:^(UIAlertAction * action) {
+                                               [weakSelf transitionToE3L];
+                                           }];
+    }
     
     UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
@@ -833,6 +839,14 @@
     [a addAction:actionCancel];
     
     [self presentViewController:a animated:YES completion:nil];
+}
+
+- (void) transitionToE3
+{
+    EventCoordinatorVC*vc= [[EventCoordinatorVC alloc] init];
+    vc.eventBeingEdited=  self.eventBeingEdited;
+    vc.delegate=  self;
+    [self.navigationController pushViewController:vc animated:YES ];
 }
 
 - (void) transitionToE3L

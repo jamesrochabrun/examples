@@ -89,7 +89,7 @@ static int votingEndingValues[3]= {
                                               kGeomFontSizeHeader, WHITE, CLEAR,
                                               self, @selector(userPressedOption:) , 0);
     buttonVotingOption0.tag= 0;
-    UIButton* buttonVotingOption1= makeButton( self.view,  @"1 hour before",
+    UIButton* buttonVotingOption1= makeButton( self.view,  @"1 day before",
                                               kGeomFontSizeHeader, WHITE, CLEAR,
                                               self, @selector(userPressedOption:) , 0);
     buttonVotingOption1.tag= 1;
@@ -97,15 +97,11 @@ static int votingEndingValues[3]= {
                                              kGeomFontSizeHeader, WHITE, CLEAR,
                                              self, @selector(userPressedOption:) , 0);
     buttonVotingOption2.tag= 2;
-//    UIButton *buttonVotingOption3= makeButton( self.view,  @"2 days before",
-//                                             kGeomFontSizeHeader, WHITE, CLEAR,
-//                                             self, @selector(userPressedOption:) , 0);
-//    buttonVotingOption3.tag= 3;
+
     self.arrayOfVotingOptionButtons=  @[
                                         buttonVotingOption0,
                                         buttonVotingOption1,
                                         buttonVotingOption2,
-//                                        buttonVotingOption3
                                         ];
     
     self.viewOver1 = [[UIView alloc] init];
@@ -168,6 +164,7 @@ static int votingEndingValues[3]= {
 - (void)userAlteredPicker: (id) sender
 {
     _upperDateWasModified= YES;
+    self.eventBeingEdited.date = _pickerEventDate.date;
     [self updateVoteEndingDate];
 }
 
@@ -205,8 +202,37 @@ static int votingEndingValues[3]= {
     
 }
 
-- (void)done:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+- (void)done:(id)sender
+{
+    // RULE: If the dates have changed only transition to the previous screen after the backend has been updated.
+    if ( self.editable) {
+        BOOL changed= NO;
+        
+        if ( _upperDateWasModified || _lowerSelectionModified) {
+            [self extractDateTimeFromUpperPicker];
+            changed= YES;
+        }
+        
+        if  (_lowerSelectionModified ) {
+            [self updateVoteEndingDate];
+            changed= YES;
+        }
+        
+        if ( self.delegate  && changed) {
+            [self.delegate datesChanged];
+        }
+        
+        if (!changed) {
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            __weak EventWhenVC *weakSelf = self;
+            [self.eventBeingEdited sendDatesToServerWithCompletionBlock:^  {
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            }];
+        }
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void)expressUpperDate
@@ -215,26 +241,6 @@ static int votingEndingValues[3]= {
 
     [_buttonEventDate setTitle: expressLocalDateTime(gmtTime)
                       forState:UIControlStateNormal];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    if ( self.editable) {
-        
-        if ( _upperDateWasModified || _lowerSelectionModified) {
-            [self extractDateTimeFromUpperPicker];
-        }
-        
-        if  (_lowerSelectionModified ) {
-            [self updateVoteEndingDate];
-        }
-        
-        if ( self.delegate  && (_upperDateWasModified || _lowerSelectionModified)) {
-            [self.delegate datesChanged];
-        }
-    }
-    
-    [super viewWillDisappear:animated];
 }
 
 - (void)updateVoteEndingDate
@@ -296,7 +302,7 @@ static int votingEndingValues[3]= {
     totalRequiredHeight += kGeomFontSizeHeader;
     totalRequiredHeight += 2*kGeomFontSizeHeader;
 
-    float y=  margin;
+    float y= IS_IPHONE4? 0: margin;
     _buttonEventDate.frame = CGRectMake(0,y, w, kGeomHeightButton);
     y +=kGeomHeightButton +  spacing;
     
@@ -307,6 +313,7 @@ static int votingEndingValues[3]= {
     [_labelOptions sizeToFit];
     _labelOptions.frame = CGRectMake(0,y,w,_labelOptions.frame.size.height);
     y += _labelOptions.frame.size.height;
+    y+= spacing;
 
     for (UIButton* button  in  _arrayOfVotingOptionButtons) {
          button.frame = CGRectMake( (w-kGeomWidthOptionButton)/2,y,kGeomWidthOptionButton,  kGeomHeightOptionButton);

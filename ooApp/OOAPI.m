@@ -1783,6 +1783,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     return op;
 }
+
 //------------------------------------------------------------------------------
 // Name:    addRestaurants toEvent
 // Purpose: Add a restaurant to an event.
@@ -1940,9 +1941,11 @@ NSString *const kKeyDeviceToken = @"device_token";
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu", kHTTPProtocol, [OOAPI URL],  (unsigned long)eo.eventID];
     
     NSDictionary *parameters= [eo dictionaryFromEvent];
+    NSLog (@"EVENT BEFORE REVISION  %@",parameters);
     
     AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
                                  success:^(id responseObject) {
+                                     NSLog (@"REVISED EVENT: %@", responseObject);
                                      success(responseObject);
                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                      failure(operation, error);

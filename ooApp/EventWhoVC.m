@@ -203,6 +203,7 @@
 @property (nonatomic,strong)UITableView* table;
 @property (nonatomic,strong) NSMutableOrderedSet *setOfPotentialParticipants;
 @property (nonatomic,strong)  NSMutableOrderedSet *participants;
+@property (atomic, assign) BOOL  busy;
 
 @end
 
@@ -246,8 +247,14 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 }
 
-- (void)done:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+- (void)done:(id)sender
+{
+    // RULE: If the server interaction is still happening then we have to wait until our data gets through.
+    if  (!self.busy) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [self performSelector:@selector(done:)  withObject:nil afterDelay:.33];
+    }
 }
 
 - (BOOL)emailAlreadyInArray: (NSString*)emailString
@@ -317,39 +324,25 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }];
     
     if  (self.editable) {
+        UserObject* user= [Settings sharedInstance].userObject;
         
         // RULE: Identify follower users we could potentially attach this event.
-        [OOAPI getFollowingWithSuccess:^(NSArray *users) {
-            NSLog  (@"USER IS FOLLOWING %lu USERS.", ( unsigned long)users.count);
-            @synchronized(weakSelf.setOfPotentialParticipants) {
-                for (UserObject* user in users) {
-                    if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
-                        [self.setOfPotentialParticipants  addObject: user];
-                    }
-                }
-            }
-            [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
-        }
-                               failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                                   NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
-                               }];
+        [OOAPI getFollowersOf: user.userID
+                      success:^(NSArray *users) {
+                          NSLog  (@"USER IS FOLLOWED BY %lu USERS.", ( unsigned long)users.count);
+                          @synchronized(weakSelf.setOfPotentialParticipants) {
+                              for (UserObject* user in users) {
+                                  if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
+                                      [weakSelf.setOfPotentialParticipants  addObject: user];
+                                  }
+                              }
+                          }
+                          [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+                      }
+                      failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                          NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
+                      }];
         
-        // XX:  just at all the users
-        [  OOAPI getAllUsersWithSuccess:^(NSArray *users) {
-            @synchronized(weakSelf.setOfPotentialParticipants) {
-                for (UserObject* user  in  users) {
-                    if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
-                        [weakSelf.setOfPotentialParticipants addObject: user];
-                    }
-                }
-                [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
-                
-            }
-            
-        }
-                                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                    NSLog  (@"CANNOT GET USER LISTING.  %@",error);
-                                }];
     }
 }
 
@@ -432,7 +425,8 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [_table reloadData];
     
     [_table scrollToRowAtIndexPath:
-     [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+     [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0]
+                  atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 //------------------------------------------------------------------------------
@@ -485,7 +479,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     if  ([object isKindOfClass:[GroupObject class]] ) {
     } else {
         [cell specifyUser: object];
-        
     }
     
     return cell;
@@ -543,13 +536,17 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }
     
     [self.delegate userDidAlterEventParticipants];
-    
+    self.busy=YES;
+    __weak EventWhoVC *weakSelf = self;
     [OOAPI setParticipationOf:object
                       inEvent:self.eventBeingEdited
                            to:value
                       success:^(NSInteger eventID) {
                           NSLog  (@"SUCCESS");
-                      } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                          weakSelf.busy= NO;
+                      }
+                      failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                          weakSelf.busy= NO;
                           NSLog  (@"FAILURE  %@",e);
                           if ( value) {
                               [_participants  removeObject: object];
