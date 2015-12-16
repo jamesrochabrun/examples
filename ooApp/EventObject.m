@@ -113,12 +113,13 @@ BOOL isEventObject (id  object)
 
     array=dictionary[kKeyEventAdministrators];
     if (array) {
+        e.administrators= [NSMutableOrderedSet new];
+
         UserObject*user= [Settings sharedInstance].userObject;
         if ( user) {
             NSUInteger currentUserID=user.userID;
-            
             for (NSNumber* number  in  array) {
-                [results  addObject: number];
+                [e.administrators  addObject: number];
                 
                 NSUInteger userid= [number  unsignedLongValue];
                 if  (userid== currentUserID) {
@@ -280,6 +281,14 @@ BOOL isEventObject (id  object)
     }
 }
 
+- (BOOL)userIsAdministrator: (NSUInteger)userid
+{
+    if  ([self.administrators containsObject:@(userid)] ) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
 
 - (void)addVenue:(RestaurantObject *)venue 
 {

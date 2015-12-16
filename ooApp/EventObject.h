@@ -87,6 +87,8 @@ enum {
 - (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
 - (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
 
+- (BOOL)userIsAdministrator: (NSUInteger)userid;
+
 @end
 
 extern BOOL isEventObject (id  object);
