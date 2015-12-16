@@ -307,6 +307,11 @@ typedef enum {
                                           success:(void (^)(id response))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)flagMediaItem:(NSUInteger)mediaItemID
+                                  success:(void (^)(NSArray *names))success
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
+
 // Auto complete
 
 
