@@ -781,12 +781,6 @@
     [self doLayout];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-}
-
 //------------------------------------------------------------------------------
 // Name:    viewWillAppear
 // Purpose:

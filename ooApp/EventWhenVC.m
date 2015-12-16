@@ -202,8 +202,9 @@ static int votingEndingValues[3]= {
     
 }
 
-- (void)done:(id)sender {
-    
+- (void)done:(id)sender
+{
+    // RULE: If the dates have changed only transition to the previous screen after the backend has been updated.
     if ( self.editable) {
         BOOL changed= NO;
         
@@ -240,12 +241,6 @@ static int votingEndingValues[3]= {
 
     [_buttonEventDate setTitle: expressLocalDateTime(gmtTime)
                       forState:UIControlStateNormal];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    
-    [super viewWillDisappear:animated];
 }
 
 - (void)updateVoteEndingDate

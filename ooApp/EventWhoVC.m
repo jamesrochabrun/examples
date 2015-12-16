@@ -249,7 +249,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)done:(id)sender
 {
-    // RULE: If the backend is busy then we have to wait until our data gets through.
+    // RULE: If the server interaction is still happening then we have to wait until our data gets through.
     if  (!self.busy) {
         [self.navigationController popViewControllerAnimated:YES];
     } else {
@@ -324,39 +324,25 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }];
     
     if  (self.editable) {
+        UserObject* user= [Settings sharedInstance].userObject;
         
         // RULE: Identify follower users we could potentially attach this event.
-        [OOAPI getFollowingWithSuccess:^(NSArray *users) {
-            NSLog  (@"USER IS FOLLOWING %lu USERS.", ( unsigned long)users.count);
-            @synchronized(weakSelf.setOfPotentialParticipants) {
-                for (UserObject* user in users) {
-                    if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
-                        [self.setOfPotentialParticipants  addObject: user];
-                    }
-                }
-            }
-            [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
-        }
-                               failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                                   NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
-                               }];
+        [OOAPI getFollowersOf: user.userID
+                      success:^(NSArray *users) {
+                          NSLog  (@"USER IS FOLLOWED BY %lu USERS.", ( unsigned long)users.count);
+                          @synchronized(weakSelf.setOfPotentialParticipants) {
+                              for (UserObject* user in users) {
+                                  if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
+                                      [weakSelf.setOfPotentialParticipants  addObject: user];
+                                  }
+                              }
+                          }
+                          [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
+                      }
+                      failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                          NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
+                      }];
         
-        // XX:  just at all the users
-        [  OOAPI getAllUsersWithSuccess:^(NSArray *users) {
-            @synchronized(weakSelf.setOfPotentialParticipants) {
-                for (UserObject* user  in  users) {
-                    if (![weakSelf.setOfPotentialParticipants containsObject:user ]) {
-                        [weakSelf.setOfPotentialParticipants addObject: user];
-                    }
-                }
-                [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
-                
-            }
-            
-        }
-                                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                    NSLog  (@"CANNOT GET USER LISTING.  %@",error);
-                                }];
     }
 }
 
