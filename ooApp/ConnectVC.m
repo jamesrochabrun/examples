@@ -160,6 +160,13 @@
     __weak ConnectTableCell *weakSelf = self;
     NSUInteger userid=self.userInfo.userID;
 
+    //NOTE: It would be better if user stats were an object that gets populated in the OOAPI layer when this
+    //end point is called. The way this is currently implemented, other parts of the app will have to copy
+    //the same implementation. e.g. the profile or user search will have to re-implement the parsing code
+    //represented here. If a new stat is added or one is removed all of the parsing implementations will have
+    //to change. This negates many benefits of OO and decreases the maintainability of the code base. It
+    //would also be better if dictionary keys were declared as constants....again this makes code much more
+    //maintainable. This should be refactored ASAP.
     self.op= [OOAPI getStatsForUser: userid
                        success:^(NSDictionary *dictionary) {
                            NSUInteger  identifier=  parseUnsignedIntegerOrNullFromServer(dictionary[ @"user_id"]);

@@ -38,17 +38,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        
-//    UIBarButtonItem *bbi = [[UIBarButtonItem alloc] init];
-//    _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    _moreButton.frame = CGRectMake(0, 0, kGeomWidthMenuButton, kGeomWidthMenuButton);
-//    _moreButton.titleLabel.textAlignment= NSTextAlignmentRight;
-//    [_moreButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomWidthMenuButton height:kGeomWidthMenuButton backgroundColor:kColorClear target:nil selector:nil];
-//    [_moreButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-//
-//    bbi.customView = _moreButton;
-//    self.navigationItem.rightBarButtonItems = @[bbi];
-
+    
     _rightNavButton = [[UIBarButtonItem alloc] init];
     self.navigationItem.rightBarButtonItem = _rightNavButton;
     [self.rightNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
