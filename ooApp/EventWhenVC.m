@@ -89,7 +89,7 @@ static int votingEndingValues[3]= {
                                               kGeomFontSizeHeader, WHITE, CLEAR,
                                               self, @selector(userPressedOption:) , 0);
     buttonVotingOption0.tag= 0;
-    UIButton* buttonVotingOption1= makeButton( self.view,  @"1 hour before",
+    UIButton* buttonVotingOption1= makeButton( self.view,  @"1 day before",
                                               kGeomFontSizeHeader, WHITE, CLEAR,
                                               self, @selector(userPressedOption:) , 0);
     buttonVotingOption1.tag= 1;
@@ -97,15 +97,11 @@ static int votingEndingValues[3]= {
                                              kGeomFontSizeHeader, WHITE, CLEAR,
                                              self, @selector(userPressedOption:) , 0);
     buttonVotingOption2.tag= 2;
-//    UIButton *buttonVotingOption3= makeButton( self.view,  @"2 days before",
-//                                             kGeomFontSizeHeader, WHITE, CLEAR,
-//                                             self, @selector(userPressedOption:) , 0);
-//    buttonVotingOption3.tag= 3;
+
     self.arrayOfVotingOptionButtons=  @[
                                         buttonVotingOption0,
                                         buttonVotingOption1,
                                         buttonVotingOption2,
-//                                        buttonVotingOption3
                                         ];
     
     self.viewOver1 = [[UIView alloc] init];
@@ -168,6 +164,7 @@ static int votingEndingValues[3]= {
 - (void)userAlteredPicker: (id) sender
 {
     _upperDateWasModified= YES;
+    self.eventBeingEdited.date = _pickerEventDate.date;
     [self updateVoteEndingDate];
 }
 
@@ -206,7 +203,35 @@ static int votingEndingValues[3]= {
 }
 
 - (void)done:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    
+    if ( self.editable) {
+        BOOL changed= NO;
+        
+        if ( _upperDateWasModified || _lowerSelectionModified) {
+            [self extractDateTimeFromUpperPicker];
+            changed= YES;
+        }
+        
+        if  (_lowerSelectionModified ) {
+            [self updateVoteEndingDate];
+            changed= YES;
+        }
+        
+        if ( self.delegate  && changed) {
+            [self.delegate datesChanged];
+        }
+        
+        if (!changed) {
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            __weak EventWhenVC *weakSelf = self;
+            [self.eventBeingEdited sendDatesToServerWithCompletionBlock:^  {
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            }];
+        }
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void)expressUpperDate
@@ -219,20 +244,6 @@ static int votingEndingValues[3]= {
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    if ( self.editable) {
-        
-        if ( _upperDateWasModified || _lowerSelectionModified) {
-            [self extractDateTimeFromUpperPicker];
-        }
-        
-        if  (_lowerSelectionModified ) {
-            [self updateVoteEndingDate];
-        }
-        
-        if ( self.delegate  && (_upperDateWasModified || _lowerSelectionModified)) {
-            [self.delegate datesChanged];
-        }
-    }
     
     [super viewWillDisappear:animated];
 }

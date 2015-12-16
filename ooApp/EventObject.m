@@ -370,13 +370,15 @@ BOOL isEventObject (id  object)
             ];
 }
 
-- (void)sendDatesToServer;
+- (void)sendDatesToServerWithCompletionBlock:(void (^)())completionBlock;
 {
     [OOAPI reviseEvent: self
                success:^(id foo) {
+                   completionBlock();
                    NSLog  (@"UPDATED BACKEND WITH NEW DATES.");
                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                    NSLog  (@"UNABLE TO UPDATE BACKEND WITH NEW DATES.");
+                   completionBlock();
                }];
 }
 

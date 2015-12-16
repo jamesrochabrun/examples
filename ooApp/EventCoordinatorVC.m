@@ -901,19 +901,9 @@
 
 - (void) updateWhenBox
 {
-    NSString *string=nil;
-    
-    EventObject* event= self.eventBeingEdited;
-    if  (event.date ) {
-        string=[NSString stringWithFormat:  @"%@", expressLocalDateTime(event.date)];
-    } else {
-        string= [NSString stringWithFormat: @"%@",
-                 LOCAL( @"TAP TO SELECT A DATE AND TIME")
-                 ];
-    }
-    
     _labelTime.text= [expressLocalTime(self.eventBeingEdited.date) lowercaseString ];
     _labelMonth.text= expressLocalMonth( _eventBeingEdited.date);
+    NSLog (@"DISPLAYING EVEN TIME %@",_labelTime.text);
 }
 
 @end
@@ -1314,7 +1304,6 @@
 
 - (void)datesChanged
 {
-    [self.eventBeingEdited sendDatesToServer];
     [self.delegate userDidAlterEvent];
 }
 
@@ -1342,43 +1331,32 @@
     if ( self.eventBeingEdited.hasBeenAltered) {
         [self.delegate userDidAlterEvent];
         
-        // NOTE: Need to re-fetch event to get the media item..
-        [OOAPI getEventByID: weakSelf.eventBeingEdited.eventID
+        // NOTE: Need to re-fetch event to get the media item.
+        NSUInteger eventid=weakSelf.eventBeingEdited.eventID;
+        [OOAPI getEventByID: eventid
                     success:^(EventObject *event) {
                         weakSelf.eventBeingEdited= event;
                         
                         [weakSelf.eventBeingEdited refreshParticipantStatsFromServerWithSuccess:^{
-                            ON_MAIN_THREAD(^(){
-                                [weakSelf.table  reloadData];
-                                
-                            });
-                        }
-                                                                                    failure:^{
-                                                                                        NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
-                                                                                        
-                                                                                    }];
-                        
-                        [weakSelf.eventBeingEdited refreshUsersFromServerWithSuccess:^{
-                            ON_MAIN_THREAD(^(){
-                                [weakSelf.table  reloadData];
-                                
-                            });    } failure:^{
+                            
+                            [weakSelf.eventBeingEdited refreshUsersFromServerWithSuccess:^{
+                                // RULE: After basic info is displayed, fetch what's on the backend.
+                                [weakSelf.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+                                    NSInteger numberOfVenues= weakSelf.eventBeingEdited.numberOfVenues;
+                                    NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
+                                    ON_MAIN_THREAD(^(){
+                                        [weakSelf.table  reloadData];
+                                        
+                                    });
+                                } failure:^{
+                                    NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
+                                }];
+                            } failure:^{
                                 NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
                             }];
-                        
-                        // RULE: After basic info is displayed, fetch what's on the backend.
-                        [weakSelf.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-                            NSInteger numberOfVenues= weakSelf.eventBeingEdited.numberOfVenues;
-                            NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
-                            ON_MAIN_THREAD(^(){
-                                [weakSelf.table  reloadData];
-                                
-                            });
-                            
                         } failure:^{
-                            NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
+                            NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
                         }];
-                        
                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                         NSLog  (@"FAILED TO FETCH EVENT");
                     } ];
@@ -1387,37 +1365,31 @@
         // NOTE: If we do not need the media item, we still need the rest of the secondary data.
         
         [self.eventBeingEdited refreshParticipantStatsFromServerWithSuccess:^{
-            ON_MAIN_THREAD(^(){
-                [weakSelf.table  reloadData];
+            
+            [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
                 
-            });
-        }
-                                                                    failure:^{
-                                                                        NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
-                                                                        
-                                                                    }];
-        
-        [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
-            ON_MAIN_THREAD(^(){
-                [weakSelf.table  reloadData];
-                
-            });    } failure:^{
+                // RULE: After basic info is displayed, fetch what's on the backend.
+                [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+                    NSInteger numberOfVenues= self.eventBeingEdited.numberOfVenues;
+                    NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
+                    ON_MAIN_THREAD(^(){
+                        [weakSelf.table  reloadData];
+                        
+                    });
+                    
+                } failure:^{
+                    NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
+                }];
+            } failure:^{
                 NSLog (@"UNABLE TO REFRESH PARTICIPANTS OF EVENT");
             }];
-        
-        // RULE: After basic info is displayed, fetch what's on the backend.
-        [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-            NSInteger numberOfVenues= self.eventBeingEdited.numberOfVenues;
-            NSLog  (@"# VENUES FOR EVENT %ld", ( unsigned long)numberOfVenues);
-            ON_MAIN_THREAD(^(){
-                [weakSelf.table  reloadData];
-                
-            });
-            
         } failure:^{
-            NSLog (@"UNABLE TO REFRESH VENUES FOR EVENT.");
+            NSLog (@"UNABLE TO REFRESH PARTICIPANTS STATS");
+            
         }];
-
+        
+        
+        
     }
 }
 
