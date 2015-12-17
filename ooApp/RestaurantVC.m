@@ -193,10 +193,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     __weak RestaurantVC *weakSelf = self;
     
-    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
-                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                  [self sharePressed];
-                                                              }];
+//    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
+//                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//                                                                  [self sharePressed];
+//                                                              }];
     
     UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add to List"
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -236,7 +236,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                          NSLog(@"Cancel");
                                                      }];
     
-    [_styleSheetAC addAction:shareRestaurant];
+//    [_styleSheetAC addAction:shareRestaurant];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
     if (addToEvent) {
@@ -248,8 +248,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [_styleSheetAC addAction:addToNewEvent];
     [_styleSheetAC addAction:cancel];
-    
-//    [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self setRightNavWithIcon:kFontIconMore target:self action:@selector(moreButtonPressed:)];
 }
 
@@ -535,17 +533,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }];
 }
 
-- (void)addToTryList {
-    OOAPI *api = [[OOAPI alloc] init];
-    __weak RestaurantVC *weakSelf = self;
-    
-    [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeToTry success:^(id response) {
-        [weakSelf getListsForRestaurant];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
-    }];
-}
-
 - (void)addToList {
     if (_listToAddTo) {
         [self addRestaurantToList:_listToAddTo];
@@ -583,14 +570,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSUInteger userID = [Settings sharedInstance].userObject.userID;
+//    NSUInteger userID = [Settings sharedInstance].userObject.userID;
     
     switch (indexPath.section) {
         case kSectionTypeMain: {
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
             cvc.restaurant = _restaurant;
             cvc.delegate = self;
-            [cvc setToTry:(_toTryID) ? YES: NO];
             [cvc setFavorite:(_favoriteID) ? YES: NO];
             cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
             //[DebugUtilities addBorderToViews:@[cvc]];
@@ -852,6 +838,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)restaurantMainCVCellSharePressed {
+    [self sharePressed];
+}
+
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {
     SFSafariViewController *svc  = [[SFSafariViewController alloc] initWithURL:url];
     [self.navigationController pushViewController:svc animated:YES];
@@ -867,8 +857,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     } else if (listType == kListTypeToTry) {
         if (_toTryID) {
             [self removeFromList:_toTryID];
-        } else {
-            [self addToTryList];
         }
     }
 }

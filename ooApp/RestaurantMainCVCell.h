@@ -24,7 +24,7 @@
                showMapTapped:(CLLocationCoordinate2D)coordinate;
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
                showListSearchingKeywords:(NSArray *)keywords;
-
+- (void)restaurantMainCVCellSharePressed;
 @end
 
 @interface RestaurantMainCVCell : UICollectionViewCell <TTTAttributedLabelDelegate>
@@ -33,7 +33,6 @@
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;
 @property (nonatomic, weak) id<RestaurantMainCVCellDelegate>delegate;
 
-- (void)setToTry:(BOOL)on;
 - (void)setFavorite:(BOOL)on;
 
 @end

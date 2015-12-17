@@ -27,7 +27,7 @@
         
         _takeAction = [UIButton buttonWithType:UIButtonTypeCustom];
         _takeAction.translatesAutoresizingMaskIntoConstraints = NO;
-        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:15 width:30 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOptions)];
+        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:15 width:25 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOptions)];
         
         [self addSubview:_backgroundImage];
         [self addSubview:_takeAction];
