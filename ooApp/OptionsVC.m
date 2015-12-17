@@ -103,7 +103,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
         });
 //        [weakSelf getUserTags];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
+        _tags = [NSArray array];
     }];
 }
 
@@ -220,6 +220,12 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
             [_userTags removeObject:tag];
         } else { //not a user tag so set it
             [_userTags addObject:tag];
+            UserObject *uo = [Settings sharedInstance].userObject;
+            [OOAPI setTag:tag.tagID forUser:uo.userID success:^{
+                NSLog(@"Tag Set");
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                NSLog(@"Tag Not Set");
+            }];
         }
     }
 }

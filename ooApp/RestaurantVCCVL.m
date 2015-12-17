@@ -63,17 +63,17 @@
         [_sectionAttributes addObject:itemAttributes];
         column = 0;
         
-        if (section == kSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%d yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
-            numberOfColumnsInRow = kNumColumnsForMediaItems;
+        if (section == kRestaurantSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
+            NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            numberOfColumnsInRow = kRestaurantNumColumnsForMediaItems;
             itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
             xOffset = kGeomSpaceEdge;
             UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
             suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
-        } else if (section == kSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%d yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+        } else if (section == kRestaurantSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
+            NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
             UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
@@ -81,7 +81,7 @@
             xOffset = kGeomSpaceEdge;
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
-        } else if (section == kSectionTypeFollowees && [self.collectionView numberOfItemsInSection:section]) {
+        } else if (section == kRestaurantSectionTypeFollowees && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = width(self.collectionView)/(50+kGeomSpaceEdge);
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
@@ -90,7 +90,7 @@
             xOffset = kGeomSpaceEdge;
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
-        } else {// if (section == kSectionTypeMain && [self.collectionView numberOfItemsInSection:section]) {
+        } else {// if (section == kRestaurantSectionTypeMain && [self.collectionView numberOfItemsInSection:section]) {
             NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
@@ -117,7 +117,7 @@
             }
                 
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
-            if (section == kSectionTypeMediaItems) {
+            if (section == kRestaurantSectionTypeMediaItems) {
                 NSLog(@"attribute frame=%@, column=%lu", NSStringFromCGRect(attributes.frame), (unsigned long)column);
             }
             [itemAttributes addObject:attributes];
@@ -159,7 +159,7 @@
     
     UICollectionViewLayoutAttributes *a;
     CGFloat y = 0, lastY;
-    for (int i=0; i<kNumColumnsForMediaItems; i++) {
+    for (int i=0; i<kRestaurantNumColumnsForMediaItems; i++) {
         NSInteger idx = [lastSectionAttributes count] - 1 - i;
         if (idx >= 0) {
             a = [lastSectionAttributes objectAtIndex:idx];

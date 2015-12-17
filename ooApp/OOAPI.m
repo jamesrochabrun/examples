@@ -776,6 +776,46 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 //------------------------------------------------------------------------------
+// Name:    getFoodFeedType
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getFoodFeedType:(NSUInteger)type
+                                             success:(void (^)(NSArray *restaurants))success
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{    
+    UserObject *uo = [Settings sharedInstance].userObject;
+
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], uo.userID];
+    
+    if (type == 1) {
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?filter=2", kHTTPProtocol, [OOAPI URL], uo.userID];
+    } else if (type == 2) {
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], uo.userID];
+    } else {
+        failure(nil, nil);
+        return nil;
+    }
+    
+
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *restaurants = [NSMutableArray array];
+        if ([responseObject count]) {
+            for (id dict in responseObject) {
+                [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+            }
+        }
+        success(restaurants);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+    
+    
+    //return [rm GET:urlString parameters:nil success:success failure:failure];
+}
+
+//------------------------------------------------------------------------------
 // Name:    getRestaurantsFromSystemList
 // Purpose:
 //------------------------------------------------------------------------------

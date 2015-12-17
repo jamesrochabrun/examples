@@ -150,7 +150,7 @@ NSString *const kKeyNotificationID = @"id";
 }
 
 - (void)testRemoteNotification {
-    NSMutableDictionary *note = [NSMutableDictionary dictionary];
+//    NSMutableDictionary *note = [NSMutableDictionary dictionary];
     
 //    {
 //        "type":2,

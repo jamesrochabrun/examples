@@ -24,6 +24,7 @@
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
 #import "ConnectVC.h"
+#import "FoodFeedVC.h"
 
 @interface MenuTVC ()
 @property (nonatomic, strong) NSMutableArray *menuItems;
@@ -73,6 +74,12 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
 
+    menuItem = [[MenuObject alloc] init];
+    menuItem.icon = kFontIconProfile;
+    menuItem.name = @"FOOD FEED";
+    menuItem.type = kMenuItemFoodFeed;
+    [_menuItems addObject:menuItem];
+    
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconWhatsNew;
     menuItem.name = @"HOT LISTS";
@@ -242,6 +249,9 @@ static NSString * const MenuCellIdentifier = @"menuCell";
         }
     } else if ([menuItem.type isEqualToString:kMenuItemDiagnostic]) {
         _fvc = [[DiagnosticVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemFoodFeed]) {
+        _fvc = [[FoodFeedVC alloc] init];
+        [(FoodFeedVC *)_fvc selectAll];
     } else if ([menuItem.type isEqualToString:kMenuItemMeet]) {
         _fvc = [[EventsListVC alloc] init];
         if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {

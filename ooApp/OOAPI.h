@@ -311,7 +311,9 @@ typedef enum {
                                   success:(void (^)(NSArray *names))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-
++ (AFHTTPRequestOperation *)getFoodFeedType:(NSUInteger)type
+                                    success:(void (^)(NSArray *restaurants))success
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 // Auto complete
 
 
