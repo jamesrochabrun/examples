@@ -12,7 +12,6 @@
 @class PhotoCVCell;
 
 @protocol PhotoCVCellDelegate
-- (void)photoCell:(PhotoCVCell *)photoCell deletePhoto:(MediaItemObject *)mio;
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio;
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject;
 @end

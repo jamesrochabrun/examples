@@ -23,6 +23,8 @@
 		3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5A1BC445A700F1AF67 /* OOFilterView.m */; };
 		3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5D1BC46BE800F1AF67 /* FilterObject.m */; };
 		3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */; };
+		36175CDA1C22940700E6FE3D /* FoodFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36175CD91C22940700E6FE3D /* FoodFeedVC.m */; };
+		36175CDD1C22AE9C00E6FE3D /* FoodFeedVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36175CDC1C22AE9C00E6FE3D /* FoodFeedVCCVL.m */; };
 		3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11A1B8E6A06004537B6 /* MenuTVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
@@ -186,6 +188,10 @@
 		3613BE5D1BC46BE800F1AF67 /* FilterObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterObject.m; sourceTree = "<group>"; };
 		3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListsVC.m; sourceTree = "<group>"; };
 		3613BE601BC5D87E00F1AF67 /* ListsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListsVC.h; sourceTree = "<group>"; };
+		36175CD81C22940700E6FE3D /* FoodFeedVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoodFeedVC.h; sourceTree = "<group>"; };
+		36175CD91C22940700E6FE3D /* FoodFeedVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoodFeedVC.m; sourceTree = "<group>"; };
+		36175CDB1C22AE9C00E6FE3D /* FoodFeedVCCVL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoodFeedVCCVL.h; sourceTree = "<group>"; };
+		36175CDC1C22AE9C00E6FE3D /* FoodFeedVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoodFeedVCCVL.m; sourceTree = "<group>"; };
 		3621F1191B8E6A06004537B6 /* MenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVC.h; sourceTree = "<group>"; };
 		3621F11A1B8E6A06004537B6 /* MenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
@@ -744,6 +750,10 @@
 				36FAB82D1BEC2DBA00B20EA1 /* FeedVC.h */,
 				3621F1191B8E6A06004537B6 /* MenuTVC.h */,
 				3621F11A1B8E6A06004537B6 /* MenuTVC.m */,
+				36175CD81C22940700E6FE3D /* FoodFeedVC.h */,
+				36175CD91C22940700E6FE3D /* FoodFeedVC.m */,
+				36175CDB1C22AE9C00E6FE3D /* FoodFeedVCCVL.h */,
+				36175CDC1C22AE9C00E6FE3D /* FoodFeedVCCVL.m */,
 				36250BDA1B82679A00F456B5 /* LoginVC.h */,
 				36250BDB1B82679A00F456B5 /* LoginVC.m */,
 				96E954E01BDFF99100F5197A /* Reachability.h */,
@@ -1033,6 +1043,7 @@
 				3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */,
 				3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */,
 				96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */,
+				36175CDD1C22AE9C00E6FE3D /* FoodFeedVCCVL.m in Sources */,
 				3625598D1C0A5102002553B4 /* OptionsVC.m in Sources */,
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
 				367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */,
@@ -1054,6 +1065,7 @@
 				36D887E41C1B48390002A412 /* TTRangeSlider.m in Sources */,
 				96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */,
 				3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */,
+				36175CDA1C22940700E6FE3D /* FoodFeedVC.m in Sources */,
 				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
 				365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */,
 				96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */,

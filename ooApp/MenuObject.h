@@ -10,6 +10,7 @@
 
 extern NSString *const kMenuItemPlay;
 extern NSString *const kMenuItemFeed;
+extern NSString *const kMenuItemFoodFeed;
 extern NSString *const kMenuItemConnect;
 extern NSString *const kMenuItemProfile;
 extern NSString *const kMenuItemDiscover;

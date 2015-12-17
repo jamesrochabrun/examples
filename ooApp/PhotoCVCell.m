@@ -32,7 +32,7 @@
         [_takeAction roundButtonWithIcon:kFontIconMore fontSize:15 width:25 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOptions)];
         
         _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userButton withText:@"@ssdds" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
+        [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
         _userButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
@@ -124,7 +124,7 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
-    
+
     if (_mediaItemObject.sourceUserID) {
         [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
             _userObject = user;

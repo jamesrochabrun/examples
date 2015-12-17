@@ -9,12 +9,12 @@
 #import <UIKit/UIKit.h>
 
 typedef enum {
-    kSectionTypeMain,
-    kSectionTypeFollowees,
-    kSectionTypeLists,
-    kSectionTypeMediaItems,
-    kSectionTypeNumberOfSections
-} kSectionType;
+    kRestaurantSectionTypeMain,
+    kRestaurantSectionTypeFollowees,
+    kRestaurantSectionTypeLists,
+    kRestaurantSectionTypeMediaItems,
+    kRestaurantSectionTypeNumberOfSections
+} kRestaurantSectionType;
 
 @class RestaurantVCCVL;
 
@@ -26,7 +26,7 @@ typedef enum {
 
 @end
 
-static NSUInteger kNumColumnsForMediaItems = 2;
+static NSUInteger kRestaurantNumColumnsForMediaItems = 2;
 
 @interface RestaurantVCCVL : UICollectionViewLayout
 

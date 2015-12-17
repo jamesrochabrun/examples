@@ -15,6 +15,7 @@ NSString *const kMenuItemConnect = @"connect";
 NSString *const kMenuItemProfile = @"profile";
 NSString *const kMenuItemDiscover = @"discover";
 NSString *const kMenuItemWhatsNew = @"whatsnew";
+NSString *const kMenuItemFoodFeed = @"foodfeed";
 NSString *const kMenuItemEat = @"eat";
 NSString *const kMenuItemMeet = @"meet";
 NSString *const kMenuItemSettings = @"settings";

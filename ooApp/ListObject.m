@@ -8,6 +8,7 @@
 
 #import "ListObject.h"
 #import "OOAPI.h"
+#import "Common.h"
 
 NSString *const kKeyListID = @"list_id";
 NSString *const kKeyListUserIDs = @"user_ids";;
@@ -37,7 +38,8 @@ BOOL isListObject (id  object)
     }
     
     ListObject *list = [[ListObject alloc] init];
-    list.listID = [[dict objectForKey:kKeyListID] unsignedIntegerValue];
+    list.listID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyListID]);
+    if (!list.listID) return nil;
     
     if ([dict objectForKey:kKeyListUserIDs] && ![[dict objectForKey:kKeyListUserIDs] isKindOfClass:[NSNull class]]) {
         list.userIDs = [dict objectForKey:kKeyListUserIDs];

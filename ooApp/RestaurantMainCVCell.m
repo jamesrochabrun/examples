@@ -110,12 +110,12 @@
         _favoriteButton.layer.cornerRadius = 0;
         
         _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_shareButton withIcon:kFontIconUpload fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed)];
+        [_shareButton withIcon:kFontIconShare fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed)];
         _shareButton.layer.cornerRadius = 0;
         
         [_shareButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        
         [_favoriteButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
-        [_shareButton setTitle:kFontIconUpload forState:UIControlStateSelected];
         [_favoriteButton setTitle:kFontIconFavoriteFilled forState:UIControlStateSelected];
         
         _favoriteButton.translatesAutoresizingMaskIntoConstraints = _shareButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -510,12 +510,17 @@
     _phoneNumber.linkAttributes = @{NSFontAttributeName : [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSForegroundColorAttributeName : UIColorRGBA(kColorYellow)};
     [_phoneNumber addLinkToPhoneNumber:_restaurant.phone withRange:range];
 
-    range = [_website.text rangeOfString:_website.text];
-    [_website setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                     [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSFontAttributeName,
-                                     UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
-                                     nil]];
-    [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
+    if (_restaurant.website) {
+        range = [_website.text rangeOfString:_website.text];
+        [_website setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                         [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader], NSFontAttributeName,
+                                         UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
+                                         nil]];
+        [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
+        _verticalLine2.hidden = _website.hidden = NO;
+    } else {
+        _verticalLine2.hidden = _website.hidden = YES;
+    }
 
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
