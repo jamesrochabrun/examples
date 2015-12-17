@@ -51,12 +51,13 @@ typedef enum : char {
 @property (nonatomic, strong) NSString *primaryImageURL;
 @property (nonatomic, strong) NSString *primaryVenueImageIdentifier;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
-@property (nonatomic,assign) int currentUserCanEdit;
-enum {
+typedef enum {
     EVENT_USER_CAN_EDIT=1,
     EVENT_USER_CANNOT_EDIT=2,
     EVENT_EDITABILITY_UNKNOWN=0
-};
+} EventEditability;
+@property (nonatomic,assign) EventEditability currentUserCanEdit;
+
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)dictionaryFromEvent;
 
@@ -73,7 +74,7 @@ enum {
 - (RestaurantObject *)firstVenue;
 
 - (AFHTTPRequestOperation *)refreshUsersFromServerWithSuccess:(void (^)())success
-                                                       failure:(void (^)())failure;
+                                                      failure:(void (^)())failure;
 - (AFHTTPRequestOperation *)refreshVenuesFromServerWithSuccess:(void (^)())success
                                                        failure:(void (^)())failure;
 - (AFHTTPRequestOperation *)refreshParticipantStatsFromServerWithSuccess:(void (^)())success
@@ -86,6 +87,9 @@ enum {
 
 - (RestaurantObject *)lookupVenueByID:(NSUInteger)identifier;
 - (VoteObject *)lookupVoteByVenueID:(NSUInteger)identifier;
+
+- (AFHTTPRequestOperation*) refreshWithSuccess: (void (^)())success
+                                       failure:(void (^)())failure;
 
 - (BOOL)userIsAdministrator: (NSUInteger)userid;
 

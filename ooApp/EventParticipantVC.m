@@ -749,6 +749,7 @@
 @property (nonatomic,strong)  UITableView * table;
 @property (nonatomic,assign) int mode;
 @property (nonatomic,strong) NSMutableArray* sortedArrayOfVenues;
+@property (nonatomic,assign) BOOL coordinatorVCReportedEventChanged;
 @end
 
 @implementation EventParticipantVC
@@ -812,18 +813,29 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
+    __weak  EventParticipantVC *weakSelf = self;
+    if ( self.coordinatorVCReportedEventChanged) {
+        self.coordinatorVCReportedEventChanged= NO;
+        
+        [self.eventBeingEdited refreshWithSuccess:^{
+            [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+        } failure:^{
+            NSLog (@"FAILED TO REFETCH EVENT");
+        }];
+    }
+         
     if (! [self.eventBeingEdited totalVenues ]) {
         /* _venueOperation=*/ [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-            [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+            [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
         } failure:^{
-            NSLog (@"FAILED TO FETCH VENUES");
+            NSLog (@"FAILED TO FETCH EVENT VENUES");
         }];
     }
     
     /* _voteOperation=*/ [self.eventBeingEdited refreshVotesFromServerWithSuccess:^{
-        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+        [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
     } failure:^{
-        NSLog  (@"FAILED TO FETCH VOTES");
+        NSLog  (@"FAILED TO FETCH EVENT VOTES");
     }];
 }
 
@@ -949,6 +961,12 @@
     }
     return kGeomEventParticipantRestaurantHeight +kGeomEventParticipantSeparatorHeight;
 }
+
+- (void) userDidAlterEvent
+{
+    self.coordinatorVCReportedEventChanged= YES;
+}
+
 
 - (void) userDidSelect: (NSUInteger) which;
 {
