@@ -348,7 +348,6 @@ BOOL isEventObject (id  object)
                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                      failure();
                                  }];
-    
 }
 
 - (AFHTTPRequestOperation *)refreshVenuesFromServerWithSuccess:(void (^)())success

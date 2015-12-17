@@ -38,6 +38,7 @@ NSString *const kFontIconPerson=  @"y";
 NSString *const kFontIconCheckmark = @"n";
 NSString *const kFontIconFavorite = @"Q";
 NSString *const kFontIconFavoriteFilled = @"R";
+NSString *const kFontIconDontCare = @"T";
 NSString *const kFontIconPhoto = @"x";
 NSString *const kFontIconUpload = @"F";
 NSString *const kFontIconUserTag = @"t";

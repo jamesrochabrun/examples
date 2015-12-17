@@ -60,9 +60,6 @@ enum  {
 //------------------------------------------------------------------------------
 
 @interface EventParticipantVotingSubCell : UIView
-
-@property (nonatomic,strong)  UIImageView *thumbnail;
-@property (nonatomic,strong)   UILabel *labelName;
 @property (nonatomic,strong) VoteObject  *vote;
 - (void)setMode:(int)mode;
 

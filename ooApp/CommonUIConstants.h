@@ -153,6 +153,7 @@ extern NSString *const kFontIconWhatsNew;
 extern NSString *const kFontIconWhatsNewFilled;
 extern NSString *const kFontIconPerson;
 extern NSString *const kFontIconCheckmark;
+extern NSString *const kFontIconDontCare;
 extern NSString *const kFontIconFavorite;
 extern NSString *const kFontIconFavoriteFilled;
 extern NSString *const kFontIconPhoto;

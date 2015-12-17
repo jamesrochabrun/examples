@@ -50,10 +50,11 @@
     ENTRY;
     [super viewDidLoad];
     
-    self.view.backgroundColor= WHITE;    
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
+    self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
+
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
     float borderWidth= 0;

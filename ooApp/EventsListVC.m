@@ -262,14 +262,14 @@
             [cell setEvent:e];
         }
         
-        if (!row) {
-            cell.nameHeader= [[OOStripHeader alloc] init];
-            [cell.nameHeader setName:_tableSectionNames[section]];
-
-            [cell setIsFirst];
-        } else {
-            cell.nameHeader= nil;
-        }
+//        if (!row) {
+//            cell.nameHeader= [[OOStripHeader alloc] init];
+//            [cell.nameHeader setName:_tableSectionNames[section]];
+//
+//            [cell setIsFirst];
+//        } else {
+//            cell.nameHeader= nil;
+//        }
     }
     
     return cell;
@@ -300,7 +300,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 0;
+    return 25;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -314,6 +314,13 @@
     return v;
 }
 
+- (NSString*) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (section < _tableSectionNames.count)
+        return _tableSectionNames[section];
+    return @"";
+}
+
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
 // Purpose:
@@ -321,7 +328,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger section= indexPath.section;
-    float extraSpaceForFirstRow= !indexPath.row ? kGeomStripHeaderHeight/2. : 0;
+//    float extraSpaceForFirstRow= !indexPath.row ? kGeomStripHeaderHeight/2. : 0;
     
     @synchronized(_yourEventsArray) {
         
@@ -339,11 +346,11 @@
         }
         
         if (!events.count) {
-            return kGeomHeightEventCellHeight + extraSpaceForFirstRow;
+            return kGeomHeightEventCellHeight;// + extraSpaceForFirstRow;
         }
     }
     
-    return kGeomHeightEventCellHeight + extraSpaceForFirstRow;
+    return kGeomHeightEventCellHeight;// + extraSpaceForFirstRow;
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
@@ -461,6 +468,7 @@
     if (_doingTransition) {
         return;
     }
+    _doingTransition=YES;
     
     NSInteger row = indexPath.row;
     NSInteger section = indexPath.section;
@@ -483,6 +491,7 @@
         }
         
         if  (!events.count) {
+            _doingTransition=NO;
             return;
         }
         
@@ -495,6 +504,7 @@
             vc.eventBeingEdited= self.eventBeingEdited;
             vc.previousVC=  self;
             [self.navigationController pushViewController:vc animated:YES];
+            _doingTransition=NO;
             return;
         }
         
@@ -504,14 +514,14 @@
             [cell updateHighlighting:NO];
         });
         
-        
         BOOL userDidSubmitVotes=  NO;
         
+        _doingTransition= YES;
+
         __weak EventsListVC *weakSelf = self;
         NSUInteger eventID= event.eventID;
         [OOAPI getEventByID:eventID
                     success:^(EventObject *event) {
-                        _doingTransition= YES;
                         [OOAPI determineIfCurrentUserCanEditEvent:event
                                                           success:^(bool allowed) {
                                                               weakSelf.doingTransition= NO;
@@ -647,6 +657,14 @@
     vc.isNewEvent= YES;
     vc.eventBeingEdited= self.eventBeingEdited;
    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+{
+    view.tintColor = BLACK;
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+    [header.textLabel setTextColor: WHITE];
+    [header.textLabel setFont: [UIFont fontWithName: kFontLatoBold size:kGeomFontSizeStripHeader]];
 }
 
 - (void)userDidAlterEvent

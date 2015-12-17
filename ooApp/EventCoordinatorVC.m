@@ -126,6 +126,7 @@
 @property (nonatomic,strong)  UIButton* buttonAccept;
 @property (nonatomic,strong)  UIButton* buttonDecline;
 @property (nonatomic,strong)  UIImageView *imageViewContainer1;
+@property (nonatomic,strong)  UIView *viewOverlay;
 @property (nonatomic,strong)  UILabel *labelIcon;
 @property (nonatomic,strong)  UILabel *labelTitle;
 @property (nonatomic,strong)  UILabel *labelSubtitle;
@@ -143,6 +144,9 @@
         self.imageViewContainer1= makeImageView(self.contentView, nil);
         _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
         _imageViewContainer1.clipsToBounds= YES;
+        
+        self.viewOverlay=makeView(self.contentView, BLACK);
+        _viewOverlay.alpha=.5;
         
         self.labelTitle=makeAttributedLabel(self.contentView, self.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
         
@@ -203,11 +207,13 @@
     self.labelIcon= nil;
     self.labelSubtitle= nil;
     self.labelTitle.text= self.eventBeingEdited.name;
+    _viewOverlay.alpha=.5;
 }
 
 - (void) coverDoesNotHaveImage
 {
     [self.labelTitle removeFromSuperview];
+    _viewOverlay.alpha=0;
     
     self.labelIcon=makeIconLabel(self.contentView, kFontIconPhoto, 20);
     self.labelTitle=makeAttributedLabel(self.contentView, @"UPLOAD A COVER PHOTO", kGeomFontSizeHeader);
@@ -317,6 +323,8 @@
     float w= self.bounds.size.width;
     float h= self.bounds.size.height;
     _imageViewContainer1.frame= CGRectMake(0, 0, w, h);
+    _viewOverlay.frame=_imageViewContainer1.frame;
+//    [self.contentView bringSubviewToFront:_viewOverlay];
     
     float yButtons= h-kGeomHeightButton;
     if ( self.inE3LMode) {
@@ -345,7 +353,6 @@
     } else {
         _labelTitle.frame = CGRectMake(0,0,w, yButtons);
     }
-    
     
 }
 
@@ -601,10 +608,6 @@
         [_venuesCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
         [_venuesCollectionView registerClass:[PlusCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFERP];
         [self addSubview: _venuesCollectionView];
-        
-        //        self.nameHeader= [[OOStripHeader alloc] init];
-        //        [self addSubview: _nameHeader];
-        //        [self.nameHeader setName: @"WHERE"];
     }
     return self;
 }
@@ -649,7 +652,11 @@
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     NSInteger total = [self.eventBeingEdited totalVenues];
-    return 1+ total ;
+    if ( _inE3LMode) {
+        return total ;
+    } else {
+        return 1+total ; // PlusCell
+    }
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -677,8 +684,9 @@
 {
     NSInteger row = indexPath.row;
     RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
-    
-    [self.delegate userTappedOnVenue: venue];
+    if (venue ) {
+        [self.delegate userTappedOnVenue: venue];
+    }
 }
 
 @end
