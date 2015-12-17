@@ -90,18 +90,12 @@ static const NSUInteger maximumKeywords= 4;
     self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff404040));
     self.keywordButtonsArray= [NSMutableArray new];
     for (int i=0; i <maximumKeywords ; i++) {
-        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeSubheader, UIColorRGB(0xff808000), CLEAR,
-                                     self, @selector(userPressedKeyword:) , 0);
+        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeSubheader, UIColorRGB(0xff808000), CLEAR, self, @selector(userPressedKeyword:) , 0);
         button.tag=  i;
         button.titleLabel.numberOfLines= 0;
         button.titleLabel.textAlignment= NSTextAlignmentCenter;
         [_keywordButtonsArray addObject: button];
     }
-    
-    self.labelPreSearchInstructiveMessage=  makeLabel( self.view,  @"", kGeomFontSizeDetail);
-    self.labelPreSearchInstructiveMessage.textColor=  UIColorRGB(0xff808000);
-    _labelPreSearchInstructiveMessage.layer.borderWidth= 1;
-    _labelPreSearchInstructiveMessage.layer.borderColor= RED.CGColor;
     
     _searchBar= [UISearchBar new];
     [ self.view addSubview:_searchBar];
@@ -149,6 +143,9 @@ static const NSUInteger maximumKeywords= 4;
     _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
     
+    self.labelPreSearchInstructiveMessage=  makeLabel( self.view,  @".", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage.textColor=  UIColorRGB(0xff808000);
+
     [self setUpKeywordsArray];
 }
 
@@ -559,41 +556,91 @@ static const NSUInteger maximumKeywords= 4;
 
 - (void)showAppropriateTable
 {
+    [self.view bringSubviewToFront:_labelPreSearchInstructiveMessage];
+    
     switch (_currentFilter) {
         case FILTER_PEOPLE:
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
             if  (!_haveSearchedPeople) {
                 _labelPreSearchInstructiveMessage.hidden= NO;
-                _labelPreSearchInstructiveMessage.text=  @"Find Your Foodies (Search for Users by Name)";
+                [UIView animateWithDuration:.2
+                                 animations:^{
+                                     _labelPreSearchInstructiveMessage.alpha=0;
+                                 }
+                                 completion:^(BOOL finished) {
+                                     _labelPreSearchInstructiveMessage.text=  @"Find Your Foodies (Search for Users by Name)";
+
+                                     [UIView animateWithDuration:.2
+                                                      animations:^{
+                                                          _labelPreSearchInstructiveMessage.alpha=1;
+                                                      } completion:^(BOOL finished) {
+                                                          
+                                                      }];
+                                 }];
             } else {
+                _labelPreSearchInstructiveMessage.alpha = 0;
                 _labelPreSearchInstructiveMessage.hidden= YES;
+                _labelPreSearchInstructiveMessage.text=  nil;
             }
 
             break;
+            
         case FILTER_YOU:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
             if  (!_haveSearchedYou) {
                 _labelPreSearchInstructiveMessage.hidden = NO;
-                _labelPreSearchInstructiveMessage.text =  @"Search for places on your lists";
+                [UIView animateWithDuration:.2
+                                 animations:^{
+                                     _labelPreSearchInstructiveMessage.alpha=0;
+                                 }
+                                 completion:^(BOOL finished) {
+                                     _labelPreSearchInstructiveMessage.text =  @"Search for places on your lists";
+                                     
+                                     [UIView animateWithDuration:.2
+                                                      animations:^{
+                                                          _labelPreSearchInstructiveMessage.alpha=1;
+                                                      } completion:^(BOOL finished) {
+                                                          
+                                                      }];
+                                 }];
             } else {
+                _labelPreSearchInstructiveMessage.alpha = 0;
                 _labelPreSearchInstructiveMessage.hidden = YES;
+                _labelPreSearchInstructiveMessage.text=  nil;
             }
-
             break;
+            
         case FILTER_PLACES:
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden = NO;
             
             if  (!_haveSearchedPlaces) {
                 _labelPreSearchInstructiveMessage.hidden = NO;
-                _labelPreSearchInstructiveMessage.text =  @"Search for places to eat\rPowered by Google™";
+                [UIView animateWithDuration:.2
+                                 animations:^{
+                                     _labelPreSearchInstructiveMessage.alpha=0;
+                                 }
+                                 completion:^(BOOL finished) {
+                                     _labelPreSearchInstructiveMessage.text =  @"Search for places to eat\rPowered by Google™";
+                                     
+                                     [UIView animateWithDuration:.2
+                                                      animations:^{
+                                                          _labelPreSearchInstructiveMessage.alpha=1;
+                                                      } completion:^(BOOL finished) {
+                                                          
+                                                      }];
+                                 }];
             } else {
                 _labelPreSearchInstructiveMessage.hidden = YES;
+                _labelPreSearchInstructiveMessage.alpha = 0;
+                _labelPreSearchInstructiveMessage.text=  nil;
             }
             break;
+            
         case FILTER_NONE:
+            _labelPreSearchInstructiveMessage.text=  nil;
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= YES;
             break;
@@ -834,9 +881,10 @@ static const NSUInteger maximumKeywords= 4;
         _viewForKeywordButtons.frame= CGRectMake(0, y, w, 1);
     }
     
-    _labelPreSearchInstructiveMessage.frame = CGRectMake((w-200)/2,y+(h-y-200)/2,200,200);
+    [_labelPreSearchInstructiveMessage sizeToFit];
+    float psih= _labelPreSearchInstructiveMessage.frame.size.height;
+    _labelPreSearchInstructiveMessage.frame = CGRectMake((w-200)/2,y+(h-y-psih)/3,200,psih);
     if  (!_labelPreSearchInstructiveMessage.hidden ) {
-        _labelPreSearchInstructiveMessage.layer.cornerRadius=  100;
         [ self.view  bringSubviewToFront:_labelPreSearchInstructiveMessage];
     }
     _tableRestaurants.frame = CGRectMake(0, y, w, h-y);

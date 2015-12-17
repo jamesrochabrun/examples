@@ -58,6 +58,7 @@ extern NSString *const kKeyUserParticipantState;
 @property (nonatomic, strong) NSString *imageIdentifier;// i.e. from OO.
 @property (nonatomic, assign) NSInteger participantType, participantState;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
+@property (nonatomic, strong) MediaItemObject *mediaItem;
 
 + (UserObject *)userFromDict:(NSDictionary *)dict;
 - (NSMutableDictionary *)dictionaryFromUser;

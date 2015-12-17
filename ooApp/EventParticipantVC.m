@@ -55,6 +55,7 @@
 @property (nonatomic, strong) UILabel *labelDateTime;
 @property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
+@property (nonatomic,strong)  UIView *viewOverlay;
 @property (nonatomic, strong) EventObject *event;
 @property (nonatomic, strong) NSTimer  *timerCountdown;
 @property (nonatomic,strong) ParticipantsView* participantsView;
@@ -79,6 +80,9 @@
         
         self.clipsToBounds= NO;
         self.backgroundColor= CLEAR;
+        
+        self.viewOverlay=makeView(self, BLACK);
+        _viewOverlay.alpha=.5;
         
         self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
         self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
@@ -128,6 +132,9 @@
     _backgroundImageView.frame = CGRectMake(margin,0,w-2*margin,h);
     _viewShadow.frame=  _backgroundImageView.frame;
     
+    _viewOverlay.frame=_backgroundImageView.frame;
+    [self bringSubviewToFront:_viewOverlay];
+    
     float y;
     if  (self.mode  != VOTING_MODE_SHOW_RESULTS ) {
         y=   (h- kGeomEventParticipantButtonHeight -kGeomFaceBubbleDiameter
@@ -142,7 +149,7 @@
     _labelDateTime.frame = CGRectMake( margin,y,w-2*margin,kGeomFontSizeSubheader);
     y+= kGeomFontSizeSubheader +spacing;
     _participantsView.frame = CGRectMake(margin,y,w-2*margin, kGeomFaceBubbleDiameter);
-    
+
     float distanceBetweenButtons= 0;
     float biggerButtonWidth= (w-2*margin-distanceBetweenButtons)/2;
     
@@ -153,7 +160,12 @@
         _labelTimeLeft.frame = CGRectMake(margin,h-kGeomEventParticipantButtonHeight/2,w-2*margin, kGeomEventParticipantButtonHeight/2);
         _buttonSubmitVote.alpha= 0;
     }
-    
+    [self bringSubviewToFront:_labelTitle];
+    [self bringSubviewToFront:_labelDateTime];
+    [self bringSubviewToFront:_labelTimeLeft];
+    [self bringSubviewToFront:_buttonSubmitVote];
+    [self bringSubviewToFront:_participantsView];
+
     [self.participantsView setNeedsLayout];
 }
 
@@ -1083,6 +1095,6 @@
         NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
         [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
     }];
-    
 }
+
 @end

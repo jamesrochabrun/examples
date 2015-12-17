@@ -370,8 +370,8 @@
     
     self.canSeeSection1Items=YES;
     self.canSeeSection2Items=YES;
-    self.canSeeSection3Items=YES;
-    self.canSeeSection4Items= YES;
+    self.canSeeSection3Items=NO;
+    self.canSeeSection4Items=NO;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;

@@ -70,9 +70,11 @@
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
     //TODO: If we asked the user for remote notifications already then register for remote notifications. This needs to be done every lauch to get a new token
-    if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+    
+    // commented out for testing
+//    if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
         [self registerForPushNotifications];
-    }
+//    }
     
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4be2767211390447c381617f13fc2437"];
     // Do some additional configuration if needed here
@@ -104,18 +106,19 @@
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    NSLog(@"didReceiveRemoteNotification");
 }
 
 // Delegation methods
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
-    NSLog(@"device token: %@", devToken);
+    NSLog(@"DEV TOKEN: %@", devToken);
     
     [OOAPI uploadAPNSDeviceToken:[devToken hexadecimalString] success:^(id response) {
-        ;
+        NSLog(@"SUCCESS IN UPLOADING DEV TOKEN");
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
+        NSLog(@"FAILURE IN UPLOADING DEV TOKEN");
     }];
 //    UserObject *userInfo = [Settings sharedInstance].userObject;
 //    NSUInteger userID = userInfo.userID;
