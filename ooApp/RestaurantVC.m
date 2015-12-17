@@ -621,6 +621,12 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     return nil;
 }
 
+- (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)uo {
+    ProfileVC *vc = [[ProfileVC alloc] init];
+    vc.userInfo = uo;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio {
     _showPhotoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do with this photo?" preferredStyle:UIAlertControllerStyleActionSheet];
     
