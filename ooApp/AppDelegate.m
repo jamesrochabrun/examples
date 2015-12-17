@@ -23,7 +23,7 @@ typedef enum {
     kNotificationTypeViewEvent = 2,
     kNotificationTypeViewList = 3,
     kNotificationTypeViewRestaurant = 4
-} NotificationType;
+} NotificationObjectType;
 
 NSString *const kKeyNotificationType = @"type";
 NSString *const kKeyNotificationID = @"id";
@@ -81,11 +81,9 @@ NSString *const kKeyNotificationID = @"id";
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
     
     //TODO: If we asked the user for remote notifications already then register for remote notifications. This needs to be done every lauch to get a new token
-    
-    // commented out for testing
-//    if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+    if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
         [self registerForPushNotifications];
-//    }
+    }
     
     [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4be2767211390447c381617f13fc2437"];
     // Do some additional configuration if needed here
@@ -119,16 +117,36 @@ NSString *const kKeyNotificationID = @"id";
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    NotificationType notType;
+    NotificationObjectType notType;
     NSUInteger identifier;
     if ([userInfo isKindOfClass:[NSDictionary class]]) {
-        notType = (NotificationType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
+        notType = (NotificationObjectType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
         identifier = parseUnsignedIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationID]);
+        if (notType && identifier) [self showObject:notType forID:identifier];
     }
 }
 
-- (void)displayNotification:(NotificationType)type identifier:(NSUInteger)identifier {
-    
+- (void)showObject:(NotificationObjectType)type forID:(NSUInteger)identifier {
+    switch (type) {
+        case kNotificationTypeViewUser:
+            //show user profile
+            message([NSString stringWithFormat:@"Show user: %lu", identifier]);
+            break;
+        case kNotificationTypeViewEvent:
+            //show event
+            message([NSString stringWithFormat:@"Show event: %lu", identifier]);
+            break;
+        case kNotificationTypeViewList:
+            //show list
+            message([NSString stringWithFormat:@"Show list: %lu", identifier]);
+            break;
+        case kNotificationTypeViewRestaurant:
+            //show restaurant
+            message([NSString stringWithFormat:@"Show restaurant: %lu", identifier]);
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)testRemoteNotification {
@@ -147,7 +165,6 @@ NSString *const kKeyNotificationID = @"id";
 //            }
 //        }
 //    }
->>>>>>> 64b3c9e8e9f4657136e3050820c470e45b2b6d18
 }
 
 // Delegation methods

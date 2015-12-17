@@ -152,7 +152,7 @@ extern NSString *const kFontIconSettings;
 extern NSString *const kFontIconWhatsNew;
 extern NSString *const kFontIconWhatsNewFilled;
 extern NSString *const kFontIconPerson;
-extern NSString *const kFontIconCheckmark;
+extern NSString *const kFontIconCheckmarkCircle;
 extern NSString *const kFontIconDontCare;
 extern NSString *const kFontIconFavorite;
 extern NSString *const kFontIconFavoriteFilled;
@@ -170,6 +170,8 @@ extern NSString *const kFontIconPin;
 extern NSString *const kFontIconPinFilled;
 extern NSString *const kFontIconMap;
 extern NSString *const kFontIconLogo;
+extern NSString *const kFontIconShare;
+extern NSString *const kFontIconCheckmark;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

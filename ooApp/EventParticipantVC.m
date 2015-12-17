@@ -345,7 +345,7 @@
     if (self) {
         self.radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
                                      WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);
-        [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
+        [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
 
         self.thumbnail= makeImageView(self, nil);
         _thumbnail.contentMode= UIViewContentModeScaleAspectFill;
@@ -389,7 +389,7 @@
             self.viewOverlay.backgroundColor= CLEAR;
             break;
         case VOTE_STATE_YES:
-            [button setTitle: kFontIconCheckmark forState:UIControlStateNormal];
+            [button setTitle: kFontIconCheckmarkCircle forState:UIControlStateNormal];
             self.viewOverlay.backgroundColor= GREEN;
             break;
         case VOTE_STATE_NO:

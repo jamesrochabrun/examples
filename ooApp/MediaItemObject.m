@@ -24,7 +24,7 @@ NSString *const kKeyMediaItemSourceUserID = @"source_user_id";
         return nil;
     }
     
-    NSLog(@"media_item: %@", dict);
+//    NSLog(@"media_item: %@", dict);
     MediaItemObject *mio = [[MediaItemObject alloc] init];
     mio.mediaItemId = [[dict objectForKey:kKeyMediaItemID] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemID] unsignedIntegerValue];
     mio.type = [dict[kKeyMediaItemType] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemType] unsignedIntegerValue];
