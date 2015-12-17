@@ -16,8 +16,8 @@
 #import "RestaurantObject.h"
 
 @protocol EventCoordinatorVCDelegate
-@optional
 - (void) userDidAlterEvent;
+@optional
 - (void) userDidDeclineEvent;
 @end
 

@@ -30,7 +30,8 @@
 //------------------------------------------------------------------------------
 
 @interface EventParticipantVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate,
-                EventParticipantFirstCellDelegate,EventParticipantVotingCellDelegate,EventCoordinatorVCDelegate>
+                EventParticipantFirstCellDelegate,EventParticipantVotingCellDelegate,
+                EventCoordinatorVCDelegate>
 
 - (void)setMode:(int)mode;
 @property (nonatomic,assign) BOOL votingIsDone;

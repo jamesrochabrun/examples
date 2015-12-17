@@ -17,12 +17,14 @@
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
 #import "GroupObject.h"
+#import "OOUserView.h"
 #import "ProfileVC.h"
 
 @interface  EventWhoTableCell ()
 @property (nonatomic, strong) UIButton *radioButton;
 @property (nonatomic, strong) UILabel *labelName;
-@property (nonatomic, strong) UIImageView *imageViewThumbnail;
+@property (nonatomic, strong) UILabel *labelUserName;
+@property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UIView *viewShadow;
 @property (nonatomic, strong) UserObject* user;
 @property (nonatomic, strong) GroupObject* group;
@@ -37,18 +39,23 @@
 {
     self = [super initWithStyle:style reuseIdentifier:(NSString *)reuseIdentifier];
     if (self) {
-        _viewShadow= makeView(self, WHITE);
-        addShadowTo(_viewShadow);
+//        _viewShadow= makeView(self, WHITE);
+//        addShadowTo(_viewShadow);
         
-        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomIconSize, BLACK, CLEAR, self, @selector(userPressRadioButton:), 0);
+        self.backgroundColor= UIColorRGBA(kColorOffBlack);
+
+        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomIconSize, WHITE, CLEAR, self, @selector(userPressRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
         _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
         
-        _imageViewThumbnail= makeImageView(self, APP.imageForNoProfileSilhouette);
-        _imageViewThumbnail.layer.borderWidth= 1;
-        _imageViewThumbnail.layer.borderColor= GRAY.CGColor;
+        _userView=[[OOUserView alloc] init];
+        [ self  addSubview: _userView];
         
         _labelName= makeLabelLeft(self, nil, kGeomFontSizeHeader);
+        _labelName.textColor= WHITE;
+        
+        _labelUserName= makeLabelLeft(self, nil, kGeomFontSizeHeader);
+        _labelUserName.textColor= WHITE;
         
         self.textLabel.hidden= YES;
         self.imageView.hidden= YES;
@@ -62,7 +69,8 @@
     self.operation= nil;
     
     _labelName.text= nil;
-    _imageViewThumbnail.image=  nil;
+    _labelUserName.text= nil;
+    _userView.user=  nil;
     _radioButton.selected= NO;
     self.group= nil;
     self.user= nil;
@@ -76,66 +84,13 @@
     
     if  (user.firstName && [user.firstName isKindOfClass:[NSString class]]  && user.firstName.length) {
         _labelName.text= [NSString stringWithFormat: @"%@ %@",user.firstName, user.lastName];
+        _labelUserName.text= [NSString stringWithFormat: @"@%@",user.username];
     } else {
         _labelName.text= user.email; // NOTE: This is for the email–only case.
+        _labelUserName.text=  @"x";
     }
     
-    UIImage *profileImage= nil;
-    if (( profileImage= [user userProfilePhoto])) {
-        self.imageViewThumbnail.image= profileImage;
-    }
-    else if ( user.imageIdentifier ) {
-        self.imageIdentifierString= user.imageIdentifier;
-        __weak EventWhoTableCell *weakSelf = self;
-        self.operation= [OOAPI getUserImageWithImageID:_imageIdentifierString
-                                              maxWidth:0
-                                             maxHeight:self.frame.size.height
-                                               success:^(NSString *imageRefs) {
-                                                   NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: imageRefs ]];
-                                                   if  (request ) {
-                                                       [weakSelf.imageViewThumbnail setImageWithURLRequest:request
-                                                                                          placeholderImage:APP.imageForNoProfileSilhouette
-                                                                                                   success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                                                                                       
-                                                                                                       ON_MAIN_THREAD( ^{
-                                                                                                           weakSelf.imageViewThumbnail.image= image;
-                                                                                                           [user setUserProfilePhoto: image
-                                                                                                            andUpload:NO];
-                                                                                                       });
-                                                                                                       
-                                                                                                   } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                                                                                       
-                                                                                                   }];
-                                                   }
-                                               } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                                                   NSLog(@"");
-                                               }];
-    }
-    else if ( user.facebookProfileImageURLString) {
-        self.imageURLForFacebook=   user.facebookProfileImageURLString;
-        __weak EventWhoTableCell *weakSelf = self;
-        
-        NSURLRequest *request= [ NSURLRequest requestWithURL:[NSURL URLWithString: user.facebookProfileImageURLString ]];
-        if  (request ) {
-            [weakSelf.imageViewThumbnail setImageWithURLRequest:request
-                                               placeholderImage:APP.imageForNoProfileSilhouette
-                                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                                            
-                                                            ON_MAIN_THREAD( ^{
-                                                                weakSelf.imageViewThumbnail.image= image;
-                                                                [user setUserProfilePhoto: image
-                                                                                andUpload:NO];
-                                                            });
-                                                            
-                                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                                            
-                                                        }];
-        }
-    }
-    else {
-        self.imageViewThumbnail.image= APP.imageForNoProfileSilhouette;
-        
-    }
+    _userView.user= user;
 }
 
 - (void) specifyGroup:  (GroupObject*)group;
@@ -155,25 +110,35 @@
     [super layoutSubviews];
     float w= self.frame.size.width;
     float h= self.frame.size.height;
+    const float  margin= kGeomSpaceEdge;
+    float y;
+    float availableHeight=h-2*margin;
     
     // RULE: If this row will simply be an email address, then we completely hide the image.
     if  (!self.group && self.user && !self.user.firstName ) {
-        _imageViewThumbnail.hidden= YES;
-        _viewShadow.frame = CGRectMake(kGeomSpaceEdge,0, w-kGeomSpaceEdge*2,
-                                       kGeomHeightEventWhoTableCellImageHeight);
-        _labelName.frame = CGRectMake(kGeomSpaceEdge,0,w-kGeomSpaceEdge-kGeomButtonWidth,kGeomHeightEventWhoTableCellImageHeight);
-        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,kGeomHeightEventWhoTableCellImageHeight);
+        _userView.hidden= YES;
+        _viewShadow.frame = CGRectMake(margin,margin, w-kGeomSpaceEdge*2, availableHeight);
+        
+        _labelName.frame = CGRectMake( margin, 0,w- margin-kGeomButtonWidth, kGeomHeightEventWhoTableCellImageHeight);
+        _labelUserName.frame= CGRectZero;
+        
+        _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
     } else {
-        _viewShadow.frame = CGRectMake(kGeomSpaceEdge,0, w-kGeomSpaceEdge*2,
-                                       kGeomHeightEventWhoTableCellImageHeight);
-        float x= kGeomSpaceEdge;
-        _imageViewThumbnail.hidden= NO;
+        _viewShadow.frame = CGRectMake( margin, margin, w- margin*2,availableHeight);
+        float x=  margin;
+        _userView.hidden= NO;
         float imageDimension= h-2*kGeomSpaceEdge;
-        _imageViewThumbnail.frame = CGRectMake(x,0,
-                                               kGeomHeightEventWhoTableCellImageHeight,kGeomHeightEventWhoTableCellImageHeight);
-        x += imageDimension+kGeomSpaceInter ;
-        _labelName.frame = CGRectMake(x,0,w-x-kGeomButtonWidth, kGeomHeightEventWhoTableCellImageHeight);
-        _radioButton.frame = CGRectMake(w-kGeomButtonWidth,0,kGeomButtonWidth,kGeomHeightEventWhoTableCellImageHeight);
+        _userView.frame = CGRectMake(x, margin,imageDimension,imageDimension);
+        
+        x +=imageDimension+ margin;
+        y= h/5;
+        [_labelName sizeToFit];
+        [_labelUserName sizeToFit];
+        _labelName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelName.frame.size.height);
+        y += _labelName.frame.size.height +kGeomSpaceInter;
+        _labelUserName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelUserName.frame.size.height);
+
+        _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
     }
     
 }
@@ -237,13 +202,14 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
     
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
-    self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  BLACK, CLEAR,
+    self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  WHITE, CLEAR,
                                    self, @selector(userPressedInviteByEmail:), 1);
     
     self.table= makeTable( self.view,  self);
 #define PARTICIPANTS_TABLE_REUSE_IDENTIFIER  @"whomToInviteCell"
     [_table registerClass:[EventWhoTableCell class] forCellReuseIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER];
-    
+    _table.backgroundColor= UIColorRGBA(kColorOffBlack);
+
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 }
 
@@ -491,7 +457,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 10;
+    return 0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

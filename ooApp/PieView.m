@@ -41,6 +41,9 @@
     CGContextMoveToPoint (context, w/2,h/2);
     CGContextAddLineToPoint (context, w/2,0);
     float  angle= (_hour%12)/12. * M_PI *2 ;
+    if ( angle == 0) {
+        angle= -.025;// @12pm/am Create an upward line.
+    }
     CGContextAddArc (context, w/2, h/2, radius, -M_PI/2, angle-M_PI/2, YES);
     CGContextAddLineToPoint (context, w/2, h/2);
 

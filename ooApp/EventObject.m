@@ -350,6 +350,85 @@ BOOL isEventObject (id  object)
                                  }];
 }
 
+- (AFHTTPRequestOperation*) refreshWithSuccess: (void (^)())success
+                                       failure:(void (^)())failure
+{
+    __weak EventObject *weakSelf = self;
+    return [OOAPI getEventByID: self.eventID
+                       success:^(EventObject *event) {
+                           if  (!weakSelf.name || (event.name && ![event.name isEqualToString: weakSelf.name])) {
+                               weakSelf.name=event.name;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (!weakSelf.eventCoverImageURL || (event.eventCoverImageURL && ![event.eventCoverImageURL isEqualToString: weakSelf.eventCoverImageURL])) {
+                               weakSelf.eventCoverImageURL=event.eventCoverImageURL;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (!weakSelf.date || (event.date && ![event.date isEqualToDate: weakSelf.date])) {
+                               weakSelf.date=event.date;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (!weakSelf.dateWhenVotingClosed || (event.dateWhenVotingClosed && ![event.dateWhenVotingClosed isEqualToDate: weakSelf.dateWhenVotingClosed])) {
+                               weakSelf.dateWhenVotingClosed=event.dateWhenVotingClosed;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (weakSelf.totalPrice<=0 || (event.totalPrice>0 && event.totalPrice != weakSelf.totalPrice)) {
+                               weakSelf.totalPrice=event.totalPrice;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (weakSelf.numberOfVenues==0 || (event.numberOfVenues>0 && event.numberOfVenues != weakSelf.numberOfVenues)) {
+                               weakSelf.numberOfVenues=event.numberOfVenues;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (weakSelf.numberOfPeople==0 || (event.numberOfPeople>0 && event.numberOfPeople != weakSelf.numberOfPeople)) {
+                               weakSelf.numberOfPeople=event.numberOfPeople;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (weakSelf.numberOfPeopleVoted==0 || (event.numberOfPeopleVoted>0 && event.numberOfPeopleVoted != weakSelf.numberOfPeopleVoted)) {
+                               weakSelf.numberOfPeopleVoted=event.numberOfPeopleVoted;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (weakSelf.numberOfPeopleResponded==0 || (event.numberOfPeopleResponded>0 && event.numberOfPeopleResponded != weakSelf.numberOfPeopleResponded)) {
+                               weakSelf.numberOfPeopleResponded=event.numberOfPeopleResponded;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (!weakSelf.reviewSite || (event.reviewSite && ![event.reviewSite isEqualToString: weakSelf.reviewSite])) {
+                               weakSelf.reviewSite=event.reviewSite;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (!weakSelf.specialEvent || (event.specialEvent && ![event.specialEvent isEqualToString: weakSelf.specialEvent])) {
+                               weakSelf.specialEvent=event.specialEvent;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (!weakSelf.comment || (event.comment && ![event.comment isEqualToString: weakSelf.comment])) {
+                               weakSelf.comment=event.comment;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           if  (weakSelf.friendRecommendationAge<=0 || (event.friendRecommendationAge>0 && event.friendRecommendationAge != weakSelf.friendRecommendationAge)) {
+                               weakSelf.friendRecommendationAge=event.friendRecommendationAge;
+                               weakSelf.hasBeenAltered=YES;
+                           }
+                           
+                           success();
+                       }
+                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                           NSLog  (@"FAILED TO REFRESH EVENT");
+                           failure();
+                       }];
+}
+
 - (AFHTTPRequestOperation *)refreshVenuesFromServerWithSuccess:(void (^)())success
                                                        failure:(void (^)())failure;
 {
