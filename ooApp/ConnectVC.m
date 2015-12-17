@@ -28,7 +28,7 @@
 
 @implementation ConnectTableSectionHeader
 
-- (instancetype) init
+- (instancetype) initWithExpandedFlag: (BOOL) expanded_
 {
     self=[super init];
     if (self) {
@@ -37,6 +37,7 @@
         _labelExpander=makeIconLabel(self, kFontIconBack, kGeomIconSize);
         _labelExpander.textColor= UIColorRGBA(kColorYellow);
         self.backgroundColor=GRAY;
+        _isExpanded=expanded_;
     }
     return self;
 }
@@ -382,10 +383,10 @@
     _followeesArray = [NSMutableArray new];
     _followersArray = [NSMutableArray new];
     
-    ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] init];
-    ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] init];
-    ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] init];
-    ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] init];
+    ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection1Items];
+    ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
+    ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
+    ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection4Items];
     
     headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView1.labelTitle.text=@"Suggested Users";
