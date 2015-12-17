@@ -32,7 +32,7 @@
 @property (nonatomic, strong) UIButton *locationButton;
 @property (nonatomic, strong) UIButton *hoursButton;
 @property (nonatomic, strong) UIButton *favoriteButton;
-@property (nonatomic, strong) UIButton *toTryButton;
+@property (nonatomic, strong) UIButton *shareButton;
 @property (nonatomic, strong) UIScrollView *hoursScroll;
 @property (nonatomic, strong) UILabel *hoursView;
 @property (nonatomic, strong) UIView *verticalLine1;
@@ -109,21 +109,21 @@
         [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
         _favoriteButton.layer.cornerRadius = 0;
         
-        _toTryButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_toTryButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
-        _toTryButton.layer.cornerRadius = 0;
+        _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_shareButton withIcon:kFontIconUpload fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed)];
+        _shareButton.layer.cornerRadius = 0;
         
-        [_toTryButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        [_shareButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
         [_favoriteButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
-        [_toTryButton setTitle:kFontIconToTryFilled forState:UIControlStateSelected];
+        [_shareButton setTitle:kFontIconUpload forState:UIControlStateSelected];
         [_favoriteButton setTitle:kFontIconFavoriteFilled forState:UIControlStateSelected];
         
-        _favoriteButton.translatesAutoresizingMaskIntoConstraints = _toTryButton.translatesAutoresizingMaskIntoConstraints = NO;
+        _favoriteButton.translatesAutoresizingMaskIntoConstraints = _shareButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_favoriteButton];
-        [self addSubview:_toTryButton];
+        [self addSubview:_shareButton];
         
-        _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _toTryButton.layer.borderWidth = 1;
-        _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _toTryButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+        _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _shareButton.layer.borderWidth = 1;
+        _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _shareButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
         
 //        _rating = [[UILabel alloc] init];
 //        _rating.translatesAutoresizingMaskIntoConstraints = NO;
@@ -190,6 +190,10 @@
     [_delegate restaurantMainCVCell:self gotoURL:url];
 }
 
+- (void)sharePressed {
+    [_delegate restaurantMainCVCellSharePressed];
+}
+
 - (void)showOnMap {
     [_delegate restaurantMainCVCell:self showMapTapped:_restaurant.location];
 }
@@ -197,8 +201,6 @@
 - (void)listButtonTapped:(id)sender {
     if (sender == _favoriteButton) {
         [_delegate restaurantMainCVCell:self listButtonTapped:kListTypeFavorites];
-    } else if (sender == _toTryButton) {
-        [_delegate restaurantMainCVCell:self listButtonTapped:kListTypeToTry];
     }
 }
 
@@ -228,7 +230,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _toTryButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _shareButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -244,7 +246,7 @@
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton][_favoriteButton(actionButtonWidth)][_toTryButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton][_shareButton(actionButtonWidth)][_favoriteButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_priceRange]-spaceInter-[_verticalLine1(1)]-spaceInter-[_distance]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_phoneNumber]-[_verticalLine2(1)]-[_website]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -253,7 +255,7 @@
     
     //name line
     [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_favoriteButton
+                         constraintWithItem:_shareButton
                          attribute:NSLayoutAttributeCenterX
                          relatedBy:NSLayoutRelationEqual
                          toItem:self
@@ -269,7 +271,7 @@
                          multiplier:1
                          constant:0]];
     [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_toTryButton
+                         constraintWithItem:_shareButton
                          attribute:NSLayoutAttributeCenterY
                          relatedBy:NSLayoutRelationEqual
                          toItem:_locationButton
@@ -285,7 +287,7 @@
                          multiplier:1
                          constant:0]];
     [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_toTryButton
+                         constraintWithItem:_shareButton
                          attribute:NSLayoutAttributeHeight
                          relatedBy:NSLayoutRelationEqual
                          toItem:_locationButton
@@ -546,10 +548,6 @@
     _hoursView.text = hrs;
     
     [self updateConstraintsIfNeeded];
-}
-
-- (void)setToTry:(BOOL)on {
-    [_toTryButton setSelected:on];
 }
 
 - (void)setFavorite:(BOOL)on {

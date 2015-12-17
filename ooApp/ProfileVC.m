@@ -325,7 +325,7 @@ static NSString * const ListRowID = @"ListRowCell";
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers > 1) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-        [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(done:)];
+        [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
     _lists = [NSArray array];

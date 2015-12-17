@@ -2253,8 +2253,8 @@ NSString *const kKeyDeviceToken = @"device_token";
         return nil;
     }
     
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userID= userInfo.userID;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
     if (!userID) {
         failure(nil,nil);
         return nil;

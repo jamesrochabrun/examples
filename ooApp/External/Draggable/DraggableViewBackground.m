@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSArray *playItems;
 @property (nonatomic, strong) UIButton *xButton;
 @property (nonatomic, strong) UIButton *tryButton;
+@property (nonatomic, strong) NSArray *tags;
 
 - (void)gotPlayItems;
 
@@ -43,7 +44,16 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
         loadedCards = [[NSMutableArray alloc] init];
         allCards = [[NSMutableArray alloc] init];
         cardsLoadedIndex = 0;
-        [self getPlayItems:nil];
+        
+        __weak DraggableViewBackground *weakSelf = self;
+        [OOAPI getTagsForUser:0 success:^(NSArray *tags) {
+            _tags = tags;
+            ON_MAIN_THREAD(^{
+                [weakSelf getPlayItems:nil];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
     }
     return self;
 }
@@ -54,15 +64,24 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     
     __weak DraggableViewBackground *weakSelf = self;
     
-    NSArray *keywords = @[@"restaurant", @"bar"];
-    if (tag) {
-        keywords = @[tag.term];
-    }
+
+    NSMutableArray *keywords = [NSMutableArray array];
+    u_int32_t count = (u_int32_t)[_tags count];
+
+    TagObject *to; //choose three terms
+    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
+    [keywords addObject:to.term];
+    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
+    [keywords addObject:to.term];
+    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
+    [keywords addObject:to.term];
+    
+    CGFloat radius = (NSUInteger)arc4random_uniform(20000) % 20000 + 2500; //choose value between 2500 and 22500;
     
     [api getRestaurantsWithKeywords:keywords
                         andLocation:[[LocationManager sharedInstance] currentUserLocation]
                           andFilter:@""
-                          andRadius:5000
+                          andRadius:radius
                         andOpenOnly:NO
                             andSort:kSearchSortTypeBestMatch
                            minPrice:0

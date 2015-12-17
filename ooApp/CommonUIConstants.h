@@ -169,6 +169,7 @@ extern NSString *const kFontIconBack;
 extern NSString *const kFontIconPin;
 extern NSString *const kFontIconPinFilled;
 extern NSString *const kFontIconMap;
+extern NSString *const kFontIconLogo;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

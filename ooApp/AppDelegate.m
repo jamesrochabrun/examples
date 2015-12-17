@@ -15,7 +15,18 @@
 #import "NSData+Conversion.h"
 #import "SWRevealViewController.h"
 #import "MenuTVC.h"
+#import "Common.h"
 #import <GoogleMaps/GoogleMaps.h>
+
+typedef enum {
+    kNotificationTypeViewUser = 1,
+    kNotificationTypeViewEvent = 2,
+    kNotificationTypeViewList = 3,
+    kNotificationTypeViewRestaurant = 4
+} NotificationType;
+
+NSString *const kKeyNotificationType = @"type";
+NSString *const kKeyNotificationID = @"id";
 
 @interface AppDelegate ()
 
@@ -108,7 +119,35 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    NSLog(@"didReceiveRemoteNotification");
+    NotificationType notType;
+    NSUInteger identifier;
+    if ([userInfo isKindOfClass:[NSDictionary class]]) {
+        notType = (NotificationType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
+        identifier = parseUnsignedIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationID]);
+    }
+}
+
+- (void)displayNotification:(NotificationType)type identifier:(NSUInteger)identifier {
+    
+}
+
+- (void)testRemoteNotification {
+    NSMutableDictionary *note = [NSMutableDictionary dictionary];
+    
+//    {
+//        "type":2,
+//        "event_id":363,
+//        "aps":
+//        {
+//            "sound":"chime.aiff",
+//            "alert":
+//            {
+//                "body":"Test will be starting in 30 minutes!",
+//                "action-loc-key":"VIEW"
+//            }
+//        }
+//    }
+>>>>>>> 64b3c9e8e9f4657136e3050820c470e45b2b6d18
 }
 
 // Delegation methods
@@ -120,11 +159,6 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"FAILURE IN UPLOADING DEV TOKEN");
     }];
-//    UserObject *userInfo = [Settings sharedInstance].userObject;
-//    NSUInteger userID = userInfo.userID;
-    
-    //    TODO: store that we asked in settings so that we can register again on launch in the future
-    //    TODO: send the device token and user ID to the OO server using OOAPI
 }
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
