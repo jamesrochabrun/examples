@@ -234,7 +234,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
     self.navTitle = nto;
     
-    self.view.backgroundColor= WHITE;
+    self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
     
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
     self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  BLACK, CLEAR,

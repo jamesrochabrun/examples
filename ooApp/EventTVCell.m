@@ -33,7 +33,7 @@
         self.header.textColor= WHITE;
         self.subHeader1.textColor= WHITE;
         self.subHeader2.textColor= WHITE;
-        self.header.font= [ UIFont  fontWithName:kFontLatoSemiboldItalic size:kGeomFontSizeHeader];
+        self.header.font= [ UIFont  fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
         //        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         //        self.thumbnail.clipsToBounds= YES;

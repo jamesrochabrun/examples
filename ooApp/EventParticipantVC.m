@@ -15,7 +15,6 @@
 #import "EventParticipantVC.h"
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
-#import "ListTVCell.h"
 #import "EventWhenVC.h"
 #import "ProfileVC.h"
 #import "RestaurantVC.h"
@@ -95,7 +94,7 @@
         self.labelTitle= makeLabel( self, nil,
                                    kGeomEventHeadingFontSize);
         _labelTitle.textColor= WHITE;
-        _labelTitle.font= [UIFont  fontWithName: kFontLatoBoldItalic size:kGeomEventHeadingFontSize];
+        _labelTitle.font= [UIFont  fontWithName: kFontLatoBold size:kGeomEventHeadingFontSize];
         
         self.labelTimeLeft= makeLabel( self, nil, kGeomFontSizeSubheader);
         _labelTimeLeft.textColor= BLACK;
@@ -324,12 +323,18 @@
 //==============================================================================
 
 @interface EventParticipantVotingSubCell ()
+
+@property (nonatomic,strong)  UIImageView *thumbnail;
+@property (nonatomic,strong)   UILabel *labelName;
+@property (nonatomic,strong)   UILabel *labelOpenOrClosed;
+@property (nonatomic,strong)   UILabel *labelDistance;
+
 @property (nonatomic,assign)  int  mode;
 @property (nonatomic,strong) UIView* viewOverlay;
 @property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong) EventObject* event;
 @property (nonatomic,assign) int radioButtonState;
-@property (nonatomic,weak) id <EventParticipantVotingSubCellDelegate>delegate;
+@property (nonatomic,weak) id <EventParticipantVotingSubCellDelegate> delegate;
 @end
 
 @implementation EventParticipantVotingSubCell
@@ -338,15 +343,21 @@
 {
     self = [super init ];
     if (self) {
-        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomFontSizeDetail, BLACK, CLEAR, self, @selector(userPressedRadioButton:), 0);
+        self.radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
+                                     WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
-        _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
-        
-        _thumbnail= makeImageView(self, nil);
+
+        self.thumbnail= makeImageView(self, nil);
         _thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         _thumbnail.clipsToBounds= YES;
         
-        _labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
+        self.labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
+        _labelName.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
+        self.labelOpenOrClosed= makeLabelLeft( self,  @"", kGeomFontSizeSubheader);
+        self.labelDistance= makeLabelLeft( self,  @"", kGeomFontSizeSubheader);
+        _labelName.textColor= WHITE;
+        _labelOpenOrClosed.textColor= WHITE;
+        _labelDistance.textColor= WHITE;
         
         self.viewOverlay= makeView( self, CLEAR);
         _viewOverlay.alpha=  0.5;
@@ -355,7 +366,9 @@
         _thumbnail.layer.borderWidth= 1;
         
         self.clipsToBounds= YES;
-        self.backgroundColor= CLEAR;
+//        self.backgroundColor= CLEAR;
+        self.backgroundColor= UIColorRGBA(kColorOffBlack);
+
         [ self setRadioButtonState:_radioButton to:value];
     }
     return self;
@@ -372,28 +385,16 @@
     
     switch (state) {
         case VOTE_STATE_DONT_CARE:
-            [button setTitle: @"don't\rcare" forState:UIControlStateNormal];
-            _radioButton.titleLabel.numberOfLines=0;
-            _radioButton.titleLabel.font= [UIFont fontWithName:kFontLatoRegular size: 6];
-            _radioButton.titleLabel.textAlignment= NSTextAlignmentCenter;
-            _radioButton.layer.cornerRadius= 50;
-            _radioButton.layer.borderWidth= 1;
-            _radioButton.layer.borderColor= GRAY.CGColor;
+            [button setTitle: kFontIconDontCare forState:UIControlStateNormal];
             self.viewOverlay.backgroundColor= CLEAR;
             break;
         case VOTE_STATE_YES:
             [button setTitle: kFontIconCheckmark forState:UIControlStateNormal];
-            _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
             self.viewOverlay.backgroundColor= GREEN;
-            _radioButton.layer.cornerRadius= 0;
-            _radioButton.layer.borderWidth= 0;
             break;
         case VOTE_STATE_NO:
             [button setTitle: kFontIconRemove forState:UIControlStateNormal];
-            _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
             self.viewOverlay.backgroundColor= RED;
-            _radioButton.layer.cornerRadius= 0;
-            _radioButton.layer.borderWidth= 0;
             break;
     }
     _radioButtonState= state;
@@ -414,8 +415,16 @@
     
     _thumbnail.frame = CGRectMake(x,0,h,h);
     x += h+kGeomSpaceInter;
-    _labelName.frame = CGRectMake(x,0,w-x-switchSize.width-2*kGeomSpaceInter,h);
+    
+    float y=  (h-3*kGeomHeightButton)/2;
+    _labelName.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,h);
+    y+=kGeomHeightButton;
+    _labelOpenOrClosed.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,h);
+    y+=kGeomHeightButton;
+    _labelDistance.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,h);
+    
     x += _labelName.frame.size.width;
+    
     _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
     
     _viewOverlay.frame= self.bounds;
@@ -472,7 +481,7 @@
     if (self) {
         self.scrollView= [UIScrollView new];
         [ self  addSubview: _scrollView];
-        self.backgroundColor= WHITE;
+        self.backgroundColor= UIColorRGBA(kColorOffBlack);
         
         self.gesture= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector (userTapped:)];
         [self addGestureRecognizer:_gesture];
@@ -505,7 +514,6 @@
         self.imageView.hidden= YES;
         
         self.clipsToBounds= NO;
-        self.backgroundColor= CLEAR;
         
     }
     return self;
@@ -580,7 +588,7 @@
 - (void)provideVote: (VoteObject*)vote
 {
     self.vote= vote;
-    self.radioButtonState=  vote.vote;
+    self.radioButtonState= (int) vote.vote;
 }
 
 - (void)prepareForReuse
@@ -758,7 +766,7 @@
 
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= [UIColor lightGrayColor];
+    self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
     
     self.sortedArrayOfVenues= [NSMutableArray new];
     
@@ -771,7 +779,8 @@
     [_table registerClass:[EventParticipantVotingCell class] forCellReuseIdentifier:TABLE_REUSE_IDENTIFIER];
     [_table registerClass:[EventParticipantFirstCell class] forCellReuseIdentifier:TABLE_REUSE_FIRST_IDENTIFIER];
     _table.showsVerticalScrollIndicator= NO;
-    
+    _table.backgroundColor= UIColorRGBA(kColorOffBlack);
+
     self.automaticallyAdjustsScrollViewInsets= NO;
    
     [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
