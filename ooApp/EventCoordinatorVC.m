@@ -1207,10 +1207,10 @@
                                                        preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                 style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self deleteEvent];
                                                      [self.navigationController  popViewControllerAnimated:YES];
                                                  }];
@@ -1247,13 +1247,14 @@
                                                    }];
     
     UIAlertAction *vote = [UIAlertAction actionWithTitle:@"Cast vote"
-                                                   style:UIAlertActionStyleDefault
+                                                   style: UIAlertActionStyleDefault
                                                  handler:^(UIAlertAction * action) {
                                                      [self castVote];
                                                  }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     style: UIAlertActionStyleDefault
+                                                   handler:^(UIAlertAction * action) {
                                                          
                                                      }];
     [a addAction:delete];

@@ -246,7 +246,7 @@
                 events = _curatedEventsArray;
                 break;
         }
-        
+
         cell = [tableView dequeueReusableCellWithIdentifier:EVENTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
         cell.selectedBackgroundView = [UIView new];
         cell.delegate= self;
@@ -261,15 +261,6 @@
             EventObject *e = events[row];
             [cell setEvent:e];
         }
-        
-//        if (!row) {
-//            cell.nameHeader= [[OOStripHeader alloc] init];
-//            [cell.nameHeader setName:_tableSectionNames[section]];
-//
-//            [cell setIsFirst];
-//        } else {
-//            cell.nameHeader= nil;
-//        }
     }
     
     return cell;
@@ -328,7 +319,6 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger section= indexPath.section;
-//    float extraSpaceForFirstRow= !indexPath.row ? kGeomStripHeaderHeight/2. : 0;
     
     @synchronized(_yourEventsArray) {
         
@@ -346,11 +336,35 @@
         }
         
         if (!events.count) {
-            return kGeomHeightEventCellHeight;// + extraSpaceForFirstRow;
+            return kGeomHeightEventCellHeight;;
         }
     }
     
-    return kGeomHeightEventCellHeight;// + extraSpaceForFirstRow;
+    return kGeomHeightEventCellHeight;;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(nonnull NSIndexPath *)indexPath
+{
+    NSInteger section= indexPath.section;
+    NSInteger row = indexPath.row;
+    @synchronized(_yourEventsArray) {
+        NSArray *events= nil;
+        switch (section) {
+            case 0:
+                events = _yourEventsArray;
+                break;
+            case 1:
+                events = _incompleteEventsArray;
+                break;
+            case 2:
+                return NO;
+        }
+        
+        if ( row>=  events.count) {
+            return NO;
+        }
+    }
+    return YES;
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
@@ -373,6 +387,9 @@
                 return nil;
         }
         
+        if ( row>=  events.count) {
+            return nil;
+        }
         EventObject* event= events[ row];
         __weak EventsListVC *weakSelf = self;
         switch ( event.currentUserCanEdit) {
@@ -418,7 +435,8 @@
                                                        preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleDefault
+						 handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -490,9 +508,9 @@
                 break;
         }
         
-        if  (!events.count) {
+        if ( row>=  events.count) {
             _doingTransition=NO;
-            return;
+           return;
         }
         
         EventObject *event = [events objectAtIndex:row];
@@ -602,7 +620,7 @@
         }
     }
     if  (!n) {
-        return 1;
+        return 1;// This is the "alas there are none" row.
     }
     return n ;
 }

@@ -232,7 +232,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                                [weakSelf createListPressed];
                                                            }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }];
     

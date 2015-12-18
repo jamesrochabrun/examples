@@ -909,21 +909,21 @@
     UIAlertAction *actionMore= nil;
     if  ([self.eventBeingEdited userIsAdministrator: user.userID] ) {
         actionMore= [UIAlertAction actionWithTitle:@"Modify or Cancel Event"
-                                             style:UIAlertActionStyleDestructive
+                                             style:  UIAlertActionStyleDefault
                                            handler:^(UIAlertAction * action) {
                                                [weakSelf transitionToE3];
                                            }];
         
     } else {
-        actionMore= [UIAlertAction actionWithTitle:@"Accept or Reject invitation"
-                                             style:UIAlertActionStyleDestructive
+        actionMore= [UIAlertAction actionWithTitle:@"See Event Details"
+                                             style: UIAlertActionStyleDefault
                                            handler:^(UIAlertAction * action) {
                                                [weakSelf transitionToE3L];
                                            }];
     }
     
     UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                          
                                                      }];
     [a addAction:actionMore];
