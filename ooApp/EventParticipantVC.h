@@ -64,7 +64,7 @@ enum  {
 @interface EventParticipantVotingSubCell : UIView
 @property (nonatomic,strong) VoteObject  *vote;
 - (void)setMode:(int)mode;
-
+- (void)provideRestaurant:(RestaurantObject*)restaurant;
 @end
 
     //------------------------------------------------------------------------------

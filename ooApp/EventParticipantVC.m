@@ -19,6 +19,7 @@
 #import "ProfileVC.h"
 #import "RestaurantVC.h"
 #import "EventCoordinatorVC.h"
+#import "LocationManager.h"
 
 #import  <QuartzCore/CALayer.h>
 
@@ -102,12 +103,6 @@
         self.labelTimeLeft= makeLabel( self, nil, kGeomFontSizeSubheader);
         _labelTimeLeft.textColor= BLACK;
         _labelTimeLeft.backgroundColor= YELLOW;
-        
-//        _labelTitle.shadowColor = BLACK;
-//        _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
-        
-//        _labelDateTime.shadowColor = BLACK;
-//        _labelDateTime.shadowOffset = CGSizeMake(0, -1.0);
         
         self.participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
@@ -374,6 +369,7 @@
 @property (nonatomic,strong) UIView* viewOverlay;
 @property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong) EventObject* event;
+@property (nonatomic,strong) RestaurantObject*restaurant;
 @property (nonatomic,assign) int radioButtonState;
 @property (nonatomic,weak) id <EventParticipantVotingSubCellDelegate> delegate;
 @end
@@ -442,6 +438,22 @@
     _radioButtonState= state;
 }
 
+- (void)provideRestaurant:(RestaurantObject*)restaurant
+{
+    self.restaurant=  restaurant;
+    self.labelName.text= restaurant.name;
+    
+    self.labelOpenOrClosed.text = [NSString stringWithFormat:@"%@", (_restaurant.isOpen) ? @"Open Now" : @"Not Open"];
+    
+    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+    
+    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
+    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];
+    
+    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
+    self.labelDistance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
+}
+
 - (void)userPressedRadioButton: (id) sender
 {
     [_delegate userPressedRadioButton:_radioButtonState];
@@ -453,17 +465,20 @@
     float w= self.frame.size.width;
     float h= self.frame.size.height;
     float x= kGeomSpaceEdge;
-    h-= kGeomEventParticipantSeparatorHeight;
+    float spacer= kGeomSpaceInter;
+//    h-= kGeomEventParticipantSeparatorHeight;
     
+    const float kGeomParticipantRestaurantHeaderHeight= 18;
+    const float kGeomParticipantRestaurantSubheaderHeight= 16;
     _thumbnail.frame = CGRectMake(x,0,h,h);
     x += h+kGeomSpaceInter;
     
-    float y=  (h-3*kGeomHeightButton)/2;
-    _labelName.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,h);
-    y+=kGeomHeightButton;
-    _labelOpenOrClosed.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,h);
-    y+=kGeomHeightButton;
-    _labelDistance.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,h);
+    float y=  (h-kGeomParticipantRestaurantHeaderHeight-2*kGeomParticipantRestaurantSubheaderHeight-2*spacer)/2;
+    _labelName.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,kGeomParticipantRestaurantHeaderHeight);
+    y+=kGeomParticipantRestaurantHeaderHeight+spacer;
+    _labelOpenOrClosed.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,kGeomParticipantRestaurantSubheaderHeight);
+    y+=kGeomParticipantRestaurantSubheaderHeight +spacer;
+    _labelDistance.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,kGeomParticipantRestaurantSubheaderHeight);
     
     x += _labelName.frame.size.width;
     
@@ -529,16 +544,7 @@
         
         self.gesture= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector (userTapped:)];
         [self addGestureRecognizer:_gesture];
-        
-//        self.viewShadow= makeView( _scrollView, WHITE);
-//        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
-//        _viewShadow.layer.shadowColor= BLACK.CGColor;
-//        _viewShadow.layer.shadowOpacity= .5;
-//        _viewShadow.layer.shadowRadius= 4;
-//        _viewShadow.clipsToBounds= NO;
-//        _viewShadow.layer.borderColor= GRAY.CGColor;
-//        _viewShadow.layer.borderWidth= .5;
-        
+      
         _subcells=@[
                     [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_YES ],
                     [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_DONT_CARE],
@@ -752,14 +758,14 @@
         NSLog (@"VENUE ID %ld HAS NO IMAGES.",(long)venueID);
         
         for (EventParticipantVotingSubCell *view in _subcells)  {
-            view.labelName.text= venue.name;
+            [view provideRestaurant:venue];
             view.tag= self.tag;
             view.thumbnail.image= placeholder;
         }
     }
     else {
         for (EventParticipantVotingSubCell *view in _subcells)  {
-            view.labelName.text= venue.name;
+            [view provideRestaurant:venue];
             view.thumbnail.image= placeholder;
             view.tag= self.tag;
         }
@@ -876,25 +882,23 @@
         self.coordinatorVCReportedEventChanged= NO;
         
         [self.eventBeingEdited refreshWithSuccess:^{
-            [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+            
+            /* _venueOperation=*/ [weakSelf.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+                
+                /* _voteOperation=*/ [weakSelf.eventBeingEdited refreshVotesFromServerWithSuccess:^{
+                    
+                    [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+                } failure:^{
+                    NSLog  (@"FAILED TO FETCH EVENT VOTES");
+                }];
+            } failure:^{
+                NSLog (@"FAILED TO FETCH EVENT VENUES");
+            }];
+            
         } failure:^{
             NSLog (@"FAILED TO REFETCH EVENT");
         }];
     }
-         
-    if (! [self.eventBeingEdited totalVenues ]) {
-        /* _venueOperation=*/ [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
-            [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
-        } failure:^{
-            NSLog (@"FAILED TO FETCH EVENT VENUES");
-        }];
-    }
-    
-    /* _voteOperation=*/ [self.eventBeingEdited refreshVotesFromServerWithSuccess:^{
-        [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
-    } failure:^{
-        NSLog  (@"FAILED TO FETCH EVENT VOTES");
-    }];
 }
 
 - (void) userPressedMenuButton: (id) sender
@@ -1105,21 +1109,6 @@
 
 - (void) userRequestToSubmit;
 {
-//    NSTimeInterval t = self.eventBeingEdited.dateWhenVotingClosed.timeIntervalSince1970;
-//    NSTimeInterval now = [NSDate date].timeIntervalSince1970;
-//    if ( t<= now) {
-//        self.votingIsDone= YES;
-//        [self setMode: VOTING_MODE_NO_VOTING];
-//        return;
-//    }
-//    
-//    if ( self.votingIsDone) {
-//        self.votingIsDone= NO;
-//        [self setMode: VOTING_MODE_ALLOW_VOTING];
-//    } else {
-//        self.votingIsDone= YES;
-//        [self setMode: VOTING_MODE_NO_VOTING];
-//    }
     [self.navigationController popViewControllerAnimated:YES ];
 }
 
