@@ -38,7 +38,8 @@ enum  {
     _restaurant = restaurant;
     self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
     self.header.text = _restaurant.name;
-    self.subHeader1.text = [NSString stringWithFormat:@"%@", (_restaurant.isOpen) ? @"Open Now" : @"Not Open"];
+    self.subHeader1.text =  _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
+                            (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     

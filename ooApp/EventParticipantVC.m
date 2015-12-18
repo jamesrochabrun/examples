@@ -362,11 +362,11 @@
 
 @property (nonatomic,strong)  UIImageView *thumbnail;
 @property (nonatomic,strong)   UILabel *labelName;
-@property (nonatomic,strong)   UILabel *labelOpenOrClosed;
 @property (nonatomic,strong)   UILabel *labelDistance;
 
 @property (nonatomic,assign)  int  mode;
 @property (nonatomic,strong) UIView* viewOverlay;
+@property (nonatomic,strong) UIView* radioButtonBacking;
 @property (nonatomic,strong) UIButton* radioButton;
 @property (nonatomic,strong) EventObject* event;
 @property (nonatomic,strong) RestaurantObject*restaurant;
@@ -380,27 +380,29 @@
 {
     self = [super init ];
     if (self) {
-        self.radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
-                                     WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);
-        [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
-
         self.thumbnail= makeImageView(self, nil);
         _thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         _thumbnail.clipsToBounds= YES;
         
-        self.labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
-        _labelName.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
-        self.labelOpenOrClosed= makeLabelLeft( self,  @"", kGeomFontSizeSubheader);
-        self.labelDistance= makeLabelLeft( self,  @"", kGeomFontSizeSubheader);
-        _labelName.textColor= WHITE;
-        _labelOpenOrClosed.textColor= WHITE;
-        _labelDistance.textColor= WHITE;
-        
         self.viewOverlay= makeView( self, CLEAR);
         _viewOverlay.alpha=  0.5;
         
+        _radioButtonBacking= makeView(self, BLACK);
+        _radioButtonBacking.layer.cornerRadius= 11;
+        _radioButtonBacking.frame = CGRectMake(0,0, 22 ,22);
+        
+        _radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
+                                      WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);
+        [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
+
+        self.labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
+        _labelName.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
+        self.labelDistance= makeLabelLeft( self,  @"", kGeomFontSizeSubheader);
+        _labelName.textColor= WHITE;
+        _labelDistance.textColor= WHITE;
+        
         _thumbnail.layer.borderColor= GRAY.CGColor;
-        _thumbnail.layer.borderWidth= 1;
+        _thumbnail.layer.borderWidth= .5;
         
         self.clipsToBounds= YES;
 //        self.backgroundColor= CLEAR;
@@ -424,7 +426,7 @@
     switch (state) {
         case VOTE_STATE_DONT_CARE:
             [button setTitle: kFontIconDontCare forState:UIControlStateNormal];
-            self.viewOverlay.backgroundColor= CLEAR;
+            self.viewOverlay.backgroundColor= BLACK;
             break;
         case VOTE_STATE_YES:
             [button setTitle: kFontIconCheckmarkCircle forState:UIControlStateNormal];
@@ -442,8 +444,6 @@
 {
     self.restaurant=  restaurant;
     self.labelName.text= restaurant.name;
-    
-    self.labelOpenOrClosed.text = [NSString stringWithFormat:@"%@", (_restaurant.isOpen) ? @"Open Now" : @"Not Open"];
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
     
@@ -464,28 +464,27 @@
     CGSize switchSize= CGSizeMake(kGeomHeightButton, kGeomHeightButton);
     float w= self.frame.size.width;
     float h= self.frame.size.height;
-    float x= kGeomSpaceEdge;
+    float x, margin= kGeomSpaceEdge;
     float spacer= kGeomSpaceInter;
-//    h-= kGeomEventParticipantSeparatorHeight;
     
     const float kGeomParticipantRestaurantHeaderHeight= 18;
     const float kGeomParticipantRestaurantSubheaderHeight= 16;
-    _thumbnail.frame = CGRectMake(x,0,h,h);
-    x += h+kGeomSpaceInter;
+    _thumbnail.frame = CGRectMake( margin, margin,w- 2*margin,h-2*margin);
     
+    x= 2*margin;
     float y=  (h-kGeomParticipantRestaurantHeaderHeight-2*kGeomParticipantRestaurantSubheaderHeight-2*spacer)/2;
     _labelName.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,kGeomParticipantRestaurantHeaderHeight);
     y+=kGeomParticipantRestaurantHeaderHeight+spacer;
-    _labelOpenOrClosed.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,kGeomParticipantRestaurantSubheaderHeight);
-    y+=kGeomParticipantRestaurantSubheaderHeight +spacer;
+
     _labelDistance.frame = CGRectMake(x,y,w-x-switchSize.width-2*kGeomSpaceInter,kGeomParticipantRestaurantSubheaderHeight);
     
     x += _labelName.frame.size.width;
     
     _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
+    _radioButtonBacking.center= _radioButton.center;
     
     _viewOverlay.frame= self.bounds;
-    [self  bringSubviewToFront:_viewOverlay];
+//    [self  bringSubviewToFront:_viewOverlay];
 }
 
 - (void)setMode:(int)mode
@@ -809,6 +808,7 @@
 @property (nonatomic,assign) int mode;
 @property (nonatomic,strong) NSMutableArray* sortedArrayOfVenues;
 @property (nonatomic,assign) BOOL coordinatorVCReportedEventChanged;
+@property (nonatomic,strong)  UIImageView* imageViewBackground;
 @end
 
 @implementation EventParticipantVC
@@ -827,6 +827,8 @@
     self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
     
     self.sortedArrayOfVenues= [NSMutableArray new];
+    
+    self.imageViewBackground= makeImageView( self.view,  @"Gradient Background.png");
     
     _table= makeTable( self.view,  self);
 #define TABLE_REUSE_IDENTIFIER  @"participantsCell"
@@ -898,6 +900,21 @@
         } failure:^{
             NSLog (@"FAILED TO REFETCH EVENT");
         }];
+    }
+    else {
+        
+        /* _venueOperation=*/ [self.eventBeingEdited refreshVenuesFromServerWithSuccess:^{
+            
+            /* _voteOperation=*/ [weakSelf.eventBeingEdited refreshVotesFromServerWithSuccess:^{
+                
+                [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+            } failure:^{
+                NSLog  (@"FAILED TO FETCH EVENT VOTES");
+            }];
+        } failure:^{
+            NSLog (@"FAILED TO FETCH EVENT VENUES");
+        }];
+        
     }
 }
 
@@ -1105,6 +1122,7 @@
     float w= self.view.bounds.size.width;
     float h= self.view.bounds.size.height;
     _table.frame= CGRectMake(margin, margin,w-2* margin,h-2*margin);
+    _imageViewBackground.frame= self.view.bounds;
 }
 
 - (void) userRequestToSubmit;

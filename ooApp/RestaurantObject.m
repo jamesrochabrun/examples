@@ -51,7 +51,18 @@ BOOL isRestaurantObject (id  object)
     restaurant.website = [[dict objectForKey:kKeyRestaurantWebsite] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantWebsite];
     restaurant.phone = [[dict objectForKey:kKeyRestaurantPhone] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantPhone];
     restaurant.address = [[dict objectForKey:kKeyRestaurantAddress] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantAddress];
-    restaurant.isOpen = ([[dict objectForKey:kKeyRestaurantOpenNow] isKindOfClass:[NSNull class]]) ? NO : [[dict objectForKey:kKeyRestaurantOpenNow] boolValue];
+    
+    id value= [dict objectForKey:kKeyRestaurantOpenNow];
+    if (! value || [value isKindOfClass:[NSNull class]] ) {
+        restaurant.isOpen = kRestaurantUnknownWhetherOpen;
+    } else {
+        if  ( [[dict objectForKey:kKeyRestaurantOpenNow] boolValue ]) {
+            restaurant.isOpen = kRestaurantOpen;
+        } else {
+            restaurant.isOpen = kRestaurantClosed;
+        }
+    }
+
     restaurant.cuisine = [[dict objectForKey:kKeyRestaurantCuisine] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantCuisine];
     
     NSArray *imageRefs = [dict objectForKey:kKeyRestaurantImageRef];

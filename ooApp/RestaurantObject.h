@@ -31,13 +31,19 @@ typedef enum {
     kRestaurantSourceTypeGoogle = 2
 } RestaurantSourceType;
 
+typedef enum: char {
+    kRestaurantOpen=1,
+    kRestaurantClosed=2,
+    kRestaurantUnknownWhetherOpen=3,
+} RestaurantOpenStatus;
+
 @interface RestaurantObject : NSObject
 
 @property (nonatomic) NSUInteger restaurantID;
 @property (nonatomic, strong) NSString *googleID;
 @property (nonatomic, strong) NSString *placeID;
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic) BOOL isOpen;
+@property (nonatomic) RestaurantOpenStatus isOpen;
 @property (nonatomic, strong) NSNumber *rating;
 @property (nonatomic, strong) NSMutableArray *imageRefs;
 @property (nonatomic, strong) NSMutableArray *mediaItems;
