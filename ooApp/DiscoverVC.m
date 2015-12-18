@@ -116,6 +116,7 @@ static NSString * const ListRowID = @"HLRCell";
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
     [self showOptionsIfTimedOut];
+    APP.nc = self.navigationController;
 }
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {

@@ -19,6 +19,7 @@
 @property (nonatomic, assign) BOOL usingStagingServer;
 @property (nonatomic, strong) UIImage *imageForNoProfileSilhouette;
 @property (nonatomic, strong) NSDate *dateLeft;
+@property (nonatomic, strong) UINavigationController *nc;
 
 - (BOOL)connected;
 - (void)registerForPushNotifications;

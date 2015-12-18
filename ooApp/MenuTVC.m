@@ -75,7 +75,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     [_menuItems addObject:menuItem];
 
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconProfile;
+    menuItem.icon = kFontIconFoodFeed;
     menuItem.name = @"FOOD FEED";
     menuItem.type = kMenuItemFoodFeed;
     [_menuItems addObject:menuItem];
@@ -219,7 +219,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     // we'll just set position and return
     MenuObject *menuItem = [_menuItems objectAtIndex:indexPath.row];
 
-    UIViewController *frontViewController;
+    UINavigationController *frontViewController;
     frontViewController = nil;
     
     ANALYTICS_EVENT_UI(@"Menu");
@@ -263,7 +263,9 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     }
     
     frontViewController = [[UINavigationController alloc] initWithRootViewController:_fvc];
+    
     [revealController pushFrontViewController:frontViewController animated:YES];
+    APP.nc = frontViewController;
 }
 
 
