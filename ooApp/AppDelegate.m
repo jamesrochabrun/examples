@@ -16,6 +16,8 @@
 #import "SWRevealViewController.h"
 #import "MenuTVC.h"
 #import "Common.h"
+#import "ProfileVC.h"
+#import "RestaurantVC.h"
 #import <GoogleMaps/GoogleMaps.h>
 
 typedef enum {
@@ -92,7 +94,7 @@ NSString *const kKeyNotificationID = @"id";
      authenticateInstallation];
     
     self.imageForNoProfileSilhouette= [UIImage  imageNamed: @"No-Profile_Image.png"];
-
+    
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }
@@ -127,10 +129,30 @@ NSString *const kKeyNotificationID = @"id";
 }
 
 - (void)showObject:(NotificationObjectType)type forID:(NSUInteger)identifier {
+    if (!_nc) {
+        NSLog(@"*** NC not set yet");
+        return;
+    }
+    
+    __weak UINavigationController *weakNC = _nc;
+    
     switch (type) {
         case kNotificationTypeViewUser:
             //show user profile
-            message([NSString stringWithFormat:@"Show user: %lu", identifier]);
+        {
+            NSLog([NSString stringWithFormat:@"Show user: %lu", identifier]);
+            [OOAPI getUserWithID:identifier success:^(UserObject *user) {
+                if (user) {
+                    ProfileVC *vc = [[ProfileVC alloc] init];
+                    vc.userInfo = user;
+                    ON_MAIN_THREAD(^{
+                        [weakNC pushViewController:vc animated:YES];
+                    });
+                }
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
+        }
             break;
         case kNotificationTypeViewEvent:
             //show event
@@ -142,7 +164,17 @@ NSString *const kKeyNotificationID = @"id";
             break;
         case kNotificationTypeViewRestaurant:
             //show restaurant
-            message([NSString stringWithFormat:@"Show restaurant: %lu", identifier]);
+        {
+            NSLog([NSString stringWithFormat:@"Show restaurant: %lu", identifier]);
+            
+//            OOAPI *api = [[OOAPI alloc] init];
+//            RestaurantVC *vc = [[RestaurantVC alloc] init];
+//            api getRestaurantWithID:<#(NSString *)#> source:<#(NSUInteger)#> success:<#^(RestaurantObject *restaurants)success#> failure:<#^(AFHTTPRequestOperation *operation, NSError *error)failure#>
+//            vc.title = trimString(ro.name);
+//            vc.restaurant = ro;
+//            vc.eventBeingEdited = self.eventBeingEdited;
+//            [self.nc pushViewController:vc animated:YES];
+        }
             break;
         default:
             break;
@@ -150,8 +182,7 @@ NSString *const kKeyNotificationID = @"id";
 }
 
 - (void)testRemoteNotification {
-//    NSMutableDictionary *note = [NSMutableDictionary dictionary];
-    
+    [self showObject:kNotificationTypeViewUser forID:3];
 //    {
 //        "type":2,
 //        "event_id":363,
@@ -235,6 +266,8 @@ NSString *const kKeyNotificationID = @"id";
     ENTRY;
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [FBSDKAppEvents activateApp];
+    
+    [self testRemoteNotification];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

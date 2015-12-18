@@ -50,8 +50,10 @@ NSString *const kFontIconBack = @"a";
 NSString *const kFontIconPin = @"V";
 NSString *const kFontIconPinFilled = @"U";
 NSString *const kFontIconMap = @"X";
-NSString *const kFontIconLogo = @"Z";
+NSString *const kFontIconLogoWire = @"Z";
 NSString *const kFontIconShare = @"1";
 NSString *const kFontIconCheckmark = @"0";
+NSString *const kFontIconLogo = @"W";
+NSString *const kFontIconFoodFeed = @"2";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
