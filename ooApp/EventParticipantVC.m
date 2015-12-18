@@ -233,7 +233,7 @@
             if (eventDate &&  now-eventDate >= ONE_HOUR/4) {
                 [_buttonAttendees setTitle: @"WHO WENT" forState:UIControlStateNormal];
             }
-        }
+                    }
     }
     
     UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
@@ -304,6 +304,7 @@
         _labelTimeLeft.attributedText=attributedStringOf( @"VOTING ENDED", kGeomFontSizeHeader);
         [self killTimer];
         [self.delegate votingEnded];
+
     }
     
     unsigned long  hours= timeRemaining/ONE_HOUR;
@@ -410,6 +411,7 @@
         self.backgroundColor= UIColorRGBA(kColorOffBlack);
 
         [ self setRadioButtonState:_radioButton to:value];
+        
     }
     return self;
 }
@@ -512,6 +514,8 @@
 @property (nonatomic,strong) UIScrollView *scrollView;
 @property (nonatomic,strong) NSArray *subcells;
 @property (nonatomic,strong)  UITapGestureRecognizer* gesture;
+@property (nonatomic,assign) BOOL isWinner;
+
 @end
 
 @implementation EventParticipantVotingCell
@@ -557,6 +561,13 @@
         
     }
     return self;
+}
+
+- (void) declareWinner;
+{
+    _isWinner= YES;
+    self.layer.borderWidth= 7;
+    self.layer.borderColor= YELLOW.CGColor;
 }
 
 - (void)dealloc
@@ -637,7 +648,9 @@
     self.imageOperation= nil;
     self.vote= nil;
     self.event= nil;
-    
+    _isWinner= NO;
+    self.layer.borderWidth= 0;
+
     UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
     for (EventParticipantVotingSubCell *view in _subcells)  {
         view.labelName.text= nil;
@@ -793,8 +806,6 @@
 @end
 
 @implementation EventParticipantVC
-{
-}
 
 - (void)viewDidLoad
 {
@@ -824,8 +835,15 @@
 
     self.automaticallyAdjustsScrollViewInsets= NO;
    
-    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    
+    NSTimeInterval votingEnds= [self.eventBeingEdited.dateWhenVotingClosed timeIntervalSince1970];
+    NSTimeInterval now= [[NSDate date ] timeIntervalSince1970];
+    if (votingEnds &&  now >= votingEnds) {
+        [self setRightNavWithIcon:@"" target:nil action:nil];
+    } else {
+        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
+    }
 }
 
 - (void)done:(id)sender {
@@ -969,6 +987,10 @@
     cell.selectionStyle= UITableViewCellSelectionStyleNone;
     cell.tag=  row;
     
+    if ( _mode == VOTING_MODE_SHOW_RESULTS && row==1) {
+        [cell  declareWinner];
+    }
+    
     RestaurantObject* venue= nil;
     if ( _mode == VOTING_MODE_SHOW_RESULTS) {
         venue= self.sortedArrayOfVenues[row];
@@ -998,6 +1020,9 @@
 //            return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight-kGeomHeightButton;
 //        }
         return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight;
+    }
+    if ( _mode == VOTING_MODE_SHOW_RESULTS && row==1) {
+        return 200;
     }
     return kGeomEventParticipantRestaurantHeight +kGeomEventParticipantSeparatorHeight;
 }
@@ -1118,6 +1143,8 @@
 
 - (void)votingEnded
 {
+    [self setRightNavWithIcon:@"" target:nil action:nil];
+
     [self setMode: VOTING_MODE_SHOW_RESULTS];
 }
 

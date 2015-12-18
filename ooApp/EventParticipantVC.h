@@ -72,6 +72,7 @@ enum  {
 @interface EventParticipantVotingCell: UITableViewCell <EventParticipantVotingSubCellDelegate, UIScrollViewDelegate>
 @property (nonatomic,strong) VoteObject  *vote;
 @property (nonatomic,weak) id <EventParticipantVotingCellDelegate> delegate;
+- (void) declareWinner;
 
 - (void) scrollToCurrentStateAnimated: (BOOL) animated;
 - (void)setMode:(int)mode;
