@@ -656,7 +656,7 @@
                     NSLog  (@"EVENT %lu CREATED FOR USER %lu", (unsigned long)eventID, ( unsigned long)userid);
                     self.eventBeingEdited= e;
                     e.eventID= eventID;
-                    
+              //
                     weakSelf.needToRefreshEventList= YES;
                     [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
                     

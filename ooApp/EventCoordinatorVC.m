@@ -435,7 +435,7 @@
 @property (nonatomic,strong) OOStripHeader *nameHeader;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
 @property (nonatomic,strong)  UILabel *labelWhoPending;
-@property (nonatomic,strong)  UILabel *labelWhoResponded;
+//@property (nonatomic,strong)  UILabel *labelWhoResponded;
 @property (nonatomic,strong)  UILabel *labelWhoVoted;
 @property (nonatomic,strong)  UILabel *labelPersonIcon;
 @property (nonatomic,strong) UIView* viewVerticalLine1;
@@ -452,10 +452,10 @@
         self.autoresizesSubviews= NO;
         
         self.labelWhoPending = makeAttributedLabel(self.contentView, @"", kGeomFontSizeHeader);
-        self.labelWhoResponded = makeAttributedLabel(self.contentView, @"", kGeomFontSizeHeader);
+//        self.labelWhoResponded = makeAttributedLabel(self.contentView, @"", kGeomFontSizeHeader);
         self.labelWhoVoted = makeAttributedLabel(self.contentView, @"", kGeomFontSizeHeader);
         _labelWhoPending.textColor= WHITE;
-        _labelWhoResponded.textColor= WHITE;
+//        _labelWhoResponded.textColor= WHITE;
         _labelWhoVoted.textColor= WHITE;
         
         self.clipsToBounds= YES;
@@ -520,15 +520,15 @@
                                     (unsigned long) pending,  LOCAL( @"PENDING")
                                     ];
     
-    NSString *countsStringResponded= [NSString stringWithFormat:  @"%lu\r%@",
-                                      (unsigned long) responded,  LOCAL( @"RESPONDED")
-                                      ];
+//    NSString *countsStringResponded= [NSString stringWithFormat:  @"%lu\r%@",
+//                                      (unsigned long) responded,  LOCAL( @"RESPONDED")
+//                                      ];
     
     NSString *countsStringVoted= [NSString stringWithFormat:  @"%lu\r%@",
                                   (unsigned long)voted,  LOCAL( @"VOTED")
                                   ];
     _labelWhoPending.attributedText= attributedStringOf(countsStringPending,  kGeomFontSizeHeader);
-    _labelWhoResponded.attributedText= attributedStringOf(countsStringResponded,  kGeomFontSizeHeader);
+//    _labelWhoResponded.attributedText= attributedStringOf(countsStringResponded,  kGeomFontSizeHeader);
     _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
     
     [self.participantsView setEvent:e];
@@ -547,11 +547,11 @@
     float margin= kGeomSpaceEdge;
     self.nameHeader.frame= CGRectMake(0, -kGeomStripHeaderHeight, w,kGeomStripHeaderHeight);
     
-    float subBoxWidth= w/3;
+    float subBoxWidth= w/2;
     float subBoxHeight= 2*h/3;
     float x= 0;
-    _labelWhoResponded.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
-    x+= subBoxWidth;
+//    _labelWhoResponded.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
+//    x+= subBoxWidth;
     _viewVerticalLine1.frame = CGRectMake(x,kGeomStripHeaderHeight/2,1,subBoxHeight-kGeomStripHeaderHeight);
     _labelWhoPending.frame = CGRectMake(x,0,subBoxWidth,subBoxHeight);
     x+= subBoxWidth;
