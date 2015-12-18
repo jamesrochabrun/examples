@@ -71,7 +71,6 @@
     _imageViewLogo.backgroundColor = UIColorRGBA(kColorClear);
      UIImage*image= [UIImage imageNamed:@"Oomami_Logo_Spork(Nov24) (1) w.png"];
     _imageViewLogo.image = image;
-    addShadowTo(_imageViewLogo);
     
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
     _facebookLoginButton.delegate = self;

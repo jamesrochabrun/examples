@@ -31,6 +31,7 @@
 @property (nonatomic, strong) NSString *imageIdentifierString;
 @property (nonatomic, strong) NSString *imageURLForFacebook;
 @property (nonatomic, strong) AFHTTPRequestOperation *operation;
+@property (nonatomic, assign) BOOL isEmpty;
 @end
 
 @implementation EventWhoTableCell
@@ -63,18 +64,30 @@
     return self;
 }
 
+- (void) setEmptyMode;
+{
+    self.isEmpty= YES;
+    _labelName.text= @"There are no confirmed participants.";
+    _labelName.textAlignment= NSTextAlignmentCenter;
+    [ self  setNeedsLayout];
+}
+
 - (void)prepareForReuse
 {
     [_operation cancel];
     self.operation= nil;
-    
+    self.isEmpty= NO;
     _labelName.text= nil;
+    _labelName.textAlignment= NSTextAlignmentLeft;
     _labelUserName.text= nil;
     _userView.user=  nil;
     _radioButton.selected= NO;
     self.group= nil;
     self.user= nil;
     self.imageIdentifierString= nil;
+    _userView.hidden= NO;
+    _labelUserName.hidden= NO;
+    _radioButton.hidden= NO;
 }
 
 - (void) specifyUser:  (UserObject*)user;
@@ -87,7 +100,7 @@
         _labelUserName.text= [NSString stringWithFormat: @"@%@",user.username];
     } else {
         _labelName.text= user.email; // NOTE: This is for the email–only case.
-        _labelUserName.text=  @"x";
+        _labelUserName.text=  @"";
     }
     
     _userView.user= user;
@@ -113,6 +126,14 @@
     const float  margin= kGeomSpaceEdge;
     float y;
     float availableHeight=h-2*margin;
+    
+    if  (_isEmpty ) {
+        _userView.hidden= YES;
+        _labelUserName.hidden= YES;
+        _radioButton.hidden= YES;
+        _labelName.frame = self.bounds;
+        return;
+    }
     
     // RULE: If this row will simply be an email address, then we completely hide the image.
     if  (!self.group && self.user && !self.user.firstName ) {
@@ -196,14 +217,22 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     self.setOfPotentialParticipants= [NSMutableOrderedSet new];
     self.participants= [NSMutableOrderedSet new];
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
-    self.navTitle = nto;
+    if ( self.editable) {
+        NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
+        self.navTitle = nto;
+    } else {
+        NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"WHO'S GOING" subHeader: nil];
+        self.navTitle = nto;
+    }
     
     self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
     
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
-    self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  WHITE, CLEAR,
-                                   self, @selector(userPressedInviteByEmail:), 1);
+    
+    if ( self.editable) {
+        self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  WHITE, CLEAR,
+                                       self, @selector(userPressedInviteByEmail:), 1);
+    }
     
     self.table= makeTable( self.view,  self);
 #define PARTICIPANTS_TABLE_REUSE_IDENTIFIER  @"whomToInviteCell"
@@ -308,7 +337,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                       failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                           NSLog (@"FAILED TO FETCH LIST OF USERS THAT USER IS FOLLOWING.");
                       }];
-        
     }
 }
 
@@ -408,11 +436,17 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     float  y=  0;
     
-    float tableHeight= h-kGeomHeightButton-2*spacing;
-    _table.frame = CGRectMake(0,y,w,tableHeight);
-    y+= tableHeight+ spacing;
-    _buttonAddEmail.frame = CGRectMake(margin,y,w-2*margin, kGeomHeightButton);
-    y += kGeomHeightButton+ spacing;
+    if ( self.editable) {
+        float tableHeight= h-kGeomHeightButton-2*spacing;
+        _table.frame = CGRectMake(0,y,w,tableHeight);
+        y+= tableHeight+ spacing;
+        _buttonAddEmail.frame = CGRectMake(margin,y,w-2*margin, kGeomHeightButton);
+        y += kGeomHeightButton+ spacing;
+    } else {
+        float tableHeight= h-kGeomHeightButton-2*spacing;
+        _table.frame = CGRectMake(0,y,w,tableHeight);
+        _buttonAddEmail.frame= CGRectZero;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -428,25 +462,30 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         }
     }
     
-    BOOL inList= NO;
-    for (UserObject* user  in  _participants) {
-        if (object.userID>0 &&  user.userID == object.userID) {
-            inList= YES;
-            break;
-        }
-        if ( [user.email isEqualToString:object.email ]) {
-            inList= YES;
-            break;
-        }
-    }
-    [ cell setRadioButtonState: inList];
-    
     cell.viewController=  self;
-    if  ([object isKindOfClass:[GroupObject class]] ) {
+    if  (object ) {
+        BOOL inList= NO;
+        for (UserObject* user  in  _participants) {
+            if (object.userID>0 &&  user.userID == object.userID) {
+                inList= YES;
+                break;
+            }
+            if ( [user.email isEqualToString:object.email ]) {
+                inList= YES;
+                break;
+            }
+        }
+        [ cell setRadioButtonState: inList];
+        
+        if  ([object isKindOfClass:[GroupObject class]] ) {
+            
+        } else {
+            [cell specifyUser: object];
+        }
+        
     } else {
-        [cell specifyUser: object];
+        [cell setEmptyMode];
     }
-    
     return cell;
 }
 
@@ -464,11 +503,22 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 {
     UserObject* user= nil;
     NSInteger row= indexPath.row;
-    @synchronized(_setOfPotentialParticipants) {
-        if  ( row  < _setOfPotentialParticipants.count) {
-            user=  _setOfPotentialParticipants[row];
+    
+    if ( self.editable) {
+        @synchronized(_setOfPotentialParticipants) {
+            if  ( row  < _setOfPotentialParticipants.count) {
+                user=  _setOfPotentialParticipants[row];
+            }
+        }
+    } else {
+        
+        @synchronized(_participants) {
+            if  ( row  < _participants.count) {
+                user=  _participants[row];
+            }
         }
     }
+    
     if ( user) {
         ProfileVC* vc= [[ProfileVC alloc] init];
         vc.userID= user.userID;
@@ -480,10 +530,18 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger  total;
-    @synchronized(_setOfPotentialParticipants) {
-        total= _setOfPotentialParticipants.count;
+    
+    if ( self.editable) {
+        @synchronized(_setOfPotentialParticipants) {
+            total= _setOfPotentialParticipants.count;
+        }
+    } else {
+        
+        @synchronized(_participants) {
+            total= _setOfPotentialParticipants.count;
+        }
     }
-    return  total;
+    return  MAX(1,total);
 }
 
 - (void) radioButtonChanged: (BOOL)value for: (id)object;

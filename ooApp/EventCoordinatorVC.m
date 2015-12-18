@@ -151,9 +151,6 @@
         self.labelTitle=makeAttributedLabel(self.contentView, self.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
         
         _labelTitle.textColor= WHITE;
-        _labelTitle.shadowColor = BLACK;
-        _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
-        _labelTitle.layer.shadowRadius= 4;
         
         self.clipsToBounds= NO;
         self.contentView.clipsToBounds= NO;
@@ -222,14 +219,12 @@
     _labelIcon.textColor= WHITE;
     _labelSubtitle.textColor= WHITE;
     
-    _labelTitle.shadowColor = BLACK;
-    _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
-    
-    _labelIcon.shadowColor = BLACK;
-    _labelIcon.shadowOffset = CGSizeMake(0, -1.0);
-    
-    _labelSubtitle.shadowColor = BLACK;
-    _labelSubtitle.shadowOffset = CGSizeMake(0, -1.0);
+//    _labelTitle.shadowColor = BLACK;
+//    _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
+//    _labelIcon.shadowColor = BLACK;
+//    _labelIcon.shadowOffset = CGSizeMake(0, -1.0);
+//    _labelSubtitle.shadowColor = BLACK;
+//    _labelSubtitle.shadowOffset = CGSizeMake(0, -1.0);
     
     [self doLayout];
 }

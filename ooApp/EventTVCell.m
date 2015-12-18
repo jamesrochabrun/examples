@@ -40,14 +40,12 @@
         
         self.viewFadeOverlay= makeView(self,  UIColorRGBA(0x80000000));
         
-        self.header.shadowColor = BLACK;
-        self.header.shadowOffset = CGSizeMake(0, -1.0);
-        
-        self.subHeader1.shadowColor = BLACK;
-        self.subHeader1.shadowOffset = CGSizeMake(0, -1.0);
-        
-        self.subHeader2.shadowColor = BLACK;
-        self.subHeader2.shadowOffset = CGSizeMake(0, -1.0);
+//        self.header.shadowColor = BLACK;
+//        self.header.shadowOffset = CGSizeMake(0, -1.0);
+//        self.subHeader1.shadowColor = BLACK;
+//        self.subHeader1.shadowOffset = CGSizeMake(0, -1.0);
+//        self.subHeader2.shadowColor = BLACK;
+//        self.subHeader2.shadowOffset = CGSizeMake(0, -1.0);
         
         _participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];

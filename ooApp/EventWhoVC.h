@@ -29,4 +29,5 @@
 @property (nonatomic,assign) EventWhoVC *viewController;
 - (void) specifyUser:  (UserObject*)user;
 - (void) specifyGroup:  (GroupObject*)group;
+- (void) setEmptyMode;
 @end

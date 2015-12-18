@@ -32,6 +32,8 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _labelCentered= makeLabel(self, @"This event has no restaurants.", kGeomFontSizeHeader);
+        _labelCentered.textColor= WHITE;
+        self.backgroundColor= UIColorRGB(kColorOffBlack);
     }
     return self;
 }
@@ -49,6 +51,7 @@
 @property (nonatomic,assign)  int mode;
 @property (nonatomic, strong) UIButton *buttonSubmitVote;
 @property (nonatomic, strong) UIButton *buttonGears;
+@property (nonatomic, strong) UIButton *buttonAttendees;
 @property (nonatomic, strong) UILabel *labelTimeLeft;
 @property (nonatomic, strong) UILabel *labelTitle;
 @property (nonatomic, strong) UILabel *labelDateTime;
@@ -100,11 +103,11 @@
         _labelTimeLeft.textColor= BLACK;
         _labelTimeLeft.backgroundColor= YELLOW;
         
-        _labelTitle.shadowColor = BLACK;
-        _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
+//        _labelTitle.shadowColor = BLACK;
+//        _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
         
-        _labelDateTime.shadowColor = BLACK;
-        _labelDateTime.shadowOffset = CGSizeMake(0, -1.0);
+//        _labelDateTime.shadowColor = BLACK;
+//        _labelDateTime.shadowOffset = CGSizeMake(0, -1.0);
         
         self.participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
@@ -115,6 +118,11 @@
         _buttonSubmitVote.titleLabel.font= [UIFont fontWithName:kFontLatoBold
                                                            size:kGeomFontSizeSubheader];
         
+        _buttonAttendees= makeButton(self,  @"WHO'S GOING", kGeomFontSizeSubheader,
+                                         WHITE, BLACK,  self, @selector(userPressedToViewAttendees:) , 0);
+        
+        _buttonAttendees.titleLabel.font= [UIFont fontWithName:kFontLatoBold
+                                                           size:kGeomFontSizeSubheader];
     }
     return self;
 }
@@ -149,20 +157,40 @@
     y+= kGeomFontSizeSubheader +spacing;
     _participantsView.frame = CGRectMake(margin,y,w-2*margin, kGeomFaceBubbleDiameter);
 
-    float distanceBetweenButtons= 0;
-    float biggerButtonWidth= (w-2*margin-distanceBetweenButtons)/2;
-    
     if  (self.mode  != VOTING_MODE_SHOW_RESULTS ) {
-        _buttonSubmitVote.frame=  CGRectMake(  margin, h-kGeomEventParticipantButtonHeight, biggerButtonWidth,kGeomEventParticipantButtonHeight);
-        _labelTimeLeft.frame = CGRectMake(  w/2+ distanceBetweenButtons/2,h-kGeomEventParticipantButtonHeight, biggerButtonWidth, kGeomEventParticipantButtonHeight);
+        float biggerButtonWidth= (w-2*margin)/3;
+        
+        _buttonSubmitVote.frame=  CGRectMake(  margin,
+                                             h-kGeomEventParticipantButtonHeight,
+                                             biggerButtonWidth,
+                                             kGeomEventParticipantButtonHeight);
+        _labelTimeLeft.frame = CGRectMake(  margin + biggerButtonWidth,
+                                          h-kGeomEventParticipantButtonHeight,
+                                          biggerButtonWidth,
+                                          kGeomEventParticipantButtonHeight);
+        _buttonAttendees.frame=  CGRectMake(  margin + 2*biggerButtonWidth,
+                                            h-kGeomEventParticipantButtonHeight,
+                                            biggerButtonWidth,
+                                            kGeomEventParticipantButtonHeight);
     } else {
-        _labelTimeLeft.frame = CGRectMake(margin,h-kGeomEventParticipantButtonHeight/2,w-2*margin, kGeomEventParticipantButtonHeight/2);
+        float biggerButtonWidth= (w-2*margin)/2;
+        
+        _labelTimeLeft.frame = CGRectMake(margin,
+                                          h-kGeomEventParticipantButtonHeight,
+                                          biggerButtonWidth,
+                                          kGeomEventParticipantButtonHeight);
         _buttonSubmitVote.alpha= 0;
+        
+        _buttonAttendees.frame=  CGRectMake(  margin +biggerButtonWidth,
+                                            h-kGeomEventParticipantButtonHeight,
+                                            biggerButtonWidth,
+                                            kGeomEventParticipantButtonHeight);
     }
     [self bringSubviewToFront:_labelTitle];
     [self bringSubviewToFront:_labelDateTime];
     [self bringSubviewToFront:_labelTimeLeft];
     [self bringSubviewToFront:_buttonSubmitVote];
+    [self bringSubviewToFront:_buttonAttendees];
     [self bringSubviewToFront:_participantsView];
 
     [self.participantsView setNeedsLayout];
@@ -173,18 +201,25 @@
     [_delegate userPressedProfilePicture:userid];
 }
 
+- (void)userPressedToViewAttendees: (id) sender
+{
+    [self.delegate  userPressedWhosGoing];
+}
+
+
 - (void) provideEvent: (EventObject*)event;
 {
     self.event= event;
     self.labelTitle.text= event.name;
     
     NSDate* dv=self.event.dateWhenVotingClosed;
-    unsigned long votingEnds= [dv timeIntervalSince1970];
+    NSTimeInterval votingEnds= [dv timeIntervalSince1970];
+    NSTimeInterval eventDate= [self.event.date timeIntervalSince1970];
+    
     if (!votingEnds) {
-        _labelTimeLeft.attributedText=attributedStringOf( @"END OF VOTING\rDATE NOT SET", kGeomFontSizeSubheader);
+        _labelTimeLeft.attributedText=attributedStringOf( @"END OF VOTING\rNOT SET", kGeomFontSizeSubheader);
     } else {
-        
-        self.labelDateTime.text= event.date ? expressLocalDateTime( event.date) :  @"Date not set.";
+        self.labelDateTime.text= event.date ? expressLocalDateTime( event.date) : @"Date not set.";
         
         unsigned long now= [[NSDate date ] timeIntervalSince1970];
         if  ( now < votingEnds) {
@@ -193,6 +228,11 @@
                                                                   selector:@selector(callbackCountdown:)
                                                                   userInfo:nil repeats:YES];
             [ self callbackCountdown:nil];
+        } else {
+            // RULE: After the event has gotten under way, change the button text to the past tense.
+            if (eventDate &&  now-eventDate >= ONE_HOUR/4) {
+                [_buttonAttendees setTitle: @"WHO WENT" forState:UIControlStateNormal];
+            }
         }
     }
     
@@ -236,14 +276,14 @@
             
         case VOTING_MODE_NO_VOTING:
             [self killTimer];
-            _buttonSubmitVote.enabled= NO;
+//            _buttonSubmitVote.enabled= NO;
             _buttonSubmitVote.alpha= 1;
             [_buttonSubmitVote setTitle: @"VOTE SUBMITTED" forState:UIControlStateNormal];
             break;
             
         case VOTING_MODE_SHOW_RESULTS:
             [self killTimer];
-            _buttonSubmitVote.enabled= NO;
+//            _buttonSubmitVote.enabled= NO;
             _buttonSubmitVote.alpha= 0;
             _labelTimeLeft.text=  @"voting has ended";
             break;
@@ -486,14 +526,14 @@
         self.gesture= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector (userTapped:)];
         [self addGestureRecognizer:_gesture];
         
-        self.viewShadow= makeView( _scrollView, WHITE);
-        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
-        _viewShadow.layer.shadowColor= BLACK.CGColor;
-        _viewShadow.layer.shadowOpacity= .5;
-        _viewShadow.layer.shadowRadius= 4;
-        _viewShadow.clipsToBounds= NO;
-        _viewShadow.layer.borderColor= GRAY.CGColor;
-        _viewShadow.layer.borderWidth= .5;
+//        self.viewShadow= makeView( _scrollView, WHITE);
+//        _viewShadow.layer.shadowOffset= CGSizeMake ( 2, 2);
+//        _viewShadow.layer.shadowColor= BLACK.CGColor;
+//        _viewShadow.layer.shadowOpacity= .5;
+//        _viewShadow.layer.shadowRadius= 4;
+//        _viewShadow.clipsToBounds= NO;
+//        _viewShadow.layer.borderColor= GRAY.CGColor;
+//        _viewShadow.layer.borderWidth= .5;
         
         _subcells=@[
                     [[EventParticipantVotingSubCell alloc]initWithRadioButtonState:VOTE_STATE_YES ],
@@ -954,9 +994,9 @@
 {
     NSInteger row = indexPath.row;
     if  (!row) {
-        if ( _mode == VOTING_MODE_SHOW_RESULTS) {
-            return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight-kGeomHeightButton;
-        }
+//        if ( _mode == VOTING_MODE_SHOW_RESULTS) {
+//            return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight-kGeomHeightButton;
+//        }
         return  kGeomEventParticipantFirstBoxHeight+kGeomEventParticipantSeparatorHeight;
     }
     return kGeomEventParticipantRestaurantHeight +kGeomEventParticipantSeparatorHeight;
@@ -1011,6 +1051,10 @@
         return;
     }
     
+    if ( self.votingIsDone) {
+        return;
+    }
+    
     [OOAPI setVoteTo: object.vote
             forEvent: object.eventID
        andRestaurant: object.venueID
@@ -1036,8 +1080,22 @@
 
 - (void) userRequestToSubmit;
 {
-    self.votingIsDone= YES;
-    [self setMode: VOTING_MODE_NO_VOTING];
+//    NSTimeInterval t = self.eventBeingEdited.dateWhenVotingClosed.timeIntervalSince1970;
+//    NSTimeInterval now = [NSDate date].timeIntervalSince1970;
+//    if ( t<= now) {
+//        self.votingIsDone= YES;
+//        [self setMode: VOTING_MODE_NO_VOTING];
+//        return;
+//    }
+//    
+//    if ( self.votingIsDone) {
+//        self.votingIsDone= NO;
+//        [self setMode: VOTING_MODE_ALLOW_VOTING];
+//    } else {
+//        self.votingIsDone= YES;
+//        [self setMode: VOTING_MODE_NO_VOTING];
+//    }
+    [self.navigationController popViewControllerAnimated:YES ];
 }
 
 - (void)userPressedProfilePicture: (NSUInteger)userid
@@ -1124,4 +1182,11 @@
     }];
 }
 
+- (void) userPressedWhosGoing;
+{
+    EventWhoVC*vc= [[EventWhoVC alloc] init];
+    [vc setEditable:NO];
+    vc.eventBeingEdited= self.eventBeingEdited;
+    [self.navigationController pushViewController:vc animated:YES];
+}
 @end
