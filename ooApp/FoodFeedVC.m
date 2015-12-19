@@ -29,6 +29,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UIAlertController *showPhotoOptions;
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @end
 
 @implementation FoodFeedVC
@@ -83,6 +84,29 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)selectFriends {
     [self getFoodFeed:kFoodFeedTypeFriends];
 }
+
+//- getNearbyRestaurants {
+//    OOAPI *api = [[OOAPI alloc] init];
+//    
+//    
+//    _requestOperation = [api getRestaurantsWithKeywords:searchTerms
+//                                            andLocation:center // _desiredLocation
+//                                              andFilter:@""
+//                                              andRadius:20
+//                                            andOpenOnly:NO
+//                                                andSort:kSearchSortTypeDistance
+//                                               minPrice:0
+//                                               maxPrice:4
+//                                                 isPlay:NO
+//                                                success:^(NSArray *r) {
+//                                                    _restaurants = r;
+//                                                    dispatch_async(dispatch_get_main_queue(), ^{
+//                                                        [weakSelf gotRestaurants];
+//                                                    });
+//                                                } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
+//                                                    ;
+//                                                }];
+//}
 
 - (void)getFoodFeed:(FoodFeedType)type {
     __weak FoodFeedVC *weakSelf = self;

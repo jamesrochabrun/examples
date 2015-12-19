@@ -37,7 +37,6 @@
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic, assign) BOOL openOnly;
-@property (nonatomic, assign) BOOL showHere;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) GMSMarker *centerMarker;
@@ -97,7 +96,6 @@ static NSString * const ListRowID = @"HLRCell";
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
     [_filterView addFilter:@"Open Now" target:self selector:@selector(selectNow)];
     [_filterView addFilter:@"All" target:self selector:@selector(selectLater)];
-    [_filterView addFilter:@"Here" target:self selector:@selector(selectHere)];
     
     [self.view addSubview:_filterView];
     
@@ -201,7 +199,6 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)selectNow {
     _openOnly = YES;
-    _showHere = NO;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -212,18 +209,6 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)selectLater {
     _openOnly = NO;
-    _showHere = NO;
-    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *mm = (OOMapMarker *)obj;
-        mm.map = nil;
-    }];
-    [_mapMarkers removeAllObjects];
-    [self getRestaurants];
-}
-
-- (void)selectHere {
-    _openOnly = NO;
-    _showHere = YES;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -446,11 +431,11 @@ static NSString * const ListRowID = @"HLRCell";
         _requestOperation = [api getRestaurantsWithKeywords:searchTerms
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""
-                                                  andRadius:(_showHere) ? 20 : distanceInMeters
+                                                  andRadius:distanceInMeters
                                                andOpenOnly:_openOnly
-                                                    andSort:(_showHere) ? kSearchSortTypeDistance : kSearchSortTypeBestMatch
-                                                   minPrice:_showHere ? 0 : _minPrice
-                                                   maxPrice:_showHere ? 4 : _maxPrice
+                                                    andSort:kSearchSortTypeBestMatch
+                                                   minPrice:_minPrice
+                                                   maxPrice:_maxPrice
                                                      isPlay:NO
                                                    success:^(NSArray *r) {
             _restaurants = r;
