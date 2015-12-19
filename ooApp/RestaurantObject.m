@@ -28,6 +28,7 @@ NSString *const kKeyRestaurantWebsite = @"website";
 NSString *const kKeyRestaurantHours = @"hours";
 NSString *const kKeyRestaurantCuisine = @"cuisine";
 NSString *const kKeyRestaurantMobileMenuURL = @"mobile_menu_url";
+NSString *const kKeyRestaurantVoteCount=  @"totalVotes";
 
 BOOL isRestaurantObject (id  object)
 {
@@ -51,6 +52,8 @@ BOOL isRestaurantObject (id  object)
     restaurant.website = [[dict objectForKey:kKeyRestaurantWebsite] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantWebsite];
     restaurant.phone = [[dict objectForKey:kKeyRestaurantPhone] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantPhone];
     restaurant.address = [[dict objectForKey:kKeyRestaurantAddress] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantAddress];
+    
+    restaurant.totalVotes= parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyRestaurantVoteCount ]);
     
     id value= [dict objectForKey:kKeyRestaurantOpenNow];
     if (! value || [value isKindOfClass:[NSNull class]] ) {

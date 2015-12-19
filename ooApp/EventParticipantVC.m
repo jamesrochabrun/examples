@@ -607,7 +607,7 @@
 {
     _isWinner= YES;
     self.layer.borderWidth= 7;
-    self.layer.borderColor= YELLOW.CGColor;
+    self.layer.borderColor= GREEN.CGColor;
 }
 
 - (void)dealloc
@@ -1053,7 +1053,7 @@
     cell.selectionStyle= UITableViewCellSelectionStyleNone;
     cell.tag=  row;
     
-    if ( _mode == VOTING_MODE_SHOW_RESULTS && row==1) {
+    if ( _mode == VOTING_MODE_SHOW_RESULTS && row==0) {
         [cell  declareWinner];
     }
     
@@ -1226,7 +1226,7 @@
     for (RestaurantObject* venue  in  self.eventBeingEdited.venues ) {
         venue.totalVotes= 0;
     }
-    
+#if 0
     [self.eventBeingEdited refreshVotesFromServerWithSuccess:^{
         NSMutableDictionary *dictionary= [NSMutableDictionary  new];
         for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
@@ -1242,23 +1242,39 @@
         for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
             [_sortedArrayOfVenues addObject: venue];
         }
-        [_sortedArrayOfVenues sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-            RestaurantObject*r1= obj1;
-            RestaurantObject*r2= obj2;
-            if ( r1.totalVotes > r2.totalVotes) {
-                return NSOrderedAscending;
-            } else if ( r1.totalVotes  < r2.totalVotes) {
-                return NSOrderedDescending;
-            } else {
-                return NSOrderedSame;
-            }
-        }];
         
         [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
     } failure:^{
         NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
         [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
     }];
+#else
+    
+    [OOAPI getVoteTalliesForEvent: self.eventBeingEdited.eventID
+                          success:^(NSArray *venues) {
+                              
+                              [weakSelf.sortedArrayOfVenues removeAllObjects];
+                              for (RestaurantObject* venue in venues) {
+                                  [weakSelf.sortedArrayOfVenues addObject: venue];
+                              }
+                              [weakSelf.sortedArrayOfVenues sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                                  RestaurantObject*r1= obj1;
+                                  RestaurantObject*r2= obj2;
+                                  if ( r1.totalVotes > r2.totalVotes) {
+                                      return NSOrderedAscending;
+                                  } else if ( r1.totalVotes  < r2.totalVotes) {
+                                      return NSOrderedDescending;
+                                  } else {
+                                      return NSOrderedSame;
+                                  }
+                              }];
+                              [weakSelf.table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
+
+                          }
+                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                              NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
+                          }];
+#endif
 }
 
 - (void) userPressedWhosGoing;
