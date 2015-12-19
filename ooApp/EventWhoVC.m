@@ -310,12 +310,12 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     // RULE: Find out what users are already attached to this events.
     [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
-        [_participants removeAllObjects];
-        self.participants= [[ NSMutableOrderedSet alloc] initWithSet: self.eventBeingEdited.users.set];
+        [weakSelf.participants removeAllObjects];
+        weakSelf.participants= [[ NSMutableOrderedSet alloc] initWithSet: self.eventBeingEdited.users.set];
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
-        
+        NSLog (@"EVENT HAS %lu PARTICIPANTS", (unsigned long) weakSelf.participants.count);
     } failure:^{
-        NSLog (@"FAILED TO DETERMINE USERS ALREADY ATTACHED TO6 EVENT");
+        NSLog (@"FAILED TO DETERMINE USERS ALREADY ATTACHED TO EVENT");
     }];
     
     if  (self.editable) {
@@ -456,9 +456,20 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     UserObject* object= nil;
     NSInteger row= indexPath.row;
-    @synchronized(_setOfPotentialParticipants) {
-        if  (row  < _setOfPotentialParticipants.count) {
-            object=  _setOfPotentialParticipants[row];
+    
+    if  (self.editable ) {
+        
+        @synchronized(_setOfPotentialParticipants) {
+            if  (row  < _setOfPotentialParticipants.count) {
+                object=  _setOfPotentialParticipants[row];
+            }
+        }
+    } else {
+        
+        @synchronized(_participants) {
+            if  (row  < _participants.count) {
+                object=  _participants[row];
+            }
         }
     }
     
@@ -538,7 +549,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     } else {
         
         @synchronized(_participants) {
-            total= _setOfPotentialParticipants.count;
+            total= _participants.count;
         }
     }
     return  MAX(1,total);
