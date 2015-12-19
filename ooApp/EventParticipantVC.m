@@ -368,6 +368,8 @@
 @property (nonatomic,strong) UIView* viewOverlay;
 @property (nonatomic,strong) UIView* radioButtonBacking;
 @property (nonatomic,strong) UIButton* radioButton;
+@property (nonatomic,strong) UIButton* buttonVoteYes;
+@property (nonatomic,strong) UIButton* buttonVoteNo;
 @property (nonatomic,strong) EventObject* event;
 @property (nonatomic,strong) RestaurantObject*restaurant;
 @property (nonatomic,assign) int radioButtonState;
@@ -391,6 +393,16 @@
         _radioButtonBacking.layer.cornerRadius= 11;
         _radioButtonBacking.frame = CGRectMake(0,0, 22 ,22);
         
+        _buttonVoteYes=[UIButton buttonWithType:UIButtonTypeCustom];
+        _buttonVoteNo=[UIButton buttonWithType:UIButtonTypeCustom];
+        [_buttonVoteYes addTarget:self action:@selector(userPressedVoteUp:) forControlEvents:UIControlEventTouchUpInside ];
+        [_buttonVoteNo addTarget:self action:@selector(userPressedVoteDown:) forControlEvents:UIControlEventTouchUpInside ];
+        [ self addSubview: _buttonVoteYes];
+        [ self addSubview: _buttonVoteNo];
+        UIImage*image=[UIImage  imageNamed: @"thumbUp.jpeg"];
+        [_buttonVoteYes setImage: image forState:UIControlStateNormal];
+        [_buttonVoteNo setImage: [UIImage  imageNamed: @"thumbDown.jpeg"] forState:UIControlStateNormal];
+        
         _radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
                                       WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
@@ -412,6 +424,16 @@
         
     }
     return self;
+}
+
+- (void)userPressedVoteUp: (id) sender
+{
+    [self.delegate  userPressedVoteUp];
+}
+
+- (void)userPressedVoteDown: (id) sender
+{
+    [self.delegate  userPressedVoteDown];
 }
 
 - (void)setRadioButtonState: (UIButton*)button  to: (int)state
@@ -483,8 +505,15 @@
     _radioButton.frame = CGRectMake(x,(h-switchSize.height)/2,switchSize.width,switchSize.height);
     _radioButtonBacking.center= _radioButton.center;
     
+    const  float kGeomParticipantRestaurantThumbSize = 25;
+    spacer=kGeomParticipantRestaurantThumbSize;
+    x= w/2 - kGeomParticipantRestaurantThumbSize -  spacer/2;
+    y=h-kGeomParticipantRestaurantThumbSize-margin;
+    _buttonVoteYes.frame = CGRectMake(x, y, kGeomParticipantRestaurantThumbSize, kGeomParticipantRestaurantThumbSize);
+    x+= kGeomParticipantRestaurantThumbSize+ spacer;
+    _buttonVoteNo.frame = CGRectMake(x, y, kGeomParticipantRestaurantThumbSize, kGeomParticipantRestaurantThumbSize);
+    
     _viewOverlay.frame= self.bounds;
-//    [self  bringSubviewToFront:_viewOverlay];
 }
 
 - (void)setMode:(int)mode
@@ -494,17 +523,23 @@
     switch ( mode) {
         case VOTING_MODE_ALLOW_VOTING:
             _radioButton.enabled= YES;
+            _buttonVoteYes.hidden= NO;
+            _buttonVoteNo.hidden= NO;
             break;
             
         case VOTING_MODE_NO_VOTING:
             _radioButton.enabled= NO;
             _radioButton.layer.borderWidth= 0;
+            _buttonVoteYes.hidden= YES;
+            _buttonVoteNo.hidden= YES;
             [_radioButton setTitle: @"" forState:UIControlStateNormal];
             break;
             
         case VOTING_MODE_SHOW_RESULTS:
             _radioButton.enabled= NO;
             _radioButton.layer.borderWidth= 0;
+            _buttonVoteYes.hidden= YES;
+            _buttonVoteNo.hidden= YES;
             [_radioButton setTitle: @"" forState:UIControlStateNormal];
             break;
             
@@ -669,6 +704,18 @@
     self.vote.venueID= venue.restaurantID;
 }
 
+- (void) userPressedVoteUp;
+{
+    self.radioButtonState= VOTE_STATE_YES;
+    [ self scrollToCurrentStateAnimated:YES ];
+}
+
+- (void) userPressedVoteDown;
+{
+    self.radioButtonState= VOTE_STATE_NO;
+    [ self scrollToCurrentStateAnimated:YES ];
+}
+
 - (void) userPressedRadioButton: (NSInteger)currentValue;
 {
     switch (currentValue)  {
@@ -722,10 +769,8 @@
         case 2: _radioButtonState=VOTE_STATE_NO ; break;
     }
     
-    //    if ( _vote.vote  != _radioButtonState) {
     _vote.vote=_radioButtonState;
     [self.delegate voteChanged: _vote ];
-    //    }
 }
 
 - (void) provideEvent: (EventObject*)event

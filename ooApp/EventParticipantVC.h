@@ -26,6 +26,8 @@
 
 @protocol EventParticipantVotingSubCellDelegate
 - (void) userPressedRadioButton: (NSInteger)currentValue;
+- (void) userPressedVoteUp;
+- (void) userPressedVoteDown;
 @end
 
 //------------------------------------------------------------------------------
