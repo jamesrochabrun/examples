@@ -38,6 +38,7 @@
     UIButton *b = (UIButton *)sender;
     
     FilterObject *fo = [_filters objectAtIndex:b.tag];
+    _current = b.tag;
     [fo.target performSelectorOnMainThread:fo.selector withObject:nil waitUntilDone:NO];
     
     CGRect frame = _currentLine.frame;
@@ -94,6 +95,11 @@
     lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
 //    _currentLine.frame = currentFrame;
     _currentLine.frame = lineFrame;
+}
+
+- (void)selectCurrent {
+    UIButton *b = (UIButton *)[_filterControls objectAtIndex:_current];
+    [b sendActionsForControlEvents: UIControlEventTouchUpInside];
 }
 
 - (void)selectFilter:(NSUInteger)which {

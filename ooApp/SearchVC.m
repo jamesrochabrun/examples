@@ -336,14 +336,14 @@ static const NSUInteger maximumKeywords= 4;
                 location.longitude = -122.4183333;
             }
             
-            OOAPI *api= [[OOAPI  alloc] init];
+            OOAPI *api= [[OOAPI alloc] init];
             
-            self.fetchOperation= [api getRestaurantsWithKeywords: @[ expression ]
+            self.fetchOperation = [api getRestaurantsWithKeywords: @[expression]
                                                      andLocation:location
                                                        andFilter: @"" // Not used.
-                                                       andRadius:100000
+                                                       andRadius:50000
                                                      andOpenOnly:NO
-                                                         andSort:kSearchSortTypeBestMatch
+                                                         andSort:kSearchSortTypeDistance
                                                         minPrice:0
                                                         maxPrice:0
                                                           isPlay:NO

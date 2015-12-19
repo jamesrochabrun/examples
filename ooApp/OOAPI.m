@@ -82,6 +82,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *mediaItems = [NSMutableArray array];
+        NSLog(@"rest name = %@ \nmedia items %@", restaurant.name, responseObject);
         for (id dict in responseObject) {
             [mediaItems addObject:[MediaItemObject mediaItemFromDict:dict]];
         }
@@ -262,9 +263,11 @@ NSString *const kKeyDeviceToken = @"device_token";
 //                                 kKeySearchFilter:filterName// Not used by backend.
                                  }];
     
-    if (!(minPrice || maxPrice) || !(minPrice == 0 && maxPrice == 4)) {
-        [parameters setObject:[NSNumber numberWithUnsignedInteger:minPrice] forKey:kKeySearchMinPrice];
-        [parameters setObject:[NSNumber numberWithUnsignedInteger:maxPrice] forKey:kKeySearchMaxPrice];
+    if (!(minPrice == 0 && maxPrice == 0)) {
+        if (!(minPrice == 0 && maxPrice == 4)) {
+            [parameters setObject:[NSNumber numberWithUnsignedInteger:minPrice] forKey:kKeySearchMinPrice];
+            [parameters setObject:[NSNumber numberWithUnsignedInteger:maxPrice] forKey:kKeySearchMaxPrice];
+        }
     }
   
     NSLog(@"search URL = %@", urlString);
@@ -1590,6 +1593,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        NSLog(@"delete photo:%lu response: %@", mio.mediaItemId, responseObject);
         success();
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
@@ -2336,15 +2340,15 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 + (NSString *)URL {
-#ifdef ADHOC
+//#ifdef ADHOC
     return kOOURLProduction;
-#else
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#endif
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 

@@ -53,6 +53,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     cvl.delegate = self;
     
     _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:cvl];
+    [_collectionView scrollsToTop];
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
     
@@ -85,10 +86,12 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)getFoodFeed:(FoodFeedType)type {
     __weak FoodFeedVC *weakSelf = self;
+    
     [OOAPI getFoodFeedType:type success:^(NSArray *restaurants) {
         _restaurants = restaurants;
         ON_MAIN_THREAD(^{
             [weakSelf.collectionView reloadData];
+            [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         _restaurants = [NSArray array];
@@ -208,7 +211,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     if (mio.sourceUserID == userID) {
         [OOAPI deletePhoto:mio success:^{
-//            [weakSelf getMediaItemsForRestaurant];
+            ON_MAIN_THREAD(^{
+                [weakSelf.filterView selectCurrent];
+            });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
