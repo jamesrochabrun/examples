@@ -15,7 +15,7 @@
 #import "ListObject.h"
 #import "RestaurantVC.h"
 #import "ListsVC.h"
-#import "DiscoverVC.h"
+#import "ExploreVC.h"
 
 @interface RestaurantListVC ()
 
@@ -97,10 +97,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
     _alertController.view.tintColor = UIColorRGBA(kColorBlack);
 
-    UIAlertAction *addRestaurantsFromDiscover = [UIAlertAction actionWithTitle:@"Add Restaurants from Discover"
+    UIAlertAction *addRestaurantsFromExplore = [UIAlertAction actionWithTitle:@"Add Restaurants from Explore"
                                                                          style:UIAlertActionStyleDefault
                                                                        handler:^(UIAlertAction * action) {
-                                                                           [self addRestaurantsFromDiscover];
+                                                                           [self addRestaurantsFromExplore];
                                                                        }];
 
     UIAlertAction *addRestaurantsFromList = [UIAlertAction actionWithTitle:@"Add Restaurants from List"
@@ -121,7 +121,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                      }]; // 3
     
 
-    [_alertController addAction:addRestaurantsFromDiscover];
+    [_alertController addAction:addRestaurantsFromExplore];
     [_alertController addAction:addRestaurantsFromList];
     [_alertController addAction:deleteList];
     [_alertController addAction:cancel];
@@ -143,8 +143,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     }];
 }
 
-- (void)addRestaurantsFromDiscover {
-    DiscoverVC *vc = [[DiscoverVC alloc] init];
+- (void)addRestaurantsFromExplore {
+    ExploreVC *vc = [[ExploreVC alloc] init];
     vc.listToAddTo = _listItem;
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -214,7 +214,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                    andOpenOnly:NO
                                                        andSort:kSearchSortTypeBestMatch
                                                        minPrice:0
-                                                       maxPrice:0
+                                                       maxPrice:3
                                                          isPlay:(_listItem.type == kListTypeJustForYou) ? YES : NO
                                                         success:^(NSArray *r) {
             weakSelf.restaurants = r;

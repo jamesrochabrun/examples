@@ -13,7 +13,7 @@ extern NSString *const kMenuItemFeed;
 extern NSString *const kMenuItemFoodFeed;
 extern NSString *const kMenuItemConnect;
 extern NSString *const kMenuItemProfile;
-extern NSString *const kMenuItemDiscover;
+extern NSString *const kMenuItemExplore;
 extern NSString *const kMenuItemWhatsNew;
 extern NSString *const kMenuItemEat;
 extern NSString *const kMenuItemMeet;

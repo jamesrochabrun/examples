@@ -33,9 +33,9 @@
         
         [_priceSlider setTintColor:UIColorRGBA(kColorYellow)];
         [_priceSlider setMinValue:0];
-        [_priceSlider setMaxValue:4];
-        [_priceSlider setSelectedMaximum:4];
+        [_priceSlider setMaxValue:3];
         [_priceSlider setSelectedMinimum:0];
+        [_priceSlider setSelectedMaximum:3];
         _priceSlider.delegate = self;
     }
     return self;

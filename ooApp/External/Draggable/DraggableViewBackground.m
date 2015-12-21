@@ -85,7 +85,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
                         andOpenOnly:NO
                             andSort:kSearchSortTypeBestMatch
                            minPrice:0
-                           maxPrice:0
+                           maxPrice:3
                              isPlay:YES
                             success:^(NSArray *r) {
                                 weakSelf.playItems = r;

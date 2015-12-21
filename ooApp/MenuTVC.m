@@ -16,7 +16,7 @@
 #import "DefaultVC.h"
 #import "FeedVC.h"
 #import "PlayVC.h"
-#import "DiscoverVC.h"
+#import "ExploreVC.h"
 #import "DiagnosticVC.h"
 #import "SearchVC.h"
 #import "EventsListVC.h"
@@ -65,7 +65,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconMap;
     menuItem.name = @"EXPLORE";
-    menuItem.type = kMenuItemDiscover;
+    menuItem.type = kMenuItemExplore;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
@@ -103,12 +103,14 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.name = @"PROFILE";
     menuItem.type = kMenuItemProfile;
     [_menuItems addObject:menuItem];
-    
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconSettings;
-    menuItem.name = @"SETTINGS";
-    menuItem.type = kMenuItemSettings;
-    [_menuItems addObject:menuItem];
+
+// Move settings functionality into profile
+//    menuItem = [[MenuObject alloc] init];
+//    menuItem.icon = kFontIconSettings;
+//    menuItem.name = @"SETTINGS";
+//    menuItem.type = kMenuItemSettings;
+//    [_menuItems addObject:menuItem];
+
 #if 0
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconFeed;
@@ -238,8 +240,8 @@ static NSString * const MenuCellIdentifier = @"menuCell";
         if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
             [APP registerForPushNotifications];
         }
-    } else if ([menuItem.type isEqualToString:kMenuItemDiscover]) {
-        _fvc = [[DiscoverVC alloc] init];
+    } else if ([menuItem.type isEqualToString:kMenuItemExplore]) {
+        _fvc = [[ExploreVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemPlay]) {
         _fvc = [[PlayVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemFeed]) {

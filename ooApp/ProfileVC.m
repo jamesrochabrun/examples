@@ -18,6 +18,8 @@
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
 #import "OOUserView.h"
+#import "ManageTagsVC.h"
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 @interface ProfileTableFirstRow ()
 @property (nonatomic, assign) NSInteger userID;
@@ -25,7 +27,6 @@
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, assign) ProfileVC *vc;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
-
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @property (nonatomic, strong) UILabel *labelUsername;
@@ -216,6 +217,8 @@ static NSString * const ListRowID = @"ListRowCell";
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, strong) UIButton *buttonNewList;
+@property (nonatomic, strong) UIAlertController *optionsAC;
+
 @end
 
 @implementation ProfileVC
@@ -318,14 +321,15 @@ static NSString * const ListRowID = @"ListRowCell";
     if (!_userInfo) {
         UserObject *userInfo = [Settings sharedInstance].userObject;
         self.profileOwner = userInfo;
+        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions)];
     } else {
         self.profileOwner = _userInfo;
+        [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers > 1) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-        [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
     _lists = [NSArray array];
@@ -481,6 +485,35 @@ static NSString * const ListRowID = @"ListRowCell";
     [self.navigationController pushViewController:vc animated:YES];
     vc.title = item.name;
     vc.listItem = item;
+}
+
+- (void)showOptions {
+    _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+            [loginManager logOut];
+            [[Settings sharedInstance] removeUser];
+            [[Settings sharedInstance] removeMostRecentLocation];
+            [[Settings sharedInstance] removeDateString];
+            [[Settings sharedInstance] removeSearchRadius];
+            [APP clearCache];
+            
+            [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
+        }];
+    UIAlertAction *manageTags = [UIAlertAction actionWithTitle:@"Manage Tags" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        ManageTagsVC *vc = [[ManageTagsVC alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    }];
+
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    }];
+
+    
+    [_optionsAC addAction:manageTags];
+    [_optionsAC addAction:logout];
+    [_optionsAC addAction:cancel];
+    [self presentViewController:_optionsAC animated:YES completion:nil];
 }
 
 @end

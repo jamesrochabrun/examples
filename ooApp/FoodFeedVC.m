@@ -15,6 +15,7 @@
 #import "OOAPI.h"
 #import "RestaurantVC.h"
 #import "ProfileVC.h"
+#import "LocationManager.h"
 
 typedef enum {
     kFoodFeedTypeFriends = 1,
@@ -85,28 +86,33 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [self getFoodFeed:kFoodFeedTypeFriends];
 }
 
-//- getNearbyRestaurants {
-//    OOAPI *api = [[OOAPI alloc] init];
-//    
-//    
-//    _requestOperation = [api getRestaurantsWithKeywords:searchTerms
-//                                            andLocation:center // _desiredLocation
-//                                              andFilter:@""
-//                                              andRadius:20
-//                                            andOpenOnly:NO
-//                                                andSort:kSearchSortTypeDistance
-//                                               minPrice:0
-//                                               maxPrice:4
-//                                                 isPlay:NO
-//                                                success:^(NSArray *r) {
-//                                                    _restaurants = r;
-//                                                    dispatch_async(dispatch_get_main_queue(), ^{
-//                                                        [weakSelf gotRestaurants];
-//                                                    });
-//                                                } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-//                                                    ;
-//                                                }];
-//}
+- (void)getNearbyRestaurants {
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    __weak FoodFeedVC *weakSelf = self;
+    
+    _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]]
+                                            andLocation:[[LocationManager sharedInstance] currentUserLocation]
+                                              andFilter:@""
+                                              andRadius:20
+                                            andOpenOnly:NO
+                                                andSort:kSearchSortTypeDistance
+                                               minPrice:0
+                                               maxPrice:3
+                                                 isPlay:NO
+                                                success:^(NSArray *r) {
+                                                    _restaurants = r;
+                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                        [weakSelf gotRestaurants];
+                                                    });
+                                                } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
+                                                    ;
+                                                }];
+}
+
+- (void)gotRestaurants {
+    
+}
 
 - (void)getFoodFeed:(FoodFeedType)type {
     __weak FoodFeedVC *weakSelf = self;
@@ -159,7 +165,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     cvc.delegate = self;
     cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     cvc.mediaItemObject = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
-    [cvc showActionButton:(cvc.mediaItemObject.source == kMediaItemTypeOomami) ? YES : NO];
+//    [cvc showActionButton:(cvc.mediaItemObject.source == kMediaItemTypeOomami) ? YES : NO];
+    [cvc showActionButton:NO];
     //[DebugUtilities addBorderToViews:@[cvc]];
     return cvc;
 }
