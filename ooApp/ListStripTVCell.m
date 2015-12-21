@@ -189,7 +189,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
                                                     andOpenOnly:NO
                                                           andSort:kSearchSortTypeBestMatch
                                                        minPrice:0
-                                                       maxPrice:0
+                                                       maxPrice:3
                                                          isPlay:(_listItem.type == kListTypeJustForYou) ? YES : NO
                                                        success:^(NSArray *r) {
             weakSelf.restaurants = r;

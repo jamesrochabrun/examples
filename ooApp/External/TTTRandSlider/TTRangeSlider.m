@@ -45,7 +45,7 @@ static const CGFloat kLabelsFontSize = 12.0f;
     _enableStep = NO;
     _step = 0.1f;
 
-    _prices = @[@"$",@"$$",@"$$$",@"$$$$",@"$$$$$"];
+    _prices = @[@"$",@"$$",@"$$$",@"$$$$"];
      
     //draw the slider line
     self.sliderLine = [CALayer layer];

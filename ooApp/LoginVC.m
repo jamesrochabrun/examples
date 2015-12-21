@@ -33,7 +33,7 @@
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *imageViewLogo;
 @property (nonatomic,strong)  UILabel* labelMessage;
-@property (nonatomic, assign) BOOL wentToDiscover;
+@property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
 
@@ -52,7 +52,7 @@
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= WHITE;
     
-    _wentToDiscover= NO;
+    _wentToExplore = NO;
     
     UIImage*backgroundImage= [ UIImage  imageNamed:@"background_image.png"];
     UIImage*gradientImage= [ UIImage  imageNamed:@"Gradient Background.png"];
@@ -162,7 +162,7 @@
     
     ANALYTICS_SCREEN(@( object_getClassName(self)));
 
-    _wentToDiscover = NO;
+    _wentToExplore = NO;
 
     [self.navigationController setNavigationBarHidden:YES];
 }
@@ -292,10 +292,10 @@
 {
     ENTRY;
 
-    if ( _wentToDiscover) { // Prevent duplicate simultaneous calls.
+    if (_wentToExplore) { // Prevent duplicate simultaneous calls.
         return;
     }
-    _wentToDiscover= YES;
+    _wentToExplore= YES;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (!facebookToken) {
@@ -434,7 +434,7 @@
                                                  // XX:  this is the OO log in flow
                                              }
                                              
-                                             // RULE:  While the above is happening take the user to the Discover page regardless of whether the backend was reached.
+                                             // RULE:  While the above is happening take the user to the Explore page regardless of whether the backend was reached.
                                              if (userInfo.username.length ) {
                                                  [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                              } else {

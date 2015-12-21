@@ -1,12 +1,12 @@
 //
-//  DiscoverVC.m
+//  ExploreVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "DiscoverVC.h"
+#import "ExploreVC.h"
 #import <GoogleMaps/GoogleMaps.h>
 #import "OOAPI.h"
 #import "UserObject.h"
@@ -25,7 +25,7 @@
 #import "TagObject.h"
 #import "AppDelegate.h"
 
-@interface DiscoverVC () <GMSMapViewDelegate>
+@interface ExploreVC () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
@@ -37,7 +37,6 @@
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic, assign) BOOL openOnly;
-@property (nonatomic, assign) BOOL showHere;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) GMSMarker *centerMarker;
@@ -49,7 +48,7 @@
 
 static NSString * const ListRowID = @"HLRCell";
 
-@implementation DiscoverVC
+@implementation ExploreVC
 
 - (instancetype)init {
     self = [super init];
@@ -97,7 +96,6 @@ static NSString * const ListRowID = @"HLRCell";
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
     [_filterView addFilter:@"Open Now" target:self selector:@selector(selectNow)];
     [_filterView addFilter:@"All" target:self selector:@selector(selectLater)];
-    [_filterView addFilter:@"Here" target:self selector:@selector(selectHere)];
     
     [self.view addSubview:_filterView];
     
@@ -111,7 +109,7 @@ static NSString * const ListRowID = @"HLRCell";
     [self setRightNavWithIcon:kFontIconDiscover target:self action:@selector(showOptions)];
     
     _minPrice = 0;
-    _maxPrice = 4;
+    _maxPrice = 3;
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
@@ -161,7 +159,7 @@ static NSString * const ListRowID = @"HLRCell";
 }
 
 - (void)populateOptions {
-    __weak DiscoverVC *weakSelf = self;
+    __weak ExploreVC *weakSelf = self;
     
     self.dropDownList.delegate = self;
     OOAPI *api = [[OOAPI alloc] init];
@@ -201,7 +199,6 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)selectNow {
     _openOnly = YES;
-    _showHere = NO;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -212,18 +209,6 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)selectLater {
     _openOnly = NO;
-    _showHere = NO;
-    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *mm = (OOMapMarker *)obj;
-        mm.map = nil;
-    }];
-    [_mapMarkers removeAllObjects];
-    [self getRestaurants];
-}
-
-- (void)selectHere {
-    _openOnly = NO;
-    _showHere = YES;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -286,6 +271,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)showOptionsIfTimedOut {
     if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:1 minutes:0 second:0])) {
+        _desiredLocation = [[LocationManager sharedInstance] currentUserLocation];
         [self showOptions];
         APP.dateLeft = [NSDate date];
     }
@@ -294,7 +280,7 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)locationBecameAvailable:(id)notification
 {
     NSLog(@"LOCATION BECAME AVAILABLE FROM iOS");
-    __weak DiscoverVC *weakSelf = self;
+    __weak ExploreVC *weakSelf = self;
     ON_MAIN_THREAD(^{
         [weakSelf updateLocation];
         [weakSelf getRestaurants];
@@ -416,7 +402,7 @@ static NSString * const ListRowID = @"HLRCell";
     
     OOAPI *api = [[OOAPI alloc] init];
     
-    __weak DiscoverVC *weakSelf=self;
+    __weak ExploreVC *weakSelf=self;
 
     if (_listToDisplay && _listToDisplay.listID) {
         [api getRestaurantsWithListID:_listToDisplay.listID success:^(NSArray *restaurants) {
@@ -446,11 +432,11 @@ static NSString * const ListRowID = @"HLRCell";
         _requestOperation = [api getRestaurantsWithKeywords:searchTerms
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""
-                                                  andRadius:(_showHere) ? 20 : distanceInMeters
+                                                  andRadius:distanceInMeters
                                                andOpenOnly:_openOnly
-                                                    andSort:(_showHere) ? kSearchSortTypeDistance : kSearchSortTypeBestMatch
-                                                   minPrice:_showHere ? 0 : _minPrice
-                                                   maxPrice:_showHere ? 4 : _maxPrice
+                                                    andSort:kSearchSortTypeBestMatch
+                                                   minPrice:_minPrice
+                                                   maxPrice:_maxPrice
                                                      isPlay:NO
                                                    success:^(NSArray *r) {
             _restaurants = r;
@@ -569,7 +555,7 @@ static NSString * const ListRowID = @"HLRCell";
     vc.eventBeingEdited= self.eventBeingEdited;
     vc.listToAddTo = _listToAddTo;
     [vc getRestaurant];
-    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Discover");
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore");
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 

@@ -14,14 +14,14 @@
 #import "OOAPI.h"
 #import "ListsVC.h"
 #import "AppDelegate.h"
-#import "DiscoverVC.h"
+#import "ExploreVC.h"
 
 @interface EmptyListVC ()
 
 @property (nonatomic, strong) UILabel *labelUpper;
 @property (nonatomic,strong)  UILabel *labelPacMan;
 @property (nonatomic, strong) UITextView *textView;
-@property (nonatomic, strong) UIButton *buttonDiscover;
+@property (nonatomic, strong) UIButton *buttonExplore;
 @property (nonatomic, strong) UIButton *buttonLists;
 @property (nonatomic,strong)  UIImageView *imageViewBackground;
 @end
@@ -69,17 +69,17 @@
                                  @selector(userPressedListsButton:),
                                  borderWidth);
     
-    self.buttonDiscover= makeButton( self.view, LOCAL(@"DISCOVER") , kGeomFontSizeSubheader,
+    self.buttonExplore = makeButton( self.view, LOCAL(@"EXPLORE") , kGeomFontSizeSubheader,
                                     YELLOW, BLACK, self,
-                                    @selector(userPressedDiscoverButton:),
+                                    @selector(userPressedExploreButton:),
                                     borderWidth);
     if ( borderWidth>0) {
         UIColor*gray= UIColorRGB(0x777777);
-        _buttonDiscover.layer.borderColor= gray.CGColor;
+        _buttonExplore.layer.borderColor= gray.CGColor;
         _buttonLists.layer.borderColor= gray.CGColor;
     }
     addShadowTo(self.buttonLists);
-    addShadowTo(self.buttonDiscover);
+    addShadowTo(self.buttonExplore);
    
     self.labelUpper= makeLabel ( self.view,  @"This list is hungry\rfor some restaurants.", kGeomFontSizeHeader);
     self.labelPacMan= makeIconLabel ( self.view,  kFontIconProfile, kGeomForkImageSize);
@@ -141,13 +141,13 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 //------------------------------------------------------------------------------
-// Name:    userPressedDiscoverButton
+// Name:    userPressedExploreButton
 // Purpose:
 //------------------------------------------------------------------------------
 
-- (void)userPressedDiscoverButton:(id)sender
+- (void)userPressedExploreButton:(id)sender
 {
-    DiscoverVC *vc = [[DiscoverVC  alloc] init];
+    ExploreVC *vc = [[ExploreVC alloc] init];
     vc.listToAddTo = _listItem;
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
@@ -189,7 +189,7 @@
     y+= heightForText+ vspace;
     
     float x=  (w-2*kGeomButtonWidth-spacer)/2;
-    _buttonDiscover.frame=CGRectMake (x,y,kGeomButtonWidth,kGeomHeightCreateListButton);
+    _buttonExplore.frame=CGRectMake (x,y,kGeomButtonWidth,kGeomHeightCreateListButton);
     x +=kGeomButtonWidth+spacer;
     _buttonLists.frame=CGRectMake (x,y,kGeomButtonWidth,kGeomHeightCreateListButton);
 }

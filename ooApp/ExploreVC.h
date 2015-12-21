@@ -1,5 +1,5 @@
 //
-//  DiscoverVC.h
+//  ExploreVC.h
 //  ooApp
 //
 //  Created by Anuj Gujar on 7/16/15.
@@ -13,7 +13,7 @@
 #import "EventObject.h"
 #import "OptionsVC.h"
 
-@interface DiscoverVC : BaseVC <UITableViewDataSource, UITableViewDelegate, OptionsVCDelegate>
+@interface ExploreVC : BaseVC <UITableViewDataSource, UITableViewDelegate, OptionsVCDelegate>
 
 @property (nonatomic, strong) ListObject *listToAddTo;
 @property (nonatomic, strong) EventObject *eventBeingEdited;

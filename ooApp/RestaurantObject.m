@@ -130,15 +130,15 @@ BOOL isRestaurantObject (id  object)
 - (NSString *)priceRangeText {
     NSString *text;
     if (_priceRange >= 4) {
-        text = @"$$$$$";
-    } else if (_priceRange >= 3) {
         text = @"$$$$";
-    } else if (_priceRange >= 2) {
+    } else if (_priceRange >= 3) {
         text = @"$$$";
-    } else if (_priceRange >= 1) {
+    } else if (_priceRange >= 2) {
         text = @"$$";
-    } else {
+    } else if (_priceRange >= 1) {
         text = @"$";
+    } else {
+        text = @"";
     }
     return text;
 }

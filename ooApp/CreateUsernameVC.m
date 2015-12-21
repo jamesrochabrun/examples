@@ -267,7 +267,7 @@
                                                          userInfo.username= enteredUsername;
                                                          [[Settings sharedInstance ]save ];
                                                          
-                                                         [weakSelf performSelectorOnMainThread:@selector(goToDiscover) withObject:nil waitUntilDone:NO];
+                                                         [weakSelf performSelectorOnMainThread:@selector(goToExplore) withObject:nil waitUntilDone:NO];
                                                          return;
                                                      }
                                                  }
@@ -313,10 +313,10 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    goToDiscover
-// Purpose: Perform segue to discover screen.
+// Name:    goToExplore
+// Purpose: Perform segue to explore screen.
 //------------------------------------------------------------------------------
-- (void) goToDiscover
+- (void) goToExplore
 {
     [_fieldUsername  resignFirstResponder];
     
@@ -324,10 +324,10 @@
     [APP.diagnosticLogString appendFormat: @"Username set to %@" ,userInfo.username];
 
     @try {
-        [self performSegueWithIdentifier:@"gotoDiscoverFromCreateUsername" sender:self];
+        [self performSegueWithIdentifier:@"gotoExploreFromCreateUsername" sender:self];
     }
     @catch (NSException *exception) {
-        NSLog (@"CANNOT GO TO DISCOVER BY THAT ROUTE");
+        NSLog (@"CANNOT GO TO EXPLPORE BY THAT ROUTE");
     }
 }
 
