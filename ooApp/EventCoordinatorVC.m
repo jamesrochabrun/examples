@@ -520,15 +520,10 @@
                                     (unsigned long) pending,  LOCAL( @"PENDING")
                                     ];
     
-//    NSString *countsStringResponded= [NSString stringWithFormat:  @"%lu\r%@",
-//                                      (unsigned long) responded,  LOCAL( @"RESPONDED")
-//                                      ];
-    
     NSString *countsStringVoted= [NSString stringWithFormat:  @"%lu\r%@",
                                   (unsigned long)voted,  LOCAL( @"VOTED")
                                   ];
     _labelWhoPending.attributedText= attributedStringOf(countsStringPending,  kGeomFontSizeHeader);
-//    _labelWhoResponded.attributedText= attributedStringOf(countsStringResponded,  kGeomFontSizeHeader);
     _labelWhoVoted.attributedText= attributedStringOf(countsStringVoted,  kGeomFontSizeHeader);
     
     [self.participantsView setEvent:e];
@@ -995,7 +990,7 @@
         }
             
         case 1:{
-            if (! [self.eventBeingEdited totalUsers]) {
+            if ([self.eventBeingEdited totalUsers] <= 1) {
                 EventCoordinatorNewCell* cell=[tableView dequeueReusableCellWithIdentifier: TABLE_REUSE_NEW_IDENTIFIER forIndexPath:indexPath];
                 [ cell setMessage: @"Tap to invite people"];
                 return cell;
