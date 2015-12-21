@@ -413,17 +413,25 @@
         _labelName.textColor= WHITE;
         _labelDistance.textColor= WHITE;
         
-        _thumbnail.layer.borderColor= GRAY.CGColor;
-        _thumbnail.layer.borderWidth= .5;
-        
+        [self applyThinBorder];
         self.clipsToBounds= YES;
-//        self.backgroundColor= CLEAR;
         self.backgroundColor= UIColorRGBA(kColorOffBlack);
 
         [ self setRadioButtonState:_radioButton to:value];
         
     }
     return self;
+}
+
+- (void)removeThinBorder
+{
+    _thumbnail.layer.borderWidth= 0;
+    
+}
+- (void)applyThinBorder
+{
+    _thumbnail.layer.borderWidth= 0.5;
+    _thumbnail.layer.borderColor= GRAY.CGColor;
 }
 
 - (void)userPressedVoteUp: (id) sender
@@ -522,6 +530,8 @@
     
     switch ( mode) {
         case VOTING_MODE_ALLOW_VOTING:
+            _radioButton.hidden= NO;
+            _radioButtonBacking.hidden=NO;
             _radioButton.enabled= YES;
             _buttonVoteYes.hidden= NO;
             _buttonVoteNo.hidden= NO;
@@ -529,6 +539,8 @@
             
         case VOTING_MODE_NO_VOTING:
             _radioButton.enabled= NO;
+            _radioButton.hidden= YES;
+            _radioButtonBacking.hidden=YES;
             _radioButton.layer.borderWidth= 0;
             _buttonVoteYes.hidden= YES;
             _buttonVoteNo.hidden= YES;
@@ -537,6 +549,8 @@
             
         case VOTING_MODE_SHOW_RESULTS:
             _radioButton.enabled= NO;
+            _radioButton.hidden= YES;
+            _radioButtonBacking.hidden=YES;
             _radioButton.layer.borderWidth= 0;
             _buttonVoteYes.hidden= YES;
             _buttonVoteNo.hidden= YES;
@@ -606,8 +620,15 @@
 - (void) declareWinner;
 {
     _isWinner= YES;
-    self.layer.borderWidth= 7;
-    self.layer.borderColor= GREEN.CGColor;
+    
+    if (_subcells.count == 3) {
+        EventParticipantVotingSubCell *view=  _subcells[1];
+        
+        view.layer.borderWidth= 5;
+        view.layer.borderColor=  UIColorRGB(0xffff30).CGColor;
+        view.clipsToBounds=NO;
+        [view removeThinBorder];
+    }
 }
 
 - (void)dealloc
@@ -652,7 +673,7 @@
 {
     float w= self.frame.size.width;
     float h= self.frame.size.height;
-    h-= kGeomEventParticipantSeparatorHeight;
+//    h-= kGeomEventParticipantSeparatorHeight;
     
     CGRect r = CGRectMake(0,0,w,h);
     _scrollView.frame= _viewShadow.frame= r ;
@@ -695,6 +716,7 @@
     for (EventParticipantVotingSubCell *view in _subcells)  {
         view.labelName.text= nil;
         view.thumbnail.image= placeholder;
+        [view applyThinBorder];
     }
 }
 

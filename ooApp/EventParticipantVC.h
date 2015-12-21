@@ -67,6 +67,9 @@ enum  {
 @property (nonatomic,strong) VoteObject  *vote;
 - (void)setMode:(int)mode;
 - (void)provideRestaurant:(RestaurantObject*)restaurant;
+- (void)removeThinBorder;
+- (void) applyThinBorder;
+
 @end
 
     //------------------------------------------------------------------------------
@@ -75,7 +78,6 @@ enum  {
 @property (nonatomic,strong) VoteObject  *vote;
 @property (nonatomic,weak) id <EventParticipantVotingCellDelegate> delegate;
 - (void) declareWinner;
-
 - (void) scrollToCurrentStateAnimated: (BOOL) animated;
 - (void)setMode:(int)mode;
 @end

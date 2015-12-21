@@ -40,9 +40,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:(NSString *)reuseIdentifier];
     if (self) {
-//        _viewShadow= makeView(self, WHITE);
-//        addShadowTo(_viewShadow);
-        
         self.backgroundColor= UIColorRGBA(kColorOffBlack);
 
         _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomIconSize, WHITE, CLEAR, self, @selector(userPressRadioButton:), 0);
@@ -188,9 +185,10 @@
 @property (nonatomic,strong)UIButton* buttonAddEmail;
 @property (nonatomic,strong)UITableView* table;
 @property (nonatomic,strong) NSMutableOrderedSet *setOfPotentialParticipants;
+@property (nonatomic,strong) NSMutableArray *searchResultsArray;
 @property (nonatomic,strong)  NSMutableOrderedSet *participants;
 @property (atomic, assign) BOOL  busy;
-
+@property (nonatomic,strong) UISearchBar *searchBar;
 @end
 
 @implementation EventWhoVC
@@ -226,6 +224,19 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }
     
     self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
+    
+    _searchBar= [UISearchBar new];
+    [ self.view addSubview:_searchBar];
+    _searchBar.searchBarStyle = UISearchBarStyleMinimal;
+    _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _searchBar.placeholder = LOCAL( @"Type your search here");
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
+    _searchBar.barTintColor = UIColorRGBA(kColorBlack);
+    _searchBar.keyboardType = UIKeyboardTypeAlphabet;
+    _searchBar.delegate = self;
+    _searchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
+    _searchBar.keyboardType = UIKeyboardTypeAlphabet;
+    _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
     
@@ -269,8 +280,18 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)reloadTable
 {
-    @synchronized(_setOfPotentialParticipants) {
-        [_table reloadData];
+    if  ( self.editable) {
+        if  (_searchBar.text.length ) {
+            [self updateTableForSearchText: _searchBar.text ];
+        }
+        
+        @synchronized(_setOfPotentialParticipants) {
+            [_table reloadData];
+        }
+    } else {
+        @synchronized(_participants)  {
+            [_table reloadData];
+        }
     }
 }
 
@@ -401,7 +422,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     @synchronized(_setOfPotentialParticipants) {
         [_setOfPotentialParticipants  addObject: user];
     }
-    [_table reloadData];
+    [self  reloadTable];
     [_table scrollToRowAtIndexPath:
      [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
@@ -416,7 +437,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         UserObject *user= makeEmailOnlyUserObject(emailAddress);
         [_setOfPotentialParticipants  addObject: user];
     }
-    [_table reloadData];
+    [self  reloadTable];
     
     [_table scrollToRowAtIndexPath:
      [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0]
@@ -437,16 +458,62 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     float  y=  0;
     
     if ( self.editable) {
-        float tableHeight= h-kGeomHeightButton-2*spacing;
+        _searchBar.hidden= NO;
+        _searchBar.frame = CGRectMake(margin,y,w- margin*2,kGeomHeightSearchBar);
+        y+= kGeomHeightSearchBar;
+        
+        float tableHeight= h-y;
         _table.frame = CGRectMake(0,y,w,tableHeight);
         y+= tableHeight+ spacing;
         _buttonAddEmail.frame = CGRectMake(margin,y,w-2*margin, kGeomHeightButton);
         y += kGeomHeightButton+ spacing;
     } else {
+         _searchBar.hidden= YES;
         float tableHeight= h-kGeomHeightButton-2*spacing;
         _table.frame = CGRectMake(0,y,w,tableHeight);
         _buttonAddEmail.frame= CGRectZero;
     }
+}
+
+//------------------------------------------------------------------------------
+// Name:    textDidChange
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    NSString* text = _searchBar.text;
+    [self updateTableForSearchText: _searchBar.text];
+}
+
+//------------------------------------------------------------------------------
+// Name:    searchBarSearchButtonClicked
+// Purpose:
+//------------------------------------------------------------------------------
+- (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    [_searchBar resignFirstResponder];
+}
+
+- (void)updateTableForSearchText:  (NSString*)text
+{
+    if  (!self.editable ) {
+        return;
+    }
+    if  (!text.length) {
+        self.searchResultsArray= nil;
+    }
+    else {
+        self.searchResultsArray= [NSMutableArray new];
+        @synchronized(_setOfPotentialParticipants) {
+            for (UserObject* user  in  _setOfPotentialParticipants) {
+                NSString*name=  [NSString  stringWithFormat: @"%@ %@", user.firstName, user.lastName ];
+                if  ([ name containsString: text] ) {
+                    [_searchResultsArray addObject: user];
+                }
+            }
+        }
+    }
+    [self.table reloadData ];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -458,14 +525,18 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     NSInteger row= indexPath.row;
     
     if  (self.editable ) {
-        
         @synchronized(_setOfPotentialParticipants) {
-            if  (row  < _setOfPotentialParticipants.count) {
-                object=  _setOfPotentialParticipants[row];
+            if  (_searchResultsArray ) {
+                if  (row  < _searchResultsArray.count) {
+                    object=  _searchResultsArray[row];
+                }
+            } else {
+                if  (row  < _setOfPotentialParticipants.count) {
+                    object=  _setOfPotentialParticipants[row];
+                }
             }
         }
     } else {
-        
         @synchronized(_participants) {
             if  (row  < _participants.count) {
                 object=  _participants[row];
@@ -544,7 +615,11 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     if ( self.editable) {
         @synchronized(_setOfPotentialParticipants) {
-            total= _setOfPotentialParticipants.count;
+            if  (_searchResultsArray ) {
+                total= _searchResultsArray.count;
+            } else {
+                total= _setOfPotentialParticipants.count;
+            }
         }
     } else {
         

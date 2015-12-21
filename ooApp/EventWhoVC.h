@@ -19,7 +19,7 @@
 - (void) userDidAlterEventParticipants;
 @end
 
-@interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate>
+@interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate,UISearchBarDelegate>
 @property (nonatomic,weak) id <EventWhoVCDelegate> delegate;
 @property (nonatomic,strong) EventObject* eventBeingEdited;
 @property (nonatomic,assign) BOOL  editable;
