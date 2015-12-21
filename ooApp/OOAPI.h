@@ -40,7 +40,7 @@ typedef enum {
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
-                                        success:(void (^)(RestaurantObject *restaurants))success
+                                        success:(void (^)(RestaurantObject *restaurant))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantsWithKeywords:(NSArray *)keywords

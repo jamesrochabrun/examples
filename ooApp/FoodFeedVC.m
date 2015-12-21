@@ -31,6 +31,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UIAlertController *showPhotoOptions;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) UIImage *imageToUpload;
+@property (nonatomic, strong) RestaurantPickerTVC *restaurantPicker;
 @end
 
 @implementation FoodFeedVC
@@ -75,7 +77,50 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (void)showCameraUI {
-    NSLog(@"Show camera UI");
+    
+    BOOL haveCamera = haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ? YES : NO;
+    
+    if (!haveCamera) {
+        [self showRestaurantPicker];
+        return;
+    }
+    
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = NO;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
+    if (!image) {
+        image = info[@"UIImagePickerControllerOriginalImage"];
+    }
+    CGSize s = image.size;
+    _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
+    
+    __weak FoodFeedVC *weakSelf = self;
+    
+    
+    [weakSelf dismissViewControllerAnimated:YES completion:nil];
+    [self showRestaurantPicker];
+}
+
+- (void)showRestaurantPicker {
+    _restaurantPicker = [[RestaurantPickerTVC alloc] init];
+    _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorOverlay35);
+    _restaurantPicker.delegate = self;
+    _restaurantPicker.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_restaurantPicker.view];
+    [self.view setNeedsUpdateConstraints];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)selectAll {
@@ -142,13 +187,30 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_filterView, _collectionView);
+    NSDictionary *views;
+    
+
+    
+    if (_restaurantPicker) {
+        UIView *restaurantPickerView = _restaurantPicker.view;
+        views = NSDictionaryOfVariableBindings(_filterView, _collectionView, restaurantPickerView);
+    } else {
+        views = NSDictionaryOfVariableBindings(_filterView, _collectionView);
+    }
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_filterView(heightFilters)][_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    if (_restaurantPicker) {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[restaurantPickerView(250)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[restaurantPickerView(200)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_restaurantPicker.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_restaurantPicker.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    }
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -249,6 +311,49 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
             ;
         }];
     }
+}
+
+- (void)restaurantPickerTVC:(RestaurantPickerTVC *)restaurantPickerTVC restaurantSelected:(RestaurantObject *)restaurant {
+    NSLog(@"restaurant selected %@", restaurant.name);
+    [_restaurantPicker.view removeFromSuperview];
+    _restaurantPicker = nil;
+    [self.view setNeedsUpdateConstraints];
+    
+    __weak FoodFeedVC *weakSelf = self;
+    
+    if (restaurant.restaurantID) {
+        [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
+               success:^{
+                   [weakSelf.filterView selectCurrent];
+               } failure:^(NSError *error) {
+                   NSLog(@"Failed to upload photo");
+               }];
+    } else  {
+        OOAPI *api = [[OOAPI alloc] init];
+        [api getRestaurantWithID:restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
+            if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
+                [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
+                           success:^{
+                               [weakSelf.filterView selectCurrent];
+                           } failure:^(NSError *error) {
+                               NSLog(@"Failed to upload photo");
+                           }];
+            
+            } else {
+                NSLog(@"Failed to upload photo because didn't get back a restaurant object");    
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Failed to upload photo because the google ID was not found");
+        }];
+    }
+}
+
+- (void)restaurantPickerTVCCanceled:(RestaurantPickerTVC *)restaurantPickerTVC {
+    NSLog(@"restaurant picker canceled");
+    [_restaurantPicker.view removeFromSuperview];
+    _restaurantPicker = nil;
+    [self.view setNeedsUpdateConstraints];
+    _imageToUpload = nil;
 }
 
 /*

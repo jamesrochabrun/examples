@@ -102,6 +102,7 @@
 		36D887E41C1B48390002A412 /* TTRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887E11C1B48390002A412 /* TTRangeSlider.m */; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
+		36F159151C27CB8C0064140F /* RestaurantPickerTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F159141C27CB8C0064140F /* RestaurantPickerTVC.m */; };
 		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
 		36F872D91B919BC200006C29 /* ListObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F872D81B919BC200006C29 /* ListObject.m */; };
 		36FAB82E1BEC2DBA00B20EA1 /* FeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FAB82C1BEC2DBA00B20EA1 /* FeedVC.m */; };
@@ -324,6 +325,8 @@
 		36DD24241B7C88E800C6348F /* EventObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventObject.h; sourceTree = "<group>"; };
 		36DD24251B7C88E800C6348F /* EventObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventObject.m; sourceTree = "<group>"; };
 		36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
+		36F159131C27CB8C0064140F /* RestaurantPickerTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantPickerTVC.h; sourceTree = "<group>"; };
+		36F159141C27CB8C0064140F /* RestaurantPickerTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantPickerTVC.m; sourceTree = "<group>"; };
 		36F7F68E1BDAB02F000F8C32 /* HoursOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HoursOpen.h; sourceTree = "<group>"; };
 		36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HoursOpen.m; sourceTree = "<group>"; };
 		36F872D71B919BC200006C29 /* ListObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListObject.h; sourceTree = "<group>"; };
@@ -764,6 +767,8 @@
 				36250BDB1B82679A00F456B5 /* LoginVC.m */,
 				96E954E01BDFF99100F5197A /* Reachability.h */,
 				96E954E11BDFF99100F5197A /* Reachability.m */,
+				36F159131C27CB8C0064140F /* RestaurantPickerTVC.h */,
+				36F159141C27CB8C0064140F /* RestaurantPickerTVC.m */,
 				36FDA7001B585F650029D29D /* Main.storyboard */,
 				36FDA7031B585F650029D29D /* Images.xcassets */,
 				36FDA7051B585F650029D29D /* LaunchScreen.xib */,
@@ -1056,6 +1061,7 @@
 				3677040B1B8816C300B594E5 /* UILabel+Additions.m in Sources */,
 				367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */,
 				3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */,
+				36F159151C27CB8C0064140F /* RestaurantPickerTVC.m in Sources */,
 				36250BDC1B82679A00F456B5 /* LoginVC.m in Sources */,
 				367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */,
 				366BBC941BA8E59F00292F80 /* ExploreVC.m in Sources */,
