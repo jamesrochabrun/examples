@@ -32,7 +32,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) UIAlertController *showPhotoOptions;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIImage *imageToUpload;
-@property (nonatomic, strong) RestaurantPickerTVC *restaurantPicker;
+@property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
 @end
 
 @implementation FoodFeedVC
@@ -106,13 +106,16 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     
     [weakSelf dismissViewControllerAnimated:YES completion:nil];
+    
     [self showRestaurantPicker];
 }
 
 - (void)showRestaurantPicker {
-    _restaurantPicker = [[RestaurantPickerTVC alloc] init];
-    _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorOverlay35);
+    if (_restaurantPicker) return;
+    _restaurantPicker = [[RestaurantPickerVC alloc] init];
+    _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
     _restaurantPicker.delegate = self;
+    _restaurantPicker.imageToUpload = _imageToUpload;
     _restaurantPicker.view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_restaurantPicker.view];
     [self.view setNeedsUpdateConstraints];
@@ -205,11 +208,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     if (_restaurantPicker) {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[restaurantPickerView(250)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[restaurantPickerView(200)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_restaurantPicker.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_restaurantPicker.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[restaurantPickerView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[restaurantPickerView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     }
 }
 
@@ -313,7 +313,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     }
 }
 
-- (void)restaurantPickerTVC:(RestaurantPickerTVC *)restaurantPickerTVC restaurantSelected:(RestaurantObject *)restaurant {
+- (void)restaurantPickerVC:(RestaurantPickerVC *)restaurantPickerVC restaurantSelected:(RestaurantObject *)restaurant {
     NSLog(@"restaurant selected %@", restaurant.name);
     [_restaurantPicker.view removeFromSuperview];
     _restaurantPicker = nil;
@@ -348,7 +348,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     }
 }
 
-- (void)restaurantPickerTVCCanceled:(RestaurantPickerTVC *)restaurantPickerTVC {
+- (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerTVC {
     NSLog(@"restaurant picker canceled");
     [_restaurantPicker.view removeFromSuperview];
     _restaurantPicker = nil;

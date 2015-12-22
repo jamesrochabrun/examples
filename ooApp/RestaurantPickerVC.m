@@ -1,45 +1,75 @@
 //
-//  RestaurantPickerTVC.m
+//  RestaurantPickerVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 12/20/15.
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "RestaurantPickerTVC.h"
+#import "RestaurantPickerVC.h"
 #import "OOAPI.h"
 #import "LocationManager.h"
 #import "DebugUtilities.h"
 
-@interface RestaurantPickerTVC ()
+@interface RestaurantPickerVC ()
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) NSArray *restaurants;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UIImageView *iv;
 @end
 
-@implementation RestaurantPickerTVC
+@implementation RestaurantPickerVC
 
 static NSString * const cellIdentifier = @"restaurantPickerCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    _iv = [[UIImageView alloc] init];
+    _iv.translatesAutoresizingMaskIntoConstraints = NO;
+    _iv.backgroundColor = UIColorRGBA(kColorClear);
+    _iv.contentMode = UIViewContentModeScaleAspectFill;
+    _iv.alpha = 0.45;
+    [self.view addSubview:_iv];
     
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
-    self.tableView.rowHeight = 30;
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableView = [[UITableView alloc] init];
+    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
+    _tableView.backgroundColor = UIColorRGBA(kColorOverlay35);
+    _tableView.rowHeight = 35;
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableView.dataSource = self;
+    _tableView.delegate = self;
     self.view.layer.cornerRadius = kGeomCornerRadius;
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    [self.view addSubview:_tableView];
+    _tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+    _tableView.layer.borderWidth = 1;
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     [self getNearbyRestaurants];
+}
+
+- (void)updateViewConstraints {
+    [super updateViewConstraints];
+    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
+    
+    NSDictionary *views;
+
+    views = NSDictionaryOfVariableBindings(_tableView, _iv);
+    
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_tableView(250)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_tableView(200)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_tableView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_tableView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
 }
 
 - (void)getNearbyRestaurants {
     OOAPI *api = [[OOAPI alloc] init];
     
-    __weak RestaurantPickerTVC *weakSelf = self;
+    __weak RestaurantPickerVC *weakSelf = self;
     
     _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]]
                                             andLocation:[[LocationManager sharedInstance] currentUserLocation]
@@ -69,6 +99,12 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     // Dispose of any resources that can be recreated.
 }
 
+- (void)setImageToUpload:(UIImage *)imageToUpload {
+    if (_imageToUpload == imageToUpload) return;
+    _imageToUpload = imageToUpload;
+    _iv.image = _imageToUpload;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -90,13 +126,13 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail]];
+    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
-    [_delegate restaurantPickerTVC:self restaurantSelected:restaurant];
+    [_delegate restaurantPickerVC:self restaurantSelected:restaurant];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -117,7 +153,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     header.frame = frame;
     
     UILabel *headerLabel = [[UILabel alloc] init];
-    [headerLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader] textColor:kColorWhite backgroundColor:kColorClear];
+    [headerLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear];
     headerLabel.text = @"Where did you take this photo?";
     [headerLabel sizeToFit];
     frame = headerLabel.frame;
@@ -141,7 +177,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 }
 
 - (void)pickerCanceled {
-    [_delegate restaurantPickerTVCCanceled:self];
+    [_delegate restaurantPickerVCCanceled:self];
 }
 
 
