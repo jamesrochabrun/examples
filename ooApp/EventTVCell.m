@@ -35,18 +35,10 @@
         self.subHeader2.textColor= WHITE;
         self.header.font= [ UIFont  fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
-        //        self.thumbnail.contentMode= UIViewContentModeScaleAspectFill;
-        //        self.thumbnail.clipsToBounds= YES;
-        
-        self.viewFadeOverlay= makeView(self,  UIColorRGBA(0x80000000));
-        
-//        self.header.shadowColor = BLACK;
-//        self.header.shadowOffset = CGSizeMake(0, -1.0);
-//        self.subHeader1.shadowColor = BLACK;
-//        self.subHeader1.shadowOffset = CGSizeMake(0, -1.0);
-//        self.subHeader2.shadowColor = BLACK;
-//        self.subHeader2.shadowOffset = CGSizeMake(0, -1.0);
-        
+
+        self.viewFadeOverlay= makeView(self, BLACK);
+        self.viewFadeOverlay.alpha= kColorEventOverlayAlpha;
+       
         _participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
         _participantsView.delegate= self;
@@ -62,7 +54,6 @@
     [_participantsView clearFaces];
     [self.operation cancel];
     [_imageOperation cancel];
-    [self updateHighlighting:NO];
     self.clipsToBounds= NO;
     self.eventInfo= nil;
     [_nameHeader removeFromSuperview];
@@ -100,15 +91,6 @@
 - (void)userPressedButtonForProfile:(NSUInteger)userid
 {
     [_delegate userTappedOnProfilePicture:userid];
-}
-
-- (void)updateHighlighting:(BOOL)highlighted;
-{
-    if (highlighted) {
-        self.thumbnail.alpha = 0.5;
-    } else {
-        self.thumbnail.alpha = 1;
-    }
 }
 
 - (void)setNameHeader:(OOStripHeader *)header

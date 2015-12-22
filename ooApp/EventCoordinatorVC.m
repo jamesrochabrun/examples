@@ -24,7 +24,7 @@
 #import "PieView.h"
 #import "EventParticipantVC.h"
 #import "ProfileVC.h"
-#import "EmptyListVC.h"
+#import "ExploreVC.h"
 #import "ParticipantsView.h"
 
 #define kGeomSeparatorHeight 25
@@ -146,7 +146,7 @@
         _imageViewContainer1.clipsToBounds= YES;
         
         self.viewOverlay=makeView(self.contentView, BLACK);
-        _viewOverlay.alpha=.5;
+        _viewOverlay.alpha= kColorEventOverlayAlpha;
         
         self.labelTitle=makeAttributedLabel(self.contentView, self.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
         
@@ -204,7 +204,7 @@
     self.labelIcon= nil;
     self.labelSubtitle= nil;
     self.labelTitle.text= self.eventBeingEdited.name;
-    _viewOverlay.alpha=.5;
+    _viewOverlay.alpha= kColorEventOverlayAlpha;
 }
 
 - (void) coverDoesNotHaveImage
@@ -1413,7 +1413,7 @@
     }
     _transitioning= YES;
     
-    EmptyListVC* vc= [[EmptyListVC alloc] init];
+    ExploreVC*vc= [[ExploreVC  alloc] init];
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 }

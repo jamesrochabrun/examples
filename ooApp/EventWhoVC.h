@@ -22,7 +22,7 @@
 @interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate,UISearchBarDelegate>
 @property (nonatomic,weak) id <EventWhoVCDelegate> delegate;
 @property (nonatomic,strong) EventObject* eventBeingEdited;
-@property (nonatomic,assign) BOOL  editable;
+@property (nonatomic,assign) BOOL  editable, eventAlreadyStarted;
 @end
 
 @interface EventWhoTableCell: UITableViewCell

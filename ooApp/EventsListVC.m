@@ -527,10 +527,10 @@
         }
         
         EventTVCell *cell= [tableView cellForRowAtIndexPath:indexPath];
-        [cell updateHighlighting:YES];
-        RUN_AFTER(400, ^{
-            [cell updateHighlighting:NO];
-        });
+//        [cell updateHighlighting:YES];
+//        RUN_AFTER(400, ^{
+//            [cell updateHighlighting:NO];
+//        });
         
         BOOL userDidSubmitVotes=  NO;
         

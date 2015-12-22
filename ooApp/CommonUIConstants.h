@@ -50,6 +50,7 @@ static NSUInteger kColorYellow = 0xFFF9FF00; //0xFF0076ff;//0xFFF9FF00;
 static NSUInteger kColorStripHeaderShadow = 0x88898989;
 static NSUInteger kColorIconSelected = 0xFFFFFFFF;
 static NSUInteger kColorCoordinatorBoxBackground = 0xFF2b2b2b;
+static CGFloat kColorEventOverlayAlpha= 0.3;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;

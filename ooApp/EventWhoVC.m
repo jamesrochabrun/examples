@@ -219,8 +219,13 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"INVITE TO EVENT" subHeader: nil];
         self.navTitle = nto;
     } else {
-        NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"WHO'S GOING" subHeader: nil];
-        self.navTitle = nto;
+        if ( self.eventAlreadyStarted) {
+            NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"WHO WENT" subHeader: nil];
+            self.navTitle = nto;
+        } else {
+            NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"WHO'S GOING" subHeader: nil];
+            self.navTitle = nto;
+        }
     }
     
     self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
@@ -459,7 +464,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     if ( self.editable) {
         _searchBar.hidden= NO;
-        _searchBar.frame = CGRectMake(margin,y,w- margin*2,kGeomHeightSearchBar);
+        _searchBar.frame = CGRectMake(margin,y,w- margin*2, kGeomHeightSearchBar);
         y+= kGeomHeightSearchBar;
         
         float tableHeight= h-y;
@@ -469,8 +474,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         y += kGeomHeightButton+ spacing;
     } else {
          _searchBar.hidden= YES;
-        float tableHeight= h-kGeomHeightButton-2*spacing;
-        _table.frame = CGRectMake(0,y,w,tableHeight);
+        _table.frame = CGRectMake(0,0,w,h);
         _buttonAddEmail.frame= CGRectZero;
     }
 }
@@ -482,7 +486,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     NSString* text = _searchBar.text;
-    [self updateTableForSearchText: _searchBar.text];
+    [self updateTableForSearchText: text];
 }
 
 //------------------------------------------------------------------------------

@@ -51,7 +51,6 @@
 @interface EventParticipantFirstCell ()
 @property (nonatomic,assign)  int mode;
 @property (nonatomic, strong) UIButton *buttonSubmitVote;
-@property (nonatomic, strong) UIButton *buttonGears;
 @property (nonatomic, strong) UIButton *buttonAttendees;
 @property (nonatomic, strong) UILabel *labelTimeLeft;
 @property (nonatomic, strong) UILabel *labelTitle;
@@ -62,6 +61,7 @@
 @property (nonatomic, strong) EventObject *event;
 @property (nonatomic, strong) NSTimer  *timerCountdown;
 @property (nonatomic,strong) ParticipantsView* participantsView;
+@property (nonatomic,assign) BOOL eventAlreadyStarted;
 @end
 
 @implementation  EventParticipantFirstCell
@@ -85,7 +85,7 @@
         self.backgroundColor= CLEAR;
         
         self.viewOverlay=makeView(self, BLACK);
-        _viewOverlay.alpha=.5;
+        _viewOverlay.alpha= kColorEventOverlayAlpha;
         
         self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
         self.backgroundImageView.contentMode= UIViewContentModeScaleAspectFill;
@@ -198,7 +198,7 @@
 
 - (void)userPressedToViewAttendees: (id) sender
 {
-    [self.delegate  userPressedWhosGoing];
+    [self.delegate  userPressedWhosGoing: self.eventAlreadyStarted];
 }
 
 
@@ -227,8 +227,11 @@
             // RULE: After the event has gotten under way, change the button text to the past tense.
             if (eventDate &&  now-eventDate >= ONE_HOUR/4) {
                 [_buttonAttendees setTitle: @"WHO WENT" forState:UIControlStateNormal];
+                self.eventAlreadyStarted= YES;
+            }  else {
+                self.eventAlreadyStarted= NO;
             }
-                    }
+        }
     }
     
     UIImage* placeholder= [UIImage imageNamed:@"background-image.jpg"];
@@ -297,9 +300,15 @@
     long  timeRemaining= votingEnds-now;
     if ( timeRemaining <= 0) {
         _labelTimeLeft.attributedText=attributedStringOf( @"VOTING ENDED", kGeomFontSizeHeader);
-        [self killTimer];
         [self.delegate votingEnded];
 
+        if  (timeRemaining < -ONE_HOUR/4) {
+            [_buttonAttendees setTitle: @"WHO WENT" forState:UIControlStateNormal];
+            self.eventAlreadyStarted= YES;
+            
+            [self killTimer];
+        }
+        return;
     }
     
     unsigned long  hours= timeRemaining/ONE_HOUR;
@@ -353,6 +362,8 @@
 {
     [self killTimer];
     self.event= nil;
+    self.eventAlreadyStarted= NO;
+
 }
 @end
 
@@ -387,7 +398,7 @@
         _thumbnail.clipsToBounds= YES;
         
         self.viewOverlay= makeView( self, CLEAR);
-        _viewOverlay.alpha=  0.5;
+        _viewOverlay.alpha=  kColorEventOverlayAlpha;
         
         _radioButtonBacking= makeView(self, BLACK);
         _radioButtonBacking.layer.cornerRadius= 11;
@@ -399,9 +410,9 @@
         [_buttonVoteNo addTarget:self action:@selector(userPressedVoteDown:) forControlEvents:UIControlEventTouchUpInside ];
         [ self addSubview: _buttonVoteYes];
         [ self addSubview: _buttonVoteNo];
-        UIImage*image=[UIImage  imageNamed: @"thumbUp.jpeg"];
+        UIImage*image=[UIImage  imageNamed: @"ThumbUp.png"];
         [_buttonVoteYes setImage: image forState:UIControlStateNormal];
-        [_buttonVoteNo setImage: [UIImage  imageNamed: @"thumbDown.jpeg"] forState:UIControlStateNormal];
+        [_buttonVoteNo setImage: [UIImage  imageNamed: @"ThumbDown.png"] forState:UIControlStateNormal];
         
         _radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
                                       WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);
@@ -516,7 +527,7 @@
     const  float kGeomParticipantRestaurantThumbSize = 25;
     spacer=kGeomParticipantRestaurantThumbSize;
     x= w/2 - kGeomParticipantRestaurantThumbSize -  spacer/2;
-    y=h-kGeomParticipantRestaurantThumbSize-margin;
+    y=h-kGeomParticipantRestaurantThumbSize-2*margin;
     _buttonVoteYes.frame = CGRectMake(x, y, kGeomParticipantRestaurantThumbSize, kGeomParticipantRestaurantThumbSize);
     x+= kGeomParticipantRestaurantThumbSize+ spacer;
     _buttonVoteNo.frame = CGRectMake(x, y, kGeomParticipantRestaurantThumbSize, kGeomParticipantRestaurantThumbSize);
@@ -774,6 +785,9 @@
             [_scrollView scrollRectToVisible: CGRectMake(w*2, 0, w,1) animated:animated];
             break;
     }
+    
+    _vote.vote=_radioButtonState;
+    [self.delegate voteChanged: _vote ];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
@@ -876,6 +890,7 @@
 @property (nonatomic,strong) NSMutableArray* sortedArrayOfVenues;
 @property (nonatomic,assign) BOOL coordinatorVCReportedEventChanged;
 @property (nonatomic,strong)  UIImageView* imageViewBackground;
+@property (nonatomic,assign) BOOL transitioning;
 @end
 
 @implementation EventParticipantVC
@@ -981,8 +996,9 @@
         } failure:^{
             NSLog (@"FAILED TO FETCH EVENT VENUES");
         }];
-        
     }
+    
+    self.transitioning = NO;
 }
 
 - (void) userPressedMenuButton: (id) sender
@@ -1123,6 +1139,11 @@
 
 - (void) userDidSelect: (NSUInteger) which;
 {
+    if ( self.transitioning) {
+        return;
+    }
+    _transitioning= YES;
+    
     RestaurantVC* vc= [[RestaurantVC  alloc] init];
     ANALYTICS_EVENT_UI(@"RestaurantVC-from-EventParticipant");
     
@@ -1172,7 +1193,7 @@
             forEvent: object.eventID
        andRestaurant: object.venueID
              success:^(NSInteger eventID) {
-                 NSLog  (@"DID SAVE VOTE.");
+                 NSLog  (@"DID SAVE VOTE AS %d.", object.vote);
              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                  NSLog  (@"CANNOT SAVE VOTE.");
              }
@@ -1248,29 +1269,6 @@
     for (RestaurantObject* venue  in  self.eventBeingEdited.venues ) {
         venue.totalVotes= 0;
     }
-#if 0
-    [self.eventBeingEdited refreshVotesFromServerWithSuccess:^{
-        NSMutableDictionary *dictionary= [NSMutableDictionary  new];
-        for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
-            [dictionary setObject: venue forKey:[NSString stringWithFormat: @"%lu", (unsigned long) venue.restaurantID] ];
-        }
-        
-        for (VoteObject* vote  in weakSelf.eventBeingEdited.votes) {
-            NSString *index= [NSString stringWithFormat: @"%lu", (unsigned long)vote.venueID ];
-            RestaurantObject*venue= dictionary[ index];
-            venue.totalVotes += vote.vote;
-        }
-        [self.sortedArrayOfVenues removeAllObjects];
-        for (RestaurantObject* venue in weakSelf.eventBeingEdited.venues) {
-            [_sortedArrayOfVenues addObject: venue];
-        }
-        
-        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
-    } failure:^{
-        NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
-        [_table performSelectorOnMainThread:@selector(reloadData)  withObject:nil waitUntilDone:NO];
-    }];
-#else
     
     [OOAPI getVoteTalliesForEvent: self.eventBeingEdited.eventID
                           success:^(NSArray *venues) {
@@ -1296,14 +1294,15 @@
                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                               NSLog  (@"FAILED TO FETCH VOTE TALLIES.");
                           }];
-#endif
 }
 
-- (void) userPressedWhosGoing;
+- (void) userPressedWhosGoing:(BOOL)eventAlreadyStarted;
 {
     EventWhoVC*vc= [[EventWhoVC alloc] init];
     [vc setEditable:NO];
     vc.eventBeingEdited= self.eventBeingEdited;
+    vc.eventAlreadyStarted= eventAlreadyStarted;
+
     [self.navigationController pushViewController:vc animated:YES];
 }
 @end

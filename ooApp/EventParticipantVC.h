@@ -16,7 +16,7 @@
 - (void) userRequestToSubmit;
 - (void) userPressedProfilePicture: (NSUInteger)userid;
 - (void) votingEnded;
-- (void) userPressedWhosGoing;
+- (void) userPressedWhosGoing:(BOOL)eventAlreadyStarted;
 @end
 
 @protocol EventParticipantVotingCellDelegate
