@@ -9,9 +9,9 @@
 #import "BaseVC.h"
 #import "FoodFeedVCCVL.h"
 #import "PhotoCVCell.h"
-#import "RestaurantPickerTVC.h"
+#import "RestaurantPickerVC.h"
 
-@interface FoodFeedVC : BaseVC <FoodFeedVCCollectionViewDelegate, UICollectionViewDataSource, PhotoCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RestaurantPickerTVCDelegate>
+@interface FoodFeedVC : BaseVC <FoodFeedVCCollectionViewDelegate, UICollectionViewDataSource, PhotoCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RestaurantPickerVCDelegate>
 
 - (void)selectAll;
 
