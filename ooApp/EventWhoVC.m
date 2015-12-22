@@ -48,6 +48,9 @@
         
         _userView=[[OOUserView alloc] init];
         [ self  addSubview: _userView];
+        _userView.userInteractionEnabled= NO;
+        
+        self.selectionStyle= UITableViewCellSelectionStyleNone;
         
         _labelName= makeLabelLeft(self, nil, kGeomFontSizeHeader);
         _labelName.textColor= WHITE;
@@ -572,6 +575,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     } else {
         [cell setEmptyMode];
     }
+    
     return cell;
 }
 
