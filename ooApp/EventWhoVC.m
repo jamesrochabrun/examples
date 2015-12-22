@@ -171,9 +171,13 @@
 
 - (void)userPressRadioButton: (id) sender
 {
+    if  (!_editable ) {
+        return;
+    }
+    
     _radioButton.selected= !_radioButton.selected;
     
-    if ( _viewController) {
+    if ( _viewController  ) {
         [_viewController radioButtonChanged:  _radioButton.selected
                                         for: _group ?: _user];
     }
@@ -552,6 +556,8 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }
     
     cell.viewController=  self;
+    cell.editable=self.editable;
+    
     if  (object ) {
         BOOL inList= NO;
         for (UserObject* user  in  _participants) {

@@ -30,4 +30,5 @@
 - (void) specifyUser:  (UserObject*)user;
 - (void) specifyGroup:  (GroupObject*)group;
 - (void) setEmptyMode;
+@property (nonatomic,assign) BOOL  editable;
 @end
