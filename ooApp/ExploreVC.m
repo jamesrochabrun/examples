@@ -270,9 +270,9 @@ static NSString * const ListRowID = @"HLRCell";
 }
 
 - (void)showOptionsIfTimedOut {
-    if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:1 minutes:0 second:0])) {
-        _desiredLocation = [[LocationManager sharedInstance] currentUserLocation];
+    if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:0 minutes:45 second:00])) {
         [self showOptions];
+        [self updateLocation];
         APP.dateLeft = [NSDate date];
     }
 }
@@ -300,8 +300,6 @@ static NSString * const ListRowID = @"HLRCell";
 {
     [super viewDidAppear:animated];
     [self verifyTrackingIsOkay];
-//    if (!_desiredLocation.longitude)
-//        [self updateLocation];
 }
 
 - (void)verifyTrackingIsOkay
@@ -313,6 +311,7 @@ static NSString * const ListRowID = @"HLRCell";
         }
         else if (TRACKING_YES == c) {
             [self updateLocation];
+            [self getRestaurants];
         }
     }
 }
@@ -329,7 +328,6 @@ static NSString * const ListRowID = @"HLRCell";
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:_camera.zoom bearing:_camera.bearing viewingAngle:_camera.viewingAngle];
     [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
     _desiredLocation = _currentLocation;
-    [self getRestaurants];
 }
 
 - (void)didReceiveMemoryWarning
