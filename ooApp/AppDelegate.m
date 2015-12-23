@@ -19,19 +19,11 @@
 #import "ProfileVC.h"
 #import "RestaurantVC.h"
 #import <GoogleMaps/GoogleMaps.h>
-
-typedef enum {
-    kNotificationTypeViewUser = 1,
-    kNotificationTypeViewEvent = 2,
-    kNotificationTypeViewList = 3,
-    kNotificationTypeViewRestaurant = 4
-} NotificationObjectType;
-
-NSString *const kKeyNotificationType = @"type";
-NSString *const kKeyNotificationID = @"id";
+#import "NotificationObject.h"
+#import "RestaurantListVC.h"
 
 @interface AppDelegate ()
-
+@property (nonatomic, strong) NSMutableArray *notifications;
 @end
 
 @implementation AppDelegate
@@ -65,6 +57,7 @@ NSString *const kKeyNotificationID = @"id";
     #endif
 #endif
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    _notifications = [NSMutableArray array];
     
     // Override point for customization after application launch.
     NSLog(@"application finished launching");
@@ -119,29 +112,37 @@ NSString *const kKeyNotificationID = @"id";
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    NotificationObjectType notType;
-    NSUInteger identifier;
     if ([userInfo isKindOfClass:[NSDictionary class]]) {
-        notType = (NotificationObjectType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
-        identifier = parseUnsignedIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationID]);
-        if (notType && identifier) [self showObject:notType forID:identifier];
+        NotificationObject *notif = [[NotificationObject alloc] init];
+        notif.type = (NotificationObjectType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
+        notif.identifier = parseUnsignedIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationID]);
+        [_notifications addObject:notif];
+        if (_nc) [self processNotifications];
     }
 }
 
-- (void)showObject:(NotificationObjectType)type forID:(NSUInteger)identifier {
-    if (!_nc) {
+- (void)setNc:(UINavigationController *)nc {
+    if (_nc == nc) return;
+    _nc = nc;
+}
+
+- (void)processNotifications {
+    if (!_nc || ![_notifications count]) {
         NSLog(@"*** NC not set yet");
         return;
     }
     
+    NotificationObject *notif =[_notifications firstObject];
+    [_notifications removeObject:notif];
+    
     __weak UINavigationController *weakNC = _nc;
     
-    switch (type) {
+    switch (notif.type) {
         case kNotificationTypeViewUser:
             //show user profile
         {
-            NSLog([NSString stringWithFormat:@"Show user: %lu", identifier]);
-            [OOAPI getUserWithID:identifier success:^(UserObject *user) {
+            NSLog([NSString stringWithFormat:@"Show user: %lu", (unsigned long)notif.identifier]);
+            [OOAPI getUserWithID:notif.identifier success:^(UserObject *user) {
                 if (user) {
                     ProfileVC *vc = [[ProfileVC alloc] init];
                     vc.userInfo = user;
@@ -156,33 +157,59 @@ NSString *const kKeyNotificationID = @"id";
             break;
         case kNotificationTypeViewEvent:
             //show event
-            message([NSString stringWithFormat:@"Show event: %lu", identifier]);
+            message([NSString stringWithFormat:@"Show event: %lu", notif.identifier]);
             break;
         case kNotificationTypeViewList:
             //show list
-            message([NSString stringWithFormat:@"Show list: %lu", identifier]);
+        {
+
+            NSLog([NSString stringWithFormat:@"Show list: %lu", notif.identifier]);
+            
+            OOAPI *api = [[OOAPI alloc] init];
+            
+            [api getList:notif.identifier success:^(ListObject *list) {
+                RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+                [weakNC pushViewController:vc animated:YES];
+                vc.title = list.name;
+                vc.listItem = list;
+                ;
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
+            
+        }
             break;
         case kNotificationTypeViewRestaurant:
             //show restaurant
         {
-            NSLog([NSString stringWithFormat:@"Show restaurant: %lu", identifier]);
+            NSLog([NSString stringWithFormat:@"Show restaurant: %lu", notif.identifier]);
             
-//            OOAPI *api = [[OOAPI alloc] init];
-//            RestaurantVC *vc = [[RestaurantVC alloc] init];
-//            api getRestaurantWithID:<#(NSString *)#> source:<#(NSUInteger)#> success:<#^(RestaurantObject *restaurants)success#> failure:<#^(AFHTTPRequestOperation *operation, NSError *error)failure#>
-//            vc.title = trimString(ro.name);
-//            vc.restaurant = ro;
-//            vc.eventBeingEdited = self.eventBeingEdited;
-//            [self.nc pushViewController:vc animated:YES];
+            OOAPI *api = [[OOAPI alloc] init];
+            
+            [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", notif.identifier] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
+                if (restaurant) {
+                    RestaurantVC *vc = [[RestaurantVC alloc] init];
+                    vc.title = trimString(restaurant.name);
+                    vc.restaurant = restaurant;
+                    [weakNC pushViewController:vc animated:YES];
+                }
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
         }
             break;
+            
         default:
             break;
     }
 }
 
 - (void)testRemoteNotification {
-    [self showObject:kNotificationTypeViewUser forID:3];
+//    NotificationObject *n = [[NotificationObject alloc] init];
+//    n.identifier = 32;
+//    n.type = kNotificationTypeViewList;
+//    [_notifications addObject:n];
+//    [self processNotifications];
 //    {
 //        "type":2,
 //        "event_id":363,
@@ -267,7 +294,7 @@ NSString *const kKeyNotificationID = @"id";
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [FBSDKAppEvents activateApp];
     
-//    [self testRemoteNotification];
+    [self testRemoteNotification];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

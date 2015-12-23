@@ -97,22 +97,22 @@ NSString *const kKeyDeviceToken = @"device_token";
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
-                                        success:(void (^)(RestaurantObject *))success
+                                        success:(void (^)(RestaurantObject *restaurant))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     if (!restaurantId) return nil;
+
+    NSString *urlString;
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@?source=%lu", kHTTPProtocol, [self ooURL],
-                           restaurantId,( unsigned long) source];
-    
+    if (source == kRestaurantSourceTypeOomami) {
+        urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@", kHTTPProtocol, [self ooURL], restaurantId];
+    } else {
+        urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@?source=%lu", kHTTPProtocol, [self ooURL], restaurantId, (unsigned long)source];
+    }
+
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        //        NSMutableArray *restaurants = [NSMutableArray array];
-        //        for (id dict in responseObject) {
-        //            NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
-        //            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
-        //        }
         RestaurantObject *restaurant = [RestaurantObject restaurantFromDict:responseObject];
         success(restaurant);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
@@ -647,6 +647,27 @@ NSString *const kKeyDeviceToken = @"device_token";
         failure(operation, error);
     }
             ];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getList
+// Purpose:
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)getList:(NSUInteger)listID
+                            success:(void (^)(ListObject *list))success
+                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu", kHTTPProtocol,
+                           [OOAPI URL], (unsigned long)listID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        ListObject *list = [ListObject listFromDict:responseObject];
+        success(list);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        ;
+    }];
 }
 
 //------------------------------------------------------------------------------

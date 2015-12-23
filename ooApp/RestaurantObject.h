@@ -28,6 +28,7 @@ extern NSString *const kKeyRestaurantCuisine;
 extern NSString *const kKeyRestaurantMobileMenuURL;
 
 typedef enum {
+    kRestaurantSourceTypeOomami = 1,
     kRestaurantSourceTypeGoogle = 2
 } RestaurantSourceType;
 

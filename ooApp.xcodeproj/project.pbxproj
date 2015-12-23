@@ -102,6 +102,7 @@
 		36D887E41C1B48390002A412 /* TTRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D887E11C1B48390002A412 /* TTRangeSlider.m */; };
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
+		36E592971C2A62BD00A56367 /* NotificationObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E592961C2A62BD00A56367 /* NotificationObject.m */; };
 		36F159151C27CB8C0064140F /* RestaurantPickerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F159141C27CB8C0064140F /* RestaurantPickerVC.m */; };
 		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
 		36F872D91B919BC200006C29 /* ListObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F872D81B919BC200006C29 /* ListObject.m */; };
@@ -325,6 +326,8 @@
 		36DD24241B7C88E800C6348F /* EventObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventObject.h; sourceTree = "<group>"; };
 		36DD24251B7C88E800C6348F /* EventObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventObject.m; sourceTree = "<group>"; };
 		36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
+		36E592951C2A62BD00A56367 /* NotificationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationObject.h; sourceTree = "<group>"; };
+		36E592961C2A62BD00A56367 /* NotificationObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationObject.m; sourceTree = "<group>"; };
 		36F159131C27CB8C0064140F /* RestaurantPickerVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantPickerVC.h; sourceTree = "<group>"; };
 		36F159141C27CB8C0064140F /* RestaurantPickerVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantPickerVC.m; sourceTree = "<group>"; };
 		36F7F68E1BDAB02F000F8C32 /* HoursOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HoursOpen.h; sourceTree = "<group>"; };
@@ -512,6 +515,8 @@
 				3613BE5D1BC46BE800F1AF67 /* FilterObject.m */,
 				36C572D81C01309900C57DA2 /* TagObject.h */,
 				36C572D91C01309900C57DA2 /* TagObject.m */,
+				36E592951C2A62BD00A56367 /* NotificationObject.h */,
+				36E592961C2A62BD00A56367 /* NotificationObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1123,6 +1128,7 @@
 				961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */,
 				366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */,
 				3629F0C61BFCF42500E2D912 /* DraggableView.m in Sources */,
+				36E592971C2A62BD00A56367 /* NotificationObject.m in Sources */,
 				96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */,
 				96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */,
 				96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */,

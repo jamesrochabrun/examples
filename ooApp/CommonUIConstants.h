@@ -178,6 +178,11 @@ extern NSString *const kFontIconLogo;
 extern NSString *const kFontIconShare;
 extern NSString *const kFontIconCheckmark;
 extern NSString *const kFontIconFoodFeed;
+extern NSString *const kFontIconCirclePlus;
+extern NSString *const kFontIconCircleX;
+extern NSString *const kFontIconYum;
+extern NSString *const kFontIconThumbsUp;
+
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

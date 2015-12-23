@@ -104,6 +104,10 @@ typedef enum {
                                    success:(void (^)(NSArray *lists))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
+- (AFHTTPRequestOperation *)getList:(NSUInteger)listID
+                            success:(void (^)(ListObject *list))success
+                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 - (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
                                              success:(void (^)(NSArray *restaurants))success
                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
