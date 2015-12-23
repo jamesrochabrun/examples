@@ -97,7 +97,16 @@
     
     if  (user.firstName && [user.firstName isKindOfClass:[NSString class]]  && user.firstName.length) {
         _labelName.text= [NSString stringWithFormat: @"%@ %@",user.firstName, user.lastName];
-        _labelUserName.text= [NSString stringWithFormat: @"@%@",user.username];
+        
+        if  (user.username ) {
+            _labelUserName.text= [NSString stringWithFormat: @"@%@",user.username];
+        } else {
+            if ( user.email) {
+                _labelUserName.text= user.email;
+            } else {
+                _labelUserName.text= [NSString stringWithFormat: @""];
+            }
+        }
     } else {
         _labelName.text= user.email; // NOTE: This is for the email–only case.
         _labelUserName.text=  @"";
@@ -435,18 +444,20 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 - (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person
 {
     ABMultiValueRef emailsMultiValueRef = ABRecordCopyValue(person, kABPersonEmailProperty);
+    if (!emailsMultiValueRef) {
+        message( @"That contact does not include an email address (required).");
+        return;
+    }
     
     NSString *firstName= nil;
     NSString *lastName= nil;
-                firstName = (__bridge_transfer  NSString *)ABRecordCopyValue(person, kABPersonFirstNameProperty);
+    firstName = (__bridge_transfer  NSString *)ABRecordCopyValue(person, kABPersonFirstNameProperty);
     lastName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
-
-    NSUInteger i;
-
+    
     NSString *firstEmailAddress=nil;
     NSString *homeEmailAddress=nil;
     
-    for (i = 0; i <= ABMultiValueGetCount(emailsMultiValueRef); i++) {
+    for (NSUInteger i = 0; i <= ABMultiValueGetCount(emailsMultiValueRef); i++) {
         NSString *emailLabel = (__bridge_transfer NSString *) ABMultiValueCopyLabelAtIndex (emailsMultiValueRef, i);
         NSString * email = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emailsMultiValueRef, i);
         
