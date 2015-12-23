@@ -113,8 +113,8 @@ static NSString * const ListRowID = @"HLRCell";
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
-    [self showOptionsIfTimedOut];
     APP.nc = self.navigationController;
+    [self showOptionsIfTimedOut];
 }
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
@@ -274,6 +274,8 @@ static NSString * const ListRowID = @"HLRCell";
         [self showOptions];
         [self updateLocation];
         APP.dateLeft = [NSDate date];
+    } else {
+        [APP processNotifications];
     }
 }
 

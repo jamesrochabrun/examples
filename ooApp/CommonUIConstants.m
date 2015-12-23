@@ -55,5 +55,9 @@ NSString *const kFontIconShare = @"1";
 NSString *const kFontIconCheckmark = @"0";
 NSString *const kFontIconLogo = @"W";
 NSString *const kFontIconFoodFeed = @"2";
+NSString *const kFontIconCirclePlus = @"3";
+NSString *const kFontIconCircleX = @"4";
+NSString *const kFontIconYum = @"5";
+NSString *const kFontIconThumbsUp = @"6";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
