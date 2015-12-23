@@ -192,7 +192,7 @@
 @property (nonatomic,strong)UILabel* labelEventDateHeader;
 @property (nonatomic,strong)UIButton* buttonAddEmailManually;
 @property (nonatomic,strong)UIButton* buttonAddEmailFromContacts;
-//@property (nonatomic,strong)UIButton* buttonAddEmailFacebook;
+@property (nonatomic,strong)UIButton* buttonAddEmailFacebook;
 @property (nonatomic,strong)UITableView* table;
 @property (nonatomic,strong) NSMutableOrderedSet *setOfPotentialParticipants;
 @property (nonatomic,strong) NSMutableArray *searchResultsArray;
@@ -211,7 +211,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     return  user;
 }
 
-- (void)x
+- (void) testing
 {
     
     if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
@@ -273,17 +273,23 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
     
     if ( self.editable) {
-        self.buttonAddEmailManually=makeButton(self.view, @"INVITE BY EMAIL",
-                                               kGeomFontSizeHeader,  WHITE, CLEAR,
+        self.buttonAddEmailManually=makeButton(self.view, @"INVITE\rBY EMAIL",
+                                               kGeomFontSizeSubheader,  WHITE, CLEAR,
                                                self, @selector(userPressedInviteByEmail:), 1);
+        _buttonAddEmailManually.titleLabel.numberOfLines=2;
+        _buttonAddEmailManually.titleLabel.textAlignment=NSTextAlignmentCenter;
         
-        self.buttonAddEmailFromContacts=makeButton(self.view, @"INVITE CONTACTS",
-                                               kGeomFontSizeHeader,  WHITE, CLEAR,
+        self.buttonAddEmailFromContacts=makeButton(self.view, @"INVITE\rCONTACTS",
+                                               kGeomFontSizeSubheader,  WHITE, CLEAR,
                                                self, @selector(userPressedInviteFromContacts:), 1);
-        
-//        self.buttonAddEmailFacebook=makeButton(self.view, @"INVITE FACEBOOK FRIEND",
-//                                               kGeomFontSizeHeader,  WHITE, CLEAR,
-//                                               self, @selector(userPressedInviteByEmail:), 1);
+        _buttonAddEmailFromContacts.titleLabel.numberOfLines=2;
+        _buttonAddEmailFromContacts.titleLabel.textAlignment=NSTextAlignmentCenter;
+
+        self.buttonAddEmailFacebook=makeButton(self.view, @"INVITE\rFACEBOOK",
+                                               kGeomFontSizeSubheader,  WHITE, CLEAR,
+                                               self, @selector(userPressedInviteViaFacebook:), 1);
+        _buttonAddEmailFacebook.titleLabel.numberOfLines=2;
+        _buttonAddEmailFacebook.titleLabel.textAlignment=NSTextAlignmentCenter;
     }
     
     self.table= makeTable( self.view,  self);
@@ -412,6 +418,12 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
 }
 
+- (void)userPressedInviteViaFacebook: (id) sender
+{
+    message(@"Coming soon... before Xmas.");
+}
+
+
 - (void)userPressedInviteFromContacts: (id) sender
 {
     self.pickerController=[[ABPeoplePickerNavigationController alloc] init];
@@ -426,8 +438,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     NSString *firstName= nil;
     NSString *lastName= nil;
-    ABMultiValueRef firstMultiValueRef = ABRecordCopyValue(person, kABPersonFirstNameProperty);
-    ABMultiValueRef lastMultiValueRef = ABRecordCopyValue(person, kABPersonLastNameProperty);
                 firstName = (__bridge_transfer  NSString *)ABRecordCopyValue(person, kABPersonFirstNameProperty);
     lastName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
 
@@ -626,11 +636,16 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         float tableHeight= h-y-kGeomHeightButton-margin-spacing;
         _table.frame = CGRectMake(0,y,w,tableHeight);
         y+= tableHeight+ spacing;
-        float buttonWidth= (w-3*margin)/2;
-        float x=  margin;
+        
+        const float maximumButtonAreaWidth = 320;
+        
+        float buttonWidth= (maximumButtonAreaWidth-2*margin-2*spacing)/3;
+        float x=  (w-maximumButtonAreaWidth)/2 + margin;
         _buttonAddEmailManually.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
-        x +=buttonWidth+ margin;
+        x +=buttonWidth+ spacing;
         _buttonAddEmailFromContacts.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
+        x +=buttonWidth+ spacing;
+        _buttonAddEmailFacebook.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
         y += kGeomHeightButton+ spacing;
     } else {
          _searchBar.hidden= YES;

@@ -212,7 +212,7 @@
     NSTimeInterval eventDate= [self.event.date timeIntervalSince1970];
     
     if (!votingEnds) {
-        _labelTimeLeft.attributedText=attributedStringOf( @"END OF VOTING\rNOT SET", kGeomFontSizeSubheader);
+        _labelTimeLeft.attributedText=attributedStringOf( @"VOTING END\rNOT SET", kGeomFontSizeSubheader);
     } else {
         self.labelDateTime.text= event.date ? expressLocalDateTime( event.date) : @"Date not set.";
         
