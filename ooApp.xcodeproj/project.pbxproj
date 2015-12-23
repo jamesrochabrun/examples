@@ -131,6 +131,8 @@
 		966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 966E08391BC6E38800A4B866 /* EventWhoVC.m */; };
 		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; };
 		9671433C1C0E2B2D004875FB /* LogoWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 9671433B1C0E2B2D004875FB /* LogoWhite.png */; };
+		967163E51C29E15B002DFDDB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E31C29E15B002DFDDB /* AddressBook.framework */; };
+		967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E41C29E15B002DFDDB /* AddressBookUI.framework */; };
 		9695C1001C1618D100911E84 /* ConnectVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9695C0FF1C1618D100911E84 /* ConnectVC.m */; };
 		96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */; };
 		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; };
@@ -374,6 +376,8 @@
 		967124941BB5E6A900F28904 /* DiagnosticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticVC.h; sourceTree = "<group>"; };
 		967124951BB5E6A900F28904 /* DiagnosticVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiagnosticVC.m; sourceTree = "<group>"; };
 		9671433B1C0E2B2D004875FB /* LogoWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LogoWhite.png; path = "Graphic Assets/LogoWhite.png"; sourceTree = "<group>"; };
+		967163E31C29E15B002DFDDB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		967163E41C29E15B002DFDDB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		9695C0FE1C1618D100911E84 /* ConnectVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectVC.h; sourceTree = "<group>"; };
 		9695C0FF1C1618D100911E84 /* ConnectVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectVC.m; sourceTree = "<group>"; };
 		96AC04611C0D22E2002B1264 /* AutoCompleteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoCompleteObject.h; sourceTree = "<group>"; };
@@ -415,6 +419,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				967163E51C29E15B002DFDDB /* AddressBook.framework in Frameworks */,
+				967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */,
 				96CA59D21BE14E2200618B57 /* MessageUI.framework in Frameworks */,
 				96CA59D01BE14C2E00618B57 /* UIKit.framework in Frameworks */,
 				36250BE01B82704300F456B5 /* FBSDKShareKit.framework in Frameworks */,
@@ -819,6 +825,8 @@
 		DF3DC48B77314A2BA614CB58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				967163E31C29E15B002DFDDB /* AddressBook.framework */,
+				967163E41C29E15B002DFDDB /* AddressBookUI.framework */,
 				96CA59D11BE14E2200618B57 /* MessageUI.framework */,
 				96CA59CF1BE14C2E00618B57 /* UIKit.framework */,
 				36250BDD1B82704300F456B5 /* FBSDKLoginKit.framework */,

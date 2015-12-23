@@ -629,18 +629,30 @@ NSString *const kKeyDeviceToken = @"device_token";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/emails/%@", kHTTPProtocol,
-                           [OOAPI URL], emailString];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/emails/%@",
+                           kHTTPProtocol,
+                           [OOAPI URL],
+                           emailString];
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        if ( [responseObject isKindOfClass:[NSDictionary class]]) {
-            UserObject* user= [UserObject userFromDict: responseObject];
-            if  (user ) {
-                success( user);
+    NSLog (@"LOOKUP USER %@",emailString);
+    
+    return [rm GET:urlString parameters: nil
+           success:^(id responseObject) {
+        if ( [responseObject isKindOfClass:[NSArray class]]) {
+            NSArray *a= responseObject;
+            if  (a.count ) {
+                UserObject* user= [UserObject userFromDict: a[0]];
+                if  (user ) {
+                    success( user);
+                } else {
+                    success( nil);
+                }
             } else {
                 success( nil);
             }
+        } else {
+            success( nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);

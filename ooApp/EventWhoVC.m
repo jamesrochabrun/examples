@@ -135,16 +135,17 @@
         return;
     }
     
+    NSLog (@"EMAIL  %@ first name  %@", self.user.email, self.user.firstName);
     // RULE: If this row will simply be an email address, then we completely hide the image.
-    if  (!self.group && self.user && !self.user.firstName ) {
-        _userView.hidden= YES;
-        _viewShadow.frame = CGRectMake(margin,margin, w-kGeomSpaceEdge*2, availableHeight);
-        
-        _labelName.frame = CGRectMake( margin, 0,w- margin-kGeomButtonWidth, kGeomHeightEventWhoTableCellImageHeight);
-        _labelUserName.frame= CGRectZero;
-        
-        _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
-    } else {
+//    if  (!self.group && self.user && !self.user.firstName ) {
+//        _userView.hidden= YES;
+//        _viewShadow.frame = CGRectMake(margin,margin, w-kGeomSpaceEdge*2, availableHeight);
+//        
+//        _labelName.frame = CGRectMake( margin, 0,w- margin-kGeomButtonWidth, kGeomHeightEventWhoTableCellImageHeight);
+//        _labelUserName.frame= CGRectZero;
+//        
+//        _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
+//    } else {
         _viewShadow.frame = CGRectMake( margin, margin, w- margin*2,availableHeight);
         float x=  margin;
         _userView.hidden= NO;
@@ -160,7 +161,7 @@
         _labelUserName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelUserName.frame.size.height);
 
         _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
-    }
+//    }
     
 }
 
@@ -189,13 +190,16 @@
 
 @interface EventWhoVC ()
 @property (nonatomic,strong)UILabel* labelEventDateHeader;
-@property (nonatomic,strong)UIButton* buttonAddEmail;
+@property (nonatomic,strong)UIButton* buttonAddEmailManually;
+@property (nonatomic,strong)UIButton* buttonAddEmailFromContacts;
+//@property (nonatomic,strong)UIButton* buttonAddEmailFacebook;
 @property (nonatomic,strong)UITableView* table;
 @property (nonatomic,strong) NSMutableOrderedSet *setOfPotentialParticipants;
 @property (nonatomic,strong) NSMutableArray *searchResultsArray;
 @property (nonatomic,strong)  NSMutableOrderedSet *participants;
 @property (atomic, assign) BOOL  busy;
 @property (nonatomic,strong) UISearchBar *searchBar;
+@property (nonatomic,strong) ABPeoplePickerNavigationController *pickerController;
 @end
 
 @implementation EventWhoVC
@@ -205,6 +209,22 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     UserObject*user= [[UserObject alloc] init];
     user.email= trimString(email);
     return  user;
+}
+
+- (void)x
+{
+    
+    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
+        ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted){
+        //1
+        NSLog(@"Denied");
+    } else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized){
+        //2
+        NSLog(@"Authorized");
+    } else{ //ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusNotDetermined
+        //3
+        NSLog(@"Not determined");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -253,8 +273,17 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     self.labelEventDateHeader= makeLabel( self.view,  @"WHEN IS THIS?", kGeomFontSizeHeader);
     
     if ( self.editable) {
-        self.buttonAddEmail=makeButton(self.view, @"INVITE BY EMAIL", kGeomFontSizeHeader,  WHITE, CLEAR,
-                                       self, @selector(userPressedInviteByEmail:), 1);
+        self.buttonAddEmailManually=makeButton(self.view, @"INVITE BY EMAIL",
+                                               kGeomFontSizeHeader,  WHITE, CLEAR,
+                                               self, @selector(userPressedInviteByEmail:), 1);
+        
+        self.buttonAddEmailFromContacts=makeButton(self.view, @"INVITE CONTACTS",
+                                               kGeomFontSizeHeader,  WHITE, CLEAR,
+                                               self, @selector(userPressedInviteFromContacts:), 1);
+        
+//        self.buttonAddEmailFacebook=makeButton(self.view, @"INVITE FACEBOOK FRIEND",
+//                                               kGeomFontSizeHeader,  WHITE, CLEAR,
+//                                               self, @selector(userPressedInviteByEmail:), 1);
     }
     
     self.table= makeTable( self.view,  self);
@@ -345,6 +374,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [self.eventBeingEdited refreshUsersFromServerWithSuccess:^{
         [weakSelf.participants removeAllObjects];
         weakSelf.participants= [[ NSMutableOrderedSet alloc] initWithSet: self.eventBeingEdited.users.set];
+        
+        for (UserObject* user  in weakSelf.participants ) {
+            [weakSelf.setOfPotentialParticipants addObject: user];
+        }
         [weakSelf performSelectorOnMainThread:@selector(reloadTable) withObject:nil waitUntilDone:NO];
         NSLog (@"EVENT HAS %lu PARTICIPANTS", (unsigned long) weakSelf.participants.count);
     } failure:^{
@@ -379,6 +412,93 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
 }
 
+- (void)userPressedInviteFromContacts: (id) sender
+{
+    self.pickerController=[[ABPeoplePickerNavigationController alloc] init];
+    _pickerController.peoplePickerDelegate=  self;
+//    [self.navigationController pushViewController: _pickerController animated:YES ];
+    [self presentViewController:_pickerController animated:YES completion:nil];
+}
+
+- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person
+{
+    ABMultiValueRef emailsMultiValueRef = ABRecordCopyValue(person, kABPersonEmailProperty);
+    
+    NSString *firstName= nil;
+    NSString *lastName= nil;
+    ABMultiValueRef firstMultiValueRef = ABRecordCopyValue(person, kABPersonFirstNameProperty);
+    ABMultiValueRef lastMultiValueRef = ABRecordCopyValue(person, kABPersonLastNameProperty);
+                firstName = (__bridge_transfer  NSString *)ABRecordCopyValue(person, kABPersonFirstNameProperty);
+    lastName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
+
+    NSUInteger i;
+
+    NSString *firstEmailAddress=nil;
+    NSString *homeEmailAddress=nil;
+    
+    for (i = 0; i <= ABMultiValueGetCount(emailsMultiValueRef); i++) {
+        NSString *emailLabel = (__bridge_transfer NSString *) ABMultiValueCopyLabelAtIndex (emailsMultiValueRef, i);
+        NSString * email = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emailsMultiValueRef, i);
+        
+        if (!firstEmailAddress) {
+            firstEmailAddress=  email;
+        }
+        
+        if ([emailLabel isEqualToString:@"Home"]) {
+            homeEmailAddress = email;
+        }
+    }
+    
+    if  (!homeEmailAddress) {
+        homeEmailAddress=firstEmailAddress;
+    }
+    
+    if (!homeEmailAddress) {
+        message( @"That contact does not have an email address.");
+    } else {
+        [self processIncomingEmailAddress: homeEmailAddress firstName:firstName lastName:lastName];
+    }
+    
+    CFRelease(emailsMultiValueRef);
+}
+
+- (void)processIncomingEmailAddress: (NSString*)string
+                          firstName:(NSString*)firstName
+                           lastName:(NSString*)lastName
+{
+    if (!isValidEmailAddress(string)) {
+        message( @"Not a valid email address.");
+        return;
+    }
+    
+    if  ([self emailAlreadyInArray: string] ) {
+        RUN_AFTER(250,^{
+            message(LOCAL( @"That user is already in the list."));
+        })
+        return;
+    }
+    
+    __weak EventWhoVC *weakSelf = self;
+    [OOAPI lookupUserByEmail:string
+                     success:^(UserObject *user) {
+                         if  (user) {
+                             [weakSelf addUser: user];
+                         } else {
+                             [weakSelf createAPlaceholderUser: string  firstName:firstName lastName:lastName];
+                         }
+                         
+                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                         [weakSelf createAPlaceholderUser: string  firstName:firstName lastName:lastName];
+                     }];
+    
+}
+
+- (void)addContactDoneButtonPressed: (id) sender
+{
+    NSLog  (@"");
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)userPressedInviteByEmail: (id) sender
 {
     UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle: LOCAL(@"EMAIL ADDRESS")
@@ -402,30 +522,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         UITextField *textField = [alertView textFieldAtIndex: 0];
         NSString *string = trimString(textField.text);
         
-        if (!isValidEmailAddress(string)) {
-            message( @"Not a valid email address.");
-            return;
-        }
-        
-        if  ([self emailAlreadyInArray: string] ) {
-            RUN_AFTER(250,^{
-                message(LOCAL( @"That user is already in the list."));
-            })
-            return;
-        }
-        
-        __weak EventWhoVC *weakSelf = self;
-        [OOAPI lookupUserByEmail:string
-                         success:^(UserObject *user) {
-                             if  (user) {
-                                 [weakSelf addUser: user];
-                             } else {
-                                 [weakSelf addTheirEmailAddress: string];
-                             }
-                             
-                         } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                             [weakSelf addTheirEmailAddress: string];
-                         }];
+        [self processIncomingEmailAddress:string  firstName: @"" lastName: @""];
     }
 }
 
@@ -439,14 +536,65 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
      [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
-- (void)addTheirEmailAddress: (NSString*)emailAddress
+- (void) createAPlaceholderUser: (NSString*)emailAddress
+                      firstName:(NSString*)firstName
+                       lastName:(NSString*)lastName
 {
     if ( !self.editable) {
         return;
     }
     
+    if (!emailAddress || !emailAddress.length) {
+        NSLog (@"MISSING EMAIL ADDRESS");
+        return;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    AFHTTPRequestOperation *op;
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users", kHTTPProtocol, [OOAPI URL]];
+
+    NSMutableDictionary* parametersDictionary=  [NSMutableDictionary new];
+    parametersDictionary [ kKeyUserEmail]= emailAddress;
+    if  (firstName ) {
+        parametersDictionary [ kKeyUserFirstName]= firstName;
+    }
+    if  (lastName ) {
+        parametersDictionary [ kKeyUserLastName]= lastName;
+    }
+    
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSString* currentUserBackendToken= userInfo.backendAuthorizationToken;
+    userInfo.backendAuthorizationToken= nil;
+    
+    __weak  EventWhoVC *weakSelf = self;
+    NSLog (@"POST %@", urlString);
+    op = [rm POST:urlString
+       parameters: parametersDictionary
+          success:^(id responseObject) {
+              NSDictionary *dict=responseObject;
+              if ([dict isKindOfClass:[NSDictionary class] ]) {
+                  NSDictionary *userDictionary= [dict objectForKey: @"user"];
+                  UserObject*user=[UserObject userFromDict:userDictionary];
+                  [weakSelf createdNewUserFromEmail: user];
+              }
+              NSLog  (@"responseObject",responseObject);
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+//              failure(operation, error);
+              NSLog  (@"UNABLE TO CREATE NEW USER %@",error);
+              message( @"Unable to add that user.");
+          }];
+
+    return;
+    
+}
+
+- (void)createdNewUserFromEmail:(UserObject*)user
+{
+    if  (!user) {
+        return;
+    }
     @synchronized(_setOfPotentialParticipants) {
-        UserObject *user= makeEmailOnlyUserObject(emailAddress);
         [_setOfPotentialParticipants  addObject: user];
     }
     [self  reloadTable];
@@ -454,6 +602,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [_table scrollToRowAtIndexPath:
      [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0]
                   atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -474,15 +623,20 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         _searchBar.frame = CGRectMake(margin,y,w- margin*2, kGeomHeightSearchBar);
         y+= kGeomHeightSearchBar;
         
-        float tableHeight= h-y;
+        float tableHeight= h-y-kGeomHeightButton-margin-spacing;
         _table.frame = CGRectMake(0,y,w,tableHeight);
         y+= tableHeight+ spacing;
-        _buttonAddEmail.frame = CGRectMake(margin,y,w-2*margin, kGeomHeightButton);
+        float buttonWidth= (w-3*margin)/2;
+        float x=  margin;
+        _buttonAddEmailManually.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
+        x +=buttonWidth+ margin;
+        _buttonAddEmailFromContacts.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
         y += kGeomHeightButton+ spacing;
     } else {
          _searchBar.hidden= YES;
         _table.frame = CGRectMake(0,0,w,h);
-        _buttonAddEmail.frame= CGRectZero;
+        _buttonAddEmailManually.frame= CGRectZero;
+        _buttonAddEmailFromContacts.frame= CGRectZero;
     }
 }
 
@@ -660,6 +814,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }
     
     [self.delegate userDidAlterEventParticipants];
+    
     self.busy=YES;
     __weak EventWhoVC *weakSelf = self;
     [OOAPI setParticipationOf:object

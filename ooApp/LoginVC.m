@@ -592,7 +592,7 @@
     
     NSMutableDictionary* parametersDictionary=  [NSMutableDictionary new];
     if  (userInfo.email.length ) {
-        parametersDictionary [ @"email"]= userInfo.email;
+        parametersDictionary [ kKeyUserEmail]= userInfo.email;
     }
     if  (facebookToken.tokenString  && facebookToken.tokenString.length ) {
         parametersDictionary [ @"token"]= facebookToken.tokenString;
@@ -601,16 +601,16 @@
         parametersDictionary [ @"facebook_id"]= userInfo.facebookIdentifier;
     }
     if  (userInfo.firstName.length ) {
-        parametersDictionary [ @"first_name"]= userInfo.firstName;
+        parametersDictionary [kKeyUserFirstName]= userInfo.firstName;
     }
     if  (userInfo.lastName.length ) {
-        parametersDictionary [ @"last_name"]= userInfo.lastName;
+        parametersDictionary [kKeyUserLastName]= userInfo.lastName;
     }
     if  (userInfo.middleName.length ) {
         parametersDictionary [ @"middle_initial"]= userInfo.middleName;
     }
     if  (userInfo.gender.length ) {
-        parametersDictionary [ @"gender"]= userInfo.gender;
+        parametersDictionary [ kKeyUserGender]= userInfo.gender;
     }
     if  (userInfo.about.length ) {
         parametersDictionary [ @"about"]= userInfo.about;

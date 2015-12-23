@@ -11,6 +11,9 @@
 #import "UserObject.h"
 #import "GroupObject.h"
 
+@import AddressBook;
+@import AddressBookUI;
+
 @protocol EventWhoTableCellDelegate
 - (void) radioButtonChanged: (BOOL)value for: (id)object;
 @end
@@ -19,7 +22,8 @@
 - (void) userDidAlterEventParticipants;
 @end
 
-@interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, UIAlertViewDelegate,UISearchBarDelegate>
+@interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, ABPersonViewControllerDelegate,ABPeoplePickerNavigationControllerDelegate,
+                            UIAlertViewDelegate, UISearchBarDelegate>
 @property (nonatomic,weak) id <EventWhoVCDelegate> delegate;
 @property (nonatomic,strong) EventObject* eventBeingEdited;
 @property (nonatomic,assign) BOOL  editable, eventAlreadyStarted;

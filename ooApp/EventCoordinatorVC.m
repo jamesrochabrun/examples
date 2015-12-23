@@ -1389,7 +1389,6 @@
     vc.editable= !self.inE3LMode;
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
-    
 }
 
 - (void)userTappedWhenBox: (id) sender
