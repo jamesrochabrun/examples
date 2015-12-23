@@ -145,33 +145,22 @@
     }
     
     NSLog (@"EMAIL  %@ first name  %@", self.user.email, self.user.firstName);
-    // RULE: If this row will simply be an email address, then we completely hide the image.
-//    if  (!self.group && self.user && !self.user.firstName ) {
-//        _userView.hidden= YES;
-//        _viewShadow.frame = CGRectMake(margin,margin, w-kGeomSpaceEdge*2, availableHeight);
-//        
-//        _labelName.frame = CGRectMake( margin, 0,w- margin-kGeomButtonWidth, kGeomHeightEventWhoTableCellImageHeight);
-//        _labelUserName.frame= CGRectZero;
-//        
-//        _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
-//    } else {
-        _viewShadow.frame = CGRectMake( margin, margin, w- margin*2,availableHeight);
-        float x=  margin;
-        _userView.hidden= NO;
-        float imageDimension= h-2*kGeomSpaceEdge;
-        _userView.frame = CGRectMake(x, margin,imageDimension,imageDimension);
-        
-        x +=imageDimension+ margin;
-        y= h/5;
-        [_labelName sizeToFit];
-        [_labelUserName sizeToFit];
-        _labelName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelName.frame.size.height);
-        y += _labelName.frame.size.height +kGeomSpaceInter;
-        _labelUserName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelUserName.frame.size.height);
-
-        _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
-//    }
     
+    _viewShadow.frame = CGRectMake( margin, margin, w- margin*2,availableHeight);
+    float x=  margin;
+    _userView.hidden= NO;
+    float imageDimension= h-2*kGeomSpaceEdge;
+    _userView.frame = CGRectMake(x, margin,imageDimension,imageDimension);
+    
+    x +=imageDimension+ margin;
+    y= h/5;
+    [_labelName sizeToFit];
+    [_labelUserName sizeToFit];
+    _labelName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelName.frame.size.height);
+    y += _labelName.frame.size.height +kGeomSpaceInter;
+    _labelUserName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelUserName.frame.size.height);
+    
+    _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
 }
 
 - (void) setRadioButtonState: (BOOL)isSet
@@ -201,7 +190,6 @@
 @property (nonatomic,strong)UILabel* labelEventDateHeader;
 @property (nonatomic,strong)UIButton* buttonAddEmailManually;
 @property (nonatomic,strong)UIButton* buttonAddEmailFromContacts;
-@property (nonatomic,strong)UIButton* buttonAddEmailFacebook;
 @property (nonatomic,strong)UITableView* table;
 @property (nonatomic,strong) NSMutableOrderedSet *setOfPotentialParticipants;
 @property (nonatomic,strong) NSMutableArray *searchResultsArray;
@@ -294,11 +282,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         _buttonAddEmailFromContacts.titleLabel.numberOfLines=2;
         _buttonAddEmailFromContacts.titleLabel.textAlignment=NSTextAlignmentCenter;
 
-        self.buttonAddEmailFacebook=makeButton(self.view, @"INVITE\rFACEBOOK",
-                                               kGeomFontSizeSubheader,  WHITE, CLEAR,
-                                               self, @selector(userPressedInviteViaFacebook:), 1);
-        _buttonAddEmailFacebook.titleLabel.numberOfLines=2;
-        _buttonAddEmailFacebook.titleLabel.textAlignment=NSTextAlignmentCenter;
     }
     
     self.table= makeTable( self.view,  self);
@@ -427,17 +410,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
 }
 
-- (void)userPressedInviteViaFacebook: (id) sender
-{
-    message(@"Coming soon... before Xmas.");
-}
-
-
 - (void)userPressedInviteFromContacts: (id) sender
 {
     self.pickerController=[[ABPeoplePickerNavigationController alloc] init];
     _pickerController.peoplePickerDelegate=  self;
-//    [self.navigationController pushViewController: _pickerController animated:YES ];
     [self presentViewController:_pickerController animated:YES completion:nil];
 }
 
@@ -583,9 +559,9 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     if  (lastName ) {
         parametersDictionary [ kKeyUserLastName]= lastName;
     }
-    
+    parametersDictionary [ @"user_type"]= @(USER_TYPE_INACTIVE);
+
     UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString* currentUserBackendToken= userInfo.backendAuthorizationToken;
     userInfo.backendAuthorizationToken= nil;
     
     __weak  EventWhoVC *weakSelf = self;
@@ -598,10 +574,11 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                   NSDictionary *userDictionary= [dict objectForKey: @"user"];
                   UserObject*user=[UserObject userFromDict:userDictionary];
                   [weakSelf createdNewUserFromEmail: user];
+                  
+                  NSLog  (@"CREATED NEW USER %@ %@ = %@",user.firstName,user.lastName, user.email);
+
               }
-              NSLog  (@"responseObject",responseObject);
           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-//              failure(operation, error);
               NSLog  (@"UNABLE TO CREATE NEW USER %@",error);
               message( @"Unable to add that user.");
           }];
@@ -650,14 +627,12 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         
         const float maximumButtonAreaWidth = 320;
         
-        float buttonWidth= (maximumButtonAreaWidth-2*margin-2*spacing)/3;
+        float buttonWidth= (maximumButtonAreaWidth-2*margin-spacing)/2;
         float x=  (w-maximumButtonAreaWidth)/2 + margin;
         _buttonAddEmailManually.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
         x +=buttonWidth+ spacing;
         _buttonAddEmailFromContacts.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
         x +=buttonWidth+ spacing;
-        _buttonAddEmailFacebook.frame = CGRectMake(x,y, buttonWidth, kGeomHeightButton);
-        y += kGeomHeightButton+ spacing;
     } else {
          _searchBar.hidden= YES;
         _table.frame = CGRectMake(0,0,w,h);

@@ -17,7 +17,14 @@ typedef enum: int {
     PARTICIPANT_TYPE_ATTENDEE = 3,
 } ParticipantType;
 
-typedef enum: int {
+typedef enum: NSUInteger {
+    USER_TYPE_NONE = 0,
+    USER_TYPE_ADMIN = 1,
+    USER_TYPE_NORMAL = 2,
+    USER_TYPE_INACTIVE = 3,
+} UserType;
+
+typedef enum: NSUInteger {
     PARTICIPANT_STATE_NONE = 0,
     PARTICIPANT_STATE_ATTENDING  = 1, // accepted
     PARTICIPANT_STATE_NOT_ATTENDING = 2,// declined

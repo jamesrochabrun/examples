@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+@import AddressBook;
+@import AddressBookUI;
+
 #import "SubBaseVC.h"
 #import "UserObject.h"
 #import "GroupObject.h"
-
-@import AddressBook;
-@import AddressBookUI;
 
 @protocol EventWhoTableCellDelegate
 - (void) radioButtonChanged: (BOOL)value for: (id)object;

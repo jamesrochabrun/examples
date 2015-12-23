@@ -404,15 +404,11 @@
         _radioButtonBacking.layer.cornerRadius= 11;
         _radioButtonBacking.frame = CGRectMake(0,0, 22 ,22);
         
-        _buttonVoteYes=[UIButton buttonWithType:UIButtonTypeCustom];
-        _buttonVoteNo=[UIButton buttonWithType:UIButtonTypeCustom];
-        [_buttonVoteYes addTarget:self action:@selector(userPressedVoteUp:) forControlEvents:UIControlEventTouchUpInside ];
-        [_buttonVoteNo addTarget:self action:@selector(userPressedVoteDown:) forControlEvents:UIControlEventTouchUpInside ];
-        [ self addSubview: _buttonVoteYes];
-        [ self addSubview: _buttonVoteNo];
-        UIImage*image=[UIImage  imageNamed: @"ThumbUp.png"];
-        [_buttonVoteYes setImage: image forState:UIControlStateNormal];
-        [_buttonVoteNo setImage: [UIImage  imageNamed: @"ThumbDown.png"] forState:UIControlStateNormal];
+        _buttonVoteYes= makeIconButton(self, kFontIconThumbsUp, 20, WHITE, CLEAR, self, @selector(userPressedVoteUp:), 0);
+        _buttonVoteNo= makeIconButton(self, kFontIconThumbsUp, 20, WHITE, CLEAR, self, @selector(userPressedVoteDown:), 0);
+        _buttonVoteNo.layer.transform=CATransform3DMakeRotation(M_PI, 0, 0, 1);
+        _buttonVoteYes.layer.shadowColor=BLACK.CGColor;
+        _buttonVoteNo.layer.shadowColor=BLACK.CGColor;
         
         _radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
                                       WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);

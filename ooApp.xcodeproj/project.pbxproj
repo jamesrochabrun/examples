@@ -119,8 +119,6 @@
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
 		962303751BB33D2700278FA6 /* forkKnife.png in Resources */ = {isa = PBXBuildFile; fileRef = 962303741BB33D2700278FA6 /* forkKnife.png */; };
-		962633151C28C9DC009E0A34 /* ThumbUp.png in Resources */ = {isa = PBXBuildFile; fileRef = 962633141C28C9DC009E0A34 /* ThumbUp.png */; };
-		962633171C28C9EE009E0A34 /* ThumbDown.png in Resources */ = {isa = PBXBuildFile; fileRef = 962633161C28C9EE009E0A34 /* ThumbDown.png */; };
 		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; };
 		962B00C31BD95D22008790FD /* VoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 962B00C21BD95D22008790FD /* VoteObject.m */; };
 		962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 962DBB221BFFAF6E00A8A09D /* Gradient Background.png */; };
@@ -151,7 +149,6 @@
 		96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E127B51BB32C6E00A8445E /* EmptyListVC.m */; };
 		96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E49E731BC5E14B008B70AF /* EventWhenVC.m */; };
 		96E954E21BDFF99100F5197A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E954E11BDFF99100F5197A /* Reachability.m */; };
-		96F49C061C0CFCAD00B087AD /* LoginBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 96F49C051C0CFCAD00B087AD /* LoginBackground.jpg */; };
 		96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */; };
 		96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */; };
 /* End PBXBuildFile section */
@@ -359,8 +356,6 @@
 		961AFC191BFBD61400B94EAE /* FeedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedObject.h; sourceTree = "<group>"; };
 		961AFC1A1BFBD61400B94EAE /* FeedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedObject.m; sourceTree = "<group>"; };
 		962303741BB33D2700278FA6 /* forkKnife.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = forkKnife.png; path = "Graphic Assets/forkKnife.png"; sourceTree = "<group>"; };
-		962633141C28C9DC009E0A34 /* ThumbUp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ThumbUp.png; path = "Graphic Assets/ThumbUp.png"; sourceTree = "<group>"; };
-		962633161C28C9EE009E0A34 /* ThumbDown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ThumbDown.png; path = "Graphic Assets/ThumbDown.png"; sourceTree = "<group>"; };
 		962667451BBC8C9600D77EBE /* UserTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTVCell.h; sourceTree = "<group>"; };
 		962667461BBC8C9600D77EBE /* UserTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTVCell.m; sourceTree = "<group>"; };
 		962B00C11BD95D22008790FD /* VoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteObject.h; sourceTree = "<group>"; };
@@ -411,7 +406,6 @@
 		96E49E731BC5E14B008B70AF /* EventWhenVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWhenVC.m; sourceTree = "<group>"; };
 		96E954E01BDFF99100F5197A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		96E954E11BDFF99100F5197A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		96F49C051C0CFCAD00B087AD /* LoginBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = LoginBackground.jpg; path = "Graphic Assets/LoginBackground.jpg"; sourceTree = "<group>"; };
 		96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "No-Profile_Image.png"; path = "Graphic Assets/No-Profile_Image.png"; sourceTree = "<group>"; };
 		96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "No-Profile_Image(circled).png"; path = "Graphic Assets/No-Profile_Image(circled).png"; sourceTree = "<group>"; };
 		F945100C76CB8545DC64E837 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -583,9 +577,6 @@
 				3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */,
 				3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */,
 				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
-				96F49C051C0CFCAD00B087AD /* LoginBackground.jpg */,
-				962633161C28C9EE009E0A34 /* ThumbDown.png */,
-				962633141C28C9DC009E0A34 /* ThumbUp.png */,
 				96B64D2D1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png */,
 				96B64D2E1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png */,
 				962303741BB33D2700278FA6 /* forkKnife.png */,
@@ -939,7 +930,6 @@
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
 				96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */,
 				367704591B8BF05100B594E5 /* Lato-Italic.ttf in Resources */,
-				962633171C28C9EE009E0A34 /* ThumbDown.png in Resources */,
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
 				3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */,
 				962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */,
@@ -964,8 +954,6 @@
 				3621F1251B900EC7004537B6 /* Logo.png in Resources */,
 				367704611B8BF05100B594E5 /* Lato-Thin.ttf in Resources */,
 				361329831C196215009413D6 /* Oomami_AppStoreLogo(167x167).png in Resources */,
-				96F49C061C0CFCAD00B087AD /* LoginBackground.jpg in Resources */,
-				962633151C28C9DC009E0A34 /* ThumbUp.png in Resources */,
 				36FDA7041B585F650029D29D /* Images.xcassets in Resources */,
 				367704561B8BF05100B594E5 /* Lato-HairlineItalic.ttf in Resources */,
 				3677045F1B8BF05100B594E5 /* Lato-Semibold.ttf in Resources */,

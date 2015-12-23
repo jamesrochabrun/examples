@@ -486,8 +486,7 @@
     __weak LoginVC *weakSelf= self;
 
     FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,gender",
-                                                     identifier]  
+                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,gender", identifier]
                                   parameters:nil
                                   HTTPMethod:@"GET"];
 
