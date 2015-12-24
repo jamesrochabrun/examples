@@ -1245,7 +1245,7 @@ NSString *const kKeyDeviceToken = @"device_token";
         NSLog (@"POST %@", urlString);
         op = [rm POST:urlString parameters: @{
                                               @"user_ids": @[@(user.userID)],
-                                               @"participant_state":@1
+//                                               @"participant_state":@1
                                                }
               
                success:^(id responseObject) {
@@ -1795,9 +1795,11 @@ NSString *const kKeyDeviceToken = @"device_token";
             NSMutableArray *events = [NSMutableArray array];
             for (id dict in responseObject) {
                 EventObject *e=[EventObject eventFromDictionary:dict];
-                NSLog  (@"EVENT  %@",dict);
-                //NSLog(@"Event name: %@", [RestaurantObject restaurantFromDict:dict].name);
-                [events addObject:e];
+                if ( e.eventType==EVENT_TYPE_CURATED) {
+                    NSLog  (@"CURATED EVENT  %@",dict);
+                    //NSLog(@"Event name: %@", [RestaurantObject restaurantFromDict:dict].name);
+                    [events addObject:e];
+                }
             }
             success(events);
         }else {

@@ -479,13 +479,13 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     [OOAPI lookupUserByEmail:string
                      success:^(UserObject *user) {
                          if  (user) {
-                             [weakSelf addUser: user];
+                             [weakSelf addUserToPotentialParticipants: user];
                          } else {
-                             [weakSelf createAPlaceholderUser: string  firstName:firstName lastName:lastName];
+                             [weakSelf createAndAddPlaceholderUser: string  firstName:firstName lastName:lastName];
                          }
                          
                      } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                         [weakSelf createAPlaceholderUser: string  firstName:firstName lastName:lastName];
+                         [weakSelf createAndAddPlaceholderUser: string  firstName:firstName lastName:lastName];
                      }];
     
 }
@@ -523,19 +523,20 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     }
 }
 
-- (void)addUser: (UserObject*)user
+- (void)addUserToPotentialParticipants: (UserObject*)user
 {
-    @synchronized(_setOfPotentialParticipants) {
-        [_setOfPotentialParticipants  addObject: user];
+    @synchronized(self.setOfPotentialParticipants) {
+        [self.setOfPotentialParticipants  addObject: user];
     }
     [self  reloadTable];
-    [_table scrollToRowAtIndexPath:
+    [self.table scrollToRowAtIndexPath:
      [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
 }
 
-- (void) createAPlaceholderUser: (NSString*)emailAddress
-                      firstName:(NSString*)firstName
-                       lastName:(NSString*)lastName
+- (void) createAndAddPlaceholderUser: (NSString*)emailAddress
+                           firstName:(NSString*)firstName
+                            lastName:(NSString*)lastName
 {
     if ( !self.editable) {
         return;
@@ -573,7 +574,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
               if ([dict isKindOfClass:[NSDictionary class] ]) {
                   NSDictionary *userDictionary= [dict objectForKey: @"user"];
                   UserObject*user=[UserObject userFromDict:userDictionary];
-                  [weakSelf createdNewUserFromEmail: user];
+                  [weakSelf addUserToPotentialParticipants: user];
                   
                   NSLog  (@"CREATED NEW USER %@ %@ = %@",user.firstName,user.lastName, user.email);
 
@@ -584,22 +585,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
           }];
 
     return;
-    
-}
-
-- (void)createdNewUserFromEmail:(UserObject*)user
-{
-    if  (!user) {
-        return;
-    }
-    @synchronized(_setOfPotentialParticipants) {
-        [_setOfPotentialParticipants  addObject: user];
-    }
-    [self  reloadTable];
-    
-    [_table scrollToRowAtIndexPath:
-     [NSIndexPath indexPathForRow:_setOfPotentialParticipants.count-1 inSection:0]
-                  atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
 }
 
