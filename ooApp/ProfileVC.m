@@ -25,7 +25,6 @@
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
-@property (nonatomic, assign) ProfileVC *vc;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UIButton *buttonFollow;
@@ -120,6 +119,42 @@ static NSString * const ListRowID = @"ListRowCell";
     return self;
 }
 
+- (void) verifyUnfollow
+{
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
+                                                              message:nil
+                                                       preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
+                                                 style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [self doUnfollow];
+                                                 }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [self.vc presentViewController:a animated:YES completion:nil];
+}
+
+- (void)doUnfollow
+{
+    __weak ProfileTableFirstRow *weakSelf = self;
+    
+    [OOAPI setFollowingUser:_userInfo
+                         to: NO
+                    success:^(id responseObject) {
+                        weakSelf.buttonFollow.selected= NO;
+                        NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
+
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                        NSLog (@"FAILED TO UNFOLLOW USER");
+                    }];
+    
+}
+
 //------------------------------------------------------------------------------
 // Name:    userPressedFollow
 // Purpose:
@@ -127,15 +162,23 @@ static NSString * const ListRowID = @"ListRowCell";
 - (void)userPressedFollow:(id)sender
 {
     __weak ProfileTableFirstRow *weakSelf = self;
+    
+    if ( _buttonFollow.selected) {
+        [self verifyUnfollow];
+        return;
+    }
+    
+    [_buttonFollow setTitle:@"..." forState:UIControlStateNormal];
+    
     [OOAPI setFollowingUser:_userInfo
                          to: !weakSelf.buttonFollow.selected
                     success:^(id responseObject) {
                         weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected;
-                       if (weakSelf.buttonFollow.selected ) {
-                           NSLog (@"SUCCESSFULLY FOLLOWED USER");
-                       } else {
-                           NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
-                       }
+                        
+                        [weakSelf.buttonFollow setTitle:@"FOLLOW" forState:UIControlStateNormal];
+                        
+                        NSLog (@"SUCCESSFULLY FOLLOWED USER");
+                        
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
                     }];
@@ -455,7 +498,7 @@ static NSString * const ListRowID = @"ListRowCell";
         ProfileTableFirstRow* headerCell= [tableView dequeueReusableCellWithIdentifier:FirstRowID forIndexPath:indexPath];
         [ headerCell setUserInfo: _profileOwner];
         headerCell.vc = self;
-//        headerCell.navigationController = self.navigationController;
+
         return headerCell;
     }
     
@@ -467,7 +510,6 @@ static NSString * const ListRowID = @"ListRowCell";
     
     cell.listItem = listItem;
     cell.navigationController = self.navigationController;
-    
 //    [DebugUtilities addBorderToViews:@[cell]];
     return cell;
 }

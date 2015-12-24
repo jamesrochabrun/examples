@@ -20,4 +20,5 @@
 
 @interface ProfileTableFirstRow : UITableViewCell <UIAlertViewDelegate>
 - (void)setUserInfo:(UserObject*)userInfo;
+@property (nonatomic,weak) ProfileVC* vc;
 @end
