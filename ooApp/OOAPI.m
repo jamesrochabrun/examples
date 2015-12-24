@@ -2155,7 +2155,8 @@ NSString *const kKeyDeviceToken = @"device_token";
                NSLog  (@"TOTAL USERS FOUND: %ld", (unsigned long)users.count);
                success(users);
                
-           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+           }
+           failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -2384,5 +2385,27 @@ NSString *const kKeyDeviceToken = @"device_token";
 #endif
 }
 
+//------------------------------------------------------------------------------
+// Name:    getUserStatsFor
+// Purpose: Fetches basic stats about a user.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getUserStatsFor:(NSUInteger) userid
+                                    success:(void (^)(UserStatsObject* ))success
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    
+    return [OOAPI getStatsForUser: userid
+                          success:^(NSDictionary *dictionary)
+            {
+                UserStatsObject* stats= [UserStatsObject statsFromDictionary:dictionary];
+                success(stats);
+                
+            }
+                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                              NSLog (@"UNABLE TO GET STATS %@",error);
+                              failure( operation,  error);
+                          }
+            ];
+}
 
 @end

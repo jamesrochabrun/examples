@@ -16,6 +16,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "EventObject.h"
 #import "UserObject.h"
+#import "UserStatsObject.h"
 
 //extern NSString *const kKeyName;
 
@@ -128,6 +129,10 @@ typedef enum {
                                           maxHeight:(NSUInteger)maxHeight
                                             success:(void (^)(NSString *imageRefs))success
                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)getUserStatsFor:(NSUInteger) userid
+                                     success:(void (^)(UserStatsObject* ))success
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)setFollowingUser:(UserObject *) user
                                           to:(BOOL)following

@@ -42,6 +42,7 @@ extern NSString *trimString(NSString* s);
 extern NSString *platformString();
 extern NSString *concatenateStrings(NSString*,NSString*);
 extern unsigned long msTime (void);
+extern NSString *stringFromUnsigned(NSUInteger);
 
 extern NSAttributedString* attributedStringOf(NSString*,double fontSize);
 extern NSAttributedString* underlinedAttributedStringOf(NSString* ,double fontSize);
@@ -74,6 +75,8 @@ extern UIView* makeView (UIView *parent, UIColor* backgroundColor);
 extern UIScrollView* makeScrollView (UIView*parent, id  delegate);
 extern void addShadowTo (UIView*v);
 extern NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum,id target,SEL callback);
+
+extern void addDiagnosticBorder (UIView*);
 
 extern NSDate* parseUTCDateFromServer(NSString *string);
 extern NSString* parseStringOrNullFromServer (id object);

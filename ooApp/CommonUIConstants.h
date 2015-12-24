@@ -187,6 +187,7 @@ extern NSString *const kFontIconThumbsUp;
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)
 #define GRAY UIColorRGB(kColorGray)
+#define MIDDLEGRAY UIColorRGB(kColorGrayMiddle)
 #define CLEAR UIColorRGBA(kColorClear)
 #define RED UIColorRGB(kColorRed)
 #define GREEN UIColorRGB(kColorGreen)

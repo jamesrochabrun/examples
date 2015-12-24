@@ -57,12 +57,23 @@ NSString *getDateString()
     return [NSString stringWithFormat: @"%04d/%02d/%02d",year,month,day];
 }
 
+NSString *stringFromUnsigned(NSUInteger value)
+{
+    return [NSString stringWithFormat:@"%lu",(unsigned long)value ];
+}
+
 NSString *trimString(NSString *s)
 {
     if (!s) {
         return @"";
     }
     return [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
+
+void addDiagnosticBorder (UIView*v)
+{
+    v.layer.borderColor= RED.CGColor;
+    v.layer.borderWidth= 1;
 }
 
 UIImageView *makeImageViewFromURL(UIView *parent, NSString *urlString, NSString *placeholderImageName)
@@ -221,6 +232,7 @@ UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
         l.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
     }
     l.lineBreakMode= NSLineBreakByWordWrapping;
+    l.clipsToBounds= NO;
     return l;
 }
 

@@ -117,6 +117,7 @@
 		36FDA7131B585F650029D29D /* ooAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA7121B585F650029D29D /* ooAppTests.m */; };
 		46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FE088B27B54BA7AAE65CC4 /* libPods.a */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
+		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
 		962303751BB33D2700278FA6 /* forkKnife.png in Resources */ = {isa = PBXBuildFile; fileRef = 962303741BB33D2700278FA6 /* forkKnife.png */; };
 		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; };
@@ -353,6 +354,8 @@
 		46FE088B27B54BA7AAE65CC4 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
 		9606C5641BBF08C400CB06FE /* EventsListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventsListVC.m; sourceTree = "<group>"; };
+		960F72541C2B5E2000DE31AC /* UserStatsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStatsObject.h; sourceTree = "<group>"; };
+		960F72551C2B5E2000DE31AC /* UserStatsObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserStatsObject.m; sourceTree = "<group>"; };
 		961AFC191BFBD61400B94EAE /* FeedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedObject.h; sourceTree = "<group>"; };
 		961AFC1A1BFBD61400B94EAE /* FeedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedObject.m; sourceTree = "<group>"; };
 		962303741BB33D2700278FA6 /* forkKnife.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = forkKnife.png; path = "Graphic Assets/forkKnife.png"; sourceTree = "<group>"; };
@@ -493,6 +496,8 @@
 				363B60C31B6AE49F00987A1B /* UserObject.m */,
 				96AC04611C0D22E2002B1264 /* AutoCompleteObject.h */,
 				96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */,
+				960F72541C2B5E2000DE31AC /* UserStatsObject.h */,
+				960F72551C2B5E2000DE31AC /* UserStatsObject.m */,
 				363B60C51B6BF0CE00987A1B /* GroupObject.h */,
 				363B60C61B6BF0CE00987A1B /* GroupObject.m */,
 				36DD24241B7C88E800C6348F /* EventObject.h */,
@@ -1127,6 +1132,7 @@
 				36E592971C2A62BD00A56367 /* NotificationObject.m in Sources */,
 				96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */,
 				96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */,
+				960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */,
 				96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */,
 				964BC8211B97A4E700760C83 /* LocationManager.m in Sources */,
 				36FAB82E1BEC2DBA00B20EA1 /* FeedVC.m in Sources */,

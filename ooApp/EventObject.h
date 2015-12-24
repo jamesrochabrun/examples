@@ -51,11 +51,13 @@ typedef enum : char {
 @property (nonatomic, strong) NSString *primaryImageURL;
 @property (nonatomic, strong) NSString *primaryVenueImageIdentifier;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
+
 typedef enum {
     EVENT_USER_CAN_EDIT=1,
     EVENT_USER_CANNOT_EDIT=2,
     EVENT_EDITABILITY_UNKNOWN=0
 } EventEditability;
+
 @property (nonatomic,assign) EventEditability currentUserCanEdit;
 
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;

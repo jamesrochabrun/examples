@@ -76,9 +76,18 @@
 //==============================================================================
 
 @interface ConnectTableCell ()
+//@property (nonatomic,strong) UILabel *labelLists;
+
 @property (nonatomic,strong) UILabel *labelFollowers;
 @property (nonatomic,strong) UILabel *labelFollowing;
-@property (nonatomic,strong) UILabel *labelLists;
+@property (nonatomic,strong) UILabel *labelPlaces;
+@property (nonatomic,strong) UILabel *labelPhotos;
+
+@property (nonatomic,strong) UILabel *labelFollowersNumber;
+@property (nonatomic,strong) UILabel *labelFollowingNumber;
+@property (nonatomic,strong) UILabel *labelPlacesNumber;
+@property (nonatomic,strong) UILabel *labelPhotosNumber;
+
 @property (nonatomic,strong) OOUserView *userView;
 @property (nonatomic,strong) UILabel *labelUserName;
 @property (nonatomic,strong) UILabel *labelName;
@@ -96,26 +105,48 @@
         _userView=[[OOUserView alloc]init];
         [self  addSubview: _userView];
         _userView.delegate=self;
+        self.autoresizesSubviews= NO;
+        [self setSeparatorInset:UIEdgeInsetsZero];
+
+        self.backgroundColor=  UIColorRGB(kColorOffBlack);
         
-        _labelFollowers= makeLabel(self, @"@", kGeomFontSizeSubheader);
-        _labelFollowing= makeLabel(self, @"@", kGeomFontSizeSubheader);
-        _labelLists= makeLabel(self, @"@", kGeomFontSizeSubheader);
+        _labelFollowers= makeLabel(self,nil, kGeomFontSizeDetail);
+        _labelFollowing= makeLabel(self, nil, kGeomFontSizeDetail);
+        _labelPhotos=  makeIconLabel(self, kFontIconPhoto, kGeomFontSizeDetail);
+        _labelPlaces=makeLabel( self, nil, kGeomFontSizeDetail);
+        
+        _labelFollowers.textColor= MIDDLEGRAY;
+        _labelFollowing.textColor= MIDDLEGRAY;
+        _labelPhotos.textColor= MIDDLEGRAY;
+        _labelPlaces.textColor= MIDDLEGRAY;
+        
+        _labelFollowersNumber= makeLabel(self, @"", kGeomFontSizeSubheader);
+        _labelFollowingNumber= makeLabel(self,  @"", kGeomFontSizeSubheader);
+        _labelPhotosNumber= makeLabelLeft(self,  @"", kGeomFontSizeSubheader);
+        _labelPlacesNumber=makeLabel( self,  @"", kGeomFontSizeSubheader);
+        
+        _labelFollowersNumber.textColor= WHITE;
+        _labelFollowingNumber.textColor= WHITE;
+        _labelPhotosNumber.textColor= WHITE;
+        _labelPlacesNumber.textColor= WHITE;
+        
+//        _labelLists=makeAttributedLabel( self, nil, kGeomFontSizeDetail);
         
         _labelUserName= makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
         _labelName= makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
-        _labelFollowers.textColor=WHITE;
-        _labelFollowing.textColor=WHITE;
-        _labelLists.textColor=WHITE;
+        
         _labelUserName.textColor=WHITE;
         _labelName.textColor=WHITE;
         
-        _labelLists.alpha=0;
+//        _labelLists.alpha=0;
         _labelFollowers.alpha=0;
         _labelFollowing.alpha=0;
-        
-        _labelLists.textAlignment=NSTextAlignmentLeft;
-        _labelFollowers.textAlignment=NSTextAlignmentCenter;
-        _labelFollowing.textAlignment=NSTextAlignmentRight;
+        _labelPhotos.alpha=0;
+        _labelPlaces.alpha=0;
+        _labelFollowersNumber.alpha=0;
+        _labelFollowingNumber.alpha=0;
+        _labelPhotosNumber.alpha=0;
+        _labelPlacesNumber.alpha=0;
         
         self.buttonFollow= makeButton(self, @"FOLLOW",
                                       kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), CLEAR,
@@ -160,35 +191,15 @@
 {
     __weak ConnectTableCell *weakSelf = self;
     NSUInteger userid=self.userInfo.userID;
-
-    //NOTE: It would be better if user stats were an object that gets populated in the OOAPI layer when this
-    //end point is called. The way this is currently implemented, other parts of the app will have to copy
-    //the same implementation. e.g. the profile or user search will have to re-implement the parsing code
-    //represented here. If a new stat is added or one is removed all of the parsing implementations will have
-    //to change. This negates many benefits of OO and decreases the maintainability of the code base. It
-    //would also be better if dictionary keys were declared as constants....again this makes code much more
-    //maintainable. This should be refactored ASAP.
-    self.op= [OOAPI getStatsForUser: userid
-                       success:^(NSDictionary *dictionary) {
-                           NSUInteger  identifier=  parseUnsignedIntegerOrNullFromServer(dictionary[ @"user_id"]);
-                           if  (!identifier || identifier== userid) {
-                               NSUInteger restaurantCount=parseUnsignedIntegerOrNullFromServer( dictionary[ @"restaurant_count"]);
-                               NSUInteger nLists=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey:@"list_count"]);
-                               NSUInteger nFollowers=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey:@"follower_count"]);
-                               NSUInteger nFollowees=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey:@"followee_count"]);
-                               NSArray*parameters=@[
-                                                    @(nLists),@(nFollowers),@(nFollowees),@(restaurantCount)
-                                                    ];
-                               
-                               ON_MAIN_THREAD(^{
-                                   [weakSelf provideStats:  parameters
-                                    ];
-                               });
-                           }
-                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                           NSLog (@"UNABLE TO GET STATS %@",error);
-                       }
-              ];
+    [OOAPI getUserStatsFor:userid success:^(UserStatsObject *object) {
+        ON_MAIN_THREAD(^{
+            [weakSelf provideStats:  object];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog  (@"STATS ERROR %@",error);
+    }
+     ];
+    
 }
 
 - (void) oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
@@ -219,61 +230,70 @@
     _labelUserName.text=nil;
     _labelName.text=nil;
     
-    _labelLists.alpha=0;
+//    _labelLists.alpha=0;
+    
     _labelFollowers.alpha=0;
     _labelFollowing.alpha=0;
+    _labelPlaces.alpha=0;
+    _labelPhotos.alpha=0;
+    _labelFollowersNumber.alpha=0;
+    _labelFollowingNumber.alpha=0;
+    _labelPlacesNumber.alpha=0;
+    _labelPhotosNumber.alpha=0;
     
-    [_labelLists setText:  @""];
+    //    [_labelLists setText:  @""];
+    [_labelPlaces setText:  @""];
     [_labelFollowers setText:  @""];
     [_labelFollowing setText:  @""];
+    [_labelPlacesNumber setText:  @""];
+    [_labelPhotosNumber setText:  @""];
+    [_labelFollowersNumber setText:  @""];
+    [_labelFollowingNumber setText:  @""];
    
     _buttonFollow.hidden= YES;
 }
 
-- (void) provideStats: (NSArray*) values
+- (void) provideStats: (UserStatsObject*) stats
 {
-    if (values.count!=4)
-        return;
-    
-    NSNumber* numberLists=values[0];
-    NSNumber* numberFollowers=values[1];
-    NSNumber* numberFollowing=values[2];
-    NSNumber* numberRestaurantCount=values[3];
-    NSInteger lists= numberLists.integerValue;
-    NSInteger followers= numberFollowers.integerValue;
-    NSInteger following= numberFollowing.integerValue;
-    NSInteger restaurantCount= numberRestaurantCount.integerValue;
-    if  (lists ==1 ) {
-        [_labelLists setText: [NSString stringWithFormat:@"1 list"  ]];
-    } else {
-        [_labelLists setText: [NSString stringWithFormat:@"%lu lists",  lists ]];
-    }
+    //    NSInteger lists= stats.totalLists;
+    NSUInteger followers= stats.totalFollowers;
+    NSUInteger following= stats.totalFollowees;
+    NSUInteger restaurantCount= stats.totalVenues;
+    NSUInteger photosCount= stats.totalPhotos;
     
     if  (followers==1 ) {
-        [_labelFollowers setText: [NSString stringWithFormat:@"1 follower"   ]];
+        [_labelFollowersNumber setText: @"1"   ];
+        [_labelFollowers setText: @"follower"  ];
     } else {
-        [_labelFollowers setText: [NSString stringWithFormat:@"%lu followers",followers ]];
+        [_labelFollowersNumber setText: stringFromUnsigned( followers) ];
+        [_labelFollowers setText: @"followers"];
     }
     
-    if  (following==1 ) {
-        [_labelFollowing setText: [NSString stringWithFormat:@"1 following"   ]];
+    [_labelFollowingNumber setText: stringFromUnsigned( following )];
+    [_labelFollowing setText: @"following"];
+    
+    if  (restaurantCount==1 ) {
+        [_labelPlacesNumber setText: @"1"   ];
+        [_labelPlaces setText: @"place"  ];
     } else {
-        [_labelFollowing setText: [NSString stringWithFormat:@"%lu following",following ]];
+        [_labelPlacesNumber  setText: stringFromUnsigned( restaurantCount )];
+        [_labelPlaces setText: @"places"];
     }
     
-    //    [_labelRestaurantCount setText: [NSString stringWithFormat:@"%@ following",values[3]  ]];
-    
-    _labelLists.textColor=WHITE;
-    _labelFollowers.textColor=WHITE;
-    _labelFollowing.textColor=WHITE;
-    
-    NSLog  (@" following %@",NSStringFromCGSize(_labelFollowing.frame.size));
+    [_labelPhotosNumber  setText: stringFromUnsigned( photosCount )];
     
     __weak ConnectTableCell *weakSelf = self;
     [UIView animateWithDuration:.4 animations:^{
-        weakSelf.labelLists.alpha=1;
+        //        weakSelf.labelLists.alpha=1;
+        
         weakSelf.labelFollowers.alpha=1;
+        weakSelf.labelPhotos.alpha=1;
         weakSelf.labelFollowing.alpha=1;
+        weakSelf.labelPlaces.alpha=1;
+        weakSelf.labelFollowersNumber.alpha=1;
+        weakSelf.labelPhotosNumber.alpha=1;
+        weakSelf.labelFollowingNumber.alpha=1;
+        weakSelf.labelPlacesNumber.alpha=1;
     }];
 }
 
@@ -283,13 +303,12 @@
     const float kGeomConnectCellMiddleGap= 7;
     
     float w=self.frame.size.width;
-    float h=self.frame.size.height;
     const float margin=kGeomSpaceEdge;
     const float spacing=kGeomSpaceInter;
     float imageSize=kGeomConnectScreenUserImageHeight;
     _userView.frame=CGRectMake(margin, margin, imageSize, imageSize);
     
-    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, margin,kGeomButtonWidth, kGeomHeightButton);
+    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, margin,kGeomButtonWidth, 24 /* per Jay */);
     
     float x=margin+imageSize+kGeomConnectCellMiddleGap;
     float y=margin;
@@ -305,20 +324,34 @@
         labelHeight= kGeomHeightButton;
     }
     _labelName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
+    y += labelHeight+ spacing;
     
-    labelHeight= 20;
+    float iconWidth= 24;
+    x=  margin + imageSize + spacing;
     y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
-    if (remainingWidth>414)
-        remainingWidth=414; // So it looks non-ridiculous on the iPad.
+    _labelPhotos.frame=CGRectMake(x, y, iconWidth, labelHeight);
+    x += iconWidth;
+    _labelPhotosNumber.frame=CGRectMake(x, y, 55,  labelHeight);
+    y += labelHeight+ spacing;
     
-    int leftLabelWidth = (int) remainingWidth/4;
-    int rightLabelWidth = (int) 3*remainingWidth/8;
-    _labelLists.frame=CGRectMake(x, y, leftLabelWidth, labelHeight);
+//    addDiagnosticBorder(_labelPhotos);
+//    addDiagnosticBorder(_labelPhotosNumber);
+    
+    labelHeight= 17;//  from mockup
+    y = _userView.frame.size.height + _userView.frame.origin.y - 2*labelHeight;
+  
+    float rightAreaWidth= 150;//  from mockup
+    int leftLabelWidth = (int) rightAreaWidth*4/14.;
+    int rightLabelWidth = (int) rightAreaWidth*5/14.;
+    x= w-rightAreaWidth;
+    _labelPlacesNumber.frame=CGRectMake(x, y, leftLabelWidth, labelHeight);
+    _labelPlaces.frame=CGRectMake(x, y +labelHeight, leftLabelWidth, labelHeight);
     x += leftLabelWidth;
-    _labelFollowers.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
+    _labelFollowersNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
+    _labelFollowers.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);
     x += rightLabelWidth;
-    _labelFollowing.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
-    x += rightLabelWidth;
+    _labelFollowingNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
+    _labelFollowing.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);
     
     [_userView layoutIfNeeded];
 }
@@ -415,8 +448,9 @@
     _tableAccordion.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tableAccordion registerClass:[ConnectTableCell class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER];
     [_tableAccordion registerClass:[UITableViewCell class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY];
-    
-    _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [_tableAccordion setLayoutMargins:UIEdgeInsetsZero];
+    _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    _tableAccordion.separatorColor= BLACK;
 }
 
 - (void)fetchFollowers
