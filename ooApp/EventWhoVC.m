@@ -57,7 +57,8 @@
         
         _labelUserName= makeLabelLeft(self, nil, kGeomFontSizeHeader);
         _labelUserName.textColor= WHITE;
-        
+        [_labelUserName withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
+
         self.textLabel.hidden= YES;
         self.imageView.hidden= YES;
     }
@@ -144,7 +145,7 @@
         return;
     }
     
-    NSLog (@"EMAIL  %@ first name  %@", self.user.email, self.user.firstName);
+//    NSLog (@"EMAIL  %@ first name  %@", self.user.email, self.user.firstName);
     
     _viewShadow.frame = CGRectMake( margin, margin, w- margin*2,availableHeight);
     float x=  margin;
@@ -156,9 +157,9 @@
     y= h/5;
     [_labelName sizeToFit];
     [_labelUserName sizeToFit];
-    _labelName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelName.frame.size.height);
-    y += _labelName.frame.size.height +kGeomSpaceInter;
     _labelUserName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelUserName.frame.size.height);
+    y += _labelUserName.frame.size.height +kGeomSpaceInter;
+    _labelName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelName.frame.size.height);
     
     _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
 }
