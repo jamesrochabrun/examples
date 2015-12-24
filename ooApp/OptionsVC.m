@@ -32,6 +32,8 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Hungry?" subHeader:@"What are you in the mood for?"];

@@ -114,6 +114,8 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     if ([userInfo isKindOfClass:[NSDictionary class]]) {
+        ANALYTICS_EVENT_OTHER(@"Notification");
+
         NotificationObject *notif = [[NotificationObject alloc] init];
         notif.type = (NotificationObjectType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
         notif.identifier = parseUnsignedIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationID]);
@@ -142,7 +144,7 @@
         case kNotificationTypeViewUser:
             //show user profile
         {
-            NSLog([NSString stringWithFormat:@"Show user: %lu", (unsigned long)notif.identifier]);
+            NSLog(@"Show user: %lu", (unsigned long)notif.identifier);
             [OOAPI getUserWithID:notif.identifier success:^(UserObject *user) {
                 if (user) {
                     ProfileVC *vc = [[ProfileVC alloc] init];
@@ -164,7 +166,7 @@
             //show list
         {
 
-            NSLog([NSString stringWithFormat:@"Show list: %lu", notif.identifier]);
+            NSLog(@"Show list: %lu", notif.identifier);
             
             OOAPI *api = [[OOAPI alloc] init];
             
@@ -183,7 +185,7 @@
         case kNotificationTypeViewRestaurant:
             //show restaurant
         {
-            NSLog([NSString stringWithFormat:@"Show restaurant: %lu", notif.identifier]);
+            NSLog(@"Show restaurant: %lu", notif.identifier);
             
             OOAPI *api = [[OOAPI alloc] init];
             

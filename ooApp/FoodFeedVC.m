@@ -41,6 +41,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+	ANALYTICS_SCREEN( @( object_getClassName(self)));
+
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Food Feed" subHeader:nil];
