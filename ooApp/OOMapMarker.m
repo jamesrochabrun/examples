@@ -41,7 +41,7 @@
 }
 
 - (BOOL)isEqual:(OOMapMarker *)object {
-    return [_objectID isEqual:object.objectID];
+    return [_objectID isEqualToString:object.objectID];
 }
 
 - (NSUInteger)hash {

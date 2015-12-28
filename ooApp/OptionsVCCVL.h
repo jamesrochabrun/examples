@@ -17,7 +17,7 @@ typedef enum {
     kOptionsSectionTypeNumberOfSections
 } kOptionsSectionType;
 
-static NSUInteger kNumColumnsForTags = 4;
+static NSUInteger kNumColumnsForTags = 3;
 
 @protocol OptionsVCCollectionViewDelegate <UICollectionViewDelegate>
 

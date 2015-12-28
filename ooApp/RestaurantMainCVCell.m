@@ -37,8 +37,6 @@
 @property (nonatomic, strong) UILabel *hoursView;
 @property (nonatomic, strong) UIView *verticalLine1;
 @property (nonatomic, strong) UIView *verticalLine2;
-@property (nonatomic, strong) UIView *verticalLine3;
-@property (nonatomic, strong) UIView *verticalLine4;
 
 @end
 
@@ -62,19 +60,12 @@
         
         _verticalLine1 = [[UIView alloc] init];
         _verticalLine2 = [[UIView alloc] init];
-        _verticalLine3 = [[UIView alloc] init];
-        _verticalLine4 = [[UIView alloc] init];
         [self addSubview:_verticalLine1];
         [self addSubview:_verticalLine2];
-        [self addSubview:_verticalLine3];
-        [self addSubview:_verticalLine4];
         
         _verticalLine1.backgroundColor = _verticalLine2.backgroundColor = UIColorRGBA(kColorWhite);
-        _verticalLine3.backgroundColor = _verticalLine4.backgroundColor = UIColorRGBA(kColorWhite);
         _verticalLine1.translatesAutoresizingMaskIntoConstraints =
-        _verticalLine2.translatesAutoresizingMaskIntoConstraints =
-        _verticalLine3.translatesAutoresizingMaskIntoConstraints =
-        _verticalLine4.translatesAutoresizingMaskIntoConstraints = NO;
+        _verticalLine2.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_hoursButton withText:@"" fontSize:kGeomFontSizeH2 width:100 height:30 backgroundColor:kColorClear target:self selector:@selector(viewHours)];
@@ -142,7 +133,11 @@
         _menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _menuButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_menuButton];
-
+        
+        _menuButton.layer.borderWidth = _cuisine.layer.borderWidth = 1;
+        _menuButton.layer.borderColor = _cuisine.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+        _menuButton.layer.cornerRadius = _cuisine.layer.cornerRadius = 0;
+        
         _distance = [[UILabel alloc] init];
         _distance.translatesAutoresizingMaskIntoConstraints = NO;
         [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear];
@@ -174,7 +169,7 @@
         [self addSubview:_hoursScroll]; //should appear above everything
         
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-//        [DebugUtilities addBorderToViews:@[_cuisine, _menuButton]];
+//        [DebugUtilities addBorderToViews:@[_phoneNumber, _website, _verticalLine2]];
     }
     return self;
 }
@@ -230,7 +225,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _verticalLine3, _verticalLine4, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _shareButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _shareButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -238,150 +233,72 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_verticalLine3]-[_priceRange]-(spaceInter)-[_hoursButton]-(spaceInter)-[_address]-[_phoneNumber]-[_locationButton(iconButtonDimensions)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    UIView *centerView, *lastLineView, *currentLine;
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_hoursButton(25)][_hoursScroll]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton][_shareButton(actionButtonWidth)][_favoriteButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_priceRange]-spaceInter-[_verticalLine1(1)]-spaceInter-[_distance]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_phoneNumber]-[_verticalLine2(1)]-[_website]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_address]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-    
-    //name line
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_shareButton
-                         attribute:NSLayoutAttributeCenterX
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:self
-                         attribute:NSLayoutAttributeCenterX
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_favoriteButton
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_locationButton
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_shareButton
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_locationButton
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_favoriteButton
-                         attribute:NSLayoutAttributeHeight
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_locationButton
-                         attribute:NSLayoutAttributeHeight
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_shareButton
-                         attribute:NSLayoutAttributeHeight
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_locationButton
-                         attribute:NSLayoutAttributeHeight
-                         multiplier:1
-                         constant:0]];
-    
-    if (!_restaurant.cuisine && !_restaurant.mobileMenuURL) {
-        
-    } else if (_restaurant.cuisine && !_restaurant.mobileMenuURL) {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_cuisine]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    //1st line
+    if ([_priceRange.text length] && [_distance.text length]) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_priceRange]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_priceRange]-spaceInter-[_verticalLine1(1)]-spaceInter-[_distance]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_cuisine
-                         attribute:NSLayoutAttributeCenterX
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:self
-                         attribute:NSLayoutAttributeCenterX
-                         multiplier:1
-                         constant:0]];
-    } else if (!_restaurant.cuisine && _restaurant.mobileMenuURL) {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_menuButton]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        [self addConstraint:[NSLayoutConstraint
-                             constraintWithItem:_menuButton
-                             attribute:NSLayoutAttributeCenterX
-                             relatedBy:NSLayoutRelationEqual
-                             toItem:self
-                             attribute:NSLayoutAttributeCenterX
-                             multiplier:1
-                             constant:0]];
-    } else {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_cuisine]-(spaceInter)-[_verticalLine3(1)]-(spaceInter)-[_menuButton]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-        [self addConstraint:[NSLayoutConstraint
-                             constraintWithItem:_cuisine
+                             constraintWithItem:_verticalLine1
                              attribute:NSLayoutAttributeCenterY
                              relatedBy:NSLayoutRelationEqual
-                             toItem:_verticalLine3
+                             toItem:_distance
                              attribute:NSLayoutAttributeCenterY
                              multiplier:1
                              constant:0]];
         [self addConstraint:[NSLayoutConstraint
-                             constraintWithItem:_menuButton
-                             attribute:NSLayoutAttributeCenterY
+                             constraintWithItem:_verticalLine1
+                             attribute:NSLayoutAttributeHeight
                              relatedBy:NSLayoutRelationEqual
-                             toItem:_verticalLine3
-                             attribute:NSLayoutAttributeCenterY
+                             toItem:_distance
+                             attribute:NSLayoutAttributeHeight
                              multiplier:1
                              constant:0]];
-
-        
         [self addConstraint:[NSLayoutConstraint
-                             constraintWithItem:_verticalLine3
-                             attribute:NSLayoutAttributeCenterX
+                             constraintWithItem:_priceRange
+                             attribute:NSLayoutAttributeCenterY
                              relatedBy:NSLayoutRelationEqual
-                             toItem:self
-                             attribute:NSLayoutAttributeCenterX
+                             toItem:_distance
+                             attribute:NSLayoutAttributeCenterY
                              multiplier:1
                              constant:0]];
+        currentLine = _priceRange;
+        centerView = _verticalLine1;
+    } else if ([_priceRange.text length]) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_priceRange]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_priceRange]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        currentLine = _priceRange;
+        centerView = _priceRange;
+    } else if ([_distance.text length]) {
+            [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_distance]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_distance]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        currentLine = _distance;
+        centerView = _distance;
     }
     
-    //distance line
     [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_verticalLine1
+                         constraintWithItem:currentLine
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:nil
+                         attribute:0
+                         multiplier:1
+                         constant:30]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:centerView
                          attribute:NSLayoutAttributeCenterX
                          relatedBy:NSLayoutRelationEqual
                          toItem:self
                          attribute:NSLayoutAttributeCenterX
                          multiplier:1
                          constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_verticalLine1
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_distance
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_verticalLine1
-                         attribute:NSLayoutAttributeHeight
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_distance
-                         attribute:NSLayoutAttributeHeight
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_priceRange
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_distance
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
-//hours button
+
+    //line 2 hour button
+    lastLineView = currentLine;
+    currentLine = _hoursButton;
+    
+    //hours button
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_hoursButton
                          attribute:NSLayoutAttributeCenterX
@@ -390,51 +307,7 @@
                          attribute:NSLayoutAttributeCenterX
                          multiplier:1
                          constant:0]];
-
-
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_address
-                         attribute:NSLayoutAttributeCenterX
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:self
-                         attribute:NSLayoutAttributeCenterX
-                         multiplier:1
-                         constant:0]];
-
-    //phone number line
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_verticalLine2
-                         attribute:NSLayoutAttributeCenterX
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:self
-                         attribute:NSLayoutAttributeCenterX
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_verticalLine2
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_phoneNumber
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_verticalLine2
-                         attribute:NSLayoutAttributeHeight
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_phoneNumber
-                         attribute:NSLayoutAttributeHeight
-                         multiplier:1
-                         constant:0]];
-    [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_website
-                         attribute:NSLayoutAttributeCenterY
-                         relatedBy:NSLayoutRelationEqual
-                         toItem:_phoneNumber
-                         attribute:NSLayoutAttributeCenterY
-                         multiplier:1
-                         constant:0]];
-
+    
     //Hours button stuff
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_hoursScroll
@@ -460,6 +333,202 @@
                          attribute:NSLayoutAttributeWidth
                          multiplier:1
                          constant:0]];
+    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:currentLine
+                         attribute:NSLayoutAttributeTop
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:lastLineView
+                         attribute:NSLayoutAttributeBottom
+                         multiplier:1
+                         constant:0]];
+
+    //line 3 address
+    lastLineView = currentLine;
+    currentLine = _address;
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_address]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:currentLine
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:nil
+                         attribute:0
+                         multiplier:1
+                         constant:30]];
+    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_address
+                         attribute:NSLayoutAttributeCenterX
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:self
+                         attribute:NSLayoutAttributeCenterX
+                         multiplier:1
+                         constant:0]];
+    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:currentLine
+                         attribute:NSLayoutAttributeTop
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:lastLineView
+                         attribute:NSLayoutAttributeBottom
+                         multiplier:1
+                         constant:0]];
+    
+    //4th line phone/website
+    lastLineView = currentLine;
+    centerView = nil;
+    currentLine = nil;
+
+    if ([_phoneNumber.text length] && [_website.text length]) {
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_phoneNumber
+                             attribute:NSLayoutAttributeCenterY
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:_verticalLine2
+                             attribute:NSLayoutAttributeCenterY
+                             multiplier:1
+                             constant:0]];
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_website
+                             attribute:NSLayoutAttributeCenterY
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:_verticalLine2
+                             attribute:NSLayoutAttributeCenterY
+                             multiplier:1
+                             constant:0]];
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_verticalLine2
+                             attribute:NSLayoutAttributeHeight
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:_phoneNumber
+                             attribute:NSLayoutAttributeHeight
+                             multiplier:1
+                             constant:0]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_phoneNumber]-[_verticalLine2(1)]-[_website]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        currentLine = _phoneNumber;
+        centerView = _verticalLine2;
+    } else if ([_phoneNumber.text length]) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_phoneNumber]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        currentLine = _phoneNumber;
+        centerView = _phoneNumber;
+    } else if ([_website.text length]) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=spaceInterX2)-[_website]-(>=spaceInterX2)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        currentLine = _website;
+        centerView = _website;
+    } else {
+        
+    }
+    if (currentLine) {
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:lastLineView
+                             attribute:NSLayoutAttributeBottom
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:currentLine
+                             attribute:NSLayoutAttributeTop
+                             multiplier:1
+                             constant:0]];
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:centerView
+                             attribute:NSLayoutAttributeCenterX
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:self
+                             attribute:NSLayoutAttributeCenterX
+                             multiplier:1
+                             constant:0]];
+    }
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_hoursButton(25)][_hoursScroll]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton][_shareButton(actionButtonWidth)][_favoriteButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    lastLineView = currentLine;
+    
+    //line 5 cuisine/menu
+    if (!_restaurant.cuisine && !_restaurant.mobileMenuURL) {
+        
+    } else if (_restaurant.cuisine && !_restaurant.mobileMenuURL) {
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:kGeomDimensionsIconButton]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_cuisine]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_locationButton attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+        currentLine = _cuisine;
+        centerView = _cuisine;
+    } else if (!_restaurant.cuisine && _restaurant.mobileMenuURL) {
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_menuButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:kGeomDimensionsIconButton]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_menuButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_menuButton attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_locationButton attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+        currentLine = _menuButton;
+        centerView = _menuButton;
+    } else {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(spaceEdge)-[_cuisine][_menuButton]-(spaceEdge)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_menuButton attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_menuButton attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_menuButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:kGeomDimensionsIconButton]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:kGeomDimensionsIconButton]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_locationButton attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+        currentLine = _verticalLine2;
+        centerView = _verticalLine2;
+    }
+    
+//    if (centerView) {
+//        [self addConstraint:[NSLayoutConstraint
+//                             constraintWithItem:currentLine
+//                             attribute:NSLayoutAttributeTop
+//                             relatedBy:NSLayoutRelationEqual
+//                             toItem:lastLineView
+//                             attribute:NSLayoutAttributeBottom
+//                             multiplier:1
+//                             constant:0]];
+//    }
+    
+    //line 6 location/share/favorite
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_shareButton
+                         attribute:NSLayoutAttributeCenterX
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:self
+                         attribute:NSLayoutAttributeCenterX
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_favoriteButton
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_locationButton
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_shareButton
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_locationButton
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_favoriteButton
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_locationButton
+                         attribute:NSLayoutAttributeHeight
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_shareButton
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_locationButton
+                         attribute:NSLayoutAttributeHeight
+                         multiplier:1
+                         constant:0]];
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationButton(iconButtonDimensions)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)layoutSubviews {
@@ -477,23 +546,29 @@
 //    _rating.text = @"JJJ";// (![_rating.text length]) ? [_restaurant ratingText] : _rating.text; //Not a fan of this, but the repsonse by getting the rest through place_id does not seem to be returning the rating
 //    NSLog(@"rating=%@", _rating.text);
     _address.text = _restaurant.address;
-    _website.text = @"Website";
     _phoneNumber.text = _restaurant.phone;
     
     if (_restaurant.cuisine) {
         [_cuisine withText:[NSString stringWithFormat:@"#%@", _restaurant.cuisine] fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(doCuisineSearch:)];
+        _cuisine.hidden = NO;
     } else {
         [_cuisine setTitle:@"" forState:UIControlStateNormal];
+        _cuisine.hidden = YES;
     }
     [_cuisine setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [_cuisine sizeToFit];
 
     if (_restaurant.mobileMenuURL) {
         [_menuButton withText:@"Menu" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(goToMenuURL)];
+        [_menuButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_menuButton sizeToFit];
+        _menuButton.hidden = NO;
     } else {
         [_menuButton setTitle:@"" forState:UIControlStateNormal];
+        _menuButton.frame = CGRectZero;
+        _menuButton.hidden = YES;
     }
-    [_menuButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-
+    
     _priceRange.text = [_restaurant priceRangeText];
     
     CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
@@ -511,16 +586,23 @@
     [_phoneNumber addLinkToPhoneNumber:_restaurant.phone withRange:range];
 
     if (_restaurant.website) {
+        _website.text = @"Website";
         range = [_website.text rangeOfString:_website.text];
         [_website setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                          [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2], NSFontAttributeName,
                                          UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
                                          nil]];
         [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
-        _verticalLine2.hidden = _website.hidden = NO;
+//        _verticalLine2.hidden = _website.hidden = NO;
     } else {
-        _verticalLine2.hidden = _website.hidden = YES;
+        _website.text = @"";
+//        _verticalLine2.hidden = _website.hidden = YES;
     }
+    
+    [_website sizeToFit];
+    [_phoneNumber sizeToFit];
+    
+    _verticalLine2.hidden = (_website.text && _phoneNumber.text) ? NO : YES;
 
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -552,7 +634,7 @@
     }];
     _hoursView.text = hrs;
     
-    [self updateConstraintsIfNeeded];
+    [self needsUpdateConstraints];
 }
 
 - (void)setFavorite:(BOOL)on {

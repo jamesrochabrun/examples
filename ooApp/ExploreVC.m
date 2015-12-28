@@ -469,7 +469,15 @@ static NSString * const ListRowID = @"HLRCell";
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(OOMapMarker *)marker {
-//    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:marker.index inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    RestaurantObject *ro = [_restaurants objectAtIndex:marker.index];
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+    vc.title = ro.name;
+    vc.restaurant = ro;
+    vc.eventBeingEdited= self.eventBeingEdited;
+    vc.listToAddTo = _listToAddTo;
+    [vc getRestaurant];
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore-MarkerInfoWindow");
 }
 
 -(UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {

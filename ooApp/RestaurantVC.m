@@ -704,7 +704,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             return 50;
             break;
         case kRestaurantSectionTypeMain:
-            return 180;
+            return 200;
             break;
         case kRestaurantSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
@@ -874,7 +874,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];
-    
 }
 
 - (void)showOnMap:(CLLocationCoordinate2D)location {

@@ -210,7 +210,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 
 - (BOOL)isUserTag:(TagObject *)tag {
     BOOL isUserTag = [_userTags containsObject:tag];
-    NSLog(@"tag=%@ selected:%d", tag.term, isUserTag);
+//    NSLog(@"tag=%@ selected:%d", tag.term, isUserTag);
     return isUserTag;
 }
 
