@@ -18,7 +18,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         _termLabel = [[UILabel alloc] init];
-        [_termLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeDetail] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_termLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH4] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         _termLabel.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_termLabel];
     }

@@ -265,8 +265,8 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     if (!(minPrice == 0 && maxPrice == 0)) {
         if (!(minPrice == 0 && maxPrice == 3)) {
-            [parameters setObject:[NSNumber numberWithUnsignedInteger:minPrice] forKey:kKeySearchMinPrice];
-            [parameters setObject:[NSNumber numberWithUnsignedInteger:maxPrice] forKey:kKeySearchMaxPrice];
+            [parameters setObject:[NSNumber numberWithUnsignedInteger:minPrice+1] forKey:kKeySearchMinPrice];
+            [parameters setObject:[NSNumber numberWithUnsignedInteger:maxPrice+1] forKey:kKeySearchMaxPrice];
         }
     }
   

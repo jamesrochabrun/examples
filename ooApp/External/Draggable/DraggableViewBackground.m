@@ -68,7 +68,11 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     NSMutableArray *keywords = [NSMutableArray array];
     u_int32_t count = (u_int32_t)[_tags count];
 
-    TagObject *to; //choose three terms
+    TagObject *to; //choose five terms
+    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
+    [keywords addObject:to.term];
+    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
+    [keywords addObject:to.term];
     to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
     [keywords addObject:to.term];
     to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];

@@ -210,9 +210,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
         self.requestOperation = [api getRestaurantsWithKeywords:(_listItem.type == kListTypeJustForYou) ? @[@"restaurants"]: @[_listItem.name]
                                                    andLocation:[[LocationManager sharedInstance] currentUserLocation]
                                                      andFilter:@""
-                                                    andRadius:2000
+                                                    andRadius:7500
                                                    andOpenOnly:NO
-                                                       andSort:kSearchSortTypeBestMatch
+                                                       andSort:kSearchSortTypeDistance
                                                        minPrice:0
                                                        maxPrice:3
                                                          isPlay:(_listItem.type == kListTypeJustForYou) ? YES : NO
