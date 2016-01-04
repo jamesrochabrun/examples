@@ -123,7 +123,7 @@
     
     CGFloat w = width(self);
     CGFloat h = height(self);
-    const float lowerGradientHeight =  8;
+//    const float lowerGradientHeight =  8;
     float thumbHeight,y;
     
     _nameHeader.frame = CGRectMake(0,0,w, kGeomStripHeaderHeight);
@@ -131,11 +131,11 @@
     if (!_isMessage) {
         // RULE: If the cell is the first one then leave space for the header.
         if  (_isFirst) {
-            thumbHeight=h-lowerGradientHeight-kGeomHeightButton/2;
+            thumbHeight=h-kGeomHeightButton/2;
             self.thumbnail.frame = CGRectMake(0,kGeomHeightButton/2,w,thumbHeight);
             y= kGeomHeightButton/2+  (thumbHeight-kGeomFaceBubbleDiameter -2*kGeomFontSizeHeader)/2;
         } else {
-            thumbHeight=h-lowerGradientHeight;
+            thumbHeight=h;
             self.thumbnail.frame = CGRectMake(0,0,w,thumbHeight);
             y= (thumbHeight-kGeomFaceBubbleDiameter-2*kGeomFontSizeHeader)/2;
         }

@@ -129,7 +129,7 @@
     float w=  self.bounds.size.width;
     float  margin= kGeomSpaceEdge;
     float spacing= 9;
-    h-= kGeomEventParticipantSeparatorHeight;
+//    h-= kGeomEventParticipantSeparatorHeight;
     
     _backgroundImageView.frame = CGRectMake(margin,0,w-2*margin,h);
     _viewShadow.frame=  _backgroundImageView.frame;
