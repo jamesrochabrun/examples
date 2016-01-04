@@ -58,7 +58,7 @@ typedef enum {
     EVENT_EDITABILITY_UNKNOWN=0
 } EventEditability;
 
-@property (nonatomic,assign) EventEditability currentUserCanEdit;
+@property (nonatomic,assign) EventEditability editability;
 
 + (EventObject *)eventFromDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)dictionaryFromEvent;

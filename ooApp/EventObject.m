@@ -109,7 +109,7 @@ BOOL isEventObject (id  object)
 
     NSMutableOrderedSet* administrators=[NSMutableOrderedSet new];
     e.administrators= administrators;
-    e.currentUserCanEdit= EVENT_USER_CANNOT_EDIT;
+    e.editability= EVENT_USER_CANNOT_EDIT;
 
     array=dictionary[kKeyEventAdministrators];
     if (array) {
@@ -123,7 +123,7 @@ BOOL isEventObject (id  object)
                 
                 NSUInteger userid= [number  unsignedLongValue];
                 if  (userid== currentUserID) {
-                    e.currentUserCanEdit= EVENT_USER_CAN_EDIT;
+                    e.editability= EVENT_USER_CAN_EDIT;
                     NSLog  (@"USER CAN EDIT EVENT.");
                 }
             }

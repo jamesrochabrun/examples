@@ -1208,13 +1208,22 @@
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self deleteEvent];
-                                                     [self.navigationController  popViewControllerAnimated:YES];
                                                  }];
     
     [a addAction:cancel];
     [a addAction:ok];
     
     [self presentViewController:a animated:YES completion:nil];
+}
+
+- (void)transitionToE1
+{
+    if ( APP.e1) {
+        [APP.e1 userDidAlterEvent];
+        [self.navigationController popToViewController: APP.e1 animated:YES];
+    } else {
+        NSLog (@"MISSING APP.E1 VALUE");
+    }
 }
 
 - (void)castVote
@@ -1235,12 +1244,20 @@
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *delete = [UIAlertAction actionWithTitle:@"Delete event"
-                                                     style:UIAlertActionStyleDestructive
-                                                   handler:^(UIAlertAction * action) {
-                                                       [self verifyDeletion];
-                                                   }];
+    UIAlertAction *deleteOrLeaveAction;
+    if ( self.eventBeingEdited.editability==EVENT_USER_CAN_EDIT) {
+        deleteOrLeaveAction = [UIAlertAction actionWithTitle:@"Delete event"
+                                   style:UIAlertActionStyleDestructive
+                                 handler:^(UIAlertAction * action) {
+                                     [self verifyDeletion];
+                                 }];
+    } else {
+        deleteOrLeaveAction = [UIAlertAction actionWithTitle:@"Leave event"
+                                                       style:UIAlertActionStyleDestructive
+                                                     handler:^(UIAlertAction * action) {
+                                                         [self doLeaveEvent];
+                                                     }];
+    }
     
     UIAlertAction *vote = [UIAlertAction actionWithTitle:@"Cast vote"
                                                    style: UIAlertActionStyleDefault
@@ -1250,10 +1267,8 @@
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style: UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                         
-                                                     }];
-    [a addAction:delete];
+                                                   handler: NULL];
+    [a addAction:deleteOrLeaveAction];
     [a addAction:vote];
     [a addAction:cancel];
     
@@ -1261,15 +1276,30 @@
     
 }
 
+- (void) doLeaveEvent
+{
+    EventObject* event= self.eventBeingEdited;
+    
+    __weak EventCoordinatorVC *weakSelf = self;
+    UserObject* currentUser= [Settings sharedInstance].userObject;
+    [OOAPI setParticipationOf: currentUser
+                      inEvent: event
+                           to:NO
+                      success:^(NSInteger eventID) {
+                          NSLog (@"CURRENT USER LEFT EVENT %lu", (unsigned long)event.eventID);
+                          [weakSelf transitionToE1];
+                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          NSLog (@"FAILED TO LEAVE EVENT %@",error);
+                      }];
+}
+
 - (void)deleteEvent
 {
     [self.delegate userDidAlterEvent];
+    __weak EventCoordinatorVC *weakSelf = self;
     [OOAPI deleteEvent:self.eventBeingEdited.eventID
                success:^{
-                   [self dismissViewControllerAnimated:YES
-                                            completion:^{
-                                                // XX:  need to force event list to reload
-                                            }];
+                   [weakSelf performSelectorOnMainThread:@selector(transitionToE1)  withObject:nil waitUntilDone:NO ];
                }
                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                    message( @"Failed to delete event.");

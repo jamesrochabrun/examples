@@ -44,6 +44,12 @@
 
 @implementation EventsListVC
 
+
+- (void) dealloc
+{
+    APP.e1=nil;
+}
+
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
 // Purpose:
@@ -52,6 +58,8 @@
 {
     ENTRY;
     [super viewDidLoad];
+    
+    APP.e1=self;
 
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
@@ -392,7 +400,7 @@
         }
         EventObject* event= events[ row];
         __weak EventsListVC *weakSelf = self;
-        switch ( event.currentUserCanEdit) {
+        switch ( event.editability) {
             case EVENT_USER_CAN_EDIT: {
                 // RULE: If the user is the coordinator then they can delete the event.
                 UITableViewRowAction *deleteAction =
@@ -454,6 +462,7 @@
     __weak EventsListVC *weakSelf = self;
     [OOAPI deleteEvent: event.eventID
                success:^{
+                   event.hasBeenAltered= YES;
                    [weakSelf refetchEvents ];
                }
                failure:^(AFHTTPRequestOperation* operation, NSError *error) {
@@ -471,6 +480,7 @@
                       inEvent: event
                            to:NO
                       success:^(NSInteger eventID) {
+                          event.hasBeenAltered= YES;
                           [weakSelf refetchEvents ];
                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                           NSLog (@"FAILED TO LEAVE EVENT %@",error);
@@ -526,7 +536,7 @@
             return;
         }
         
-        EventTVCell *cell= [tableView cellForRowAtIndexPath:indexPath];
+//        EventTVCell *cell= [tableView cellForRowAtIndexPath:indexPath];
 //        [cell updateHighlighting:YES];
 //        RUN_AFTER(400, ^{
 //            [cell updateHighlighting:NO];

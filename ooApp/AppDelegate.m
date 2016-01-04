@@ -160,13 +160,13 @@
             break;
         case kNotificationTypeViewEvent:
             //show event
-            message([NSString stringWithFormat:@"Show event: %lu", notif.identifier]);
+            message([NSString stringWithFormat:@"Show event: %lu", (unsigned long)notif.identifier]);
             break;
         case kNotificationTypeViewList:
             //show list
         {
 
-            NSLog(@"Show list: %lu", notif.identifier);
+            NSLog(@"Show list: %lu", (unsigned long)notif.identifier);
             
             OOAPI *api = [[OOAPI alloc] init];
             
@@ -185,11 +185,11 @@
         case kNotificationTypeViewRestaurant:
             //show restaurant
         {
-            NSLog(@"Show restaurant: %lu", notif.identifier);
+            NSLog(@"Show restaurant: %lu", (unsigned long)notif.identifier);
             
             OOAPI *api = [[OOAPI alloc] init];
             
-            [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", notif.identifier] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
+            [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)notif.identifier] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
                 if (restaurant) {
                     RestaurantVC *vc = [[RestaurantVC alloc] init];
                     vc.title = trimString(restaurant.name);

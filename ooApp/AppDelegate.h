@@ -11,6 +11,7 @@
 #import "UserObject.h"
 #import "TimeUtilities.h"
 #import "EventObject.h"
+#import "EventsListVC.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -20,6 +21,7 @@
 @property (nonatomic, strong) UIImage *imageForNoProfileSilhouette;
 @property (nonatomic, strong) NSDate *dateLeft;
 @property (nonatomic, strong) UINavigationController *nc;
+@property (nonatomic, strong) EventsListVC *e1;
 
 - (BOOL)connected;
 - (void)registerForPushNotifications;

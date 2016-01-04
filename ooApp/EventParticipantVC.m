@@ -1132,7 +1132,6 @@
     self.coordinatorVCReportedEventChanged= YES;
 }
 
-
 - (void) userDidSelect: (NSUInteger) which;
 {
     if ( self.transitioning) {

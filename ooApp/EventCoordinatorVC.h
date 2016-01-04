@@ -83,7 +83,7 @@
 @property (nonatomic,weak) NSObject<EventCoordinatorCoverCellDelegate>* delegate;
 @end
 
-@interface EventCoordinatorVC : SubBaseVC <UIImagePickerControllerDelegate, UIScrollViewDelegate, EventCoordinatorCoverCellDelegate,
+@interface EventCoordinatorVC : SubBaseVC <UIImagePickerControllerDelegate, UIScrollViewDelegate, 
     EventWhenVCDelegate, ParticipantsViewDelegate, EventWhoVCDelegate,EventCoordinatorWhereCellDelegate,
     EventCoordinatorWhenCellDelegate,EventCoordinatorWhoCellDelegate,
 UINavigationControllerDelegate>
