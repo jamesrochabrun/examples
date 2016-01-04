@@ -116,7 +116,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                        }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style: UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }]; // 3
     

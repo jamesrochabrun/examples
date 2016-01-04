@@ -23,7 +23,7 @@
 @end
 
 @interface EventWhoVC : SubBaseVC  <EventWhoTableCellDelegate, ABPersonViewControllerDelegate,ABPeoplePickerNavigationControllerDelegate,
-                            UIAlertViewDelegate, UISearchBarDelegate>
+                             UISearchBarDelegate>
 @property (nonatomic,weak) id <EventWhoVCDelegate> delegate;
 @property (nonatomic,strong) EventObject* eventBeingEdited;
 @property (nonatomic,assign) BOOL  editable, eventAlreadyStarted;

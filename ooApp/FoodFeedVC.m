@@ -269,7 +269,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                                                             [self flagPhoto:mio];
                                                         }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }];
     

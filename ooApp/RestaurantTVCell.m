@@ -253,7 +253,7 @@ enum  {
                                                                [weakSelf createListPressed];
                                                            }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault
+                                                     style: UIAlertActionStyleCancel
 							 handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }];
@@ -369,7 +369,8 @@ enum  {
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {

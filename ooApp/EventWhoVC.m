@@ -493,35 +493,44 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 
 - (void)addContactDoneButtonPressed: (id) sender
 {
-    NSLog  (@"");
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)userPressedInviteByEmail: (id) sender
 {
-    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle: LOCAL(@"EMAIL ADDRESS")
-                                                     message:nil
-                                                    delegate:  self
-                                           cancelButtonTitle: LOCAL(@"Cancel")
-                                           otherButtonTitles: LOCAL(@"ADD"), nil];
-    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [[alert textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeEmailAddress];
-    [[alert textFieldAtIndex:0]  becomeFirstResponder];
-    [alert show];
-}
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"EMAIL ADDRESS")
+                                                              message:nil
+                                                       preferredStyle:UIAlertControllerStyleAlert];
+    
+    [a addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        [textField setKeyboardType:UIKeyboardTypeEmailAddress];
+        [textField becomeFirstResponder];
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style: UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    
+    __weak  EventWhoVC *weakSelf = self;
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:LOCAL(@"ADD")
+                                                 style: UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction * action) {
+                                                   UITextField *textField = a.textFields.firstObject;
+                                                   
+                                                   NSString *string = trimString(textField.text);
+                                                   
+                                                   [weakSelf processIncomingEmailAddress:string
+                                                                               firstName: @""
+                                                                                lastName: @""];
+                                               }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [self presentViewController:a animated:YES completion:nil];
+    
 
-//------------------------------------------------------------------------------
-// Name:    clickedButtonAtIndex
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if  (1==buttonIndex) {
-        UITextField *textField = [alertView textFieldAtIndex: 0];
-        NSString *string = trimString(textField.text);
-        
-        [self processIncomingEmailAddress:string  firstName: @"" lastName: @""];
-    }
 }
 
 - (void)addUserToPotentialParticipants: (UserObject*)user

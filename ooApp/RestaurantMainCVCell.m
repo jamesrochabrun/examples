@@ -210,8 +210,7 @@
         NSString *num = [@"telprompt://" stringByAppendingString:phoneNumber];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:num]];
     } else {
-        UIAlertView *notPermitted=[[UIAlertView alloc] initWithTitle:@"Alert" message:@"Your device doesn't support this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [notPermitted show];
+        messageWithTitle (@"Alert", @"Your device doesn't support this feature.");// Uses UIAlertController.
     }
 }
 

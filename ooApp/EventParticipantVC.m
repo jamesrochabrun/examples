@@ -1004,7 +1004,7 @@
     __weak EventParticipantVC *weakSelf = self;
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
                                                               message:nil
-                                                       preferredStyle:UIAlertControllerStyleAlert];
+                                                       preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *actionMore= nil;
     if  ([self.eventBeingEdited userIsAdministrator: user.userID] ) {
@@ -1023,7 +1023,8 @@
     }
     
     UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style: UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction * action) {
                                                          
                                                      }];
     [a addAction:actionMore];

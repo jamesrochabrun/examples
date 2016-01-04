@@ -123,10 +123,11 @@ static NSString * const ListRowID = @"ListRowCell";
 {
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
                                                               message:nil
-                                                       preferredStyle:UIAlertControllerStyleAlert];
+                                                       preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style: UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -304,7 +305,8 @@ static NSString * const ListRowID = @"ListRowCell";
              }
          ];
     }];
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * _Nonnull action) {
         ;
     }];
     
@@ -551,7 +553,7 @@ static NSString * const ListRowID = @"ListRowCell";
         [self.navigationController pushViewController:vc animated:YES];
     }];
 
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }];
 
     

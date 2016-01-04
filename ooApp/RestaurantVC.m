@@ -160,7 +160,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -251,7 +252,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                                [weakSelf createListPressed];
                                                            }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }];
     
@@ -677,7 +679,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                            [self flagPhoto:mio];
                                                        }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }];
     
@@ -968,7 +971,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                             [self showPhotoLibraryUI];
                                                         }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
                                                          NSLog(@"Cancel");
                                                      }];
     

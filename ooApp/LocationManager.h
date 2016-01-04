@@ -16,7 +16,7 @@ extern NSString *const kDefaultsUserLocationChoice;
 extern NSString *const kDefaultsUserLocationLastKnownLatitude;
 extern NSString *const kDefaultsUserLocationLastKnownLongitude;
 
-@interface LocationManager : NSObject <CLLocationManagerDelegate, UIAlertViewDelegate>
+@interface LocationManager : NSObject <CLLocationManagerDelegate>
 
 + (instancetype) sharedInstance;
 

@@ -193,7 +193,6 @@
                         NSLog  (@"YOUR EVENT FETCHING FAILED  %@",e);
                     }
      ];
-    
 }
 
 //------------------------------------------------------------------------------
@@ -202,13 +201,63 @@
 //------------------------------------------------------------------------------
 - (void)userPressedAdd:(id)sender
 {
-    UIAlertView* alert= [ [UIAlertView  alloc] initWithTitle:LOCAL(@"New Event")
-                                                     message:LOCAL(@"Enter a name for the new event")
-                                                    delegate:self
-                                           cancelButtonTitle:LOCAL(@"Cancel")
-                                           otherButtonTitles:LOCAL(@"Create"), nil];
-    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [alert show];
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"New Event")
+                                                              message:LOCAL(@"Enter a name for the new event")
+                                                       preferredStyle:UIAlertControllerStyleAlert];
+    
+    [a addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder=@"Event Name";
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style: UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
+                                                 style: UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction * action) {
+                                                   UITextField *textField = a.textFields.firstObject;
+                                                   
+                                                   [textField resignFirstResponder];
+                                                   
+                                                   NSString *string = trimString(textField.text);
+                                                   if  (string.length ) {
+                                                       string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
+                                                   }
+                                                   
+                                                   NSUInteger userid= [Settings sharedInstance].userObject.userID;
+                                                   EventObject *e= [[EventObject alloc] init];
+                                                   e.name=  string;
+                                                   e.numberOfPeople= 1;
+                                                   e.createdAt= [NSDate date];
+                                                   e.creatorID= userid;
+                                                   e.updatedAt= [NSDate date];
+                                                   e.eventType= EVENT_TYPE_USER;
+                                                   self.eventBeingEdited= e;
+                                                   
+                                                   __weak EventsListVC* weakSelf= self;
+                                                   [OOAPI addEvent: e
+                                                           success:^(NSInteger eventID) {
+                                                               NSLog  (@"EVENT %lu CREATED FOR USER %lu", (unsigned long)eventID, ( unsigned long)userid);
+                                                               self.eventBeingEdited= e;
+                                                               e.eventID= eventID;
+                                                               //
+                                                               weakSelf.needToRefreshEventList= YES;
+                                                               [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
+                                                               
+                                                           }
+                                                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                               NSLog  (@"%@", error);
+                                                               message( @"backend was unable to create a new event");
+                                                           }];
+                                               }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [self presentViewController:a animated:YES completion:nil];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -440,10 +489,10 @@
 {
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really delete?")
                                                               message:nil
-                                                       preferredStyle:UIAlertControllerStyleAlert];
+                                                       preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleDefault
+                                                     style:UIAlertActionStyleCancel
 						 handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
@@ -633,49 +682,6 @@
         return 1;// This is the "alas there are none" row.
     }
     return n ;
-}
-
-//------------------------------------------------------------------------------
-// Name:    clickedButtonAtIndex
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if  (1==buttonIndex) {
-        UITextField *textField = [alertView textFieldAtIndex: 0];
-        [textField resignFirstResponder];
-        
-        NSString *string = trimString(textField.text);
-        if  (string.length ) {
-            string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
-        }
-        
-        NSUInteger userid= [Settings sharedInstance].userObject.userID;
-        EventObject *e= [[EventObject alloc] init];
-        e.name=  string;
-        e.numberOfPeople= 1;
-        e.createdAt= [NSDate date];
-        e.creatorID= userid;
-        e.updatedAt= [NSDate date];
-        e.eventType= EVENT_TYPE_USER;
-        self.eventBeingEdited= e;
-        
-        __weak EventsListVC* weakSelf= self;
-        [OOAPI addEvent: e
-                success:^(NSInteger eventID) {
-                    NSLog  (@"EVENT %lu CREATED FOR USER %lu", (unsigned long)eventID, ( unsigned long)userid);
-                    self.eventBeingEdited= e;
-                    e.eventID= eventID;
-              //
-                    weakSelf.needToRefreshEventList= YES;
-                    [weakSelf performSelectorOnMainThread:@selector(goToEventCoordinatorScreen:) withObject:string waitUntilDone:NO];
-                    
-                }
-                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    NSLog  (@"%@", error);
-                    message( @"backend was unable to create a new event");
-                }];
-    }
 }
 
 - (void)goToEventCoordinatorScreen: (NSString*)name

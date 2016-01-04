@@ -110,9 +110,9 @@
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-//    self.buttonUploadHugePhoto= makeButton(self.view,  @"UPLOAD HUGE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoHugeUpload:), 1);
-//    _buttonUploadHugePhoto.titleLabel.numberOfLines= 0;
-//    _buttonUploadHugePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+    self.buttonUploadHugePhoto= makeButton(self.view,  @"UPLOAD HUGE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoHugeUpload:), 1);
+    _buttonUploadHugePhoto.titleLabel.numberOfLines= 0;
+    _buttonUploadHugePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
 //    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
 //    _buttonUploadPhoto.titleLabel.numberOfLines= 0;
@@ -218,6 +218,9 @@
 - (void)doPhotoHugeUpload: (id) sender
 {
     self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];
+    
+    message (@"OK");
+    
 //    [OOAPI uploadPhoto:self.hugeImage
 //                    to:UPLOAD_DESTINATION_DIAGNOSTIC
 //            identifier:0
@@ -335,9 +338,12 @@
     y= margin;
     _buttonSendLog.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
+    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    y+=  spacing +kGeomHeightButton;
     _switchUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     _labelUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
+    
     
     _ivPhoto.frame = CGRectMake(0,0,w,_textviewDiagnosticLog.frame.origin.y);
     [self.view sendSubviewToBack:_ivPhoto ];

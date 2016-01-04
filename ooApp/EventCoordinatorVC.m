@@ -1200,10 +1200,10 @@
 {
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really delete?")
                                                               message:nil
-                                                       preferredStyle:UIAlertControllerStyleAlert];
+                                                       preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
                                                      }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -1243,7 +1243,7 @@
 {
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
                                                               message:nil
-                                                       preferredStyle:UIAlertControllerStyleAlert];
+                                                       preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *deleteOrLeaveAction;
     if ( self.eventBeingEdited.editability==EVENT_USER_CAN_EDIT) {
         deleteOrLeaveAction = [UIAlertAction actionWithTitle:@"Delete event"
@@ -1266,7 +1266,7 @@
                                                  }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style: UIAlertActionStyleDefault
+                                                     style: UIAlertActionStyleCancel
                                                    handler: NULL];
     [a addAction:deleteOrLeaveAction];
     [a addAction:vote];

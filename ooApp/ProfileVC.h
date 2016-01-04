@@ -18,7 +18,7 @@
 - (void)goToEmptyListScreen:(NSString *)string;
 @end
 
-@interface ProfileTableFirstRow : UITableViewCell <UIAlertViewDelegate>
+@interface ProfileTableFirstRow : UITableViewCell 
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
 @end

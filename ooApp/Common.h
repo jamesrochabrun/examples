@@ -32,7 +32,7 @@ extern NSString *const kNotificationLocationBecameAvailable;
 extern NSString *const kNotificationLocationBecameUnavailable;
 
 extern void message (NSString *str);
-extern void message2 (NSString *str, NSString*string);
+extern void messageWithTitle (NSString *str, NSString*string);
 
 extern NSString *const kOOURLStage;
 extern NSString *const kOOURLProduction;

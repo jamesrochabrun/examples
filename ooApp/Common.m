@@ -26,20 +26,26 @@ NSString *const kHTTPProtocol = @"https";
 
 void message (NSString *str)
 {
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: str
-                                                     message:nil
-                                                    delegate: nil
-                                           cancelButtonTitle: @"OK" otherButtonTitles: nil ];
-    [alert show];
+    messageWithTitle (str,nil);
 }
 
-void message2 (NSString *str, NSString*string)
+void messageWithTitle (NSString *str, NSString*string)
 {
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: str
-                                                     message:string
-                                                    delegate: nil
-                                           cancelButtonTitle: @"OK" otherButtonTitles: nil ];
-    [alert show];
+    UIAlertController *a= [UIAlertController alertControllerWithTitle: str ?: @""
+                                                              message:string
+                                                       preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                                     }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
+                                                 style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                 }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
 }
 
 NSString *concatenateStrings(NSString*a,NSString*b)
