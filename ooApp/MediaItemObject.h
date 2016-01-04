@@ -21,10 +21,12 @@ extern NSString *const kKeyMediaItemHeight;
 extern NSString *const kKeyMediaItemWidth;
 extern NSString *const kKeyMediaItemURL;
 extern NSString *const kKeyMediaItemSourceUserID;
+extern NSString *const kKeyMediaItemCaption;
 
 @interface MediaItemObject : NSObject
 
 @property (nonatomic, strong) NSString *reference;
+@property (nonatomic, strong) NSString *caption;
 @property (nonatomic) NSUInteger type;
 @property (nonatomic) NSUInteger source;
 @property (nonatomic) NSUInteger mediaItemId;

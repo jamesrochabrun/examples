@@ -82,6 +82,7 @@
         //remove from list
         [api deleteRestaurant:_restaurantToAdd.restaurantID fromList:_list.listID success:^(NSArray *lists) {
             [weakSelf getListsForRestaurant];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
@@ -89,6 +90,7 @@
         //add to list
         [api addRestaurants:@[_restaurantToAdd] toList:_list.listID success:^(id response) {
             [weakSelf getListsForRestaurant];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];

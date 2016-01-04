@@ -36,7 +36,8 @@
 @property (nonatomic, strong) GMSCameraPosition *camera;
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) OOFilterView *filterView;
-@property (nonatomic, assign) BOOL openOnly;
+//@property (nonatomic, assign) BOOL openOnly;
+@property (nonatomic, assign) BOOL nearby;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) GMSMarker *centerMarker;
@@ -60,8 +61,8 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.    
-    _openOnly = YES;
+
+//    _openOnly = YES;
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
     _mapView.translatesAutoresizingMaskIntoConstraints = NO;
     _mapView.mapType = kGMSTypeNormal;
@@ -94,10 +95,11 @@ static NSString * const ListRowID = @"HLRCell";
     
     _filterView = [[OOFilterView alloc] init];
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_filterView addFilter:@"Open Now" target:self selector:@selector(selectNow)];
-    [_filterView addFilter:@"All" target:self selector:@selector(selectLater)];
-    
+    [_filterView addFilter:@"Around Me" target:self selector:@selector(selectNearby)];
+    [_filterView addFilter:@"Top Spots" target:self selector:@selector(selectTopSpots)];
     [self.view addSubview:_filterView];
+    _nearby = NO;
+    [_filterView setCurrent:1];
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Explore" subHeader:nil];
     self.navTitle = _nto;
@@ -149,9 +151,9 @@ static NSString * const ListRowID = @"HLRCell";
     _minPrice = minPrice;
     _maxPrice = maxPrice;
     _listToDisplay = nil;
-    [_filterView setCurrent:1];
     [_filterView setNeedsLayout];
-    _openOnly = NO;
+//    _openOnly = NO;
+    _nearby = NO;
     [self getRestaurants];
     [self dismissViewControllerAnimated:YES completion:^{
         ;
@@ -197,8 +199,8 @@ static NSString * const ListRowID = @"HLRCell";
     
 }
 
-- (void)selectNow {
-    _openOnly = YES;
+- (void)selectNearby {
+    _nearby = YES;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -207,8 +209,8 @@ static NSString * const ListRowID = @"HLRCell";
     [self getRestaurants];
 }
 
-- (void)selectLater {
-    _openOnly = NO;
+- (void)selectTopSpots {
+    _nearby = NO;
     [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOMapMarker *mm = (OOMapMarker *)obj;
         mm.map = nil;
@@ -216,6 +218,26 @@ static NSString * const ListRowID = @"HLRCell";
     [_mapMarkers removeAllObjects];
     [self getRestaurants];
 }
+
+//- (void)selectNow {
+//    _openOnly = YES;
+//    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        OOMapMarker *mm = (OOMapMarker *)obj;
+//        mm.map = nil;
+//    }];
+//    [_mapMarkers removeAllObjects];
+//    [self getRestaurants];
+//}
+
+//- (void)selectLater {
+//    _openOnly = NO;
+//    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        OOMapMarker *mm = (OOMapMarker *)obj;
+//        mm.map = nil;
+//    }];
+//    [_mapMarkers removeAllObjects];
+//    [self getRestaurants];
+//}
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
@@ -271,7 +293,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)showOptionsIfTimedOut {
     if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:0 minutes:45 second:00])) {
-        [self showOptions];
+//        [self showOptions];
         [self updateLocation];
         APP.dateLeft = [NSDate date];
     } else {
@@ -422,7 +444,7 @@ static NSString * const ListRowID = @"HLRCell";
                 [searchTerms addObject:t.term];
             }];
         } else {
-            searchTerms = (_openOnly) ? [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]] : [NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]];
+            searchTerms = (_nearby) ? [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]] : [NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]];
             NSLog(@"category: %@", searchTerms);
         }
         _defaultListObject.name = [self getFilteredListName];
@@ -433,8 +455,8 @@ static NSString * const ListRowID = @"HLRCell";
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""
                                                   andRadius:distanceInMeters
-                                               andOpenOnly:_openOnly
-                                                    andSort:kSearchSortTypeBestMatch
+                                               andOpenOnly:NO//_openOnly
+                                                    andSort:(_nearby) ? kSearchSortTypeDistance : kSearchSortTypeBestMatch
                                                    minPrice:_minPrice
                                                    maxPrice:_maxPrice
                                                      isPlay:NO

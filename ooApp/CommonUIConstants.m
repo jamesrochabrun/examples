@@ -25,7 +25,6 @@ NSString *const kFontIconFeed = @"g";
 NSString *const kFontIconMenu = @"d";
 NSString *const kFontIconMore = @"f";//ellipsis
 NSString *const kFontIconPlay = @"Y";
-NSString *const kFontIconProfile = @"i";
 NSString *const kFontIconProfileFilled = @"H";
 NSString *const kFontIconEmptyCircle = @"O";
 NSString *const kFontIconFilledCircle = @"P";
@@ -42,7 +41,7 @@ NSString *const kFontIconDontCare = @"T";
 NSString *const kFontIconPhoto = @"x";
 NSString *const kFontIconUpload = @"F";
 NSString *const kFontIconUserTag = @"t";
-NSString *const kFontIconLocation = @"w";
+//NSString *const kFontIconLocation = @"w";
 NSString *const kFontIconToTry = @"o";
 NSString *const kFontIconToTryFilled = @"I";
 NSString *const kFontIconList = @"p";
@@ -59,5 +58,10 @@ NSString *const kFontIconCirclePlus = @"3";
 NSString *const kFontIconCircleX = @"4";
 NSString *const kFontIconYum = @"5";
 NSString *const kFontIconThumbsUp = @"6";
+NSString *const kFontIconYumOutline = @"i";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
+
+NSString *const kNotificationFoodFeedNeedsUpdate = @"notificationFoodFeedNeedsUpdate";
+NSString *const kNotificationRestaurantListsNeedsUpdate = @"notificationRestaurantListsNeedsUpdate";
+

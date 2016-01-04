@@ -346,7 +346,11 @@
     if (_restaurant == restaurant) return;
     _restaurant = restaurant;
     _name.text = _restaurant.name;
-    [self getRestaurant];
+    if (!_restaurant.restaurantID) {
+        [self getRestaurant];
+    } else {
+        [self updateCard:_restaurant];
+    }
 }
 
 - (void)getRestaurant {

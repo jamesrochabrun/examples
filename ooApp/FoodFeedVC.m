@@ -33,6 +33,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIImage *imageToUpload;
 @property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
+@property (nonatomic) BOOL needsUpdate;
 @end
 
 @implementation FoodFeedVC
@@ -71,6 +72,31 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     _collectionView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
     [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showCameraUI)];
+    
+    _needsUpdate = NO;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setUpdateNeeded)
+                                                 name:kNotificationFoodFeedNeedsUpdate object:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationFoodFeedNeedsUpdate object:nil];
+}
+
+- (void)setUpdateNeeded {
+    _needsUpdate = YES;
+}
+
+- (void)updateIfNeeded {
+    if (_needsUpdate) {
+        [_filterView selectCurrent];
+        _needsUpdate = NO;
+    }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self updateIfNeeded];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -136,34 +162,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [self getFoodFeed:kFoodFeedTypeFriends];
 }
 
-- (void)getNearbyRestaurants {
-    OOAPI *api = [[OOAPI alloc] init];
-    
-    __weak FoodFeedVC *weakSelf = self;
-    
-    _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]]
-                                            andLocation:[[LocationManager sharedInstance] currentUserLocation]
-                                              andFilter:@""
-                                              andRadius:20
-                                            andOpenOnly:NO
-                                                andSort:kSearchSortTypeDistance
-                                               minPrice:0
-                                               maxPrice:3
-                                                 isPlay:NO
-                                                success:^(NSArray *r) {
-                                                    _restaurants = r;
-                                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                                        [weakSelf gotRestaurants];
-                                                    });
-                                                } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-                                                    ;
-                                                }];
-}
-
-- (void)gotRestaurants {
-    
-}
-
 - (void)getFoodFeed:(FoodFeedType)type {
     __weak FoodFeedVC *weakSelf = self;
     
@@ -187,14 +185,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     return 0;
 }
 
-
 - (void)updateViewConstraints {
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
     
     NSDictionary *views;
-    
-
     
     if (_restaurantPicker) {
         UIView *restaurantPickerView = _restaurantPicker.view;
@@ -242,6 +237,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio {
+    
+}
+
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject {
     ProfileVC *vc = [[ProfileVC alloc] init];
     vc.userInfo = userObject;
@@ -261,7 +260,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                                                               });
                                                               
                                                           }];
-    UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Tag"
+    UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Add Caption"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                            [self tagPhoto:mio];
                                                        }];

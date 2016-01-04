@@ -47,7 +47,15 @@ enum  {
     CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-    self.subHeader2.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
+    
+    NSString *distance = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)] : @"";
+    NSString *rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
+    
+    if ([distance length] && [rating length]) {
+        self.subHeader2.text = [NSString stringWithFormat:@"%@ | %@", distance, rating];
+    } else {
+        self.subHeader2.text = [NSString stringWithFormat:@"%@", [distance length] ? distance : rating];
+    }
 
     OOAPI *api = [[OOAPI alloc] init];
     

@@ -69,6 +69,137 @@ NSString *const kKeyDeviceToken = @"device_token";
     }];
 }
 
++ (AFHTTPRequestOperation *)getNumMediaItemLikes:(NSUInteger)mediaItemID
+                                      success:(void (^)(NSUInteger count))success
+                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    if (!mediaItemID) {
+        failure(nil, nil);
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/likes/count", kHTTPProtocol, [OOAPI URL], mediaItemID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]] && [responseObject objectForKey:@"like_count"]) {
+            NSUInteger numLikes = parseUnsignedIntegerOrNullFromServer([responseObject objectForKey:@"like_count"]);
+            success (numLikes);
+        } else {
+            success (0);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSInteger statusCode = operation.response.statusCode;
+        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)getMediaItemLiked:(NSUInteger)mediaItemID
+                                           byUser:(NSUInteger)userID
+                                           success:(void (^)(BOOL ))success
+                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    if (!mediaItemID || !userID) {
+        failure(nil, nil);
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/%lu/likes", kHTTPProtocol, [OOAPI URL], userID, mediaItemID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSUInteger uid, mid;
+            NSDictionary *dict = responseObject;
+            uid = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyUserID]);
+            mid = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyMediaItemID]);
+            if (uid == userID && mid == mediaItemID) {
+                success(YES);
+            } else {
+                success(NO);
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSInteger statusCode = operation.response.statusCode;
+        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)unsetMediaItemLike:(NSUInteger)mediaItemID
+                             forUser:(NSUInteger)userID
+                             success:(void (^)())success
+                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    if  (!userID || !mediaItemID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/users/%lu/likes",
+                           kHTTPProtocol, [OOAPI URL], mediaItemID, userID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
+        success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)setMediaItemLike:(NSUInteger)mediaItemID
+                           forUser:(NSUInteger)userID
+                           success:(void (^)())success
+                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    if  (!userID || !mediaItemID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/likes",
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
+    
+    NSDictionary *parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", (unsigned long)userID]};
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    
+    return op;
+}
+
++ (AFHTTPRequestOperation *)setMediaItemCaption:(NSUInteger)mediaItemID
+                                     caption:(NSString *)caption
+                                     success:(void (^)())success
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    if  (!mediaItemID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu",
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
+    
+    NSDictionary *parameters = @{kKeyMediaItemCaption : caption};
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    
+    return op;
+}
+
 //------------------------------------------------------------------------------
 // Name:    getRestaurantMediaItems
 // Purpose:
@@ -281,7 +412,7 @@ NSString *const kKeyDeviceToken = @"device_token";
             [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
         }
         success(restaurants);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSInteger statusCode= operation.response.statusCode;
         NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
         failure(operation, error);
@@ -290,10 +421,8 @@ NSString *const kKeyDeviceToken = @"device_token";
 
 + (AFHTTPRequestOperation *)getAllTagsWithSuccess:(void (^)(NSArray *tags))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
-{
-#define  ALL_USERS 0 // But does this hold for all calls?
-    
-    return [OOAPI getTagsForUser:ALL_USERS success:success failure:failure ];
+{    
+    return [OOAPI getTagsForUser:kAllUsersID success:success failure:failure];
 }
 
 #if 0
@@ -2140,8 +2269,7 @@ NSString *const kKeyDeviceToken = @"device_token";
         return nil;
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/groups/%lu/users",
-                           kHTTPProtocol, [OOAPI URL], (unsigned long)groupID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/groups/%lu/users", kHTTPProtocol, [OOAPI URL], (unsigned long)groupID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil
@@ -2149,16 +2277,16 @@ NSString *const kKeyDeviceToken = @"device_token";
                NSMutableArray *users = [NSMutableArray array];
                for (id object in responseObject) {
                    
-                   if ( [ object isKindOfClass:[NSDictionary class]]) {
-                       [users  addObject:  [UserObject userFromDict: object]];
+                   if ([object isKindOfClass:[NSDictionary class]]) {
+                       [users addObject:[UserObject userFromDict:object]];
                    }
                }
                
-               NSLog  (@"TOTAL USERS FOUND: %ld", (unsigned long)users.count);
+               NSLog(@"TOTAL USERS FOUND: %ld", (unsigned long)users.count);
                success(users);
                
            }
-           failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -2168,7 +2296,7 @@ NSString *const kKeyDeviceToken = @"device_token";
 // Name:    determineIfCurrentUserCanEditEvent
 // Purpose:
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *) event
++ (AFHTTPRequestOperation *)determineIfCurrentUserCanEditEvent:(EventObject *)event
                                                        success:(void (^)(bool))success
                                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
@@ -2182,7 +2310,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%lu/users/%lu",
                            kHTTPProtocol, [OOAPI URL],
                            (unsigned long)event.eventID,
-                           ( unsigned long) userID];
+                           ( unsigned long)userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -2199,10 +2327,8 @@ NSString *const kKeyDeviceToken = @"device_token";
                                                 }
                                             }
                                             success(NO);
-                                            
                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                             NSInteger statusCode= operation.response.statusCode;
-                                            
                                             if (statusCode == 404) {
                                                 success(NO);
                                             } else {
@@ -2218,11 +2344,10 @@ NSString *const kKeyDeviceToken = @"device_token";
 // Name:    getVotesForEvent
 // Purpose:
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getVotesForEvent:(EventObject*)event
++ (AFHTTPRequestOperation *)getVotesForEvent:(EventObject *)event
                                     success:(void (^)(NSArray *votes))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/events/%ld/votes", kHTTPProtocol, [OOAPI URL], (unsigned long)event.eventID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -2231,14 +2356,13 @@ NSString *const kKeyDeviceToken = @"device_token";
            success:^(id responseObject) {
                NSMutableArray *votes = [NSMutableArray array];
                for (id dict in responseObject) {
-                   VoteObject* object=[VoteObject voteFromDictionary:dict];
-                   if  (object ) {
-                       [votes addObject: object];
+                   VoteObject *object=[VoteObject voteFromDictionary:dict];
+                   if (object) {
+                       [votes addObject:object];
                    }
                }
                success(votes);
-               
-           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -2256,18 +2380,17 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters: nil
+    return [rm GET:urlString parameters:nil
            success:^(id responseObject) {
                NSMutableArray *venues = [NSMutableArray array];
-               for (NSDictionary* d in responseObject) {
-                   RestaurantObject* object=[RestaurantObject restaurantFromDict:d];
-                   if  (object ) {
-                       [venues addObject: object];
+               for (NSDictionary *d in responseObject) {
+                   RestaurantObject *object=[RestaurantObject restaurantFromDict:d];
+                   if (object) {
+                       [venues addObject:object];
                    }
                }
                success(venues);
-               
-           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
            }];
@@ -2375,39 +2498,36 @@ NSString *const kKeyDeviceToken = @"device_token";
                                                 failure:failure];
 }
 
-+ (NSString *)URL {
-#ifdef ADHOC
-    return kOOURLProduction;
-#else
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#endif
-}
-
 //------------------------------------------------------------------------------
 // Name:    getUserStatsFor
 // Purpose: Fetches basic stats about a user.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getUserStatsFor:(NSUInteger) userid
-                                    success:(void (^)(UserStatsObject* ))success
++ (AFHTTPRequestOperation *)getUserStatsFor:(NSUInteger)userID
+                                    success:(void (^)(UserStatsObject *))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    
-    return [OOAPI getStatsForUser: userid
-                          success:^(NSDictionary *dictionary)
-            {
-                UserStatsObject* stats= [UserStatsObject statsFromDictionary:dictionary];
-                success(stats);
-                
-            }
+    return [OOAPI getStatsForUser: userID
+                          success:^(NSDictionary *dictionary) {
+                              UserStatsObject *stats= [UserStatsObject statsFromDictionary:dictionary];
+                              success(stats);
+                          }
                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                               NSLog (@"UNABLE TO GET STATS %@",error);
-                              failure( operation,  error);
+                              failure( operation, error);
                           }
             ];
+}
+
++ (NSString *)URL {
+//#ifdef ADHOC
+    return kOOURLProduction;
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 @end

@@ -45,7 +45,7 @@ typedef enum: char {
 @property (nonatomic, strong) NSString *placeID;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic) RestaurantOpenStatus isOpen;
-@property (nonatomic, strong) NSNumber *rating;
+@property (nonatomic, assign) CGFloat rating;
 @property (nonatomic, strong) NSMutableArray *imageRefs;
 @property (nonatomic, strong) NSMutableArray *mediaItems;
 @property (nonatomic, strong) NSString *cuisine;

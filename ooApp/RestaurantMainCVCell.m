@@ -76,7 +76,7 @@
         [self addSubview:_hoursButton];
 
         _locationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_locationButton withIcon:kFontIconLocation fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showOnMap)];
+        [_locationButton withIcon:kFontIconPin fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showOnMap)];
         _locationButton.layer.cornerRadius = 0;
         [self addSubview:_locationButton];
         [_locationButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];

@@ -325,6 +325,9 @@ static NSString * const ListRowID = @"ListRowCell";
 
     _buttonNewList.hidden = ([self profileOfCurrentUser:_profileOwner.userID] ? NO : YES);
     
+    //NOTE: This results in the profile lists getting refreshed every time. If a person navigates to an R1 page
+    //      then back it should not refresh. Use notifications instead to determine if a refresh is needed.
+    //      Specific lists can be targeted by passing the list_id in the notification object
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
                 success:^(NSArray *foundLists) {

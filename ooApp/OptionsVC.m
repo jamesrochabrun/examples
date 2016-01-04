@@ -197,7 +197,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
             break;
         case kOptionsSectionTypeTags: {
 //            TagObject *to = [_tags objectAtIndex:indexPath.row];
-            CGFloat height = 45;
+            CGFloat height = 40;
             return height;
             break;
         }

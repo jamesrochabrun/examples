@@ -57,7 +57,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     views = NSDictionaryOfVariableBindings(_tableView, _iv);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_tableView(250)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_tableView(270)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_tableView(200)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -78,7 +78,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
                                             andOpenOnly:NO
                                                 andSort:kSearchSortTypeDistance
                                                minPrice:0
-                                               maxPrice:3
+                                               maxPrice:0
                                                  isPlay:NO
                                                 success:^(NSArray *r) {
                                                     _restaurants = r;
@@ -126,7 +126,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
+    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]];
     return cell;
 }
 

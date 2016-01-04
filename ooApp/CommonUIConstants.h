@@ -149,7 +149,6 @@ extern NSString *const kFontIconFeed;
 extern NSString *const kFontIconMenu;
 extern NSString *const kFontIconMore;
 extern NSString *const kFontIconPlay;
-extern NSString *const kFontIconProfile;// Pac-Man
 extern NSString *const kFontIconProfileFilled;
 extern NSString *const kFontIconRemove;
 extern NSString *const kFontIconSearch;
@@ -164,7 +163,7 @@ extern NSString *const kFontIconFavoriteFilled;
 extern NSString *const kFontIconPhoto;
 extern NSString *const kFontIconUpload;
 extern NSString *const kFontIconUserTag;
-extern NSString *const kFontIconLocation;
+//extern NSString *const kFontIconLocation;
 extern NSString *const kFontIconToTry;
 extern NSString *const kFontIconToTryFilled;
 extern NSString *const kFontIconList;
@@ -182,7 +181,10 @@ extern NSString *const kFontIconCirclePlus;
 extern NSString *const kFontIconCircleX;
 extern NSString *const kFontIconYum;
 extern NSString *const kFontIconThumbsUp;
+extern NSString *const kFontIconYumOutline;
 
+extern NSString *const kNotificationFoodFeedNeedsUpdate;
+extern NSString *const kNotificationRestaurantListsNeedsUpdate;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

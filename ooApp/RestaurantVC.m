@@ -46,6 +46,7 @@
 @property (nonatomic) NSUInteger toTryID;
 @property (nonatomic, strong) UIButton *addPhotoButton;
 @property (nonatomic, strong) NSArray *followees;
+@property (nonatomic) BOOL listsNeedUpdate;
 
 @end
 
@@ -64,7 +65,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 {
     [super viewWillAppear:animated];
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-    
+    [self updateIfNeeded];
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
 
@@ -108,8 +109,26 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [_addPhotoButton roundButtonWithIcon:kFontIconPhoto fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(showPickPhotoUI)];
     _addPhotoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_addPhotoButton];
-    
-    //    [DebugUtilities addBorderToViews:@[_listButtonsContainer]];
+    _listsNeedUpdate = NO;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setListsUpdateNeeded)
+                                                 name:kNotificationRestaurantListsNeedsUpdate object:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationRestaurantListsNeedsUpdate object:nil];
+}
+
+- (void)setListsUpdateNeeded {
+    _listsNeedUpdate = YES;
+}
+
+- (void)updateIfNeeded {
+    if (_listsNeedUpdate) {
+        [self removeAllButtons];
+        [self getListsForRestaurant];
+        _listsNeedUpdate = NO;
+    }
 }
 
 -(void)updateViewConstraints {
@@ -497,6 +516,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)removeAllButtons {
+    for (OOTagButton *b in [_listButtons allObjects]) {
+        [b removeFromSuperview];
+    }
+    [_listButtons removeAllObjects];
+}
+
 - (void)removeFromList:(NSUInteger)listID {
     OOAPI *api = [[OOAPI alloc] init];
     
@@ -619,6 +645,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     return nil;
 }
 
+- (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
+}
+
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)uo {
     ProfileVC *vc = [[ProfileVC alloc] init];
     vc.userInfo = uo;
@@ -638,7 +668,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                               });
                                                               
                                                           }];
-    UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Tag"
+    UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Add Caption"
                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                               [self tagPhoto:mio];
                                                           }];
@@ -666,6 +696,32 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 - (void)tagPhoto:(MediaItemObject *)mio {
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
+    vc.delegate = self;
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    vc.mio = mio;
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+//        vc.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
+}
+
+- (void)textEntryFinished:(OOTextEntryVC *)textEntryVC {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
+}
+
+- (void)ooTextEntryVC:(AddCaptionToMIOVC *)textEntryVC textToSubmit:(NSString *)text {
     
 }
 
@@ -684,6 +740,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     if (mio.sourceUserID == userID) {
         [OOAPI deletePhoto:mio success:^{
             [weakSelf getMediaItemsForRestaurant];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
@@ -794,6 +851,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         if (mio.url) {
             photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mio.url]];
             [photo performLoadUnderlyingImageAndNotify];
+            photo.caption = mio.caption;
             return photo;
         } else if (mio.source == kMediaItemTypeGoogle && mio.reference) {
             OOAPI *api = [[OOAPI alloc] init];

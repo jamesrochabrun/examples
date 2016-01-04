@@ -25,6 +25,8 @@ typedef enum {
     kSearchSortTypeBestMatch = 2,
 } SearchSortType;
 
+static NSUInteger kAllUsersID = 0; //means user not specified so trying to get info for all users
+
 @interface OOAPI : NSObject
 
 + (NSString *) URL;
@@ -323,6 +325,30 @@ typedef enum {
 + (AFHTTPRequestOperation *)getFoodFeedType:(NSUInteger)type
                                     success:(void (^)(NSArray *restaurants))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)getNumMediaItemLikes:(NSUInteger)mediaItemID
+                                      success:(void (^)(NSUInteger count))success
+                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)getMediaItemLiked:(NSUInteger)mediaItemID
+                                       byUser:(NSUInteger)userID
+                                      success:(void (^)(BOOL ))success
+                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)unsetMediaItemLike:(NSUInteger)mediaItemID
+                                       forUser:(NSUInteger)userID
+                                       success:(void (^)())success
+                                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)setMediaItemLike:(NSUInteger)mediaItemID
+                                       forUser:(NSUInteger)userID
+                                       success:(void (^)())success
+                                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)setMediaItemCaption:(NSUInteger)mediaItemID
+                                        caption:(NSString *)caption
+                                        success:(void (^)())success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
+
 // Auto complete
 
 

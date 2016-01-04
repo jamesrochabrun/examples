@@ -69,16 +69,12 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     u_int32_t count = (u_int32_t)[_tags count];
 
     TagObject *to; //choose five terms
-    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
-    [keywords addObject:to.term];
-    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
-    [keywords addObject:to.term];
-    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
-    [keywords addObject:to.term];
-    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
-    [keywords addObject:to.term];
-    to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
-    [keywords addObject:to.term];
+    for (NSInteger i=0; i<=4; i++) {
+        to = [_tags objectAtIndex:(NSUInteger)arc4random_uniform(count) % count];
+        if (![to.term isEqualToString:@"coffee"]) {
+            [keywords addObject:to.term];
+        }
+    }
     
     CGFloat radius = (NSUInteger)arc4random_uniform(20000) % 20000 + 2500; //choose value between 2500 and 22500;
     
@@ -88,7 +84,7 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
                           andRadius:radius
                         andOpenOnly:NO
                             andSort:kSearchSortTypeBestMatch
-                           minPrice:0
+                           minPrice:1
                            maxPrice:3
                              isPlay:YES
                             success:^(NSArray *r) {

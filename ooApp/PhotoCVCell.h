@@ -14,6 +14,7 @@
 @protocol PhotoCVCellDelegate
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio;
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject;
+- (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio;
 @end
 
 @interface PhotoCVCell : UICollectionViewCell

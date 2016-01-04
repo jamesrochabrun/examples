@@ -580,10 +580,10 @@
         
         self.cvLayout= [[UICollectionViewFlowLayout alloc] init];
         self.cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        _cvLayout.itemSize = CGSizeMake(110, 127);
+        _cvLayout.itemSize = CGSizeMake(kGeomEventCoordinatorBoxHeight*1.3, kGeomEventCoordinatorBoxHeight);
         _cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        _cvLayout.minimumInteritemSpacing = 0;
-        _cvLayout.minimumLineSpacing = 0;
+        _cvLayout.minimumInteritemSpacing = 5;
+        _cvLayout.minimumLineSpacing = 3;
         
         self.venuesCollectionView = [[UICollectionView alloc] initWithFrame: CGRectZero collectionViewLayout: _cvLayout];
         _venuesCollectionView.delegate = self;
@@ -653,7 +653,7 @@
 {
     NSInteger total = [self.eventBeingEdited totalVenues];
     NSInteger row= indexPath.row;
-    if (row== total ) {
+    if (row == total) {
         
         PlusCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFERP
                                                                   forIndexPath:indexPath];
@@ -665,8 +665,9 @@
     TileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
                                                                 forIndexPath:indexPath];
     cvc.backgroundColor = GRAY;
-    RestaurantObject *venue= [self.eventBeingEdited getNthVenue:row];
+    RestaurantObject *venue = [self.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
+    cvc.displayType = KListDisplayTypeStrip;
     return cvc;
 }
 

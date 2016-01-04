@@ -48,7 +48,7 @@ BOOL isRestaurantObject (id  object)
     restaurant.placeID = [dict objectForKey:kKeyRestaurantPlaceID];
     restaurant.restaurantID = [[dict objectForKey:kKeyRestaurantRestaurantID] unsignedIntegerValue];
     restaurant.name = [dict objectForKey:kKeyRestaurantName];
-    restaurant.rating = [dict objectForKey:kKeyRestaurantRating];
+    restaurant.rating = [[dict objectForKey:kKeyRestaurantRating] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyRestaurantRating] floatValue];
     restaurant.website = [[dict objectForKey:kKeyRestaurantWebsite] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantWebsite];
     restaurant.phone = [[dict objectForKey:kKeyRestaurantPhone] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantPhone];
     restaurant.address = [[dict objectForKey:kKeyRestaurantAddress] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantAddress];
@@ -123,7 +123,6 @@ BOOL isRestaurantObject (id  object)
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [dict setObject:restaurant.name forKey:kKeyRestaurantName];
-    [dict setObject:restaurant.rating forKey:kKeyRestaurantRating];
     return dict;
 }
 
@@ -144,20 +143,21 @@ BOOL isRestaurantObject (id  object)
 }
 
 - (NSString *)ratingText {
-    CGFloat r = [_rating floatValue];
+    CGFloat r = _rating;
     NSString *text;
     
-    if (r == 5) {
-        text = [NSString stringWithFormat:@"%@%@%@%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
+    if (r >= 4.5) {
+        text = [NSString stringWithFormat:@"A+"];
     } else if (r >= 4) {
-        text = [NSString stringWithFormat:@"%@%@%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
+        text = [NSString stringWithFormat:@"A"];
+    } else if (r >= 3.5) {
+        text = [NSString stringWithFormat:@"B+"];
     } else if (r >= 3) {
-        text = [NSString stringWithFormat:@"%@%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
+        text = [NSString stringWithFormat:@"B"];
     } else if (r >= 2) {
-        text = [NSString stringWithFormat:@"%@%@", kFontIconWhatsNewFilled, kFontIconWhatsNewFilled];
-  
+        text = [NSString stringWithFormat:@"C"];
     } else if (r >= 1) {
-        text = [NSString stringWithFormat:@"%@", kFontIconWhatsNewFilled];
+        text = [NSString stringWithFormat:@"D"];
     } else {
       text=@"";
     }

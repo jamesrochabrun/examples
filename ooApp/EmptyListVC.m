@@ -82,7 +82,7 @@
     addShadowTo(self.buttonExplore);
    
     self.labelUpper= makeLabel ( self.view,  @"This list is hungry\rfor some restaurants.", kGeomFontSizeHeader);
-    self.labelPacMan= makeIconLabel ( self.view,  kFontIconProfile, kGeomForkImageSize);
+    self.labelPacMan= makeIconLabel ( self.view,  kFontIconPerson, kGeomForkImageSize);
     
     _labelUpper.textColor= WHITE;
     _labelPacMan.textColor= WHITE;
