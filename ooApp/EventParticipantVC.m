@@ -274,14 +274,12 @@
             
         case VOTING_MODE_NO_VOTING:
             [self killTimer];
-//            _buttonSubmitVote.enabled= NO;
             _buttonSubmitVote.alpha= 1;
             [_buttonSubmitVote setTitle: @"VOTE SUBMITTED" forState:UIControlStateNormal];
             break;
             
         case VOTING_MODE_SHOW_RESULTS:
             [self killTimer];
-//            _buttonSubmitVote.enabled= NO;
             _buttonSubmitVote.alpha= 0;
             _labelTimeLeft.text=  @"voting has ended";
             break;
@@ -489,6 +487,7 @@
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
     self.labelDistance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
+    
 }
 
 - (void)userPressedRadioButton: (id) sender
@@ -850,7 +849,16 @@
         float h= self.frame.size.height;
         
         MediaItemObject* media= venue.mediaItems[0];
-        if  (media.reference) {
+        if ( media.url) {
+            for (EventParticipantVotingSubCell *view in self.subcells)  {
+                ON_MAIN_THREAD( ^{
+                    [view.thumbnail
+                     setImageWithURL:[NSURL URLWithString:  media.url]
+                     placeholderImage:placeholder];
+                });
+            }
+        }
+        else if  (media.reference) {
             __weak EventParticipantVotingCell *weakSelf = self;
             self.imageOperation= [api getRestaurantImageWithImageRef: media.reference
                                                             maxWidth:0
