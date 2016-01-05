@@ -48,9 +48,9 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    self.layer.cornerRadius = width(_imageView)/2;
-    self.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
-    self.layer.borderWidth = 1;
+    _imageView.layer.cornerRadius = width(_imageView)/2;
+    _imageView.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
+    _imageView.layer.borderWidth = 1;
 
 }
 

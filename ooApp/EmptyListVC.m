@@ -95,7 +95,7 @@
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     
     UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
-    [b roundButtonWithIcon:kFontIconAdd fontSize:20 width:30 height:30 backgroundColor:kColorBlack target:nil selector:nil];
+    [b roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:30 height:30 backgroundColor:kColorBlack target:nil selector:nil];
     
     textAttachment.image = [UIImage imageFromView:b];
     textAttachment.bounds=  CGRectMake(0,-3,18,18);
