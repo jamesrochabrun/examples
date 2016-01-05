@@ -245,6 +245,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
                                                             style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                 NSLog(@"Add to New Event");
+                                                                [weakSelf addToNewEvent];
                                                             }];
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -319,7 +320,71 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
         NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
     };
+}
+
+- (void) addToNewEvent
+{
+    __weak RestaurantVC* weakSelf= self;
+
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"New Event")
+                                                              message:LOCAL(@"Enter a name for the new event")
+                                                       preferredStyle:UIAlertControllerStyleAlert];
     
+    [a addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder=@"Event Name";
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style: UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
+                                                 style: UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction * action)
+                         {
+                             UITextField *textField = a.textFields.firstObject;
+                             
+                             [textField resignFirstResponder];
+                             
+                             NSString *string = trimString(textField.text);
+                             if  (string.length ) {
+                                 string = [string stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[string substringToIndex:1] uppercaseString]];
+                             }
+                             
+                             NSUInteger userid= [Settings sharedInstance].userObject.userID;
+                             EventObject *e= [[EventObject alloc] init];
+                             e.name=  string;
+                             e.numberOfPeople= 1;
+                             e.createdAt= [NSDate date];
+                             e.creatorID= userid;
+                             e.updatedAt= [NSDate date];
+                             e.eventType= EVENT_TYPE_USER;
+                             self.eventBeingEdited= e;
+                             
+                             __weak EventObject *weakEvent = e;
+                             [OOAPI addEvent: e
+                                     success:^(NSInteger eventID) {
+                                         NSLog  (@"EVENT %lu CREATED FOR USER %lu", (unsigned long)eventID, ( unsigned long)userid);
+                                         self.eventBeingEdited= weakEvent;
+                                         weakEvent.eventID= eventID;
+                                         
+                                         [weakEvent addVenue: weakSelf.restaurant completionBlock:^(BOOL success) {
+                                             EventCoordinatorVC *vc= [[EventCoordinatorVC alloc] init];
+                                             vc.eventBeingEdited= weakEvent;
+                                             [weakSelf.navigationController pushViewController:vc animated:YES];
+                                         }];
+                                     }
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         NSLog  (@"%@", error);
+                                         message( @"backend was unable to create a new event");
+                                     }];
+                         }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [self presentViewController:a animated:YES completion:nil];
 }
 
 - (void)addToEvent

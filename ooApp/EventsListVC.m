@@ -257,7 +257,6 @@
     [a addAction:ok];
     
     [self presentViewController:a animated:YES completion:nil];
-    
 }
 
 //------------------------------------------------------------------------------
