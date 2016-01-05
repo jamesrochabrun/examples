@@ -68,7 +68,7 @@
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorGrayMiddle)] forState:UIControlStateDisabled];
     self.clipsToBounds = YES;
     self.layer.cornerRadius = width/2;
-    self.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+    self.layer.borderColor = UIColorRGBA(kColorYellowFaded).CGColor;
     self.layer.borderWidth = 1;
     
     //    NSArray *views = [NSArray arrayWithObjects:self.titleLabel, nil];

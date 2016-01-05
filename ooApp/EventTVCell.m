@@ -163,7 +163,7 @@
     }
     
     self.gradient.hidden = YES;
-    self.locationIcon.hidden = YES;
+    self.icon.hidden = YES;
     
     [self  bringSubviewToFront:_viewFadeOverlay];
     [self  bringSubviewToFront:self.header];
@@ -194,10 +194,10 @@
     
     self.subHeader1.text = dateString;
     
-    RestaurantObject* primaryVenue= [_eventInfo totalVenues ] ? (RestaurantObject*)[_eventInfo firstVenue ] :nil;
+    RestaurantObject *primaryVenue= [_eventInfo totalVenues] ? (RestaurantObject *)[_eventInfo firstVenue ] :nil;
     
     OOAPI *api = [[OOAPI alloc] init];
-    UIImage *placeholder= [UIImage imageNamed: @"background-image.jpg"];
+    UIImage *placeholder = [UIImage imageNamed:@"background-image.jpg"];
     __weak EventTVCell *weakSelf = self;
     
     if (_eventInfo.primaryImageURL ) {
@@ -218,7 +218,7 @@
             } else {
                 __weak EventTVCell *weakSelf = self;
                 
-                _imageOperation=[api getRestaurantImageWithImageRef: _eventInfo.primaryVenueImageIdentifier
+                _imageOperation = [api getRestaurantImageWithImageRef:_eventInfo.primaryVenueImageIdentifier
                                                            maxWidth:self.frame.size.width
                                                           maxHeight:0
                                                             success:^(NSString *link) {

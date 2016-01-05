@@ -356,7 +356,7 @@ static NSString * const ListRowID = @"ListRowCell";
     
     _userID = 0;
     _buttonNewList = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
+    [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
     _buttonNewList.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
     
     self.automaticallyAdjustsScrollViewInsets= NO;

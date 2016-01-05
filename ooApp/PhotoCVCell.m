@@ -33,11 +33,11 @@
         
         _takeAction = [UIButton buttonWithType:UIButtonTypeCustom];
         _takeAction.translatesAutoresizingMaskIntoConstraints = NO;
-        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:15 width:25 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOptions)];
+        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:25 width:25 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOptions)];
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _yumButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [_yumButton withIcon:kFontIconYumOutline fontSize:15 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(likePhotoTapped)];
+        [_yumButton withIcon:kFontIconYumOutline fontSize:20 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(likePhotoTapped)];
         [_yumButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
         

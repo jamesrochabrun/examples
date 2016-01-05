@@ -76,7 +76,7 @@
         [self addSubview:_hoursButton];
 
         _locationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_locationButton withIcon:kFontIconPin fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showOnMap)];
+        [_locationButton withIcon:kFontIconPin fontSize:kGeomIconSizeSmall width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showOnMap)];
         _locationButton.layer.cornerRadius = 0;
         [self addSubview:_locationButton];
         [_locationButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
@@ -97,11 +97,11 @@
         _hoursView.translatesAutoresizingMaskIntoConstraints = NO;
         
         _favoriteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
+        [_favoriteButton withIcon:kFontIconFavorite fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(listButtonTapped:)];
         _favoriteButton.layer.cornerRadius = 0;
         
         _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_shareButton withIcon:kFontIconShare fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed)];
+        [_shareButton withIcon:kFontIconShare fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed)];
         _shareButton.layer.cornerRadius = 0;
         
         [_shareButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];

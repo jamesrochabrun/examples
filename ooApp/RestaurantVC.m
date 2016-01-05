@@ -106,7 +106,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     _listButtons = [NSMutableSet set];
     
     _addPhotoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_addPhotoButton roundButtonWithIcon:kFontIconPhoto fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(showPickPhotoUI)];
+    [_addPhotoButton roundButtonWithIcon:kFontIconPhoto fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(showPickPhotoUI)];
     _addPhotoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_addPhotoButton];
     _listsNeedUpdate = NO;
