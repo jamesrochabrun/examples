@@ -21,7 +21,7 @@
     
     if (self) {
         _xLabel = [[UILabel alloc] init];
-        [_xLabel withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorBlack backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_xLabel withFont:[UIFont fontWithName:kFontIcons size:18] textColor:kColorBlack backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
 
         _nameLabel = [[UILabel alloc] init];
         [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeListButton] textColor:kColorBlack backgroundColor:kColorClear];
