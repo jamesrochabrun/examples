@@ -135,6 +135,7 @@
 		9671433C1C0E2B2D004875FB /* LogoWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 9671433B1C0E2B2D004875FB /* LogoWhite.png */; };
 		967163E51C29E15B002DFDDB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E31C29E15B002DFDDB /* AddressBook.framework */; };
 		967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E41C29E15B002DFDDB /* AddressBookUI.framework */; };
+		968EE95E1C3C501900DFE30E /* EventSelectionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 968EE95D1C3C501900DFE30E /* EventSelectionVC.m */; };
 		9695C1001C1618D100911E84 /* ConnectVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9695C0FF1C1618D100911E84 /* ConnectVC.m */; };
 		96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */; };
 		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; };
@@ -385,6 +386,8 @@
 		9671433B1C0E2B2D004875FB /* LogoWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LogoWhite.png; path = "Graphic Assets/LogoWhite.png"; sourceTree = "<group>"; };
 		967163E31C29E15B002DFDDB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		967163E41C29E15B002DFDDB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		968EE95C1C3C501900DFE30E /* EventSelectionVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSelectionVC.h; sourceTree = "<group>"; };
+		968EE95D1C3C501900DFE30E /* EventSelectionVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSelectionVC.m; sourceTree = "<group>"; };
 		9695C0FE1C1618D100911E84 /* ConnectVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectVC.h; sourceTree = "<group>"; };
 		9695C0FF1C1618D100911E84 /* ConnectVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectVC.m; sourceTree = "<group>"; };
 		96AC04611C0D22E2002B1264 /* AutoCompleteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoCompleteObject.h; sourceTree = "<group>"; };
@@ -742,6 +745,8 @@
 				966E08391BC6E38800A4B866 /* EventWhoVC.m */,
 				96ACD7881BC3487E00E37DC1 /* EventCoordinatorVC.h */,
 				96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */,
+				968EE95C1C3C501900DFE30E /* EventSelectionVC.h */,
+				968EE95D1C3C501900DFE30E /* EventSelectionVC.m */,
 				96C3A3F21BC5F335009689E3 /* EventParticipantVC.h */,
 				96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */,
 				96E127B41BB32C6E00A8445E /* EmptyListVC.h */,
@@ -1098,6 +1103,7 @@
 				36175CDA1C22940700E6FE3D /* FoodFeedVC.m in Sources */,
 				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
 				365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */,
+				968EE95E1C3C501900DFE30E /* EventSelectionVC.m in Sources */,
 				96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,

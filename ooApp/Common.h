@@ -33,6 +33,8 @@ extern NSString *const kNotificationLocationBecameUnavailable;
 
 extern void message (NSString *str);
 extern void messageWithTitle (NSString *str, NSString*string);
+extern void messageWithTitleAndCompletionBlock (NSString *title, NSString*string, void (^block)(BOOL result),
+                                         BOOL showCancel);
 
 extern NSString *const kOOURLStage;
 extern NSString *const kOOURLProduction;
@@ -105,6 +107,7 @@ extern void ANALYTICS_EVENT_UI (NSString*);
 extern void ANALYTICS_EVENT_CLOUD (NSString*);
 extern void ANALYTICS_EVENT_OTHER (NSString*);
 extern void ANALYTICS_FORCE_SYNC ( void);
+extern void ANALYTICS_EVENT_ERROR (NSString*name);
 
 extern UIImage *darkenImage(UIImage *image);
 #endif

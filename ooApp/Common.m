@@ -29,20 +29,32 @@ void message (NSString *str)
     messageWithTitle (str,nil);
 }
 
-void messageWithTitle (NSString *str, NSString*string)
+void messageWithTitle (NSString *title, NSString*string)
 {
-    UIAlertController *a= [UIAlertController alertControllerWithTitle: str ?: @""
+    messageWithTitleAndCompletionBlock(title, string, NULL, NO);
+}
+
+void messageWithTitleAndCompletionBlock (NSString *title, NSString*string, void (^block)(BOOL result),
+                                         BOOL showCancel)
+{
+    UIAlertController *a= [UIAlertController alertControllerWithTitle: title ?: @""
                                                               message:string
                                                        preferredStyle:UIAlertControllerStyleActionSheet];
     
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
-                                                     }];
+    UIAlertAction *cancel = nil;
+    if (showCancel)
+        cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                          style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                              if (block) block(NO);
+                                          }];
+    
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
                                                  style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     if (block) block(YES);
                                                  }];
     
-    [a addAction:cancel];
+    if (showCancel)
+        [a addAction:cancel];
     [a addAction:ok];
     
     [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
@@ -751,6 +763,17 @@ void ANALYTICS_SCREEN(NSString* name)
 void ANALYTICS_FORCE_SYNC ()
 {
     [[GAI sharedInstance] dispatch];
+}
+
+void ANALYTICS_EVENT_ERROR (NSString*name)
+{
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    
+    [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"error"
+                                                          action:  name?:  @"unknown"
+                                                           label:@""
+                                                           value:nil] build]];
+    
 }
 
 void ANALYTICS_EVENT_OTHER (NSString*name)

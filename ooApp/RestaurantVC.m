@@ -24,6 +24,7 @@
 #import "MediaItemObject.h"
 #import "OOUserView.h"
 #import "ProfileVC.h"
+#import "EventSelectionVC.h"
 #import <MapKit/MapKit.h>
 
 #import "DebugUtilities.h"
@@ -213,10 +214,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     __weak RestaurantVC *weakSelf = self;
     
-//    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
-//                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-//                                                                  [self sharePressed];
-//                                                              }];
+    //    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
+    //                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    //                                                                  [self sharePressed];
+    //                                                              }];
     
     UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add to List"
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -225,40 +226,59 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     UIAlertAction *addToEvent = nil;
     UIAlertAction *removeFromEvent = nil;
     if ( self.eventBeingEdited) {
+        NSString* name= self.eventBeingEdited.name ?: @"";
+        name=[name substringToIndex: MIN(5,[name length])];
+        name=concatenateStrings(name, @"…");
+        
         if (  ![self.eventBeingEdited alreadyHasVenue: _restaurant ] ) {
-            addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Event")
-                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     NSLog(@"Add to Event");
-                                                     [weakSelf addToEvent];
-                                                 }];
+            NSString* message = concatenateStrings(LOCAL(@"Add to "), name);
+            addToEvent= [UIAlertAction actionWithTitle: message
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction * action) {
+                                                   NSLog(@"Add to Event");
+                                                   [weakSelf addToEvent];
+                                               }];
         } else {
+            NSString* message=concatenateStrings(LOCAL(@"Remove from "), name);
+            
             // XX:  need ability to remove a restaurant from an event
-            removeFromEvent= [UIAlertAction actionWithTitle: LOCAL(@"Remove from Event")
-                                                      style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                          NSLog(@"Remove from Event");
-                                                          [weakSelf removeFromEvent];
-                                                      }];
+            removeFromEvent= [UIAlertAction actionWithTitle: message
+                                                      style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction * action) {
+                                                        NSLog(@"Remove from Event");
+                                                        [weakSelf removeFromEvent];
+                                                    }];
             
         }
+    } else {
+        addToEvent= [UIAlertAction actionWithTitle: LOCAL(@"Add to Existing Event")
+                                             style:UIAlertActionStyleDefault
+                                           handler:^(UIAlertAction * action) {
+                                               NSLog(@"Add to Existing Event");
+                                               [weakSelf addToExistingEvent];
+                                           }];
+        
     }
     
     UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
-                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                NSLog(@"Add to New Event");
-                                                                [weakSelf addToNewEvent];
-                                                            }];
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              NSLog(@"Add to New Event");
+                                                              [weakSelf addToNewEvent];
+                                                          }];
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
-                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                               NSLog(@"Add to New List");
-                                                               [weakSelf createListPressed];
-                                                           }];
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             NSLog(@"Add to New List");
+                                                             [weakSelf createListPressed];
+                                                         }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * action) {
-                                                         NSLog(@"Cancel");
-                                                     }];
+                                                       NSLog(@"Cancel");
+                                                   }];
     
-//    [_styleSheetAC addAction:shareRestaurant];
+    //    [_styleSheetAC addAction:shareRestaurant];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
     if (addToEvent) {
@@ -320,6 +340,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
         NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
     };
+}
+
+-(void)addToExistingEvent
+{
+    EventSelectionVC *vc=[[EventSelectionVC alloc]init];
+    vc.restaurantBeingAdded = _restaurant;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void) addToNewEvent

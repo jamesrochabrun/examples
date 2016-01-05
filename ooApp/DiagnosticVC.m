@@ -219,7 +219,7 @@
 {
     self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];
     
-    message (@"OK");
+    messageWithTitle(@"Title", @"Message");
     
 //    [OOAPI uploadPhoto:self.hugeImage
 //                    to:UPLOAD_DESTINATION_DIAGNOSTIC
@@ -273,7 +273,7 @@
 {
     [[Settings sharedInstance] setSearchRadius:  radius *1000];
     radius*= 2;
-    if  (radius> 100 ) {
+    if  (radius> 512 ) {
         radius= 1;
     }
     NSString *string= [NSString stringWithFormat:@"%dkM RADIUS", radius];
