@@ -289,6 +289,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 #define PARTICIPANTS_TABLE_REUSE_IDENTIFIER  @"whomToInviteCell"
     [_table registerClass:[EventWhoTableCell class] forCellReuseIdentifier:PARTICIPANTS_TABLE_REUSE_IDENTIFIER];
     _table.backgroundColor= UIColorRGBA(kColorOffBlack);
+    _table.showsVerticalScrollIndicator= NO;
 
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 }

@@ -451,6 +451,8 @@
     [_tableAccordion setLayoutMargins:UIEdgeInsetsZero];
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _tableAccordion.separatorColor= BLACK;
+    _tableAccordion.showsVerticalScrollIndicator= NO;
+
 }
 
 - (void)fetchFollowers

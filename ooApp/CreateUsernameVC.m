@@ -77,11 +77,11 @@
     self.imageViewBackground= makeImageView( self.scrollView,  @"Gradient Background.png");
     self.imageViewIcon= makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
     
-    self.buttonSignUp= makeButton( _scrollView, LOCAL(@"Create User") , kGeomFontSizeHeader,
-                                  WHITE, CLEAR, self,
+    self.buttonSignUp= makeButton( _scrollView, LOCAL(@"Create") , kGeomFontSizeHeader,
+                                  YELLOW, CLEAR, self,
                                   @selector(userPressedSignUpButton:),
-                                  .5);
-    _buttonSignUp.layer.borderColor=GRAY.CGColor;
+                                  .6);
+    _buttonSignUp.layer.borderColor=YELLOW.CGColor;
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
@@ -102,12 +102,12 @@
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
     self.labelMessage=  makeLabel (_scrollView,
-                                   LOCAL(@"What should we call you?\r(Select your username)"),
-                                         kGeomFontSizeHeader);
-                                   _labelMessage.textColor= WHITE;
-                                   
-                                   NavTitleObject *nto = [[NavTitleObject alloc]
-                                                          initWithHeader: LOCAL(@"Create User")
+                                   LOCAL(@"What should we call you?\r(Create your username)"),
+                                   kGeomFontSizeHeader);
+    _labelMessage.textColor= WHITE;
+    
+    NavTitleObject *nto = [[NavTitleObject alloc]
+                           initWithHeader: LOCAL(@"Create Username")
                            subHeader:nil];
     [self setNavTitle:  nto];
     
@@ -115,20 +115,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
     
-//    UserObject* userInfo= [Settings sharedInstance].userObject;
-//    NSString* emailAddressString= userInfo.email;
-//    __weak CreateUsernameVC *weakSelf= self;
-//    [OOAPI fetchSampleUsernamesFor:emailAddressString
-//                           success:^(NSArray *names) {
-//                               NSLog  (@"SERVER PROVIDED SAMPLE USERNAMES:  %@",names);
-//                               [weakSelf.arrayOfSuggestions removeAllObjects];
-//                               for (NSString* string  in  names) {
-//                                   [weakSelf.arrayOfSuggestions addObject: string];
-//                               }
-//                               [weakSelf performSelectorOnMainThread:@selector(refreshTable) withObject:nil waitUntilDone:NO ];
-//                           } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-//                               NSLog  (@"FAILED TO GET SAMPLE USERNAMES FROM SERVER  %@",e);
-//                           }];
 }
 
 - (void)done:(id)sender {
@@ -327,7 +313,7 @@
         [self performSegueWithIdentifier:@"gotoExploreFromCreateUsername" sender:self];
     }
     @catch (NSException *exception) {
-        NSLog (@"CANNOT GO TO EXPLPORE BY THAT ROUTE");
+        [self.navigationController  popViewControllerAnimated:YES ];
     }
 }
 

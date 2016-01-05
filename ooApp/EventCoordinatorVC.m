@@ -943,7 +943,8 @@
     _table.sectionHeaderHeight= kGeomSeparatorHeight;
     _table.backgroundColor= BLACK;
     _table.delaysContentTouches= YES;
-    
+    _table.showsVerticalScrollIndicator= NO;
+
 #define TABLE_REUSE_COVER_IDENTIFIER @"e1cover"
 #define TABLE_REUSE_WHO_IDENTIFIER @"e1who"
 #define TABLE_REUSE_WHERE_IDENTIFIER @"e1where"
