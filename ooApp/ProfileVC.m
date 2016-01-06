@@ -451,6 +451,7 @@ static NSString * const ListRowID = @"ListRowCell";
     [super viewDidLoad];
     
     _userID = 0;
+
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     

@@ -48,18 +48,21 @@
         [self.layer addSublayer:_gradient];
         _gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor], nil];
         
-        _locationIcon = [[UILabel alloc] init];
-        [_locationIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorYellow backgroundColor:kColorClear];
-        _locationIcon.text = kFontIconPin;
-        _locationIcon.textAlignment = NSTextAlignmentCenter;
-        _locationIcon.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addSubview:_locationIcon];
+        _icon = [[UILabel alloc] init];
+        [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorYellow backgroundColor:kColorClear];
+        _icon.text = kFontIconPin;
+        _icon.textAlignment = NSTextAlignmentCenter;
+        [self addSubview:_icon];
         
         _header = [[UILabel alloc] init];
         [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
         
         _subHeader1 = [[UILabel alloc] init];
         [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        
+        _iconLabel = [[UILabel alloc] init];
+        [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorYellow backgroundColor:kColorClear];
+        _iconLabel.text = @"";
         
         _subHeader2 = [[UILabel alloc] init];
         [_subHeader2 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
@@ -81,13 +84,19 @@
         [self addSubview:_header];
         [self addSubview:_subHeader1];
         [self addSubview:_subHeader2];
+        [_icon addSubview:_iconLabel];
         
         //set the selected color for the cell
         UIView *bgColorView = [[UIView alloc] init];
         bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
         [self setSelectedBackgroundView:bgColorView];
         
-        _thumbnail.translatesAutoresizingMaskIntoConstraints = _header.translatesAutoresizingMaskIntoConstraints = _subHeader1.translatesAutoresizingMaskIntoConstraints = _subHeader2.translatesAutoresizingMaskIntoConstraints = NO;
+        _thumbnail.translatesAutoresizingMaskIntoConstraints =
+        _header.translatesAutoresizingMaskIntoConstraints =
+        _subHeader1.translatesAutoresizingMaskIntoConstraints =
+        _subHeader2.translatesAutoresizingMaskIntoConstraints =
+        _icon.translatesAutoresizingMaskIntoConstraints =
+        _iconLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
@@ -103,7 +112,7 @@
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButtonSmall)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _thumbnail, _header, _subHeader1, _subHeader2, _viewShadow, _actionButton, _locationIcon);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _thumbnail, _header, _subHeader1, _subHeader2, _viewShadow, _actionButton, _icon, _iconLabel);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     _shadowConstraints = [NSMutableArray array];
@@ -116,14 +125,31 @@
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_header]-(spaceEdge)-[_subHeader1]-(spaceEdge)-[_subHeader2]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_actionButton(buttonWidth)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationIcon(45)]-spaceInter-[_header]-[_actionButton(buttonWidth)]-spaceEdgeX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_icon(45)]-spaceInter-[_header]-[_actionButton(buttonWidth)]-spaceEdgeX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_thumbnail]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_iconLabel
+                         attribute:NSLayoutAttributeCenterX
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_icon
+                         attribute:NSLayoutAttributeCenterX
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_iconLabel
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_icon
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:-5]];
+    
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_subHeader1
                          attribute:NSLayoutAttributeCenterY
                          relatedBy:NSLayoutRelationEqual
-                         toItem:_locationIcon
+                         toItem:_icon
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
                          constant:0]];
@@ -160,7 +186,7 @@
                          multiplier:1
                          constant:0]];
     [self addConstraint:[NSLayoutConstraint
-                         constraintWithItem:_locationIcon
+                         constraintWithItem:_icon
                          attribute:NSLayoutAttributeCenterY
                          relatedBy:NSLayoutRelationEqual
                          toItem:self

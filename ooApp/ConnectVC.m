@@ -112,7 +112,7 @@
         
         _labelFollowers= makeLabel(self,nil, kGeomFontSizeDetail);
         _labelFollowing= makeLabel(self, nil, kGeomFontSizeDetail);
-        _labelPhotos=  makeIconLabel(self, kFontIconPhoto, kGeomFontSizeDetail);
+        _labelPhotos=  makeIconLabel(self, kFontIconPhoto, kGeomIconSizeSmall);
         _labelPlaces=makeLabel( self, nil, kGeomFontSizeDetail);
         
         _labelFollowers.textColor= MIDDLEGRAY;
@@ -302,10 +302,10 @@
     [super layoutSubviews];
     const float kGeomConnectCellMiddleGap= 7;
     
-    float w=self.frame.size.width;
-    const float margin=kGeomSpaceEdge;
-    const float spacing=kGeomSpaceInter;
-    float imageSize=kGeomConnectScreenUserImageHeight;
+    float w = self.frame.size.width;
+    const float margin = kGeomSpaceEdge;
+    const float spacing = kGeomSpaceInter;
+    float imageSize = kGeomConnectScreenUserImageHeight;
     _userView.frame=CGRectMake(margin, margin, imageSize, imageSize);
     
     _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, margin,kGeomButtonWidth, 24 /* per Jay */);
@@ -326,7 +326,9 @@
     _labelName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
     y += labelHeight+ spacing;
     
-    float iconWidth= 24;
+    float iconWidth = 30;
+    labelHeight = 20;
+    
     x=  margin + imageSize + spacing;
     y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
     _labelPhotos.frame=CGRectMake(x, y, iconWidth, labelHeight);
@@ -422,7 +424,7 @@
     ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection4Items];
     
     headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView1.labelTitle.text=@"Suggested Users";
+    headerView1.labelTitle.text=@"Friends Onp Oomami";
     
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";

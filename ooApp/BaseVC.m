@@ -10,6 +10,7 @@
 #import "WhatsNewVC.h"
 #import "DebugUtilities.h"
 #import "DropDownListTVC.h"
+#import "DebugUtilities.h"
 
 //revealViewController.rearViewRevealWidth = 200;
 //revealViewController.rearViewRevealOverdraw = 0;// Cannot drag and see beyond width 200

@@ -90,7 +90,7 @@
     _table.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _createEventButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_createEventButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedAdd:)];
+    [_createEventButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedAdd:)];
     [self.view addSubview:_createEventButton];
 }
 

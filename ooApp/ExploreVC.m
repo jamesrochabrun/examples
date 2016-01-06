@@ -371,6 +371,7 @@ static NSString * const ListRowID = @"HLRCell";
     cell.restaurant = ro;
     cell.listToAddTo = _listToAddTo;
     cell.nc = self.navigationController;
+    cell.index = indexPath.row + 1;
     [cell updateConstraintsIfNeeded];
     
     [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
@@ -405,9 +406,9 @@ static NSString * const ListRowID = @"HLRCell";
     CLLocationCoordinate2D topEdge = CLLocationCoordinate2DMake(topLeftCoord.latitude, center.longitude);
 
     UILabel *locationIcon = [[UILabel alloc] init];
-    [locationIcon withFont:[UIFont fontWithName:kFontIcons size:20] textColor:kColorBlack backgroundColor:kColorClear];
+    [locationIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorBlack backgroundColor:kColorClear];
     locationIcon.text = kFontIconPerson;
-    locationIcon.frame = CGRectMake(0, 0, 20, 20);
+    locationIcon.frame = CGRectMake(0, 0, 30, 30);
     _centerMarker.position = center;
     _centerMarker.icon = [UIImage imageFromView:locationIcon];
     _centerMarker.map = _mapView;

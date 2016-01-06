@@ -28,7 +28,7 @@
         
         [_headerLabel withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [_subHeaderLabel withFont:[UIFont fontWithName:kFontLatoThin size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
-        [_arrow withFont:[UIFont fontWithName:kFontIcons size:10] textColor:kColorYellow backgroundColor:kColorClear];
+        [_arrow withFont:[UIFont fontWithName:kFontIcons size:15] textColor:kColorYellow backgroundColor:kColorClear];
         _arrow.text = kFontIconBack;
         _arrow.hidden = YES;
         
