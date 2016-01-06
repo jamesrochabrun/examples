@@ -20,6 +20,8 @@
 #import "OOUserView.h"
 #import "ManageTagsVC.h"
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import "OOTextEntryVC.h"
+#import "OOFilterView.h"
 
 @interface ProfileTableFirstRow ()
 @property (nonatomic, assign) NSInteger userID;
@@ -28,11 +30,14 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UIButton *buttonFollow;
-@property (nonatomic, strong) UILabel *labelUsername;
-@property (nonatomic, strong) UILabel *labelDescription;
-@property (nonatomic, strong) UILabel *labelRestaurants;
-@property (nonatomic, assign) float spaceNeededForFirstCell;
-
+@property (nonatomic, strong) UIButton *buttonDescription;
+@property (nonatomic, strong) UILabel *labelFollowees;
+@property (nonatomic, strong) UILabel *labelFollowers;
+@property (nonatomic, strong) UILabel *labelFolloweesCount;
+@property (nonatomic, strong) UILabel *labelFollowersCount;
+@property (nonatomic, strong) UIImageView *backgroundImageView;
+@property (nonatomic, strong) UIView *backgroundImageFade;
+@property (nonatomic,strong) OOFilterView *filterView;
 @end
 
 static NSString * const FirstRowID = @"profileFirstRowCell";
@@ -42,46 +47,92 @@ static NSString * const ListRowID = @"ListRowCell";
 
 - (void)setUserInfo:(UserObject *)u
 {
+    __weak ProfileTableFirstRow *weakSelf = self;
     _userInfo= u;
-    
-    // Ascertain whether reviewing our own profile.
-    UserObject *currentUser = [Settings sharedInstance].userObject;
-    NSUInteger ownUserIdentifier = [currentUser userID];
-    _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
-    if ( _viewingOwnProfile) {
-        _buttonFollow.hidden = YES;
-        
-    }
-    
-    NSString *username= nil;
-    if  (_userInfo.username.length) {
-        username = _userInfo.username;
-    } else {
-        username = @"Missing username";
-    }
-    _labelUsername.text= username;
     
     [_userView setUser:_userInfo];
     
-    // Find out if current user is following this user.
-    if  (!_viewingOwnProfile) {
+    // Ascertain whether reviewing our own profile.
+    
+    UserObject *currentUser = [Settings sharedInstance].userObject;
+    NSUInteger ownUserIdentifier = [currentUser userID];
+    _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
+    
+    // RULE: Only update the button when we know for sure whose profile is.
+    if ( _viewingOwnProfile) {
+        [_buttonFollow setTitle: @"This is you!" forState:UIControlStateNormal];
+        [_buttonFollow setTitleColor: WHITE forState:UIControlStateNormal];
+        _buttonFollow.layer.borderWidth= 0;
+    }
+    else  {
         self.buttonFollow.selected= NO;
-        __weak ProfileTableFirstRow *weakSelf = self;
         
         [OOAPI  getFollowersOf: _userInfo.userID
                        success:^(NSArray *users) {
+                           
+                           [weakSelf.buttonFollow setTitle: @"FOLLOW" forState:UIControlStateNormal];
+                           [weakSelf.buttonFollow setTitleColor: YELLOW forState:UIControlStateNormal];
+                           weakSelf.buttonFollow.layer.cornerRadius= kGeomCornerRadius;
+                           weakSelf.buttonFollow.layer.borderWidth= 1;
+                           weakSelf.buttonFollow.layer.borderColor=YELLOW.CGColor;
+                           
                            for (UserObject* user   in  users) {
                                if ( user.userID==ownUserIdentifier) {
                                    weakSelf.buttonFollow.selected= YES;
                                    break;
                                }
                            }
+                           weakSelf.buttonFollow.enabled= YES;
+                           
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
                        }];
     }
     
-    [self layoutsSubviews];
+    if  (_userInfo.about.length ) {
+        [_buttonDescription setTitle:_userInfo.about forState:UIControlStateNormal ];
+    } else {
+        if ( _viewingOwnProfile) {
+            [_buttonDescription setTitle: @"Tap here and tell us about yourself." forState:UIControlStateNormal ];
+        } else {
+            NSString* pronoun=  @"their";
+            
+            if ( _userInfo.gender.length) {
+                unichar ch=[_userInfo.gender characterAtIndex:0];
+                if ( ch == 'f' || ch=='F') {
+                    pronoun=  @"her";
+                } else {
+                    pronoun=  @"his";
+                }
+            }
+            NSString*expression=[NSString  stringWithFormat: @"This user probably just needs a second to finish  %@ meal, stay tuned.", pronoun ];
+            [_buttonDescription setTitle: expression forState:UIControlStateNormal ];
+
+        }
+    }
+    
+    [self layoutSubviews];
+    
+    _labelFollowees.alpha= 0;
+    _labelFollowers.alpha= 0;
+    _labelFolloweesCount.alpha= 0;
+    _labelFollowersCount.alpha= 0;
+    
+    [OOAPI getUserStatsFor:_userInfo.userID
+                   success:^(UserStatsObject *stats) {
+                       
+                       weakSelf.labelFollowersCount.text= stringFromUnsigned(stats.totalFollowers);
+                       weakSelf.labelFolloweesCount.text= stringFromUnsigned(stats.totalFollowees);
+                       [UIView animateWithDuration:.4
+                                        animations:^{
+                                            weakSelf.labelFollowees.alpha= 1;
+                                            weakSelf.labelFollowers.alpha= 1;
+                                            weakSelf.labelFolloweesCount.alpha= 1;
+                                            weakSelf.labelFollowersCount.alpha= 1;
+                                        }];
+                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                       NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                   }];
 }
 
 //------------------------------------------------------------------------------
@@ -92,31 +143,67 @@ static NSString * const ListRowID = @"ListRowCell";
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.autoresizesSubviews= NO;
+        _backgroundImageView=  makeImageView(self, @"background_image.png");
+        _backgroundImageFade= makeView( self,  UIColorRGBA(0x80000000));
+        
+        _filterView= [[OOFilterView alloc] init];
+        [self addSubview:_filterView];
+        [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];//  index 0
+        [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];//  index 1
+        
         _userView= [[OOUserView alloc] init];
         [self addSubview:_userView];
         
-        NSString *description = _userInfo.about.length? _userInfo.about: nil;
-        NSString *restaurants =  nil;
+        _labelFollowees=  makeLabel(self, @"FOLLOWING", kGeomFontSizeSubheader );
+        _labelFollowers=  makeLabel(self, @"FOLLOWERS", kGeomFontSizeSubheader);
         
-        self.labelUsername = makeLabelLeft(self, nil,kGeomFontSizeHeader);
-        self.labelDescription = makeLabelLeft(self, description,kGeomFontSizeHeader);
-        self.labelRestaurants = makeLabelLeft(self, restaurants,kGeomFontSizeHeader);
+        _labelFolloweesCount=  makeLabel(self, @"", kGeomFontSizeHeader);
+        _labelFollowersCount=  makeLabel(self, @"", kGeomFontSizeHeader);
         
-        _labelUsername.textColor = UIColorRGBA(kColorWhite);
-        _labelDescription.textColor = UIColorRGBA(kColorWhite);
-        _labelRestaurants.textColor = UIColorRGBA(kColorWhite);
+        _labelFollowersCount.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
+        _labelFolloweesCount.font = _labelFollowersCount.font;
+        
+        _buttonDescription=  makeButton(self,  @"", 1, WHITE,
+                                        UIColorRGBA(0x80000000),  self,
+                                        @selector(userTappedDescription:) , 0);
+        _buttonDescription.titleLabel.font= [ UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
+        
+        _labelFollowees.textColor = WHITE;
+        _labelFollowers.textColor = WHITE;
+        _labelFolloweesCount.textColor = WHITE;
+        _labelFollowersCount.textColor = WHITE;
         
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
-        self.buttonFollow= makeButton(self, @"FOLLOW",
-                                      kGeomFontSizeHeader, UIColorRGBA(kColorWhite), CLEAR,
+        self.buttonFollow= makeButton(self, @"",
+                                      kGeomFontSizeHeader, CLEAR, CLEAR,
                                       self,
-                                      @selector (userPressedFollow:), 1);
+                                      @selector (userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
+        _buttonFollow.enabled=NO;
         
         self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
+}
+
+- (void)userTappedDescription: (id) sender
+{
+    OOTextEntryVC *vc=[[OOTextEntryVC alloc] init];
+    [self.vc.navigationController pushViewController:vc animated:YES ];
+
+    
+}
+
+- (void)userTappedOnListsFilter: (id) sender
+{
+    [self.delegate userTappedOnLists];
+}
+
+- (void)userTappedOnPhotosFilter: (id) sender
+{
+    [self.delegate userTappedOnPhotos];
 }
 
 - (void) verifyUnfollow
@@ -128,7 +215,7 @@ static NSString * const ListRowID = @"ListRowCell";
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style: UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * action) {
-                                                     }];
+                                                   }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                      [self doUnfollow];
@@ -149,7 +236,7 @@ static NSString * const ListRowID = @"ListRowCell";
                     success:^(id responseObject) {
                         weakSelf.buttonFollow.selected= NO;
                         NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
-
+                        
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO UNFOLLOW USER");
                     }];
@@ -162,6 +249,10 @@ static NSString * const ListRowID = @"ListRowCell";
 //------------------------------------------------------------------------------
 - (void)userPressedFollow:(id)sender
 {
+    if  (_viewingOwnProfile ) {
+        return;
+    }
+    
     __weak ProfileTableFirstRow *weakSelf = self;
     
     if ( _buttonFollow.selected) {
@@ -186,70 +277,51 @@ static NSString * const ListRowID = @"ListRowCell";
 }
 
 //------------------------------------------------------------------------------
-// Name:    layoutsSubviews
+// Name:    layoutSubviews
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)layoutsSubviews
+- (void)layoutSubviews
 {
-    float w = [UIScreen mainScreen].bounds.size.width;
+    [super layoutSubviews];
     
-    const int spacer = kGeomSpaceInter;
-    int x = kGeomSpaceEdge;
+    float w = self.bounds.size.width;
+    float h = self.bounds.size.height;
+    
+    _backgroundImageView.frame= CGRectMake(0,0,w,h-kGeomProfileFilterViewHeight);
+    _backgroundImageFade.frame= CGRectMake(0,0,w,h-kGeomProfileFilterViewHeight);
+    _backgroundImageView.backgroundColor= YELLOW;
     int y = kGeomSpaceEdge;
-    _userView.frame = CGRectMake(x, y, kGeomProfileImageSize, kGeomProfileImageSize);
-    int bottomOfImage = y + kGeomProfileImageSize;
+    _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
     
-    // Place the image
-    x += kGeomProfileImageSize + spacer;
-    _labelUsername.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
-    y += kGeomProfileInformationHeight + spacer;
+    [_labelFollowers sizeToFit];
+    [_labelFollowees sizeToFit];
+    [_labelFollowersCount sizeToFit];
+    [_labelFolloweesCount sizeToFit];
+    float upperLabelHeight=  20;
+    float lowerLabelHeight= 18;
+    float horizontalSpaceForText=  (320-kGeomProfileImageSize)/2;
+    y= (kGeomProfileImageSize +2*kGeomSpaceEdge -upperLabelHeight-lowerLabelHeight)/2;
+    float leftX= w/2 - kGeomProfileImageSize/2  - horizontalSpaceForText;
+    float rightX= w/2 + kGeomProfileImageSize/2;
+    _labelFollowersCount.frame = CGRectMake(leftX, y, horizontalSpaceForText, upperLabelHeight);
+    _labelFolloweesCount.frame = CGRectMake(rightX, y, horizontalSpaceForText, upperLabelHeight);
+    y+=upperLabelHeight;
+    _labelFollowers.frame = CGRectMake(leftX, y, horizontalSpaceForText, lowerLabelHeight);
+    _labelFollowees.frame = CGRectMake(rightX, y, horizontalSpaceForText, lowerLabelHeight);
     
-    // Place the labels
-    if (_labelDescription.text.length) {
-        _labelDescription.frame=CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
-        y += kGeomProfileInformationHeight + spacer;
-    } else {
-        _labelDescription.hidden = YES;
-    }
+    y=kGeomSpaceEdge+kGeomProfileImageSize+kGeomSpaceInter;
+    _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y,kGeomButtonWidth,  kGeomProfileFollowButtonHeight);
+    y += kGeomProfileFollowButtonHeight + kGeomSpaceInter;
     
-    if (_labelRestaurants.text.length) {
-        _labelRestaurants.frame = CGRectMake(x,y,w-x,kGeomProfileInformationHeight);
-        y += kGeomProfileInformationHeight + spacer;
-    } else {
-        _labelRestaurants.hidden= YES;
-    }
+    _buttonDescription.frame = CGRectMake(kGeomSpaceEdge,h-kGeomProfileFilterViewHeight-kGeomProfileTextviewHeight,w-2*kGeomSpaceEdge,kGeomProfileTextviewHeight);
+    y += kGeomProfileTextviewHeight;
     
-    // Place the follow button
-    if (!_viewingOwnProfile) {
-        _buttonFollow.frame = CGRectMake(w- kGeomSpaceEdge-kGeomButtonWidth,y,kGeomButtonWidth,  kGeomHeightButton);
-        y += kGeomHeightButton + spacer;
-    } else {
-        _buttonFollow.hidden= YES;
-    }
-    
-    if  (y < bottomOfImage) {
-        y = bottomOfImage;
-    }
-    
-    self.spaceNeededForFirstCell = y;
-}
-
-//------------------------------------------------------------------------------
-// Name:    neededHeight
-// Purpose:
-//------------------------------------------------------------------------------
-- (NSInteger)neededHeight
-{
-    if (!_spaceNeededForFirstCell) {
-        [self layoutsSubviews];
-    }
-    return self.spaceNeededForFirstCell;
+    _filterView.frame = CGRectMake(0,h-kGeomProfileFilterViewHeight,w,kGeomProfileFilterViewHeight);
 }
 
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    _buttonFollow.hidden= NO;
 }
 
 @end
@@ -260,9 +332,9 @@ static NSString * const ListRowID = @"ListRowCell";
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject *profileOwner;
+@property (nonatomic,assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UIAlertController *optionsAC;
-
 @end
 
 @implementation ProfileVC
@@ -278,10 +350,10 @@ static NSString * const ListRowID = @"ListRowCell";
     [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = @"Enter new list name";
     }];
-
+    
     UIAlertAction *newList = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         OOAPI *api = [[OOAPI alloc] init];
-
+        
         NSString *name = [alert.textFields[0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         
         NSString *string = trimString(name);
@@ -307,12 +379,30 @@ static NSString * const ListRowID = @"ListRowCell";
     }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * _Nonnull action) {
-        ;
-    }];
+                                                       ;
+                                                   }];
     
     [alert addAction:newList];
     [alert addAction:cancel];
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)userTappedOnLists
+{
+    static unsigned n=0;
+    if ((n=!n))
+        message( @"really");
+    else
+        message( @"seriously");
+}
+
+- (void)userTappedOnPhotos
+{
+    static unsigned n=0;
+    if ((n=1-n))
+        message( @"hey");
+    else
+        message( @"that tickles");
 }
 
 //------------------------------------------------------------------------------
@@ -324,21 +414,25 @@ static NSString * const ListRowID = @"ListRowCell";
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
-
-    _buttonNewList.hidden = ([self profileOfCurrentUser:_profileOwner.userID] ? NO : YES);
     
-    //NOTE: This results in the profile lists getting refreshed every time. If a person navigates to an R1 page
-    //      then back it should not refresh. Use notifications instead to determine if a refresh is needed.
-    //      Specific lists can be targeted by passing the list_id in the notification object
+    static BOOL didFetch=NO;
+    if (!didFetch) {
+        didFetch=YES;
+        [self  updateRestaurantLists:nil ];
+    }
+}
+
+- (void)updateRestaurantLists: (NSNotification*)not
+{
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
                 success:^(NSArray *foundLists) {
-                    NSLog (@" number of lists for this user:  %ld", (long)foundLists.count);
+                    NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
                     _lists = foundLists;
                     [self.table reloadData];
                 }
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                    NSLog  (@" error while getting lists for user: %@",e);
+                    NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
                 }];
 }
 
@@ -357,21 +451,36 @@ static NSString * const ListRowID = @"ListRowCell";
     [super viewDidLoad];
     
     _userID = 0;
-    _buttonNewList = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
-    _buttonNewList.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-    
+
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
-    // Ascertain whether reviewing our own profile.
+    [self registerForNotification: kNotificationRestaurantListsNeedsUpdate calling:@selector(updateRestaurantLists:) ];
+    // NOTE:  Unregistered in dealloc.
+    
+    // Ascertain whether reviewing our own profile based on passed-in UserObject pointer.
     //
     if (!_userInfo) {
+        _viewingOwnProfile=YES;
         UserObject *userInfo = [Settings sharedInstance].userObject;
         self.profileOwner = userInfo;
-        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions)];
     } else {
         self.profileOwner = _userInfo;
+        
+        UserObject *currentUser = [Settings sharedInstance].userObject;
+        NSUInteger ownUserIdentifier = [currentUser userID];
+        _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
+    }
+    
+    if ( _viewingOwnProfile) {
+        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions)];
+
+        _buttonNewList = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
+        _buttonNewList.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+
+        [self.view addSubview:_buttonNewList];
+    } else {
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
@@ -380,36 +489,31 @@ static NSString * const ListRowID = @"ListRowCell";
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     }
     
-    _lists = [NSArray array];
+    _lists = @[];
     
-    self.table = [UITableView new];
-    self.table.delegate= self;
-    self.table.dataSource= self;
-    [self.view addSubview:_table];
+    self.table =  makeTable( self.view,  self);
     self.table.backgroundColor=[UIColor clearColor];
     self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
     [_table registerClass:[ProfileTableFirstRow class] forCellReuseIdentifier:FirstRowID];
     [_table registerClass:[ListStripTVCell class] forCellReuseIdentifier:ListRowID];
     
-    NSString *first = _profileOwner.firstName ?:  @"";
-    NSString *last = _profileOwner.lastName ?:  @"";
-    NSString *fullName =  [NSString stringWithFormat: @"%@ %@", first, last ];
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:fullName subHeader:nil];
+    NSString *string= _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username)
+                                            :  @"Missing username";
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: string
+                                                       subHeader:nil];
     [self setNavTitle:nto];
     
-    __weak  ProfileVC *weakSelf = self;
+    __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
         [_profileOwner refreshWithSuccess:^{
             [weakSelf.table reloadRowsAtIndexPaths:@[ [NSIndexPath  indexPathForRow:0 inSection:0]]
-                                                      withRowAnimation:UITableViewRowAnimationNone
+                                  withRowAnimation:UITableViewRowAnimationNone
              ];
         } failure:^{
             NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
         }
          ];
     }
-    
-    [self.view addSubview:_buttonNewList];
 }
 
 //------------------------------------------------------------------------------
@@ -418,21 +522,16 @@ static NSString * const ListRowID = @"ListRowCell";
 //------------------------------------------------------------------------------
 - (void)viewWillLayoutSubviews
 {
-    // NOTE:  this is just temporary
     [super viewWillLayoutSubviews];
+    
     self.table.frame = self.view.bounds;
     
-    // Place the new list buttons
     CGFloat x, y, spacer;
-    if ([self profileOfCurrentUser:_profileOwner.userID]) {
+    if (_viewingOwnProfile) {
         x = kGeomSpaceEdge;
         _buttonNewList.frame = CGRectMake(width(self.view) - (width(_buttonNewList) + 30), height(self.view) - (height(_buttonNewList) + 30), width(_buttonNewList), height(_buttonNewList));
         y += kGeomHeightButton + spacer;
     }
-}
-
--(BOOL)profileOfCurrentUser:(NSUInteger)userID {
-    return (userID == [Settings sharedInstance].userObject.userID) ? YES : NO;
 }
 
 //------------------------------------------------------------------------------
@@ -475,11 +574,16 @@ static NSString * const ListRowID = @"ListRowCell";
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row = indexPath.row;
-
+    
     if (!row) {
-        return 120;
+        return kGeomProfileTableFirstRowHeight;
     }
     return kGeomHeightStripListRow;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
+{
+    return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -503,19 +607,19 @@ static NSString * const ListRowID = @"ListRowCell";
         ProfileTableFirstRow* headerCell= [tableView dequeueReusableCellWithIdentifier:FirstRowID forIndexPath:indexPath];
         [ headerCell setUserInfo: _profileOwner];
         headerCell.vc = self;
-
+        headerCell.delegate=self;
         return headerCell;
     }
     
     ListStripTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
-
+    
     NSArray *a = self.lists;
     ListObject *listItem = a[indexPath.row-1];
     listItem.listDisplayType = KListDisplayTypeStrip;
     
     cell.listItem = listItem;
     cell.navigationController = self.navigationController;
-//    [DebugUtilities addBorderToViews:@[cell]];
+    //    [DebugUtilities addBorderToViews:@[cell]];
     return cell;
 }
 
@@ -538,24 +642,24 @@ static NSString * const ListRowID = @"ListRowCell";
     _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-            FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
-            [loginManager logOut];
-            [[Settings sharedInstance] removeUser];
-            [[Settings sharedInstance] removeMostRecentLocation];
-            [[Settings sharedInstance] removeDateString];
-            [[Settings sharedInstance] removeSearchRadius];
-            [APP clearCache];
-            
-            [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
-        }];
+        FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+        [loginManager logOut];
+        [[Settings sharedInstance] removeUser];
+        [[Settings sharedInstance] removeMostRecentLocation];
+        [[Settings sharedInstance] removeDateString];
+        [[Settings sharedInstance] removeSearchRadius];
+        [APP clearCache];
+        
+        [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
+    }];
     UIAlertAction *manageTags = [UIAlertAction actionWithTitle:@"Manage Tags" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         ManageTagsVC *vc = [[ManageTagsVC alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }];
-
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }];
-
+    
     
     [_optionsAC addAction:manageTags];
     [_optionsAC addAction:logout];

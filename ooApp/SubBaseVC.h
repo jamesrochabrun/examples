@@ -18,4 +18,7 @@
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 
+- (void)registerForNotification:(NSString*) name calling:(SEL)selector;
+- (void)unregisterFromNotifications;
+
 @end

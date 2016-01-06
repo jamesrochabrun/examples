@@ -194,6 +194,25 @@
     [_navTitleView setNeedsLayout];
 }
 
+- (void)registerForNotification:(NSString*) name calling:(SEL)selector
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector: selector
+                   name: name
+                 object:nil];
+}
+
+- (void)unregisterFromNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver: self  ];
+}
+
+- (void)dealloc
+{
+    [self unregisterFromNotifications];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -208,15 +227,5 @@
 - (void)dropDownList:(DropDownListTVC *)dropDownList optionTapped:(id)object {
     NSLog(@"subclass should implement this if it wants to respond to a drop down list tap");
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

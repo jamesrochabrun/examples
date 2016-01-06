@@ -58,6 +58,25 @@
 
 }
 
+- (void)registerForNotification:(NSString*) name calling:(SEL)selector
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector: selector
+                   name: name
+                 object:nil];
+}
+
+- (void)unregisterFromNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver: self  ];
+}
+
+- (void)dealloc
+{
+    [self unregisterFromNotifications];
+}
+
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
     [self.leftNavButton setTitle:icon];
     [self.leftNavButton setTarget:target];

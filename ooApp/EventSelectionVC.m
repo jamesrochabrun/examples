@@ -233,7 +233,7 @@
         [event refreshVenuesFromServerWithSuccess:^{
             if([event alreadyHasVenue: self.restaurantBeingAdded]) {
                 message(@"That event already has the restaurant.");
-                _doingTransition=NO;
+                weakSelf.doingTransition=NO;
                 return;
             }
             
