@@ -64,4 +64,6 @@ NSString *const kImageNoProfileImage= @"No-Profile_Image";
 
 NSString *const kNotificationFoodFeedNeedsUpdate = @"notificationFoodFeedNeedsUpdate";
 NSString *const kNotificationRestaurantListsNeedsUpdate = @"notificationRestaurantListsNeedsUpdate";
+NSString *const kNotificationEventAltered = @"notificationEventAltered";
+NSString *const kNotificationEventDeleted = @"notificationEventDeleted";
 

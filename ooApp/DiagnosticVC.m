@@ -17,6 +17,7 @@
 #import "Settings.h"
 #import "UIImageView+AFNetworking.h"
 #import "CreateUsernameVC.h"
+#import "OOTextEntryVC.h"
 
 @interface DiagnosticVC ()
 @property (nonatomic,strong)  UIButton* buttonClearUsername;
@@ -24,7 +25,7 @@
 @property (nonatomic,strong)  UIButton* buttonSendLog;
 @property (nonatomic,strong)  UIButton* buttonSearchRadius;
 @property (nonatomic,strong)  UIButton* buttonUploadPhoto;
-@property (nonatomic,strong)  UIButton* buttonUploadHugePhoto;
+@property (nonatomic,strong)  UIButton* buttonExperiment;
 @property (nonatomic,strong)  UIButton* buttonTakePhoto;
 @property (nonatomic,strong)  UIButton* buttonCreateUsername;
 @property (nonatomic,strong)  UISwitch* switchUsingStage;
@@ -110,9 +111,9 @@
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonUploadHugePhoto= makeButton(self.view,  @"UPLOAD HUGE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoHugeUpload:), 1);
-    _buttonUploadHugePhoto.titleLabel.numberOfLines= 0;
-    _buttonUploadHugePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
+    self.buttonExperiment= makeButton(self.view, @"EXPERIMENT", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(doExperiment:), 1);
+    _buttonExperiment.titleLabel.numberOfLines= 0;
+    _buttonExperiment.titleLabel.textAlignment= NSTextAlignmentCenter;
     
 //    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
 //    _buttonUploadPhoto.titleLabel.numberOfLines= 0;
@@ -212,15 +213,18 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    doPhotoHugeUpload
+// Name:    doExperiment
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)doPhotoHugeUpload: (id) sender
+- (void)doExperiment: (id) sender
 {
-    self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];
+//    self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];
     
-    messageWithTitle(@"Title", @"Message");
+//    messageWithTitle(@"Title", @"Message");
     
+    OOTextEntryVC *vc=[[OOTextEntryVC alloc] init];
+    [self.navigationController pushViewController:vc animated:YES ];
+
 //    [OOAPI uploadPhoto:self.hugeImage
 //                    to:UPLOAD_DESTINATION_DIAGNOSTIC
 //            identifier:0
@@ -338,7 +342,7 @@
     y= margin;
     _buttonSendLog.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    _buttonUploadHugePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    _buttonExperiment.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _switchUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     _labelUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);

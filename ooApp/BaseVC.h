@@ -24,5 +24,7 @@
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)targer action:(SEL)sector;
 - (void)displayDropDown:(BOOL)showIt;
+- (void)registerForNotification:(NSString*) name calling:(SEL)selector;
+- (void)unregisterFromNotifications;
 
 @end

@@ -73,7 +73,6 @@ static CGFloat kGeomDimensionsIconButtonSmall = 35.0;
 static CGFloat kGeomDimensionsIconButton = 40.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
 static CGFloat kGeomHeightFilters = 40.0;
-static CGFloat kGeomProfileInformationHeight = 18;
 static CGFloat kGeomButtonWidth = 100;
 static CGFloat kGeomHeightSampleUsernameRow = 180.0;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
@@ -89,8 +88,13 @@ static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
-static NSUInteger kGeomSampleUsernameTableWidth = 175/.62;
-static CGFloat kGeomProfileImageSize = 100;
+
+static CGFloat kGeomProfileImageSize = 94;
+static CGFloat kGeomProfileFollowButtonHeight = 18;
+static CGFloat kGeomProfileFilterViewHeight = 27;
+static CGFloat kGeomProfileTextviewHeight= 36;
+static CGFloat kGeomProfileTableFirstRowHeight= 203;
+
 static CGFloat kGeomForkImageSize = 150;
 static CGFloat kGeomEmptyTextViewWidth = 200;
 static CGFloat kGeomEmptyTextFieldWidth = 150;
@@ -101,19 +105,22 @@ static CGFloat kGeomWidthMenuButton = 44;// The button should stay at 44. The ti
 static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 static CGFloat kGeomHeightFilterSelectedLine = 3.0;
 static CGFloat kGeomHeightSearchBar = 55;
+
 static CGFloat kGeomEventCoordinatorBoxHeight = 130;
 static CGFloat kGeomEventCoordinatorPieDiameter = 33;
+static CGFloat kGeomEventCoordinatorBoxHeightTopmost = 230;
+
 static CGFloat kGeomEventParticipantFirstBoxHeight = 170;
 static CGFloat kGeomEventParticipantButtonHeight =  33;
 static CGFloat kGeomEventParticipantRestaurantHeight = 92;
 static CGFloat kGeomEventParticipantSeparatorHeight = 6;
+
 static CGFloat kGeomVotingResultsBoxHeight = 175;
 static CGFloat kGeomVotingResultsRestaurantHeight = 92;
 static CGFloat kGeomHeightEventCellHeight = 160.0;
 static CGFloat kGeomFaceBubbleDiameter = 26;
 static CGFloat kGeomFaceBubbleSpacing = 5;
 static CGFloat kGeomStripHeaderHeight = 27;
-static CGFloat kGeomEventCoordinatorBoxHeightTopmost = 230;
 static CGFloat kGeomHeightEventWhoTableCellHeight = 100;
 static CGFloat kGeomHeightEventWhoTableCellImageHeight = 84;
 static CGFloat kGeomSideBarRevealWidth = 235;
@@ -185,6 +192,8 @@ extern NSString *const kFontIconYumOutline;
 
 extern NSString *const kNotificationFoodFeedNeedsUpdate;
 extern NSString *const kNotificationRestaurantListsNeedsUpdate;
+extern NSString *const kNotificationEventAltered;
+extern NSString *const kNotificationEventDeleted;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

@@ -11,7 +11,12 @@
 #import "BaseVC.h"
 #import "UserObject.h"
 
-@interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate>
+@protocol ProfileTableFirstRowDelegate
+- (void) userTappedOnLists;
+- (void) userTappedOnPhotos;
+@end
+
+@interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate, ProfileTableFirstRowDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
@@ -21,4 +26,5 @@
 @interface ProfileTableFirstRow : UITableViewCell 
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
+@property (nonatomic,weak) id<ProfileTableFirstRowDelegate> delegate;
 @end
