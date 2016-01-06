@@ -89,13 +89,13 @@ static NSString * const ListRowID = @"ListRowCell";
                        }];
     }
     
-    if  (_userInfo.about.length ) {
-        [_buttonDescription setTitle:_userInfo.about forState:UIControlStateNormal ];
+    if  (_userInfo.about.length) {
+        [_buttonDescription setTitle:_userInfo.about forState:UIControlStateNormal];
     } else {
-        if ( _viewingOwnProfile) {
+        if (_viewingOwnProfile) {
             [_buttonDescription setTitle: @"Tap here and tell us about yourself." forState:UIControlStateNormal ];
         } else {
-            NSString* pronoun=  @"their";
+            NSString *pronoun=  @"their";
             
             if ( _userInfo.gender.length) {
                 unichar ch=[_userInfo.gender characterAtIndex:0];
@@ -164,10 +164,10 @@ static NSString * const ListRowID = @"ListRowCell";
         _labelFollowersCount.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         _labelFolloweesCount.font = _labelFollowersCount.font;
         
-        _buttonDescription=  makeButton(self,  @"", 1, WHITE,
+        _buttonDescription =  makeButton(self,  @"", 1, WHITE,
                                         UIColorRGBA(0x80000000),  self,
                                         @selector(userTappedDescription:) , 0);
-        _buttonDescription.titleLabel.font= [ UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
+        _buttonDescription.titleLabel.font = [ UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
         
         _labelFollowees.textColor = WHITE;
         _labelFollowers.textColor = WHITE;
@@ -188,12 +188,11 @@ static NSString * const ListRowID = @"ListRowCell";
     return self;
 }
 
-- (void)userTappedDescription: (id) sender
+- (void)userTappedDescription:(id)sender
 {
-    OOTextEntryVC *vc=[[OOTextEntryVC alloc] init];
-    [self.vc.navigationController pushViewController:vc animated:YES ];
-
-    
+    OOTextEntryVC *vc = [[OOTextEntryVC alloc] init];
+    vc.defaultText = _userInfo.about;
+    [self.vc.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)userTappedOnListsFilter: (id) sender
@@ -287,8 +286,8 @@ static NSString * const ListRowID = @"ListRowCell";
     float w = self.bounds.size.width;
     float h = self.bounds.size.height;
     
-    _backgroundImageView.frame= CGRectMake(0,0,w,h-kGeomProfileFilterViewHeight);
-    _backgroundImageFade.frame= CGRectMake(0,0,w,h-kGeomProfileFilterViewHeight);
+    _backgroundImageView.frame= CGRectMake(0,0,w,h-kGeomHeightFilters);
+    _backgroundImageFade.frame= CGRectMake(0,0,w,h-kGeomHeightFilters);
     _backgroundImageView.backgroundColor= YELLOW;
     int y = kGeomSpaceEdge;
     _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
@@ -313,10 +312,10 @@ static NSString * const ListRowID = @"ListRowCell";
     _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y,kGeomButtonWidth,  kGeomProfileFollowButtonHeight);
     y += kGeomProfileFollowButtonHeight + kGeomSpaceInter;
     
-    _buttonDescription.frame = CGRectMake(kGeomSpaceEdge,h-kGeomProfileFilterViewHeight-kGeomProfileTextviewHeight,w-2*kGeomSpaceEdge,kGeomProfileTextviewHeight);
+    _buttonDescription.frame = CGRectMake(kGeomSpaceEdge,h-kGeomHeightFilters-kGeomProfileTextviewHeight,w-2*kGeomSpaceEdge,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;
     
-    _filterView.frame = CGRectMake(0,h-kGeomProfileFilterViewHeight,w,kGeomProfileFilterViewHeight);
+    _filterView.frame = CGRectMake(0, h-kGeomHeightFilters, w, kGeomHeightFilters);
 }
 
 - (void)prepareForReuse
@@ -332,7 +331,7 @@ static NSString * const ListRowID = @"ListRowCell";
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject *profileOwner;
-@property (nonatomic,assign) BOOL viewingOwnProfile;
+@property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @end

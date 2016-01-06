@@ -45,6 +45,7 @@ extern NSString *const kKeyUserImageURL;
 extern NSString *const kKeyUserImageIdentifier;
 extern NSString *const kKeyUserParticipantType;
 extern NSString *const kKeyUserParticipantState;
+extern NSString *const kKeyUserAbout;
 
 @interface UserObject : NSObject
 

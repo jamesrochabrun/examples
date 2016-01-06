@@ -24,6 +24,7 @@ NSString *const kKeyUserImageIdentifier = @"image_identifier";
 NSString *const kKeyUserParticipantType = @"participant_type";
 NSString *const kKeyUserParticipantState = @"participant_state";
 NSString *const kKeyUserMediaItem = @"media_item";
+NSString *const kKeyUserAbout = @"about";
 
 @interface UserObject()
 
@@ -77,6 +78,7 @@ BOOL isUserObject (id  object)
     user.imageIdentifier = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageIdentifier]);
     user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
+    user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
     
     // RULE: If the server referred to the current user and
     // we have more information about the current user then fill it in.
@@ -106,6 +108,7 @@ BOOL isUserObject (id  object)
              kKeyUserFirstName:self.firstName ?: @"",
              kKeyUserLastName:self.lastName ?: @"",
              kKeyUserEmail: self.email ?: @"",
+             kKeyUserAbout: self.about ?: @"",
              kKeyUserPhoneNumber:self.phoneNumber ?: @"",
              kKeyUserToken:self.backendAuthorizationToken ?: @"",
              kKeyUserGender:self.gender ?: @"",
@@ -151,22 +154,23 @@ BOOL isUserObject (id  object)
     }
 }
 
-- (void) refreshWithSuccess: (void (^)())success
+- (void)refreshWithSuccess:(void (^)())success
                     failure:(void (^)())failure;
 {
     [OOAPI getUserWithID:self.userID
                   success:^(UserObject *user) {
-                      self.mediaItem=user.mediaItem;
-                      self.userID= user.userID ;
-                      self.firstName=  user.firstName;
-                      self.middleName=  user.middleName;
-                      self.lastName=  user.lastName ;
-                      self.email=  user.email;
-                      self.phoneNumber=  user.phoneNumber;
-                      self.gender= user.gender;
-                      self.username= user.username;
-                      self.facebookProfileImageURLString= user.facebookProfileImageURLString;
-                      self.imageIdentifier= user.imageIdentifier;
+                      self.mediaItem = user.mediaItem;
+                      self.userID = user.userID;
+                      self.about = user.about;
+                      self.firstName = user.firstName;
+                      self.middleName = user.middleName;
+                      self.lastName = user.lastName ;
+                      self.email = user.email;
+                      self.phoneNumber = user.phoneNumber;
+                      self.gender = user.gender;
+                      self.username = user.username;
+                      self.facebookProfileImageURLString = user.facebookProfileImageURLString;
+                      self.imageIdentifier = user.imageIdentifier;
                     
                       success();
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
