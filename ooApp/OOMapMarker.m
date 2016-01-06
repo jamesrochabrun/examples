@@ -22,22 +22,15 @@
         self.appearAnimation = kGMSMarkerAnimationPop;
         
         _markerIcon = [[UILabel alloc] init];
-        [_markerIcon withFont:[UIFont fontWithName:kFontIcons size:26] textColor:kColorBlack backgroundColor:kColorClear];
+        [_markerIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorBlack backgroundColor:kColorClear];
         _markerIcon.text = kFontIconPinFilled;
-        _markerIcon.frame = CGRectMake(0, 0, 30, 30);
+        //_markerIcon.frame = CGRectMake(0, 0, 30, 30);
         [_markerIcon sizeToFit];
         
         _indexLabel = [[UILabel alloc] init];
         [_indexLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorBlack backgroundColor:kColorClear];
         _indexLabel.frame = CGRectMake(0, 2, 0, 0);
         [_markerIcon addSubview:_indexLabel];
-        
-//        UIView *circle = [[UIView alloc] init];
-//        circle.backgroundColor = UIColorRGBA(kColorBlack);
-//        circle.frame = CGRectMake(10, 7, 4, 4);
-//        circle.layer.cornerRadius = width(circle)/2;
-//        [_markerIcon addSubview:circle];
-//        [DebugUtilities addBorderToViews:@[_indexLabel]];
     }
     return self;
 }

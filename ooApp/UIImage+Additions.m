@@ -26,7 +26,8 @@
 }
 
 + (UIImage *)imageFromView:(UIView *)v {
-    UIGraphicsBeginImageContext(v.frame.size);
+    UIGraphicsBeginImageContextWithOptions(v.frame.size, NO, 0.0);
+    //UIGraphicsBeginImageContext(v.frame.size);
     [v.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

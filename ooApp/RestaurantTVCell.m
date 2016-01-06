@@ -14,7 +14,7 @@
 @interface RestaurantTVCell ()
 @property (nonatomic, strong) UIAlertController *restaurantOptionsAC;
 @property (nonatomic, strong) UIAlertController *createListAC;
-@property (nonatomic,  assign)  int  mode;
+@property (nonatomic, assign) NSUInteger mode;
 @end
 
 enum  {
@@ -125,7 +125,7 @@ enum  {
 
 - (void)prepareForReuse
 {
-    [super  prepareForReuse];
+    [super prepareForReuse];
     [self.actionButton setTitle:  @"" forState:UIControlStateNormal];
     self.restaurant= nil;
     self.eventBeingEdited= nil;
@@ -134,7 +134,7 @@ enum  {
 
 - (void)expressMode
 {
-    NSString*string=  @"";
+    NSString *string = @"";
     if (!self.eventBeingEdited) {
         string= kFontIconMore;
         self.mode= MODE_MODAL;
@@ -146,12 +146,10 @@ enum  {
         } else {
             string= kFontIconAdd;
             self.mode= MODE_ADD;
-            
         }
     }
     
     [self.actionButton setTitle: string forState:UIControlStateNormal];
-    
 }
 
 - (void)setupActionButton
@@ -202,6 +200,10 @@ enum  {
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
+}
+
+- (void)setIndex:(NSUInteger)index {
+    self.iconLabel.text = [NSString stringWithFormat:@"%lu", index];
 }
 
 - (void)setupRestaurantOptionsAC {

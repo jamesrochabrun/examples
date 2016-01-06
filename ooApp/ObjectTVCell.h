@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSMutableArray *shadowConstraints;
 @property (nonatomic, strong) CAGradientLayer *gradient;
 @property (nonatomic, strong) UILabel *icon;
+@property (nonatomic, strong) UILabel *iconLabel;
 
 - (void)hideShadow;
 - (void)showShadow;
