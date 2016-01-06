@@ -61,7 +61,7 @@
         [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
         
         _iconLabel = [[UILabel alloc] init];
-        [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorYellow backgroundColor:kColorClear];
+        [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorYellow backgroundColor:kColorClear];
         _iconLabel.text = @"";
         
         _subHeader2 = [[UILabel alloc] init];
