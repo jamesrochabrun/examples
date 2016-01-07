@@ -191,6 +191,7 @@ extern NSString *const kFontIconCircleX;
 extern NSString *const kFontIconYum;
 extern NSString *const kFontIconThumbsUp;
 extern NSString *const kFontIconYumOutline;
+extern NSString *const kFontIconLogoFull;
 
 extern NSString *const kNotificationFoodFeedNeedsUpdate;
 extern NSString *const kNotificationRestaurantListsNeedsUpdate;

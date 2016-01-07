@@ -47,6 +47,7 @@
     NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
     [_diagnosticLogString appendFormat: @"PLATFORM %@\r",platformString()];
     [_diagnosticLogString appendFormat:  @"APPLICATION %@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
+
 #else
     #define INTERNAL_RELEASE //XX add this to a scheme.
 

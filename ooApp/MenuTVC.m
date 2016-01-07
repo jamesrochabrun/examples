@@ -143,12 +143,13 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     UIView *backgroundView = [[UIView alloc] initWithFrame:self.tableView.bounds];
     backgroundView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     self.tableView.backgroundView = backgroundView;
-    UIImage *image = [UIImage imageNamed:@"Oomami_Logo_Spork(Nov24) (1) w.png"];
 
-    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0, height(backgroundView)-60 , image.size.width/image.size.height*60, 60)];
-    iv.contentMode = UIViewContentModeScaleAspectFit;
-    iv.image = image;
-    [self.tableView.backgroundView addSubview:iv];
+    UILabel *logoLabel = [[UILabel alloc] init];
+    [logoLabel withFont:[UIFont fontWithName:kFontIcons size:110] textColor:kColorWhite backgroundColor:kColorClear];
+    logoLabel.text = kFontIconLogoFull;
+    [logoLabel sizeToFit];
+    logoLabel.frame = CGRectMake(10, height(backgroundView)-30, width(logoLabel), 30);
+    [self.tableView.backgroundView addSubview:logoLabel];
 }
 
 - (void)didReceiveMemoryWarning {

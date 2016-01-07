@@ -424,7 +424,7 @@
     ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection4Items];
     
     headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView1.labelTitle.text=@"Friends Onp Oomami";
+    headerView1.labelTitle.text=@"Friends On Oomami";
     
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";

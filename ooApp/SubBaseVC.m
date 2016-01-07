@@ -16,6 +16,8 @@
 @property (nonatomic, strong) NavTitleView *navTitleView;
 @property (nonatomic, strong) UIBarButtonItem *leftNavButton;
 @property (nonatomic, strong) UIBarButtonItem *rightNavButton;
+@property (nonatomic, strong) UIButton *rightBarButtonView;
+@property (nonatomic, strong) UIButton *leftBarButtonView;
 @end
 
 @implementation SubBaseVC
@@ -39,18 +41,21 @@
 {
     [super viewDidLoad];
     
-    _rightNavButton = [[UIBarButtonItem alloc] init];
-    self.navigationItem.rightBarButtonItem = _rightNavButton;
-    [self.rightNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                 [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName, UIColorRGB(kColorYellow), NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
+    _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
+    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    _rightBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
     
-    _leftNavButton = [[UIBarButtonItem alloc] init];
-    self.navigationItem.leftBarButtonItem = _leftNavButton;
-    [self.leftNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
-                                                UIColorRGB(kColorYellow), NSForegroundColorAttributeName,
-                                                nil] forState:UIControlStateNormal];
+    _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
+    self.navigationItem.rightBarButtonItem = _rightNavButton;
 
+    _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
+    [_leftBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    
+    _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
+    self.navigationItem.leftBarButtonItem = _leftNavButton;
 
     
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
@@ -78,15 +83,13 @@
 }
 
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-    [self.leftNavButton setTitle:icon];
-    [self.leftNavButton setTarget:target];
-    [self.leftNavButton setAction:selector];
+    [self.leftBarButtonView setTitle:icon forState:UIControlStateNormal];
+    [self.leftBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-    [self.rightNavButton setTitle:icon];
-    [self.rightNavButton setTarget:target];
-    [self.rightNavButton setAction:selector];
+    [self.rightBarButtonView setTitle:icon forState:UIControlStateNormal];
+    [self.rightBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {
