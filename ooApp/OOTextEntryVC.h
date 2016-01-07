@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseVC.h"
+#import "SubBaseVC.h"
 #import "NavTitleObject.h"
 
 @class OOTextEntryVC;
@@ -16,7 +16,7 @@
 - (void)textEntryFinished:(NSString *)text;
 @end
 
-@interface OOTextEntryVC :  BaseVC <UITextViewDelegate>
+@interface OOTextEntryVC : SubBaseVC <UITextViewDelegate>
 @property (nonatomic, weak) id<OOTextEntryVCDelegate> delegate;
 @property (nonatomic, strong) NSString *defaultText;
 @property (nonatomic, strong) NavTitleObject *nto;

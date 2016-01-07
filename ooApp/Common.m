@@ -862,3 +862,15 @@ UIImage *darkenImage(UIImage *image)
     UIGraphicsEndImageContext();
     return darkenedImage;
 }
+
+@implementation Common
+
++ (NSString *)versionString {
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString *majorVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
+    NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
+    NSString *s = [NSString stringWithFormat:@"v%@b%@", majorVersion, minorVersion];
+    return s;
+}
+
+@end

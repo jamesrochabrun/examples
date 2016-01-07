@@ -44,6 +44,7 @@
 @property (nonatomic, strong) ListObject *defaultListObject;
 @property (nonatomic, strong) NSMutableSet *tags;
 @property (nonatomic) NSUInteger minPrice, maxPrice;
+@property (nonatomic, strong) UIButton *changeLocationButton;
 
 @end
 
@@ -87,6 +88,11 @@ static NSString * const ListRowID = @"HLRCell";
     
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
+    _changeLocationButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _changeLocationButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [_changeLocationButton withIcon:kFontIconDiscover fontSize:kGeomIconSize width:10 height:10 backgroundColor:kColorClear target:self selector:@selector(changeLocation)];
+    [_changeLocationButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:13 bearing:0 viewingAngle:1];
     
     _tags = [NSMutableSet set];
@@ -117,6 +123,11 @@ static NSString * const ListRowID = @"HLRCell";
     [self populateOptions];
     APP.nc = self.navigationController;
     [self showOptionsIfTimedOut];
+}
+
+- (void)changeLocation {
+    OOTextEntryVC *textEntry = [[OOTextEntryVC alloc] init];
+
 }
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {

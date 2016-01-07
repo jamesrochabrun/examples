@@ -44,8 +44,8 @@
     [self.view addSubview:_postButton];
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
-    [self setRightNavWithIcon:nil target:self action:@selector(closeTextEntry)];
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(userPressedBack:)];
+    [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(closeTextEntry)];
+    [self setLeftNavWithIcon:@"" target:nil action:nil];
 }
 
 - (NSString*)text;
@@ -74,14 +74,14 @@
 
 - (void)post:(UIButton*)sender
 {
-    [self.delegate textEntryFinished: _textView.text];
+    [self.delegate textEntryFinished:[self text]];
     [self userPressedBack: nil];
 }
 
 - (void)closeTextEntry
 {
     [_textView resignFirstResponder];
-//    [_delegate textEntryFinished:self];
+    [_delegate textEntryFinished:[self text]];
 }
 
 - (void)updateViewConstraints

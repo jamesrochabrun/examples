@@ -150,6 +150,13 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     [logoLabel sizeToFit];
     logoLabel.frame = CGRectMake(10, height(backgroundView)-30, width(logoLabel), 30);
     [self.tableView.backgroundView addSubview:logoLabel];
+    
+    UILabel *versionLabel = [[UILabel alloc] init];
+    [versionLabel withFont:[UIFont fontWithName:kFontLatoThin size:kGeomFontSizeH6] textColor:kColorWhite backgroundColor:kColorClear];
+    versionLabel.text = [Common versionString];
+    [versionLabel sizeToFit];
+    versionLabel.frame = CGRectMake(CGRectGetMaxX(logoLabel.frame) + kGeomSpaceInter, height(backgroundView)-height(versionLabel) - kGeomSpaceInter, width(versionLabel), height(versionLabel));
+    [self.tableView.backgroundView addSubview:versionLabel];
 }
 
 - (void)didReceiveMemoryWarning {
