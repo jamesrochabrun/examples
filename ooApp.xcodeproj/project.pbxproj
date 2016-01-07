@@ -136,6 +136,7 @@
 		967163E51C29E15B002DFDDB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E31C29E15B002DFDDB /* AddressBook.framework */; };
 		967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E41C29E15B002DFDDB /* AddressBookUI.framework */; };
 		968EE95E1C3C501900DFE30E /* EventSelectionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 968EE95D1C3C501900DFE30E /* EventSelectionVC.m */; };
+		9694F0271C3DE85300D6C9AA /* ListStripCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9694F0261C3DE85300D6C9AA /* ListStripCVCell.m */; };
 		9695C1001C1618D100911E84 /* ConnectVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9695C0FF1C1618D100911E84 /* ConnectVC.m */; };
 		96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */; };
 		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; };
@@ -152,6 +153,7 @@
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
 		96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E127B51BB32C6E00A8445E /* EmptyListVC.m */; };
 		96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E49E731BC5E14B008B70AF /* EventWhenVC.m */; };
+		96E4FC6C1C3D973200C8C485 /* profile-background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 96E4FC6B1C3D973200C8C485 /* profile-background.jpg */; };
 		96E954E21BDFF99100F5197A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E954E11BDFF99100F5197A /* Reachability.m */; };
 		96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */; };
 		96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */; };
@@ -388,6 +390,8 @@
 		967163E41C29E15B002DFDDB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		968EE95C1C3C501900DFE30E /* EventSelectionVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSelectionVC.h; sourceTree = "<group>"; };
 		968EE95D1C3C501900DFE30E /* EventSelectionVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSelectionVC.m; sourceTree = "<group>"; };
+		9694F0251C3DE85300D6C9AA /* ListStripCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListStripCVCell.h; sourceTree = "<group>"; };
+		9694F0261C3DE85300D6C9AA /* ListStripCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListStripCVCell.m; sourceTree = "<group>"; };
 		9695C0FE1C1618D100911E84 /* ConnectVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectVC.h; sourceTree = "<group>"; };
 		9695C0FF1C1618D100911E84 /* ConnectVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectVC.m; sourceTree = "<group>"; };
 		96AC04611C0D22E2002B1264 /* AutoCompleteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoCompleteObject.h; sourceTree = "<group>"; };
@@ -416,6 +420,7 @@
 		96E127B51BB32C6E00A8445E /* EmptyListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmptyListVC.m; sourceTree = "<group>"; };
 		96E49E721BC5E14B008B70AF /* EventWhenVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWhenVC.h; sourceTree = "<group>"; };
 		96E49E731BC5E14B008B70AF /* EventWhenVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWhenVC.m; sourceTree = "<group>"; };
+		96E4FC6B1C3D973200C8C485 /* profile-background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "profile-background.jpg"; path = "Graphic Assets/profile-background.jpg"; sourceTree = "<group>"; };
 		96E954E01BDFF99100F5197A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		96E954E11BDFF99100F5197A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "No-Profile_Image.png"; path = "Graphic Assets/No-Profile_Image.png"; sourceTree = "<group>"; };
@@ -456,6 +461,8 @@
 				3621F11E1B8F6E32004537B6 /* MenuTVCell.m */,
 				365F175F1B9105B500015D5D /* ListStripTVCell.h */,
 				365F17601B9105B500015D5D /* ListStripTVCell.m */,
+				9694F0251C3DE85300D6C9AA /* ListStripCVCell.h */,
+				9694F0261C3DE85300D6C9AA /* ListStripCVCell.m */,
 				36587B731B93C7AD00D01EB5 /* ListCVFL.h */,
 				36587B741B93C7AD00D01EB5 /* ListCVFL.m */,
 				36587B791B9423D700D01EB5 /* TileCVCell.h */,
@@ -598,6 +605,7 @@
 				9671433B1C0E2B2D004875FB /* LogoWhite.png */,
 				966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */,
 				3621F1231B900EC7004537B6 /* Logo.png */,
+				96E4FC6B1C3D973200C8C485 /* profile-background.jpg */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
 				96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */,
 				96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */,
@@ -955,6 +963,7 @@
 				962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */,
 				367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */,
 				367704631B8BF05100B594E5 /* OFL.txt in Resources */,
+				96E4FC6C1C3D973200C8C485 /* profile-background.jpg in Resources */,
 				367704641B8BF05100B594E5 /* README.txt in Resources */,
 				964DEA691C1F444C0045BA2C /* background_image.png in Resources */,
 				367704371B88552E00B594E5 /* background-image.jpg in Resources */,
@@ -1125,6 +1134,7 @@
 				36780EA81C3A24AF00B2DE4B /* AddCaptionToMIOVC.m in Sources */,
 				36C572DD1C01477600C57DA2 /* ManageTagsVC.m in Sources */,
 				3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */,
+				9694F0271C3DE85300D6C9AA /* ListStripCVCell.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
 				36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,

@@ -13,13 +13,12 @@
 @class OOTextEntryVC;
 
 @protocol OOTextEntryVCDelegate
-- (void)ooTextEntryVC:(OOTextEntryVC *)textEntryVC textToSubmit:(NSString *)text;
-- (void)textEntryFinished:(OOTextEntryVC *)textEntryVC;
+- (void)textEntryFinished:(NSString *)text;
 @end
 
 @interface OOTextEntryVC :  BaseVC <UITextViewDelegate>
 @property (nonatomic, weak) id<OOTextEntryVCDelegate> delegate;
 @property (nonatomic, strong) NSString *defaultText;
-@property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) NavTitleObject *nto;
+- (NSString*)text;
 @end

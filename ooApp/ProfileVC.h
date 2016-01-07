@@ -10,21 +10,29 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "BaseVC.h"
 #import "UserObject.h"
+#import "OOTextEntryVC.h"
 
 @protocol ProfileTableFirstRowDelegate
 - (void) userTappedOnLists;
 - (void) userTappedOnPhotos;
 @end
 
-@interface ProfileVC : BaseVC <UITableViewDataSource, UITableViewDelegate, ProfileTableFirstRowDelegate>
+@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileTableFirstRowDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
 - (void)goToEmptyListScreen:(NSString *)string;
 @end
 
-@interface ProfileTableFirstRow : UITableViewCell 
+@interface ProfileCVPhotoLayout:UICollectionViewLayout
+@end
+
+@interface ProfileTableFirstRow : UICollectionReusableView  <OOTextEntryVCDelegate>
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
-@property (nonatomic,weak) id<ProfileTableFirstRowDelegate> delegate;
+@property (nonatomic,weak) NSObject<ProfileTableFirstRowDelegate>* delegate;
+@end
+
+@interface ProfileCVPhotoCell : UICollectionViewCell
+- (void)setMediaObject:(MediaItemObject *)mediaObject;
 @end

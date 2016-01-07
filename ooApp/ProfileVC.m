@@ -10,7 +10,7 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "Common.h"
-#import "ListStripTVCell.h"
+#import "ListStripCVCell.h"
 #import "OOAPI.h"
 #import "EmptyListVC.h"
 #import "RestaurantListVC.h"
@@ -39,9 +39,6 @@
 @property (nonatomic, strong) UIView *backgroundImageFade;
 @property (nonatomic,strong) OOFilterView *filterView;
 @end
-
-static NSString * const FirstRowID = @"profileFirstRowCell";
-static NSString * const ListRowID = @"ListRowCell";
 
 @implementation ProfileTableFirstRow
 
@@ -107,7 +104,6 @@ static NSString * const ListRowID = @"ListRowCell";
             }
             NSString*expression=[NSString  stringWithFormat: @"This user probably just needs a second to finish  %@ meal, stay tuned.", pronoun ];
             [_buttonDescription setTitle: expression forState:UIControlStateNormal ];
-
         }
     }
     
@@ -135,16 +131,12 @@ static NSString * const ListRowID = @"ListRowCell";
                    }];
 }
 
-//------------------------------------------------------------------------------
-// Name:    initWithStyle:
-// Purpose:
-//------------------------------------------------------------------------------
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+- (instancetype) initWithFrame:(CGRect)frame
+    {
+        self=[ super initWithFrame:frame];
     if (self) {
         self.autoresizesSubviews= NO;
-        _backgroundImageView=  makeImageView(self, @"background_image.png");
+        _backgroundImageView=  makeImageView(self, @"profile-background.jpg");
         _backgroundImageFade= makeView( self,  UIColorRGBA(0x80000000));
         
         _filterView= [[OOFilterView alloc] init];
@@ -183,7 +175,6 @@ static NSString * const ListRowID = @"ListRowCell";
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         _buttonFollow.enabled=NO;
         
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     return self;
 }
@@ -192,9 +183,23 @@ static NSString * const ListRowID = @"ListRowCell";
 {
     OOTextEntryVC *vc = [[OOTextEntryVC alloc] init];
     vc.defaultText = _userInfo.about;
+    vc.delegate=self;
     [self.vc.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)textEntryFinished:(NSString*)text;
+{
+    __weak ProfileTableFirstRow *weakSelf = self;
+    [OOAPI setAboutInfoFor: _userInfo.userID
+                        to:text
+                   success:^{
+                       [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
+                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                       NSLog  (@"FAILED TO SET ABOUT INFO FOR USER");
+                   }
+     ];
+}
+     
 - (void)userTappedOnListsFilter: (id) sender
 {
     [self.delegate userTappedOnLists];
@@ -202,7 +207,10 @@ static NSString * const ListRowID = @"ListRowCell";
 
 - (void)userTappedOnPhotosFilter: (id) sender
 {
-    [self.delegate userTappedOnPhotos];
+    [self.delegate  performSelector:@selector(userTappedOnPhotos)
+                         withObject:nil
+                         afterDelay:.1
+                      ];
 }
 
 - (void) verifyUnfollow
@@ -318,25 +326,187 @@ static NSString * const ListRowID = @"ListRowCell";
     _filterView.frame = CGRectMake(0, h-kGeomHeightFilters, w, kGeomHeightFilters);
 }
 
-- (void)prepareForReuse
-{
-    [super prepareForReuse];
-}
+//- (void)prepareForReuse
+//{
+//    [super prepareForReuse];
+//}
 
 @end
 
 //==============================================================================
 @interface ProfileVC ()
 
-@property (nonatomic, strong) UITableView *table;
-@property (nonatomic, strong) NSArray *lists;
+@property (nonatomic, strong) UICollectionView *cv;
+@property (nonatomic, strong) UICollectionViewLayout *listLayout;
+@property (nonatomic, strong) ProfileCVPhotoLayout *photoLayout;
+
+@property (nonatomic,assign) BOOL viewingLists; // false => viewing photos
+@property (nonatomic, strong) NSArray *arrayLists;
+@property (nonatomic,strong) NSMutableArray *arrayPhotos;
+
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UIAlertController *optionsAC;
+@property (nonatomic,strong) ProfileTableFirstRow* topView;
+
 @end
 
 @implementation ProfileVC
+
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    
+    static BOOL didFetch=NO;
+    if (!didFetch) {
+        didFetch=YES;
+        [self  updateRestaurantLists:nil ];
+    }
+}
+
+- (void)done:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewDidLoad
+{
+    ENTRY;
+    [super viewDidLoad];
+    
+    _userID = 0;
+    _viewingLists= YES;
+    
+    _arrayLists = @[];
+    _arrayPhotos= @[].mutableCopy;
+    
+    self.automaticallyAdjustsScrollViewInsets= NO;
+    self.view.autoresizesSubviews= NO;
+    
+    [self registerForNotification: kNotificationRestaurantListsNeedsUpdate
+                          calling:@selector(updateRestaurantLists:)
+     ];
+    // NOTE:  Unregistered in dealloc.
+    
+    // Ascertain whether reviewing our own profile based on passed-in UserObject pointer.
+    //
+    if (!_userInfo) {
+        _viewingOwnProfile=YES;
+        UserObject *userInfo = [Settings sharedInstance].userObject;
+        self.profileOwner = userInfo;
+    } else {
+        self.profileOwner = _userInfo;
+        
+        UserObject *currentUser = [Settings sharedInstance].userObject;
+        NSUInteger ownUserIdentifier = [currentUser userID];
+        _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
+    }
+    
+    if ( _viewingOwnProfile) {
+        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions)];
+
+        _buttonNewList = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
+        _buttonNewList.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+
+        [self.view addSubview:_buttonNewList];
+    } else {
+        [self setRightNavWithIcon:@"" target:nil action:nil];
+    }
+    
+    NSUInteger totalControllers= self.navigationController.viewControllers.count;
+    if (totalControllers > 1) {
+        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    }
+    
+    self.photoLayout= [[ProfileCVPhotoLayout alloc] init];
+    
+    CGSize size= CGSizeMake([ UIScreen mainScreen ].bounds.size.width-2, 111);
+    UICollectionViewFlowLayout *cvLayout= [[UICollectionViewFlowLayout alloc] init];
+    cvLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    cvLayout.itemSize = size;
+    cvLayout.minimumInteritemSpacing = 5;
+    cvLayout.minimumLineSpacing = 3;
+    cvLayout.sectionHeadersPinToVisibleBounds= NO;
+    self.listLayout= cvLayout;
+    
+    _cv = makeCollectionView(self.view, self, cvLayout);
+#define PROFILE_CV_PHOTO_CELL  @"profilephotocell"
+#define PROFILE_CV_LIST_CELL  @"profilelistCell"
+#define PROFILE_CV_HEADER_CELL  @"profileHeaderCell"
+    
+    // NOTE: When _viewingLists==YES, use ProfileCVListRow else use ProfileCVPhotoCell.
+    [_cv registerClass:[ProfileCVPhotoCell class] forCellWithReuseIdentifier: PROFILE_CV_PHOTO_CELL];
+    [_cv registerClass:[ListStripCVCell class] forCellWithReuseIdentifier: PROFILE_CV_LIST_CELL];
+    
+    [_cv registerClass:[ProfileTableFirstRow class ] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+                    withReuseIdentifier:PROFILE_CV_HEADER_CELL];
+    
+    NSString *string= _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username)
+    :  @"Missing username";
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: string
+                                                       subHeader:nil];
+    [self setNavTitle:nto];
+    
+    __weak ProfileVC *weakSelf = self;
+    if  (!_profileOwner.mediaItem) {
+        [_profileOwner refreshWithSuccess:^{
+//            [weakSelf.cv reloadRowsAtIndexPaths:@[ [NSIndexPath  indexPathForRow:0 inSection:0]]
+//                                  withRowAnimation:UITableViewRowAnimationNone
+//             ];
+        } failure:^{
+            NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
+        }
+         ];
+    }
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    
+    self.cv.frame = self.view.bounds;
+    
+    CGFloat x, y, spacer;
+    if (_viewingOwnProfile) {
+        x = kGeomSpaceEdge;
+        _buttonNewList.frame = CGRectMake(width(self.view) - (width(_buttonNewList) + 30), height(self.view) - (height(_buttonNewList) + 30), width(_buttonNewList), height(_buttonNewList));
+        y += kGeomHeightButton + spacer;
+        [ self.view  bringSubviewToFront:_buttonNewList];
+    }
+}
+
+- (void)updateRestaurantLists: (NSNotification*)not
+{
+    __weak  ProfileVC *weakSelf = self;
+    OOAPI *api = [[OOAPI alloc] init];
+    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
+                success:^(NSArray *foundLists) {
+                    NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
+                    weakSelf.arrayLists = foundLists;
+                    ON_MAIN_THREAD(^(){
+                        [weakSelf.cv reloadData];
+                    });
+                }
+                failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                    NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
+                }];
+}
 
 //------------------------------------------------------------------------------
 // Name:    userPressedNewList
@@ -388,148 +558,119 @@ static NSString * const ListRowID = @"ListRowCell";
 
 - (void)userTappedOnLists
 {
-    static unsigned n=0;
-    if ((n=!n))
-        message( @"really");
-    else
-        message( @"seriously");
+    __weak  ProfileVC *weakSelf = self;
+    _viewingLists= YES;
+    [_cv setCollectionViewLayout: _listLayout animated:YES completion:^(BOOL finished) {
+        [weakSelf.cv  reloadData];
+    }];
 }
 
 - (void)userTappedOnPhotos
 {
-    static unsigned n=0;
-    if ((n=1-n))
-        message( @"hey");
-    else
-        message( @"that tickles");
+    message( @"not yet");
+    return;
+    
+        __weak  ProfileVC *weakSelf = self;
+    _viewingLists= NO;
+
+    [_cv startInteractiveTransitionToCollectionViewLayout:_photoLayout
+                                               completion:^(BOOL completed, BOOL finished) {
+                                                   NSLog (@" completed=  %lu", ( unsigned long) completed);
+                                                   NSLog (@" finished=  %lu", ( unsigned long) finished);
+                                                           [weakSelf.cv  reloadData];
+
+                                               }];
+    [_cv finishInteractiveTransition];
+    
 }
 
-//------------------------------------------------------------------------------
-// Name:    viewWillAppear
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillAppear:(BOOL)animated
+#pragma mark - Collection View stuff
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView;
 {
-    [super viewWillAppear:animated];
-    
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
-    
-    static BOOL didFetch=NO;
-    if (!didFetch) {
-        didFetch=YES;
-        [self  updateRestaurantLists:nil ];
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    if  (_viewingLists ) {
+        return self.arrayLists.count;
+    } else {
+        return self.arrayPhotos.count;
     }
 }
 
-- (void)updateRestaurantLists: (NSNotification*)not
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
-    OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
-                success:^(NSArray *foundLists) {
-                    NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
-                    _lists = foundLists;
-                    [self.table reloadData];
-                }
-                failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                    NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
-                }];
+    return  CGSizeMake([UIScreen mainScreen].bounds.size.width , kGeomProfileTableFirstRowHeight);;
 }
 
-- (void)done:(id)sender
+- (UICollectionReusableView*) collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewDidLoad
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewDidLoad
-{
-    ENTRY;
-    [super viewDidLoad];
     
-    _userID = 0;
-
-    self.automaticallyAdjustsScrollViewInsets= NO;
-    self.view.autoresizesSubviews= NO;
+     ProfileTableFirstRow *view = nil;
     
-    [self registerForNotification: kNotificationRestaurantListsNeedsUpdate calling:@selector(updateRestaurantLists:) ];
-    // NOTE:  Unregistered in dealloc.
-    
-    // Ascertain whether reviewing our own profile based on passed-in UserObject pointer.
-    //
-    if (!_userInfo) {
-        _viewingOwnProfile=YES;
-        UserObject *userInfo = [Settings sharedInstance].userObject;
-        self.profileOwner = userInfo;
-    } else {
-        self.profileOwner = _userInfo;
+    if([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         
-        UserObject *currentUser = [Settings sharedInstance].userObject;
-        NSUInteger ownUserIdentifier = [currentUser userID];
-        _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
+        view= [collectionView dequeueReusableSupplementaryViewOfKind: kind
+                                                 withReuseIdentifier:PROFILE_CV_HEADER_CELL
+                                                        forIndexPath:indexPath];
+        
+        [ view setUserInfo: _profileOwner];
+        view.vc = self;
+        view.delegate=self;
+        
     }
-    
-    if ( _viewingOwnProfile) {
-        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions)];
+    return view;
+}
 
-        _buttonNewList = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
-        _buttonNewList.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-
-        [self.view addSubview:_buttonNewList];
-    } else {
-        [self setRightNavWithIcon:@"" target:nil action:nil];
-    }
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger row= indexPath.row;
+    NSLog (@"row= %ld", (long)row);
     
-    NSUInteger totalControllers= self.navigationController.viewControllers.count;
-    if (totalControllers > 1) {
-        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-    }
-    
-    _lists = @[];
-    
-    self.table =  makeTable( self.view,  self);
-    self.table.backgroundColor=[UIColor clearColor];
-    self.table.separatorStyle= UITableViewCellSeparatorStyleNone;
-    [_table registerClass:[ProfileTableFirstRow class] forCellReuseIdentifier:FirstRowID];
-    [_table registerClass:[ListStripTVCell class] forCellReuseIdentifier:ListRowID];
-    
-    NSString *string= _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username)
-                                            :  @"Missing username";
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: string
-                                                       subHeader:nil];
-    [self setNavTitle:nto];
-    
-    __weak ProfileVC *weakSelf = self;
-    if  (!_profileOwner.mediaItem) {
-        [_profileOwner refreshWithSuccess:^{
-            [weakSelf.table reloadRowsAtIndexPaths:@[ [NSIndexPath  indexPathForRow:0 inSection:0]]
-                                  withRowAnimation:UITableViewRowAnimationNone
-             ];
-        } failure:^{
-            NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
+    if  (_viewingLists ) {
+        NSUInteger  total= self.arrayLists.count;
+        if  (row>= total ) {
+            return nil;
         }
-         ];
+        
+        ListStripCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:  PROFILE_CV_LIST_CELL
+                                                                           forIndexPath:indexPath ] ;
+        
+        NSArray *a = self.arrayLists;
+        ListObject *listItem = a[row];
+        listItem.listDisplayType = KListDisplayTypeStrip;
+        
+        cell.listItem = listItem;
+        cell.navigationController = self.navigationController;
+    
+        return cell;
+    }
+    else {
+        NSUInteger  total= self.arrayPhotos.count;
+        if  (row>= total ) {
+            return nil;
+        }
+        
+        ProfileCVPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:  PROFILE_CV_PHOTO_CELL
+                                                                             forIndexPath:indexPath ] ;
+        NSArray *a = self.arrayPhotos;
+        MediaItemObject *object = a[row];
+        cell.mediaObject =  object;
+        
+        return cell;
     }
 }
 
-//------------------------------------------------------------------------------
-// Name:    viewWillLayoutSubviews
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillLayoutSubviews
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    [super viewWillLayoutSubviews];
-    
-    self.table.frame = self.view.bounds;
-    
-    CGFloat x, y, spacer;
-    if (_viewingOwnProfile) {
-        x = kGeomSpaceEdge;
-        _buttonNewList.frame = CGRectMake(width(self.view) - (width(_buttonNewList) + 30), height(self.view) - (height(_buttonNewList) + 30), width(_buttonNewList), height(_buttonNewList));
-        y += kGeomHeightButton + spacer;
+    NSInteger row= indexPath.row;
+    if  (_viewingLists ) {
+    }
+    else {
+        
     }
 }
 
@@ -550,7 +691,7 @@ static NSString * const ListRowID = @"ListRowCell";
 //------------------------------------------------------------------------------
 - (NSUInteger)getNumberOfLists
 {
-    return self.lists.count;
+    return self.arrayLists.count;
 }
 
 //------------------------------------------------------------------------------
@@ -559,7 +700,7 @@ static NSString * const ListRowID = @"ListRowCell";
 //------------------------------------------------------------------------------
 - (NSString *)getNameOfList:(NSInteger)which
 {
-    NSArray *a= self.lists;
+    NSArray *a= self.arrayLists;
     if  (which < 0 ||  which >= a.count) {
         return  @"";
     }
@@ -570,72 +711,72 @@ static NSString * const ListRowID = @"ListRowCell";
 // Name:    heightForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger row = indexPath.row;
-    
-    if (!row) {
-        return kGeomProfileTableFirstRowHeight;
-    }
-    return kGeomHeightStripListRow;
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
-{
-    return 1;
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    NSInteger row = indexPath.row;
+//    
+//    if (!row) {
+//        return kGeomProfileTableFirstRowHeight;
+//    }
+//    return kGeomHeightStripListRow;
+//}
+//
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
+//{
+//    return 1;
+//}
 
 //------------------------------------------------------------------------------
 // Name:    numberOfRowsInSection
 // Purpose:
 //------------------------------------------------------------------------------
-- ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 1 + [self getNumberOfLists];
-}
+//- ( NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+//{
+//    return 1 + [self getNumberOfLists];
+//}
 
 //------------------------------------------------------------------------------
 // Name:    cellForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger row = indexPath.row;
-    
-    if  (!row) {
-        ProfileTableFirstRow* headerCell= [tableView dequeueReusableCellWithIdentifier:FirstRowID forIndexPath:indexPath];
-        [ headerCell setUserInfo: _profileOwner];
-        headerCell.vc = self;
-        headerCell.delegate=self;
-        return headerCell;
-    }
-    
-    ListStripTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
-    
-    NSArray *a = self.lists;
-    ListObject *listItem = a[indexPath.row-1];
-    listItem.listDisplayType = KListDisplayTypeStrip;
-    
-    cell.listItem = listItem;
-    cell.navigationController = self.navigationController;
-    //    [DebugUtilities addBorderToViews:@[cell]];
-    return cell;
-}
+//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    NSInteger row = indexPath.row;
+//    
+//    if  (!row) {
+//        ProfileTableFirstRow* headerCell= [tableView dequeueReusableCellWithIdentifier:FirstRowID forIndexPath:indexPath];
+//        [ headerCell setUserInfo: _profileOwner];
+//        headerCell.vc = self;
+//        headerCell.delegate=self;
+//        return headerCell;
+//    }
+//    
+//    ListStripTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
+//    
+//    NSArray *a = self.arrayLists;
+//    ListObject *listItem = a[indexPath.row-1];
+//    listItem.listDisplayType = KListDisplayTypeStrip;
+//    
+//    cell.listItem = listItem;
+//    cell.navigationController = self.navigationController;
+//    //    [DebugUtilities addBorderToViews:@[cell]];
+//    return cell;
+//}
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger row = indexPath.row;
-    if (!row) {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        return;
-    }
-    ListObject *item = [_lists objectAtIndex:(indexPath.row - 1)];
-    
-    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
-    vc.title = item.name;
-    vc.listItem = item;
-}
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    NSInteger row = indexPath.row;
+//    if (!row) {
+//        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+//        return;
+//    }
+//    ListObject *item = [_arrayLists objectAtIndex:(indexPath.row - 1)];
+//    
+//    RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+//    [self.navigationController pushViewController:vc animated:YES];
+//    vc.title = item.name;
+//    vc.listItem = item;
+//}
 
 - (void)showOptions {
     _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
@@ -667,3 +808,64 @@ static NSString * const ListRowID = @"ListRowCell";
 }
 
 @end
+
+@interface  ProfileCVPhotoCell()
+@property (nonatomic,strong)  UIImageView* imageView;
+@property (nonatomic,strong)  MediaItemObject* mediaObject;
+@end
+
+@implementation ProfileCVPhotoCell
+
+- (instancetype) initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        _imageView= makeImageView(self.contentView, nil);
+        
+    }
+    return self;
+}
+
+- (void)setMediaObject:(MediaItemObject *)mediaObject
+{
+    if  (!mediaObject || mediaObject ==_mediaObject) {
+        return;
+    }
+    _mediaObject= mediaObject;
+    NSString*string= _mediaObject.url;
+    if (!string) {
+        return;
+    }
+    NSURL *url= [ NSURL URLWithString: string];
+    if  (!url) {
+        return;
+    }
+    [_imageView setImageWithURL: url];
+}
+
+@end
+
+@implementation ProfileCVPhotoLayout
+
+- (void)prepareLayout;
+{
+    NSLog  (@"");
+}
+
+- (nullable UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath;
+{
+    return nil;
+}
+
+- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+    
+    attributes.frame = CGRectMake(0, 0, 100,75);
+    
+    return attributes;
+}
+
+@end
+
+

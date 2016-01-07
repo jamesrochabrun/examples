@@ -2498,6 +2498,23 @@ NSString *const kKeyDeviceToken = @"device_token";
                                                 failure:failure];
 }
 
++ (AFHTTPRequestOperation *)setAboutInfoFor:(NSUInteger)userID
+                                         to:(NSString*)text
+                                    success:(void (^)( void))success
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    NSString *requestString =[NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
+
+    return [[OONetworkManager sharedRequestManager] PUT:requestString
+                                             parameters: @{
+                                                           @"about": text ?:  @""
+                                                          }
+                                                success:^(id  response)  {
+                                                    success ();
+                                                }
+                                                failure:failure];
+}
+
 //------------------------------------------------------------------------------
 // Name:    getUserStatsFor
 // Purpose: Fetches basic stats about a user.

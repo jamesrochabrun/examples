@@ -64,7 +64,7 @@
         column = 0;
         
         if (section == kRestaurantSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = kRestaurantNumColumnsForMediaItems;
             itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
             xOffset = kGeomSpaceEdge;
@@ -73,7 +73,7 @@
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
         } else if (section == kRestaurantSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
             UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
@@ -151,7 +151,7 @@
             yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
         }
 
-        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, numberOfColumnsInRow);
+        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld",(long) section,(long) [self.collectionView numberOfItemsInSection:section], yOffset, (long)numberOfColumnsInRow);
     }
     
     // Get the last item to calculate the total height of the content

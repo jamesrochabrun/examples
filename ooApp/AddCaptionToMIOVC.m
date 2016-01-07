@@ -27,9 +27,12 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)post {
-    [OOAPI setMediaItemCaption:_mio.mediaItemId caption:self.textView.text success:^{
-        [self.delegate textEntryFinished:self];
+- (void)post: (UIButton*)sender
+{
+    [OOAPI setMediaItemCaption:_mio.mediaItemId
+                       caption: [self text]
+                       success:^{
+        [self.delegate textEntryFinished: [self text]];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];

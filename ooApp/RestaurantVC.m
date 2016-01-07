@@ -810,7 +810,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }];
 }
 
-- (void)textEntryFinished:(OOTextEntryVC *)textEntryVC {
+- (void)textEntryFinished:(NSString *)text {
     [self dismissViewControllerAnimated:YES completion:^{
         ;
     }];

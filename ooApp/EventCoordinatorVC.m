@@ -565,7 +565,6 @@
 @property (nonatomic,strong) OOStripHeader *nameHeader;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
 @property (nonatomic,strong) UICollectionView *venuesCollectionView;
-@property (nonatomic,strong) UICollectionViewFlowLayout *cvLayout;
 
 @end
 
@@ -578,26 +577,14 @@
         self.autoresizesSubviews= NO;
         self.backgroundColor= UIColorRGBA( kColorCoordinatorBoxBackground);
         
-        self.cvLayout= [[UICollectionViewFlowLayout alloc] init];
-        self.cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        _cvLayout.itemSize = CGSizeMake(kGeomEventCoordinatorBoxHeight*1.3, kGeomEventCoordinatorBoxHeight);
-        _cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        _cvLayout.minimumInteritemSpacing = 5;
-        _cvLayout.minimumLineSpacing = 3;
-        
-        self.venuesCollectionView = [[UICollectionView alloc] initWithFrame: CGRectZero collectionViewLayout: _cvLayout];
-        _venuesCollectionView.delegate = self;
-        _venuesCollectionView.dataSource = self;
-        _venuesCollectionView.showsHorizontalScrollIndicator = NO;
-        _venuesCollectionView.showsVerticalScrollIndicator = NO;
-        _venuesCollectionView.alwaysBounceHorizontal = YES;
-        _venuesCollectionView.allowsSelection = YES;
-        _venuesCollectionView.backgroundColor= CLEAR;
+        self.venuesCollectionView= makeHorizontalCollectionView( self,  self,
+                                                                CGSizeMake(kGeomEventCoordinatorBoxHeight*1.3, kGeomEventCoordinatorBoxHeight));
+
 #define CV_CELL_REUSE_IDENTIFER @"E3_CV"
 #define CV_CELL_REUSE_IDENTIFERP @"E3_CV_plus"
         [_venuesCollectionView registerClass:[TileCVCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFER];
         [_venuesCollectionView registerClass:[PlusCell class] forCellWithReuseIdentifier: CV_CELL_REUSE_IDENTIFERP];
-        [self addSubview: _venuesCollectionView];
+
     }
     return self;
 }

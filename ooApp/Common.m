@@ -262,6 +262,42 @@ UIView* makeView (UIView *parent, UIColor* backgroundColor)
     return v;
 }
 
+UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionViewFlowLayout* layout)
+{
+    UICollectionView *cv = [[UICollectionView alloc] initWithFrame: CGRectZero collectionViewLayout: layout];
+    cv.delegate = delegate;
+    cv.dataSource = delegate;
+    cv.showsHorizontalScrollIndicator = NO;
+    cv.showsVerticalScrollIndicator = NO;
+    cv.alwaysBounceHorizontal = NO;
+    cv.allowsSelection = YES;
+    cv.backgroundColor= CLEAR;
+    [parent addSubview: cv];
+    return cv;
+}
+
+UICollectionView* makeHorizontalCollectionView (UIView *parent,id  delegate, CGSize itemSize)
+{
+    UICollectionViewFlowLayout *cvLayout= [[UICollectionViewFlowLayout alloc] init];
+    cvLayout.itemSize = itemSize;
+    cvLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    cvLayout.minimumInteritemSpacing = 5;
+    cvLayout.minimumLineSpacing = 3;
+    return makeCollectionView(parent,delegate,cvLayout);
+}
+
+UICollectionView* makeVerticalCollectionView (UIView *parent,id  delegate, CGSize itemSize)
+{
+    UICollectionViewFlowLayout *cvLayout= [[UICollectionViewFlowLayout alloc] init];
+    cvLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    cvLayout.itemSize = itemSize;
+    cvLayout.minimumInteritemSpacing = 5;
+    cvLayout.minimumLineSpacing = 3;
+    cvLayout.sectionHeadersPinToVisibleBounds= YES;
+
+    return makeCollectionView(parent,delegate,cvLayout);
+}
+
 UITableView* makeTable (UIView *parent,id  delegate)
 {
     UITableView* tv= [ [ UITableView alloc ]init ];
