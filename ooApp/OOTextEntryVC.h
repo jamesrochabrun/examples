@@ -19,6 +19,7 @@
 @interface OOTextEntryVC : SubBaseVC <UITextViewDelegate>
 @property (nonatomic, weak) id<OOTextEntryVCDelegate> delegate;
 @property (nonatomic, strong) NSString *defaultText;
+@property (nonatomic, assign) NSUInteger textLengthLimit;
 @property (nonatomic, strong) NavTitleObject *nto;
 - (NSString*)text;
 @end

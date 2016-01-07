@@ -183,6 +183,7 @@
 {
     OOTextEntryVC *vc = [[OOTextEntryVC alloc] init];
     vc.defaultText = _userInfo.about;
+    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
     vc.delegate=self;
     [self.vc.navigationController pushViewController:vc animated:YES];
 }

@@ -68,7 +68,6 @@ static NSUInteger kGeomFontSizeStripHeader = 13;
 static NSUInteger kGeomFontSizeBannerMain = 12;
 static NSUInteger kGeomFontSizeDetail = 11;
 static NSInteger kGeomPeopleIconFontSize = 30;
-static NSInteger kGeomEventHeadingFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomIconSize = 30;
 static CGFloat kGeomIconSizeSmall = 27;
@@ -109,9 +108,15 @@ static CGFloat kGeomCancelButtonInteriorPadding = 3.5;
 static CGFloat kGeomHeightFilterSelectedLine = 3.0;
 static CGFloat kGeomHeightSearchBar = 55;
 
+static CGFloat kGeomHeightEventCellHeight = 160.0;
+static NSInteger kGeomEventHeadingFontSize = 30;
+
 static CGFloat kGeomEventCoordinatorBoxHeight = 130;
 static CGFloat kGeomEventCoordinatorPieDiameter = 33;
 static CGFloat kGeomEventCoordinatorBoxHeightTopmost = 230;
+
+static CGFloat kGeomHeightEventWhoTableCellHeight = 100;
+static CGFloat kGeomHeightEventWhoTableCellImageHeight = 84;
 
 static CGFloat kGeomEventParticipantFirstBoxHeight = 170;
 static CGFloat kGeomEventParticipantButtonHeight =  33;
@@ -120,12 +125,11 @@ static CGFloat kGeomEventParticipantSeparatorHeight = 6;
 
 static CGFloat kGeomVotingResultsBoxHeight = 175;
 static CGFloat kGeomVotingResultsRestaurantHeight = 92;
-static CGFloat kGeomHeightEventCellHeight = 160.0;
+
 static CGFloat kGeomFaceBubbleDiameter = 26;
 static CGFloat kGeomFaceBubbleSpacing = 5;
+
 static CGFloat kGeomStripHeaderHeight = 27;
-static CGFloat kGeomHeightEventWhoTableCellHeight = 100;
-static CGFloat kGeomHeightEventWhoTableCellImageHeight = 84;
 static CGFloat kGeomSideBarRevealWidth = 235;
 static CGFloat kGeomHeightCreateListButton = 23;
 static CGFloat kGeomVerticalSpaceCreateList = 31;
@@ -133,7 +137,9 @@ static CGFloat kGeomHeightDropDownListRow = 40;
 static CGFloat kNumDropDownListRows = 5;
 static CGFloat kGeomHeightFeedWithImageTableCellHeight= 180;
 static CGFloat kGeomHeightFeedWithoutImageTableCellHeight=  60;
+
 static CGFloat kGeomCreateUsernameCentralIconSize= 180;
+
 static CGFloat kGeomConnectScreenHeaderHeight= 33;
 static CGFloat kGeomConnectScreenUserImageHeight= 82;
 
