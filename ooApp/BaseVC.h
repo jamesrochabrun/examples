@@ -13,9 +13,6 @@
 #import "NavTitleView.h"
 
 @interface BaseVC : UIViewController <SWRevealViewControllerDelegate, DropDownListTVCDelegate>
-
-@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
-
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *leftNavButton;
 @property (nonatomic, strong) NavTitleObject *navTitle;
 @property (nonatomic, strong) DropDownListTVC *dropDownList;

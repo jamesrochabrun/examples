@@ -219,26 +219,6 @@ static NSString * const ListRowID = @"HLRCell";
     [self getRestaurants];
 }
 
-//- (void)selectNow {
-//    _openOnly = YES;
-//    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//        OOMapMarker *mm = (OOMapMarker *)obj;
-//        mm.map = nil;
-//    }];
-//    [_mapMarkers removeAllObjects];
-//    [self getRestaurants];
-//}
-
-//- (void)selectLater {
-//    _openOnly = NO;
-//    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//        OOMapMarker *mm = (OOMapMarker *)obj;
-//        mm.map = nil;
-//    }];
-//    [_mapMarkers removeAllObjects];
-//    [self getRestaurants];
-//}
-
 - (void)updateViewConstraints {
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};

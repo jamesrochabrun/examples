@@ -32,6 +32,7 @@
 @property (nonatomic, strong) UIImageView *gradientImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UIImageView *imageViewLogo;
+@property (nonatomic, strong) UILabel *logoLabel;
 @property (nonatomic,strong)  UILabel* labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
@@ -69,7 +70,7 @@
     _imageViewLogo = [[UIImageView alloc] init];
     _imageViewLogo.contentMode = UIViewContentModeScaleAspectFit;
     _imageViewLogo.backgroundColor = UIColorRGBA(kColorClear);
-     UIImage*image= [UIImage imageNamed:@"Oomami_Logo_Spork(Nov24) (1) w.png"];
+     UIImage *image= [UIImage imageNamed:@"Oomami_Logo_Spork(Nov24) (1) w.png"];
     _imageViewLogo.image = image;
     
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];

@@ -23,6 +23,9 @@
 @property (nonatomic, strong) UIButton *displayDropDownButton;
 @property (nonatomic, strong) UIView *mainCoverView;
 @property (nonatomic, strong) UITapGestureRecognizer *tap;
+@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
+@property (nonatomic, strong) UIButton *rightBarButtonView;
+@property (nonatomic, strong) UIButton *leftBarButtonView;
 @end
 
 @implementation BaseVC
@@ -32,27 +35,30 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+    _rightBarButtonView.frame = CGRectMake(0, 0, 40, 40);
+    [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
+    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    _rightBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
 
-    _leftNavButton = [[UIBarButtonItem alloc] init];
-    self.navigationItem.leftBarButtonItem = _leftNavButton;
-
-    _rightNavButton = [[UIBarButtonItem alloc] init];
+    _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
     self.navigationItem.rightBarButtonItem = _rightNavButton;
-    [self.rightNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                 [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName, UIColorRGB(kColorYellow), NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     
     SWRevealViewController *revealViewController = self.revealViewController;
     revealViewController.delegate = self;
 
     if (revealViewController) {
         revealViewController.rearViewRevealWidth = kGeomSideBarRevealWidth;
-        [self.leftNavButton setTitle:kFontIconMenu];
-        [self.leftNavButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                           [UIFont fontWithName:kFontIcons size:kGeomIconSize], NSFontAttributeName,
-                                           UIColorRGB(kColorYellow), NSForegroundColorAttributeName,
-                                           nil] forState:UIControlStateNormal];
-        [self.leftNavButton setTarget:self.revealViewController];
-        [self.leftNavButton setAction:@selector(revealToggle:)];
+        _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+        _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
+        [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
+        [_leftBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+        [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
+        _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
+        self.navigationItem.leftBarButtonItem = _leftNavButton;
+        
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
     
@@ -88,6 +94,8 @@
     
     [self.navigationController.view addSubview:_dropDownList.view];
     [self.navigationController.view bringSubviewToFront:self.navigationController.navigationBar];
+    
+//    [DebugUtilities addBorderToViews:@[_leftBarButtonView, _rightBarButtonView, _navTitleView]];
 }
 
 - (void)toggleDropDown {
@@ -99,15 +107,14 @@
 }
 
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-    [self.leftNavButton setTitle:icon];
-    [self.leftNavButton setTarget:target];
-    [self.leftNavButton setAction:selector];
+    [self.leftBarButtonView setTitle:icon forState:UIControlStateNormal];
+    [self.leftBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+
 }
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-    [self.rightNavButton setTitle:icon];
-    [self.rightNavButton setTarget:target];
-    [self.rightNavButton setAction:selector];
+    [self.rightBarButtonView setTitle:icon forState:UIControlStateNormal];
+    [self.rightBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
 
 -(void)displayDropDown:(BOOL)showIt {
