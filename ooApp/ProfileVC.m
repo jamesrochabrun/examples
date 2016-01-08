@@ -199,6 +199,10 @@
     [OOAPI setAboutInfoFor:_userInfo.userID
                         to:text
                    success:^{
+                       self.userInfo.about = text;
+                       [Settings sharedInstance].userObject.about = text;
+                       [[Settings sharedInstance] save]; 
+                       
                        [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog(@"FAILED TO SET ABOUT INFO FOR USER");
