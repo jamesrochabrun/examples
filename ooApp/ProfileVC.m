@@ -158,9 +158,10 @@
         _labelFollowersCount.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         _labelFolloweesCount.font = _labelFollowersCount.font;
         
-        _buttonDescription =  makeButton(self,  @"", 1, WHITE,
-                                         UIColorRGBA(0x80000000),  self,
-                                         @selector(userTappedDescription:) , 0);
+        _buttonDescription=  makeButton(self,  @"", 1, WHITE,
+                                        UIColorRGBA(0x80000000),  self,
+                                        @selector(userTappedDescription:) , 0);
+        _buttonDescription.titleLabel.numberOfLines= 0;
         _buttonDescription.titleLabel.font = [ UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
         
         _labelFollowees.textColor = WHITE;
@@ -346,7 +347,7 @@
 @property (nonatomic, strong) UIButton *buttonNewList;
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @property (nonatomic,strong) ProfileHeaderView* topView;
-
+@property (nonatomic,assign) BOOL didFetch;
 @end
 
 @implementation ProfileVC
@@ -361,11 +362,18 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
-    static BOOL didFetch=NO;
-    if (!didFetch) {
-        didFetch=YES;
-        [self  updateRestaurantLists:nil ];
+    if (!_didFetch) {
+        _didFetch=YES;
+        [self  update:nil ];
     }
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    _didFetch=NO;
+
+    [super viewDidDisappear: animated];
+    
 }
 
 - (void)done:(id)sender
@@ -392,7 +400,7 @@
     self.view.autoresizesSubviews= NO;
     
     [self registerForNotification: kNotificationRestaurantListsNeedsUpdate
-                          calling:@selector(updateRestaurantLists:)
+                          calling:@selector(update:)
      ];
     // NOTE:  Unregistered in dealloc.
     
@@ -460,13 +468,6 @@
          ];
     }
     
-    float w=  [UIScreen mainScreen ].bounds.size.width;
-    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
-                   success:^(NSArray *mediaObjects) {
-                       weakSelf.arrayPhotos= mediaObjects;
-                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                       NSLog  (@"FAILED TO GET PHOTOS");
-                   }];
 }
 
 //------------------------------------------------------------------------------
@@ -488,7 +489,7 @@
     }
 }
 
-- (void)updateRestaurantLists: (NSNotification*)not
+- (void)update: (NSNotification*)not
 {
     __weak  ProfileVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
@@ -504,6 +505,15 @@
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
                 }];
+    
+    
+    float w=  [UIScreen mainScreen ].bounds.size.width;
+    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
+                   success:^(NSArray *mediaObjects) {
+                       weakSelf.arrayPhotos= mediaObjects;
+                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                       NSLog  (@"FAILED TO GET PHOTOS");
+                   }];
 }
 
 //------------------------------------------------------------------------------

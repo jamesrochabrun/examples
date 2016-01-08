@@ -50,7 +50,7 @@
     
     _imageView.layer.cornerRadius = width(_imageView)/2;
     _imageView.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
-    _imageView.layer.borderWidth = 1;
+    _imageView.layer.borderWidth = 0;
 
 }
 
