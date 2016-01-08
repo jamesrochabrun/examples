@@ -27,7 +27,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)post: (UIButton*)sender
+- (void)post:(UIButton *)sender
 {
     [OOAPI setMediaItemCaption:_mio.mediaItemId
                        caption: [self text]

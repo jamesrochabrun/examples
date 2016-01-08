@@ -34,7 +34,7 @@ NSString *const kKeyMediaItemCaption = @"caption";
     mio.height = [dict[kKeyMediaItemHeight] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemHeight] floatValue];
     mio.width = [dict[kKeyMediaItemWidth] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemWidth] floatValue]; 
     mio.url = [[dict objectForKey:kKeyMediaItemURL] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyMediaItemURL];
-    mio.caption = [[dict objectForKey:kKeyMediaItemCaption] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyMediaItemCaption];
+    mio.caption = [[dict objectForKey:kKeyMediaItemCaption] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyMediaItemCaption];
     mio.sourceUserID = [dict[kKeyMediaItemSourceUserID] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemSourceUserID] unsignedIntegerValue];
     return mio;
 }

@@ -436,7 +436,7 @@ static NSString * const ListRowID = @"HLRCell";
                 [searchTerms addObject:t.term];
             }];
         } else {
-            searchTerms = (_nearby) ? [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]] : [NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]];
+            searchTerms = [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]];
             NSLog(@"category: %@", searchTerms);
         }
         _defaultListObject.name = [self getFilteredListName];
