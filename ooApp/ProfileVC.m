@@ -159,9 +159,10 @@
         _labelFollowersCount.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         _labelFolloweesCount.font = _labelFollowersCount.font;
         
-        _buttonDescription=  makeButton(self,  @"", 1, WHITE,
+        _buttonDescription = makeButton(self,  @"", 1, WHITE,
                                         UIColorRGBA(0x80000000),  self,
                                         @selector(userTappedDescription:) , 0);
+        _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
         _buttonDescription.titleLabel.font = [ UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
         
@@ -195,12 +196,12 @@
 - (void)textEntryFinished:(NSString*)text;
 {
     __weak ProfileHeaderView *weakSelf = self;
-    [OOAPI setAboutInfoFor: _userInfo.userID
+    [OOAPI setAboutInfoFor:_userInfo.userID
                         to:text
                    success:^{
                        [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                       NSLog  (@"FAILED TO SET ABOUT INFO FOR USER");
+                       NSLog(@"FAILED TO SET ABOUT INFO FOR USER");
                    }
      ];
 }
@@ -325,7 +326,7 @@
     _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y,kGeomButtonWidth,  kGeomProfileFollowButtonHeight);
     y += kGeomProfileFollowButtonHeight + kGeomSpaceInter;
     
-    _buttonDescription.frame = CGRectMake(kGeomSpaceEdge,h-kGeomHeightFilters-kGeomProfileTextviewHeight,w-2*kGeomSpaceEdge,kGeomProfileTextviewHeight);
+    _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;
     
     _filterView.frame = CGRectMake(0, h-kGeomHeightFilters, w, kGeomHeightFilters);
