@@ -343,9 +343,6 @@
     _labelPhotosNumber.frame=CGRectMake(x, y, 55,  labelHeight);
     y += labelHeight+ spacing;
     
-//    addDiagnosticBorder(_labelPhotos);
-//    addDiagnosticBorder(_labelPhotosNumber);
-    
     labelHeight= 17;//  from mockup
     y = _userView.frame.size.height + _userView.frame.origin.y - 2*labelHeight;
   

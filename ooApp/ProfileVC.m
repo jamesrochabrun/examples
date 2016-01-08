@@ -29,6 +29,7 @@
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
+@property (nonatomic, strong) UIView *viewHalo;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) OOUserView *userView;
@@ -149,6 +150,9 @@
         
         _userView= [[OOUserView alloc] init];
         [self addSubview:_userView];
+        
+        _viewHalo= makeView(self, CLEAR);
+        addBorder(_viewHalo, 2, YELLOW);
         
         _labelFollowees=  makeLabel(self, @"FOLLOWING", kGeomFontSizeSubheader );
         _labelFollowers=  makeLabel(self, @"FOLLOWERS", kGeomFontSizeSubheader);
@@ -309,6 +313,8 @@
     _backgroundImageView.backgroundColor= YELLOW;
     int y = kGeomSpaceEdge;
     _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
+    _viewHalo.frame = _userView.frame;
+    _viewHalo.layer.cornerRadius=kGeomProfileImageSize/2;
     
     [_labelFollowers sizeToFit];
     [_labelFollowees sizeToFit];

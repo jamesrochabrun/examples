@@ -81,7 +81,7 @@ extern UIScrollView* makeScrollView (UIView*parent, id  delegate);
 extern void addShadowTo (UIView*v);
 extern NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum,id target,SEL callback);
 
-extern void addDiagnosticBorder (UIView*);
+extern void addBorder (UIView*, float width, UIColor *color);
 
 extern NSDate* parseUTCDateFromServer(NSString *string);
 extern NSString* parseStringOrNullFromServer (id object);

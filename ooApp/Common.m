@@ -88,10 +88,13 @@ NSString *trimString(NSString *s)
     return [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 }
 
-void addDiagnosticBorder (UIView*v)
+void addBorder (UIView*v, float width, UIColor *color)
 {
-    v.layer.borderColor= RED.CGColor;
-    v.layer.borderWidth= 1;
+    if (!color) {
+        color= WHITE;
+    }
+    v.layer.borderColor= color.CGColor;
+    v.layer.borderWidth= width;
 }
 
 UIImageView *makeImageViewFromURL(UIView *parent, NSString *urlString, NSString *placeholderImageName)
