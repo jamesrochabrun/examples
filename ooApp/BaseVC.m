@@ -107,9 +107,9 @@
 }
 
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+    [self.leftBarButtonView removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
     [self.leftBarButtonView setTitle:icon forState:UIControlStateNormal];
     [self.leftBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-
 }
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {

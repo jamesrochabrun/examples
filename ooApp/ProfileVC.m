@@ -24,6 +24,7 @@
 #import "OOFilterView.h"
 #import "ProfileVCCVLayout.h"
 #import "RestaurantListVC.h"
+#import "PhotoCVCell.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -452,7 +453,7 @@
 #define PROFILE_CV_HEADER_CELL  @"profileHeaderCell"
     
     // NOTE: When _viewingLists==YES, use ProfileCVListRow else use ProfileCVPhotoCell.
-    [_cv registerClass:[ProfileCVPhotoCell class] forCellWithReuseIdentifier: PROFILE_CV_PHOTO_CELL];
+    [_cv registerClass:[PhotoCVCell class] forCellWithReuseIdentifier: PROFILE_CV_PHOTO_CELL];
     [_cv registerClass:[ListStripCVCell class] forCellWithReuseIdentifier: PROFILE_CV_LIST_CELL];
     
     [_cv registerClass:[ProfileHeaderView class ] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
@@ -681,11 +682,11 @@
             return nil;
         }
         
-        ProfileCVPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:  PROFILE_CV_PHOTO_CELL
+        PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:  PROFILE_CV_PHOTO_CELL
                                                                              forIndexPath:indexPath ] ;
         NSArray *a = self.arrayPhotos;
         MediaItemObject *object = a[row];
-        cell.mediaObject =  object;
+        cell.mediaItemObject =  object;
         int gray=rand()&0xff;
         gray= gray + ( gray <<8)+ ( gray <<16);
         cell.backgroundColor= UIColorRGB( gray );
@@ -772,51 +773,53 @@
 
 @end
 
-@interface  ProfileCVPhotoCell()
-@property (nonatomic,strong)  UIImageView* imageView;
-@property (nonatomic,strong)  MediaItemObject* mediaObject;
-@end
-
-@implementation ProfileCVPhotoCell
-
-- (instancetype) initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        _imageView= makeImageView(self.contentView, nil);
-        
-    }
-    return self;
-}
-
-- (void)prepareForReuse
-{
-    _mediaObject= nil;
-    _imageView.image= nil;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    _imageView.frame= self.bounds;
-}
-
-- (void)setMediaObject:(MediaItemObject *) mo
-{
-    if  (!mo) {
-        return;
-    }
-    _mediaObject= mo;
-    NSString*string= _mediaObject.url;
-    if (!string) {
-        return;
-    }
-    NSURL *url= [ NSURL URLWithString: string];
-    if  (!url) {
-        return;
-    }
-    [_imageView setImageWithURL: url];
-}
-
-@end
+//NOTE: Re-using the existing PhotoCVCell
+//
+//@interface  ProfileCVPhotoCell()
+//@property (nonatomic,strong)  UIImageView* imageView;
+//@property (nonatomic,strong)  MediaItemObject* mediaObject;
+//@end
+//
+//@implementation ProfileCVPhotoCell
+//
+//- (instancetype) initWithFrame:(CGRect)frame
+//{
+//    self = [super initWithFrame:frame];
+//    if (self) {
+//        _imageView= makeImageView(self.contentView, nil);
+//        
+//    }
+//    return self;
+//}
+//
+//- (void)prepareForReuse
+//{
+//    _mediaObject= nil;
+//    _imageView.image= nil;
+//}
+//
+//- (void)layoutSubviews
+//{
+//    [super layoutSubviews];
+//    _imageView.frame= self.bounds;
+//}
+//
+//- (void)setMediaObject:(MediaItemObject *) mo
+//{
+//    if  (!mo) {
+//        return;
+//    }
+//    _mediaObject= mo;
+//    NSString*string= _mediaObject.url;
+//    if (!string) {
+//        return;
+//    }
+//    NSURL *url= [ NSURL URLWithString: string];
+//    if  (!url) {
+//        return;
+//    }
+//    [_imageView setImageWithURL: url];
+//}
+//
+//@end
 

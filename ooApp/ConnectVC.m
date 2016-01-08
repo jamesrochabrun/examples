@@ -148,12 +148,19 @@
         _labelPhotosNumber.alpha=0;
         _labelPlacesNumber.alpha=0;
         
-        self.buttonFollow= makeButton(self, @"FOLLOW",
-                                      kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), CLEAR,
-                                      self,
-                                      @selector (userPressedFollow:), 1);
+        _buttonFollow = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_buttonFollow withText:@"FOLLOW" fontSize:kGeomFontSizeSubheader width:40 height:40 backgroundColor:kColorClear textColor:kColorYellow borderColor:kColorYellow target:self
+                       selector:@selector (userPressedFollow:)];
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
+        [self addSubview:_buttonFollow];
+        
+//        self.buttonFollow= makeButton(self, @"FOLLOW",
+//                                      kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), CLEAR,
+//                                      self,
+//                                      @selector (userPressedFollow:), 1);
+//        
+//        _buttonFollow.hidden= YES;
     }
     return self;
 }

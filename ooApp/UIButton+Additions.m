@@ -10,6 +10,13 @@
 
 @implementation UIButton (Additions)
 
+- (void)withText:(NSString *)text fontSize:(NSUInteger)fontSize width:(NSUInteger)width height:(NSUInteger)height backgroundColor:(NSUInteger)backColor textColor:(NSUInteger)textColor borderColor:(NSUInteger)borderColor target:(id)target selector:(SEL)selector {
+    [self withText:text fontSize:fontSize width:width height:height backgroundColor:backColor target:target selector:selector];
+    [self setTitleColor:UIColorRGBA(textColor) forState:UIControlStateNormal];
+    self.layer.borderColor = UIColorRGBA(borderColor).CGColor;
+    self.layer.borderWidth = 1;
+}
+
 - (void)withText:(NSString *)text fontSize:(NSUInteger)fontSize width:(NSUInteger)width height:(NSUInteger)height backgroundColor:(NSUInteger)backColor target:(id)target selector:(SEL)selector {
     
     if (!width) {
