@@ -106,7 +106,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)showCameraUI {
     
-    BOOL haveCamera = haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ? YES : NO;
+    BOOL haveCamera  = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
     
     if (!haveCamera) {
         [self showRestaurantPicker];

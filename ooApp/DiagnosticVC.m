@@ -382,7 +382,7 @@
 {
     UIImage *image=  info[ @"UIImagePickerControllerEditedImage"];
     if (!image) {
-        image= info[ @"UIImagePickerControllerEditedImage"];
+        image= info[ @"UIImagePickerControllerOriginalImage"];
     }
     self.hugeImage= image;
     

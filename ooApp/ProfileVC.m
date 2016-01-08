@@ -356,7 +356,7 @@
 
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
-@property (nonatomic, strong) UIButton *buttonNewList;
+@property (nonatomic, strong) UIButton *buttonLowerRight;
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @property (nonatomic,strong) ProfileHeaderView* topView;
 @property (nonatomic,assign) BOOL didFetch;
@@ -431,11 +431,11 @@
     if ( _viewingOwnProfile) {
         [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions)];
         
-        _buttonNewList = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_buttonNewList roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedNewList:)];
-        _buttonNewList.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+        _buttonLowerRight = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_buttonLowerRight roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedLowerRightButton:)];
+        _buttonLowerRight.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
         
-        [self.view addSubview:_buttonNewList];
+        [self.view addSubview:_buttonLowerRight];
     } else {
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
@@ -496,9 +496,9 @@
     CGFloat x, y, spacer;
     if (_viewingOwnProfile) {
         x = kGeomSpaceEdge;
-        _buttonNewList.frame = CGRectMake(width(self.view) - (width(_buttonNewList) + 30), height(self.view) - (height(_buttonNewList) + 30), width(_buttonNewList), height(_buttonNewList));
+        _buttonLowerRight.frame = CGRectMake(width(self.view) - (width(_buttonLowerRight) + 30), height(self.view) - (height(_buttonLowerRight) + 30), width(_buttonLowerRight), height(_buttonLowerRight));
         y += kGeomHeightButton + spacer;
-        [ self.view  bringSubviewToFront:_buttonNewList];
+        [ self.view  bringSubviewToFront:_buttonLowerRight];
     }
 }
 
@@ -523,16 +523,88 @@
     [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
                    success:^(NSArray *mediaObjects) {
                        weakSelf.arrayPhotos= mediaObjects;
+                       NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
+                       ON_MAIN_THREAD(^(){
+                           [weakSelf.cv  reloadData];
+                       });
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog  (@"FAILED TO GET PHOTOS");
                    }];
 }
 
 //------------------------------------------------------------------------------
-// Name:    userPressedNewList
+// Name:    userPressedLowerRightButton
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)userPressedNewList:(id)sender
+- (void)userPressedLowerRightButton:(id)sender
+{
+    if  (_viewingLists ) {
+        [self userPressedNewList];
+    } else {
+        [self userPressedNewPhoto];
+    }
+}
+
+- (void)userPressedNewPhoto
+{
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        message( @"This app doesn't have access to the camera.");
+        return;
+    }
+    
+    UIImagePickerController *ic = [[UIImagePickerController alloc] init];
+    [ic setAllowsEditing: YES];
+    [ic setSourceType: UIImagePickerControllerSourceTypeCamera];
+    [ic setCameraCaptureMode: UIImagePickerControllerCameraCaptureModePhoto];
+    [ic setShowsCameraControls: YES];
+    [ic setDelegate: self];
+    [ self presentViewController: ic animated: YES completion: NULL];
+}
+
+//------------------------------------------------------------------------------
+// Name:    didFinishPickingMediaWithInfo
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    UIImage *image=  info[ @"UIImagePickerControllerEditedImage"];
+    if (!image) {
+        image= info[ @"UIImagePickerControllerOriginalImage"];
+    }
+    
+    if ( image && [image isKindOfClass:[UIImage class]]) {
+        CGSize s = image.size;
+        if ( s.width) {
+            image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
+          
+            UserObject *user= [Settings sharedInstance].userObject;
+            
+            __weak  ProfileVC *weakSelf = self;
+            [OOAPI uploadPhoto: image
+                     forObject: user
+                       success:^{
+                           [weakSelf update: nil];
+                       }
+                       failure:^(NSError *error) {
+                           NSLog(@"FAILED TO UPLOAD PHOTOGRAPH");
+                       }];
+        }
+    }
+    
+    [self  dismissViewControllerAnimated:YES completion:nil];
+}
+
+//------------------------------------------------------------------------------
+// Name:    imagePickerControllerDidCancel
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    message( @"you canceled taking a photo");
+    [self  dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)userPressedNewList
 {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Create List" message:nil preferredStyle:UIAlertControllerStyleAlert];
     
@@ -580,6 +652,7 @@
 {
     _viewingLists= YES;
     [_listsAndPhotosLayout setShowingLists: YES];
+    [_buttonLowerRight setTitle: kFontIconAdd forState:UIControlStateNormal ];
     [_listsAndPhotosLayout  invalidateLayout];
     [self.cv  reloadData];
 }
@@ -588,6 +661,7 @@
 {
     _viewingLists= NO;
     [_listsAndPhotosLayout setShowingLists: NO];
+    [_buttonLowerRight setTitle: kFontIconPhoto forState:UIControlStateNormal ];
     [_listsAndPhotosLayout  invalidateLayout];
     [self.cv  reloadData];
 }
