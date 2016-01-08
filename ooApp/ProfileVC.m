@@ -348,6 +348,7 @@
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @property (nonatomic,strong) ProfileHeaderView* topView;
 @property (nonatomic,assign) BOOL didFetch;
+@property (nonatomic,assign) NSUInteger lastShownUser;
 @end
 
 @implementation ProfileVC
@@ -362,6 +363,11 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
+    if (_lastShownUser && _lastShownUser != _userInfo.userID) {
+        _didFetch=NO;
+        _lastShownUser = _userInfo.userID;
+    }
+    
     if (!_didFetch) {
         _didFetch=YES;
         [self  update:nil ];
@@ -370,7 +376,6 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    _didFetch=NO;
 
     [super viewDidDisappear: animated];
     
@@ -430,6 +435,8 @@
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
+    _lastShownUser = _userInfo.userID;
+    
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers > 1) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
@@ -459,9 +466,11 @@
     __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
         [_profileOwner refreshWithSuccess:^{
-            //            [weakSelf.cv reloadRowsAtIndexPaths:@[ [NSIndexPath  indexPathForRow:0 inSection:0]]
-            //                                  withRowAnimation:UITableViewRowAnimationNone
-            //             ];
+            ProfileHeaderView *view= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
+                                                 viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
+                                                                       atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
+                                                           ];
+            [view setUserInfo: weakSelf.profileOwner];
         } failure:^{
             NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
         }
@@ -505,7 +514,6 @@
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
                 }];
-    
     
     float w=  [UIScreen mainScreen ].bounds.size.width;
     [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
