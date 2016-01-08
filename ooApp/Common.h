@@ -72,7 +72,7 @@ extern UITextView* makeTextView (UIView*parent, UIColor *bg, BOOL editable);
 extern UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize);
 extern UIWebView* makeWebView (UIView*parent, id  delegate);
 extern UITableView* makeTable (UIView *parent,id  delegate);
-extern UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionViewFlowLayout* layout);
+extern UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionViewLayout* layout);
 extern UICollectionView* makeHorizontalCollectionView (UIView *parent,id  delegate, CGSize itemSize);
 extern UICollectionView* makeVerticalCollectionView (UIView *parent,id  delegate, CGSize itemSize);
 extern UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);

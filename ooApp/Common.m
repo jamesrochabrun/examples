@@ -96,7 +96,7 @@ void addDiagnosticBorder (UIView*v)
 
 UIImageView *makeImageViewFromURL(UIView *parent, NSString *urlString, NSString *placeholderImageName)
 {
-    NSURL *url= [ NSURL  URLWithString:urlString];
+    NSURL *url= [NSURL  URLWithString:urlString];
     UIImageView *iv= nil;
     UIImage *image=nil;
     if ( !url) {
@@ -178,16 +178,16 @@ UIImageView* makeImageView (UIView *parent, id image_)
     }
     else if([image_ isKindOfClass:[NSString class   ]] ){
         imageIsURL= [[image_ lowercaseString] hasPrefix: @"http"];
-        url= imageIsURL? [ NSURL  URLWithString:image_] : nil;
+        url= imageIsURL? [NSURL  URLWithString:image_] : nil;
         if ( !imageIsURL) {
-            image= [ UIImage imageNamed:image_];
+            image= [UIImage imageNamed:image_];
         }
     }
-    UIImageView* iv= [ [UIImageView alloc ]initWithImage:  image  ];
+    UIImageView* iv= [[UIImageView alloc ]initWithImage:  image  ];
     if  ( imageIsURL && url) {
         [iv setImageWithURL:url placeholderImage:nil];
     }
-    [ parent addSubview: iv ];
+    [parent addSubview: iv ];
     
     iv.contentMode= UIViewContentModeScaleAspectFill;
     iv.clipsToBounds= YES;
@@ -217,8 +217,8 @@ NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*user
 
 UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize)
 {
-    UILabel* l= [ [ UILabel alloc ]init ];
-    [ parent addSubview: l ];
+    UILabel* l= [[ UILabel alloc ]init ];
+    [parent addSubview: l ];
     l.numberOfLines= 0;
     l.textAlignment= NSTextAlignmentCenter;
     if (text)
@@ -229,8 +229,8 @@ UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize)
 
 UILabel* makeAttributedLabelWithColor (UIView *parent, NSString*  text, float fontSize,UIColor*color)
 {
-    UILabel* l= [ [ UILabel alloc ]init ];
-    [ parent addSubview: l ];
+    UILabel* l= [[ UILabel alloc ]init ];
+    [parent addSubview: l ];
     l.numberOfLines= 0;
     l.textAlignment= NSTextAlignmentCenter;
     if (text)
@@ -241,8 +241,8 @@ UILabel* makeAttributedLabelWithColor (UIView *parent, NSString*  text, float fo
 
 UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
 {
-    UILabel* l= [ [ UILabel alloc ]init ];
-    [ parent addSubview: l ];
+    UILabel* l= [[ UILabel alloc ]init ];
+    [parent addSubview: l ];
     l.numberOfLines= 0;
     l.textAlignment= NSTextAlignmentCenter;
     l.text=  text;
@@ -256,13 +256,13 @@ UILabel* makeLabel (UIView *parent, NSString*  text, float fontSize)
 
 UIView* makeView (UIView *parent, UIColor* backgroundColor)
 {
-    UIView* v = [ [ UIView alloc ]init ];
-    [ parent addSubview: v];
+    UIView* v = [[ UIView alloc ]init ];
+    [parent addSubview: v];
     v.backgroundColor= backgroundColor;
     return v;
 }
 
-UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionViewFlowLayout* layout)
+UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionViewLayout* layout)
 {
     UICollectionView *cv = [[UICollectionView alloc] initWithFrame: CGRectZero collectionViewLayout: layout];
     cv.delegate = delegate;
@@ -300,9 +300,9 @@ UICollectionView* makeVerticalCollectionView (UIView *parent,id  delegate, CGSiz
 
 UITableView* makeTable (UIView *parent,id  delegate)
 {
-    UITableView* tv= [ [ UITableView alloc ]init ];
+    UITableView* tv= [[ UITableView alloc ]init ];
     if  (tv) {
-        [ parent addSubview: tv ];
+        [parent addSubview: tv ];
     }
     tv.delegate= delegate;
     tv.dataSource= delegate;
@@ -314,8 +314,8 @@ UITableView* makeTable (UIView *parent,id  delegate)
 
 UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize)
 {
-    UILabel* l= [ [ UILabel alloc ]init ];
-    [ parent addSubview: l ];
+    UILabel* l= [[ UILabel alloc ]init ];
+    [parent addSubview: l ];
     l.textAlignment= NSTextAlignmentCenter;
     l.text=  text;
     l.font= [UIFont fontWithName:kFontIcons size: fontSize];
@@ -331,7 +331,7 @@ UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
 
 UIScrollView* makeScrollView (UIView*parent, id  delegate)
 {
-    UIScrollView *v= [ UIScrollView  new];
+    UIScrollView *v= [UIScrollView  new];
     v.delegate=  delegate;
     [parent addSubview: v];
     return v;
@@ -339,7 +339,7 @@ UIScrollView* makeScrollView (UIView*parent, id  delegate)
 
 UIWebView* makeWebView (UIView*parent, id  delegate)
 {
-    UIWebView *v= [ UIWebView  new];
+    UIWebView *v= [UIWebView  new];
     v.delegate=  delegate;
     [parent addSubview: v];
     return v;
@@ -347,7 +347,7 @@ UIWebView* makeWebView (UIView*parent, id  delegate)
 
 UITextView* makeTextView (UIView*parent, UIColor *bg,BOOL  editable)
 {
-    UITextView *textView= [ UITextView  new];
+    UITextView *textView= [UITextView  new];
     textView.editable= editable;
     textView.backgroundColor= bg;
     [parent addSubview: textView];
@@ -356,14 +356,14 @@ UITextView* makeTextView (UIView*parent, UIColor *bg,BOOL  editable)
 
 UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
-    UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
+    UIButton* button= [UIButton buttonWithType:  UIButtonTypeCustom];
     if  (title ) {
         NSAttributedString* a= [[NSAttributedString alloc] initWithString:title];
-        [ button setAttributedTitle: a forState:UIControlStateNormal ];
+        [button setAttributedTitle: a forState:UIControlStateNormal ];
         button.titleLabel.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
     }
     if ( target && callback) {
-        [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
+        [button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
     }
     if  (fg ) {
         [button setTitleColor:fg forState:UIControlStateNormal];
@@ -376,20 +376,20 @@ UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize
     if  (bg ) {
         button.layer.backgroundColor= bg.CGColor;
     }
-    [ parent addSubview: button ];
+    [parent addSubview: button ];
     return button;
 }
 
 UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
     fontSize=kGeomIconSize;
-    UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
+    UIButton* button= [UIButton buttonWithType:  UIButtonTypeCustom];
     if  (title ) {
-        [ button setTitle: title forState:UIControlStateNormal ];
+        [button setTitle: title forState:UIControlStateNormal ];
         button.titleLabel.font= [UIFont fontWithName: kFontIcons size:fontSize];
     }
     if ( target && callback) {
-        [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
+        [button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
     }
     if  (fg ) {
         [button setTitleColor:fg forState:UIControlStateNormal];
@@ -402,21 +402,21 @@ UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIC
     if  (bg ) {
         button.layer.backgroundColor= bg.CGColor;
     }
-    [ parent addSubview: button ];
+    [parent addSubview: button ];
     return button;
 }
 
 UIButton* makeButtonForAutolayout (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
-    UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
+    UIButton* button= [UIButton buttonWithType:  UIButtonTypeCustom];
     button.translatesAutoresizingMaskIntoConstraints = NO;
 
     if  (title ) {
-        [ button setTitle: title forState:UIControlStateNormal ];
+        [button setTitle: title forState:UIControlStateNormal ];
         button.titleLabel.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
     }
     if ( target && callback) {
-        [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
+        [button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
     }
     if  (fg ) {
         [button setTitleColor:fg forState:UIControlStateNormal];
@@ -429,19 +429,19 @@ UIButton* makeButtonForAutolayout (UIView *parent, NSString*  title, float fontS
     if  (bg ) {
         button.layer.backgroundColor= bg.CGColor;
     }
-    [ parent addSubview: button ];
+    [parent addSubview: button ];
     return button;
 }
 
 UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
-    UIButton* button= [ UIButton buttonWithType:  UIButtonTypeCustom];
+    UIButton* button= [UIButton buttonWithType:  UIButtonTypeCustom];
     if  (title ) {
-        [ button setTitle: title forState:UIControlStateNormal ];
+        [button setTitle: title forState:UIControlStateNormal ];
         button.titleLabel.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
     }
     if ( target && callback) {
-        [ button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
+        [button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
     }
     if  (fg ) {
         [button setTitleColor:fg forState:UIControlStateNormal];
@@ -454,7 +454,7 @@ UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor
     if  (bg ) {
         button.layer.backgroundColor= bg.CGColor;
     }
-    [ parent addSubview: button ];
+    [parent addSubview: button ];
     return button;
 }
 
@@ -586,9 +586,9 @@ NSDate* parseUTCDateFromServer(NSString *string)
         return nil;
     }
     NSString* temp= [string stringByReplacingOccurrencesOfString: @"T" withString: @" "];
-    temp= [ temp stringByReplacingOccurrencesOfString: @"Z" withString: @""];
-    temp= [ temp stringByReplacingOccurrencesOfString: @"  " withString: @" "];
-    temp= [ temp stringByReplacingOccurrencesOfString: @".000" withString: @""];
+    temp= [temp stringByReplacingOccurrencesOfString: @"Z" withString: @""];
+    temp= [temp stringByReplacingOccurrencesOfString: @"  " withString: @" "];
+    temp= [temp stringByReplacingOccurrencesOfString: @".000" withString: @""];
     temp= trimString( temp);
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
@@ -599,10 +599,10 @@ NSDate* parseUTCDateFromServer(NSString *string)
 
 NSUInteger parseUnsignedIntegerOrNullFromServer (id object)
 {
-    if  (object && [ object isKindOfClass:[NSNumber class]]) {
+    if  (object && [object isKindOfClass:[NSNumber class]]) {
         return  (( NSNumber*)object).unsignedIntegerValue;
     }
-    if  (object && [ object isKindOfClass:[NSString class]]) {
+    if  (object && [object isKindOfClass:[NSString class]]) {
         return (NSUInteger) (( NSString*)object).integerValue;
     }
     return 0;
@@ -610,10 +610,10 @@ NSUInteger parseUnsignedIntegerOrNullFromServer (id object)
 
 NSInteger parseIntegerOrNullFromServer (id object)
 {
-    if  (object && [ object isKindOfClass:[NSNumber class]]) {
+    if  (object && [object isKindOfClass:[NSNumber class]]) {
         return  (( NSNumber*)object).integerValue;
     }
-    if  (object && [ object isKindOfClass:[NSString class]]) {
+    if  (object && [object isKindOfClass:[NSString class]]) {
         return  (( NSString*)object).integerValue;
     }
     return 0;
@@ -621,10 +621,10 @@ NSInteger parseIntegerOrNullFromServer (id object)
 
 double parseNumberOrNullFromServer (id object)
 {
-    if  (object && [ object isKindOfClass:[NSNumber class]]) {
+    if  (object && [object isKindOfClass:[NSNumber class]]) {
         return  (( NSNumber*)object).doubleValue;
     }
-    if  (object && [ object isKindOfClass:[NSString class]]) {
+    if  (object && [object isKindOfClass:[NSString class]]) {
         return  (( NSString*)object).doubleValue;
     }
     return 0;
@@ -632,7 +632,7 @@ double parseNumberOrNullFromServer (id object)
 
 NSArray* parseArrayOrNullFromServer (id object)
 {
-    if  (object && [ object isKindOfClass:[NSArray class]]) {
+    if  (object && [object isKindOfClass:[NSArray class]]) {
         return  (NSArray*)object;
     }
     return nil;
@@ -640,7 +640,7 @@ NSArray* parseArrayOrNullFromServer (id object)
 
 NSString* parseStringOrNullFromServer (id object)
 {
-    if  (object && [ object isKindOfClass:[NSString class]]) {
+    if  (object && [object isKindOfClass:[NSString class]]) {
         return  (NSString*)object;
     }
     return nil;

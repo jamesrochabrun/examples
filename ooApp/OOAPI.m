@@ -1199,6 +1199,45 @@ NSString *const kKeyDeviceToken = @"device_token";
     return op;
 }
 
++ (AFHTTPRequestOperation *)getPhotosOfUser:(NSUInteger )userid
+                                   maxWidth:(NSUInteger)maxWidth
+                                  maxHeight:(NSUInteger)maxHeight
+                                    success:(void (^)(NSArray *mediaObjects))success
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long)userid];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (maxWidth) {
+        maxWidth = (isRetinaDisplay()) ? 2*maxWidth:maxWidth;
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)maxWidth] forKey:@"maxwidth"];
+    } else if (maxHeight) {
+        maxHeight = (isRetinaDisplay()) ? 2*maxHeight:maxHeight;
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)maxWidth] forKey:@"maxHeight"];
+    }
+    
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
+        NSMutableArray *array= [NSMutableArray new];
+        if ( [responseObject isKindOfClass:[NSArray class] ]) {
+            NSArray *objects= responseObject;
+            
+            for (NSDictionary*  dictionary  in objects) {
+                if  ([dictionary isKindOfClass:[NSDictionary  class ] ] ) {
+                    MediaItemObject *object= [ MediaItemObject  mediaItemFromDict:  dictionary];
+                    if  (object ) {
+                        [array  addObject:  object];
+                    }
+                }
+            }
+        }
+        success( array);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        NSLog(@"Error: %@", error);
+    }];
+}
 //------------------------------------------------------------------------------
 // Name:    getUserImageWithImageID
 // Purpose:

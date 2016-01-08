@@ -11,26 +11,25 @@
 #import "BaseVC.h"
 #import "UserObject.h"
 #import "OOTextEntryVC.h"
+#import "ProfileVCCVLayout.h"
 
-@protocol ProfileTableFirstRowDelegate
+@protocol ProfileHeaderViewDelegate
 - (void) userTappedOnLists;
 - (void) userTappedOnPhotos;
 @end
 
-@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileTableFirstRowDelegate>
+@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate,
+ProfileHeaderViewDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
 - (void)goToEmptyListScreen:(NSString *)string;
 @end
 
-@interface ProfileCVPhotoLayout:UICollectionViewLayout
-@end
-
-@interface ProfileTableFirstRow : UICollectionReusableView  <OOTextEntryVCDelegate>
+@interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryVCDelegate>
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
-@property (nonatomic,weak) NSObject<ProfileTableFirstRowDelegate>* delegate;
+@property (nonatomic,weak) NSObject<ProfileHeaderViewDelegate>* delegate;
 @end
 
 @interface ProfileCVPhotoCell : UICollectionViewCell

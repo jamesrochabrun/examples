@@ -48,21 +48,25 @@
     [self setLeftNavWithIcon:@"" target:nil action:nil];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [_textView becomeFirstResponder];
+}
+
 - (NSString*)text;
 {
     return _textView.text;
 }
 
-- (void)userPressedBack:(id)sender
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    [_textView resignFirstResponder];
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [_textView becomeFirstResponder];
+    NSString* newString= [textView.text stringByReplacingCharactersInRange:range withString:text];
+    if ( _textLengthLimit) {
+        return  newString.length <  _textLengthLimit;
+    } else {
+        return YES;
+    }
 }
 
 - (void)setDefaultText:(NSString *)defaultText
@@ -74,25 +78,26 @@
 
 - (void)post:(UIButton*)sender
 {
-    [self.delegate textEntryFinished:[self text]];
-    [self userPressedBack: nil];
+    [_textView resignFirstResponder];
+    [_delegate textEntryFinished:[self text]];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)closeTextEntry
 {
     [_textView resignFirstResponder];
-    [_delegate textEntryFinished:[self text]];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)updateViewConstraints
 {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButton)};
+    NSDictionary *metrics = @{@"height":@(2*kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButton)};
     
     UIView *superview = self.view;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _textView, _postButton);
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_textView(>=30)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_textView(>=60)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_postButton(30)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_textView]-[_postButton(50)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }

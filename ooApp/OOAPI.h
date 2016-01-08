@@ -132,6 +132,12 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                             success:(void (^)(NSString *imageRefs))success
                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)getPhotosOfUser:(NSUInteger )userid
+                                           maxWidth:(NSUInteger)maxWidth
+                                          maxHeight:(NSUInteger)maxHeight
+                                            success:(void (^)(NSArray *mediaObjects))success
+                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 + (AFHTTPRequestOperation *)setAboutInfoFor:(NSUInteger)userID
                                          to:(NSString*)text
                                     success:(void (^)( void))success

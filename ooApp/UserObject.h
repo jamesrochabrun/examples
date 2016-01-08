@@ -10,6 +10,8 @@
 #import "ListObject.h"
 #import "MediaItemObject.h"
 
+static NSUInteger kUserObjectMaximumAboutTextLength=  140;
+
 typedef enum: int {
     PARTICIPANT_TYPE_NONE = 0,
     PARTICIPANT_TYPE_CREATOR = 1,

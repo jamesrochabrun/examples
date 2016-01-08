@@ -50,7 +50,7 @@
     
     _imageView.layer.cornerRadius = width(_imageView)/2;
     _imageView.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
-    _imageView.layer.borderWidth = 1;
+    _imageView.layer.borderWidth = 0;
 
 }
 
@@ -72,6 +72,7 @@
     NSString*last=_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
     NSString *initials = [NSString stringWithFormat:@"%@%@",  first, last];
     _emptyUserView.text = initials;
+    UIImage *image= nil;
     
     if (_user.mediaItem) {
         OOAPI *api = [[OOAPI alloc] init];
@@ -101,7 +102,12 @@
                 [self displayEmptyView:YES];
             });
         }];
-    } else {
+    }
+    else if (( image= [_user userProfilePhoto]) ) {
+        // NOTE: This would have been fetched from Facebook when the app started.
+        _imageView.image=  image;
+    }
+    else {
         ON_MAIN_THREAD(^{
             [self displayEmptyView:YES];
         });

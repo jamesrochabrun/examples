@@ -80,6 +80,10 @@ BOOL isUserObject (id  object)
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
     
+    if ( user.about.length > kUserObjectMaximumAboutTextLength) {
+        user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
+    }
+    
     // RULE: If the server referred to the current user and
     // we have more information about the current user then fill it in.
     //
