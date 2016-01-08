@@ -155,6 +155,7 @@
 		96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E49E731BC5E14B008B70AF /* EventWhenVC.m */; };
 		96E4FC6C1C3D973200C8C485 /* profile-background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 96E4FC6B1C3D973200C8C485 /* profile-background.jpg */; };
 		96E954E21BDFF99100F5197A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E954E11BDFF99100F5197A /* Reachability.m */; };
+		96EBC2E71C3EFC3100836066 /* ProfileVCCVLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EBC2E61C3EFC3100836066 /* ProfileVCCVLayout.m */; };
 		96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */; };
 		96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */; };
 /* End PBXBuildFile section */
@@ -423,6 +424,8 @@
 		96E4FC6B1C3D973200C8C485 /* profile-background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "profile-background.jpg"; path = "Graphic Assets/profile-background.jpg"; sourceTree = "<group>"; };
 		96E954E01BDFF99100F5197A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		96E954E11BDFF99100F5197A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		96EBC2E51C3EFC3100836066 /* ProfileVCCVLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileVCCVLayout.h; sourceTree = "<group>"; };
+		96EBC2E61C3EFC3100836066 /* ProfileVCCVLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileVCCVLayout.m; sourceTree = "<group>"; };
 		96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "No-Profile_Image.png"; path = "Graphic Assets/No-Profile_Image.png"; sourceTree = "<group>"; };
 		96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "No-Profile_Image(circled).png"; path = "Graphic Assets/No-Profile_Image(circled).png"; sourceTree = "<group>"; };
 		F945100C76CB8545DC64E837 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -741,6 +744,8 @@
 				364AD8C31C11514300F70F56 /* OptionsVCCVL.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
+				96EBC2E51C3EFC3100836066 /* ProfileVCCVLayout.h */,
+				96EBC2E61C3EFC3100836066 /* ProfileVCCVLayout.m */,
 				96CC3A1F1BE97E1C00A43A04 /* PieView.h */,
 				96CC3A201BE97E1C00A43A04 /* PieView.m */,
 				96D2C4771BEC21020060EDB8 /* ParticipantsView.h */,
@@ -1137,6 +1142,7 @@
 				9694F0271C3DE85300D6C9AA /* ListStripCVCell.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
 				36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */,
+				96EBC2E71C3EFC3100836066 /* ProfileVCCVLayout.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				36C572DA1C01309900C57DA2 /* TagObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,

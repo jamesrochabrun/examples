@@ -262,7 +262,7 @@ UIView* makeView (UIView *parent, UIColor* backgroundColor)
     return v;
 }
 
-UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionViewFlowLayout* layout)
+UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionViewLayout* layout)
 {
     UICollectionView *cv = [[UICollectionView alloc] initWithFrame: CGRectZero collectionViewLayout: layout];
     cv.delegate = delegate;
