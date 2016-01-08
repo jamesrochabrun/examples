@@ -707,9 +707,30 @@
         [self.navigationController pushViewController:vc animated:YES];
     }
     else {
-        MediaItemObject *object= _arrayPhotos[row];
-        //  need a viewer VC
+
+        NSUInteger row = indexPath.row;
+        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate: self];
+        [photoBrowser setCurrentPhotoIndex: row];
+        [self.navigationController pushViewController:photoBrowser animated:YES];
     }
+}
+
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+    return _arrayPhotos.count;
+}
+
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+    if (index  < _arrayPhotos.count) {
+        MediaItemObject *mediaObject= _arrayPhotos[index];
+        MWPhoto *photo;
+        if (mediaObject.url) {
+            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mediaObject.url]];
+            [photo performLoadUnderlyingImageAndNotify];
+            photo.caption = mediaObject.caption;
+            return photo;
+        }
+    }
+    return nil;
 }
 
 //------------------------------------------------------------------------------
@@ -775,54 +796,4 @@
 }
 
 @end
-
-//NOTE: Re-using the existing PhotoCVCell
-//
-//@interface  ProfileCVPhotoCell()
-//@property (nonatomic,strong)  UIImageView* imageView;
-//@property (nonatomic,strong)  MediaItemObject* mediaObject;
-//@end
-//
-//@implementation ProfileCVPhotoCell
-//
-//- (instancetype) initWithFrame:(CGRect)frame
-//{
-//    self = [super initWithFrame:frame];
-//    if (self) {
-//        _imageView= makeImageView(self.contentView, nil);
-//        
-//    }
-//    return self;
-//}
-//
-//- (void)prepareForReuse
-//{
-//    _mediaObject= nil;
-//    _imageView.image= nil;
-//}
-//
-//- (void)layoutSubviews
-//{
-//    [super layoutSubviews];
-//    _imageView.frame= self.bounds;
-//}
-//
-//- (void)setMediaObject:(MediaItemObject *) mo
-//{
-//    if  (!mo) {
-//        return;
-//    }
-//    _mediaObject= mo;
-//    NSString*string= _mediaObject.url;
-//    if (!string) {
-//        return;
-//    }
-//    NSURL *url= [ NSURL URLWithString: string];
-//    if  (!url) {
-//        return;
-//    }
-//    [_imageView setImageWithURL: url];
-//}
-//
-//@end
 

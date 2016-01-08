@@ -12,14 +12,15 @@
 #import "UserObject.h"
 #import "OOTextEntryVC.h"
 #import "ProfileVCCVLayout.h"
+#import "MWPhotoBrowser.h"
 
 @protocol ProfileHeaderViewDelegate
 - (void) userTappedOnLists;
 - (void) userTappedOnPhotos;
 @end
 
-@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate,
-ProfileHeaderViewDelegate>
+@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate,
+                                ProfileHeaderViewDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 

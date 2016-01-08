@@ -210,7 +210,7 @@ extern NSString *const kNotificationEventDeleted;
 #define WHITE UIColorRGB(kColorWhite)
 #define GRAY UIColorRGB(kColorGray)
 #define MIDDLEGRAY UIColorRGB(kColorGrayMiddle)
-#define CLEAR UIColorRGBA(kColorClear)
+#define CLEAR (UIColor.clearColor)
 #define RED UIColorRGB(kColorRed)
 #define GREEN UIColorRGB(kColorGreen)
 #define BLUE UIColorRGB(kColorBlue)
