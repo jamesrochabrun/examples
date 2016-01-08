@@ -10,7 +10,7 @@
 
 @class ProfileVCCVLayout;
 
-// NOTE: ∃ only one section that is always used for displaying photos.
+// NOTE: ∃ only one section that is always used for displaying lists and photos.
 
 @protocol ProfileVCCollectionViewDelegate <UICollectionViewDelegate>
 

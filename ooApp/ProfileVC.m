@@ -376,13 +376,6 @@
     }
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-
-    [super viewDidDisappear: animated];
-    
-}
-
 - (void)done:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
@@ -453,7 +446,7 @@
 #define PROFILE_CV_LIST_CELL  @"profilelistCell"
 #define PROFILE_CV_HEADER_CELL  @"profileHeaderCell"
     
-    // NOTE: When _viewingLists==YES, use ProfileCVListRow else use ProfileCVPhotoCell.
+    // NOTE: When _viewingLists==YES, use ProfileCVListRow else use PhotoCVCell.
     [_cv registerClass:[PhotoCVCell class] forCellWithReuseIdentifier: PROFILE_CV_PHOTO_CELL];
     [_cv registerClass:[ListStripCVCell class] forCellWithReuseIdentifier: PROFILE_CV_LIST_CELL];
     
@@ -478,7 +471,6 @@
         }
          ];
     }
-    
 }
 
 //------------------------------------------------------------------------------

@@ -78,7 +78,7 @@
         [_sectionAttributes addObject:itemAttributes];
         column = 0;
         
-        itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
+        itemSize = CGSizeMake((width(self.collectionView)-2*kGeomSpaceEdge)/numberOfColumnsInRow , 0);
         UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                                                           withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
         suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), kGeomProfileHeaderViewHeight));
