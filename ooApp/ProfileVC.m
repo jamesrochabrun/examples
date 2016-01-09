@@ -24,7 +24,6 @@
 #import "OOFilterView.h"
 #import "ProfileVCCVLayout.h"
 #import "RestaurantListVC.h"
-#import "PhotoCVCell.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -764,12 +763,82 @@
         NSArray *a = self.arrayPhotos;
         MediaItemObject *object = a[row];
         cell.mediaItemObject =  object;
+        cell.delegate=  self;
         int gray=rand()&0xff;
         gray= gray + ( gray <<8)+ ( gray <<16);
         cell.backgroundColor= UIColorRGB( gray );
         return cell;
     }
 }
+
+- (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio
+{
+    __weak  ProfileVC *weakSelf = self;
+    if  (_viewingOwnProfile ) {
+        
+        UIAlertController *a= [UIAlertController alertControllerWithTitle: nil
+                                                                  message:nil
+                                                           preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIAlertAction *cancel = nil;
+        cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                          style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                              
+                                          }];
+        
+        UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete photo"
+                                                               style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                   [OOAPI deletePhoto:mio
+                                                                              success:^{
+                                                                                  [weakSelf.cv reloadData];
+                                                                              }
+                                                                              failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                                  NSLog  (@"FAILED TO DELETE PHOTO");
+                                                                              }];
+                                                               }];
+        UIAlertAction *captionAction = [UIAlertAction actionWithTitle:@"Add caption to photo"
+                                                               style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                   message( @"coming soon");
+                                                               }];
+        
+        [a addAction:cancel];
+        [a addAction:deleteAction];
+        [a addAction:captionAction];
+        
+        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
+        
+    } else {
+        
+        UIAlertController *a= [UIAlertController alertControllerWithTitle: nil
+                                                                  message:nil
+                                                           preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIAlertAction *cancel = nil;
+        cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                          style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                                              
+                                          }];
+        
+        UIAlertAction *reportAction = [UIAlertAction actionWithTitle:@"Report photo"
+                                                               style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                   [OOAPI deletePhoto:mio
+                                                                              success:^{
+                                                                                  message( @"You have reported the photo successfully.");
+                                                                              }
+                                                                              failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                                  NSLog  (@"FAILED TO REPORT PHOTO");
+                                                                              }];
+
+                                                               }];
+        
+        [a addAction:cancel];
+        [a addAction:reportAction];
+        
+        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
+        
+    }
+}
+
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -1781,6 +1781,30 @@ NSString *const kKeyDeviceToken = @"device_token";
     return op;
 }
 
++ (AFHTTPRequestOperation *)reportPhoto:(MediaItemObject *)mio success:(void (^)(void))success
+                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if  (!mio) {
+        failure (nil,nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)mio.mediaItemId];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm PUT:urlString parameters: @{
+                                              @"is_flagged":@1
+                                              }
+              success:^(id responseObject) {
+        NSLog(@"delete photo:%lu response: %@", mio.mediaItemId, responseObject);
+        success();
+    }
+              failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
+
 + (AFHTTPRequestOperation *)deletePhoto:(MediaItemObject *)mio success:(void (^)(void))success
             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
