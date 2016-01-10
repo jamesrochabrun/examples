@@ -27,7 +27,7 @@
     _textView.keyboardType = UIKeyboardTypeTwitter;
     _textView.textColor = UIColorRGBA(kColorWhite);
     _textView.backgroundColor = UIColorRGBA(kColorBlack);
-    _textView.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1];
+    _textView.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
     _textView.layer.cornerRadius = kGeomCornerRadius;
     [_textView setScrollEnabled:NO];
     [self.view addSubview:_textView];

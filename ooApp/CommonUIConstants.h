@@ -56,8 +56,8 @@ static CGFloat kColorEventOverlayAlpha = 0.3;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
-static NSUInteger kGeomFontSizeH1 = 16;
-static NSUInteger kGeomFontSizeH2 = 14;
+static NSUInteger kGeomFontSizeH1 = 18;
+static NSUInteger kGeomFontSizeH2 = 15;
 static NSUInteger kGeomFontSizeH3 = 13;
 static NSUInteger kGeomFontSizeH4 = 12;
 static NSUInteger kGeomFontSizeH5 = 11;

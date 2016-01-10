@@ -24,7 +24,7 @@
         // Initialization code
         _iconLabel = [[UILabel alloc] init];
         _iconLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [_iconLabel withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH1] textColor:kColorYellow backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
+        [_iconLabel withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH2] textColor:kColorYellow backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         _iconLabel.text = @"";
         [self addSubview:_iconLabel];
         
