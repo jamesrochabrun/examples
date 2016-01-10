@@ -91,6 +91,7 @@
 		367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45391BCE3A7200E96B69 /* PhotoCVCell.m */; };
 		367B453D1BCE62BC00E96B69 /* RestaurantMainCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */; };
 		367B45401BD06AB600E96B69 /* OOStripHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453F1BD06AB600E96B69 /* OOStripHeader.m */; };
+		367E91D31C4050BD001B1795 /* ViewPhotoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367E91D21C4050BD001B1795 /* ViewPhotoVC.m */; };
 		3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490B1BE04B73003BF98B /* UIImageEffects.m */; };
 		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
@@ -310,6 +311,8 @@
 		367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantMainCVCell.m; sourceTree = "<group>"; };
 		367B453E1BD06AB600E96B69 /* OOStripHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOStripHeader.h; sourceTree = "<group>"; };
 		367B453F1BD06AB600E96B69 /* OOStripHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOStripHeader.m; sourceTree = "<group>"; };
+		367E91D11C4050BD001B1795 /* ViewPhotoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewPhotoVC.h; sourceTree = "<group>"; };
+		367E91D21C4050BD001B1795 /* ViewPhotoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewPhotoVC.m; sourceTree = "<group>"; };
 		3686490A1BE04B73003BF98B /* UIImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImageEffects.h; path = External/UIImageEffects/UIImageEffects.h; sourceTree = "<group>"; };
 		3686490B1BE04B73003BF98B /* UIImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageEffects.m; path = External/UIImageEffects/UIImageEffects.m; sourceTree = "<group>"; };
 		3686490D1BE09CF3003BF98B /* OOActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOActivityItemProvider.h; sourceTree = "<group>"; };
@@ -734,6 +737,8 @@
 				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
 				36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */,
 				36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */,
+				367E91D11C4050BD001B1795 /* ViewPhotoVC.h */,
+				367E91D21C4050BD001B1795 /* ViewPhotoVC.m */,
 				36780EA61C3A24AF00B2DE4B /* AddCaptionToMIOVC.h */,
 				36780EA71C3A24AF00B2DE4B /* AddCaptionToMIOVC.m */,
 				367B45351BCCA9B100E96B69 /* RestaurantVCCVL.h */,
@@ -1121,6 +1126,7 @@
 				96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,
+				367E91D31C4050BD001B1795 /* ViewPhotoVC.m in Sources */,
 				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */,

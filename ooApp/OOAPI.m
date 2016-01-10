@@ -110,6 +110,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSLog(@"like: %@", responseObject);
             NSUInteger uid, mid;
             NSDictionary *dict = responseObject;
             uid = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyUserID]);
@@ -119,6 +120,8 @@ NSString *const kKeyDeviceToken = @"device_token";
             } else {
                 success(NO);
             }
+        } else {
+            success(NO);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSInteger statusCode = operation.response.statusCode;
@@ -2575,15 +2578,15 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 + (NSString *)URL {
-#ifdef ADHOC
+//#ifdef ADHOC
     return kOOURLProduction;
-#else
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#endif
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 @end

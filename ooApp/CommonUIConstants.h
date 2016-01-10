@@ -36,6 +36,7 @@ static NSUInteger kColorMarker = 0xFFF9FF00;//0xFF1874CD;//0xDD0000A0;
 static NSUInteger kColorMarkerFaded = 0x701874CD;//0x700000A0;
 static NSUInteger kColorOffBlack = 0xFF272727;
 static NSUInteger kColorOffWhite = 0xFFE5E5E5;
+static NSUInteger kColorOverlay10 = 0xE6000000;
 static NSUInteger kColorOverlay20 = 0xCC000000;
 static NSUInteger kColorOverlay25 = 0xC0000000;
 static NSUInteger kColorOverlay30 = 0xB3000000;
@@ -200,6 +201,9 @@ extern NSString *const kFontIconYum;
 extern NSString *const kFontIconThumbsUp;
 extern NSString *const kFontIconYumOutline;
 extern NSString *const kFontIconLogoFull;
+extern NSString *const kFontIconCaption;
+extern NSString *const kFontIconCaptionFilled;
+
 
 extern NSString *const kNotificationFoodFeedNeedsUpdate;
 extern NSString *const kNotificationRestaurantListsNeedsUpdate;

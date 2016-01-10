@@ -232,7 +232,7 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
+    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)*0.4), @"mapWidth" : @(width(self.view))};
     
     NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _filterView);
     

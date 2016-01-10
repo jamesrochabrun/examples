@@ -51,7 +51,6 @@
     _imageView.layer.cornerRadius = width(_imageView)/2;
     _imageView.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
     _imageView.layer.borderWidth = 0;
-
 }
 
 - (void)layoutSubviews {
@@ -59,17 +58,14 @@
 //    _emptyUserView.layer.cornerRadius = width(_emptyUserView)/2;
 //    _imageView.layer.cornerRadius = width(_imageView)/2;
     self.layer.cornerRadius = width(_imageView)/2;
-
 }
 
 - (void)setUser:(UserObject *)user {
     if (user == _user) return;
     _user = user;
     
-    [self addTarget:self action:@selector(userTapped) forControlEvents:UIControlEventTouchUpInside];
-    
-    NSString*first= _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
-    NSString*last=_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
+    NSString *first= _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
+    NSString *last=_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
     NSString *initials = [NSString stringWithFormat:@"%@%@",  first, last];
     _emptyUserView.text = initials;
     UIImage *image= nil;
@@ -82,23 +78,23 @@
             [_imageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                               placeholderImage:nil
                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                           ON_MAIN_THREAD(^ {
-                                               [weakIV setAlpha:0.0];
-                                               [weakSelf setNeedsUpdateConstraints];
-                                               weakIV.image = image;
-                                               [UIView beginAnimations:nil context:NULL];
-                                               [UIView setAnimationDuration:0.3];
-                                               [weakIV setAlpha:1.0];
-                                               weakSelf.emptyUserView.alpha = 0;
-                                               [UIView commitAnimations];
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [weakIV setAlpha:0.0];
+                                                 weakIV.image = image;
+                                                 [UIView beginAnimations:nil context:NULL];
+                                                 [UIView setAnimationDuration:0.3];
+                                                 [weakIV setAlpha:1.0];
+                                                 weakSelf.emptyUserView.alpha = 0;
+                                                 [UIView commitAnimations];
+                                                 [weakSelf updateConstraintsIfNeeded];
                                            });
                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                           ON_MAIN_THREAD(^{
+                                             dispatch_async(dispatch_get_main_queue(), ^{
                                                [weakSelf displayEmptyView:YES];
                                            });
                                        }];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ON_MAIN_THREAD(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 [self displayEmptyView:YES];
             });
         }];
@@ -108,7 +104,7 @@
         _imageView.image=  image;
     }
     else {
-        ON_MAIN_THREAD(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [self displayEmptyView:YES];
         });
     }
@@ -126,6 +122,11 @@
     [_delegate oOUserViewTapped:self forUser:_user];
 }
 
+- (void)setDelegate:(id<OOUserViewDelegate>)delegate {
+    if (_delegate == delegate) return;
+    _delegate = delegate;
+   [self addTarget:self action:@selector(userTapped) forControlEvents:UIControlEventTouchUpInside]; 
+}
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

@@ -271,7 +271,7 @@ static NSString * const MenuCellIdentifier = @"menuCell";
         _fvc = [[DiagnosticVC alloc] init];
     } else if ([menuItem.type isEqualToString:kMenuItemFoodFeed]) {
         _fvc = [[FoodFeedVC alloc] init];
-        [(FoodFeedVC *)_fvc selectAll];
+//        [(FoodFeedVC *)_fvc selectAll];
     } else if ([menuItem.type isEqualToString:kMenuItemMeet]) {
         _fvc = [[EventsListVC alloc] init];
         if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
