@@ -73,10 +73,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showCameraUI)];
     
-    _needsUpdate = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setUpdateNeeded)
                                                  name:kNotificationFoodFeedNeedsUpdate object:nil];
+    _needsUpdate = YES;
 }
 
 - (void)dealloc {
@@ -131,7 +131,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
     
     __weak FoodFeedVC *weakSelf = self;
-    
     
     [weakSelf dismissViewControllerAnimated:YES completion:nil];
     
@@ -232,8 +231,30 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
-    RestaurantVC *vc = [[RestaurantVC alloc] init];
+
+    MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
+    
+    
+    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+    vc.mio = mio;
     vc.restaurant = r;
+    vc.delegate = self;
+    //[self.navigationController pushViewController:vc animated:NO];
+    vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self.navigationController presentViewController:vc animated:NO completion:^{
+    }];
+}
+
+- (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant {
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = restaurant;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showProfile:(UserObject *)user {
+    ProfileVC *vc = [[ProfileVC alloc] init];
+    vc.userInfo = user;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

@@ -37,7 +37,7 @@
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _yumButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [_yumButton withIcon:kFontIconYumOutline fontSize:20 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(likePhotoTapped)];
+        [_yumButton withIcon:kFontIconYumOutline fontSize:20 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
         [_yumButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
         
@@ -90,7 +90,7 @@
     [_delegate photoCell:self showPhotoOptions:_mediaItemObject];
 }
 
-- (void)likePhotoTapped {
+- (void)yumPhotoTapped {
     __weak PhotoCVCell *weakSelf = self;
     if (_yumButton.isSelected) {
         NSLog(@"unlike photo");
@@ -182,8 +182,6 @@
         
         [self updateNumYums];
         
-        __weak PhotoCVCell *weakSelf = self;
-        
         [OOAPI getMediaItemLiked:_mediaItemObject.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
             ON_MAIN_THREAD(^{
                 [_yumButton setSelected:liked];
@@ -199,6 +197,7 @@
     }
     
     if (_mediaItemObject.sourceUserID) {
+//        __weak PhotoCVCell *weakSelf = self;
         [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
             _userObject = user;
             NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
