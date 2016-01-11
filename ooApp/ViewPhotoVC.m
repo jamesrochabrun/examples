@@ -240,7 +240,8 @@
     _restaurantName.frame = frame;
 
     frame = _iv.frame;
-    frame.size.height = _iv.image.size.height/_iv.image.size.width * width(_backgroundView) - 2*kGeomSpaceEdge;
+
+    frame.size.height = _iv.image.size.height/((_iv.image.size.width) ? (_iv.image.size.width) : 1) * width(_backgroundView) - 2*kGeomSpaceEdge;
     frame.size.width = width(_backgroundView) - 2*kGeomSpaceEdge;
     frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_restaurantName.frame));
     _iv.frame = frame;
