@@ -11,10 +11,8 @@
 
 @class OOUserView;
 
-@protocol OOUserViewDelegate
-
+@protocol OOUserViewDelegate <NSObject>
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user;
-
 @end
 
 @interface OOUserView : UIControl

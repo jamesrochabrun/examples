@@ -119,7 +119,9 @@
 }
 
 - (void)userTapped {
-    [_delegate oOUserViewTapped:self forUser:_user];
+    if ([_delegate respondsToSelector:@selector(oOUserViewTapped:forUser:)]) {
+        [_delegate oOUserViewTapped:self forUser:_user];
+    }
 }
 
 - (void)setDelegate:(id<OOUserViewDelegate>)delegate {

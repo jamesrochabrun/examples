@@ -83,11 +83,15 @@
 }
 
 - (void)showProfile {
-    [_delegate photoCell:self showProfile:_userObject];
+    if ([_delegate respondsToSelector:@selector(photoCell:showProfile:)]) {
+        [_delegate photoCell:self showProfile:_userObject];
+    }
 }
 
 - (void)showOptions {
-    [_delegate photoCell:self showPhotoOptions:_mediaItemObject];
+    if ([_delegate respondsToSelector:@selector(photoCell:showPhotoOptions:)]) {
+        [_delegate photoCell:self showPhotoOptions:_mediaItemObject];
+    }
 }
 
 - (void)yumPhotoTapped {
@@ -99,7 +103,9 @@
             ON_MAIN_THREAD(^{
                 [_yumButton setSelected:NO];
                 [weakSelf updateNumYums];
-                [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
+                    [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                }
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
@@ -111,7 +117,9 @@
             ON_MAIN_THREAD(^{
                 [_yumButton setSelected:YES];
                 [weakSelf updateNumYums];
-                [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
+                    [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                }
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
