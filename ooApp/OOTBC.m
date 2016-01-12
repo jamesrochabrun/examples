@@ -50,10 +50,11 @@
     [image sizeToFit];
     [selectedImage sizeToFit];
 
-//    tbi = [[UITabBarItem alloc] initWithTitle:@"Food Feed" image:[UIImage imageFromView:image] selectedImage:[UIImage imageFromView:selectedImage]];
-//    UINavigationController *ffNC = [[self childViewControllers] objectAtIndex:0];
-//    ffNC.tabBarItem = tbi;
-
+    UINavigationController *ffNC = [[self childViewControllers] objectAtIndex:0];
+    [ffNC.tabBarItem setImage:[UIImage imageFromView:image]];
+    [ffNC.tabBarItem setSelectedImage:[UIImage imageFromView:selectedImage]];
+    ffNC.tabBarItem.title = @"Food Feed";
+    
     image.text = selectedImage.text = kFontIconSearch;
     [image sizeToFit];
     [selectedImage sizeToFit];
@@ -94,10 +95,7 @@
     nc = [[UINavigationController alloc] initWithRootViewController:_profileVC];
     [self addChildViewController:nc];
     
-    [self setSelectedIndex:2];
-    
-    
-    
+    [self setSelectedIndex:0];
 }
 
 - (void)didReceiveMemoryWarning {
