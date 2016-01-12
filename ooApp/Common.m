@@ -77,7 +77,7 @@ NSString *getDateString()
 
 NSString *stringFromUnsigned(NSUInteger value)
 {
-    return [NSString stringWithFormat:@"%lu",(unsigned long)value ];
+    return [NSString stringWithFormat:@"%lu", (unsigned long)value];
 }
 
 NSString *trimString(NSString *s)

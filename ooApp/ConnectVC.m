@@ -181,19 +181,19 @@
                     }];
 }
 
-- (void) showFollowButton: (BOOL)following
+- (void)showFollowButton:(BOOL)following
 {
-    _buttonFollow.hidden= NO;
-    _buttonFollow.selected=  following;
+    _buttonFollow.hidden = NO;
+    _buttonFollow.selected = following;
 }
 
 - (void)commenceFetchingStats
 {
     __weak ConnectTableCell *weakSelf = self;
-    NSUInteger userid=self.userInfo.userID;
+    NSUInteger userid = self.userInfo.userID;
     [OOAPI getUserStatsFor:userid success:^(UserStatsObject *object) {
         ON_MAIN_THREAD(^{
-            [weakSelf provideStats:  object];
+            [weakSelf provideStats:object];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog  (@"STATS ERROR %@",error);
@@ -202,26 +202,25 @@
     
 }
 
-- (void) oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
+- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
 {
-    [self.delegate userTappedImageOfUser: user];
+    [self.delegate userTappedImageOfUser:user];
 }
 
-- (void) provideUser: (UserObject*) user;
+- (void)provideUser:(UserObject *)user;
 {
-    if(!user)
-        return;
+    if (!user) return;
     
-    self.userInfo=user;
+    self.userInfo = user;
     
-    [_userView setUser: user];
+    [_userView setUser:user];
     
     NSString *string= user.username ? [NSString stringWithFormat:@"@%@",user.username] : @"Unknown";
-    _labelUserName.text= string;
+    _labelUserName.text = string;
     
-    _labelName.text=[NSString stringWithFormat:@"%@ %@",
-                     user.firstName ?: @"First",
-                     user.lastName ?: @"Last"];
+    _labelName.text = [NSString stringWithFormat:@"%@ %@",
+                       user.firstName ? : @"First",
+                       user.lastName ? : @"Last"];
 }
 
 - (void)prepareForReuse
@@ -232,72 +231,71 @@
     
 //    _labelLists.alpha=0;
     
-    _labelFollowers.alpha=0;
-    _labelFollowing.alpha=0;
-    _labelPlaces.alpha=0;
-    _labelPhotos.alpha=0;
-    _labelFollowersNumber.alpha=0;
-    _labelFollowingNumber.alpha=0;
-    _labelPlacesNumber.alpha=0;
-    _labelPhotosNumber.alpha=0;
+    _labelFollowers.alpha = 0;
+    _labelFollowing.alpha = 0;
+    _labelPlaces.alpha = 0;
+    _labelPhotos.alpha = 0;
+    _labelFollowersNumber.alpha = 0;
+    _labelFollowingNumber.alpha = 0;
+    _labelPlacesNumber.alpha = 0;
+    _labelPhotosNumber.alpha = 0;
     
     //    [_labelLists setText:  @""];
-    [_labelPlaces setText:  @""];
-    [_labelFollowers setText:  @""];
-    [_labelFollowing setText:  @""];
-    [_labelPlacesNumber setText:  @""];
-    [_labelPhotosNumber setText:  @""];
-    [_labelFollowersNumber setText:  @""];
-    [_labelFollowingNumber setText:  @""];
+    [_labelPlaces setText:@""];
+    [_labelFollowers setText:@""];
+    [_labelFollowing setText:@""];
+    [_labelPlacesNumber setText:@""];
+    [_labelPhotosNumber setText:@""];
+    [_labelFollowersNumber setText:@""];
+    [_labelFollowingNumber setText:@""];
    
     _buttonFollow.hidden= YES;
 }
 
-- (void) provideStats: (UserStatsObject*) stats
+- (void)provideStats:(UserStatsObject *)stats
 {
     //    NSInteger lists= stats.totalLists;
-    NSUInteger followers= stats.totalFollowers;
-    NSUInteger following= stats.totalFollowees;
-    NSUInteger restaurantCount= stats.totalVenues;
-    NSUInteger photosCount= stats.totalPhotos;
+    NSUInteger followers = stats.totalFollowers;
+    NSUInteger following = stats.totalFollowees;
+    NSUInteger restaurantCount = stats.totalVenues;
+    NSUInteger photosCount = stats.totalPhotos;
     
-    if  (followers==1 ) {
-        [_labelFollowersNumber setText: @"1"   ];
-        [_labelFollowers setText: @"follower"  ];
+    if (followers == 1) {
+        [_labelFollowersNumber setText:@"1"];
+        [_labelFollowers setText:@"follower"];
     } else {
-        [_labelFollowersNumber setText: stringFromUnsigned( followers) ];
-        [_labelFollowers setText: @"followers"];
+        [_labelFollowersNumber setText:stringFromUnsigned(followers)];
+        [_labelFollowers setText:@"followers"];
     }
     
-    [_labelFollowingNumber setText: stringFromUnsigned( following )];
-    [_labelFollowing setText: @"following"];
+    [_labelFollowingNumber setText:stringFromUnsigned(following)];
+    [_labelFollowing setText:@"following"];
     
-    if  (restaurantCount==1 ) {
-        [_labelPlacesNumber setText: @"1"   ];
-        [_labelPlaces setText: @"place"  ];
+    if (restaurantCount == 1) {
+        [_labelPlacesNumber setText:@"1"];
+        [_labelPlaces setText:@"place"];
     } else {
-        [_labelPlacesNumber  setText: stringFromUnsigned( restaurantCount )];
+        [_labelPlacesNumber setText:stringFromUnsigned(restaurantCount)];
         [_labelPlaces setText: @"places"];
     }
     
-    [_labelPhotosNumber  setText: stringFromUnsigned( photosCount )];
+    [_labelPhotosNumber setText:stringFromUnsigned(photosCount)];
     
     __weak ConnectTableCell *weakSelf = self;
     [UIView animateWithDuration:.4 animations:^{
         //        weakSelf.labelLists.alpha=1;
-        
-        weakSelf.labelFollowers.alpha=1;
-        weakSelf.labelPhotos.alpha=1;
-        weakSelf.labelFollowing.alpha=1;
-        weakSelf.labelPlaces.alpha=1;
-        weakSelf.labelFollowersNumber.alpha=1;
-        weakSelf.labelPhotosNumber.alpha=1;
-        weakSelf.labelFollowingNumber.alpha=1;
-        weakSelf.labelPlacesNumber.alpha=1;
+        weakSelf.labelFollowers.alpha = 1;
+        weakSelf.labelPhotos.alpha = 1;
+        weakSelf.labelFollowing.alpha = 1;
+        weakSelf.labelPlaces.alpha = 1;
+        weakSelf.labelFollowersNumber.alpha = 1;
+        weakSelf.labelPhotosNumber.alpha = 1;
+        weakSelf.labelFollowingNumber.alpha = 1;
+        weakSelf.labelPlacesNumber.alpha = 1;
     }];
 }
 
-- (void) layoutSubviews
+- (void)layoutSubviews
 {
     [super layoutSubviews];
     const float kGeomConnectCellMiddleGap= 7;
@@ -306,9 +304,9 @@
     const float margin = kGeomSpaceEdge;
     const float spacing = kGeomSpaceInter;
     float imageSize = kGeomConnectScreenUserImageHeight;
-    _userView.frame=CGRectMake(margin, margin, imageSize, imageSize);
+    _userView.frame = CGRectMake(margin, margin, imageSize, imageSize);
     
-    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, margin,kGeomButtonWidth, 24 /* per Jay */);
+    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, 15,kGeomButtonWidth, 24 /* per Jay */);
     
     float x=margin+imageSize+kGeomConnectCellMiddleGap;
     float y=margin;
