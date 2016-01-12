@@ -168,7 +168,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         _restaurants = restaurants;
         ON_MAIN_THREAD(^{
             [weakSelf.collectionView reloadData];
-            [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+            
+            if (weakSelf.restaurants.count ) {
+                [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+            }
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         _restaurants = [NSArray array];
