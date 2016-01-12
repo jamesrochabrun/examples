@@ -99,6 +99,8 @@ extern NSInteger getLocalDayNumber (NSDate*);
 extern NSInteger getLocalDayOfMonth (NSDate* date);
 extern NSInteger getLocalHour (NSDate* date);
 
+extern void complainAboutInternetConnection (void);
+
 static inline BOOL is_reachable(void) {
 	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;
 	return status ==ReachableViaWiFi || status==ReachableViaWWAN;

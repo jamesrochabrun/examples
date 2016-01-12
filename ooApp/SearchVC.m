@@ -278,6 +278,7 @@ static const NSUInteger maximumKeywords= 4;
                                                         
                                                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                         NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
+                                                        complainAboutInternetConnection();
                                                         
                                                         [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
                                                                                    withObject:nil
@@ -312,7 +313,8 @@ static const NSUInteger maximumKeywords= 4;
                                                                       
                                                                   } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                                       NSLog  (@"ERROR FETCHING YOU'S RESTAURANTS: %@",e );
-                                                                      
+                                                                      complainAboutInternetConnection();
+
                                                                       [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
                                                                                                  withObject:nil
                                                                                               waitUntilDone:NO];
@@ -354,7 +356,8 @@ static const NSUInteger maximumKeywords= 4;
                                                              
                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                              NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
-                                                             
+                                                             complainAboutInternetConnection();
+
                                                              [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
                                                                                         withObject:nil
                                                                                      waitUntilDone:NO];

@@ -270,6 +270,9 @@
                                              NSLog (@"PUT OF USERNAME FAILED %@ w/%ld",error,(long)statusCode);
                                              if (statusCode==403)
                                                  [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
+                                             else {
+                                                 complainAboutInternetConnection();
+                                             }
 
                                          }     ];
 }

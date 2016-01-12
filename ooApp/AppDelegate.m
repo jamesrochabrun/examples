@@ -303,11 +303,9 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [[Settings sharedInstance] save];
-    ANALYTICS_EVENT_OTHER(@"Terminate");
-    ANALYTICS_FORCE_SYNC();
+    // NOTE: In newer iOS releases, I've found attempting to save data from here results in data getting lost. -ZS
     
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    ANALYTICS_EVENT_OTHER(@"Terminate");
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application

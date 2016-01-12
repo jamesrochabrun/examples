@@ -131,6 +131,7 @@
                                         }];
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                       complainAboutInternetConnection();
                    }];
 }
 

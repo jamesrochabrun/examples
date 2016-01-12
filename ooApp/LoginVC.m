@@ -86,8 +86,10 @@
     self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
     _labelMessage.textColor= WHITE;
     
+#ifdef DEBUG
     self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
     [self.view addGestureRecognizer:_pinch];
+#endif
 }
 
 - (void)loginBypass: (id) sender
@@ -320,9 +322,9 @@
     }
 
     //---------------------------------------------------
-    // RULE:  if the application was deleted, we may have
+    // RULE: If the application was deleted, we may have
     //  the Facebook ID but not the email address and
-    //  certainly not the authorization token.  in this case
+    //  certainly not the authorization token. In this case
     //  we need to ask FB for the email address.
     //
     NSString *token= userInfo.backendAuthorizationToken;
@@ -435,7 +437,9 @@
                                                  // XX:  this is the OO log in flow
                                              }
                                              
-                                             // RULE:  While the above is happening take the user to the Explore page regardless of whether the backend was reached.
+                                             // RULE: While the above is happening take the user to the
+                                             //     Explore page regardless of whether the backend was reached.
+                                             
                                              if (userInfo.username.length ) {
                                                  [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                              } else {
@@ -726,7 +730,6 @@
         }
     }
 }
-
 
 - (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
