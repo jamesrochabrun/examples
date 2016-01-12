@@ -12,6 +12,7 @@
 #import "SearchVC.h"
 #import "ConnectVC.h"
 #import "ProfileVC.h"
+#import "AppDelegate.h"
 
 @interface OOTBC ()
 @property (nonatomic, strong) ExploreVC *exploreVC;
@@ -96,6 +97,7 @@
     [self addChildViewController:nc];
     
     [self setSelectedIndex:0];
+    APP.tabBar = self;
 }
 
 - (void)didReceiveMemoryWarning {

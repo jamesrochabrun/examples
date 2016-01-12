@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="First" image="7A1801C0-C828-4905-BD7A-7FF5D759408C" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="First" image="08012FC8-9B3F-4D44-B8C9-168FBDB99323" id="acW-dT-cKf"/>
                     <navigationItem key="navigationItem" id="mD4-Ex-NhB"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -209,6 +209,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="1Iq-hT-Nip" kind="relationship" relationship="viewControllers" id="zdq-XU-wlj"/>
+                        <segue destination="MbO-b8-NsW" kind="show" identifier="loginUISegue" id="sOR-f7-PXO"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uam-vJ-hKs" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -217,7 +218,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="7A1801C0-C828-4905-BD7A-7FF5D759408C" width="30" height="30">
+        <image name="08012FC8-9B3F-4D44-B8C9-168FBDB99323" width="30" height="30">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGSUpYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QEAcI
 ERYbHCUmJysyNzo9Q0ZVJG51bGzUCQoLDA0ODxBWJGNsYXNzXE5TSW1hZ2VGbGFnc1ZOU1JlcHNXTlND
@@ -278,6 +279,6 @@ TQAAAAAAAAAAAAAAAAAAC8M
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="hFU-ZB-sOJ"/>
-        <segue reference="WV5-ww-Tac"/>
+        <segue reference="sOR-f7-PXO"/>
     </inferredMetricsTieBreakers>
 </document>

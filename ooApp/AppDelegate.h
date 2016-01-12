@@ -22,6 +22,7 @@
 @property (nonatomic, strong) NSDate *dateLeft;
 @property (nonatomic, strong) UINavigationController *nc;
 @property (nonatomic, strong) EventsListVC *e1;
+@property (nonatomic, strong) SWRevealViewController *tabBar;
 
 - (BOOL)connected;
 - (void)registerForPushNotifications;

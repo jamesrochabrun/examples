@@ -133,8 +133,8 @@ UIButton *makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SE
                              maxHeight: 0
                                success: ^(NSString *link)  {
                                    NSURL *url= [NSURL URLWithString: link];
-                                   if  ( url) {
-                                       NSURLRequest*r= [NSURLRequest requestWithURL:url];
+                                   if  (url) {
+                                       NSURLRequest *r= [NSURLRequest requestWithURL:url];
                                        __weak UIButton *weakButton = b;
                                        [b.imageView setImageWithURLRequest:r
                                                           placeholderImage:APP.imageForNoProfileSilhouette
@@ -315,7 +315,7 @@ UITableView* makeTable (UIView *parent,id  delegate)
     return tv;
 }
 
-UILabel* makeIconLabel (UIView *parent, NSString*  text, float fontSize)
+UILabel *makeIconLabel(UIView *parent, NSString *text, float fontSize)
 {
     UILabel* l= [[ UILabel alloc ]init ];
     [parent addSubview: l ];
@@ -334,21 +334,21 @@ UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
 
 UIScrollView* makeScrollView (UIView*parent, id  delegate)
 {
-    UIScrollView *v= [UIScrollView  new];
-    v.delegate=  delegate;
-    [parent addSubview: v];
+    UIScrollView *v= [UIScrollView new];
+    v.delegate = delegate;
+    [parent addSubview:v];
     return v;
 }
 
-UIWebView* makeWebView (UIView*parent, id  delegate)
+UIWebView *makeWebView(UIView *parent, id delegate)
 {
-    UIWebView *v= [UIWebView  new];
-    v.delegate=  delegate;
-    [parent addSubview: v];
+    UIWebView *v= [UIWebView new];
+    v.delegate = delegate;
+    [parent addSubview:v];
     return v;
 }
 
-UITextView* makeTextView (UIView*parent, UIColor *bg,BOOL  editable)
+UITextView *makeTextView(UIView *parent, UIColor *bg, BOOL editable)
 {
     UITextView *textView= [UITextView  new];
     textView.editable= editable;
@@ -357,10 +357,10 @@ UITextView* makeTextView (UIView*parent, UIColor *bg,BOOL  editable)
     return textView;
 }
 
-UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
+UIButton *makeAttributedButton (UIView *parent, NSString *title, float fontSize, UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
-    UIButton* button= [UIButton buttonWithType:  UIButtonTypeCustom];
-    if  (title ) {
+    UIButton *button= [UIButton buttonWithType:UIButtonTypeCustom];
+    if (title) {
         NSAttributedString* a= [[NSAttributedString alloc] initWithString:title];
         [button setAttributedTitle: a forState:UIControlStateNormal ];
         button.titleLabel.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
@@ -376,10 +376,10 @@ UIButton* makeAttributedButton (UIView *parent, NSString*  title, float fontSize
             button.layer.cornerRadius= kGeomCornerRadius;
         }
     }
-    if  (bg ) {
-        button.layer.backgroundColor= bg.CGColor;
+    if (bg) {
+        button.layer.backgroundColor = bg.CGColor;
     }
-    [parent addSubview: button ];
+    [parent addSubview:button];
     return button;
 }
 
@@ -475,11 +475,11 @@ UIButton* makeRoundIconButton (UIView *parent, NSString*  title, float fontSize,
     return b;
 }
 
-UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth, float radius)
+UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id target, SEL callback, float borderWidth, float radius)
 {
-    UIButton*b= makeButtonForAutolayout(parent, title, fontSize, fg, bg, target, callback, borderWidth);
-    b.titleLabel.font= [UIFont fontWithName: kFontIcons size:fontSize];
-    b.layer.cornerRadius=  radius;
+    UIButton *b = makeButtonForAutolayout(parent, title, fontSize, fg, bg, target, callback, borderWidth);
+    b.titleLabel.font = [UIFont fontWithName:kFontIcons size:fontSize];
+    b.layer.cornerRadius = radius;
     return b;
 }
 

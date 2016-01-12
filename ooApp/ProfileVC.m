@@ -372,13 +372,6 @@
 {
     [super viewWillAppear:animated];
     
-    NSLog(@"rvc=%@", APP.nc.revealViewController);
-    NSLog(@"snc=%@", self.navigationController);
-    NSLog(@"sncrvc=%@", self.navigationController.revealViewController);
-    NSLog(@"snctvcrvc=%@", self.navigationController.topViewController.revealViewController);
-    NSLog(@"tvc=%@", APP.nc.topViewController);
-    NSLog(@"tvcrvc=%@", APP.nc.topViewController.revealViewController);
-    
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
     if (_lastShownUser && _lastShownUser != _userInfo.userID) {
@@ -929,10 +922,7 @@
         [[Settings sharedInstance] removeDateString];
         [[Settings sharedInstance] removeSearchRadius];
         [APP clearCache];
-        
-        [APP.nc.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
-    
-       // [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
+        [APP.tabBar performSegueWithIdentifier:@"loginUISegue" sender:self];
     }];
     UIAlertAction *manageTags = [UIAlertAction actionWithTitle:@"Manage Tags" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         ManageTagsVC *vc = [[ManageTagsVC alloc] init];
