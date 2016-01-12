@@ -112,8 +112,6 @@ extern void ANALYTICS_EVENT_OTHER (NSString*);
 extern void ANALYTICS_FORCE_SYNC ( void);
 extern void ANALYTICS_EVENT_ERROR (NSString*name);
 
-extern UIImage *darkenImage(UIImage *image);
-
 @interface Common : NSObject
 
 + (NSString *)versionString;
