@@ -112,6 +112,8 @@ static NSString * const ListRowID = @"HLRCell";
 
     if (_listToAddTo || _eventBeingEdited) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    } else {
+        [self setLeftNavWithIcon:@"" target:nil action:nil];
     }
     
     [self setRightNavWithIcon:kFontIconDiscover target:self action:@selector(showOptions)];

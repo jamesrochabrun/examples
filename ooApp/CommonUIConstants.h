@@ -49,6 +49,7 @@ static NSUInteger kColorGreen = 0xFF00FF00;
 static NSUInteger kColorBlue = 0xFF0000FF;
 static NSUInteger kColorYellow = 0xFFF9FF00;
 static NSUInteger kColorYellowFaded = 0x99F9FF00;
+static NSUInteger kColorYellowReallyFaded = 0x45F9FF00;
 static NSUInteger kColorStripHeaderShadow = 0x88898989;
 static NSUInteger kColorIconSelected = 0xFFFFFFFF;
 static NSUInteger kColorCoordinatorBoxBackground = 0xFF2b2b2b;

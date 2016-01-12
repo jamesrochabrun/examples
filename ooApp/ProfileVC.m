@@ -446,6 +446,8 @@
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers > 1) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    } else {
+        [self setLeftNavWithIcon:@"" target:nil action:nil];
     }
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
@@ -954,8 +956,7 @@
         [[Settings sharedInstance] removeDateString];
         [[Settings sharedInstance] removeSearchRadius];
         [APP clearCache];
-        
-        [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
+        [APP.tabBar performSegueWithIdentifier:@"loginUISegue" sender:self];
     }];
     UIAlertAction *manageTags = [UIAlertAction actionWithTitle:@"Manage Tags" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         ManageTagsVC *vc = [[ManageTagsVC alloc] init];
