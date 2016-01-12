@@ -14,9 +14,10 @@
 
 @class ViewPhotoVC;
 
-@protocol ViewPhotoVCDelegate
+@protocol ViewPhotoVCDelegate <NSObject>
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant;
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showProfile:(UserObject *)user;
+- (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC;
 @end
 
 @interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate>

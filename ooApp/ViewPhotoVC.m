@@ -116,7 +116,9 @@
     } completion:^(BOOL finished) {
         [self dismissViewControllerAnimated:NO
                                  completion:^{
-                                     ;
+                                     if ([_delegate respondsToSelector:@selector(viewPhotoVCClosed:)]) {
+                                         [_delegate viewPhotoVCClosed:self];
+                                     }
                                  }];
     }];
 }

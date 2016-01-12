@@ -234,6 +234,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
     
+    self.tabBarController.tabBar.hidden = YES;
     
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
     vc.mio = mio;
@@ -244,6 +245,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self.navigationController presentViewController:vc animated:NO completion:^{
     }];
+}
+
+- (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC {
+    self.tabBarController.tabBar.hidden = NO;
 }
 
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant {
