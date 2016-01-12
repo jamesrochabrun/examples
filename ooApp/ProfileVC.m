@@ -360,6 +360,7 @@
 @property (nonatomic,strong) ProfileHeaderView* topView;
 @property (nonatomic,assign) BOOL didFetch;
 @property (nonatomic,assign) NSUInteger lastShownUser;
+@property (nonatomic,assign) MediaItemObject* mediaItemBeingEdited;
 @end
 
 @implementation ProfileVC
@@ -792,15 +793,16 @@
                                                                style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                    [OOAPI deletePhoto:mio
                                                                               success:^{
-                                                                                  [weakSelf.cv reloadData];
+                                                                                  NSLog  (@"SUCCESS IN DELETING PHOTO");
+                                                                                  [weakSelf update:nil];
                                                                               }
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                                  NSLog  (@"FAILED TO DELETE PHOTO");
+                                                                                  NSLog  (@"FAILED TO DELETE PHOTO, error=%@",error);
                                                                               }];
                                                                }];
         UIAlertAction *captionAction = [UIAlertAction actionWithTitle:@"Add caption to photo"
                                                                style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                   message( @"coming soon");
+                                                                   [weakSelf userAddingCaptionTo:mio];
                                                                }];
         
         [a addAction:cancel];
@@ -828,7 +830,7 @@
                                                                                   message( @"You have reported the photo successfully.");
                                                                               }
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                                  NSLog  (@"FAILED TO REPORT PHOTO");
+                                                                                  NSLog  (@"FAILED TO REPORT PHOTO, error=%@",error);
                                                                               }];
 
                                                                }];
@@ -841,7 +843,38 @@
     }
 }
 
+- (void)userAddingCaptionTo: ( MediaItemObject*)mediaObject
+{
+    OOTextEntryVC *vc = [[OOTextEntryVC alloc] init];
+    vc.defaultText = mediaObject.caption;
+    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;// XX:
+    vc.delegate=self;
+    self.mediaItemBeingEdited= mediaObject;
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
+- (void)textEntryFinished:(NSString*)text;
+{
+    __weak ProfileVC *weakSelf = self;
+    [OOAPI setMediaItemCaption:_mediaItemBeingEdited.mediaItemId
+                       caption:text
+                       success:^{
+                           weakSelf.mediaItemBeingEdited= nil;
+                           NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
+                       }
+                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                           weakSelf.mediaItemBeingEdited= nil;
+                           NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
+                       }
+     ];
+}
+
+- (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio
+{
+    
+    message( @"liked photo");
+}
+    
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row= indexPath.row;
