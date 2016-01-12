@@ -20,10 +20,12 @@
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UIButton *numYums;
 @property (nonatomic, strong) UIButton *userButton;
+@property (nonatomic, strong) UIButton *closeButton;
 @property (nonatomic, strong) OOUserView *userViewButton;
 @property (nonatomic, strong) UIButton *restaurantName;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, strong) UITapGestureRecognizer *closeTapGesture;
 @property (nonatomic, strong) UserObject *user;
 @end
 
@@ -42,11 +44,16 @@
         _caption = [[UILabel alloc] init];
         [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         
+        _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
+        [_closeButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorYellow borderColor:kColorClear target:self selector:@selector(showRestaurant)];
+        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
         
         _tapGesture = [[UITapGestureRecognizer alloc] init];
+        _closeTapGesture = [[UITapGestureRecognizer alloc] init];
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_yumButton withIcon:kFontIconYumOutline fontSize:40 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
@@ -67,8 +74,10 @@
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
-        
+
+
         [self.view addSubview:_backgroundView];
+        [_backgroundView addSubview:_closeButton];
         [_backgroundView addSubview:_caption];
         [_backgroundView addSubview:_userButton];
         [_backgroundView addSubview:_userViewButton];
@@ -114,7 +123,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [_tapGesture addTarget:self action:@selector(close)];
+    [_tapGesture addTarget:self action:@selector(showRestaurant)];
+    [_closeTapGesture addTarget:self action:@selector(close)];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -156,7 +166,10 @@
 //    _backgroundImage.image = nil;
     
     OOAPI *api = [[OOAPI alloc] init];
-            [self.view addGestureRecognizer:_tapGesture];
+    
+    [_backgroundView addGestureRecognizer:_tapGesture];
+    [self.view addGestureRecognizer:_closeTapGesture];
+    
     __weak UIImageView *weakIV = _iv;
     __weak ViewPhotoVC *weakSelf = self;
     
@@ -283,6 +296,10 @@
     frame.size.height = CGRectGetMaxY(_userButton.frame) + kGeomSpaceEdge;
     frame.origin.y = (height(self.view) - frame.size.height)/2;
     _backgroundView.frame = frame;
+    
+    frame = _closeButton.frame;
+    frame.origin = CGPointMake(CGRectGetWidth(_backgroundView.frame)-CGRectGetWidth(_closeButton.frame), 0);
+    _closeButton.frame = frame;
     
    // [_backgroundView bringSubviewToFront:_restaurantName];
 }

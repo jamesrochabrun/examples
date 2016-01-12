@@ -18,12 +18,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="First" image="9DFAA0A8-6249-4809-AE6F-94A05DB737C4" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="First" image="3D20195F-E90C-4AE1-B549-DAB6541971E9" id="acW-dT-cKf"/>
                     <navigationItem key="navigationItem" id="mD4-Ex-NhB"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2162" y="144"/>
+            <point key="canvasLocation" x="2892" y="260"/>
         </scene>
         <!--EmptyList-->
         <scene sceneID="KNa-l7-ohr">
@@ -41,7 +41,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="52q-oQ-zRh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1549" y="-1241"/>
+            <point key="canvasLocation" x="353" y="-1783"/>
         </scene>
         <!--Menu-->
         <scene sceneID="dkC-vN-2xv">
@@ -69,12 +69,13 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T25-Rm-2kZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1470" y="-556"/>
+            <point key="canvasLocation" x="2131" y="-460"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Item-->
         <scene sceneID="QPN-8W-NqC">
             <objects>
                 <navigationController id="DyY-Mi-do0" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="acZ-dD-M15"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="LcM-xi-ReH">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -85,7 +86,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cHf-cb-S4L" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1470" y="144"/>
+            <point key="canvasLocation" x="2131" y="260"/>
         </scene>
         <!--Profile-->
         <scene sceneID="32X-TW-2nU">
@@ -106,7 +107,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DOH-a6-2ed" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="823" y="-1005"/>
+            <point key="canvasLocation" x="353" y="-1071"/>
         </scene>
         <!--Reveal View Controller-->
         <scene sceneID="VEz-fu-Fy6">
@@ -121,15 +122,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="jOO-3E-6Bk"/>
                     <connections>
                         <segue destination="Wma-a5-07f" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="Eag-kR-R0T"/>
-                        <segue destination="DyY-Mi-do0" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="Ler-TQ-2MX"/>
-                        <segue destination="MbO-b8-NsW" kind="show" identifier="loginUISegue" id="ef4-jV-xDv"/>
+                        <segue destination="DyY-Mi-do0" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="m5w-m2-yIZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dho-dy-JQz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="821" y="-354"/>
+            <point key="canvasLocation" x="1402" y="-39"/>
         </scene>
         <!--Create UsernameVC-->
         <scene sceneID="vVT-DW-xht">
@@ -146,12 +147,12 @@
                     </view>
                     <connections>
                         <segue destination="MbO-b8-NsW" kind="show" identifier="returnToLogin" id="eJl-xG-h6Y"/>
-                        <segue destination="1Iq-hT-Nip" kind="show" identifier="gotoExploreFromCreateUsername" id="eSv-Z2-37Q"/>
+                        <segue destination="Un1-Gt-hYH" kind="show" identifier="mainUISegue" id="SUo-AR-XDR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="205-uK-Eq8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="573" y="449"/>
+            <point key="canvasLocation" x="513" y="-123"/>
         </scene>
         <!--Login-->
         <scene sceneID="aSG-qy-GVl">
@@ -168,14 +169,14 @@
                     <navigationItem key="navigationItem" id="Fbi-XC-4pI"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
-                        <segue destination="1Iq-hT-Nip" kind="show" identifier="mainUISegue" id="Old-qZ-n3z"/>
                         <segue destination="NGY-d5-9fK" kind="show" identifier="gotoCreateUsername" id="Nwv-RE-w07"/>
                         <segue destination="O7c-KZ-1eq" kind="show" identifier="showProfile" id="AGC-Gq-PUd"/>
+                        <segue destination="Un1-Gt-hYH" kind="show" identifier="mainUISegue" id="hFU-ZB-sOJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UXi-wQ-9ae" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="128" y="-411"/>
+            <point key="canvasLocation" x="-362" y="-351"/>
         </scene>
         <!--Item-->
         <scene sceneID="wHZ-OH-cha">
@@ -194,11 +195,28 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uzR-pm-DUc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-695" y="-345"/>
+            <point key="canvasLocation" x="-1045" y="-351"/>
+        </scene>
+        <!--OOTBC-->
+        <scene sceneID="T7Q-kb-eHh">
+            <objects>
+                <tabBarController id="Un1-Gt-hYH" customClass="OOTBC" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="Rtk-qP-fpj">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="1Iq-hT-Nip" kind="relationship" relationship="viewControllers" id="zdq-XU-wlj"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Uam-vJ-hKs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1402" y="-943"/>
         </scene>
     </scenes>
     <resources>
-        <image name="9DFAA0A8-6249-4809-AE6F-94A05DB737C4" width="30" height="30">
+        <image name="3D20195F-E90C-4AE1-B549-DAB6541971E9" width="30" height="30">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGQkNYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ERYbHCUmJygwMzY8P1UkbnVsbNQJCgsMDQ4PEFYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVwc1dOU0Nv
@@ -257,7 +275,7 @@ RgAAAAAAAAAAAAAAAAAAC5U
         </image>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ef4-jV-xDv"/>
-        <segue reference="eSv-Z2-37Q"/>
+        <segue reference="eJl-xG-h6Y"/>
+        <segue reference="hFU-ZB-sOJ"/>
     </inferredMetricsTieBreakers>
 </document>

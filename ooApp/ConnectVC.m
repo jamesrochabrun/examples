@@ -154,13 +154,6 @@
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
         [self addSubview:_buttonFollow];
-        
-//        self.buttonFollow= makeButton(self, @"FOLLOW",
-//                                      kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), CLEAR,
-//                                      self,
-//                                      @selector (userPressedFollow:), 1);
-//        
-//        _buttonFollow.hidden= YES;
     }
     return self;
 }
@@ -458,6 +451,8 @@
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _tableAccordion.separatorColor= BLACK;
     _tableAccordion.showsVerticalScrollIndicator= NO;
+    
+    [self setLeftNavWithIcon:@"" target:nil action:nil];
 
 }
 

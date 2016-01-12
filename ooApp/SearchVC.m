@@ -155,6 +155,8 @@ static const NSUInteger maximumKeywords= 4;
     [self changeFilter:FILTER_PLACES];
 
     [self setUpKeywordsArray];
+    
+    [self setLeftNavWithIcon:@"" target:nil action:nil];
 }
 
 //------------------------------------------------------------------------------

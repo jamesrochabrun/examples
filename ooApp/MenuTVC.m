@@ -56,16 +56,22 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     MenuObject *menuItem;
     _menuItems = [NSMutableArray array];
     
+//    menuItem = [[MenuObject alloc] init];
+//    menuItem.icon = kFontIconSearch;
+//    menuItem.name = @"SEARCH";
+//    menuItem.type = kMenuItemSearch;
+//    [_menuItems addObject:menuItem];
+//
+//    menuItem = [[MenuObject alloc] init];
+//    menuItem.icon = kFontIconMap;
+//    menuItem.name = @"EXPLORE";
+//    menuItem.type = kMenuItemExplore;
+//    [_menuItems addObject:menuItem];
+    
     menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconSearch;
-    menuItem.name = @"SEARCH";
-    menuItem.type = kMenuItemSearch;
-    [_menuItems addObject:menuItem];
-
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconMap;
-    menuItem.name = @"EXPLORE";
-    menuItem.type = kMenuItemExplore;
+    menuItem.icon = kFontIconFoodFeed;
+    menuItem.name = @"FOOD FEED";
+    menuItem.type = kMenuItemFoodFeed;
     [_menuItems addObject:menuItem];
     
     menuItem = [[MenuObject alloc] init];
@@ -74,12 +80,6 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.type = kMenuItemPlay;
     [_menuItems addObject:menuItem];
 
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconFoodFeed;
-    menuItem.name = @"FOOD FEED";
-    menuItem.type = kMenuItemFoodFeed;
-    [_menuItems addObject:menuItem];
-    
     menuItem = [[MenuObject alloc] init];
     menuItem.icon = kFontIconWhatsNew;
     menuItem.name = @"HOT LISTS";
@@ -92,17 +92,17 @@ static NSString * const MenuCellIdentifier = @"menuCell";
     menuItem.type = kMenuItemMeet;
     [_menuItems addObject:menuItem];
     
-    menuItem = [MenuObject new];
-    menuItem.icon = kFontIconFeed;
-    menuItem.name = @"CONNECT";
-    menuItem.type = kMenuItemConnect;
-    [_menuItems addObject:menuItem];
+//    menuItem = [MenuObject new];
+//    menuItem.icon = kFontIconFeed;
+//    menuItem.name = @"CONNECT";
+//    menuItem.type = kMenuItemConnect;
+//    [_menuItems addObject:menuItem];
     
-    menuItem = [[MenuObject alloc] init];
-    menuItem.icon = kFontIconPerson;
-    menuItem.name = @"PROFILE";
-    menuItem.type = kMenuItemProfile;
-    [_menuItems addObject:menuItem];
+//    menuItem = [[MenuObject alloc] init];
+//    menuItem.icon = kFontIconPerson;
+//    menuItem.name = @"PROFILE";
+//    menuItem.type = kMenuItemProfile;
+//    [_menuItems addObject:menuItem];
 
 // Move settings functionality into profile
 //    menuItem = [[MenuObject alloc] init];

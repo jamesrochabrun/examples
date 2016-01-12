@@ -444,6 +444,8 @@
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers > 1) {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    } else {
+        [self setLeftNavWithIcon:@"" target:nil action:nil];
     }
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];

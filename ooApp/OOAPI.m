@@ -110,7 +110,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            NSLog(@"like: %@", responseObject);
+//            NSLog(@"like: %@", responseObject);
             NSUInteger uid, mid;
             NSDictionary *dict = responseObject;
             uid = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyUserID]);
