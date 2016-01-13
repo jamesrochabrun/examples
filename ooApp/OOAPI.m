@@ -77,7 +77,7 @@ NSString *const kKeyDeviceToken = @"device_token";
         failure(nil, nil);
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/likes/count", kHTTPProtocol, [OOAPI URL], mediaItemID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/likes/count", kHTTPProtocol, [OOAPI URL],(unsigned long) mediaItemID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -104,7 +104,7 @@ NSString *const kKeyDeviceToken = @"device_token";
         failure(nil, nil);
     }
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/%lu/likes", kHTTPProtocol, [OOAPI URL], userID, mediaItemID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/%lu/likes", kHTTPProtocol, [OOAPI URL],(unsigned long) userID, (unsigned long)mediaItemID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -140,7 +140,7 @@ NSString *const kKeyDeviceToken = @"device_token";
         return nil;
     }
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/users/%lu/likes",
-                           kHTTPProtocol, [OOAPI URL], mediaItemID, userID];
+                           kHTTPProtocol, [OOAPI URL],(unsigned long) mediaItemID,(unsigned long) userID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
@@ -211,7 +211,7 @@ NSString *const kKeyDeviceToken = @"device_token";
                                                success:(void (^)(NSArray *mediaItems))success
                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL], restaurant.restaurantID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL],(unsigned long) restaurant.restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -2602,15 +2602,15 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 + (NSString *)URL {
-#ifdef ADHOC
+//#ifdef ADHOC
     return kOOURLProduction;
-#else
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#endif
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 @end

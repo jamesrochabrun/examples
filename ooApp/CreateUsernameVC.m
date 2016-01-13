@@ -15,14 +15,14 @@
 #import "AppDelegate.h"
 
 @interface CreateUsernameVC ()
-@property (nonatomic,strong)  UIImageView *imageViewBackground, *imageViewIcon;
+@property (nonatomic, strong) UIImageView *imageViewBackground, *imageViewIcon;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UILabel *labelMessage;
-@property (nonatomic,strong) UILabel* labelUsernameTaken;
-@property (nonatomic,strong) UITextField* fieldUsername;
-@property (nonatomic,strong) UIButton* buttonSignUp;
-@property (nonatomic,strong) NSMutableArray* arrayOfSuggestions;
-@property (nonatomic,strong) UITableView* tableOfSuggestions;
+@property (nonatomic, strong) UILabel *labelUsernameTaken;
+@property (nonatomic, strong) UITextField *fieldUsername;
+@property (nonatomic, strong) UIButton *buttonSignUp;
+@property (nonatomic, strong) NSMutableArray *arrayOfSuggestions;
+@property (nonatomic, strong) UITableView *tableOfSuggestions;
 @end
 
 @implementation CreateUsernameVC
@@ -65,56 +65,55 @@
     ENTRY;
     [super viewDidLoad];
     
-    _arrayOfSuggestions=[NSMutableArray new];
+    _arrayOfSuggestions = [NSMutableArray new];
     
-    self.view.backgroundColor= WHITE;
-    self.automaticallyAdjustsScrollViewInsets= NO;
-    self.view.autoresizesSubviews= NO;
+    self.view.backgroundColor = WHITE;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.view.autoresizesSubviews = NO;
     
-    self.scrollView= [UIScrollView  new];
-    [self.view  addSubview: _scrollView ];
+    self.scrollView = [UIScrollView  new];
+    [self.view addSubview:_scrollView];
     
     self.imageViewBackground= makeImageView( self.scrollView,  @"Gradient Background.png");
-    self.imageViewIcon= makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
+    self.imageViewIcon = makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
     
-    self.buttonSignUp= makeButton( _scrollView, LOCAL(@"Create") , kGeomFontSizeHeader,
+    self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
                                   YELLOW, CLEAR, self,
                                   @selector(userPressedSignUpButton:),
                                   .6);
-    _buttonSignUp.layer.borderColor=YELLOW.CGColor;
+    _buttonSignUp.layer.borderColor = YELLOW.CGColor;
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
-    self.fieldUsername= [ UITextField  new];
-    _fieldUsername.delegate= self;
-    _fieldUsername.backgroundColor= WHITE;
-    _fieldUsername.placeholder=  LOCAL(@"Desired username");
-    _fieldUsername.borderStyle= UITextBorderStyleLine;
-    _fieldUsername.textAlignment= NSTextAlignmentCenter;
-    [_scrollView addSubview: _fieldUsername];
+    self.fieldUsername = [UITextField new];
+    _fieldUsername.delegate = self;
+    _fieldUsername.backgroundColor = WHITE;
+    _fieldUsername.placeholder = LOCAL(@"Desired username");
+    _fieldUsername.borderStyle = UITextBorderStyleLine;
+    _fieldUsername.textAlignment = NSTextAlignmentCenter;
+    [_scrollView addSubview:_fieldUsername];
     _fieldUsername.clearButtonMode = UITextFieldViewModeWhileEditing;
     
-    self.labelUsernameTaken= makeLabel(_scrollView,LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
-    self.labelUsernameTaken.textColor= YELLOW;
-    _labelUsernameTaken.hidden= YES;
+    self.labelUsernameTaken= makeLabel(_scrollView, LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
+    self.labelUsernameTaken.textColor = YELLOW;
+    _labelUsernameTaken.hidden = YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
-    self.labelMessage=  makeLabel (_scrollView,
+    self.labelMessage = makeLabel(_scrollView,
                                    LOCAL(@"What should we call you?\r(Create your username)"),
                                    kGeomFontSizeHeader);
-    _labelMessage.textColor= WHITE;
+    _labelMessage.textColor = WHITE;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader: LOCAL(@"Create Username")
+                           initWithHeader:LOCAL(@"Create Username")
                            subHeader:nil];
-    [self setNavTitle:  nto];
+    [self setNavTitle:nto];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wentIntoBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
-    
 }
 
 - (void)done:(id)sender {
@@ -130,20 +129,20 @@
 // Name:    shouldChangeCharactersInRange
 // Purpose: Control what characters users can enter.
 //------------------------------------------------------------------------------
-- (BOOL) textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (!string || !string.length) {
         return YES;
     }
     const char *cstring= string.UTF8String;
-    if  (!cstring) {
+    if (!cstring) {
         return YES;
     }
     
     // RULE:  only accept letters and numbers.
     while (*cstring) {
-        int  character= *cstring++;
-        if  (!isdigit( character)  && !isalpha( character)) {
+        int character= *cstring++;
+        if (!isdigit( character)  && !isalpha( character)) {
             return NO;
         }
     }
@@ -157,11 +156,11 @@
     if (!cell) {
         cell=  [[UITableViewCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER ];
     }
-    NSString* name= nil;
-    NSInteger row= indexPath.row;
+    NSString *name = nil;
+    NSInteger row = indexPath.row;
     @synchronized(_arrayOfSuggestions) {
-        if  (row  < _arrayOfSuggestions.count) {
-            name=  _arrayOfSuggestions[row];
+        if (row < _arrayOfSuggestions.count) {
+            name = _arrayOfSuggestions[row];
         }
     }
     cell.textLabel.text= name;
@@ -270,6 +269,9 @@
                                              NSLog (@"PUT OF USERNAME FAILED %@ w/%ld",error,(long)statusCode);
                                              if (statusCode==403)
                                                  [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
+                                             else {
+                                                 complainAboutInternetConnection();
+                                             }
 
                                          }     ];
 }

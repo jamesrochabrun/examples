@@ -143,8 +143,6 @@
 		96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */; };
 		96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7861BC3331000E37DC1 /* EventTVCell.m */; };
 		96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */; };
-		96B64D2F1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png in Resources */ = {isa = PBXBuildFile; fileRef = 96B64D2D1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png */; };
-		96B64D301C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png in Resources */ = {isa = PBXBuildFile; fileRef = 96B64D2E1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png */; };
 		96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */; };
 		96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */; };
 		96CA59D01BE14C2E00618B57 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96CA59CF1BE14C2E00618B57 /* UIKit.framework */; };
@@ -407,8 +405,6 @@
 		96ACD7861BC3331000E37DC1 /* EventTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTVCell.m; sourceTree = "<group>"; };
 		96ACD7881BC3487E00E37DC1 /* EventCoordinatorVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCoordinatorVC.h; sourceTree = "<group>"; };
 		96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventCoordinatorVC.m; sourceTree = "<group>"; };
-		96B64D2D1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_Logo_Spork(Nov24) (1) w.png"; path = "Graphic Assets/Oomami_Logo_Spork(Nov24) (1) w.png"; sourceTree = "<group>"; };
-		96B64D2E1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_Logo_Spork(Nov24) (1).png"; path = "Graphic Assets/Oomami_Logo_Spork(Nov24) (1).png"; sourceTree = "<group>"; };
 		96BF31211BB36C4D002BFDD2 /* CreateUsernameVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateUsernameVC.h; sourceTree = "<group>"; };
 		96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateUsernameVC.m; sourceTree = "<group>"; };
 		96C3A3F21BC5F335009689E3 /* EventParticipantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParticipantVC.h; sourceTree = "<group>"; };
@@ -607,8 +603,6 @@
 				3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */,
 				3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */,
 				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
-				96B64D2D1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png */,
-				96B64D2E1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png */,
 				962303741BB33D2700278FA6 /* forkKnife.png */,
 				964DEA681C1F444C0045BA2C /* background_image.png */,
 				9671433B1C0E2B2D004875FB /* LogoWhite.png */,
@@ -967,7 +961,6 @@
 				361329811C196215009413D6 /* Oomami_AppStoreLogo(120x120).png in Resources */,
 				96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */,
 				3677045D1B8BF05100B594E5 /* Lato-MediumItalic.ttf in Resources */,
-				96B64D301C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1).png in Resources */,
 				367704551B8BF05100B594E5 /* Lato-Hairline.ttf in Resources */,
 				367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */,
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
@@ -991,7 +984,6 @@
 				9671433C1C0E2B2D004875FB /* LogoWhite.png in Resources */,
 				367704511B8BF05100B594E5 /* Lato-Black.ttf in Resources */,
 				367704531B8BF05100B594E5 /* Lato-Bold.ttf in Resources */,
-				96B64D2F1C20B6FD00C03CCD /* Oomami_Logo_Spork(Nov24) (1) w.png in Resources */,
 				367704581B8BF05100B594E5 /* Lato-HeavyItalic.ttf in Resources */,
 				361329821C196215009413D6 /* Oomami_AppStoreLogo(152x152).png in Resources */,
 				966098BB1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png in Resources */,

@@ -25,8 +25,9 @@
 @property (nonatomic,strong)  UIButton* buttonSendLog;
 @property (nonatomic,strong)  UIButton* buttonSearchRadius;
 @property (nonatomic,strong)  UIButton* buttonUploadPhoto;
-@property (nonatomic,strong)  UIButton* buttonExperiment;
+@property (nonatomic,strong)  UIButton* buttonHardCrash;
 @property (nonatomic,strong)  UIButton* buttonTakePhoto;
+@property (nonatomic,strong)  UIButton* buttonCrash;
 @property (nonatomic,strong)  UIButton* buttonCreateUsername;
 @property (nonatomic,strong)  UISwitch* switchUsingStage;
 @property (nonatomic,strong)  UILabel* labelUsingStage;
@@ -103,6 +104,10 @@
     _buttonSearchRadius.titleLabel.numberOfLines= 0;
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
     
+    _buttonCrash= makeButton(self.view, [NSString stringWithFormat:@"SOFT\rCRASH"] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(deliberateCrash:), 1);
+    _buttonCrash.titleLabel.numberOfLines= 0;
+    _buttonCrash.titleLabel.textAlignment= NSTextAlignmentCenter;
+    
     _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doTakePhoto:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
@@ -111,9 +116,9 @@
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonExperiment= makeButton(self.view, @"EXPERIMENT", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(doExperiment:), 1);
-    _buttonExperiment.titleLabel.numberOfLines= 0;
-    _buttonExperiment.titleLabel.textAlignment= NSTextAlignmentCenter;
+    self.buttonHardCrash= makeButton(self.view, @"HARD CRASH", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(doHardCrash:), 1);
+    _buttonHardCrash.titleLabel.numberOfLines= 0;
+    _buttonHardCrash.titleLabel.textAlignment= NSTextAlignmentCenter;
     
 //    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
 //    _buttonUploadPhoto.titleLabel.numberOfLines= 0;
@@ -212,28 +217,11 @@
     [self presentCameraModal];
 }
 
-//------------------------------------------------------------------------------
-// Name:    doExperiment
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)doExperiment: (id) sender
+- (void)doHardCrash: (id) sender
 {
-//    self.hugeImage= [ UIImage  imageNamed: @"background-image.jpg"];
-    
-//    messageWithTitle(@"Title", @"Message");
-    
-    OOTextEntryVC *vc=[[OOTextEntryVC alloc] init];
-    [self.navigationController pushViewController:vc animated:YES ];
-
-//    [OOAPI uploadPhoto:self.hugeImage
-//                    to:UPLOAD_DESTINATION_DIAGNOSTIC
-//            identifier:0
-//               success:^{
-//                   NSLog  (@"Uploaded huge photo.");
-//                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
-//               } failure:^(NSError *error) {
-//                   NSLog  (@"Failed to upload huge photo. %@",error);
-//               }];
+//    char *temp = NULL;
+//    strcpy (temp, "deliberateHardCrash");
+    bzero (&message, 1<<23);
 }
 
 //------------------------------------------------------------------------------
@@ -246,17 +234,6 @@
         message( @"Please take a photo first.");
         return;
     }
-//    [OOAPI uploadPhoto: _hugeImage
-//                    to:UPLOAD_DESTINATION_DIAGNOSTIC
-//            identifier:0
-//               success:^{
-//                   NSLog  (@"Uploaded photo.");
-//                   
-//                   [self performSelectorOnMainThread:@selector(loadTextFieldAndScrollToBottom)  withObject:nil waitUntilDone:NO ];
-//               } failure:^(NSError *error) {
-//                   NSLog  (@"Failed to upload photo.");
-//               }];
-    
 }
 
 //------------------------------------------------------------------------------
@@ -328,12 +305,12 @@
     _buttonClearCache.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _buttonSearchRadius.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
-    
+
     x += buttonWidth+ spacing;
     y= margin;
     _buttonTakePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    _buttonUploadPhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    _buttonCrash.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _buttonCreateUsername.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
@@ -342,12 +319,11 @@
     y= margin;
     _buttonSendLog.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    _buttonExperiment.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    _buttonHardCrash.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _switchUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     _labelUsingStage.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    
     
     _ivPhoto.frame = CGRectMake(0,0,w,_textviewDiagnosticLog.frame.origin.y);
     [self.view sendSubviewToBack:_ivPhoto ];

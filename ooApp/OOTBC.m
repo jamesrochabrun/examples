@@ -41,11 +41,7 @@
     
     
     [image withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorYellow backgroundColor:kColorClear];
-
-
     [selectedImage withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorBlue backgroundColor:kColorClear];
-    selectedImage.layer.borderColor = UIColorRGBA(kColorYellowReallyFaded).CGColor;
-    selectedImage.layer.borderWidth = 1;
 
     image.text = selectedImage.text = kFontIconFoodFeed;
     [image sizeToFit];

@@ -21,6 +21,7 @@
 @property (nonatomic, strong) UILabel *numYums;
 @property (nonatomic, strong) CAGradientLayer *gradient;
 @property (nonatomic, strong) UserObject *userObject;
+@property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 @end
 
 @implementation PhotoCVCell
@@ -67,6 +68,11 @@
         [self addSubview:_userButton];
         [self addSubview:_yumButton];
         [self addSubview:_numYums];
+        
+        _doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yumPhotoTapped)];
+        [_doubleTapGesture setDelaysTouchesBegan:YES];
+        [_doubleTapGesture setNumberOfTapsRequired:2];
+        [self addGestureRecognizer:_doubleTapGesture];
         
 //        [DebugUtilities addBorderToViews:@[_yumButton, _numYums, _userButton]];
     }

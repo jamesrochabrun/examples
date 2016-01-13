@@ -13,6 +13,13 @@
 #import "OOUserView.h"
 #import "UserObject.h"
 
+enum : int {
+    kConnectSectionFriends = 0,
+    kConnectSectionFoodies = 1,
+    kConnectSectionFollowers = 2,
+    kConnectSectionFollowees = 3,
+};
+
 @protocol ConnectTableSectionHeaderDelegate
 - (void) userTappedSectionHeader:(int)which;
 @end
@@ -26,7 +33,6 @@
 @protocol ConnectTableCellDelegate
 - (void) userTappedImageOfUser:(UserObject*)user;
 - (void) userTappedFollowButtonForUser:(UserObject*)user;
-- (NSOperationQueue*) requireOperationQ;
 @end
 
 @interface ConnectTableCell : UITableViewCell <OOUserViewDelegate>
@@ -39,4 +45,5 @@
 
 @interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate,ConnectTableCellDelegate>
 @property (nonatomic,readonly) NSOperationQueue *queueForStats;
+@property (nonatomic,assign) NSInteger defaultSection;
 @end

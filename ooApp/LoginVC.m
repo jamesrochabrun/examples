@@ -31,9 +31,8 @@
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIImageView *gradientImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
-@property (nonatomic, strong) UIImageView *imageViewLogo;
 @property (nonatomic, strong) UILabel *logoLabel;
-@property (nonatomic,strong)  UILabel* labelMessage;
+@property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
@@ -58,36 +57,37 @@
     UIImage*backgroundImage= [ UIImage  imageNamed:@"background_image.png"];
     UIImage*gradientImage= [ UIImage  imageNamed:@"Gradient Background.png"];
 
-    self.gradientImageView=  makeImageView( self.view, gradientImage);
+    self.gradientImageView = makeImageView( self.view, gradientImage);
     _gradientImageView.contentMode = UIViewContentModeScaleAspectFill;
 
-    _backgroundImageView = makeImageView(self.view,  backgroundImage);
+    _backgroundImageView = makeImageView(self.view, backgroundImage);
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
-    _backgroundImageView.clipsToBounds= YES;
-    _backgroundImageView.opaque= NO;
-    addShadowTo  (_backgroundImageView);
+    _backgroundImageView.clipsToBounds = YES;
+    _backgroundImageView.opaque = NO;
+    addShadowTo(_backgroundImageView);
     
-    _imageViewLogo = [[UIImageView alloc] init];
-    _imageViewLogo.contentMode = UIViewContentModeScaleAspectFit;
-    _imageViewLogo.backgroundColor = UIColorRGBA(kColorClear);
-     UIImage *image= [UIImage imageNamed:@"Oomami_Logo_Spork(Nov24) (1) w.png"];
-    _imageViewLogo.image = image;
+    _logoLabel = [[UILabel alloc] init];
+    [_logoLabel withFont:[UIFont fontWithName:kFontIcons size:width(self.view)*0.75] textColor:kColorWhite backgroundColor:kColorClear];
+    _logoLabel.text = kFontIconLogoFull;
+    _logoLabel.frame = CGRectMake(0, 0, width(self.view)*0.75, 100);
     
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
     _facebookLoginButton.delegate = self;
     _facebookLoginButton.layer.cornerRadius = kGeomCornerRadius;
     _facebookLoginButton.readPermissions = @[@"public_profile", @"email", @"user_friends"];
-    addShadowTo  (_facebookLoginButton);
+    addShadowTo(_facebookLoginButton);
 
     [self.view addSubview:_backgroundImageView];
-    [self.view addSubview:_imageViewLogo];
+    [self.view addSubview:_logoLabel];
     [self.view addSubview:_facebookLoginButton];
     
     self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
     _labelMessage.textColor= WHITE;
     
+#ifdef DEBUG
     self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
     [self.view addGestureRecognizer:_pinch];
+#endif
 }
 
 - (void)loginBypass: (id) sender
@@ -106,45 +106,37 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float h=  self.view.bounds.size.height;
-    float w=  self.view.bounds.size.width;
+    CGFloat h = height(self.view);
+    CGFloat w = width(self.view);
     
     _gradientImageView.frame= self.view.bounds;
     [ self.view  sendSubviewToBack:_gradientImageView];
 
-    float backgroundImageWidth= _backgroundImageView.image.size.width;
-    float backgroundImageHeight= _backgroundImageView.image.size.height;
-    float backgroundAspect= backgroundImageHeight>0 ? backgroundImageWidth/backgroundImageHeight : 1000000;
-    float actualBackgroundImageHeight=w/backgroundAspect;
-    _backgroundImageView.frame= CGRectMake( 0,  0, w, actualBackgroundImageHeight);
+    CGFloat backgroundImageWidth = _backgroundImageView.image.size.width;
+    CGFloat backgroundImageHeight = _backgroundImageView.image.size.height;
+    CGFloat backgroundAspect = backgroundImageHeight > 0 ? backgroundImageWidth/backgroundImageHeight : 1000000;
+    CGFloat actualBackgroundImageHeight=w/backgroundAspect;
+    _backgroundImageView.frame= CGRectMake(0, 0, w, actualBackgroundImageHeight);
+    _backgroundImageView.clipsToBounds = YES;
 
-    float imageViewLogoWidth= _imageViewLogo.image.size.width;
-    float imageViewLogoHeight= _imageViewLogo.image.size.height;
-    float aspect= imageViewLogoHeight>0 ? imageViewLogoWidth/imageViewLogoHeight : 1000000;
-    imageViewLogoWidth= w*.75;
-    if ( aspect>0) {
-            imageViewLogoHeight= imageViewLogoWidth/aspect;
-    }
+    CGFloat y = height(self.view)*0.25;
+    _logoLabel.frame = CGRectMake((width(self.view) - width(_logoLabel))/2, y, width(_logoLabel), height(_logoLabel));
     
-    _backgroundImageView.clipsToBounds= YES;
-
-    float y= (w- imageViewLogoHeight)/2;
-    _imageViewLogo.frame = CGRectMake((w- imageViewLogoWidth)/2, y,imageViewLogoWidth, imageViewLogoHeight);
-    y +=imageViewLogoHeight;
-    y -=10; // as per Jay
+    y += height(_logoLabel);
+    y -= 10; // as per Jay
     [_labelMessage sizeToFit];
-    _labelMessage.frame = CGRectMake(0,y,w, _labelMessage.frame.size.height);
+    _labelMessage.frame = CGRectMake(0, y, w, _labelMessage.frame.size.height);
     
-    float facebookButtonHeight= _facebookLoginButton.frame.size.height;
-    if  (facebookButtonHeight<1) {
-        facebookButtonHeight=kGeomHeightButton;
+    CGFloat facebookButtonHeight = _facebookLoginButton.frame.size.height;
+    if (facebookButtonHeight < 1) {
+        facebookButtonHeight = kGeomHeightButton;
     }
     
-    y = actualBackgroundImageHeight+ (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
+    y = actualBackgroundImageHeight + (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
     const float buttonWidth =  275;
-    float x = (w-buttonWidth)/2;
+    CGFloat x = (w  -buttonWidth)/2;
     
-    _facebookLoginButton.frame=  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
+    _facebookLoginButton.frame =  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
 }
 
 - (void)viewWillLayoutSubviews
@@ -196,22 +188,21 @@
     UserObject *userInfo = [Settings sharedInstance].userObject;
     userInfo.userID = parseIntegerOrNullFromServer(value);
     [[Settings sharedInstance] save];
-
 }
 
 //------------------------------------------------------------------------------
 // Name:    updateEmail
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)updateEmail: (NSString*) value
+- (void)updateEmail:(NSString *)value
 {
-    if  (!value) {
+    if (!value) {
         return;
     }
     LOGS2(@"EMAIL",value);
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    if  (!userInfo.email  || !userInfo.email.length) {
-        userInfo.email= value;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    if (!userInfo.email || !userInfo.email.length) {
+        userInfo.email = value;
     }
 }
 
@@ -219,18 +210,18 @@
 // Name:    updateAuthorizationToken
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)updateAuthorizationToken: (NSString*) value
+- (void)updateAuthorizationToken:(NSString *)value
 {
     ENTRY;
 
-    if  (!value) {
+    if (!value) {
         return;
     }
-    UserObject* userInfo= [Settings sharedInstance].userObject;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
     if (!userInfo.backendAuthorizationToken || ![userInfo.backendAuthorizationToken isEqualToString: value]) {
         userInfo.backendAuthorizationToken= value;
     }
-    LOGS2( @"TOKEN", value);
+    LOGS2(@"TOKEN", value);
 }
 
 //------------------------------------------------------------------------------
@@ -320,9 +311,9 @@
     }
 
     //---------------------------------------------------
-    // RULE:  if the application was deleted, we may have
+    // RULE: If the application was deleted, we may have
     //  the Facebook ID but not the email address and
-    //  certainly not the authorization token.  in this case
+    //  certainly not the authorization token. In this case
     //  we need to ask FB for the email address.
     //
     NSString *token= userInfo.backendAuthorizationToken;
@@ -435,7 +426,9 @@
                                                  // XX:  this is the OO log in flow
                                              }
                                              
-                                             // RULE:  While the above is happening take the user to the Explore page regardless of whether the backend was reached.
+                                             // RULE: While the above is happening take the user to the
+                                             //     Explore page regardless of whether the backend was reached.
+                                             
                                              if (userInfo.username.length ) {
                                                  [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                              } else {
@@ -726,7 +719,6 @@
         }
     }
 }
-
 
 - (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
