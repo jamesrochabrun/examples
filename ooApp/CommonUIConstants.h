@@ -94,10 +94,9 @@ static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
 
 static CGFloat kGeomProfileImageSize = 94;
-static CGFloat kGeomProfileFollowButtonHeight = 18;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
-static CGFloat kGeomProfileHeaderViewHeight= 203;
+static CGFloat kGeomProfileHeaderViewHeight= 211;
 static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 
 static CGFloat kGeomForkImageSize = 150;
@@ -145,6 +144,8 @@ static CGFloat kGeomCreateUsernameCentralIconSize= 180;
 
 static CGFloat kGeomConnectScreenHeaderHeight= 33;
 static CGFloat kGeomConnectScreenUserImageHeight= 82;
+
+static CGFloat kGeomFollowButtonHeight= 24; // Connect screen, profile screen
 
 // Images
 extern NSString *const kImageNoProfileImage;

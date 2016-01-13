@@ -344,8 +344,8 @@
     _buttonFollowees.frame = CGRectMake(rightX, y, horizontalSpaceForText, lowerLabelHeight);
     
     y=kGeomSpaceEdge+kGeomProfileImageSize+kGeomSpaceInter;
-    _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y,kGeomButtonWidth,  kGeomProfileFollowButtonHeight);
-    y += kGeomProfileFollowButtonHeight + kGeomSpaceInter;
+    _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y,kGeomButtonWidth, kGeomFollowButtonHeight );
+    y += kGeomFollowButtonHeight + kGeomSpaceInter;
     
     _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;

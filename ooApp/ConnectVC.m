@@ -306,7 +306,7 @@
     float imageSize = kGeomConnectScreenUserImageHeight;
     _userView.frame = CGRectMake(margin, margin, imageSize, imageSize);
     
-    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, 15,kGeomButtonWidth, 24 /* per Jay */);
+    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, 15,kGeomButtonWidth, kGeomFollowButtonHeight);
     
     float x=margin+imageSize+kGeomConnectCellMiddleGap;
     float y=margin;
