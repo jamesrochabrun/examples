@@ -236,8 +236,13 @@
     }
 }
 
-- (void)viewWillLayoutSubviews {
+- (void)viewWillLayoutSubviews
+{
     [super viewWillLayoutSubviews];
+    
+    if ( self.view.frame.size.height <= 0) {
+        return; // Fix for NaN crash.
+    }
     
     CGRect frame;
     
