@@ -45,7 +45,7 @@
         _yumButton.contentEdgeInsets = UIEdgeInsetsMake(20, 0, 0, 0);
 
         _caption = [[UILabel alloc] init];
-        [_caption withFont:[UIFont fontWithName:kFontIcons size:20] textColor:kColorYellow backgroundColor:kColorClear];
+        [_caption withFont:[UIFont fontWithName:kFontIcons size:15] textColor:kColorYellow backgroundColor:kColorClear];
         _caption.text = kFontIconCaptionFilled;
         _caption.translatesAutoresizingMaskIntoConstraints = NO;
         
