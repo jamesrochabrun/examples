@@ -111,7 +111,7 @@ static CGFloat kGeomHeightFilterSelectedLine = 3.0;
 static CGFloat kGeomHeightSearchBar = 55;
 
 static CGFloat kGeomHeightEventCellHeight = 160.0;
-static NSInteger kGeomEventHeadingFontSize = 30;
+static CGFloat kGeomEventHeadingFontSize = 30;
 
 static CGFloat kGeomEventCoordinatorBoxHeight = 130;
 static CGFloat kGeomEventCoordinatorPieDiameter = 33;
@@ -137,6 +137,7 @@ static CGFloat kGeomHeightCreateListButton = 23;
 static CGFloat kGeomVerticalSpaceCreateList = 31;
 static CGFloat kGeomHeightDropDownListRow = 40;
 static CGFloat kNumDropDownListRows = 5;
+
 static CGFloat kGeomHeightFeedWithImageTableCellHeight= 180;
 static CGFloat kGeomHeightFeedWithoutImageTableCellHeight=  60;
 

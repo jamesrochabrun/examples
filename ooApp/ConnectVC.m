@@ -130,15 +130,12 @@
         _labelPhotosNumber.textColor= WHITE;
         _labelPlacesNumber.textColor= WHITE;
         
-//        _labelLists=makeAttributedLabel( self, nil, kGeomFontSizeDetail);
-        
         _labelUserName= makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
         _labelName= makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
         
         _labelUserName.textColor=WHITE;
         _labelName.textColor=WHITE;
         
-//        _labelLists.alpha=0;
         _labelFollowers.alpha=0;
         _labelFollowing.alpha=0;
         _labelPhotos.alpha=0;
