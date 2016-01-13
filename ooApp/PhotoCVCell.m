@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UIButton *userButton;
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UILabel *numYums;
+@property (nonatomic, strong) UILabel *caption;
 @property (nonatomic, strong) CAGradientLayer *gradient;
 @property (nonatomic, strong) UserObject *userObject;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
@@ -41,7 +42,12 @@
         [_yumButton withIcon:kFontIconYumOutline fontSize:20 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
         [_yumButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
-        _yumButton.contentEdgeInsets = UIEdgeInsetsMake(21, 0, 0, 0);
+        _yumButton.contentEdgeInsets = UIEdgeInsetsMake(20, 0, 0, 0);
+
+        _caption = [[UILabel alloc] init];
+        [_caption withFont:[UIFont fontWithName:kFontIcons size:20] textColor:kColorYellow backgroundColor:kColorClear];
+        _caption.text = kFontIconCaptionFilled;
+        _caption.translatesAutoresizingMaskIntoConstraints = NO;
         
         _numYums = [[UILabel alloc] init];
         [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH4] textColor:kColorWhite backgroundColor:kColorClear];
@@ -53,7 +59,7 @@
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [_userButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-        _userButton.contentEdgeInsets = UIEdgeInsetsMake(21, 0, 0, 0);
+        _userButton.contentEdgeInsets = UIEdgeInsetsMake(20, 0, 0, 0);
         
         [self addSubview:_backgroundImage];
         [self addSubview:_takeAction];
@@ -70,6 +76,7 @@
         [self addSubview:_userButton];
         [self addSubview:_yumButton];
         [self addSubview:_numYums];
+        [self addSubview:_caption];
         
         _doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yumPhotoTapped)];
         [_doubleTapGesture setDelaysTouchesBegan:YES];
@@ -141,29 +148,34 @@
 
 - (void)updateConstraints {
     [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall), @"userNameLength" : @([_userButton sizeThatFits:CGSizeMake(200, 10)].width + 2)};
 
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage,_numYums, _takeAction, _userButton, _yumButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage,_numYums, _takeAction, _userButton, _yumButton, _caption);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    if (_userButton.titleLabel.text) {
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(userNameLength)-[_caption]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    }
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_userButton][_numYums][_yumButton(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_takeAction(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_takeAction(25)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton(35)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_yumButton(35)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_caption]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 -(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) return;
     _mediaItemObject = mediaItemObject;
     
-    _userButton.hidden = _gradient.hidden = _yumButton.hidden = _numYums.hidden = YES;
+    _userButton.hidden = _gradient.hidden = _yumButton.hidden = _numYums.hidden = _caption.hidden = YES;
     
     _backgroundImage.image = nil;
+    if (_mediaItemObject.caption.length) _caption.hidden = NO;
     
     OOAPI *api = [[OOAPI alloc] init];
     
@@ -221,6 +233,7 @@
                 [_userButton setTitle:userName forState:UIControlStateNormal];
                 _userButton.hidden = NO;
                 _gradient.hidden = NO;
+                [weakSelf setNeedsUpdateConstraints];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;

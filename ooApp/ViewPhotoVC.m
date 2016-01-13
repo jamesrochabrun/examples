@@ -163,10 +163,6 @@
     
     _caption.text = _mio.caption;
     
-//    _userButton.hidden = _gradient.hidden = _yumButton.hidden = _numYums.hidden = YES;
-    
-//    _backgroundImage.image = nil;
-    
     OOAPI *api = [[OOAPI alloc] init];
     
     [_backgroundView addGestureRecognizer:_tapGesture];
@@ -320,7 +316,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_yumButton setSelected:NO];
                 [weakSelf updateNumYums];
-//                [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
@@ -332,7 +328,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_yumButton setSelected:YES];
                 [weakSelf updateNumYums];
-//                [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;

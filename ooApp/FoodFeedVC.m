@@ -251,6 +251,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC {
     self.tabBarController.tabBar.hidden = NO;
+    [self updateIfNeeded];
 }
 
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant {
