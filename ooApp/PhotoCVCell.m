@@ -23,6 +23,7 @@
 @property (nonatomic, strong) CAGradientLayer *gradient;
 @property (nonatomic, strong) UserObject *userObject;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
+@property (nonatomic, strong) NSArray *captionConstraint;
 @end
 
 @implementation PhotoCVCell
@@ -157,7 +158,11 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     if (_userButton.titleLabel.text) {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(userNameLength)-[_caption]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        if (_captionConstraint) {
+            [self removeConstraints:_captionConstraint];
+        }
+        _captionConstraint = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(userNameLength)-[_caption]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+        [self addConstraints:_captionConstraint];
     }
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_userButton][_numYums][_yumButton(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_takeAction(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
