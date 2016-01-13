@@ -513,7 +513,7 @@
 {
     EventObject* e= self.eventBeingEdited;
     NSInteger pending= e.numberOfPeople - e.numberOfPeopleResponded;
-    NSInteger responded= e.numberOfPeopleResponded;
+//    NSInteger responded= e.numberOfPeopleResponded;
     NSInteger  voted= e.numberOfPeopleVoted;
     
     NSString *countsStringPending= [NSString stringWithFormat: @"%lu\r%@",

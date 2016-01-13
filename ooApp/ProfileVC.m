@@ -775,6 +775,16 @@
     }
 }
 
+- (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject
+{
+    if  (_viewingOwnProfile ) {
+        NSLog  (@"OWN PROFILE");
+        return;
+    }
+    
+    // XX:  maybe in future people can upload group photos that everyone in the group has in their profiles.
+}
+
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio
 {
     __weak  ProfileVC *weakSelf = self;
@@ -860,11 +870,13 @@
     [OOAPI setMediaItemCaption:_mediaItemBeingEdited.mediaItemId
                        caption:text
                        success:^{
+                           weakSelf.mediaItemBeingEdited.caption= text;
                            weakSelf.mediaItemBeingEdited= nil;
                            NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
                        }
                        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            weakSelf.mediaItemBeingEdited= nil;
+                           complainAboutInternetConnection();
                            NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
                        }
      ];
@@ -872,8 +884,36 @@
 
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio
 {
-    
-    message( @"liked photo");
+//    UserObject* user= [Settings sharedInstance].userObject;
+//    __weak ProfileVC *weakSelf = self;
+//    
+//    [OOAPI getMediaItemLiked:mio.mediaItemId
+//                      byUser:user.userID
+//                     success:^(BOOL value) {
+//                         if  (value ) {
+//                             [OOAPI setMediaItemLike:mio.mediaItemId forUser:user.userID success:^{
+//                                 NSLog  (@"SUCCESSFULLY TOGGLED PHOTO LIKE FOR USER %lu", (unsigned long) user.userID);
+//                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                 NSLog  (@"FAILED TO SET PHOTO LIKE STATUS %@",error);
+//                                 complainAboutInternetConnection();
+//                             }];
+//                         } else {
+//                             [OOAPI unsetMediaItemLike:mio.mediaItemId forUser:user.userID success:^{
+//                                 NSLog  (@"SUCCESSFULLY TOGGLED PHOTO LIKE FOR USER %lu", (unsigned long) user.userID);
+//                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                 NSLog  (@"FAILED TO SET PHOTO LIKE STATUS %@",error);
+//                                 complainAboutInternetConnection();
+//                             }];
+//                         }
+//                         
+//                         // NOTE:  really we only need to update the one cell
+//                         
+//                         [weakSelf.cv reloadData];
+//                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                         NSLog  (@"FAILED TO GET PHOTO LIKE STATUS %@",error);
+//                         complainAboutInternetConnection();
+//                     }];
+
 }
     
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
