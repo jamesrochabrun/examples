@@ -41,6 +41,7 @@
         [_yumButton withIcon:kFontIconYumOutline fontSize:20 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
         [_yumButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
+        _yumButton.contentEdgeInsets = UIEdgeInsetsMake(21, 0, 0, 0);
         
         _numYums = [[UILabel alloc] init];
         [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH4] textColor:kColorWhite backgroundColor:kColorClear];
@@ -52,6 +53,7 @@
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [_userButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        _userButton.contentEdgeInsets = UIEdgeInsetsMake(21, 0, 0, 0);
         
         [self addSubview:_backgroundImage];
         [self addSubview:_takeAction];
@@ -150,7 +152,7 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_userButton][_numYums][_yumButton(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_takeAction(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_takeAction(25)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton(35)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_yumButton(35)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
