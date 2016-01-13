@@ -24,6 +24,7 @@
 #import "OOFilterView.h"
 #import "ProfileVCCVLayout.h"
 #import "RestaurantListVC.h"
+#import "ConnectVC.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -34,10 +35,10 @@
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @property (nonatomic, strong) UIButton *buttonDescription;
-@property (nonatomic, strong) UILabel *labelFollowees;
-@property (nonatomic, strong) UILabel *labelFollowers;
-@property (nonatomic, strong) UILabel *labelFolloweesCount;
-@property (nonatomic, strong) UILabel *labelFollowersCount;
+@property (nonatomic, strong) UIButton *buttonFollowees;
+@property (nonatomic, strong) UIButton *buttonFollowers;
+@property (nonatomic, strong) UIButton *buttonFolloweesCount;
+@property (nonatomic, strong) UIButton *buttonFollowersCount;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIView *backgroundImageFade;
 @property (nonatomic,strong) OOFilterView *filterView;
@@ -112,22 +113,23 @@
     
     [self layoutSubviews];
     
-    _labelFollowees.alpha= 0;
-    _labelFollowers.alpha= 0;
-    _labelFolloweesCount.alpha= 0;
-    _labelFollowersCount.alpha= 0;
+    _buttonFollowees.alpha= 0;
+    _buttonFollowers.alpha= 0;
+    _buttonFolloweesCount.alpha= 0;
+    _buttonFollowersCount.alpha= 0;
     
     [OOAPI getUserStatsFor:_userInfo.userID
                    success:^(UserStatsObject *stats) {
                        
-                       weakSelf.labelFollowersCount.text= stringFromUnsigned(stats.totalFollowers);
-                       weakSelf.labelFolloweesCount.text= stringFromUnsigned(stats.totalFollowees);
+                       [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                       [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+
                        [UIView animateWithDuration:.4
                                         animations:^{
-                                            weakSelf.labelFollowees.alpha= 1;
-                                            weakSelf.labelFollowers.alpha= 1;
-                                            weakSelf.labelFolloweesCount.alpha= 1;
-                                            weakSelf.labelFollowersCount.alpha= 1;
+                                            weakSelf.buttonFollowees.alpha= 1;
+                                            weakSelf.buttonFollowers.alpha= 1;
+                                            weakSelf.buttonFolloweesCount.alpha= 1;
+                                            weakSelf.buttonFollowersCount.alpha= 1;
                                         }];
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
@@ -154,14 +156,14 @@
         _viewHalo= makeView(self, CLEAR);
         addBorder(_viewHalo, 2, YELLOW);
         
-        _labelFollowees=  makeLabel(self, @"FOLLOWING", kGeomFontSizeSubheader );
-        _labelFollowers=  makeLabel(self, @"FOLLOWERS", kGeomFontSizeSubheader);
+        _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
-        _labelFolloweesCount=  makeLabel(self, @"", kGeomFontSizeHeader);
-        _labelFollowersCount=  makeLabel(self, @"", kGeomFontSizeHeader);
+        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
-        _labelFollowersCount.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
-        _labelFolloweesCount.font = _labelFollowersCount.font;
+        _buttonFollowersCount.titleLabel.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
+        _buttonFolloweesCount.titleLabel.font = _buttonFollowersCount.titleLabel.font;
         
         _buttonDescription = makeButton(self,  @"", 1, WHITE,
                                         UIColorRGBA(0x80000000),  self,
@@ -169,11 +171,6 @@
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
         _buttonDescription.titleLabel.font = [ UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
-        
-        _labelFollowees.textColor = WHITE;
-        _labelFollowers.textColor = WHITE;
-        _labelFolloweesCount.textColor = WHITE;
-        _labelFollowersCount.textColor = WHITE;
         
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
@@ -186,6 +183,20 @@
         
     }
     return self;
+}
+
+- (void)userPressedFollowees: (id) sender
+{
+    ConnectVC *vc= [[ConnectVC  alloc] init];
+    vc.defaultSection= kConnectSectionFollowees;
+    [self.vc.navigationController pushViewController: vc animated:YES];
+}
+
+- (void)userPressedFollowers: (id) sender
+{
+    ConnectVC *vc= [[ConnectVC  alloc] init];
+    vc.defaultSection= kConnectSectionFollowers;
+    [self.vc.navigationController pushViewController: vc animated:YES];
 }
 
 - (void)userTappedDescription:(id)sender
@@ -316,21 +327,21 @@
     _viewHalo.frame = _userView.frame;
     _viewHalo.layer.cornerRadius=kGeomProfileImageSize/2;
     
-    [_labelFollowers sizeToFit];
-    [_labelFollowees sizeToFit];
-    [_labelFollowersCount sizeToFit];
-    [_labelFolloweesCount sizeToFit];
+    [_buttonFollowers sizeToFit];
+    [_buttonFollowees sizeToFit];
+    [_buttonFollowersCount sizeToFit];
+    [_buttonFolloweesCount sizeToFit];
     float upperLabelHeight=  20;
     float lowerLabelHeight= 18;
     float horizontalSpaceForText=  (320-kGeomProfileImageSize)/2;
     y= (kGeomProfileImageSize +2*kGeomSpaceEdge -upperLabelHeight-lowerLabelHeight)/2;
     float leftX= w/2 - kGeomProfileImageSize/2  - horizontalSpaceForText;
     float rightX= w/2 + kGeomProfileImageSize/2;
-    _labelFollowersCount.frame = CGRectMake(leftX, y, horizontalSpaceForText, upperLabelHeight);
-    _labelFolloweesCount.frame = CGRectMake(rightX, y, horizontalSpaceForText, upperLabelHeight);
+    _buttonFollowersCount.frame = CGRectMake(leftX, y, horizontalSpaceForText, upperLabelHeight);
+    _buttonFolloweesCount.frame = CGRectMake(rightX, y, horizontalSpaceForText, upperLabelHeight);
     y+=upperLabelHeight;
-    _labelFollowers.frame = CGRectMake(leftX, y, horizontalSpaceForText, lowerLabelHeight);
-    _labelFollowees.frame = CGRectMake(rightX, y, horizontalSpaceForText, lowerLabelHeight);
+    _buttonFollowers.frame = CGRectMake(leftX, y, horizontalSpaceForText, lowerLabelHeight);
+    _buttonFollowees.frame = CGRectMake(rightX, y, horizontalSpaceForText, lowerLabelHeight);
     
     y=kGeomSpaceEdge+kGeomProfileImageSize+kGeomSpaceInter;
     _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y,kGeomButtonWidth,  kGeomProfileFollowButtonHeight);

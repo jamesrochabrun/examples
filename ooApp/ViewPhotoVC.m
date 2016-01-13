@@ -344,7 +344,7 @@
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getNumMediaItemLikes:_mio.mediaItemId success:^(NSUInteger count) {
         if (count) {
-            [_numYums setTitle:[NSString stringWithFormat:@"%lu %@", count, (count == 1) ? @"yum" : @"yums"] forState:UIControlStateNormal];
+            [_numYums setTitle:[NSString stringWithFormat:@"%lu %@", (unsigned long)count, (count == 1) ? @"yum" : @"yums"] forState:UIControlStateNormal];
             dispatch_async(dispatch_get_main_queue(), ^{
                 _numYums.hidden = NO;
                 [weakSelf.view setNeedsLayout];

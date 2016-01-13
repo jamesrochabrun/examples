@@ -401,8 +401,8 @@
     
     self.canSeeSection1Items=YES;
     self.canSeeSection2Items=YES;
-    self.canSeeSection3Items=NO;
-    self.canSeeSection4Items=NO;
+    self.canSeeSection3Items= _defaultSection == kConnectSectionFollowers;
+    self.canSeeSection4Items= _defaultSection == kConnectSectionFollowees;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -424,11 +424,11 @@
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";
     
-    headerView4.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView4.labelTitle.text=@"Users You Follow";
-    
     headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView3.labelTitle.text=@"Users Who Follow You";
+    
+    headerView4.backgroundColor=UIColorRGB(kColorOffBlack);
+    headerView4.labelTitle.text=@"Users You Follow";
     
     _arraySectionHeaderViews= @[
                                 headerView1, headerView2, headerView3, headerView4
@@ -524,6 +524,7 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     [ self reload];
+    
 }
 
 - (void)reload
@@ -537,10 +538,28 @@
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
                     ( unsigned long)weakSelf.followeesArray.count);
         }
+        
+        if (weakSelf.canSeeSection3Items) {
+            ON_MAIN_THREAD(^() {
+                if ( weakSelf.defaultSection == kConnectSectionFollowers) {
+                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
+                                                   atScrollPosition:UITableViewScrollPositionTop
+                                                           animated:YES];
+                    weakSelf.defaultSection = -1;
+                }
+            });
+        }
+        
         if (weakSelf.canSeeSection4Items) {
-            // RULE: Don't reload the section unless the followees users are visible.
             ON_MAIN_THREAD(^() {
                 [weakSelf.tableAccordion reloadData];
+                
+                if ( weakSelf.defaultSection == kConnectSectionFollowees) {
+                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
+                                                   atScrollPosition:UITableViewScrollPositionTop
+                                                           animated:YES];
+                    weakSelf.defaultSection = -1;
+                }
             });
         }
         
