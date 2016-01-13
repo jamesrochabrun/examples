@@ -52,7 +52,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     _filterView = [[OOFilterView alloc] init];
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
     [_filterView addFilter:@"All" target:self selector:@selector(selectAll)];
-    [_filterView addFilter:@"Friends" target:self selector:@selector(selectFriends)];
+    [_filterView addFilter:@"Following" target:self selector:@selector(selectFriends)];
     [_filterView setCurrent:0];
     [self.view addSubview:_filterView];
     
@@ -166,9 +166,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     [OOAPI getFoodFeedType:type success:^(NSArray *restaurants) {
         _restaurants = restaurants;
-        ON_MAIN_THREAD(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.collectionView reloadData];
-            [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+            if ([restaurants count]) {
+                [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+            }
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         _restaurants = [NSArray array];
