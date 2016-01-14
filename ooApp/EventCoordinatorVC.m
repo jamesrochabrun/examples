@@ -1130,7 +1130,7 @@
 {
     UIImage *image=  info[ @"UIImagePickerControllerEditedImage"];
     if (!image) {
-        image= info[ @"UIImagePickerControllerEditedImage"];
+        image= info[ @"UIImagePickerControllerOriginalImage"];
     }
     
     EventCoordinatorCoverCell *cell= [_table cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];

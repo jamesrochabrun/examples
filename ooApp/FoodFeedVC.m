@@ -116,7 +116,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
     picker.allowsEditing = NO;
-    picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     
     [self presentViewController:picker animated:YES completion:NULL];
 }
@@ -124,11 +124,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
-    if (!image) {
-        image = info[@"UIImagePickerControllerOriginalImage"];
-    }
+
     CGSize s = image.size;
-    _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
+    _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
     
     __weak FoodFeedVC *weakSelf = self;
     

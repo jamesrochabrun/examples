@@ -78,11 +78,11 @@
         [_sectionAttributes addObject:itemAttributes];
         column = 0;
         
-        itemSize = CGSizeMake((width(self.collectionView)-2*kGeomSpaceEdge)/numberOfColumnsInRow , 0);
+        itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow-1, 0);
         UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                                                           withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
         suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), kGeomProfileHeaderViewHeight));
-        xOffset = kGeomSpaceEdge;
+        xOffset = 0;
         yOffset += kGeomProfileHeaderViewHeight;
         [itemAttributes addObject:suppattributes];
         
@@ -132,12 +132,12 @@
                 
                 // Reset values
                 column = 0;
-                xOffset = kGeomSpaceEdge;
+                xOffset = 0;
                 yOffset += /*itemSize.height+*/kGeomSpaceEdge;
             }
         }
         //done with section, set the x & y offsets for the new section appropriately
-        xOffset = kGeomSpaceEdge;
+        xOffset = 0;
         UICollectionViewLayoutAttributes *theLastAttribute = [itemAttributes lastObject];
         if (theLastAttribute) {
             yOffset = theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;

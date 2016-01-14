@@ -123,17 +123,15 @@
                        
                        [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
                        [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-
-                       [UIView animateWithDuration:.4
-                                        animations:^{
-                                            weakSelf.buttonFollowees.alpha= 1;
-                                            weakSelf.buttonFollowers.alpha= 1;
-                                            weakSelf.buttonFolloweesCount.alpha= 1;
-                                            weakSelf.buttonFollowersCount.alpha= 1;
-                                        }];
+                       
+                       weakSelf.buttonFollowees.alpha= 1;
+                       weakSelf.buttonFollowers.alpha= 1;
+                       weakSelf.buttonFolloweesCount.alpha= 1;
+                       weakSelf.buttonFollowersCount.alpha= 1;
+                       
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                       complainAboutInternetConnection();
+
                    }];
 }
 
@@ -520,7 +518,7 @@
     [super viewWillLayoutSubviews];
     
     self.cv.frame = self.view.bounds;
-    
+
     CGFloat x, y, spacer;
     if (_viewingOwnProfile) {
         x = kGeomSpaceEdge;
@@ -583,7 +581,6 @@
     UIImagePickerController *ic = [[UIImagePickerController alloc] init];
     [ic setAllowsEditing:NO];
     [ic setSourceType:UIImagePickerControllerSourceTypeCamera];
-    [ic setCameraCaptureMode:UIImagePickerControllerCameraCaptureModePhoto];
     [ic setShowsCameraControls:YES];
     [ic setDelegate:self];
     [self presentViewController:ic animated:YES completion:NULL];
@@ -603,7 +600,7 @@
     if (image && [image isKindOfClass:[UIImage class]]) {
         CGSize s = image.size;
         if (s.width) {
-            _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
+            _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
         }
     }
     
@@ -644,7 +641,7 @@
                    } failure:^(NSError *error) {
                        NSLog(@"Failed to upload photo");
                    }];
-    } else  {
+    } else {
         [OOAPI convertGoogleIDToRestaurant: restaurant.googleID success:^(RestaurantObject *restaurant) {
             if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
@@ -738,7 +735,11 @@
     [_listsAndPhotosLayout setShowingLists: YES];
     [_buttonLowerRight setTitle: kFontIconAdd forState:UIControlStateNormal ];
     [_listsAndPhotosLayout  invalidateLayout];
-    [self.cv  reloadData];
+    NSRange range;
+    range.location=0;
+    range.length=1;
+    NSIndexSet *set = [[NSIndexSet alloc] initWithIndexesInRange: range];
+    [self.cv reloadSections: set];
 }
 
 - (void)userTappedOnPhotos
@@ -747,7 +748,11 @@
     [_listsAndPhotosLayout setShowingLists: NO];
     [_buttonLowerRight setTitle: kFontIconPhoto forState:UIControlStateNormal ];
     [_listsAndPhotosLayout  invalidateLayout];
-    [self.cv  reloadData];
+    NSRange range;
+    range.location=0;
+    range.length=1;
+    NSIndexSet *set = [[NSIndexSet alloc] initWithIndexesInRange: range];
+    [self.cv reloadSections: set];
 }
 
 #pragma mark - Collection View stuff
@@ -849,9 +854,6 @@
         MediaItemObject *object = a[row];
         cell.mediaItemObject =  object;
         cell.delegate=  self;
-        int gray=rand()&0xff;
-        gray= gray + ( gray <<8)+ ( gray <<16);
-        cell.backgroundColor= UIColorRGB( gray );
         return cell;
     }
 }
@@ -971,7 +973,7 @@
                        }
                        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            weakSelf.mediaItemBeingEdited= nil;
-                           complainAboutInternetConnection();
+
                            NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
                            
                        }

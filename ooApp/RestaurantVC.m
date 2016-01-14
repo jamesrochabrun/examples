@@ -1097,11 +1097,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
-    if (!image) {
-        image = info[@"UIImagePickerControllerOriginalImage"];
-    }
+ 
     CGSize s = image.size;
-    UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
+    UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
     
     __weak RestaurantVC *weakSelf = self;
     [OOAPI uploadPhoto:newImage forObject:_restaurant
@@ -1118,6 +1116,5 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
-
 
 @end

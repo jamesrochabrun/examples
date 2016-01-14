@@ -847,24 +847,6 @@ void ANALYTICS_EVENT_UI (NSString* name)
                                                            value:nil] build]];
 }
 
-void complainAboutInternetConnection (void)
-{
-    static time_t whenWeComplainedLast= 0;
-
-    ON_MAIN_THREAD(^{
-        time_t now=time(NULL);
-        time_t difference=  now- whenWeComplainedLast;
-        whenWeComplainedLast=  now;
-        if  (difference>5 ) {
-            if ( APP.connected) {
-                message( @"There appears to be a problem with the cloud servers. Please try again later.");
-            } else {
-                messageWithTitle( @"Need your help",  @"The Internet connection appears to be offline.");
-            }
-        }
-    });
-}
-
 @implementation Common
 
 + (NSString *)versionString {

@@ -344,7 +344,6 @@
     UIImagePickerController *ic = [[UIImagePickerController alloc] init];
     [ic setAllowsEditing: YES];
     [ic setSourceType: UIImagePickerControllerSourceTypeCamera];
-    [ic setCameraCaptureMode: UIImagePickerControllerCameraCaptureModePhoto];
     [ic setShowsCameraControls: YES];
     [ic setDelegate: self];
     [ self presentViewController: ic animated: YES completion: NULL];

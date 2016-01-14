@@ -93,6 +93,8 @@ static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
 
+static CGFloat kGeomUploadWidth = 750;
+
 static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
@@ -206,7 +208,6 @@ extern NSString *const kFontIconYumOutline;
 extern NSString *const kFontIconLogoFull;
 extern NSString *const kFontIconCaption;
 extern NSString *const kFontIconCaptionFilled;
-
 
 extern NSString *const kNotificationFoodFeedNeedsUpdate;
 extern NSString *const kNotificationRestaurantListsNeedsUpdate;
