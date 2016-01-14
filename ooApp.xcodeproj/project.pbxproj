@@ -122,7 +122,6 @@
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
-		962303751BB33D2700278FA6 /* forkKnife.png in Resources */ = {isa = PBXBuildFile; fileRef = 962303741BB33D2700278FA6 /* forkKnife.png */; };
 		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; };
 		962B00C31BD95D22008790FD /* VoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 962B00C21BD95D22008790FD /* VoteObject.m */; };
 		962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 962DBB221BFFAF6E00A8A09D /* Gradient Background.png */; };
@@ -370,7 +369,6 @@
 		960F72551C2B5E2000DE31AC /* UserStatsObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserStatsObject.m; sourceTree = "<group>"; };
 		961AFC191BFBD61400B94EAE /* FeedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedObject.h; sourceTree = "<group>"; };
 		961AFC1A1BFBD61400B94EAE /* FeedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedObject.m; sourceTree = "<group>"; };
-		962303741BB33D2700278FA6 /* forkKnife.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = forkKnife.png; path = "Graphic Assets/forkKnife.png"; sourceTree = "<group>"; };
 		962667451BBC8C9600D77EBE /* UserTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTVCell.h; sourceTree = "<group>"; };
 		962667461BBC8C9600D77EBE /* UserTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTVCell.m; sourceTree = "<group>"; };
 		962B00C11BD95D22008790FD /* VoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteObject.h; sourceTree = "<group>"; };
@@ -602,7 +600,6 @@
 				3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */,
 				3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */,
 				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
-				962303741BB33D2700278FA6 /* forkKnife.png */,
 				964DEA681C1F444C0045BA2C /* background_image.png */,
 				966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */,
 				96E4FC6B1C3D973200C8C485 /* profile-background.jpg */,
@@ -991,7 +988,6 @@
 				367704561B8BF05100B594E5 /* Lato-HairlineItalic.ttf in Resources */,
 				3677045F1B8BF05100B594E5 /* Lato-Semibold.ttf in Resources */,
 				361329801C196215009413D6 /* Oomami_AppStoreLogo(76x76).png in Resources */,
-				962303751BB33D2700278FA6 /* forkKnife.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
