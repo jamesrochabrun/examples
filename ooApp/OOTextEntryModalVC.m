@@ -75,9 +75,9 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    NSString* newString= [textView.text stringByReplacingCharactersInRange:range withString:text];
-    if ( _textLengthLimit) {
-        return  newString.length <  _textLengthLimit;
+    NSString *newString= [textView.text stringByReplacingCharactersInRange:range withString:text];
+    if (_textLengthLimit) {
+        return newString.length < _textLengthLimit;
     } else {
         return YES;
     }
@@ -90,7 +90,7 @@
     _textView.text = _defaultText;
 }
 
-- (void)post:(UIButton*)sender
+- (void)post:(UIButton *)sender
 {
     [_textView resignFirstResponder];
     [_delegate textEntryFinished:[self text]];

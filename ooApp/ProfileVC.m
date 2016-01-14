@@ -175,7 +175,7 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow= makeButton(self, @"",
-                                      kGeomFontSizeHeader, CLEAR, CLEAR,
+                                      kGeomFontSizeSubheader, CLEAR, CLEAR,
                                       self,
                                       @selector (userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
@@ -581,12 +581,12 @@
     }
     
     UIImagePickerController *ic = [[UIImagePickerController alloc] init];
-    [ic setAllowsEditing: NO];
-    [ic setSourceType: UIImagePickerControllerSourceTypeCamera];
-    [ic setCameraCaptureMode: UIImagePickerControllerCameraCaptureModePhoto];
-    [ic setShowsCameraControls: YES];
-    [ic setDelegate: self];
-    [ self presentViewController: ic animated: YES completion: NULL];
+    [ic setAllowsEditing:NO];
+    [ic setSourceType:UIImagePickerControllerSourceTypeCamera];
+    [ic setCameraCaptureMode:UIImagePickerControllerCameraCaptureModePhoto];
+    [ic setShowsCameraControls:YES];
+    [ic setDelegate:self];
+    [self presentViewController:ic animated:YES completion:NULL];
 }
 
 //------------------------------------------------------------------------------
@@ -595,24 +595,22 @@
 //------------------------------------------------------------------------------
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    UIImage *image=  info[ @"UIImagePickerControllerEditedImage"];
+    UIImage *image=  info[@"UIImagePickerControllerEditedImage"];
     if (!image) {
-        image= info[ @"UIImagePickerControllerOriginalImage"];
+        image = info[@"UIImagePickerControllerOriginalImage"];
     }
     
-    if ( image && [image isKindOfClass:[UIImage class]]) {
+    if (image && [image isKindOfClass:[UIImage class]]) {
         CGSize s = image.size;
-        if ( s.width) {
+        if (s.width) {
             _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
-
         }
     }
     
-    __weak  ProfileVC *weakSelf = self;
+    __weak ProfileVC *weakSelf = self;
 
-    [self  dismissViewControllerAnimated:YES completion:^{
-        [weakSelf  showRestaurantPicker];
-
+    [self dismissViewControllerAnimated:YES completion:^{
+        [weakSelf showRestaurantPicker];
     }];
 }
 
