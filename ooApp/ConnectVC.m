@@ -278,18 +278,14 @@
     
     [_labelPhotosNumber setText:stringFromUnsigned(photosCount)];
     
-    __weak ConnectTableCell *weakSelf = self;
-    [UIView animateWithDuration:.4 animations:^{
-        //        weakSelf.labelLists.alpha=1;
-        weakSelf.labelFollowers.alpha = 1;
-        weakSelf.labelPhotos.alpha = 1;
-        weakSelf.labelFollowing.alpha = 1;
-        weakSelf.labelPlaces.alpha = 1;
-        weakSelf.labelFollowersNumber.alpha = 1;
-        weakSelf.labelPhotosNumber.alpha = 1;
-        weakSelf.labelFollowingNumber.alpha = 1;
-        weakSelf.labelPlacesNumber.alpha = 1;
-    }];
+    self.labelFollowers.alpha = 1;
+    self.labelPhotos.alpha = 1;
+    self.labelFollowing.alpha = 1;
+    self.labelPlaces.alpha = 1;
+    self.labelFollowersNumber.alpha = 1;
+    self.labelPhotosNumber.alpha = 1;
+    self.labelFollowingNumber.alpha = 1;
+    self.labelPlacesNumber.alpha = 1;
 }
 
 - (void)layoutSubviews

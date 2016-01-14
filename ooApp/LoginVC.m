@@ -642,8 +642,9 @@
                                                      
                                                      NSDictionary *subdictionary=d[ @"user"];
                                                      if (subdictionary) {
-                                                         NSString *userid = subdictionary[@"user_id"];
-                                                         [weakSelf updateUserID:userid];
+                                                         UserObject*user= [UserObject  userFromDict: subdictionary];
+                                                         [Settings sharedInstance].userObject= user;
+                                                         [[Settings sharedInstance] save];
                                                      }
                                                  }
                                              }
