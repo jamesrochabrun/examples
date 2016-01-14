@@ -866,7 +866,6 @@
     __weak ConnectVC *weakSelf= self;
     NSMutableString *facebookRequest = [NSMutableString new];
     [facebookRequest appendString:@"/me/friends?fields=id,name,email&limit=200"];
-//    [facebookRequest appendString:@"?limit=200"];
     
     FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
                                   initWithGraphPath:facebookRequest

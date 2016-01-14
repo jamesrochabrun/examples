@@ -142,7 +142,7 @@
     self=[ super initWithFrame:frame];
     if (self) {
         self.autoresizesSubviews= NO;
-        _backgroundImageView=  makeImageView(self, @"profile-background.jpg");
+        _backgroundImageView=  makeImageView(self, @"background-image.jpg");
         _backgroundImageFade= makeView( self,  UIColorRGBA(0x80000000));
         
         _filterView= [[OOFilterView alloc] init];

@@ -153,7 +153,6 @@
 		96D35F7D1B9F879200A18A23 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 96D35F7C1B9F879200A18A23 /* Common.m */; };
 		96E127B61BB32C6E00A8445E /* EmptyListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E127B51BB32C6E00A8445E /* EmptyListVC.m */; };
 		96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E49E731BC5E14B008B70AF /* EventWhenVC.m */; };
-		96E4FC6C1C3D973200C8C485 /* profile-background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 96E4FC6B1C3D973200C8C485 /* profile-background.jpg */; };
 		96E954E21BDFF99100F5197A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 96E954E11BDFF99100F5197A /* Reachability.m */; };
 		96EBC2E71C3EFC3100836066 /* ProfileVCCVLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EBC2E61C3EFC3100836066 /* ProfileVCCVLayout.m */; };
 		96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */; };
@@ -424,7 +423,6 @@
 		96E127B51BB32C6E00A8445E /* EmptyListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmptyListVC.m; sourceTree = "<group>"; };
 		96E49E721BC5E14B008B70AF /* EventWhenVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWhenVC.h; sourceTree = "<group>"; };
 		96E49E731BC5E14B008B70AF /* EventWhenVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWhenVC.m; sourceTree = "<group>"; };
-		96E4FC6B1C3D973200C8C485 /* profile-background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "profile-background.jpg"; path = "Graphic Assets/profile-background.jpg"; sourceTree = "<group>"; };
 		96E954E01BDFF99100F5197A /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		96E954E11BDFF99100F5197A /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		96EBC2E51C3EFC3100836066 /* ProfileVCCVLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileVCCVLayout.h; sourceTree = "<group>"; };
@@ -611,7 +609,6 @@
 				9671433B1C0E2B2D004875FB /* LogoWhite.png */,
 				966098BA1BFE9B1200B5D5B1 /* FB-f-Logo__white_512.png */,
 				3621F1231B900EC7004537B6 /* Logo.png */,
-				96E4FC6B1C3D973200C8C485 /* profile-background.jpg */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
 				96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */,
 				96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */,
@@ -976,7 +973,6 @@
 				962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */,
 				367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */,
 				367704631B8BF05100B594E5 /* OFL.txt in Resources */,
-				96E4FC6C1C3D973200C8C485 /* profile-background.jpg in Resources */,
 				367704641B8BF05100B594E5 /* README.txt in Resources */,
 				964DEA691C1F444C0045BA2C /* background_image.png in Resources */,
 				367704371B88552E00B594E5 /* background-image.jpg in Resources */,
