@@ -175,7 +175,7 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow= makeButton(self, @"",
-                                      kGeomFontSizeHeader, CLEAR, CLEAR,
+                                      kGeomFontSizeSubheader, CLEAR, CLEAR,
                                       self,
                                       @selector (userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
