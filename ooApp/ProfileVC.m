@@ -20,7 +20,7 @@
 #import "OOUserView.h"
 #import "ManageTagsVC.h"
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-#import "OOTextEntryVC.h"
+#import "OOTextEntryModalVC.h"
 #import "OOFilterView.h"
 #import "ProfileVCCVLayout.h"
 #import "RestaurantListVC.h"
@@ -201,11 +201,23 @@
 
 - (void)userTappedDescription:(id)sender
 {
-    OOTextEntryVC *vc = [[OOTextEntryVC alloc] init];
-    vc.defaultText = _userInfo.about;
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
+    vc.delegate = self;
     vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
-    vc.delegate=self;
-    [self.vc.navigationController pushViewController:vc animated:YES];
+    vc.defaultText = _userInfo.about;
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.vc.navigationController presentViewController:nc animated:YES completion:^{
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
 }
 
 - (void)textEntryFinished:(NSString*)text;
@@ -373,6 +385,8 @@
 @property (nonatomic,assign) BOOL didFetch;
 @property (nonatomic,assign) NSUInteger lastShownUser;
 @property (nonatomic,assign) MediaItemObject* mediaItemBeingEdited;
+@property (nonatomic,strong) RestaurantPickerVC* restaurantPicker;
+@property (nonatomic,strong) UIImage* imageToUpload;
 @end
 
 @implementation ProfileVC
@@ -567,7 +581,7 @@
     }
     
     UIImagePickerController *ic = [[UIImagePickerController alloc] init];
-    [ic setAllowsEditing: YES];
+    [ic setAllowsEditing: NO];
     [ic setSourceType: UIImagePickerControllerSourceTypeCamera];
     [ic setCameraCaptureMode: UIImagePickerControllerCameraCaptureModePhoto];
     [ic setShowsCameraControls: YES];
@@ -589,23 +603,81 @@
     if ( image && [image isKindOfClass:[UIImage class]]) {
         CGSize s = image.size;
         if ( s.width) {
-            image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
-          
-            UserObject *user= [Settings sharedInstance].userObject;
-            
-            __weak  ProfileVC *weakSelf = self;
-            [OOAPI uploadPhoto: image
-                     forObject: user
-                       success:^{
-                           [weakSelf update: nil];
-                       }
-                       failure:^(NSError *error) {
-                           NSLog(@"FAILED TO UPLOAD PHOTOGRAPH");
-                       }];
+            _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(750, 750*s.height/s.width)];
+
         }
     }
     
-    [self  dismissViewControllerAnimated:YES completion:nil];
+    __weak  ProfileVC *weakSelf = self;
+
+    [self  dismissViewControllerAnimated:YES completion:^{
+        [weakSelf  showRestaurantPicker];
+
+    }];
+}
+
+- (void)showRestaurantPicker {
+    if (_restaurantPicker) return;
+    _restaurantPicker = [[RestaurantPickerVC alloc] init];
+    _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
+    _restaurantPicker.delegate = self;
+    _restaurantPicker.imageToUpload = _imageToUpload;
+    [self.view addSubview:_restaurantPicker.view];
+    [_restaurantPicker.view  setNeedsUpdateConstraints];
+
+    [self presentViewController: _restaurantPicker animated:YES completion:^{
+        
+    }];
+}
+
+- (void)restaurantPickerVC:(RestaurantPickerVC *)restaurantPickerVC restaurantSelected:(RestaurantObject *)restaurant;
+{
+    __weak  ProfileVC *weakSelf = self;
+
+    if (restaurant.restaurantID) {
+        [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
+                   success:^{
+                       [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
+                           weakSelf.restaurantPicker = nil;
+                           [weakSelf update: nil];
+                           weakSelf.imageToUpload= nil;
+
+                       }];
+                   } failure:^(NSError *error) {
+                       NSLog(@"Failed to upload photo");
+                   }];
+    } else  {
+        [OOAPI convertGoogleIDToRestaurant: restaurant.googleID success:^(RestaurantObject *restaurant) {
+            if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
+                [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
+                           success:^{
+                               [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
+                                   weakSelf.restaurantPicker = nil;
+                                   [weakSelf update: nil];
+                                   weakSelf.imageToUpload= nil;
+
+                               }];
+                           } failure:^(NSError *error) {
+                               NSLog(@"Failed to upload photo");
+                           }];
+                
+            } else {
+                NSLog(@"Failed to upload photo because didn't get back a restaurant object");
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Failed to upload photo because the google ID was not found");
+        }];
+    }
+}
+
+- (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerVC;
+{
+    __weak  ProfileVC *weakSelf = self;
+
+    self.imageToUpload= nil;
+    [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
+        weakSelf.restaurantPicker = nil;
+    }];
 }
 
 //------------------------------------------------------------------------------
@@ -867,12 +939,25 @@
 
 - (void)userAddingCaptionTo: ( MediaItemObject*)mediaObject
 {
-    OOTextEntryVC *vc = [[OOTextEntryVC alloc] init];
-    vc.defaultText = mediaObject.caption;
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    self.mediaItemBeingEdited = mediaObject;
+    
+    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
+    vc.delegate = self;
     vc.textLengthLimit= kUserObjectMaximumAboutTextLength;// XX:
-    vc.delegate=self;
-    self.mediaItemBeingEdited= mediaObject;
-    [self.navigationController pushViewController:vc animated:YES];
+    vc.defaultText = mediaObject.caption;
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
 }
 
 - (void)textEntryFinished:(NSString*)text;
@@ -884,47 +969,19 @@
                            weakSelf.mediaItemBeingEdited.caption= text;
                            weakSelf.mediaItemBeingEdited= nil;
                            NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
+                           
                        }
                        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            weakSelf.mediaItemBeingEdited= nil;
                            complainAboutInternetConnection();
                            NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
+                           
                        }
      ];
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio
 {
-//    UserObject* user= [Settings sharedInstance].userObject;
-//    __weak ProfileVC *weakSelf = self;
-//    
-//    [OOAPI getMediaItemLiked:mio.mediaItemId
-//                      byUser:user.userID
-//                     success:^(BOOL value) {
-//                         if  (value ) {
-//                             [OOAPI setMediaItemLike:mio.mediaItemId forUser:user.userID success:^{
-//                                 NSLog  (@"SUCCESSFULLY TOGGLED PHOTO LIKE FOR USER %lu", (unsigned long) user.userID);
-//                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                 NSLog  (@"FAILED TO SET PHOTO LIKE STATUS %@",error);
-//                                 complainAboutInternetConnection();
-//                             }];
-//                         } else {
-//                             [OOAPI unsetMediaItemLike:mio.mediaItemId forUser:user.userID success:^{
-//                                 NSLog  (@"SUCCESSFULLY TOGGLED PHOTO LIKE FOR USER %lu", (unsigned long) user.userID);
-//                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                 NSLog  (@"FAILED TO SET PHOTO LIKE STATUS %@",error);
-//                                 complainAboutInternetConnection();
-//                             }];
-//                         }
-//                         
-//                         // NOTE:  really we only need to update the one cell
-//                         
-//                         [weakSelf.cv reloadData];
-//                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                         NSLog  (@"FAILED TO GET PHOTO LIKE STATUS %@",error);
-//                         complainAboutInternetConnection();
-//                     }];
-
 }
     
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -1016,7 +1073,6 @@
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }];
-    
     
     [_optionsAC addAction:manageTags];
     [_optionsAC addAction:logout];

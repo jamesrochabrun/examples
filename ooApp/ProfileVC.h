@@ -10,10 +10,11 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "BaseVC.h"
 #import "UserObject.h"
-#import "OOTextEntryVC.h"
+#import "OOTextEntryModalVC.h"
 #import "ProfileVCCVLayout.h"
 #import "MWPhotoBrowser.h"
 #import "PhotoCVCell.h"
+#import "RestaurantPickerVC.h"
 
 @protocol ProfileHeaderViewDelegate
 - (void) userTappedOnLists;
@@ -22,7 +23,7 @@
 
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate,
                                 ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate,
-                                OOTextEntryVCDelegate
+                                OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate
 >
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
@@ -30,7 +31,7 @@
 - (void)goToEmptyListScreen:(NSString *)string;
 @end
 
-@interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryVCDelegate>
+@interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryModalVCDelegate>
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
 @property (nonatomic,weak) NSObject<ProfileHeaderViewDelegate>* delegate;

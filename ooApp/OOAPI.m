@@ -254,6 +254,14 @@ NSString *const kKeyDeviceToken = @"device_token";
     }];
 }
 
++ (AFHTTPRequestOperation *) convertGoogleIDToRestaurant:(NSString *)googleID
+                                        success:(void (^)(RestaurantObject *restaurant))success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    OOAPI *api = [[OOAPI alloc] init];
+    return [api getRestaurantWithID:googleID source:kRestaurantSourceTypeGoogle success:success failure:failure  ];
+}
+
 //------------------------------------------------------------------------------
 // Name:    getRestaurantImageWithImageRef
 // Purpose:
@@ -1856,10 +1864,12 @@ NSString *const kKeyDeviceToken = @"device_token";
     if ([object isKindOfClass:[RestaurantObject class]]) {
         RestaurantObject *restaurant = (RestaurantObject *)object;
         parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
-    } else if ([object isKindOfClass:[UserObject class]]) {
+    }
+    else if ([object isKindOfClass:[UserObject class]]) {
         UserObject *user = (UserObject *)object;
         parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", (unsigned long)user.userID]};
-    } else if ([object isKindOfClass:[ListObject class]]) {
+    }
+    else if ([object isKindOfClass:[ListObject class]]) {
         ListObject *list = (ListObject *)object;
         parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", (unsigned long)list.listID]};
     } else if ([object isKindOfClass:[EventObject class]]) {
@@ -2602,15 +2612,15 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 + (NSString *)URL {
-//#ifdef ADHOC
+#ifdef ADHOC
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end
