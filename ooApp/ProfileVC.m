@@ -48,6 +48,9 @@
 
 - (void)setUserInfo:(UserObject *)u
 {
+    if ( u==_userInfo) {
+        return;
+    }
     __weak ProfileHeaderView *weakSelf = self;
     _userInfo= u;
     
@@ -735,11 +738,7 @@
     [_listsAndPhotosLayout setShowingLists: YES];
     [_buttonLowerRight setTitle: kFontIconAdd forState:UIControlStateNormal ];
     [_listsAndPhotosLayout  invalidateLayout];
-    NSRange range;
-    range.location=0;
-    range.length=1;
-    NSIndexSet *set = [[NSIndexSet alloc] initWithIndexesInRange: range];
-    [self.cv reloadSections: set];
+    [self.cv reloadData];
 }
 
 - (void)userTappedOnPhotos
@@ -748,11 +747,7 @@
     [_listsAndPhotosLayout setShowingLists: NO];
     [_buttonLowerRight setTitle: kFontIconPhoto forState:UIControlStateNormal ];
     [_listsAndPhotosLayout  invalidateLayout];
-    NSRange range;
-    range.location=0;
-    range.length=1;
-    NSIndexSet *set = [[NSIndexSet alloc] initWithIndexesInRange: range];
-    [self.cv reloadSections: set];
+    [self.cv reloadData];
 }
 
 #pragma mark - Collection View stuff
