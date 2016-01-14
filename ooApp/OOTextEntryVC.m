@@ -80,18 +80,12 @@
 {
     [_textView resignFirstResponder];
     [_delegate textEntryFinished:[self text]];
-    
-    //NOTE: OOTextEntryVC is intended to be presented modally so this is not the right way to dismiss it
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)closeTextEntry
 {
     [_textView resignFirstResponder];
     [_delegate textEntryFinished:[self text]];
-    
-    //NOTE: OOTextEntryVC is intended to be presented modally so this is not the right way to dismiss it
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)updateViewConstraints
