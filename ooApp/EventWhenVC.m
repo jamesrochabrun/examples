@@ -129,7 +129,7 @@ static int votingEndingValues[3]= {
     }
 
     if ( self.eventBeingEdited.dateWhenVotingClosed && self.eventBeingEdited.date) {
-        long long when= [self.eventBeingEdited.date timeIntervalSince1970];
+        long long when = [self.eventBeingEdited.date timeIntervalSince1970];
         long long whenVotingEnds = [self.eventBeingEdited.dateWhenVotingClosed timeIntervalSince1970];
         long long difference = when-whenVotingEnds;
         if  (difference>=HALF_HOUR-5  && difference<=HALF_HOUR+5 ) {

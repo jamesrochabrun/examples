@@ -8,6 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OOAIV : UIView
+@interface OOAIV : UIView 
+
+@property (nonatomic, strong) NSString *message;
+@property (nonatomic, strong) UILabel *messageLabel;
+@property (nonatomic) BOOL hideWhenStopped;
+@property (nonatomic) BOOL isAnimating;
+
+- (id)initWithFrame:(CGRect)frame simple:(BOOL)simple;
+- (void)startAnimating;
+- (void)stopAnimating;
 
 @end
