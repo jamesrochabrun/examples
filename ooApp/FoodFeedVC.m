@@ -162,10 +162,16 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)getFoodFeed:(FoodFeedType)type {
     __weak FoodFeedVC *weakSelf = self;
     
+    [self.view bringSubviewToFront:self.aiv];
+    [self.aiv startAnimating];
+    self.aiv.message = @"loading";
+
+    
     [OOAPI getFoodFeedType:type success:^(NSArray *restaurants) {
         _restaurants = restaurants;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.collectionView reloadData];
+            [weakSelf.aiv stopAnimating];
             if ([weakSelf.restaurants count]) {
                 [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
             }

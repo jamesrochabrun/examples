@@ -17,6 +17,7 @@
 @property (nonatomic, strong) NavTitleObject *navTitle;
 @property (nonatomic, strong) DropDownListTVC *dropDownList;
 @property (nonatomic, strong) NavTitleView *navTitleView;
+@property (nonatomic, strong) OOAIV *aiv;
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)targer action:(SEL)sector;

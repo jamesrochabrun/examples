@@ -15,6 +15,9 @@
     [self setTitleColor:UIColorRGBA(textColor) forState:UIControlStateNormal];
     self.layer.borderColor = UIColorRGBA(borderColor).CGColor;
     self.layer.borderWidth = 1;
+    self.titleLabel.numberOfLines = 2;
+    self.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
 }
 
 - (void)withText:(NSString *)text fontSize:(NSUInteger)fontSize width:(NSUInteger)width height:(NSUInteger)height backgroundColor:(NSUInteger)backColor target:(id)target selector:(SEL)selector {

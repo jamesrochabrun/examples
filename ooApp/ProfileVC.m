@@ -171,16 +171,16 @@
                                         @selector(userTappedDescription:) , 0);
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
-        _buttonDescription.titleLabel.font = [ UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
+        _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
         
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
-        self.buttonFollow= makeButton(self, @"",
+        self.buttonFollow = makeButton(self, @"",
                                       kGeomFontSizeSubheader, CLEAR, CLEAR,
                                       self,
-                                      @selector (userPressedFollow:), 0);
+                                      @selector(userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        _buttonFollow.enabled=NO;
+        _buttonFollow.enabled = NO;
     }
     return self;
 }

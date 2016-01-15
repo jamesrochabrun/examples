@@ -40,9 +40,10 @@
         
         _iv = [[UIImageView alloc] init];
         _iv.contentMode = UIViewContentModeScaleAspectFit;
+        _iv.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         _caption = [[UILabel alloc] init];
-        [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
@@ -74,7 +75,6 @@
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
-
 
         [self.view addSubview:_backgroundView];
         [_backgroundView addSubview:_closeButton];
@@ -153,7 +153,6 @@
     _restaurant = restaurant;
     
     [_restaurantName setTitle:_restaurant.name forState:UIControlStateNormal];
-    [_restaurantName sizeToFit];
     [self.view setNeedsLayout];
 }
 
@@ -236,34 +235,40 @@
 {
     [super viewWillLayoutSubviews];
     
-    if ( self.view.frame.size.height <= 0) {
+    if (!height(self.view)) {
         return; // Fix for NaN crash.
     }
     
     CGRect frame;
+    CGFloat maxImageHeight = 0.7 * height(self.view);
+    CGFloat imageMaxY;
     
     //adjust backgroundview horizontal parameters
     frame = _backgroundView.frame;
     frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _backgroundView.frame = frame;
-
+    
     frame = _restaurantName.frame;
-    frame.size = [_restaurantName sizeThatFits:CGSizeMake(width(_backgroundView)-2*kGeomSpaceEdge, 100)];
-    frame.origin.y = 0;
+    frame.size.width = width(_backgroundView)-2*kGeomSpaceEdge-2*kGeomDimensionsIconButton;
+//    frame.size.height = 50;
+    frame.origin.y = kGeomSpaceEdge;
     frame.origin.x = (width(_backgroundView) - width(_restaurantName))/2;
     frame.size.height = kGeomDimensionsIconButton;
     _restaurantName.frame = frame;
 
     frame = _iv.frame;
 
-    frame.size.height = _iv.image.size.height/((_iv.image.size.width) ? (_iv.image.size.width) : 1) * width(_backgroundView) - 2*kGeomSpaceEdge;
+    CGFloat imageHeight = _iv.image.size.height/((_iv.image.size.width) ? (_iv.image.size.width) : 1) * width(_backgroundView) - 2*kGeomSpaceEdge;
+    frame.size.height = (imageHeight > maxImageHeight) ? maxImageHeight : imageHeight;
     frame.size.width = width(_backgroundView) - 2*kGeomSpaceEdge;
-    frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_restaurantName.frame));
+    frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceCellPadding);
     _iv.frame = frame;
+    
+    imageMaxY = CGRectGetMaxY(_iv.frame);
 
     frame = _userViewButton.frame;
-    frame.origin.y = CGRectGetMaxY(_iv.frame) + kGeomSpaceInter;
+    frame.origin.y = imageMaxY + kGeomSpaceCellPadding;
     frame.origin.x = kGeomSpaceEdge;
     frame.size.height = kGeomDimensionsIconButton;
     frame.size.width = kGeomDimensionsIconButton;
@@ -276,7 +281,7 @@
     
     frame = _yumButton.frame;
     frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-    frame.origin = CGPointMake(width(_backgroundView) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_iv.frame) + kGeomSpaceInter);
+    frame.origin = CGPointMake(width(_backgroundView) - kGeomDimensionsIconButton - kGeomSpaceEdge, imageMaxY + kGeomSpaceCellPadding);
     _yumButton.frame = frame;
 
     [_numYums sizeToFit];
@@ -286,11 +291,12 @@
     _numYums.frame = frame;
     _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
 
-    CGFloat distanceFromEdge = (CGRectGetMaxX(_userButton.frame) > (width(_backgroundView) - CGRectGetMinX(_numYums.frame))) ? CGRectGetMaxX(_userButton.frame) : (width(_backgroundView) - CGRectGetMinX(_numYums.frame));
+    CGFloat distanceFromEdge = (CGRectGetMaxX(_userButton.frame) > (width(_backgroundView) - CGRectGetMinX(_numYums.frame))) ? CGRectGetMaxX(_userButton.frame) + kGeomSpaceCellPadding : (width(_backgroundView) - CGRectGetMinX(_numYums.frame) - kGeomSpaceCellPadding);
     
     frame = _caption.frame;
     frame.size = [_caption sizeThatFits:CGSizeMake(width(_backgroundView) - 2*distanceFromEdge, 100)];
-    frame.origin.y = CGRectGetMaxY(_iv.frame) + kGeomSpaceInter;
+    frame.origin.y = imageMaxY + kGeomSpaceCellPadding +
+        ((CGRectGetMaxY(_userButton.frame) - (imageMaxY + kGeomSpaceCellPadding)) - (frame.size.height))/2;
     frame.origin.x = (width(_backgroundView) - frame.size.width)/2;
     _caption.frame = frame;
 
