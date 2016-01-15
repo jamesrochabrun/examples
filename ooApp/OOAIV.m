@@ -29,9 +29,11 @@
         _backView.layer.cornerRadius = kGeomCornerRadius;
         [self addSubview:_backView];
         
-        _ooaiv = [[UIImageView alloc] initWithFrame:CGRectIntegral(CGRectMake((frame.size.width - kGeomDimensionsIconButton)/2,
-                                                                             frame.size.height - kGeomDimensionsIconButtonSmall-10,
-                                                                             kGeomDimensionsIconButtonSmall, kGeomDimensionsIconButtonSmall))];
+        _ooaiv = [[UIImageView alloc] initWithFrame:
+                  CGRectIntegral(CGRectMake((frame.size.width - kGeomDimensionsIconButton)/2,
+                                            kGeomSpaceEdge,
+                                            kGeomDimensionsIconButton,
+                                            kGeomDimensionsIconButton))];
         _ooaiv.backgroundColor = [UIColor clearColor];
         
         NSMutableArray *images;
@@ -45,18 +47,14 @@
         [_ooaiv setContentMode:UIViewContentModeScaleAspectFit];
         [_ooaiv setAnimationDuration:2];
         
-        _messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.bounds.size.width-20, _ooaiv.frame.origin.y - 5)];
-        _messageLabel.textColor = UIColorRGBA(kColorWhite);
-        _messageLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH5];
-        _messageLabel.backgroundColor = [UIColor clearColor];
-        _messageLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        _messageLabel.numberOfLines = 0;
-        _messageLabel.textAlignment = NSTextAlignmentCenter;
-        
+        _messageLabel = [[UILabel alloc] initWithFrame:
+                         CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_ooaiv.frame) + kGeomSpaceInter, width(self)-2*kGeomSpaceEdge, CGRectGetMaxY(_ooaiv.frame) + kGeomSpaceInter)];
+        [_messageLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH5] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         [self addSubview:_ooaiv];
         [self addSubview:_messageLabel];
      
 //        [DebugUtilities addBorderToViews:@[_ooaiv, _messageLabel]];
+        self.alpha = 0;
         
         _hideWhenStopped = YES;
     }
@@ -86,6 +84,15 @@
     frame = _ooaiv.frame;
     frame.origin.y = _messageLabel.frame.origin.y + _messageLabel.frame.size.height + kVBuffer;
     _ooaiv.frame = CGRectIntegral(frame);
+    
+    _ooaiv.frame = CGRectMake(((width(self) - kGeomDimensionsIconButton))/2,
+                              kGeomSpaceEdge,
+                              kGeomDimensionsIconButton,
+                              kGeomDimensionsIconButton);
+    _messageLabel.frame = CGRectMake(kGeomSpaceEdge,
+                                     CGRectGetMaxY(_ooaiv.frame),
+                                     width(self) - 2*kGeomSpaceEdge,
+                                     height(self) - CGRectGetMaxY(_ooaiv.frame));
 }
 
 - (void)startAnimating {
