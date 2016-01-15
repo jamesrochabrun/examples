@@ -34,6 +34,7 @@ extern NSString *const kKeyMediaItemCaption;
 @property (nonatomic) CGFloat width;
 @property (nonatomic) CGFloat height;
 @property (nonatomic) NSUInteger sourceUserID;
+@property (nonatomic) NSUInteger optionalRestaurantID;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryOfMediaItem;

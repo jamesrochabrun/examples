@@ -13,7 +13,6 @@
 #import "ListStripCVCell.h"
 #import "OOAPI.h"
 #import "EmptyListVC.h"
-#import "RestaurantListVC.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
@@ -25,6 +24,7 @@
 #import "ProfileVCCVLayout.h"
 #import "RestaurantListVC.h"
 #import "ConnectVC.h"
+#import "RestaurantVC.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -181,7 +181,6 @@
                                       @selector (userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         _buttonFollow.enabled=NO;
-        
     }
     return self;
 }
@@ -653,7 +652,6 @@
                                    weakSelf.restaurantPicker = nil;
                                    [weakSelf update: nil];
                                    weakSelf.imageToUpload= nil;
-
                                }];
                            } failure:^(NSError *error) {
                                NSLog(@"Failed to upload photo");
@@ -968,9 +966,7 @@
                        }
                        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            weakSelf.mediaItemBeingEdited= nil;
-
                            NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
-                           
                        }
      ];
 }
@@ -989,19 +985,66 @@
         [self.navigationController pushViewController:vc animated:YES];
     }
     else {
-
         NSUInteger row = indexPath.row;
-        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate: self];
-        [photoBrowser setCurrentPhotoIndex: row];
-        [self.navigationController pushViewController:photoBrowser animated:YES];
+        MediaItemObject* mediaObject=_arrayPhotos[ row];
+        
+//        if (!mediaObject.reference) {
+            [self launchViewPhoto: mediaObject restaurant:nil];
+//        } else {
+//            __weak  ProfileVC *weakSelf = self;
+//            [OOAPI convertGoogleIDToRestaurant:
+//                                       success:^(RestaurantObject *restaurant) {
+//                                           [weakSelf launchViewPhoto: mediaObject  restaurant:restaurant];
+//
+//                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                           [weakSelf launchViewPhoto: mediaObject restaurant:nil];
+//                                       }];
+//        }
     }
 }
 
-- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+- (void) launchViewPhoto:(MediaItemObject*) mediaObject restaurant:(RestaurantObject*)restaurant
+{
+    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+    [vc setDelegate: self];
+    [vc setMio: mediaObject];
+    [vc setRestaurant: restaurant];
+    [vc.view setNeedsUpdateConstraints];
+    vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self.navigationController presentViewController:vc animated:NO completion:^{
+    }];
+}
+
+- (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC
+{
+    self.tabBarController.tabBar.hidden = NO;
+}
+
+- (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant
+{
+    if (!restaurant) {
+        return;
+    }
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = restaurant;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showProfile:(UserObject *)user
+{
+    ProfileVC *vc = [[ProfileVC alloc] init];
+    vc.userInfo = user;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser
+{
     return _arrayPhotos.count;
 }
 
-- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index
+{
     if (index  < _arrayPhotos.count) {
         MediaItemObject *mediaObject= _arrayPhotos[index];
         MWPhoto *photo;

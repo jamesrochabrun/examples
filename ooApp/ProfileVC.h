@@ -15,6 +15,7 @@
 #import "MWPhotoBrowser.h"
 #import "PhotoCVCell.h"
 #import "RestaurantPickerVC.h"
+#import "ViewPhotoVC.h"
 
 @protocol ProfileHeaderViewDelegate
 - (void) userTappedOnLists;
@@ -23,7 +24,9 @@
 
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate,
                                 ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate,
-                                OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate
+                                OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate,
+                        ViewPhotoVCDelegate
+
 >
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;

@@ -251,6 +251,7 @@ NSString *const kKeyDeviceToken = @"device_token";
         success(restaurant);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         NSLog(@"Error: %@", error);
+        failure(operation,error);
     }];
 }
 
