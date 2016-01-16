@@ -64,7 +64,7 @@
     
     // RULE: Only update the button when we know for sure whose profile is.
     if ( _viewingOwnProfile) {
-        [_buttonFollow setTitle: @"This is you!" forState:UIControlStateNormal];
+        [_buttonFollow setTitle: @"" forState:UIControlStateNormal];
         [_buttonFollow setTitleColor: WHITE forState:UIControlStateNormal];
         _buttonFollow.layer.borderWidth= 0;
     }
@@ -974,7 +974,7 @@
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio
 {
 }
-    
+
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row= indexPath.row;
@@ -987,19 +987,24 @@
     else {
         NSUInteger row = indexPath.row;
         MediaItemObject* mediaObject=_arrayPhotos[ row];
-        
-//        if (!mediaObject.reference) {
+        NSUInteger restaurantID= mediaObject.restaurantID;
+        if  (!restaurantID) {
             [self launchViewPhoto: mediaObject restaurant:nil];
-//        } else {
-//            __weak  ProfileVC *weakSelf = self;
-//            [OOAPI convertGoogleIDToRestaurant:
-//                                       success:^(RestaurantObject *restaurant) {
-//                                           [weakSelf launchViewPhoto: mediaObject  restaurant:restaurant];
-//
-//                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                           [weakSelf launchViewPhoto: mediaObject restaurant:nil];
-//                                       }];
-//        }
+        } else {
+            __weak  ProfileVC *weakSelf = self;
+            OOAPI *api=[[OOAPI alloc]init];
+            [api getRestaurantWithID: stringFromUnsigned(restaurantID)
+                              source: kRestaurantSourceTypeOomami
+                             success:^(RestaurantObject *restaurant) {
+                if ( restaurant) {
+                    [weakSelf launchViewPhoto: mediaObject restaurant:restaurant];
+                } else {
+                    [weakSelf launchViewPhoto: mediaObject restaurant:nil];
+                }
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                [weakSelf launchViewPhoto: mediaObject restaurant:nil];
+            }];
+        }
     }
 }
 
@@ -1012,6 +1017,7 @@
     [vc.view setNeedsUpdateConstraints];
     vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    self.tabBarController.tabBar.hidden = YES;
     [self.navigationController presentViewController:vc animated:NO completion:^{
     }];
 }
