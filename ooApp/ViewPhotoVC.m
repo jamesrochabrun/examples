@@ -151,8 +151,11 @@
 - (void)setRestaurant:(RestaurantObject *)restaurant {
     if (restaurant == _restaurant) return;
     _restaurant = restaurant;
-    
-    [_restaurantName setTitle:_restaurant.name forState:UIControlStateNormal];
+    if ( _restaurant) {
+        [_restaurantName setTitle:_restaurant.name forState:UIControlStateNormal];
+    } else {
+        [_restaurantName setTitle:  @"NO RESTAURANT" forState:UIControlStateNormal];
+    }
     [self.view setNeedsLayout];
 }
 

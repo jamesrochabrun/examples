@@ -16,6 +16,7 @@ NSString *const kKeyMediaItemHeight = @"height";
 NSString *const kKeyMediaItemWidth = @"width";
 NSString *const kKeyMediaItemURL = @"url";
 NSString *const kKeyMediaItemSourceUserID = @"source_user_id";
+NSString *const kKeyMediaItemRestaurantID = @"restaurant_id";
 NSString *const kKeyMediaItemCaption = @"caption";
 
 @implementation MediaItemObject
@@ -36,6 +37,8 @@ NSString *const kKeyMediaItemCaption = @"caption";
     mio.url = [[dict objectForKey:kKeyMediaItemURL] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyMediaItemURL];
     mio.caption = [[dict objectForKey:kKeyMediaItemCaption] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyMediaItemCaption];
     mio.sourceUserID = [dict[kKeyMediaItemSourceUserID] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemSourceUserID] unsignedIntegerValue];
+    
+    mio.restaurantID = parseUnsignedIntegerOrNullFromServer(dict [kKeyMediaItemRestaurantID ]);
     return mio;
 }
 
@@ -50,6 +53,7 @@ NSString *const kKeyMediaItemCaption = @"caption";
              kKeyMediaItemWidth: self.width ?  @(self.width):  @(0.f),
              kKeyMediaItemURL: self.url ?:  @"",
              kKeyMediaItemSourceUserID: self.sourceUserID ?  @(self.sourceUserID): @(0U),
+             kKeyMediaItemRestaurantID: self.restaurantID ?  @(self.restaurantID): @(0U),
              };
 }
 

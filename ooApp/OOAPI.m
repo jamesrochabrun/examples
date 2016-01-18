@@ -57,7 +57,10 @@ NSString *const kKeyDeviceToken = @"device_token";
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants", kHTTPProtocol, [self ooURL]];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+    return [rm GET:urlString parameters: @{
+                                           @"restaurant_ids": restaurantIds
+                                           }
+           success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         for (id dict in responseObject) {
             //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
@@ -227,14 +230,18 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getRestaurantsWithIDs
+// Name:    getRestaurantsWithID
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
                                         success:(void (^)(RestaurantObject *restaurant))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    if (!restaurantId) return nil;
+    if (!restaurantId) {
+        if (failure)
+            failure(nil,nil);
+        return nil;
+    }
 
     NSString *urlString;
     

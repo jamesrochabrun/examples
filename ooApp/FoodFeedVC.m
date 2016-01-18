@@ -246,7 +246,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.mio = mio;
     vc.restaurant = r;
     vc.delegate = self;
-    //[self.navigationController pushViewController:vc animated:NO];
+
     vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self.navigationController presentViewController:vc animated:NO completion:^{
