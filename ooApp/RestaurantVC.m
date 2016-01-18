@@ -45,7 +45,7 @@
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic) NSUInteger favoriteID;
 @property (nonatomic) NSUInteger toTryID;
-@property (nonatomic, strong) UIButton *addPhotoButton;
+//@property (nonatomic, strong) UIButton *addPhotoButton;
 @property (nonatomic, strong) NSArray *followees;
 @property (nonatomic) BOOL listsNeedUpdate;
 
@@ -106,10 +106,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     _listButtons = [NSMutableSet set];
     
-    _addPhotoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_addPhotoButton roundButtonWithIcon:kFontIconPhoto fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(showPickPhotoUI)];
-    _addPhotoButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_addPhotoButton];
+//    _addPhotoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [_addPhotoButton roundButtonWithIcon:kFontIconPhoto fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(showPickPhotoUI)];
+//    _addPhotoButton.translatesAutoresizingMaskIntoConstraints = NO;
+//    [self.view addSubview:_addPhotoButton];
     _listsNeedUpdate = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setListsUpdateNeeded)
@@ -137,7 +137,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"listContainerHeight":@(_listButtonsContainerHeight), @"buttonDimensions":@(kGeomDimensionsIconButton)};
     
     UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView, _addPhotoButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView /*,_addPhotoButton*/);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view removeConstraints:_verticalLayoutContraints];
@@ -146,8 +146,8 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
 }
 
@@ -260,12 +260,12 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
         
     }
     
-    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              NSLog(@"Add to New Event");
-                                                              [weakSelf addToNewEvent];
-                                                          }];
+//    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
+//                                                            style:UIAlertActionStyleDefault
+//                                                          handler:^(UIAlertAction * action) {
+//                                                              NSLog(@"Add to New Event");
+//                                                              [weakSelf addToNewEvent];
+//                                                          }];
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
@@ -281,16 +281,17 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     //    [_styleSheetAC addAction:shareRestaurant];
     [_styleSheetAC addAction:addToList];
     [_styleSheetAC addAction:addToNewList];
+#if 0
     if (addToEvent) {
         [_styleSheetAC addAction:addToEvent];
     }
     if ( removeFromEvent) {
         [_styleSheetAC addAction:removeFromEvent];
     }
-    
     [_styleSheetAC addAction:addToNewEvent];
+#endif
     [_styleSheetAC addAction:cancel];
-    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(moreButtonPressed:)];
+    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
 }
 
 - (void)sharePressed {
@@ -445,7 +446,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)moreButtonPressed:(id)sender
+- (void)moreButtonPressed
 {
     [self presentViewController:_styleSheetAC animated:YES completion:nil];
 }
@@ -990,6 +991,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     vc.userID = user.userID;
     vc.userInfo = user;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)restaurantMainCVCellMorePressed {
+    [self moreButtonPressed];
 }
 
 - (void)restaurantMainCVCellSharePressed {

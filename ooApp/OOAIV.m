@@ -45,7 +45,7 @@
         
         [_ooaiv setAnimationImages:images];
         [_ooaiv setContentMode:UIViewContentModeScaleAspectFit];
-        [_ooaiv setAnimationDuration:2];
+        [_ooaiv setAnimationDuration:3];
         
         _messageLabel = [[UILabel alloc] initWithFrame:
                          CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_ooaiv.frame) + kGeomSpaceInter, width(self)-2*kGeomSpaceEdge, CGRectGetMaxY(_ooaiv.frame) + kGeomSpaceInter)];

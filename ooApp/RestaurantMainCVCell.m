@@ -33,6 +33,7 @@
 @property (nonatomic, strong) UIButton *hoursButton;
 @property (nonatomic, strong) UIButton *favoriteButton;
 @property (nonatomic, strong) UIButton *shareButton;
+@property (nonatomic, strong) UIButton *addButton;
 @property (nonatomic, strong) UIScrollView *hoursScroll;
 @property (nonatomic, strong) UILabel *hoursView;
 @property (nonatomic, strong) UIView *verticalLine1;
@@ -103,15 +104,20 @@
         _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_shareButton withIcon:kFontIconShare fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed)];
         _shareButton.layer.cornerRadius = 0;
-        
         [_shareButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
         
+        _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_addButton withIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(morePressed)];
+        _addButton.layer.cornerRadius = 0;
+        [_addButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+
         [_favoriteButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
         [_favoriteButton setTitle:kFontIconFavoriteFilled forState:UIControlStateSelected];
         
-        _favoriteButton.translatesAutoresizingMaskIntoConstraints = _shareButton.translatesAutoresizingMaskIntoConstraints = NO;
+        _addButton.translatesAutoresizingMaskIntoConstraints = _favoriteButton.translatesAutoresizingMaskIntoConstraints = _shareButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_favoriteButton];
         [self addSubview:_shareButton];
+        [self addSubview:_addButton];
         
         _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _shareButton.layer.borderWidth = 1;
         _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _shareButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
@@ -189,6 +195,10 @@
     [_delegate restaurantMainCVCellSharePressed];
 }
 
+- (void)morePressed {
+    [_delegate restaurantMainCVCellMorePressed];
+}
+
 - (void)showOnMap {
     [_delegate restaurantMainCVCell:self showMapTapped:_restaurant.location];
 }
@@ -221,10 +231,10 @@
 - (void)updateConstraints {
     [super updateConstraints];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/3)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/4)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _shareButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _shareButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton, _addButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -444,7 +454,7 @@
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton][_shareButton(actionButtonWidth)][_favoriteButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton(actionButtonWidth)][_shareButton(>=actionButtonWidth)][_favoriteButton(actionButtonWidth)][_addButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     lastLineView = currentLine;
     
@@ -488,7 +498,7 @@
     //line 6 location/share/favorite
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_shareButton
-                         attribute:NSLayoutAttributeCenterX
+                         attribute:NSLayoutAttributeRight
                          relatedBy:NSLayoutRelationEqual
                          toItem:self
                          attribute:NSLayoutAttributeCenterX
@@ -511,6 +521,14 @@
                          multiplier:1
                          constant:0]];
     [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_addButton
+                         attribute:NSLayoutAttributeCenterY
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_locationButton
+                         attribute:NSLayoutAttributeCenterY
+                         multiplier:1
+                         constant:0]];
+    [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_favoriteButton
                          attribute:NSLayoutAttributeHeight
                          relatedBy:NSLayoutRelationEqual
@@ -526,7 +544,14 @@
                          attribute:NSLayoutAttributeHeight
                          multiplier:1
                          constant:0]];
-    
+    [self addConstraint:[NSLayoutConstraint
+                         constraintWithItem:_addButton
+                         attribute:NSLayoutAttributeHeight
+                         relatedBy:NSLayoutRelationEqual
+                         toItem:_locationButton
+                         attribute:NSLayoutAttributeHeight
+                         multiplier:1
+                         constant:0]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationButton(iconButtonDimensions)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 

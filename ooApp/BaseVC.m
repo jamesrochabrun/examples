@@ -64,7 +64,7 @@
         [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
         [_leftBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-        [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
+//        [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
         _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
         self.navigationItem.leftBarButtonItem = _leftNavButton;
         
