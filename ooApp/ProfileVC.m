@@ -160,8 +160,8 @@
         _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
         _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
-        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
-        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
+        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, WHITE, CLEAR,  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, WHITE, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
         _buttonFollowersCount.titleLabel.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         _buttonFolloweesCount.titleLabel.font = _buttonFollowersCount.titleLabel.font;
