@@ -49,13 +49,36 @@
 
 @implementation ProfileHeaderView
 
+- (void)registerForNotification:(NSString*) name calling:(SEL)selector
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector: selector
+                   name: name
+                 object:nil];
+}
+
+- (void)unregisterFromNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver: self  ];
+}
+
 - (void)setUserInfo:(UserObject *)u
 {
     if ( u==_userInfo) {
         return;
     }
-    __weak ProfileHeaderView *weakSelf = self;
     _userInfo= u;
+
+    [self loadUserInfo];
+}
+
+- (void) loadUserInfo
+{
+    if (!_userInfo) {
+        return;
+    }
+    __weak ProfileHeaderView *weakSelf = self;
     
     [_userView setUser: _userInfo];
     
@@ -127,7 +150,8 @@
     
     [OOAPI getUserStatsFor:_userInfo.userID
                    success:^(UserStatsObject *stats) {
-                       
+                       ON_MAIN_THREAD(^{
+
                        [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
                        [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
                        
@@ -139,6 +163,7 @@
                        weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
                        weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
                        weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                       });
                        
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
@@ -205,9 +230,21 @@
         [_buttonFollow setTitle:@"" forState:UIControlStateSelected];
         _buttonFollow.layer.borderColor=YELLOW.CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
-
+        
+        [self registerForNotification: kNotificationOwnProfileNeedsUpdate
+                              calling:@selector(updateOwnProfile:)
+         ];
     }
     return self;
+}
+
+- (void)updateOwnProfile: (NSNotification*)not
+{
+    if ( !_viewingOwnProfile) {
+        return;
+    }
+    
+    [self loadUserInfo];
 }
 
 - (void)userPressedFollowees: (id) sender
