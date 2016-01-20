@@ -31,4 +31,11 @@ static NSInteger kHashRestaurant= 0x20000000;
 static NSInteger kHashUser= 0x40000000;
 static NSInteger kHashGroup= 0x30000000;
 
+enum {
+    kTabIndexNone = -1,
+    kTabIndexSearch = 1,
+    kTabIndexConnect = 3,
+    kTabIndexProfile = 4,
+};
+
 #endif

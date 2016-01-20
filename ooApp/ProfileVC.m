@@ -39,20 +39,46 @@
 @property (nonatomic, strong) UIButton *buttonFollowers;
 @property (nonatomic, strong) UIButton *buttonFolloweesCount;
 @property (nonatomic, strong) UIButton *buttonFollowersCount;
+@property (nonatomic,strong)  UILabel *labelVenuesCount,*labelPhotoCount,*labelLikesCount;
+@property (nonatomic,strong)  UILabel *labelVenues,*labelPhoto,*labelLikes;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIView *backgroundImageFade;
 @property (nonatomic,strong) OOFilterView *filterView;
+@property (nonatomic,assign) BOOL followingThisUser;
 @end
 
 @implementation ProfileHeaderView
+
+- (void)registerForNotification:(NSString*) name calling:(SEL)selector
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector: selector
+                   name: name
+                 object:nil];
+}
+
+- (void)unregisterFromNotifications
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver: self  ];
+}
 
 - (void)setUserInfo:(UserObject *)u
 {
     if ( u==_userInfo) {
         return;
     }
-    __weak ProfileHeaderView *weakSelf = self;
     _userInfo= u;
+
+    [self loadUserInfo];
+}
+
+- (void) loadUserInfo
+{
+    if (!_userInfo) {
+        return;
+    }
+    __weak ProfileHeaderView *weakSelf = self;
     
     [_userView setUser: _userInfo];
     
@@ -61,32 +87,33 @@
     UserObject *currentUser = [Settings sharedInstance].userObject;
     NSUInteger ownUserIdentifier = [currentUser userID];
     _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
-    
+
+    [self  indicateNotFollowing];
+
     // RULE: Only update the button when we know for sure whose profile is.
     if ( _viewingOwnProfile) {
-        [_buttonFollow setTitle: @"" forState:UIControlStateNormal];
-        [_buttonFollow setTitleColor: WHITE forState:UIControlStateNormal];
-        _buttonFollow.layer.borderWidth= 0;
+        NSLog  (@"VIEWING OWN PROFILE.");
+        // RULE: Show the user's own stats.
+        [self  indicateFollowing];
     }
     else  {
-        self.buttonFollow.selected= NO;
-        
         [OOAPI  getFollowersOf: _userInfo.userID
                        success:^(NSArray *users) {
                            
-                           [weakSelf.buttonFollow setTitle: @"FOLLOW" forState:UIControlStateNormal];
-                           [weakSelf.buttonFollow setTitleColor: YELLOW forState:UIControlStateNormal];
-                           weakSelf.buttonFollow.layer.cornerRadius= kGeomCornerRadius;
-                           weakSelf.buttonFollow.layer.borderWidth= 1;
-                           weakSelf.buttonFollow.layer.borderColor=YELLOW.CGColor;
-                           
+                           BOOL foundSelf= NO;
                            for (UserObject* user   in  users) {
+                               // RULE: If we are following this user then we make the follow button disappear.
                                if ( user.userID==ownUserIdentifier) {
-                                   weakSelf.buttonFollow.selected= YES;
+                                   foundSelf= YES;
                                    break;
                                }
                            }
-                           weakSelf.buttonFollow.enabled= YES;
+                           
+                           if  (!foundSelf) {
+                               [weakSelf indicateNotFollowing];
+                           } else {
+                               [weakSelf indicateFollowing];
+                           }
                            
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
@@ -123,7 +150,8 @@
     
     [OOAPI getUserStatsFor:_userInfo.userID
                    success:^(UserStatsObject *stats) {
-                       
+                       ON_MAIN_THREAD(^{
+
                        [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
                        [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
                        
@@ -132,10 +160,16 @@
                        weakSelf.buttonFolloweesCount.alpha= 1;
                        weakSelf.buttonFollowersCount.alpha= 1;
                        
+                       weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                       weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                       weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                       });
+                       
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
 
                    }];
+    
 }
 
 - (instancetype) initWithFrame:(CGRect)frame
@@ -160,8 +194,8 @@
         _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
         _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
-        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
-        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
+        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, WHITE, CLEAR,  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, WHITE, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
         _buttonFollowersCount.titleLabel.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         _buttonFolloweesCount.titleLabel.font = _buttonFollowersCount.titleLabel.font;
@@ -173,16 +207,44 @@
         _buttonDescription.titleLabel.numberOfLines= 0;
         _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
         
+        _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeHeader);
+        _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeHeader);
+        _labelLikesCount= makeLabel(self,  @"", kGeomFontSizeHeader);
+        _labelVenues= makeIconLabel(self, kFontIconPin, kGeomFontSizeHeader);
+        _labelPhoto= makeIconLabel(self, kFontIconPhoto, kGeomFontSizeHeader);
+        _labelLikes= makeIconLabel(self, kFontIconYum, kGeomFontSizeHeader);
+        
+        _labelVenuesCount.textColor= WHITE;
+        _labelPhotoCount.textColor= WHITE;
+        _labelLikesCount.textColor= WHITE;
+        _labelVenues.textColor= WHITE;
+        _labelPhoto.textColor= WHITE;
+        _labelLikes.textColor= WHITE;
+        
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
-        self.buttonFollow = makeButton(self, @"",
-                                      kGeomFontSizeSubheader, CLEAR, CLEAR,
+        self.buttonFollow = makeButton(self, @"FOLLOW",
+                                      kGeomFontSizeSubheader, YELLOW, CLEAR,
                                       self,
                                       @selector(userPressedFollow:), 0);
-        [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        _buttonFollow.enabled = NO;
+        [_buttonFollow setTitle:@"" forState:UIControlStateSelected];
+        _buttonFollow.layer.borderColor=YELLOW.CGColor;
+        _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
+        
+        [self registerForNotification: kNotificationOwnProfileNeedsUpdate
+                              calling:@selector(updateOwnProfile:)
+         ];
     }
     return self;
+}
+
+- (void)updateOwnProfile: (NSNotification*)not
+{
+    if ( !_viewingOwnProfile) {
+        return;
+    }
+    
+    [self loadUserInfo];
 }
 
 - (void)userPressedFollowees: (id) sender
@@ -278,12 +340,43 @@
     [OOAPI setFollowingUser:_userInfo
                          to: NO
                     success:^(id responseObject) {
-                        weakSelf.buttonFollow.selected= NO;
+                        [weakSelf indicateNotFollowing];
+                        
                         NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
                         
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO UNFOLLOW USER");
                     }];
+    
+}
+
+- (void)indicateFollowing
+{
+    _buttonFollow.layer.borderWidth= 0;
+    _buttonFollow.selected= YES;
+    _followingThisUser=YES;
+    _labelPhoto.hidden= NO;
+    _labelPhotoCount.hidden= NO;
+    _labelLikes.hidden= NO;
+    _labelLikesCount.hidden= NO;
+    _labelVenues.hidden= NO;
+    _labelVenuesCount.hidden= NO;
+    
+}
+
+- (void)indicateNotFollowing
+{
+    _followingThisUser=NO;
+    _buttonFollow.selected= NO;
+    _buttonFollow.layer.borderWidth= 1;
+    
+    _labelPhoto.hidden= YES;
+    _labelPhotoCount.hidden= YES;
+    _labelLikes.hidden= YES;
+    _labelLikesCount.hidden= YES;
+    _labelVenues.hidden= YES;
+    _labelVenuesCount.hidden= YES;
+    
     
 }
 
@@ -299,20 +392,16 @@
     
     __weak ProfileHeaderView *weakSelf = self;
     
-    if ( _buttonFollow.selected) {
+    if (_followingThisUser) {
         [self verifyUnfollow];
         return;
     }
     
-    [_buttonFollow setTitle:@"..." forState:UIControlStateNormal];
-    
     [OOAPI setFollowingUser:_userInfo
-                         to: !weakSelf.buttonFollow.selected
+                         to: YES
                     success:^(id responseObject) {
-                        weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected;
-                        
-                        [weakSelf.buttonFollow setTitle:@"FOLLOW" forState:UIControlStateNormal];
-                        
+                        [weakSelf indicateFollowing];
+                      
                         NSLog (@"SUCCESSFULLY FOLLOWED USER");
                         
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
@@ -356,8 +445,21 @@
     _buttonFollowees.frame = CGRectMake(rightX, y, horizontalSpaceForText, lowerLabelHeight);
     
     y=kGeomSpaceEdge+kGeomProfileImageSize+kGeomSpaceInter;
-    _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y,kGeomButtonWidth, kGeomFollowButtonHeight );
-    y += kGeomFollowButtonHeight + kGeomSpaceInter;
+    _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
+                                     kGeomButtonWidth, kGeomFollowButtonHeight );
+    
+    // Layout the statistics labels.
+    float x= (w-3*kGeomProfileStatsItemWidth)/2;
+    _labelVenuesCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
+    _labelVenues.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
+    x += kGeomProfileStatsItemWidth;
+    _labelPhotoCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
+    _labelPhoto.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
+    x += kGeomProfileStatsItemWidth;
+    _labelLikesCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
+    _labelLikes.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
+    
+    y += kGeomProfileStatsItemHeight + kGeomSpaceInter;
     
     _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;

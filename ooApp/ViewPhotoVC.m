@@ -343,6 +343,12 @@
             ;
         }];
     }
+    
+    UserObject* myself= [Settings sharedInstance].userObject;
+    if ( _mio.sourceUserID==myself.userID) {
+        // RULE: If I like or unlike my own photo, I will need to update my profile screen.
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationOwnProfileNeedsUpdate object:nil];
+    }
 }
 
 - (void)updateNumYums {
