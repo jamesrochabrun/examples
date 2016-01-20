@@ -678,13 +678,25 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             return ([_listButtons count]) ? 1 : 0;
             break;
         case kRestaurantSectionTypeMediaItems:
-            return [_mediaItems count];
+            return [self numberOfMediaItemsToDisplay];
             break;
         case kRestaurantSectionTypeFollowees:
             return [_followees count];
             break;
     }
     return 0;
+}
+
+//A count of all Oomami Items + other Media Items to make the total at least 10
+- (NSUInteger)numberOfMediaItemsToDisplay {
+
+    NSUInteger numItems = 0;
+    for (MediaItemObject *mio in _mediaItems) {
+        if (numItems >= 10 && mio.source == kMediaItemTypeGoogle)
+            break;
+        numItems++;
+    }
+    return numItems;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {

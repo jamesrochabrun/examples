@@ -119,8 +119,8 @@
         [self addSubview:_shareButton];
         [self addSubview:_addButton];
         
-        _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _shareButton.layer.borderWidth = 1;
-        _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _shareButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+        _addButton.layer.borderWidth = _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _shareButton.layer.borderWidth = 1;
+        _addButton.layer.borderColor = _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _shareButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
         
 //        _rating = [[UILabel alloc] init];
 //        _rating.translatesAutoresizingMaskIntoConstraints = NO;
