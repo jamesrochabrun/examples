@@ -113,7 +113,7 @@
             
             if ([lastRowAttributes count] > index%numberOfColumnsInRow) {
                 UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
-                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + 2;
+                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + kGeomInterImageGap;
             }
                 
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
@@ -129,7 +129,7 @@
                 [lastRowAttributes addObject:attributes];
             }
             
-            xOffset = xOffset+itemSize.width + 2;
+            xOffset = xOffset+itemSize.width + kGeomInterImageGap;
             column++;
             
             // Create a new row if this was the last column

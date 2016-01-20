@@ -94,6 +94,7 @@ static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
+static CGFloat kGeomInterImageGap = 2;
 
 static CGFloat kGeomUploadWidth = 750;
 
