@@ -100,8 +100,10 @@ static CGFloat kGeomUploadWidth = 750;
 static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
-static CGFloat kGeomProfileHeaderViewHeight= 211;
+static CGFloat kGeomProfileHeaderViewHeight= 223;
 static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
+static CGFloat kGeomProfileStatsItemWidth= 30;
+static CGFloat kGeomProfileStatsItemHeight= 36;
 
 static CGFloat kGeomForkImageSize = 150;
 static CGFloat kGeomEmptyTextViewWidth = 200;

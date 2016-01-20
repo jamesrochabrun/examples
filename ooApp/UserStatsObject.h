@@ -16,6 +16,7 @@
 @property (nonatomic,assign) NSUInteger totalLists;
 @property (nonatomic,assign) NSUInteger totalPhotos;
 @property (nonatomic,assign) NSUInteger totalVenues;
+@property (nonatomic,assign) NSUInteger totalLikes;
 
 + (UserStatsObject *)statsFromDictionary:(NSDictionary *)dictionary;
 

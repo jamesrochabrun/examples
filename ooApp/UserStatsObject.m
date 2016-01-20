@@ -16,6 +16,7 @@ NSString *const kKeyStatsListsTotal = @"list_count";
 NSString *const kKeyStatsFollowerTotal = @"follower_count";
 NSString *const kKeyStatsFolloweeTotal = @"followee_count";
 NSString *const kKeyStatsPhotosTotal = @"media_item_count";
+NSString *const kKeyStatsLikesTotal = @"likes_count";
 
 + (UserStatsObject *)statsFromDictionary:(NSDictionary *)dictionary;
 {
@@ -33,6 +34,8 @@ NSString *const kKeyStatsPhotosTotal = @"media_item_count";
     object.totalFollowers=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey: kKeyStatsFollowerTotal]);
     object.totalFollowees=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey: kKeyStatsFolloweeTotal]);
     object.totalPhotos=parseUnsignedIntegerOrNullFromServer([dictionary objectForKey:kKeyStatsPhotosTotal]);
+    object.totalLikes= parseUnsignedIntegerOrNullFromServer([ dictionary  objectForKey:kKeyStatsLikesTotal]);
+    
     return object;
 }
 
