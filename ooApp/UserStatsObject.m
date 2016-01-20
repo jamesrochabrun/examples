@@ -16,7 +16,7 @@ NSString *const kKeyStatsListsTotal = @"list_count";
 NSString *const kKeyStatsFollowerTotal = @"follower_count";
 NSString *const kKeyStatsFolloweeTotal = @"followee_count";
 NSString *const kKeyStatsPhotosTotal = @"media_item_count";
-NSString *const kKeyStatsLikesTotal = @"likes_count";
+NSString *const kKeyStatsLikesTotal = @"yum_count";
 
 + (UserStatsObject *)statsFromDictionary:(NSDictionary *)dictionary;
 {
