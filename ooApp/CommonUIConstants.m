@@ -70,4 +70,6 @@ NSString *const kNotificationRestaurantListsNeedsUpdate = @"notificationRestaura
 NSString *const kNotificationOwnProfileNeedsUpdate = @"notificationOwnProfileNeedsUpdate";
 NSString *const kNotificationEventAltered = @"notificationEventAltered";
 NSString *const kNotificationEventDeleted = @"notificationEventDeleted";
+NSString *const kNotificationPhotoDeleted = @"notificationPhotoDeleted";
+NSString *const kNotificationRestaurantDeleted = @"notificationRestaurantDeleted";
 
