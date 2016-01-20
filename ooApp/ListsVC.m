@@ -193,33 +193,32 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
         return;
     }
     
-    OOAPI*api= [[OOAPI  alloc] init ];
-    __weak  ListsVC *weakSelf = self;
-    _operationToFetchAll=[api getRestaurantsWithListID:  list.listID
-                                               success:^(NSArray *restaurants) {
-                                                   if  (!restaurants || ! restaurants.count) {
-                                                       return;
-                                                   }
+    OOAPI *api= [[OOAPI alloc] init];
+    __weak ListsVC *weakSelf = self;
+    _operationToFetchAll = [api getRestaurantsWithListID:list.listID
+                                                 success:^(NSArray *restaurants) {
+                                                     if (!restaurants || !restaurants.count) {
+                                                         return;
+                                                     }
                                                    
-                                                   weakSelf.operationToAddAll= [OOAPI addRestaurants:restaurants
+                                                     weakSelf.operationToAddAll = [OOAPI addRestaurants:restaurants
                                                                  toEvent:weakSelf.eventBeingEdited
                                                                  success:^(id response) {
-                                                                     NSLog  (@"ADDED RESTAURANTS TO EVENT.");
+                                                                     NSLog (@"ADDED RESTAURANTS TO EVENT.");
                                                                      weakSelf.operationToAddAll= nil;
                                                                      weakSelf.eventBeingEdited.hasBeenAltered= YES;
-                                                                     message( @"Added restaurants to event.");
+                                                                     message(@"Added restaurants to event.");
                                                                      
                                                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                     message( @"There was a problem adding the restaurants of that list to the event.");
-                                                                     NSLog  (@"CANNOT ADD RESTAURANTS TO EVENT.");
+                                                                     message(@"There was a problem adding the restaurants of that list to the event.");
+                                                                     NSLog(@"CANNOT ADD RESTAURANTS TO EVENT.");
                                                                      weakSelf.operationToAddAll= nil;
                                                                  }];
                                                    
                                                    weakSelf.operationToFetchAll= nil;
                                                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                   NSLog  (@"CANNOT GET RESTAURANT WITH LIST ID");
+                                                   NSLog(@"CANNOT GET RESTAURANT WITH LIST ID");
                                                    weakSelf.operationToFetchAll= nil;
-
                                                }];
 }
 
