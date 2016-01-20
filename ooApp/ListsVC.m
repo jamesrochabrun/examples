@@ -21,10 +21,17 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) AFHTTPRequestOperation *operationToFetchAll;
 @property (nonatomic, strong) AFHTTPRequestOperation *operationToAddAll;
-
+@property (nonatomic, strong) UIButton *addToFavoritesButton;
+@property (nonatomic, strong) UIButton *addToWishlistButton;
+@property (nonatomic, strong) UIButton *createListButton;
+@property (nonatomic) BOOL haveFavoritesList;
+@property (nonatomic) BOOL haveWishList;
+@property (nonatomic) BOOL haveUserList;
+@property (nonatomic) UIAlertController *createListAC;
 @end
 
 static NSString * const cellIdentifier = @"listCell";
+static NSString * const buttonsCellIdentifier = @"buttonCell";
 
 @implementation ListsVC
 
@@ -53,12 +60,12 @@ static NSString * const cellIdentifier = @"listCell";
     _tableView.dataSource = self;
 
     [_tableView registerClass:[ListTVCell class] forCellReuseIdentifier:cellIdentifier];
+    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:buttonsCellIdentifier];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    _tableView.rowHeight = kGeomHeightHorizontalListRow;
     _tableView.separatorInset = UIEdgeInsetsZero;
     _tableView.layoutMargins = UIEdgeInsetsZero;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
+
     _requestOperation = nil;
     _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 }
@@ -109,8 +116,71 @@ static NSString * const cellIdentifier = @"listCell";
 - (void)gotLists
 {
     NSLog(@"Got %lu lists.", (unsigned long)[_lists count]);
+    
+    _haveFavoritesList = _haveUserList = _haveWishList = NO;
+    for (ListObject *lo in _lists) {
+        if (lo.type == kListTypeFavorites) _haveFavoritesList = YES;
+        if (lo.type == kListTypeToTry) _haveWishList = YES;
+        if (lo.type == kListTypeUser) _haveUserList = YES;
+        if (_haveUserList && _haveWishList && _haveFavoritesList) break;
+    }
+//    _haveFavoritesList = _haveUserList = _haveWishList = NO; //uncomment to test buttons
     [_tableView reloadData];
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
+}
+
+- (void)setupCreateListAC {
+    _createListAC = [UIAlertController alertControllerWithTitle:@"Create List"
+                                                        message:nil
+                                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    [_createListAC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Enter new list name";
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Create"
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSString *name = [_createListAC.textFields[0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                                                     
+                                                     if ([name length]) {
+                                                         [self createListNamed:name];
+                                                     }
+                                                 }];
+    
+    [_createListAC addAction:cancel];
+    [_createListAC addAction:ok];
+}
+
+- (void)createListPressed {
+    [self presentViewController:_createListAC animated:YES completion:nil];
+}
+
+- (void)createListNamed:(NSString *)name {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak ListsVC *weakSelf = self;
+    [api addList:name success:^(ListObject *listObject) {
+        if (listObject.listID) {
+            [weakSelf addRestaurantToList:listObject];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Could not create list: %@", error);
+    }];
+}
+
+- (void)addRestaurantToList:(ListObject *)list {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak ListsVC *weakSelf = self;
+    [api addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
+        ON_MAIN_THREAD(^{
+            [weakSelf getLists];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Could add restaurant to list: %@", error);
+    }];
 }
 
 - (void)userPressedAddAllForList:(ListObject *)list
@@ -155,36 +225,86 @@ static NSString * const cellIdentifier = @"listCell";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    if (_haveUserList && _haveWishList && _haveFavoritesList) return 1;
+    return 2;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return (indexPath.section == 0) ? kGeomHeightHorizontalListRow : 40+2*kGeomSpaceEdge;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_lists count];
+    switch (section) {
+        case 0:
+            return [_lists count];
+            break;
+        case 1:
+            return 1;
+            break;
+        default:
+            return 1;
+            break;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ListTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-
-    if (_restaurantToAdd) {
-        cell.restaurantToAdd = _restaurantToAdd;
-    } else if (_listToAddTo) {
-        cell.listToAddTo = _listToAddTo;
+    if (indexPath.section == 0) {
+        ListTVCell *cell = (ListTVCell *)[_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (_restaurantToAdd) {
+            cell.restaurantToAdd = _restaurantToAdd;
+        } else if (_listToAddTo) {
+            cell.listToAddTo = _listToAddTo;
+        }
+        
+        ListObject *list = [_lists objectAtIndex:indexPath.row];
+        cell.list = list;
+        
+        [cell updateConstraintsIfNeeded];
+        return cell;
+    } else {
+        UITableViewCell *cell = (UITableViewCell *)[_tableView dequeueReusableCellWithIdentifier:buttonsCellIdentifier];
+        _addToFavoritesButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _addToWishlistButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _createListButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        
+        NSMutableArray *buttons = [NSMutableArray array];
+        if (!_haveFavoritesList) {
+            [_addToFavoritesButton withText:@"Add to Favorites" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToFavorites)];
+            [buttons addObject:_addToFavoritesButton];
+        }
+        
+        if (!_haveWishList) {
+            [_addToWishlistButton withText:@"Add to Wishlist" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToWishlist)];
+            [buttons addObject:_addToWishlistButton];
+        }
+        
+        if (!_haveFavoritesList) {
+            [_createListButton withText:@"Create New List" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(createList)];
+            [buttons addObject:_createListButton];
+            [self setupCreateListAC];
+        }
+        
+        CGFloat x = kGeomSpaceEdge;
+        for (UIButton *b in buttons) {
+            b.frame = CGRectMake(x, kGeomSpaceEdge, (width(self.tableView) - kGeomSpaceEdge*([buttons count] +1))/[buttons count], 40);
+            cell.contentView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            [cell.contentView addSubview:b];
+            x = CGRectGetMaxX(b.frame) + kGeomSpaceEdge;
+        }
+        
+        return cell;
     }
     
-    ListObject *list = [_lists objectAtIndex:indexPath.row];
-    cell.list = list;
 
-    [cell updateConstraintsIfNeeded];
+
     
 //    if ( self.eventBeingEdited  &&  list.numRestaurants) {
 //        [cell addTheAddAllButton];
 //        cell.delegate= self;
 //        cell.listToAddTo=list;
 //    }
-
-    return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -197,6 +317,34 @@ static NSString * const cellIdentifier = @"listCell";
     [self.navigationController pushViewController:vc animated:YES];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+- (void)addToFavorites {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak ListsVC *weakSelf = self;
+    
+    [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeFavorites success:^(id response) {
+        [weakSelf getLists];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)addToWishlist {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak ListsVC *weakSelf = self;
+    
+    [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeToTry success:^(id response) {
+        [weakSelf getLists];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)createList {
+    [self presentViewController:_createListAC animated:YES completion:nil];
 }
 
 - (void)userPressedAddAllForList

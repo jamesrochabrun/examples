@@ -45,7 +45,6 @@
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic) NSUInteger favoriteID;
 @property (nonatomic) NSUInteger toTryID;
-//@property (nonatomic, strong) UIButton *addPhotoButton;
 @property (nonatomic, strong) NSArray *followees;
 @property (nonatomic) BOOL listsNeedUpdate;
 
@@ -106,10 +105,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     _listButtons = [NSMutableSet set];
     
-//    _addPhotoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [_addPhotoButton roundButtonWithIcon:kFontIconPhoto fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(showPickPhotoUI)];
-//    _addPhotoButton.translatesAutoresizingMaskIntoConstraints = NO;
-//    [self.view addSubview:_addPhotoButton];
     _listsNeedUpdate = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setListsUpdateNeeded)
@@ -137,7 +132,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"listContainerHeight":@(_listButtonsContainerHeight), @"buttonDimensions":@(kGeomDimensionsIconButton)};
     
     UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView /*,_addPhotoButton*/);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view removeConstraints:_verticalLayoutContraints];
@@ -145,10 +140,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [self.view addConstraints:_verticalLayoutContraints];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-//    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_addPhotoButton(buttonDimensions)]-30-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
 }
 
 - (void)setupCreateListAC {

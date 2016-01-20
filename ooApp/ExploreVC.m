@@ -40,7 +40,6 @@
 @property (nonatomic, assign) BOOL nearby;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
-@property (nonatomic, strong) GMSMarker *centerMarker;
 @property (nonatomic, strong) ListObject *defaultListObject;
 @property (nonatomic, strong) NSMutableSet *tags;
 @property (nonatomic) NSUInteger minPrice, maxPrice;
@@ -75,7 +74,6 @@ static NSString * const ListRowID = @"HLRCell";
     _mapView.delegate = self;
     [_mapView setMinZoom:0 maxZoom:16];
     _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    _centerMarker = [[OOMapMarker alloc] init];
     
     _tableView = [[UITableView alloc] init];
     [self.view addSubview:_tableView];
@@ -402,9 +400,6 @@ static NSString * const ListRowID = @"HLRCell";
     [locationIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorBlack backgroundColor:kColorClear];
     locationIcon.text = kFontIconPerson;
     locationIcon.frame = CGRectMake(0, 0, 30, 30);
-    _centerMarker.position = center;
-    _centerMarker.icon = [UIImage imageFromView:locationIcon];
-    _centerMarker.map = _mapView;
     
 //DEBUG math
 //    OOMapMarker *topEdgeMarker = [[OOMapMarker alloc] init];
