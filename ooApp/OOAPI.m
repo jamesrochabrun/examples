@@ -2309,7 +2309,7 @@ NSString *const kKeyDeviceToken = @"device_token";
 // Name:    getFollowers…
 // Purpose: Fetch an array of users that are following the current user.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getFollowersOf: (unsigned long)userid
++ (AFHTTPRequestOperation *)getFollowersOf: (NSUInteger)userid
                                    success:(void (^)(NSArray *users))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {

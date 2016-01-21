@@ -525,8 +525,7 @@
     // NOTE: Need to make the call to find out who we are following before anything else is displayed.
     
     __weak  ConnectVC *weakSelf = self;
-//ZACK: I THINK THIS FIXES THE CRASH...CAN YOU PLEASE VERIFY THAT IT WAS YOUR INTENT?
-//    [OOAPI getFollowingWithSuccess:^(NSArray *users) {
+    
     UserObject* currentUser= [Settings sharedInstance].userObject;
     [OOAPI getFollowingOf:currentUser.userID success:^(NSArray *users) {
         @synchronized(weakSelf.followeesArray)  {
