@@ -522,7 +522,6 @@
 @property (nonatomic, strong) UICollectionView *cv;
 @property (nonatomic, strong) ProfileVCCVLayout *listsAndPhotosLayout;
 
-@property (nonatomic,assign) BOOL viewingLists; // false => viewing photos
 @property (nonatomic, strong) NSArray *arrayLists;
 @property (nonatomic,strong) NSArray *arrayPhotos;
 
@@ -538,6 +537,7 @@
 @property (nonatomic,strong) UIProgressView*progressUpload;
 @property (nonatomic,assign) BOOL doingUpload;
 @property (nonatomic,strong) RestaurantObject*selectedRestaurant;
+@property (nonatomic,assign) BOOL viewingLists; // false => viewing photos
 @end
 
 @implementation ProfileVC

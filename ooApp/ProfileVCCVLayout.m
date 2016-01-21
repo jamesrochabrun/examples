@@ -166,7 +166,7 @@
     NSArray *lastSectionAttributes = [_sectionAttributes lastObject];
     
     UICollectionViewLayoutAttributes *a;
-    CGFloat y = kGeomSpaceEdge, lastY;
+    CGFloat y = 0, lastY;
     for (int i=0; i<numberOfColumnsInRow; i++) {
         NSInteger index = [lastSectionAttributes count] - 1 - i;
         if (index >= 0) {
@@ -183,8 +183,6 @@
     NSLog (@"CV SIZE %@",NSStringFromCGSize(_contentSize));
 }
 
-
-
 - (void)preparePhotosLayout
 {
     NSUInteger column = 0;    // Current column inside row
@@ -193,18 +191,16 @@
     _sectionAttributes = [[NSMutableArray alloc] init];
     
     CGFloat xOffset = kGeomSpaceEdge;
-    CGFloat yOffset = kGeomSpaceEdge;
+    CGFloat yOffset = 0;
     
     CGFloat contentWidth = 0.0;         // Used to determine the contentSize
     CGFloat contentHeight = 0.0;        // Used to determine the contentSize
     
-    NSUInteger numberOfColumnsInRow = _showingLists ? 1 : kProfileNumColumnsForMediaItemsPhone;
-
     NSMutableArray *itemAttributes;
     CGSize itemSize;
     
-    float allowableHorizontalSpace= (width(self.collectionView)-2*kGeomSpaceEdge)/numberOfColumnsInRow;
-    if (numberOfColumnsInRow==2 ) {
+    float allowableHorizontalSpace= (width(self.collectionView)-2*kGeomSpaceEdge)/kProfileNumColumnsForMediaItemsPhone;
+    if (kProfileNumColumnsForMediaItemsPhone==2 ) {
         allowableHorizontalSpace -= kGeomInterImageGap/2;
     }
     
@@ -217,12 +213,12 @@
         [_sectionAttributes addObject:itemAttributes];
         column = 0;
         
-        itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow-1, 0);
+        itemSize = CGSizeMake(width(self.collectionView)/kProfileNumColumnsForMediaItemsPhone-1, 0);
         UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                                                           withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
         suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), kGeomProfileHeaderViewHeight));
         xOffset = kGeomSpaceEdge;
-        yOffset += kGeomProfileHeaderViewHeight;
+        yOffset += kGeomProfileHeaderViewHeight  + kGeomSpaceEdge;
         [itemAttributes addObject:suppattributes];
         
         NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
@@ -242,8 +238,8 @@
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:section];
             UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
             
-            if ([lastRowAttributes count] > index%numberOfColumnsInRow) {
-                UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
+            if ([lastRowAttributes count] > index%kProfileNumColumnsForMediaItemsPhone) {
+                UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%kProfileNumColumnsForMediaItemsPhone];
                 yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + 2;
             }
             
@@ -253,9 +249,9 @@
             
             [itemAttributes addObject:attributes];
             
-            if ([lastRowAttributes count] > index%numberOfColumnsInRow &&
-                [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow]) {
-                [lastRowAttributes replaceObjectAtIndex:index%numberOfColumnsInRow withObject:attributes];
+            if ([lastRowAttributes count] > index%kProfileNumColumnsForMediaItemsPhone &&
+                [lastRowAttributes objectAtIndex:index%kProfileNumColumnsForMediaItemsPhone]) {
+                [lastRowAttributes replaceObjectAtIndex:index%kProfileNumColumnsForMediaItemsPhone withObject:attributes];
             } else {
                 [lastRowAttributes addObject:attributes];
             }
@@ -264,7 +260,7 @@
             column++;
             
             // Create a new row if this was the last column
-            if (column == numberOfColumnsInRow)
+            if (column == kProfileNumColumnsForMediaItemsPhone)
             {
                 if (CGRectGetMaxX(attributes.frame) > contentWidth)
                     contentWidth = CGRectGetMaxX(attributes.frame);
@@ -282,7 +278,7 @@
             yOffset = theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
         }
         
-        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld",(long) section,(long) [self.collectionView numberOfItemsInSection:section], yOffset, (long)numberOfColumnsInRow);
+        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld",(long) section,(long) [self.collectionView numberOfItemsInSection:section], yOffset, (long)kProfileNumColumnsForMediaItemsPhone);
     }
     
     // Get the last item to calculate the total height of the content
@@ -290,7 +286,7 @@
     
     UICollectionViewLayoutAttributes *a;
     CGFloat y = kGeomSpaceEdge, lastY;
-    for (int i=0; i<numberOfColumnsInRow; i++) {
+    for (int i=0; i<kProfileNumColumnsForMediaItemsPhone; i++) {
         NSInteger index = [lastSectionAttributes count] - 1 - i;
         if (index >= 0) {
             a = [lastSectionAttributes objectAtIndex: index];
