@@ -1816,7 +1816,7 @@ NSString *const kKeyDeviceToken = @"device_token";
                                               @"is_flagged":@1
                                               }
               success:^(id responseObject) {
-        NSLog(@"delete photo:%lu response: %@", mio.mediaItemId, responseObject);
+        NSLog(@"delete photo:%lu response: %@",(unsigned long) mio.mediaItemId, responseObject);
         success();
     }
               failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
@@ -1837,7 +1837,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
-        NSLog(@"delete photo:%lu response: %@", mio.mediaItemId, responseObject);
+        NSLog(@"delete photo:%lu response: %@",(unsigned long) mio.mediaItemId, responseObject);
         success();
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
@@ -1900,6 +1900,65 @@ NSString *const kKeyDeviceToken = @"device_token";
         NSLog(@"Error: %@ ***** %@", operation.responseString, error);
         failure(error);
     }];
+    [op start];
+}
+
+//------------------------------------------------------------------------------
+// Name:    uploadPhoto
+// Purpose: This is the AFNetworking approach.
+//------------------------------------------------------------------------------
++ (void)uploadPhoto:(UIImage *)image
+          forObject:(id)object
+            success:(void (^)(void))success
+            failure:(void (^)( NSError *error))failure
+            progress:(void (^)(NSUInteger , long long , long long ))progress;
+{
+    if (!image || !object) {
+        failure(nil);
+        return ;
+    }
+    
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.6);
+    
+    NSDictionary *parameters;
+    
+    if ([object isKindOfClass:[RestaurantObject class]]) {
+        RestaurantObject *restaurant = (RestaurantObject *)object;
+        parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
+    }
+    else if ([object isKindOfClass:[UserObject class]]) {
+        UserObject *user = (UserObject *)object;
+        parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", (unsigned long)user.userID]};
+    }
+    else if ([object isKindOfClass:[ListObject class]]) {
+        ListObject *list = (ListObject *)object;
+        parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", (unsigned long)list.listID]};
+    } else if ([object isKindOfClass:[EventObject class]]) {
+        EventObject *event = (EventObject *)object;
+        parameters = @{kKeyEventEventID : [NSString stringWithFormat:@"%lu", (unsigned long)event.eventID]};
+    } else {
+        NSLog(@"Unhandled object type in photo upload %@", [object class]);
+        failure(nil);
+        return;
+    }
+    
+    AFHTTPRequestOperation *op;
+    
+    op = [rm POST:[NSString stringWithFormat:@"%@://%@/users/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long)userID] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFileData:imageData name:@"upload" fileName:@"photo.png" mimeType:@"image/png"];
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Success: %@ ***** %@", operation.responseString, responseObject);
+        success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@ ***** %@", operation.responseString, error);
+        failure(error);
+    }];
+    
+    [op setUploadProgressBlock:progress];
     [op start];
 }
 
@@ -2619,15 +2678,15 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 + (NSString *)URL {
-//#ifdef ADHOC
+#ifdef ADHOC
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end

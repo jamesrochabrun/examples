@@ -196,6 +196,11 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
 + (AFHTTPRequestOperation *)lookupUsername:(NSString *)string
                                    success:(void (^)(BOOL))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *))failure;
++ (void)uploadPhoto:(UIImage *)image
+          forObject:(id)object
+            success:(void (^)(void))success
+            failure:(void (^)( NSError *error))failure
+           progress:(void (^)(NSUInteger , long long , long long ))progress;
 
 + (AFHTTPRequestOperation *)lookupUserByEmail:(NSString *)emailString
                                       success:(void (^)(UserObject *))success

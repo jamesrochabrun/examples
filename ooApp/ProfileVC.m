@@ -271,6 +271,10 @@
 
 - (void)userPressedFollowers: (id) sender
 {
+    if  (self.vc.doingUpload) {
+        return;
+    }
+    
     [self fetchFollowers];
 }
 
@@ -298,6 +302,9 @@
 
 - (void)userPressedFollowees: (id) sender
 {
+    if  (self.vc.doingUpload) {
+        return;
+    }
     [self fetchFollowing];
 }
 
@@ -528,6 +535,9 @@
 @property (nonatomic,assign) MediaItemObject* mediaItemBeingEdited;
 @property (nonatomic,strong) RestaurantPickerVC* restaurantPicker;
 @property (nonatomic,strong) UIImage* imageToUpload;
+@property (nonatomic,strong) UIProgressView*progressUpload;
+@property (nonatomic,assign) BOOL doingUpload;
+@property (nonatomic,strong) RestaurantObject*selectedRestaurant;
 @end
 
 @implementation ProfileVC
@@ -556,7 +566,9 @@
 
 - (void)done:(id)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    if  (!_doingUpload) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -636,6 +648,10 @@
                                                        subHeader:nil];
     [self setNavTitle:nto];
     
+    self.progressUpload= [UIProgressView new];
+    [ self.view addSubview: _progressUpload];
+    _progressUpload.hidden= YES;
+    
     __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
         [_profileOwner refreshWithSuccess:^{
@@ -671,6 +687,9 @@
     
     self.cv.frame = self.view.bounds;
     
+    float w= self.view.bounds.size.width;
+    float h= self.view.bounds.size.height;
+    _progressUpload.frame = CGRectMake(0,h/2,w, 10);
 }
 
 - (void) refetch
@@ -758,6 +777,9 @@
 
 - (void)showRestaurantPicker {
     if (_restaurantPicker) return;
+    
+    self.selectedRestaurant= nil;
+
     _restaurantPicker = [[RestaurantPickerVC alloc] init];
     _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
     _restaurantPicker.delegate = self;
@@ -772,42 +794,15 @@
 
 - (void)restaurantPickerVC:(RestaurantPickerVC *)restaurantPickerVC restaurantSelected:(RestaurantObject *)restaurant;
 {
+    self.selectedRestaurant= restaurant;
     __weak  ProfileVC *weakSelf = self;
-    
-    if (restaurant.restaurantID) {
-        [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
-                   success:^{
-                       [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
-                           weakSelf.restaurantPicker = nil;
-                           [weakSelf refetch];
-                           weakSelf.imageToUpload= nil;
-                           
-                       }];
-                   } failure:^(NSError *error) {
-                       NSLog(@"Failed to upload photo");
-                   }];
-    } else {
-        [OOAPI convertGoogleIDToRestaurant: restaurant.googleID success:^(RestaurantObject *restaurant) {
-            if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
-                [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
-                           success:^{
-                               [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
-                                   weakSelf.restaurantPicker = nil;
-                                   [weakSelf refetch];
-                                   weakSelf.imageToUpload= nil;
-                               }];
-                           } failure:^(NSError *error) {
-                               NSLog(@"Failed to upload photo");
-                           }];
-                
-            } else {
-                NSLog(@"Failed to upload photo because didn't get back a restaurant object");
-            }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Failed to upload photo because the google ID was not found");
-        }];
+
+    [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
+        weakSelf.restaurantPicker = nil;
+        [weakSelf performUpload];
     }
-}
+     ];
+ }
 
 - (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerVC;
 {
@@ -817,6 +812,89 @@
     [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
         weakSelf.restaurantPicker = nil;
     }];
+}
+
+- (void)performUpload
+{
+    __weak  ProfileVC *weakSelf = self;
+    self.doingUpload= YES;
+    self.progressUpload.hidden= NO;
+    
+    if (_selectedRestaurant.restaurantID) {
+        [OOAPI uploadPhoto:_imageToUpload forObject:_selectedRestaurant
+                   success:^{
+                       ON_MAIN_THREAD(^{
+                           [weakSelf refetch];
+                           weakSelf.imageToUpload= nil;
+                           
+                           weakSelf.doingUpload= NO;
+                           weakSelf.progressUpload.hidden= YES;
+                       });
+                   }
+                   failure:^(NSError *error) {
+                       NSLog(@"Failed to upload photo");
+                       ON_MAIN_THREAD(^{
+                           weakSelf.doingUpload= NO;
+                           weakSelf.progressUpload.hidden= YES;
+                       });
+                   }
+                  progress:^(NSUInteger __unused bytesWritten,
+                             long long totalBytesWritten,
+                             long long totalBytesExpectedToWrite) {
+                      long double d= totalBytesWritten;
+                      d/=totalBytesExpectedToWrite;
+                      ON_MAIN_THREAD(^{
+                          weakSelf.progressUpload.progress= (float)d;
+                      });
+                  }
+         ];
+    } else {
+        [OOAPI convertGoogleIDToRestaurant: _selectedRestaurant.googleID success:^(RestaurantObject *restaurant) {
+            if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
+                [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
+                           success:^{
+                               ON_MAIN_THREAD(^{
+                                   [weakSelf refetch];
+                                   weakSelf.imageToUpload= nil;
+                                   weakSelf.doingUpload= NO;
+                                   weakSelf.progressUpload.hidden= YES;
+                               });
+                           }
+                           failure:^(NSError *error) {
+                               NSLog(@"Failed to upload photo");
+                               ON_MAIN_THREAD(^{
+                                   weakSelf.doingUpload= NO;
+                                   weakSelf.progressUpload.hidden= YES;
+                               });
+                           }
+                          progress:^(NSUInteger __unused bytesWritten,
+                                     long long totalBytesWritten,
+                                     long long totalBytesExpectedToWrite) {
+                              long double d= totalBytesWritten;
+                              d/=totalBytesExpectedToWrite;
+                              ON_MAIN_THREAD(^{
+                                  weakSelf.progressUpload.progress= (float)d;
+                              });
+                          }
+                 ];
+                
+            } else {
+                NSLog(@"Failed to upload photo because didn't get back a restaurant object");
+                ON_MAIN_THREAD(^{
+                    weakSelf.doingUpload= NO;
+                    weakSelf.progressUpload.hidden= YES;
+                });
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Failed to upload photo because the google ID was not found");
+            ON_MAIN_THREAD(^{
+                weakSelf.doingUpload= NO;
+                weakSelf.progressUpload.hidden= YES;
+            });
+        }];
+    }
+
+    
 }
 
 //------------------------------------------------------------------------------
@@ -1130,6 +1208,10 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    if  (_doingUpload) {
+        return;
+    }
+    
     NSInteger row= indexPath.row;
     if  (_viewingLists ) {
         ListObject*object= _arrayLists[row];
@@ -1185,6 +1267,7 @@
     if (!restaurant) {
         return;
     }
+    
     RestaurantVC *vc = [[RestaurantVC alloc] init];
     vc.restaurant = restaurant;
     [self.navigationController pushViewController:vc animated:YES];
@@ -1223,6 +1306,10 @@
 //------------------------------------------------------------------------------
 - (void)goToEmptyListScreen:(ListObject *)list
 {
+    if  (_doingUpload) {
+        return;
+    }
+    
     EmptyListVC *vc= [[EmptyListVC alloc] init];
     vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];
@@ -1250,7 +1337,12 @@
     return [a objectAtIndex:which];
 }
 
-- (void)showOptions {
+- (void)showOptions
+{
+    if  (_doingUpload) {
+        return;
+    }
+
     _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
