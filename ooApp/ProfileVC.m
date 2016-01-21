@@ -251,10 +251,8 @@
 - (void)fetchFollowers
 {
     __weak ProfileHeaderView *weakSelf = self;
-    UserObject* currentUser= [Settings sharedInstance].userObject;
     
-    //    self.fetchOperationSection4 =
-    [OOAPI getFollowersOf:currentUser.userID
+    [OOAPI getFollowersOf: _userInfo.userID
                   success: ^(NSArray *users) {
                       ON_MAIN_THREAD(^{
                           UserListVC *vc= [[UserListVC  alloc] init];
@@ -280,20 +278,21 @@
 {
     __weak  ProfileHeaderView *weakSelf = self;
     
-    [OOAPI getFollowingWithSuccess:^(NSArray *users) {
-        ON_MAIN_THREAD(^{
-            UserListVC *vc= [[UserListVC  alloc] init];
-            vc.desiredTitle=  @"FOLLOWEES";
-            vc.usersArray= users.mutableCopy;
-            [weakSelf.vc.navigationController pushViewController: vc animated:YES];
-            
-            NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
-                    ( unsigned long)users.count);
-        });
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
-    }];
+    [OOAPI getFollowingOf: _userInfo.userID
+                  success:^(NSArray *users) {
+                      ON_MAIN_THREAD(^{
+                          UserListVC *vc= [[UserListVC  alloc] init];
+                          vc.desiredTitle=  @"FOLLOWEES";
+                          vc.usersArray= users.mutableCopy;
+                          [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+                          
+                          NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
+                                  ( unsigned long)users.count);
+                      });
+                      
+                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
+                  }];
     
 }
 
@@ -522,7 +521,6 @@
 
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
-//@property (nonatomic, strong) UIButton *buttonLowerRight;
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @property (nonatomic,strong) ProfileHeaderView* topView;
 @property (nonatomic,assign) BOOL didFetch;
@@ -553,6 +551,7 @@
         _didFetch=YES;
         [self  refetch ];
     }
+    
 }
 
 - (void)done:(id)sender
@@ -603,22 +602,18 @@
     if ( _viewingOwnProfile) {
         [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
         
-//        _buttonLowerRight = [UIButton buttonWithType:UIButtonTypeCustom];
-//        [_buttonLowerRight roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedLowerRightButton:)];
-//        _buttonLowerRight.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-//        [self.view addSubview:_buttonLowerRight];
     } else {
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
     _lastShownUser = _userInfo.userID;
     
-    //    NSUInteger totalControllers= self.navigationController.viewControllers.count;
-    //    if (totalControllers > 1) {
-    [self setLeftNavWithIcon:kFontIconMenu target:self action:@selector(showOptions)];
-    //    } else {
-    //        [self setLeftNavWithIcon:@"" target:nil action:nil];
-    //    }
+    NSUInteger totalControllers= self.navigationController.viewControllers.count;
+    if (totalControllers  == 1) {
+        [self setLeftNavWithIcon:kFontIconMenu target:self action:@selector(showOptions)];
+    } else {
+        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:) ];
+    }
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
     _listsAndPhotosLayout.delegate= self;

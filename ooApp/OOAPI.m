@@ -2272,14 +2272,13 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getFollowingWithSuccess
-// Purpose: Fetch an array of users that the current user is following.
+// Name:    getFollowingOf
+// Purpose: Fetch an array of users that a user is following.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getFollowingWithSuccess:(void (^)(NSArray *users))success
-                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getFollowingOf: (NSUInteger)userid
+                                   success:(void (^)(NSArray *users))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    UserObject *userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userid= userInfo.userID;
     if (!userid) {
         failure(nil,nil);
         return nil;
