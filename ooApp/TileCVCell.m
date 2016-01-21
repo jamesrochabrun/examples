@@ -142,9 +142,9 @@
 }
 
 - (void)setRestaurant:(RestaurantObject *)restaurant {
-    if (_restaurant == restaurant) return;
+//    if (_restaurant == restaurant) return;
     _restaurant = restaurant;
-//    NSLog(@"restaurant name = %@", restaurant.name);
+    NSLog(@"RESTAURANT NAME = %@, #MEDIA= %lu", restaurant.name,  (unsigned long)restaurant.mediaItems.count);
     _name.text = _restaurant.name;
     _backgroundImage.image = nil;
     _priceRange.text = [_restaurant priceRangeText];
@@ -177,7 +177,8 @@
                     [weakSelf setNeedsLayout];
                 });
             } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                ;
+                NSLog  (@"ERROR= %@",error);
+                NSLog(@"FAILED TO GET IMAGE FOR RESTAURANT NAME = %@, #MEDIA= %lu", restaurant.name,  (unsigned long)restaurant.mediaItems.count);
             }];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
@@ -214,7 +215,7 @@
     [super prepareForReuse];
 //    _requestOperation = nil;
 
-//    [self.backgroundImage cancelImageRequestOperation];
+    [self.backgroundImage cancelImageRequestOperation];
     
     // AFNetworking
     [_requestOperation cancel];

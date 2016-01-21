@@ -106,6 +106,8 @@ static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 static CGFloat kGeomProfileStatsItemWidth= 30;
 static CGFloat kGeomProfileStatsItemHeight= 36;
 
+static CGFloat kGeomUserListUserImageHeight=82;
+
 static CGFloat kGeomForkImageSize = 150;
 static CGFloat kGeomEmptyTextViewWidth = 200;
 static CGFloat kGeomEmptyTextFieldWidth = 150;

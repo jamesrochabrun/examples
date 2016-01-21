@@ -45,8 +45,6 @@
     NSString *token= userInfo.backendAuthorizationToken;
     if  (token && token.lowercaseString.length ) {
         [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
-    } else {
-        NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN (NOT NEEDED FOR GET)");
     }
     
     [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
@@ -189,9 +187,7 @@
     NSString* token= userInfo.backendAuthorizationToken;
     if  (token  &&  token.lowercaseString.length ) {
         [nm.requestManager.requestSerializer setValue:token.lowercaseString forHTTPHeaderField:@"authorization"];
-    } else {
-        NSLog (@"MISSING BACKEND AUTHORIZATION TOKEN (NOT NEEDED FOR GET)");
-    }
+    } 
 
     [nm.requestManager.requestSerializer setValue:@"image/png" forHTTPHeaderField:@"Content-Type"];
     

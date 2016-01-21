@@ -25,6 +25,7 @@
 #import "RestaurantListVC.h"
 #import "ConnectVC.h"
 #import "RestaurantVC.h"
+#import "UserListVC.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -247,18 +248,58 @@
     [self loadUserInfo];
 }
 
-- (void)userPressedFollowees: (id) sender
+- (void)fetchFollowers
 {
-    ConnectVC *vc= [[ConnectVC  alloc] init];
-    vc.defaultSection= kConnectSectionFollowees;
-    [self.vc.navigationController pushViewController: vc animated:YES];
+    __weak ProfileHeaderView *weakSelf = self;
+    UserObject* currentUser= [Settings sharedInstance].userObject;
+    
+    //    self.fetchOperationSection4 =
+    [OOAPI getFollowersOf:currentUser.userID
+                  success: ^(NSArray *users) {
+                      ON_MAIN_THREAD(^{
+                          UserListVC *vc= [[UserListVC  alloc] init];
+                          vc.desiredTitle=  @"FOLLOWERS";
+                          vc.usersArray= users.mutableCopy;
+                          [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+                          
+                          NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWERS",
+                                  ( unsigned long)users.count);
+                      });
+                      
+                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                      NSLog  (@"UNABLE TO FETCH FOLLOWERS");
+                  }     ];
 }
 
 - (void)userPressedFollowers: (id) sender
 {
-    ConnectVC *vc= [[ConnectVC  alloc] init];
-    vc.defaultSection= kConnectSectionFollowers;
-    [self.vc.navigationController pushViewController: vc animated:YES];
+    [self fetchFollowers];
+}
+
+- (void)fetchFollowing
+{
+    __weak  ProfileHeaderView *weakSelf = self;
+    
+    [OOAPI getFollowingWithSuccess:^(NSArray *users) {
+        ON_MAIN_THREAD(^{
+            UserListVC *vc= [[UserListVC  alloc] init];
+            vc.desiredTitle=  @"FOLLOWEES";
+            vc.usersArray= users.mutableCopy;
+            [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+            
+            NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
+                    ( unsigned long)users.count);
+        });
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
+    }];
+    
+}
+
+- (void)userPressedFollowees: (id) sender
+{
+    [self fetchFollowing];
 }
 
 - (void)userTappedDescription:(id)sender
@@ -635,13 +676,6 @@
     
     self.cv.frame = self.view.bounds;
     
-    CGFloat x, y, spacer;
-    if (_viewingOwnProfile) {
-        x = kGeomSpaceEdge;
-//        _buttonLowerRight.frame = CGRectMake(width(self.view) - (width(_buttonLowerRight) + 30), height(self.view) - (height(_buttonLowerRight) + 30), width(_buttonLowerRight), height(_buttonLowerRight));
-//        y += kGeomHeightButton + spacer;
-//        [ self.view  bringSubviewToFront:_buttonLowerRight];
-    }
 }
 
 - (void) refetch
@@ -920,7 +954,6 @@
 
 - (UICollectionReusableView*) collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    
     ProfileHeaderView *view = nil;
     
     if([kind isEqualToString:UICollectionElementKindSectionHeader]) {
@@ -941,7 +974,6 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row= indexPath.row;
-    NSLog (@"row= %ld", (long)row);
     
     if  (_viewingLists ) {
         NSUInteger  total= self.arrayLists.count;
@@ -956,8 +988,9 @@
         ListObject *listItem = a[row];
         listItem.listDisplayType = KListDisplayTypeStrip;
         
-        cell.listItem = listItem;
         cell.navigationController = self.navigationController;
+        cell.listItem = listItem;
+        [cell getRestaurants];
         
         return cell;
     }
@@ -984,7 +1017,6 @@
         return;
     }
     
-    // XX:  maybe in future people can upload group photos that everyone in the group has in their profiles.
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio
