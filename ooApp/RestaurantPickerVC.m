@@ -22,29 +22,38 @@
 
 static NSString * const cellIdentifier = @"restaurantPickerCell";
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _iv = [[UIImageView alloc] init];
+        _iv.translatesAutoresizingMaskIntoConstraints = NO;
+        _iv.backgroundColor = UIColorRGBA(kColorClear);
+        _iv.contentMode = UIViewContentModeScaleAspectFill;
+        _iv.alpha = 0.45;
+        [self.view addSubview:_iv];
+        
+        _tableView = [[UITableView alloc] init];
+        [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
+        _tableView.backgroundColor = UIColorRGBA(kColorOverlay35);
+        _tableView.rowHeight = 35;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        self.view.layer.cornerRadius = kGeomCornerRadius;
+        _tableView.translatesAutoresizingMaskIntoConstraints = NO;
+        _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+        _tableView.layer.borderWidth = 1;
+        [self.view addSubview:_tableView];
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    _iv = [[UIImageView alloc] init];
-    _iv.translatesAutoresizingMaskIntoConstraints = NO;
-    _iv.backgroundColor = UIColorRGBA(kColorClear);
-    _iv.contentMode = UIViewContentModeScaleAspectFill;
-    _iv.alpha = 0.45;
-    [self.view addSubview:_iv];
-    
-    _tableView = [[UITableView alloc] init];
-    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
-    _tableView.backgroundColor = UIColorRGBA(kColorOverlay35);
-    _tableView.rowHeight = 35;
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableView.dataSource = self;
-    _tableView.delegate = self;
-    self.view.layer.cornerRadius = kGeomCornerRadius;
-    [self.view addSubview:_tableView];
-    _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
-    _tableView.layer.borderWidth = 1;
-    
+}
+
+- (void)setLocation:(CLLocationCoordinate2D)location {
+    _location = location;
     [self getNearbyRestaurants];
 }
 
@@ -71,8 +80,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     
     __weak RestaurantPickerVC *weakSelf = self;
     
-    _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[@"restaurant", @"bar"]]
-                                            andLocation:[[LocationManager sharedInstance] currentUserLocation]
+    _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[@"food"]]
+                                            andLocation:_location
                                               andFilter:@""
                                               andRadius:20
                                             andOpenOnly:NO

@@ -20,5 +20,6 @@
 
 @property (nonatomic, weak) id<RestaurantPickerVCDelegate> delegate;
 @property (nonatomic, strong) UIImage *imageToUpload;
+@property (nonatomic) CLLocationCoordinate2D location;
 
 @end
