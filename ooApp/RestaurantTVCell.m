@@ -220,7 +220,7 @@ enum  {
                                                                   [self sharePressed];
                                                               }];
     
-    UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add to List"
+    UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add/Remove from List"
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                             [self addToList];
                                                         }];

@@ -18,20 +18,26 @@
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *lists;
+@property (nonatomic, strong) NSArray *listsWithRestaurant;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) AFHTTPRequestOperation *operationToFetchAll;
 @property (nonatomic, strong) AFHTTPRequestOperation *operationToAddAll;
 @property (nonatomic, strong) UIButton *addToFavoritesButton;
 @property (nonatomic, strong) UIButton *addToWishlistButton;
 @property (nonatomic, strong) UIButton *createListButton;
-@property (nonatomic) BOOL haveFavoritesList;
-@property (nonatomic) BOOL haveWishList;
-@property (nonatomic) BOOL haveUserList;
-@property (nonatomic) UIAlertController *createListAC;
+@property (nonatomic) NSUInteger favoritesListID;
+@property (nonatomic) NSUInteger wishListID;
+@property (nonatomic, strong) UIAlertController *createListAC;
 @end
 
 static NSString * const cellIdentifier = @"listCell";
 static NSString * const buttonsCellIdentifier = @"buttonCell";
+
+typedef enum {
+    kListsVCSectionButtons = 0,
+    kListsVCSectionLists = 1
+} kListsVCSection;
+
 
 @implementation ListsVC
 
@@ -116,15 +122,6 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
 - (void)gotLists
 {
     NSLog(@"Got %lu lists.", (unsigned long)[_lists count]);
-    
-    _haveFavoritesList = _haveUserList = _haveWishList = NO;
-    for (ListObject *lo in _lists) {
-        if (lo.type == kListTypeFavorites) _haveFavoritesList = YES;
-        if (lo.type == kListTypeToTry) _haveWishList = YES;
-        if (lo.type == kListTypeUser) _haveUserList = YES;
-        if (_haveUserList && _haveWishList && _haveFavoritesList) break;
-    }
-//    _haveFavoritesList = _haveUserList = _haveWishList = NO; //uncomment to test buttons
     [_tableView reloadData];
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
@@ -176,7 +173,7 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
     __weak ListsVC *weakSelf = self;
     [api addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
         ON_MAIN_THREAD(^{
-            [weakSelf getLists];
+            [weakSelf getListsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Could add restaurant to list: %@", error);
@@ -193,53 +190,51 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
         return;
     }
     
-    OOAPI*api= [[OOAPI  alloc] init ];
-    __weak  ListsVC *weakSelf = self;
-    _operationToFetchAll=[api getRestaurantsWithListID:  list.listID
-                                               success:^(NSArray *restaurants) {
-                                                   if  (!restaurants || ! restaurants.count) {
-                                                       return;
-                                                   }
+    OOAPI *api= [[OOAPI alloc] init];
+    __weak ListsVC *weakSelf = self;
+    _operationToFetchAll = [api getRestaurantsWithListID:list.listID
+                                                 success:^(NSArray *restaurants) {
+                                                     if (!restaurants || !restaurants.count) {
+                                                         return;
+                                                     }
                                                    
-                                                   weakSelf.operationToAddAll= [OOAPI addRestaurants:restaurants
+                                                     weakSelf.operationToAddAll = [OOAPI addRestaurants:restaurants
                                                                  toEvent:weakSelf.eventBeingEdited
                                                                  success:^(id response) {
-                                                                     NSLog  (@"ADDED RESTAURANTS TO EVENT.");
+                                                                     NSLog (@"ADDED RESTAURANTS TO EVENT.");
                                                                      weakSelf.operationToAddAll= nil;
                                                                      weakSelf.eventBeingEdited.hasBeenAltered= YES;
-                                                                     message( @"Added restaurants to event.");
+                                                                     message(@"Added restaurants to event.");
                                                                      
                                                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                     message( @"There was a problem adding the restaurants of that list to the event.");
-                                                                     NSLog  (@"CANNOT ADD RESTAURANTS TO EVENT.");
+                                                                     message(@"There was a problem adding the restaurants of that list to the event.");
+                                                                     NSLog(@"CANNOT ADD RESTAURANTS TO EVENT.");
                                                                      weakSelf.operationToAddAll= nil;
                                                                  }];
                                                    
                                                    weakSelf.operationToFetchAll= nil;
                                                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                   NSLog  (@"CANNOT GET RESTAURANT WITH LIST ID");
+                                                   NSLog(@"CANNOT GET RESTAURANT WITH LIST ID");
                                                    weakSelf.operationToFetchAll= nil;
-
                                                }];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    if (_haveUserList && _haveWishList && _haveFavoritesList) return 1;
     return 2;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return (indexPath.section == 0) ? kGeomHeightHorizontalListRow : 40+2*kGeomSpaceEdge;
+    return (indexPath.section == kListsVCSectionLists) ? kGeomHeightHorizontalListRow : 40+2*kGeomSpaceEdge;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     switch (section) {
-        case 0:
+        case kListsVCSectionLists:
             return [_lists count];
             break;
-        case 1:
+        case kListsVCSectionButtons:
             return 1;
             break;
         default:
@@ -250,7 +245,7 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 0) {
+    if (indexPath.section == kListsVCSectionLists) {
         ListTVCell *cell = (ListTVCell *)[_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         if (_restaurantToAdd) {
             cell.restaurantToAdd = _restaurantToAdd;
@@ -259,6 +254,7 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
         }
         
         ListObject *list = [_lists objectAtIndex:indexPath.row];
+        cell.lists = _listsWithRestaurant;
         cell.list = list;
         
         [cell updateConstraintsIfNeeded];
@@ -266,24 +262,34 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
     } else {
         UITableViewCell *cell = (UITableViewCell *)[_tableView dequeueReusableCellWithIdentifier:buttonsCellIdentifier];
         _addToFavoritesButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_addToFavoritesButton withText:@"Add to Favorites" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToFavorites)];
+        
         _addToWishlistButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_addToWishlistButton withText:@"Add to Wishlist" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToWishlist)];
+
         _createListButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self setupCreateListAC];
+        [_createListButton withText:@"Add to New List" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(createList)];
         
         NSMutableArray *buttons = [NSMutableArray array];
-        if (!_haveFavoritesList) {
-            [_addToFavoritesButton withText:@"Add to Favorites" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToFavorites)];
-            [buttons addObject:_addToFavoritesButton];
+        [buttons addObjectsFromArray:@[_addToFavoritesButton, _addToWishlistButton, _createListButton]];
+        
+        [_addToFavoritesButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+        if (_favoritesListID) {
+            [_addToFavoritesButton setTitle:@"Remove from Favorites" forState:UIControlStateNormal];
+            [_addToFavoritesButton addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
+        } else {
+            [_addToFavoritesButton setTitle:@"Add fo Favorites" forState:UIControlStateNormal];
+            [_addToFavoritesButton addTarget:self action:@selector(addToFavorites) forControlEvents:UIControlEventTouchUpInside];
         }
         
-        if (!_haveWishList) {
-            [_addToWishlistButton withText:@"Add to Wishlist" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToWishlist)];
-            [buttons addObject:_addToWishlistButton];
-        }
-        
-        if (!_haveFavoritesList) {
-            [_createListButton withText:@"Create New List" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(createList)];
-            [buttons addObject:_createListButton];
-            [self setupCreateListAC];
+        [_addToWishlistButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+        if (_wishListID) {
+            [_addToWishlistButton setTitle:@"Remove from Wishlist" forState:UIControlStateNormal];
+            [_addToWishlistButton addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
+        } else {
+            [_addToWishlistButton setTitle:@"Add to Wishlist" forState:UIControlStateNormal];
+            [_addToWishlistButton addTarget:self action:@selector(addToWishlist) forControlEvents:UIControlEventTouchUpInside];
         }
         
         CGFloat x = kGeomSpaceEdge;
@@ -297,14 +303,34 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
         return cell;
     }
     
-
-
-    
 //    if ( self.eventBeingEdited  &&  list.numRestaurants) {
 //        [cell addTheAddAllButton];
 //        cell.delegate= self;
 //        cell.listToAddTo=list;
 //    }
+}
+
+- (void)removeFromList:(id)sender {
+    NSUInteger listID = 0;
+    if (sender == _addToFavoritesButton) {
+        listID = _favoritesListID;
+    } else if (sender == _addToWishlistButton) {
+        listID = _wishListID;
+    } else {
+        return; //can't handle this and it should not happen
+    }
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    __weak ListsVC *weakSelf = self;
+    [api deleteRestaurant:_restaurantToAdd.restaurantID fromList:listID success:^(NSArray *lists) {
+        ON_MAIN_THREAD(^{
+            [weakSelf getListsForRestaurant];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -324,7 +350,7 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
     __weak ListsVC *weakSelf = self;
     
     [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeFavorites success:^(id response) {
-        [weakSelf getLists];
+        [weakSelf getListsForRestaurant];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
@@ -336,7 +362,7 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
     __weak ListsVC *weakSelf = self;
     
     [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeToTry success:^(id response) {
-        [weakSelf getLists];
+        [weakSelf getListsForRestaurant];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
@@ -352,6 +378,44 @@ static NSString * const buttonsCellIdentifier = @"buttonCell";
     
     
 }
+
+- (void)setRestaurantToAdd:(RestaurantObject *)restaurantToAdd {
+    if (_restaurantToAdd == restaurantToAdd) return;
+    _restaurantToAdd = restaurantToAdd;
+    [self getListsForRestaurant];
+    
+}
+
+- (void)getListsForRestaurant {
+    OOAPI *api =[[OOAPI alloc] init];
+    __weak ListsVC *weakSelf = self;
+    
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    
+    [api getListsOfUser:userInfo.userID withRestaurant:_restaurantToAdd.restaurantID
+                success:^(NSArray *foundLists) {
+                    NSLog (@"number of lists with this restaurant: %ld", ( long) foundLists.count);
+                    _listsWithRestaurant = foundLists;
+                    ON_MAIN_THREAD( ^{
+                        [weakSelf updateButtonsSection];
+                    });
+                }
+                failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                    NSLog  (@"error while getting lists with restaurant:  %@",e);
+                }];
+}
+
+- (void)updateButtonsSection {
+    _favoritesListID = _wishListID = 0;
+    for (ListObject *lo in _listsWithRestaurant) {
+        if (lo.type == kListTypeFavorites) _favoritesListID = lo.listID;
+        if (lo.type == kListTypeToTry) _wishListID = lo.listID;
+        if (_wishListID && _favoritesListID) break;
+    }
+
+    [_tableView reloadData];
+}
+
 /*
 #pragma mark - Navigation
 
