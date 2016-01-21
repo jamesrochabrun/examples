@@ -13,8 +13,6 @@
 
 @interface ListTVCell()
 
-//@property (nonatomic, strong) UIButton *addButton;
-@property (nonatomic, strong) NSArray *lists;
 @property (nonatomic,strong) UIButton *buttonAddAll;
 
 @end
@@ -29,7 +27,7 @@
     return self;
 }
 
-- (void) addTheAddAllButton;
+- (void)addTheAddAllButton;
 {
     _buttonAddAll= makeButton(self,  @"ADD ALL", kGeomFontSizeHeader,
                               WHITE, CLEAR, self,
@@ -39,7 +37,7 @@
     [self bringSubviewToFront:_buttonAddAll];
 }
 
-- (void)userPressedAddAll: (id) sender
+- (void)userPressedAddAll:(id)sender
 {
     NSLog  (@"USER PRESSED ADD ALL BUTTON");
     [self.delegate userPressedAddAllForList:self.listToAddTo ];
@@ -98,6 +96,12 @@
     }
 }
 
+- (void)setLists:(NSArray *)lists {
+    if (_lists == lists) return;
+    _lists = lists;
+    [self updateAddButton];
+}
+
 - (void)getListsForRestaurant {
     OOAPI *api =[[OOAPI alloc] init];
     __weak ListTVCell *weakSelf = self;
@@ -106,10 +110,9 @@
 
     [api getListsOfUser:userInfo.userID withRestaurant:_restaurantToAdd.restaurantID
                 success:^(NSArray *foundLists) {
-                    NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
-                    _lists = foundLists;
+                    NSLog (@" number of lists for this user: %ld", (long) foundLists.count);
                     ON_MAIN_THREAD( ^{
-                        [weakSelf updateAddButton];
+                        weakSelf.lists = foundLists;
                     });
                 }
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
@@ -118,6 +121,7 @@
 }
 
 - (void)updateAddButton {
+    if (!_list || !_lists) return;
     __block BOOL onList = NO;
     [_lists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         ListObject *lo = (ListObject *)obj;
@@ -139,6 +143,9 @@
 - (void)setList:(ListObject *)list {
     if (list == _list) return;
     _list = list;
+    
+    [self updateAddButton];
+    
     self.thumbnail.image = nil;
     self.header.text = _list.name;
     if (_list.numRestaurants == 1) {
@@ -153,7 +160,7 @@
         self.actionButton.hidden = NO;
         [self.actionButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
         [self.actionButton addTarget:self action:@selector(toggleListInclusion) forControlEvents:UIControlEventTouchUpInside];
-        [self getListsForRestaurant];
+//        [self getListsForRestaurant];
     } else if (_listToAddTo) {
         self.actionButton.hidden = NO;
         [self.actionButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];

@@ -16,6 +16,7 @@
 
 @interface ListTVCell : ObjectTVCell
 
+@property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) ListObject *list;
 @property (nonatomic) BOOL onList;
 

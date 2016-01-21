@@ -124,6 +124,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
+    NSDictionary *metadata = [info valueForKey:UIImagePickerControllerMediaMetadata];
+
 
     CGSize s = image.size;
     _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
