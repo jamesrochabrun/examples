@@ -26,7 +26,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 // Name:    +sharedInstance
 // Purpose: Provides the singleton instance.
 //------------------------------------------------------------------------------
-+ (instancetype) sharedInstance;
++ (instancetype)sharedInstance;
 {
     static id sharedInstance;
     static dispatch_once_t once=0;
@@ -37,16 +37,16 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
     return sharedInstance;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [self stopTrackingLocation];
 }
 
-- (instancetype) init
+- (instancetype)init
 {
     self = [super init];
     if (self) {
-        _currentLocation= [[Settings sharedInstance] mostRecentLocation ];
+        _currentLocation = [[Settings sharedInstance] mostRecentLocation];
     }
     return self;
 }
@@ -55,10 +55,9 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 // Name:    askUserWhetherToTrack
 // Purpose: This is our own routine in addition to the system's pop-up.
 //------------------------------------------------------------------------------
-- (void) askUserWhetherToTrack
+- (void)askUserWhetherToTrack
 {
     // RULE: Only show the one Apple pop-up.
-    
     [self startTrackingLocation];
 }
 
@@ -66,12 +65,11 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 // Name:    startTrackingLocation
 // Purpose: Sets up the location tracking mechanism.
 //------------------------------------------------------------------------------
-- (void) startTrackingLocation
+- (void)startTrackingLocation
 {
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
-    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)])
-    {
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
         [self.locationManager requestWhenInUseAuthorization];
     }
     [_locationManager startUpdatingLocation];
@@ -106,11 +104,11 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 // Name:    currentUserLocation
 // Purpose: Returns current location if available.
 //------------------------------------------------------------------------------
-- (CLLocationCoordinate2D) currentUserLocation
+- (CLLocationCoordinate2D)currentUserLocation
 {
     if (!self.locationManager) {
         [self startTrackingLocation];
-        return [[Settings sharedInstance] mostRecentLocation ];
+        return [[Settings sharedInstance] mostRecentLocation];
     }
 
     return self.currentLocation;
@@ -121,9 +119,9 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 //------------------------------------------------------------------------------
 // Name:    locationManagerDidPauseLocationUpdates:
 //------------------------------------------------------------------------------
-- (void) locationManagerDidPauseLocationUpdates:(CLLocationManager *)manager
+- (void)locationManagerDidPauseLocationUpdates:(CLLocationManager *)manager
 {
-    NSLog (@"Location manager updates paused");
+    NSLog(@"Location manager updates paused");
 }
 
 //------------------------------------------------------------------------------
@@ -138,7 +136,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 //    float la = coord.latitude;
 //    float lo = coord.longitude;
 //    NSLog  (@"New location data lat= %g, long= %g",la,lo);
-    self.currentLocation= coord;
+    self.currentLocation = coord;
     
     [[Settings sharedInstance] setMostRecentLocation:coord ];
 }
@@ -151,7 +149,6 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
        didFailWithError:(NSError *)error
 {
     NSLog (@"Location manager error %@",error.localizedDescription);
-
 }
 
 
