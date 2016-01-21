@@ -310,6 +310,10 @@
 
 - (void)userTappedDescription:(id)sender
 {
+    if (! _viewingOwnProfile) {
+        return;
+    }
+    
     UINavigationController *nc = [[UINavigationController alloc] init];
     
     OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
@@ -720,19 +724,6 @@
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog  (@"FAILED TO GET PHOTOS");
                    }];
-}
-
-//------------------------------------------------------------------------------
-// Name:    userPressedUpperRightButton
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)userPressedLowerRightButton:(id)sender
-{
-    if  (_viewingLists ) {
-        [self userPressedNewList];
-    } else {
-        [self userPressedNewPhoto];
-    }
 }
 
 - (void)userPressedNewPhoto
