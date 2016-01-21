@@ -94,6 +94,7 @@ static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
+static CGFloat kGeomInterImageGap = 2;
 
 static CGFloat kGeomUploadWidth = 750;
 
@@ -218,6 +219,8 @@ extern NSString *const kNotificationRestaurantListsNeedsUpdate;
 extern NSString *const kNotificationEventAltered;
 extern NSString *const kNotificationEventDeleted;
 extern NSString *const kNotificationOwnProfileNeedsUpdate;
+extern NSString *const kNotificationPhotoDeleted;
+extern NSString *const kNotificationRestaurantDeleted;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

@@ -79,13 +79,9 @@
                               placeholderImage:nil
                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
                                              dispatch_async(dispatch_get_main_queue(), ^{
-                                                 [weakIV setAlpha:0.0];
                                                  weakIV.image = image;
-                                                 [UIView beginAnimations:nil context:NULL];
-                                                 [UIView setAnimationDuration:0.3];
                                                  [weakIV setAlpha:1.0];
                                                  weakSelf.emptyUserView.alpha = 0;
-                                                 [UIView commitAnimations];
                                                  [weakSelf updateConstraintsIfNeeded];
                                            });
                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {

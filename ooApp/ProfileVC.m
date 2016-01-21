@@ -69,7 +69,7 @@
         return;
     }
     _userInfo= u;
-
+    
     [self loadUserInfo];
 }
 
@@ -87,9 +87,9 @@
     UserObject *currentUser = [Settings sharedInstance].userObject;
     NSUInteger ownUserIdentifier = [currentUser userID];
     _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
-
+    
     [self  indicateNotFollowing];
-
+    
     // RULE: Only update the button when we know for sure whose profile is.
     if ( _viewingOwnProfile) {
         NSLog  (@"VIEWING OWN PROFILE.");
@@ -151,23 +151,23 @@
     [OOAPI getUserStatsFor:_userInfo.userID
                    success:^(UserStatsObject *stats) {
                        ON_MAIN_THREAD(^{
-
-                       [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                       [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                       
-                       weakSelf.buttonFollowees.alpha= 1;
-                       weakSelf.buttonFollowers.alpha= 1;
-                       weakSelf.buttonFolloweesCount.alpha= 1;
-                       weakSelf.buttonFollowersCount.alpha= 1;
-                       
-                       weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                       weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                       weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                           
+                           [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                           [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                           
+                           weakSelf.buttonFollowees.alpha= 1;
+                           weakSelf.buttonFollowers.alpha= 1;
+                           weakSelf.buttonFolloweesCount.alpha= 1;
+                           weakSelf.buttonFollowersCount.alpha= 1;
+                           
+                           weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                           weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                           weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
                        });
                        
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-
+                       
                    }];
     
 }
@@ -224,9 +224,9 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow = makeButton(self, @"FOLLOW",
-                                      kGeomFontSizeSubheader, YELLOW, CLEAR,
-                                      self,
-                                      @selector(userPressedFollow:), 0);
+                                       kGeomFontSizeSubheader, YELLOW, CLEAR,
+                                       self,
+                                       @selector(userPressedFollow:), 0);
         [_buttonFollow setTitle:@"" forState:UIControlStateSelected];
         _buttonFollow.layer.borderColor=YELLOW.CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
@@ -290,7 +290,7 @@
                    success:^{
                        self.userInfo.about = text;
                        [Settings sharedInstance].userObject.about = text;
-                       [[Settings sharedInstance] save]; 
+                       [[Settings sharedInstance] save];
                        
                        [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -401,7 +401,7 @@
                          to: YES
                     success:^(id responseObject) {
                         [weakSelf indicateFollowing];
-                      
+                        
                         NSLog (@"SUCCESSFULLY FOLLOWED USER");
                         
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
@@ -481,7 +481,7 @@
 
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
-@property (nonatomic, strong) UIButton *buttonLowerRight;
+//@property (nonatomic, strong) UIButton *buttonLowerRight;
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @property (nonatomic,strong) ProfileHeaderView* topView;
 @property (nonatomic,assign) BOOL didFetch;
@@ -510,7 +510,7 @@
     
     if (!_didFetch) {
         _didFetch=YES;
-        [self  update:nil ];
+        [self  refetch ];
     }
 }
 
@@ -538,7 +538,10 @@
     self.view.autoresizesSubviews= NO;
     
     [self registerForNotification: kNotificationRestaurantListsNeedsUpdate
-                          calling:@selector(update:)
+                          calling:@selector(handleRestaurantListAltered:)
+     ];
+    [self registerForNotification: kNotificationPhotoDeleted
+                          calling:@selector(handlePhotoDeleted:)
      ];
     // NOTE:  Unregistered in dealloc.
     
@@ -557,25 +560,24 @@
     }
     
     if ( _viewingOwnProfile) {
-        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions)];
+        [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
         
-        _buttonLowerRight = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_buttonLowerRight roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedLowerRightButton:)];
-        _buttonLowerRight.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-        
-        [self.view addSubview:_buttonLowerRight];
+//        _buttonLowerRight = [UIButton buttonWithType:UIButtonTypeCustom];
+//        [_buttonLowerRight roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedLowerRightButton:)];
+//        _buttonLowerRight.frame = CGRectMake(0, 0, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+//        [self.view addSubview:_buttonLowerRight];
     } else {
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
     _lastShownUser = _userInfo.userID;
     
-    NSUInteger totalControllers= self.navigationController.viewControllers.count;
-    if (totalControllers > 1) {
-        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-    } else {
-        [self setLeftNavWithIcon:@"" target:nil action:nil];
-    }
+    //    NSUInteger totalControllers= self.navigationController.viewControllers.count;
+    //    if (totalControllers > 1) {
+    [self setLeftNavWithIcon:kFontIconMenu target:self action:@selector(showOptions)];
+    //    } else {
+    //        [self setLeftNavWithIcon:@"" target:nil action:nil];
+    //    }
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
     _listsAndPhotosLayout.delegate= self;
@@ -613,6 +615,16 @@
     }
 }
 
+- (void)handlePhotoDeleted: (NSNotification*)not
+{
+    [self refetch];
+}
+
+- (void)handleRestaurantListAltered: (NSNotification*)not
+{
+    [self refetch];
+}
+
 //------------------------------------------------------------------------------
 // Name:    viewWillLayoutSubviews
 // Purpose:
@@ -622,17 +634,17 @@
     [super viewWillLayoutSubviews];
     
     self.cv.frame = self.view.bounds;
-
+    
     CGFloat x, y, spacer;
     if (_viewingOwnProfile) {
         x = kGeomSpaceEdge;
-        _buttonLowerRight.frame = CGRectMake(width(self.view) - (width(_buttonLowerRight) + 30), height(self.view) - (height(_buttonLowerRight) + 30), width(_buttonLowerRight), height(_buttonLowerRight));
-        y += kGeomHeightButton + spacer;
-        [ self.view  bringSubviewToFront:_buttonLowerRight];
+//        _buttonLowerRight.frame = CGRectMake(width(self.view) - (width(_buttonLowerRight) + 30), height(self.view) - (height(_buttonLowerRight) + 30), width(_buttonLowerRight), height(_buttonLowerRight));
+//        y += kGeomHeightButton + spacer;
+//        [ self.view  bringSubviewToFront:_buttonLowerRight];
     }
 }
 
-- (void)update: (NSNotification*)not
+- (void) refetch
 {
     __weak  ProfileVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
@@ -663,7 +675,7 @@
 }
 
 //------------------------------------------------------------------------------
-// Name:    userPressedLowerRightButton
+// Name:    userPressedUpperRightButton
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)userPressedLowerRightButton:(id)sender
@@ -709,7 +721,7 @@
     }
     
     __weak ProfileVC *weakSelf = self;
-
+    
     [self dismissViewControllerAnimated:YES completion:^{
         [weakSelf showRestaurantPicker];
     }];
@@ -723,7 +735,7 @@
     _restaurantPicker.imageToUpload = _imageToUpload;
     [self.view addSubview:_restaurantPicker.view];
     [_restaurantPicker.view  setNeedsUpdateConstraints];
-
+    
     [self presentViewController: _restaurantPicker animated:YES completion:^{
         
     }];
@@ -732,15 +744,15 @@
 - (void)restaurantPickerVC:(RestaurantPickerVC *)restaurantPickerVC restaurantSelected:(RestaurantObject *)restaurant;
 {
     __weak  ProfileVC *weakSelf = self;
-
+    
     if (restaurant.restaurantID) {
         [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                    success:^{
                        [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
                            weakSelf.restaurantPicker = nil;
-                           [weakSelf update: nil];
+                           [weakSelf refetch];
                            weakSelf.imageToUpload= nil;
-
+                           
                        }];
                    } failure:^(NSError *error) {
                        NSLog(@"Failed to upload photo");
@@ -752,7 +764,7 @@
                            success:^{
                                [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
                                    weakSelf.restaurantPicker = nil;
-                                   [weakSelf update: nil];
+                                   [weakSelf refetch];
                                    weakSelf.imageToUpload= nil;
                                }];
                            } failure:^(NSError *error) {
@@ -771,7 +783,7 @@
 - (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerVC;
 {
     __weak  ProfileVC *weakSelf = self;
-
+    
     self.imageToUpload= nil;
     [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
         weakSelf.restaurantPicker = nil;
@@ -832,20 +844,32 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+- (void)handleUpperRightButton
+{
+    if (_viewingLists ) {
+        [self userPressedNewList];
+    } else {
+        [self userPressedNewPhoto];
+    }
+    
+}
+
 - (void)userTappedOnLists
 {
     _viewingLists= YES;
     [_listsAndPhotosLayout setShowingLists: YES];
-    [_buttonLowerRight setTitle: kFontIconAdd forState:UIControlStateNormal ];
+    [self setRightNavWithIcon: kFontIconAdd target:self action:@selector( handleUpperRightButton)];
+    
     [_listsAndPhotosLayout  invalidateLayout];
     [self.cv reloadData];
+    
 }
 
 - (void)userTappedOnPhotos
 {
     _viewingLists= NO;
     [_listsAndPhotosLayout setShowingLists: NO];
-    [_buttonLowerRight setTitle: kFontIconPhoto forState:UIControlStateNormal ];
+    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector( handleUpperRightButton)];
     [_listsAndPhotosLayout  invalidateLayout];
     [self.cv reloadData];
 }
@@ -944,7 +968,7 @@
         }
         
         PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:  PROFILE_CV_PHOTO_CELL
-                                                                             forIndexPath:indexPath ] ;
+                                                                      forIndexPath:indexPath ] ;
         NSArray *a = self.arrayPhotos;
         MediaItemObject *object = a[row];
         cell.mediaItemObject =  object;
@@ -983,16 +1007,16 @@
                                                                    [OOAPI deletePhoto:mio
                                                                               success:^{
                                                                                   NSLog  (@"SUCCESS IN DELETING PHOTO");
-                                                                                  [weakSelf update:nil];
+                                                                                  [weakSelf refetch];
                                                                               }
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                                                   NSLog  (@"FAILED TO DELETE PHOTO, error=%@",error);
                                                                               }];
                                                                }];
         UIAlertAction *captionAction = [UIAlertAction actionWithTitle:@"Add caption to photo"
-                                                               style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                   [weakSelf userAddingCaptionTo:mio];
-                                                               }];
+                                                                style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                    [weakSelf userAddingCaptionTo:mio];
+                                                                }];
         
         [a addAction:cancel];
         [a addAction:deleteAction];
@@ -1021,7 +1045,7 @@
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                                                   NSLog  (@"FAILED TO REPORT PHOTO, error=%@",error);
                                                                               }];
-
+                                                                   
                                                                }];
         
         [a addAction:cancel];
@@ -1098,14 +1122,14 @@
             [api getRestaurantWithID: stringFromUnsigned(restaurantID)
                               source: kRestaurantSourceTypeOomami
                              success:^(RestaurantObject *restaurant) {
-                if ( restaurant) {
-                    [weakSelf launchViewPhoto: mediaObject restaurant:restaurant];
-                } else {
-                    [weakSelf launchViewPhoto: mediaObject restaurant:nil];
-                }
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [weakSelf launchViewPhoto: mediaObject restaurant:nil];
-            }];
+                                 if ( restaurant) {
+                                     [weakSelf launchViewPhoto: mediaObject restaurant:restaurant];
+                                 } else {
+                                     [weakSelf launchViewPhoto: mediaObject restaurant:nil];
+                                 }
+                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                 [weakSelf launchViewPhoto: mediaObject restaurant:nil];
+                             }];
         }
     }
 }

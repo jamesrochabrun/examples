@@ -60,8 +60,8 @@
     [self setSectionAttributes:nil];
     _sectionAttributes = [[NSMutableArray alloc] init];
     
-    CGFloat xOffset = 0;
-    CGFloat yOffset = 0;
+    CGFloat xOffset = kGeomSpaceEdge;
+    CGFloat yOffset = kGeomSpaceEdge;
     
     CGFloat contentWidth = 0.0;         // Used to determine the contentSize
     CGFloat contentHeight = 0.0;        // Used to determine the contentSize
@@ -69,6 +69,12 @@
     NSUInteger numberOfColumnsInRow = _showingLists ? 1 : kProfileNumColumnsForMediaItemsPhone;
     NSMutableArray *itemAttributes;
     CGSize itemSize;
+    
+    float allowableHorizontalSpace= (width(self.collectionView)-2*kGeomSpaceEdge)/numberOfColumnsInRow;
+    if (numberOfColumnsInRow==2 ) {
+        allowableHorizontalSpace -= kGeomInterImageGap/2;
+    }
+    
     NSUInteger nSections=[self.collectionView numberOfSections];
     
     for (NSUInteger section = 0; section < nSections; section++) {
@@ -82,7 +88,7 @@
         UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                                                           withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
         suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), kGeomProfileHeaderViewHeight));
-        xOffset = 0;
+        xOffset = kGeomSpaceEdge;
         yOffset += kGeomProfileHeaderViewHeight;
         [itemAttributes addObject:suppattributes];
         
@@ -108,7 +114,7 @@
                 yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + 2;
             }
             
-            attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
+            attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, allowableHorizontalSpace, itemSize.height));
             
             NSLog(@"attribute frame=%@, column=%lu", NSStringFromCGRect(attributes.frame), (unsigned long)column);
             
@@ -121,7 +127,7 @@
                 [lastRowAttributes addObject:attributes];
             }
             
-            xOffset = xOffset+itemSize.width + 2;
+            xOffset += allowableHorizontalSpace + kGeomInterImageGap;
             column++;
             
             // Create a new row if this was the last column
@@ -132,8 +138,8 @@
                 
                 // Reset values
                 column = 0;
-                xOffset = 0;
-                yOffset += /*itemSize.height+*/kGeomSpaceEdge;
+                xOffset = kGeomSpaceEdge;
+                yOffset += /*itemSize.height+*/kGeomInterImageGap;
             }
         }
         //done with section, set the x & y offsets for the new section appropriately
