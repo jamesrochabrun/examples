@@ -44,6 +44,11 @@ enum : int {
 @end
 
 @interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate,ConnectTableCellDelegate>
-@property (nonatomic,readonly) NSOperationQueue *queueForStats;
 @property (nonatomic,assign) NSInteger defaultSection;
 @end
+
+
+
+
+
+

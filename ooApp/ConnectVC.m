@@ -920,20 +920,8 @@
     NSString*string=  [array firstObject];
     __weak ConnectVC *weakSelf= self;
 
-    if  ([string containsString:@"@"  ]) {
-//        //  old code, not used
-//        [OOAPI getUsersTheCurrentUserIsNotFollowingUsingEmails:  array
-//                                                       success:^(NSArray *users) {
-//                                                           @synchronized(weakSelf.suggestedUsersArray)  {
-//                                                               weakSelf.suggestedUsersArray=users.mutableCopy;
-//                                                           }
-//                                                           ON_MAIN_THREAD(^{
-//                                                               [weakSelf refreshSuggestedUsersSection];
-//                                                           });
-//                                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                                           NSLog (@"FETCH OF NON-FOLLOWEES USING EMAILS FAILED");
-//                                                       }];
-    } else {
+    if  (![string containsString:@"@"  ]) {
+        
         [OOAPI getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs:  array
                                                        success:^(NSArray *users) {
                                                            @synchronized(weakSelf.suggestedUsersArray)  {

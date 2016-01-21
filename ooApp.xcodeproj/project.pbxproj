@@ -186,6 +186,7 @@
 		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; };
 		962B00C31BD95D22008790FD /* VoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 962B00C21BD95D22008790FD /* VoteObject.m */; };
 		962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 962DBB221BFFAF6E00A8A09D /* Gradient Background.png */; };
+		963A4D271C50465600E10263 /* UserListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 963A4D261C50465600E10263 /* UserListVC.m */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		964DEA691C1F444C0045BA2C /* background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 964DEA681C1F444C0045BA2C /* background_image.png */; };
@@ -495,6 +496,8 @@
 		962B00C11BD95D22008790FD /* VoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteObject.h; sourceTree = "<group>"; };
 		962B00C21BD95D22008790FD /* VoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteObject.m; sourceTree = "<group>"; };
 		962DBB221BFFAF6E00A8A09D /* Gradient Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Gradient Background.png"; path = "Graphic Assets/Gradient Background.png"; sourceTree = "<group>"; };
+		963A4D251C50465600E10263 /* UserListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListVC.h; sourceTree = "<group>"; };
+		963A4D261C50465600E10263 /* UserListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserListVC.m; sourceTree = "<group>"; };
 		964BC81C1B97935F00760C83 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
@@ -929,6 +932,8 @@
 				364AD8C31C11514300F70F56 /* OptionsVCCVL.m */,
 				3621F1271B9014DD004537B6 /* ProfileVC.h */,
 				3621F1281B9014DD004537B6 /* ProfileVC.m */,
+				963A4D251C50465600E10263 /* UserListVC.h */,
+				963A4D261C50465600E10263 /* UserListVC.m */,
 				96EBC2E51C3EFC3100836066 /* ProfileVCCVLayout.h */,
 				96EBC2E61C3EFC3100836066 /* ProfileVCCVLayout.m */,
 				96CC3A1F1BE97E1C00A43A04 /* PieView.h */,
@@ -1385,6 +1390,7 @@
 				9694F0271C3DE85300D6C9AA /* ListStripCVCell.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
 				36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */,
+				963A4D271C50465600E10263 /* UserListVC.m in Sources */,
 				96EBC2E71C3EFC3100836066 /* ProfileVCCVLayout.m in Sources */,
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				36C572DA1C01309900C57DA2 /* TagObject.m in Sources */,
