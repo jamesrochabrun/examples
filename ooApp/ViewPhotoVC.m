@@ -136,17 +136,19 @@
         _backgroundView.alpha = 0;
         self.view.backgroundColor = UIColorRGBA(kColorClear);
     } completion:^(BOOL finished) {
-//        self.tabBarController.tabBar.hidden = NO;
         [self.navigationController popViewControllerAnimated:NO];
         [_delegate viewPhotoVC:self showRestaurant:_restaurant];
     }];
-//    self.tabBarController.tabBar.hidden = NO;
-//    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (void)showProfile {
-    [_delegate viewPhotoVC:self showProfile:_user];
-    [self close];
+    [UIView animateWithDuration:0.4 animations:^{
+        _backgroundView.alpha = 0;
+        self.view.backgroundColor = UIColorRGBA(kColorClear);
+    } completion:^(BOOL finished) {
+        [self.navigationController popViewControllerAnimated:NO];
+        [_delegate viewPhotoVC:self showProfile:_user];
+    }];
 }
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {

@@ -69,7 +69,7 @@
     NSString *initials = [NSString stringWithFormat:@"%@%@",  first, last];
     _emptyUserView.text = initials;
     UIImage *image= nil;
-    
+        
     if (_user.mediaItem) {
         OOAPI *api = [[OOAPI alloc] init];
         [api getRestaurantImageWithMediaItem:_user.mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
@@ -94,12 +94,10 @@
                 [self displayEmptyView:YES];
             });
         }];
-    }
-    else if (( image= [_user userProfilePhoto]) ) {
+    } else if (( image= [_user userProfilePhoto]) ) {
         // NOTE: This would have been fetched from Facebook when the app started.
-        _imageView.image=  image;
-    }
-    else {
+        _imageView.image =  image;
+    } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self displayEmptyView:YES];
         });

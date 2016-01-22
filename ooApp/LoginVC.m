@@ -353,7 +353,7 @@
     [self fetchProfilePhoto];
     
     UserObject* userInfo = [Settings sharedInstance].userObject;
-   
+    
     //---------------------------------------------------
     // RULE: If the day has changed, we will need to request
     // a new authorization key.
@@ -767,7 +767,7 @@
 -(void)fetchProfilePhoto
 {
     ENTRY;
-
+    
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/picture?width=1080&height=1080&redirect=false"
                                        parameters: nil ]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
