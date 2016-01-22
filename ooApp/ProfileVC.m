@@ -46,6 +46,7 @@
 @property (nonatomic, strong) UIView *backgroundImageFade;
 @property (nonatomic,strong) OOFilterView *filterView;
 @property (nonatomic,assign) BOOL followingThisUser;
+@property (nonatomic,strong) UIButton* buttonSettings;
 @end
 
 @implementation ProfileHeaderView
@@ -192,6 +193,8 @@
         _viewHalo= makeView(self, CLEAR);
         addBorder(_viewHalo, 2, YELLOW);
         
+        self.buttonSettings= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
+        
         _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
         _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
@@ -237,6 +240,12 @@
          ];
     }
     return self;
+}
+
+- (void)userPressedSettings: (id) sender
+{
+    [self.delegate userPressedSettings];
+    
 }
 
 - (void)updateOwnProfile: (NSNotification*)not
@@ -476,8 +485,13 @@
     _backgroundImageView.backgroundColor= YELLOW;
     int y = kGeomSpaceEdge;
     _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
+    
     _viewHalo.frame = _userView.frame;
     _viewHalo.layer.cornerRadius=kGeomProfileImageSize/2;
+    
+    const  float buttonSettingsSize= _viewingOwnProfile? 30:0;
+    _buttonSettings.frame = CGRectMake(_userView.frame.origin.x+kGeomProfileImageSize-buttonSettingsSize, y + kGeomProfileImageSize-buttonSettingsSize,
+                                       buttonSettingsSize,buttonSettingsSize);
     
     [_buttonFollowers sizeToFit];
     [_buttonFollowees sizeToFit];
@@ -626,7 +640,8 @@
     
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers  == 1) {
-        [self setLeftNavWithIcon:kFontIconMenu target:self action:@selector(showOptions)];
+//        [self setLeftNavWithIcon:kFontIconMenu target:self action:@selector(showOptions)];
+        [self setLeftNavWithIcon:nil target:nil action:NULL ];
     } else {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:) ];
     }
@@ -1328,7 +1343,8 @@
     return [a objectAtIndex:which];
 }
 
-- (void)showOptions
+//- (void)showOptions
+- (void) userPressedSettings;
 {
     if  (_doingUpload) {
         return;
