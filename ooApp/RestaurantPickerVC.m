@@ -186,6 +186,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 }
 
 - (void)pickerCanceled {
+    UIImageWriteToSavedPhotosAlbum(_imageToUpload, nil, nil, nil);
     [_delegate restaurantPickerVCCanceled:self];
 }
 
