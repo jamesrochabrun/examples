@@ -80,7 +80,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     
     __weak RestaurantPickerVC *weakSelf = self;
     
-    _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[@"food"]]
+    _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[@"restaurant",@"bar"]]
                                             andLocation:_location
                                               andFilter:@""
                                               andRadius:20

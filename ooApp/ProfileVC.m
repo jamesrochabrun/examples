@@ -1168,16 +1168,12 @@
     [vc setMio: mediaObject];
     [vc setRestaurant: restaurant];
     [vc.view setNeedsUpdateConstraints];
-    vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    self.tabBarController.tabBar.hidden = YES;
-    [self.navigationController presentViewController:vc animated:NO completion:^{
-    }];
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC
 {
-    self.tabBarController.tabBar.hidden = NO;
+
 }
 
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant

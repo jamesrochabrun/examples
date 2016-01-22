@@ -176,9 +176,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                 NSNumber *latitude = metadata[@"{GPS}"][@"Latitude"];
                 
                 
-                if ([longitudeRef isEqualToString:@"W"]) longitude = [NSNumber numberWithFloat:-[longitude floatValue]];
+                if ([longitudeRef isEqualToString:@"W"]) longitude = [NSNumber numberWithDouble:-[longitude doubleValue]];
                 
-                if ([latitudeRef isEqualToString:@"S"]) latitude = [NSNumber numberWithFloat:-[latitude floatValue]];
+                if ([latitudeRef isEqualToString:@"S"]) latitude = [NSNumber numberWithDouble:-[latitude doubleValue]];
                 
                 if (longitude && latitude) {
                     CLLocationCoordinate2D photoLocation = CLLocationCoordinate2DMake([latitude doubleValue],
@@ -306,21 +306,14 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
     
-    self.tabBarController.tabBar.hidden = YES;
-    
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
     vc.mio = mio;
     vc.restaurant = r;
     vc.delegate = self;
-
-    vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self.navigationController presentViewController:vc animated:NO completion:^{
-    }];
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC {
-    self.tabBarController.tabBar.hidden = NO;
     [self updateIfNeeded];
 }
 
