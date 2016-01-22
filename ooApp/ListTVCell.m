@@ -10,6 +10,7 @@
 #import "MediaItemObject.h"
 #import "DebugUtilities.h"
 #import "Settings.h"
+#import "LocationManager.h"
 
 @interface ListTVCell()
 
@@ -203,7 +204,9 @@
 
 - (void)addAllRestaurantsFromList {
     OOAPI *api = [[OOAPI alloc] init];
-    [api getRestaurantsWithListID:_list.listID success:^(NSArray *restaurants) {
+    [api getRestaurantsWithListID:_list.listID
+                          andLocation:[LocationManager sharedInstance].currentUserLocation
+                          success:^(NSArray *restaurants) {
         [api addRestaurants:restaurants toList:_listToAddTo.listID success:^(id response) {
             ;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

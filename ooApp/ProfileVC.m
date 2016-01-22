@@ -602,7 +602,7 @@
 @property (nonatomic,assign) MediaItemObject* mediaItemBeingEdited;
 @property (nonatomic,strong) RestaurantPickerVC* restaurantPicker;
 @property (nonatomic,strong) UIImage* imageToUpload;
-@property (nonatomic,strong) UIProgressView*progressUpload;
+//@property (nonatomic,strong) UIProgressView*progressUpload;
 @property (nonatomic,assign) BOOL doingUpload;
 @property (nonatomic,strong) RestaurantObject*selectedRestaurant;
 @property (nonatomic,assign) BOOL viewingLists; // false => viewing photos
@@ -721,14 +721,18 @@
                                                        subHeader:nil];
     [self setNavTitle:nto];
     
-    self.progressUpload = [UIProgressView new];
-    [self.view addSubview:_progressUpload];
-    _progressUpload.hidden = YES;
+    self.uploadProgressBar = [UIProgressView new];
+    [self.view addSubview:self.uploadProgressBar];
+    self.uploadProgressBar.hidden = YES;
     
     __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
         [_profileOwner refreshWithSuccess:^{
+//<<<<<<< HEAD
+//            ProfileHeaderView *view = (ProfileHeaderView *)[weakSelf collectionView: weakSelf.cv
+//=======
             self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
+//>>>>>>> 7dd3dd23cf1bd76572d460009bfd36d41f381622
                                                  viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
                                                                        atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
                                                            ];
@@ -760,9 +764,9 @@
     
     self.cv.frame = self.view.bounds;
     
-    float w= self.view.bounds.size.width;
-    float h= self.view.bounds.size.height;
-    _progressUpload.frame = CGRectMake(0,0,w, 10);
+    CGFloat w = width(self.view);
+    CGFloat h = height(self.view);
+    self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
 }
 
 - (void) refetch
@@ -905,7 +909,7 @@
 {
     __weak  ProfileVC *weakSelf = self;
     self.doingUpload= YES;
-    self.progressUpload.hidden= NO;
+    self.uploadProgressBar.hidden= NO;
     
     if (_selectedRestaurant.restaurantID) {
         [OOAPI uploadPhoto:_imageToUpload forObject:_selectedRestaurant
@@ -915,14 +919,14 @@
                            weakSelf.imageToUpload= nil;
                            
                            weakSelf.doingUpload= NO;
-                           weakSelf.progressUpload.hidden= YES;
+                           weakSelf.uploadProgressBar.hidden= YES;
                        });
                    }
                    failure:^(NSError *error) {
                        NSLog(@"Failed to upload photo");
                        ON_MAIN_THREAD(^{
                            weakSelf.doingUpload= NO;
-                           weakSelf.progressUpload.hidden= YES;
+                           weakSelf.uploadProgressBar.hidden= YES;
                        });
                    }
                   progress:^(NSUInteger __unused bytesWritten,
@@ -931,7 +935,7 @@
                       long double d= totalBytesWritten;
                       d/=totalBytesExpectedToWrite;
                       ON_MAIN_THREAD(^{
-                          weakSelf.progressUpload.progress= (float)d;
+                          weakSelf.uploadProgressBar.progress= (float)d;
                       });
                   }
          ];
@@ -944,14 +948,14 @@
                                    [weakSelf refetch];
                                    weakSelf.imageToUpload= nil;
                                    weakSelf.doingUpload= NO;
-                                   weakSelf.progressUpload.hidden= YES;
+                                   weakSelf.uploadProgressBar.hidden= YES;
                                });
                            }
                            failure:^(NSError *error) {
                                NSLog(@"Failed to upload photo");
                                ON_MAIN_THREAD(^{
                                    weakSelf.doingUpload= NO;
-                                   weakSelf.progressUpload.hidden= YES;
+                                   weakSelf.uploadProgressBar.hidden= YES;
                                });
                            }
                           progress:^(NSUInteger __unused bytesWritten,
@@ -960,7 +964,7 @@
                               long double d= totalBytesWritten;
                               d/=totalBytesExpectedToWrite;
                               ON_MAIN_THREAD(^{
-                                  weakSelf.progressUpload.progress= (float)d;
+                                  weakSelf.uploadProgressBar.progress= (float)d;
                               });
                           }
                  ];
@@ -969,14 +973,14 @@
                 NSLog(@"Failed to upload photo because didn't get back a restaurant object");
                 ON_MAIN_THREAD(^{
                     weakSelf.doingUpload= NO;
-                    weakSelf.progressUpload.hidden= YES;
+                    weakSelf.uploadProgressBar.hidden= YES;
                 });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Failed to upload photo because the google ID was not found");
             ON_MAIN_THREAD(^{
                 weakSelf.doingUpload= NO;
-                weakSelf.progressUpload.hidden= YES;
+                weakSelf.uploadProgressBar.hidden= YES;
             });
         }];
     }

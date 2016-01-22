@@ -162,7 +162,9 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _listItem.type == kListTypeFavorites ||
         _listItem.type == kListTypeUser) {
         
-        self.requestOperation = [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *r) {
+        self.requestOperation = [api getRestaurantsWithListID:_listItem.listID
+                                                  andLocation:[LocationManager sharedInstance].currentUserLocation
+                                                      success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];

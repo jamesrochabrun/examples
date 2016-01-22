@@ -138,7 +138,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 //    NSLog  (@"New location data lat= %g, long= %g",la,lo);
     self.currentLocation = coord;
     
-    [[Settings sharedInstance] setMostRecentLocation:coord ];
+    [[Settings sharedInstance] setMostRecentLocation:coord];
 }
 
 //------------------------------------------------------------------------------

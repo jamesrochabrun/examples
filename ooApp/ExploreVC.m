@@ -416,7 +416,9 @@ static NSString * const ListRowID = @"HLRCell";
     __weak ExploreVC *weakSelf=self;
 
     if (_listToDisplay && _listToDisplay.listID) {
-        [api getRestaurantsWithListID:_listToDisplay.listID success:^(NSArray *restaurants) {
+        [api getRestaurantsWithListID:_listToDisplay.listID
+                          andLocation:[LocationManager sharedInstance].currentUserLocation
+                              success:^(NSArray *restaurants) {
             _restaurants = restaurants;
             ON_MAIN_THREAD(^ {
                 [weakSelf gotRestaurants];
@@ -432,6 +434,8 @@ static NSString * const ListRowID = @"HLRCell";
                 TagObject *t = (TagObject *)obj;
                 [searchTerms addObject:t.term];
             }];
+        } else if (_nearby) {
+            searchTerms = [NSMutableArray arrayWithArray:@[]];
         } else {
             searchTerms = [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]];
             NSLog(@"category: %@", searchTerms);

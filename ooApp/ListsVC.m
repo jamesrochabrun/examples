@@ -193,6 +193,7 @@ typedef enum {
     OOAPI *api= [[OOAPI alloc] init];
     __weak ListsVC *weakSelf = self;
     _operationToFetchAll = [api getRestaurantsWithListID:list.listID
+                          andLocation:[LocationManager sharedInstance].currentUserLocation                            
                                                  success:^(NSArray *restaurants) {
                                                      if (!restaurants || !restaurants.count) {
                                                          return;

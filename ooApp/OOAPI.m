@@ -23,6 +23,8 @@ NSString *const kKeySearchSort = @"sort";
 NSString *const kKeySearchFilter = @"filter";
 NSString *const kKeySearchMinPrice = @"minprice";
 NSString *const kKeySearchMaxPrice = @"maxprice";
+NSString *const kKeySearchLatitude = @"latitude";
+NSString *const kKeySearchLongitude = @"longitude";
 
 NSString *const kKeyRestaurantIDs = @"restaurant_ids";
 NSString *const kKeyUserIDs = @"user_ids";
@@ -358,24 +360,28 @@ NSString *const kKeyDeviceToken = @"device_token";
 {
     NSMutableString *searchTerms = [[NSMutableString alloc] init];
     
-    if (!keywords || ![keywords count]) {
+    if (!keywords) {
         failure(nil,nil);
         return nil;
     } else {
-        [keywords enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString *s = (NSString *)obj;
-            NSString *fs;
-            if ([s containsString:@" "]) {
-                fs = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
-            } else {
-                fs = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
-            }
-                
-            if ([searchTerms length]) {
-                [searchTerms appendString:@"OR"];
-            }
-            [searchTerms appendString:fs];
-        }];
+//        if (![keywords count]) {
+            
+//        } else {
+            [keywords enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                NSString *s = (NSString *)obj;
+                NSString *fs;
+                if ([s containsString:@" "]) {
+                    fs = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
+                } else {
+                    fs = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
+                }
+                    
+                if ([searchTerms length]) {
+                    [searchTerms appendString:@"OR"];
+                }
+                [searchTerms appendString:fs];
+            }];
+//        }
     }
     
     if (!filterName) {
@@ -935,15 +941,25 @@ NSString *const kKeyDeviceToken = @"device_token";
 // Purpose:
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
+                                         andLocation:(CLLocationCoordinate2D)location
                                              success:(void (^)(NSArray *restaurants))success
                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%ld/restaurants", kHTTPProtocol,
                            [OOAPI URL],
                            (long)listID];
-    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (CLLocationCoordinate2DIsValid(location)) {
+        [parameters setObject:[NSString stringWithFormat:@"%f", location.latitude] forKey:kKeySearchLatitude];
+        [parameters setObject:[NSString stringWithFormat:@"%f", location.longitude] forKey:kKeySearchLongitude];
+    }
+    
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         if ([responseObject count]) {
             for (id dict in responseObject) {

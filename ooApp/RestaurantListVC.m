@@ -188,7 +188,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
     if (_listItem.type == kListTypeToTry ||
         _listItem.type == kListTypeFavorites ||
         _listItem.type == kListTypeUser) {
-        self.requestOperation = [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *r) {
+        self.requestOperation = [api getRestaurantsWithListID:_listItem.listID
+                          andLocation:[LocationManager sharedInstance].currentUserLocation
+                                                      success:^(NSArray *r) {
             weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
@@ -288,8 +290,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
         __weak RestaurantListVC *weakSelf = self;
         OOAPI *api = [[OOAPI alloc] init];
         
-        [api deleteRestaurant:restaurant.restaurantID fromList:_listItem.listID success:^(NSArray *lists) {
-            [api getRestaurantsWithListID:_listItem.listID success:^(NSArray *restaurants) {
+        [api deleteRestaurant:restaurant.restaurantID fromList:_listItem.listID
+                      success:^(NSArray *lists) {
+            [api getRestaurantsWithListID:_listItem.listID
+                          andLocation:[LocationManager sharedInstance].currentUserLocation
+                                  success:^(NSArray *restaurants) {
                 _restaurants = restaurants;
                 ON_MAIN_THREAD(^{
                     [weakSelf.tableView reloadData];
