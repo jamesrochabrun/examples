@@ -62,7 +62,7 @@
 
 - (void)setUser:(UserObject *)user
 {
-    if  ([_user isEqualToDeeply: user] ) {
+    if  (user==_user && [_user isEqualToDeeply: user] ) {
         return;
     }
     _user = user;
