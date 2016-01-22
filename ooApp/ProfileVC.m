@@ -602,7 +602,6 @@
 @property (nonatomic,assign) MediaItemObject* mediaItemBeingEdited;
 @property (nonatomic,strong) RestaurantPickerVC* restaurantPicker;
 @property (nonatomic,strong) UIImage* imageToUpload;
-//@property (nonatomic,strong) UIProgressView*progressUpload;
 @property (nonatomic,assign) BOOL doingUpload;
 @property (nonatomic,strong) RestaurantObject*selectedRestaurant;
 @property (nonatomic,assign) BOOL viewingLists; // false => viewing photos
@@ -721,18 +720,13 @@
                                                        subHeader:nil];
     [self setNavTitle:nto];
     
-    self.uploadProgressBar = [UIProgressView new];
-    [self.view addSubview:self.uploadProgressBar];
-    self.uploadProgressBar.hidden = YES;
+    [self.view bringSubviewToFront:self.uploadProgressBar];
     
     __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
         [_profileOwner refreshWithSuccess:^{
-//<<<<<<< HEAD
-//            ProfileHeaderView *view = (ProfileHeaderView *)[weakSelf collectionView: weakSelf.cv
-//=======
-            self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
-//>>>>>>> 7dd3dd23cf1bd76572d460009bfd36d41f381622
+
+        self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
                                                  viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
                                                                        atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
                                                            ];
@@ -909,7 +903,7 @@
 {
     __weak  ProfileVC *weakSelf = self;
     self.doingUpload= YES;
-    self.uploadProgressBar.hidden= NO;
+    self.uploadProgressBar.hidden = NO;
     
     if (_selectedRestaurant.restaurantID) {
         [OOAPI uploadPhoto:_imageToUpload forObject:_selectedRestaurant

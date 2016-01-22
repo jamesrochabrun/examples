@@ -110,6 +110,10 @@
     _dropDownList.view.backgroundColor = UIColorRGBA(kColorOffWhite);
     _dropDownList.view.hidden = YES;
     
+    self.uploadProgressBar = [UIProgressView new];
+    [self.view addSubview:self.uploadProgressBar];
+    self.uploadProgressBar.hidden = YES;
+
     [self.navigationController.view addSubview:_dropDownList.view];
     [self.navigationController.view bringSubviewToFront:self.navigationController.navigationBar];
     
