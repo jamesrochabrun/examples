@@ -145,7 +145,7 @@
                     pronoun=  @"his";
                 }
             }
-            NSString*expression=[NSString  stringWithFormat: @"This user probably just needs a second to finish  %@ meal, stay tuned.", pronoun ];
+            NSString*expression=[NSString  stringWithFormat: @"This user probably just needs a second to finish %@ meal, stay tuned.", pronoun ];
             [_buttonDescription setTitle: expression forState:UIControlStateNormal ];
         }
     }
