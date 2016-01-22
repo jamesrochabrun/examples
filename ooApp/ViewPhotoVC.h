@@ -10,6 +10,7 @@
 #import "MediaItemObject.h"
 #import "RestaurantObject.h"
 #import "UserObject.h"
+#import "AddCaptionToMIOVC.h"
 #import "OOUserView.h"
 
 @class ViewPhotoVC;
@@ -20,8 +21,9 @@
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC;
 @end
 
-@interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate>
+@interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate, OOTextEntryVCDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;
+@property (nonatomic, weak) UINavigationController *nc;
 @end

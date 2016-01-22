@@ -16,6 +16,8 @@
 #import "RestaurantVC.h"
 #import "ProfileVC.h"
 #import "LocationManager.h"
+#import "UIImage+Additions.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 typedef enum {
     kFoodFeedTypeFriends = 1,
@@ -71,7 +73,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     _collectionView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
-    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showCameraUI)];
+    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setUpdateNeeded)
@@ -104,19 +106,52 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showPickPhotoUI
+{
+    BOOL haveCamera = NO, havePhotoLibrary = NO;
+    haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ? YES : NO;
+    havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary] ? YES : NO;
+    UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Add Photo to the Food Feed"]
+                                                                      message:[NSString stringWithFormat:@"Take a photo with your camera or add one from your photo library."]
+                                                               preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"Camera"
+                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                           [self showCameraUI];
+                                                       }];
+    
+    UIAlertAction *libraryUI = [UIAlertAction actionWithTitle:@"Library"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [self showPhotoLibraryUI];
+                                                        }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                       NSLog(@"Cancel");
+                                                   }];
+    
+    
+    if (haveCamera) [addPhoto addAction:cameraUI];
+    if (havePhotoLibrary) [addPhoto addAction:libraryUI];
+    [addPhoto addAction:cancel];
+    
+    if (havePhotoLibrary && haveCamera )[self presentViewController:addPhoto animated:YES completion:nil];
+}
+
 - (void)showCameraUI {
-    
-    BOOL haveCamera  = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
-    
-    if (!haveCamera) {
-        [self showRestaurantPicker];
-        return;
-    }
-    
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
     picker.allowsEditing = NO;
-    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)showPhotoLibraryUI {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = NO;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     [self presentViewController:picker animated:YES completion:NULL];
 }
@@ -124,22 +159,51 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
-    NSDictionary *metadata = [info valueForKey:UIImagePickerControllerMediaMetadata];
-
 
     CGSize s = image.size;
     _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
+
+    NSURL *url = info[@"UIImagePickerControllerReferenceURL"];
+
+    if (url) {
+        ALAssetsLibrary *lib = [[ALAssetsLibrary alloc] init];
+        [lib assetForURL:url resultBlock:^(ALAsset *asset) {
+            NSDictionary *metadata = asset.defaultRepresentation.metadata;
+            if (metadata) {
+                NSString *longitudeRef = metadata[@"{GPS}"][@"LongitudeRef"];
+                NSNumber *longitude = metadata[@"{GPS}"][@"Longitude"];
+                NSString *latitudeRef = metadata[@"{GPS}"][@"LatitudeRef"];
+                NSNumber *latitude = metadata[@"{GPS}"][@"Latitude"];
+                
+                
+                if ([longitudeRef isEqualToString:@"W"]) longitude = [NSNumber numberWithDouble:-[longitude doubleValue]];
+                
+                if ([latitudeRef isEqualToString:@"S"]) latitude = [NSNumber numberWithDouble:-[latitude doubleValue]];
+                
+                if (longitude && latitude) {
+                    CLLocationCoordinate2D photoLocation = CLLocationCoordinate2DMake([latitude doubleValue],
+                                                       [longitude doubleValue]);
+                    __weak FoodFeedVC *weakSelf = self;
+                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                    [self showRestaurantPickerAtCoordinate:photoLocation];
+                }
+            }
+        } failureBlock:^(NSError *error) {
+            //User denied access
+            NSLog(@"Unable to access image: %@", error);
+        }];
+    } else {
+        [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
+    }
     
-    __weak FoodFeedVC *weakSelf = self;
-    
-    [weakSelf dismissViewControllerAnimated:YES completion:nil];
-    
-    [self showRestaurantPicker];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)showRestaurantPicker {
+- (void)showRestaurantPickerAtCoordinate:(CLLocationCoordinate2D)location {
+    
     if (_restaurantPicker) return;
     _restaurantPicker = [[RestaurantPickerVC alloc] init];
+    _restaurantPicker.location = location;
     _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
     _restaurantPicker.delegate = self;
     _restaurantPicker.imageToUpload = _imageToUpload;
@@ -242,21 +306,14 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
     
-    self.tabBarController.tabBar.hidden = YES;
-    
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
     vc.mio = mio;
     vc.restaurant = r;
     vc.delegate = self;
-
-    vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self.navigationController presentViewController:vc animated:NO completion:^{
-    }];
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC {
-    self.tabBarController.tabBar.hidden = NO;
     [self updateIfNeeded];
 }
 

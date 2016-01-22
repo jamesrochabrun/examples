@@ -16,7 +16,7 @@
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UIView *backgroundView;
-@property (nonatomic, strong) UILabel *caption;
+@property (nonatomic, strong) UIButton *captionButton;
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UIButton *numYums;
 @property (nonatomic, strong) UIButton *userButton;
@@ -26,7 +26,10 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *closeTapGesture;
+@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 @property (nonatomic, strong) UserObject *user;
+@property (nonatomic, strong) UINavigationController *aNC;
+@property (nonatomic) CGPoint originPoint;
 @end
 
 @implementation ViewPhotoVC
@@ -42,8 +45,13 @@
         _iv.contentMode = UIViewContentModeScaleAspectFit;
         _iv.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
-        _caption = [[UILabel alloc] init];
-        [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+//        _caption = [[UILabel alloc] init];
+//        [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        _captionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_captionButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:nil selector:nil];
+        _captionButton.titleLabel.numberOfLines = 0;
+        _captionButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+        _captionButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
         
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
@@ -55,6 +63,8 @@
         
         _tapGesture = [[UITapGestureRecognizer alloc] init];
         _closeTapGesture = [[UITapGestureRecognizer alloc] init];
+        _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
+    
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_yumButton withIcon:kFontIconYumOutline fontSize:40 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
@@ -78,7 +88,7 @@
 
         [self.view addSubview:_backgroundView];
         [_backgroundView addSubview:_closeButton];
-        [_backgroundView addSubview:_caption];
+        [_backgroundView addSubview:_captionButton];
         [_backgroundView addSubview:_userButton];
         [_backgroundView addSubview:_userViewButton];
         [_backgroundView addSubview:_numYums];
@@ -86,14 +96,52 @@
         [_backgroundView addSubview:_iv];
         [_backgroundView addSubview:_restaurantName];
 
-//        [DebugUtilities addBorderToViews:@[_restaurantName, _numYums, _yumButton, _caption, _userButton, _iv, _userViewButton]];
+//        [DebugUtilities addBorderToViews:@[_restaurantName, _numYums, _yumButton, _captionButton, _userButton, _iv, _userViewButton]];
     }
     return self;
 }
 
+- (void)addCaption {
+    _aNC = [[UINavigationController alloc] init];
+    AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
+    
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    vc.mio = _mio;
+    vc.delegate = self;
+    
+    [_aNC addChildViewController:vc];
+    
+    [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [_aNC.navigationBar setTranslucent:YES];
+    _aNC.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:_aNC animated:YES completion:^{
+        _aNC.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
+}
+
+- (void)textEntryFinished:(NSString *)text {
+    _mio.caption = text;
+    [_captionButton setTitle:text forState:UIControlStateNormal];
+    [self.view setNeedsLayout];
+//    [self.navigationController popViewControllerAnimated:NO];
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
+}
+
 - (void)showRestaurant {
-    [_delegate viewPhotoVC:self showRestaurant:_restaurant];
-    [self close];
+    [UIView animateWithDuration:0.4 animations:^{
+        _backgroundView.alpha = 0;
+        self.view.backgroundColor = UIColorRGBA(kColorClear);
+    } completion:^(BOOL finished) {
+//        self.tabBarController.tabBar.hidden = NO;
+        [self.navigationController popViewControllerAnimated:NO];
+        [_delegate viewPhotoVC:self showRestaurant:_restaurant];
+    }];
+//    self.tabBarController.tabBar.hidden = NO;
+//    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (void)showProfile {
@@ -114,12 +162,8 @@
         _backgroundView.alpha = 0;
         self.view.backgroundColor = UIColorRGBA(kColorClear);
     } completion:^(BOOL finished) {
-        [self dismissViewControllerAnimated:NO
-                                 completion:^{
-                                     if ([_delegate respondsToSelector:@selector(viewPhotoVCClosed:)]) {
-                                         [_delegate viewPhotoVCClosed:self];
-                                     }
-                                 }];
+//        self.tabBarController.tabBar.hidden = NO;
+        [self.navigationController popViewControllerAnimated:NO];
     }];
 }
 
@@ -127,6 +171,31 @@
     [super viewDidLoad];
     [_tapGesture addTarget:self action:@selector(showRestaurant)];
     [_closeTapGesture addTarget:self action:@selector(close)];
+    [self.view addGestureRecognizer:_panGesture];
+}
+
+- (void)pan:(UIGestureRecognizer *)gestureRecognizer {
+    if (_panGesture != gestureRecognizer) return;
+    
+    CGPoint newPoint;
+    NSLog(@"translation %@", NSStringFromCGPoint(_originPoint));
+    if (_panGesture.state == UIGestureRecognizerStateBegan) {
+        _originPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
+    } else if (_panGesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
+        _backgroundView.transform = CGAffineTransformMakeTranslation(delta.x, delta.y);
+    } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
+        newPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
+        CGFloat distance = distanceBetweenPoints(newPoint, _originPoint);
+        NSLog(@"distance moved: %f", distance);
+        if (distance > 40) {
+            [self close];
+        } else {
+            [UIView animateWithDuration:0.2 animations:^{
+                _backgroundView.transform = CGAffineTransformIdentity;
+            }];
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -136,6 +205,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    self.tabBarController.tabBar.hidden = YES;
     [UIView animateWithDuration:0.3 animations:^{
         self.view.backgroundColor = UIColorRGBA(kColorOverlay10);
         _backgroundView.alpha = 1;
@@ -146,6 +216,11 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    self.tabBarController.tabBar.hidden = NO;
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
 }
 
 - (void)setRestaurant:(RestaurantObject *)restaurant {
@@ -154,7 +229,7 @@
     if ( _restaurant) {
         [_restaurantName setTitle:_restaurant.name forState:UIControlStateNormal];
     } else {
-        [_restaurantName setTitle:  @"NO RESTAURANT" forState:UIControlStateNormal];
+        [_restaurantName setTitle:@"NO RESTAURANT" forState:UIControlStateNormal];
     }
     [self.view setNeedsLayout];
 }
@@ -163,8 +238,24 @@
     if (mio == _mio) return;
     _mio = mio;
     
-    _caption.text = _mio.caption;
+//    _caption.text = _mio.caption;
     
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    if ([_mio.caption length]) {
+        [_captionButton setTitle:_mio.caption forState:UIControlStateNormal];
+    } else {
+        if (_mio.sourceUserID == user.userID) {
+            [_captionButton setTitle:@"+ add caption" forState:UIControlStateNormal];
+        }
+    }
+
+    if (_mio.sourceUserID == user.userID) {
+        [_captionButton addTarget:self action:@selector(addCaption) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [_captionButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+    }
+
     OOAPI *api = [[OOAPI alloc] init];
     
     [_backgroundView addGestureRecognizer:_tapGesture];
@@ -254,7 +345,6 @@
     
     frame = _restaurantName.frame;
     frame.size.width = width(_backgroundView)-2*kGeomSpaceEdge-2*kGeomDimensionsIconButton;
-//    frame.size.height = 50;
     frame.origin.y = kGeomSpaceEdge;
     frame.origin.x = (width(_backgroundView) - width(_restaurantName))/2;
     frame.size.height = kGeomDimensionsIconButton;
@@ -296,12 +386,14 @@
 
     CGFloat distanceFromEdge = (CGRectGetMaxX(_userButton.frame) > (width(_backgroundView) - CGRectGetMinX(_numYums.frame))) ? CGRectGetMaxX(_userButton.frame) + kGeomSpaceCellPadding : (width(_backgroundView) - CGRectGetMinX(_numYums.frame) - kGeomSpaceCellPadding);
     
-    frame = _caption.frame;
-    frame.size = [_caption sizeThatFits:CGSizeMake(width(_backgroundView) - 2*distanceFromEdge, 100)];
+    frame = _captionButton.frame;
+    frame.size = _captionButton.intrinsicContentSize;
+    frame.size.width = (frame.size.width > (width(_backgroundView) - 2*distanceFromEdge)) ? width(_backgroundView) - 2*distanceFromEdge : frame.size.width;
+    frame.size.height = imageMaxY + kGeomSpaceCellPadding - CGRectGetMaxY(_userButton.frame);
     frame.origin.y = imageMaxY + kGeomSpaceCellPadding +
         ((CGRectGetMaxY(_userButton.frame) - (imageMaxY + kGeomSpaceCellPadding)) - (frame.size.height))/2;
     frame.origin.x = (width(_backgroundView) - frame.size.width)/2;
-    _caption.frame = frame;
+    _captionButton.frame = frame;
 
     //adjust backgroundview vertical parameters based on content
     frame = _backgroundView.frame;
