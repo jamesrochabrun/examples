@@ -2694,15 +2694,15 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 + (NSString *)URL {
-//#ifdef ADHOC
+#ifdef ADHOC
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end

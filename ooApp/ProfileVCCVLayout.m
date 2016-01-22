@@ -75,12 +75,12 @@
     CGFloat contentWidth = 0.0;         // Used to determine the contentSize
     CGFloat contentHeight = 0.0;        // Used to determine the contentSize
     
-    NSUInteger numberOfColumnsInRow = _showingLists ? 1 : kProfileNumColumnsForMediaItemsPhone;
+    NSUInteger numberOfColumnsInRow = 1;
     
     NSMutableArray *itemAttributes;
     CGSize itemSize;
     
-    float allowableHorizontalSpace= (width(self.collectionView))/numberOfColumnsInRow;
+    float allowableHorizontalSpace= round ((width(self.collectionView)));
     if (numberOfColumnsInRow==2 ) {
         allowableHorizontalSpace -= kGeomInterImageGap/2;
     }
@@ -199,9 +199,9 @@
     NSMutableArray *itemAttributes;
     CGSize itemSize;
     
-    float allowableHorizontalSpace= (width(self.collectionView)-2*kGeomSpaceEdge)/kProfileNumColumnsForMediaItemsPhone;
-    if (kProfileNumColumnsForMediaItemsPhone==2 ) {
-        allowableHorizontalSpace -= kGeomInterImageGap/2;
+    float allowableHorizontalSpace=round( (width(self.collectionView)-2*kGeomSpaceEdge)/kProfileNumColumnsForMediaItemsPhone);
+    if (kProfileNumColumnsForMediaItemsPhone>=2 ) {
+        allowableHorizontalSpace -= kGeomInterImageGap;
     }
     
     NSUInteger nSections=[self.collectionView numberOfSections];

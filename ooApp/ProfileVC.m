@@ -76,6 +76,12 @@
     [self loadUserInfo];
 }
 
+- (void) refreshUserImage
+{
+    [_userView clear];
+    [_userView setUser: _userInfo];
+}
+
 - (void) loadUserInfo
 {
     if (!_userInfo) {
@@ -191,10 +197,12 @@
         [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];//  index 1
         
         _userView= [[OOUserView alloc] init];
+        _userView.delegate= self;
         [self addSubview:_userView];
         
         _viewHalo= makeView(self, CLEAR);
         addBorder(_viewHalo, 2, YELLOW);
+        _viewHalo.userInteractionEnabled=NO;
         
         self.buttonSettings= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
         
@@ -249,10 +257,14 @@
     return self;
 }
 
+- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user;
+{
+    [self.delegate userPressedSettings];
+}
+
 - (void)userPressedSettings: (id) sender
 {
     [self.delegate userPressedSettings];
-    
 }
 
 - (void)updateOwnProfile: (NSNotification*)not
@@ -594,6 +606,7 @@
 @property (nonatomic,assign) BOOL doingUpload;
 @property (nonatomic,strong) RestaurantObject*selectedRestaurant;
 @property (nonatomic,assign) BOOL viewingLists; // false => viewing photos
+@property (nonatomic,assign) BOOL pickerIsForRestaurants;
 @end
 
 @implementation ProfileVC
@@ -635,6 +648,9 @@
 {
     ENTRY;
     [super viewDidLoad];
+    
+    CGSize size= [ UIScreen mainScreen].bounds.size;
+    NSLog  (@"SCREEN SIZE:  %@",NSStringFromCGSize(size));
     
     _userID = 0;
     _viewingLists= YES;
@@ -712,11 +728,15 @@
     __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
         [_profileOwner refreshWithSuccess:^{
-            ProfileHeaderView *view = (ProfileHeaderView *)[weakSelf collectionView: weakSelf.cv
+//<<<<<<< HEAD
+//            ProfileHeaderView *view = (ProfileHeaderView *)[weakSelf collectionView: weakSelf.cv
+//=======
+            self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
+//>>>>>>> 7dd3dd23cf1bd76572d460009bfd36d41f381622
                                                  viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
                                                                        atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
                                                            ];
-            [view setUserInfo: weakSelf.profileOwner];
+            [_topView setUserInfo: weakSelf.profileOwner];
         } failure:^{
             NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
         }
@@ -786,6 +806,7 @@
         return;
     }
     
+    _pickerIsForRestaurants= YES;
     UIImagePickerController *ic = [[UIImagePickerController alloc] init];
     [ic setAllowsEditing:NO];
     [ic setSourceType:UIImagePickerControllerSourceTypeCamera];
@@ -804,19 +825,44 @@
     if (!image) {
         image = info[@"UIImagePickerControllerOriginalImage"];
     }
+    if (!image || ![image isKindOfClass:[UIImage class]])
+        return;
     
-    if (image && [image isKindOfClass:[UIImage class]]) {
+    if  (_pickerIsForRestaurants ) {
+        
         CGSize s = image.size;
         if (s.width) {
             _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
         }
+        
+        __weak ProfileVC *weakSelf = self;
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            [weakSelf showRestaurantPicker];
+        }];
+    } else {
+        __weak ProfileVC *weakSelf = self;
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
+                       success:^{
+                           [_profileOwner refreshWithSuccess:^{
+                               ON_MAIN_THREAD(^(){
+                                   ProfileHeaderView *view= weakSelf.topView;
+                                   [ view refreshUserImage];
+                               });
+                           }
+                                                     failure:^{
+                                                     }];
+                           
+                       }
+                       failure:^(NSError *error) {
+                           
+                       }];
+            
+        }];
     }
     
-    __weak ProfileVC *weakSelf = self;
-    
-    [self dismissViewControllerAnimated:YES completion:^{
-        [weakSelf showRestaurantPicker];
-    }];
 }
 
 - (void)showRestaurantPicker {
@@ -948,7 +994,6 @@
 //------------------------------------------------------------------------------
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    message( @"you canceled taking a photo");
     [self  dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -1083,6 +1128,7 @@
         [ view setUserInfo: _profileOwner];
         view.vc = self;
         view.delegate=self;
+        self.topView = view;
         return view;
     }
     
@@ -1378,13 +1424,13 @@
     return [a objectAtIndex:which];
 }
 
-//- (void)showOptions
 - (void) userPressedSettings;
 {
-    if  (_doingUpload) {
+    if  (_doingUpload || !_viewingOwnProfile) {
         return;
     }
-
+    __weak  ProfileVC *weakSelf = self;
+    
     _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
@@ -1397,18 +1443,87 @@
         [APP clearCache];
         [APP.tabBar performSegueWithIdentifier:@"loginUISegue" sender:self];
     }];
+    
+    UIAlertAction *actionProfilePicture = [UIAlertAction actionWithTitle:@"Change Profile Picture" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf  userPressedChangeProfilePicture];
+    }];
+    
     UIAlertAction *manageTags = [UIAlertAction actionWithTitle:@"Manage Tags" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         ManageTagsVC *vc = [[ManageTagsVC alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
+        [weakSelf .navigationController pushViewController:vc animated:YES];
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }];
     
+    [_optionsAC addAction: actionProfilePicture];
     [_optionsAC addAction:manageTags];
     [_optionsAC addAction:logout];
     [_optionsAC addAction:cancel];
     [self presentViewController:_optionsAC animated:YES completion:nil];
+}
+
+- (void)userPressedChangeProfilePicture
+{
+    [self showPickPhotoUI];
+    
+}
+
+- (void)showPickPhotoUI
+{
+    _pickerIsForRestaurants= NO;
+    
+    BOOL haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+    BOOL havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
+ 
+    UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:@"Set Your Profile Photo"
+                                                                      message:nil
+                                                               preferredStyle:UIAlertControllerStyleAlert];
+    __weak  ProfileVC *weakSelf = self;
+    UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"From the Camera"
+                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                           [weakSelf showCameraUI];
+                                                       }];
+    
+    UIAlertAction *libraryUI = [UIAlertAction actionWithTitle:@"From the Photo Library"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [weakSelf showPhotoLibraryUI];
+                                                        }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                       NSLog(@"Cancel");
+                                                   }];
+    
+    if (!haveCamera && ! havePhotoLibrary) {
+        return;
+    }
+    if (haveCamera) [addPhoto addAction:cameraUI];
+    if (havePhotoLibrary) [addPhoto addAction:libraryUI];
+    [addPhoto addAction:cancel];
+    
+    if (havePhotoLibrary ||  haveCamera )
+        [self presentViewController:addPhoto animated:YES completion:nil];
+}
+
+- (void)showCameraUI
+{
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = NO;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)showPhotoLibraryUI
+{
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = NO;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
 }
 
 @end
