@@ -18,6 +18,8 @@
 @property (nonatomic, strong) DropDownListTVC *dropDownList;
 @property (nonatomic, strong) NavTitleView *navTitleView;
 @property (nonatomic, strong) OOAIV *aiv;
+@property (nonatomic, strong) UIProgressView *uploadProgressBar;
+
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)targer action:(SEL)sector;

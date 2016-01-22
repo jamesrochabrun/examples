@@ -115,6 +115,7 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (AFHTTPRequestOperation *)getRestaurantsWithListID:(NSUInteger)listID
+                                         andLocation:(CLLocationCoordinate2D)location
                                              success:(void (^)(NSArray *restaurants))success
                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
