@@ -26,6 +26,7 @@
 #import "ConnectVC.h"
 #import "RestaurantVC.h"
 #import "UserListVC.h"
+#import "LocationManager.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -704,9 +705,9 @@
                                                        subHeader:nil];
     [self setNavTitle:nto];
     
-    self.progressUpload= [UIProgressView new];
-    [ self.view addSubview: _progressUpload];
-    _progressUpload.hidden= YES;
+    self.progressUpload = [UIProgressView new];
+    [self.view addSubview:_progressUpload];
+    _progressUpload.hidden = YES;
     
     __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
@@ -745,7 +746,7 @@
     
     float w= self.view.bounds.size.width;
     float h= self.view.bounds.size.height;
-    _progressUpload.frame = CGRectMake(0,h/2,w, 10);
+    _progressUpload.frame = CGRectMake(0,0,w, 10);
 }
 
 - (void) refetch
@@ -826,6 +827,7 @@
     _restaurantPicker = [[RestaurantPickerVC alloc] init];
     _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
     _restaurantPicker.delegate = self;
+    _restaurantPicker.location = [LocationManager sharedInstance].currentUserLocation;
     _restaurantPicker.imageToUpload = _imageToUpload;
     [self.view addSubview:_restaurantPicker.view];
     [_restaurantPicker.view  setNeedsUpdateConstraints];

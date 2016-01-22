@@ -164,7 +164,6 @@
         _backgroundView.alpha = 0;
         self.view.backgroundColor = UIColorRGBA(kColorClear);
     } completion:^(BOOL finished) {
-//        self.tabBarController.tabBar.hidden = NO;
         [self.navigationController popViewControllerAnimated:NO];
     }];
 }
@@ -180,16 +179,17 @@
     if (_panGesture != gestureRecognizer) return;
     
     CGPoint newPoint;
-    NSLog(@"translation %@", NSStringFromCGPoint(_originPoint));
+//    NSLog(@"translation %@", NSStringFromCGPoint(_originPoint));
     if (_panGesture.state == UIGestureRecognizerStateBegan) {
         _originPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
     } else if (_panGesture.state == UIGestureRecognizerStateChanged) {
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
         _backgroundView.transform = CGAffineTransformMakeTranslation(delta.x, delta.y);
+        self.view.alpha = 0.5;
     } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
         newPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
         CGFloat distance = distanceBetweenPoints(newPoint, _originPoint);
-        NSLog(@"distance moved: %f", distance);
+//        NSLog(@"distance moved: %f", distance);
         if (distance > 40) {
             [self close];
         } else {
@@ -208,6 +208,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     self.tabBarController.tabBar.hidden = YES;
+    self.navigationController.navigationBarHidden = YES;
     [UIView animateWithDuration:0.3 animations:^{
         self.view.backgroundColor = UIColorRGBA(kColorOverlay10);
         _backgroundView.alpha = 1;
@@ -219,6 +220,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.tabBarController.tabBar.hidden = NO;
+    self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
