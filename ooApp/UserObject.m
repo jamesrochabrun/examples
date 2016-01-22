@@ -58,6 +58,23 @@ BOOL isUserObject (id  object)
     return self.hash == other.hash;
 }
 
+- (BOOL)isEqualToDeeply:(UserObject*) other;
+{
+    if  ( self.userID != other.userID)  return NO;
+    if  ( self.mediaItem.mediaItemId != other.mediaItem.mediaItemId)  return NO;
+    if  (![(self.mediaItem.url ?:  @"") isEqualToString: (other.mediaItem.url?:  @"")])  return NO;
+    if  (![(self.mediaItem.reference ?:  @"") isEqualToString: (other.mediaItem.reference?:  @"")])  return NO;
+    if  (![(_firstName ?:  @"") isEqualToString: (other.firstName?:  @"")])  return NO;
+    if  (![(self.lastName?:  @"") isEqualToString: (other.lastName?:  @"")])  return NO;
+    if  (![(self.email?:  @"") isEqualToString: (other.email?:  @"")])  return NO;
+    if  (![(self.facebookIdentifier?:  @"") isEqualToString: (other.facebookIdentifier?:  @"")])  return NO;
+    if  (![(self.about?:  @"") isEqualToString: (other.about?:  @"")])  return NO;
+    if  (![(self.phoneNumber?:  @"") isEqualToString: (other.phoneNumber?:  @"")])  return NO;
+    if  (![(self.gender?:  @"") isEqualToString: (other.gender?:  @"")])  return NO;
+    if  (![(self.username?:  @"") isEqualToString: (other.username?:  @"")])  return NO;
+    return YES;
+}
+
 //------------------------------------------------------------------------------
 // Name:    +userFromDict
 // Purpose: Instantiates user object from user dictionary.

@@ -60,8 +60,11 @@
     self.layer.cornerRadius = width(_imageView)/2;
 }
 
-- (void)setUser:(UserObject *)user {
-    if (user == _user) return;
+- (void)setUser:(UserObject *)user
+{
+    if  ([_user isEqualToDeeply: user] ) {
+        return;
+    }
     _user = user;
     if (!user) {
         self.imageView.image = nil;

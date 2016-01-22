@@ -77,6 +77,8 @@ extern NSString *const kKeyUserAbout;
 
 - (NSUInteger)hash;
 
+- (BOOL)isEqualToDeeply:(UserObject*) user;
+
 - (void) refreshWithSuccess: (void (^)())success
                    failure:(void (^)())failure;
 
