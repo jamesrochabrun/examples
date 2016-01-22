@@ -76,6 +76,12 @@
     [self loadUserInfo];
 }
 
+- (void) refreshUserImage
+{
+    [_userView clear];
+    [_userView setUser: _userInfo];
+}
+
 - (void) loadUserInfo
 {
     if (!_userInfo) {
@@ -722,11 +728,11 @@
     __weak ProfileVC *weakSelf = self;
     if  (!_profileOwner.mediaItem) {
         [_profileOwner refreshWithSuccess:^{
-            ProfileHeaderView *view= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
+            self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
                                                  viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
                                                                        atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
                                                            ];
-            [view setUserInfo: weakSelf.profileOwner];
+            [_topView setUserInfo: weakSelf.profileOwner];
         } failure:^{
             NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
         }
@@ -811,18 +817,18 @@
 //------------------------------------------------------------------------------
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
+    UIImage *image=  info[@"UIImagePickerControllerEditedImage"];
+    if (!image) {
+        image = info[@"UIImagePickerControllerOriginalImage"];
+    }
+    if (!image || ![image isKindOfClass:[UIImage class]])
+        return;
+    
     if  (_pickerIsForRestaurants ) {
         
-        UIImage *image=  info[@"UIImagePickerControllerEditedImage"];
-        if (!image) {
-            image = info[@"UIImagePickerControllerOriginalImage"];
-        }
-        
-        if (image && [image isKindOfClass:[UIImage class]]) {
-            CGSize s = image.size;
-            if (s.width) {
-                _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
-            }
+        CGSize s = image.size;
+        if (s.width) {
+            _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
         }
         
         __weak ProfileVC *weakSelf = self;
@@ -831,8 +837,28 @@
             [weakSelf showRestaurantPicker];
         }];
     } else {
+        __weak ProfileVC *weakSelf = self;
         
+        [self dismissViewControllerAnimated:YES completion:^{
+            [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
+                       success:^{
+                           [_profileOwner refreshWithSuccess:^{
+                               ON_MAIN_THREAD(^(){
+                                   ProfileHeaderView *view= weakSelf.topView;
+                                   [ view refreshUserImage];
+                               });
+                           }
+                                                     failure:^{
+                                                     }];
+                           
+                       }
+                       failure:^(NSError *error) {
+                           
+                       }];
+            
+        }];
     }
+    
 }
 
 - (void)showRestaurantPicker {
@@ -1098,6 +1124,7 @@
         [ view setUserInfo: _profileOwner];
         view.vc = self;
         view.delegate=self;
+        self.topView = view;
         return view;
     }
     
@@ -1393,13 +1420,13 @@
     return [a objectAtIndex:which];
 }
 
-//- (void)showOptions
 - (void) userPressedSettings;
 {
-    if  (_doingUpload) {
+    if  (_doingUpload || !_viewingOwnProfile) {
         return;
     }
-
+    __weak  ProfileVC *weakSelf = self;
+    
     _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
@@ -1414,12 +1441,12 @@
     }];
     
     UIAlertAction *actionProfilePicture = [UIAlertAction actionWithTitle:@"Change Profile Picture" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self userPressedChangeProfilePicture];
+        [weakSelf  userPressedChangeProfilePicture];
     }];
     
     UIAlertAction *manageTags = [UIAlertAction actionWithTitle:@"Manage Tags" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         ManageTagsVC *vc = [[ManageTagsVC alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
+        [weakSelf .navigationController pushViewController:vc animated:YES];
     }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {

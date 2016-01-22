@@ -20,4 +20,6 @@
 @property (nonatomic, strong) UserObject *user;
 @property (nonatomic, weak) id<OOUserViewDelegate> delegate;
 
+- (void) clear;
+
 @end

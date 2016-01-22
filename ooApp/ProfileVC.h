@@ -39,6 +39,7 @@
 @interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryModalVCDelegate, OOUserViewDelegate>
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
+- (void) refreshUserImage;
 @property (nonatomic,weak) NSObject<ProfileHeaderViewDelegate>* delegate;
 @end
 

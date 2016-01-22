@@ -63,6 +63,10 @@
 - (void)setUser:(UserObject *)user {
     if (user == _user) return;
     _user = user;
+    if (!user) {
+        self.imageView.image = nil;
+        return;
+    }
     
     NSString *first= _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
     NSString *last=_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
@@ -110,6 +114,12 @@
         _emptyUserView.alpha = 1;
         [self setNeedsUpdateConstraints];
     }
+}
+
+- (void) clear;
+{
+    _imageView.image=nil;
+    _user= nil;
 }
 
 - (void)userTapped {
