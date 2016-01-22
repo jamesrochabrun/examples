@@ -99,6 +99,9 @@ extern NSInteger getLocalDayNumber(NSDate *);
 extern NSInteger getLocalDayOfMonth(NSDate *date);
 extern NSInteger getLocalHour(NSDate *date);
 
+static inline CGFloat widthOfView(UIView *view) { return view.frame.size.width; }
+static inline CGFloat heightOfView(UIView *view) { return view.frame.size.height; }
+
 static inline BOOL is_reachable(void) {
 	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;
 	return status ==ReachableViaWiFi || status==ReachableViaWWAN;

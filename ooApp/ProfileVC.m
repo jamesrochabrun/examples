@@ -165,6 +165,8 @@
                            weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
                            weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
                            weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                           
+                           [weakSelf setNeedsLayout];
                        });
                        
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -211,9 +213,9 @@
         _buttonDescription.titleLabel.numberOfLines= 0;
         _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
         
-        _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeHeader);
-        _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeHeader);
-        _labelLikesCount= makeLabel(self,  @"", kGeomFontSizeHeader);
+        _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeDetail);
+        _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeDetail);
+        _labelLikesCount= makeLabel(self,  @"", kGeomFontSizeDetail);
         _labelVenues= makeIconLabel(self, kFontIconPin, kGeomFontSizeHeader);
         _labelPhoto= makeIconLabel(self, kFontIconPhoto, kGeomFontSizeHeader);
         _labelLikes= makeIconLabel(self, kFontIconYum, kGeomFontSizeHeader);
@@ -224,6 +226,10 @@
         _labelVenues.textColor= WHITE;
         _labelPhoto.textColor= WHITE;
         _labelLikes.textColor= WHITE;
+        
+        _labelVenuesCount.textAlignment= NSTextAlignmentLeft;
+        _labelPhotoCount.textAlignment= NSTextAlignmentLeft;
+        _labelLikesCount.textAlignment= NSTextAlignmentLeft;
         
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
@@ -514,6 +520,7 @@
                                      kGeomButtonWidth, kGeomFollowButtonHeight );
     
     // Layout the statistics labels.
+#if 0
     float x= (w-3*kGeomProfileStatsItemWidth)/2;
     _labelVenuesCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
     _labelVenues.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
@@ -523,7 +530,37 @@
     x += kGeomProfileStatsItemWidth;
     _labelLikesCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
     _labelLikes.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
+#else
+    [_labelVenues sizeToFit];
+    [_labelVenuesCount sizeToFit];
+    [_labelPhoto sizeToFit];
+    [_labelPhotoCount sizeToFit];
+    [_labelLikes sizeToFit];
+    [_labelLikesCount sizeToFit];
+    float w1= widthOfView(_labelVenues);
+    float w2= widthOfView(_labelVenuesCount);
+    float w3= widthOfView(_labelPhoto);
+    float w4= widthOfView(_labelPhotoCount);
+    float w5= widthOfView(_labelLikes);
+    float w6= widthOfView(_labelLikesCount);
+    float x= (w-w1-w2-w3-w4-w6-w5-2*kGeomSpaceInter)/2;
+    _labelVenues.frame = CGRectMake(x,y ,w1,kGeomProfileStatsItemHeight);
+    x += w1;
+  
+    _labelVenuesCount.frame = CGRectMake(x,y,w2,kGeomProfileStatsItemHeight);
+    x += w2+kGeomSpaceInter;
     
+    _labelPhoto.frame = CGRectMake(x,y ,w3,kGeomProfileStatsItemHeight);
+    x += w3;
+    
+    _labelPhotoCount.frame = CGRectMake(x,y,w4,kGeomProfileStatsItemHeight);
+    x += w4 +kGeomSpaceInter;
+   
+    _labelLikes.frame = CGRectMake(x,y ,w5,kGeomProfileStatsItemHeight);
+    x += w5;
+
+    _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
+#endif
     y += kGeomProfileStatsItemHeight + kGeomSpaceInter;
     
     _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
