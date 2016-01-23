@@ -31,6 +31,7 @@ NSString *const kFontIconFilledCircle = @"P";
 NSString *const kFontIconRemove = @"e";
 NSString *const kFontIconSearch = @"c";
 NSString *const kFontIconSettings = @"m";
+NSString *const kFontIconSettingsFilled=  @"K";
 NSString *const kFontIconWhatsNew = @"G";
 NSString *const kFontIconWhatsNewFilled = @"J";
 NSString *const kFontIconPerson=  @"y";

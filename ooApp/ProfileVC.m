@@ -272,7 +272,7 @@
     if ( !_viewingOwnProfile) {
         return;
     }
-    
+    [self refreshUserImage];
     [self loadUserInfo];
 }
 
@@ -602,7 +602,7 @@
 @property (nonatomic, assign) MediaItemObject *mediaItemBeingEdited;
 @property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
 @property (nonatomic, strong) UIImage *imageToUpload;
-//@property (nonatomic,assign) BOOL doingUpload;
+//@property (nonatomic,assign) BOOL uploading;
 @property (nonatomic, strong) RestaurantObject *selectedRestaurant;
 @property (nonatomic, assign) BOOL viewingLists; // false => viewing photos
 @property (nonatomic, assign) BOOL pickerIsForRestaurants;
@@ -738,9 +738,26 @@
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    handlePhotoDeleted
+// Purpose: If one of our media objects was deleted then update our UI.
+//------------------------------------------------------------------------------
 - (void)handlePhotoDeleted: (NSNotification*)not
 {
-    [self refetch];
+    BOOL foundIt= NO;
+    NSNumber* mediaObjectIDNumber= not.object;
+    NSUInteger mediaObjectID= [mediaObjectIDNumber isKindOfClass: [NSNumber class ]] ?mediaObjectIDNumber.unsignedIntegerValue:0;
+    for (MediaItemObject* item  in  _arrayPhotos) {
+        if ( item.mediaItemId == mediaObjectID) {
+            foundIt= YES;
+            break;
+        }
+    }
+    
+    if  (foundIt ) {
+        [self refetch];
+    }
+    
 }
 
 - (void)handleRestaurantListAltered: (NSNotification*)not
@@ -841,8 +858,7 @@
                        success:^{
                            [_profileOwner refreshWithSuccess:^{
                                ON_MAIN_THREAD(^(){
-                                   ProfileHeaderView *view= weakSelf.topView;
-                                   [ view refreshUserImage];
+                                   NOTIFY(kNotificationOwnProfileNeedsUpdate);
                                });
                            }
                                                      failure:^{
@@ -909,9 +925,11 @@
                    success:^{
                        ON_MAIN_THREAD(^{
                            [weakSelf refetch];
-                           weakSelf.imageToUpload = nil;
-                           weakSelf.uploading = NO;
-                           weakSelf.uploadProgressBar.hidden = YES;
+                           weakSelf.imageToUpload= nil;
+                           weakSelf.uploading= NO;
+                           weakSelf.uploadProgressBar.hidden= YES;
+
+                           NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
                    }
                    failure:^(NSError *error) {
@@ -938,9 +956,11 @@
                            success:^{
                                ON_MAIN_THREAD(^{
                                    [weakSelf refetch];
-                                   weakSelf.imageToUpload = nil;
-                                   weakSelf.uploading = NO;
-                                   weakSelf.uploadProgressBar.hidden = YES;
+                                   weakSelf.imageToUpload= nil;
+                                   weakSelf.uploading= NO;
+                                   weakSelf.uploadProgressBar.hidden= YES;
+                                   
+                                   NOTIFY(kNotificationFoodFeedNeedsUpdate);
                                });
                            }
                            failure:^(NSError *error) {
@@ -1196,6 +1216,11 @@
                                                                               success:^{
                                                                                   NSLog  (@"SUCCESS IN DELETING PHOTO");
                                                                                   [weakSelf refetch];
+                                                                                  
+                                                                                  NOTIFY(kNotificationFoodFeedNeedsUpdate);
+                                                                                  
+                                                                                  NOTIFY_WITH(kNotificationPhotoDeleted, @( mio.mediaItemId));
+                                                                                  
                                                                               }
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                                                   NSLog  (@"FAILED TO DELETE PHOTO, error=%@",error);
