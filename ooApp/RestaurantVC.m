@@ -109,6 +109,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setListsUpdateNeeded)
                                                  name:kNotificationRestaurantListsNeedsUpdate object:nil];
+    [self.view bringSubviewToFront:self.uploadProgressBar];
 }
 
 - (void)dealloc {
@@ -587,6 +588,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 - (void)viewDidLayoutSubviews {
     _listButtonsContainer.frame = CGRectMake(0, 0, width(self.view)-2*kGeomSpaceEdge, _listButtonsContainerHeight);
     //    NSLog(@"_listButtonsContainer=%@", _listButtonsContainer);
+    self.uploadProgressBar.frame = CGRectMake(0, 0, width(self.view), 2);
 }
 
 - (void)showList:(id)sender {
@@ -1109,12 +1111,26 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     CGSize s = image.size;
     UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
     
+    self.uploading = YES;
+    self.uploadProgressBar.hidden = NO;
+    
     __weak RestaurantVC *weakSelf = self;
     [OOAPI uploadPhoto:newImage forObject:_restaurant
                success:^{
+                   weakSelf.uploading = NO;
+                   weakSelf.uploadProgressBar.hidden = YES;
                    [weakSelf getMediaItemsForRestaurant];
                } failure:^(NSError *error) {
-
+                   weakSelf.uploading = NO;
+                   weakSelf.uploadProgressBar.hidden = YES;
+               } progress:^(NSUInteger __unused bytesWritten,
+                          long long totalBytesWritten,
+                          long long totalBytesExpectedToWrite) {
+                   long double d= totalBytesWritten;
+                   d/=totalBytesExpectedToWrite;
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       weakSelf.uploadProgressBar.progress = (float)d;
+                   });
                }];
 
     [weakSelf dismissViewControllerAnimated:YES completion:nil];
