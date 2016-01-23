@@ -43,7 +43,7 @@ NSString *const kFontIconUpload = @"F";
 NSString *const kFontIconUserTag = @"t";
 //NSString *const kFontIconLocation = @"w";
 NSString *const kFontIconToTry = @"o";
-NSString *const kFontIconToTryFilled = @"I";
+NSString *const kFontIconToTryFilled = @"o";
 NSString *const kFontIconList = @"p";
 NSString *const kFontIconBack = @"a";
 NSString *const kFontIconPin = @"V";
@@ -62,6 +62,7 @@ NSString *const kFontIconYumOutline = @"i";
 NSString *const kFontIconLogoFull = @"7";
 NSString *const kFontIconCaption = @"8";
 NSString *const kFontIconCaptionFilled = @"9";
+NSString *const kFontIconSettingsFilled = @"K";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
 
