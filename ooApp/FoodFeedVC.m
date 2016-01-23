@@ -78,7 +78,13 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setUpdateNeeded)
                                                  name:kNotificationFoodFeedNeedsUpdate object:nil];
+    [self.view bringSubviewToFront:self.uploadProgressBar];
     _needsUpdate = YES;
+}
+
+- (void)viewWillLayoutSubviews {
+    CGFloat w = width(self.view);
+    self.uploadProgressBar.frame = CGRectMake(0, 0, w, 2);
 }
 
 - (void)dealloc {
@@ -261,7 +267,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
     
     NSDictionary *views;
-    
     if (_restaurantPicker) {
         UIView *restaurantPickerView = _restaurantPicker.view;
         views = NSDictionaryOfVariableBindings(_filterView, _collectionView, restaurantPickerView);
@@ -271,7 +276,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_filterView(heightFilters)][_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
@@ -410,16 +414,32 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     NSLog(@"restaurant selected %@", restaurant.name);
     [_restaurantPicker.view removeFromSuperview];
     _restaurantPicker = nil;
+    
+    self.uploading = YES;
+    self.uploadProgressBar.hidden = NO;
+    
     [self.view setNeedsUpdateConstraints];
     
     __weak FoodFeedVC *weakSelf = self;
-    
+
     if (restaurant.restaurantID) {
         [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                success:^{
+                   weakSelf.uploading = NO;
+                   weakSelf.uploadProgressBar.hidden = YES;
                    [weakSelf.filterView selectCurrent];
                } failure:^(NSError *error) {
+                   weakSelf.uploading = NO;
+                   weakSelf.uploadProgressBar.hidden = YES;
                    NSLog(@"Failed to upload photo");
+               } progress:^(NSUInteger __unused bytesWritten,
+                            long long totalBytesWritten,
+                            long long totalBytesExpectedToWrite) {
+                   long double d= totalBytesWritten;
+                   d/=totalBytesExpectedToWrite;
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       weakSelf.uploadProgressBar.progress = (float)d;
+                   });
                }];
     } else  {
         OOAPI *api = [[OOAPI alloc] init];
@@ -427,9 +447,21 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
             if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                            success:^{
+                               weakSelf.uploading = NO;
+                               weakSelf.uploadProgressBar.hidden = YES;
                                [weakSelf.filterView selectCurrent];
                            } failure:^(NSError *error) {
+                               weakSelf.uploading = NO;
+                               weakSelf.uploadProgressBar.hidden = YES;
                                NSLog(@"Failed to upload photo");
+                           } progress:^(NSUInteger __unused bytesWritten,
+                                       long long totalBytesWritten,
+                                       long long totalBytesExpectedToWrite) {
+                               long double d= totalBytesWritten;
+                               d/=totalBytesExpectedToWrite;
+                               dispatch_async(dispatch_get_main_queue(), ^{
+                                   weakSelf.uploadProgressBar.progress = (float)d;
+                               });
                            }];
             
             } else {
