@@ -165,6 +165,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     NSURL *url = info[@"UIImagePickerControllerReferenceURL"];
 
+    __weak FoodFeedVC *weakSelf = self;
+
     if (url) {
         ALAssetsLibrary *lib = [[ALAssetsLibrary alloc] init];
         [lib assetForURL:url resultBlock:^(ALAsset *asset) {
@@ -183,9 +185,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                 if (longitude && latitude) {
                     CLLocationCoordinate2D photoLocation = CLLocationCoordinate2DMake([latitude doubleValue],
                                                        [longitude doubleValue]);
-                    __weak FoodFeedVC *weakSelf = self;
                     [weakSelf dismissViewControllerAnimated:YES completion:nil];
-                    [self showRestaurantPickerAtCoordinate:photoLocation];
+                    [weakSelf showRestaurantPickerAtCoordinate:photoLocation];
                 }
             }
         } failureBlock:^(NSError *error) {
@@ -234,7 +235,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     
     [OOAPI getFoodFeedType:type success:^(NSArray *restaurants) {
-        _restaurants = restaurants;
+        weakSelf.restaurants = restaurants;
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.collectionView reloadData];
             [weakSelf.aiv stopAnimating];
@@ -243,7 +244,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
             }
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        _restaurants = [NSArray array];
+        weakSelf.restaurants = @[ ];
     }];
 }
 

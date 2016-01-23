@@ -183,6 +183,7 @@ extern NSString *const kFontIconProfileFilled;
 extern NSString *const kFontIconRemove;
 extern NSString *const kFontIconSearch;
 extern NSString *const kFontIconSettings;
+extern NSString *const kFontIconSettingsFilled;
 extern NSString *const kFontIconWhatsNew;
 extern NSString *const kFontIconWhatsNewFilled;
 extern NSString *const kFontIconPerson;

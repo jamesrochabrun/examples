@@ -204,7 +204,7 @@
         addBorder(_viewHalo, 2, YELLOW);
         _viewHalo.userInteractionEnabled=NO;
         
-        self.buttonSettings= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
+        self.buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
         
         _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
         _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
@@ -272,7 +272,7 @@
     if ( !_viewingOwnProfile) {
         return;
     }
-    
+    [self refreshUserImage];
     [self loadUserInfo];
 }
 
@@ -738,9 +738,26 @@
     }
 }
 
+//------------------------------------------------------------------------------
+// Name:    handlePhotoDeleted
+// Purpose: If one of our media objects was deleted then update our UI.
+//------------------------------------------------------------------------------
 - (void)handlePhotoDeleted: (NSNotification*)not
 {
-    [self refetch];
+    BOOL foundIt= NO;
+    NSNumber* mediaObjectIDNumber= not.object;
+    NSUInteger mediaObjectID= [mediaObjectIDNumber isKindOfClass: [NSNumber class ]] ?mediaObjectIDNumber.unsignedIntegerValue:0;
+    for (MediaItemObject* item  in  _arrayPhotos) {
+        if ( item.mediaItemId == mediaObjectID) {
+            foundIt= YES;
+            break;
+        }
+    }
+    
+    if  (foundIt ) {
+        [self refetch];
+    }
+    
 }
 
 - (void)handleRestaurantListAltered: (NSNotification*)not
@@ -842,8 +859,7 @@
                        success:^{
                            [_profileOwner refreshWithSuccess:^{
                                ON_MAIN_THREAD(^(){
-                                   ProfileHeaderView *view= weakSelf.topView;
-                                   [ view refreshUserImage];
+                                   NOTIFY(kNotificationOwnProfileNeedsUpdate);
                                });
                            }
                                                      failure:^{
@@ -914,6 +930,8 @@
                            
                            weakSelf.doingUpload= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
+                           
+                           NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
                    }
                    failure:^(NSError *error) {
@@ -943,6 +961,8 @@
                                    weakSelf.imageToUpload= nil;
                                    weakSelf.doingUpload= NO;
                                    weakSelf.uploadProgressBar.hidden= YES;
+                                   
+                                   NOTIFY(kNotificationFoodFeedNeedsUpdate);
                                });
                            }
                            failure:^(NSError *error) {
@@ -1198,6 +1218,11 @@
                                                                               success:^{
                                                                                   NSLog  (@"SUCCESS IN DELETING PHOTO");
                                                                                   [weakSelf refetch];
+                                                                                  
+                                                                                  NOTIFY(kNotificationFoodFeedNeedsUpdate);
+                                                                                  
+                                                                                  NOTIFY_WITH(kNotificationPhotoDeleted, @( mio.mediaItemId));
+                                                                                  
                                                                               }
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                                                   NSLog  (@"FAILED TO DELETE PHOTO, error=%@",error);
