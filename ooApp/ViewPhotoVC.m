@@ -195,6 +195,7 @@
         } else {
             [UIView animateWithDuration:0.2 animations:^{
                 _backgroundView.transform = CGAffineTransformIdentity;
+                self.view.alpha = 1;
             }];
         }
     }
