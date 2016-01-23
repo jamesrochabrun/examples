@@ -41,13 +41,13 @@
 @property (nonatomic, strong) UIButton *buttonFollowers;
 @property (nonatomic, strong) UIButton *buttonFolloweesCount;
 @property (nonatomic, strong) UIButton *buttonFollowersCount;
-@property (nonatomic,strong)  UILabel *labelVenuesCount,*labelPhotoCount,*labelLikesCount;
-@property (nonatomic,strong)  UILabel *labelVenues,*labelPhoto,*labelLikes;
+@property (nonatomic, strong) UILabel *labelVenuesCount, *labelPhotoCount, *labelLikesCount;
+@property (nonatomic, strong) UILabel *labelVenues, *labelPhoto, *labelLikes;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIView *backgroundImageFade;
-@property (nonatomic,strong) OOFilterView *filterView;
-@property (nonatomic,assign) BOOL followingThisUser;
-@property (nonatomic,strong) UIButton* buttonSettings;
+@property (nonatomic, strong) OOFilterView *filterView;
+@property (nonatomic, assign) BOOL followingThisUser;
+@property (nonatomic, strong) UIButton* buttonSettings;
 @end
 
 @implementation ProfileHeaderView
@@ -299,7 +299,7 @@
 
 - (void)userPressedFollowers: (id) sender
 {
-    if  (self.vc.doingUpload) {
+    if  (self.vc.uploading) {
         return;
     }
     
@@ -330,7 +330,7 @@
 
 - (void)userPressedFollowees: (id) sender
 {
-    if  (self.vc.doingUpload) {
+    if  (self.vc.uploading) {
         return;
     }
     [self fetchFollowing];
@@ -596,16 +596,16 @@
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIAlertController *optionsAC;
-@property (nonatomic,strong) ProfileHeaderView* topView;
-@property (nonatomic,assign) BOOL didFetch;
-@property (nonatomic,assign) NSUInteger lastShownUser;
-@property (nonatomic,assign) MediaItemObject* mediaItemBeingEdited;
-@property (nonatomic,strong) RestaurantPickerVC* restaurantPicker;
-@property (nonatomic,strong) UIImage* imageToUpload;
-@property (nonatomic,assign) BOOL doingUpload;
-@property (nonatomic,strong) RestaurantObject*selectedRestaurant;
-@property (nonatomic,assign) BOOL viewingLists; // false => viewing photos
-@property (nonatomic,assign) BOOL pickerIsForRestaurants;
+@property (nonatomic, strong) ProfileHeaderView* topView;
+@property (nonatomic, assign) BOOL didFetch;
+@property (nonatomic, assign) NSUInteger lastShownUser;
+@property (nonatomic, assign) MediaItemObject *mediaItemBeingEdited;
+@property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
+@property (nonatomic, strong) UIImage *imageToUpload;
+//@property (nonatomic,assign) BOOL uploading;
+@property (nonatomic, strong) RestaurantObject *selectedRestaurant;
+@property (nonatomic, assign) BOOL viewingLists; // false => viewing photos
+@property (nonatomic, assign) BOOL pickerIsForRestaurants;
 @end
 
 @implementation ProfileVC
@@ -634,7 +634,7 @@
 
 - (void)done:(id)sender
 {
-    if  (!_doingUpload) {
+    if  (!self.uploading) {
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -776,7 +776,6 @@
     self.cv.frame = self.view.bounds;
     
     CGFloat w = width(self.view);
-    CGFloat h = height(self.view);
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
 }
 
@@ -909,7 +908,7 @@
 {
     __weak  ProfileVC *weakSelf = self;
     
-    self.imageToUpload= nil;
+    self.imageToUpload = nil;
     [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
         weakSelf.restaurantPicker = nil;
     }];
@@ -918,7 +917,7 @@
 - (void)performUpload
 {
     __weak  ProfileVC *weakSelf = self;
-    self.doingUpload= YES;
+    self.uploading = YES;
     self.uploadProgressBar.hidden = NO;
     
     if (_selectedRestaurant.restaurantID) {
@@ -927,27 +926,26 @@
                        ON_MAIN_THREAD(^{
                            [weakSelf refetch];
                            weakSelf.imageToUpload= nil;
-                           
-                           weakSelf.doingUpload= NO;
+                           weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
-                           
+
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
                    }
                    failure:^(NSError *error) {
                        NSLog(@"Failed to upload photo");
                        ON_MAIN_THREAD(^{
-                           weakSelf.doingUpload= NO;
-                           weakSelf.uploadProgressBar.hidden= YES;
+                           weakSelf.uploading = NO;
+                           weakSelf.uploadProgressBar.hidden = YES;
                        });
                    }
                   progress:^(NSUInteger __unused bytesWritten,
                              long long totalBytesWritten,
                              long long totalBytesExpectedToWrite) {
-                      long double d= totalBytesWritten;
+                      long double d = totalBytesWritten;
                       d/=totalBytesExpectedToWrite;
                       ON_MAIN_THREAD(^{
-                          weakSelf.uploadProgressBar.progress= (float)d;
+                          weakSelf.uploadProgressBar.progress = (float)d;
                       });
                   }
          ];
@@ -959,7 +957,7 @@
                                ON_MAIN_THREAD(^{
                                    [weakSelf refetch];
                                    weakSelf.imageToUpload= nil;
-                                   weakSelf.doingUpload= NO;
+                                   weakSelf.uploading= NO;
                                    weakSelf.uploadProgressBar.hidden= YES;
                                    
                                    NOTIFY(kNotificationFoodFeedNeedsUpdate);
@@ -968,8 +966,8 @@
                            failure:^(NSError *error) {
                                NSLog(@"Failed to upload photo");
                                ON_MAIN_THREAD(^{
-                                   weakSelf.doingUpload= NO;
-                                   weakSelf.uploadProgressBar.hidden= YES;
+                                   weakSelf.uploading = NO;
+                                   weakSelf.uploadProgressBar.hidden = YES;
                                });
                            }
                           progress:^(NSUInteger __unused bytesWritten,
@@ -978,7 +976,7 @@
                               long double d= totalBytesWritten;
                               d/=totalBytesExpectedToWrite;
                               ON_MAIN_THREAD(^{
-                                  weakSelf.uploadProgressBar.progress= (float)d;
+                                  weakSelf.uploadProgressBar.progress = (float)d;
                               });
                           }
                  ];
@@ -986,15 +984,15 @@
             } else {
                 NSLog(@"Failed to upload photo because didn't get back a restaurant object");
                 ON_MAIN_THREAD(^{
-                    weakSelf.doingUpload= NO;
-                    weakSelf.uploadProgressBar.hidden= YES;
+                    weakSelf.uploading = NO;
+                    weakSelf.uploadProgressBar.hidden = YES;
                 });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Failed to upload photo because the google ID was not found");
             ON_MAIN_THREAD(^{
-                weakSelf.doingUpload= NO;
-                weakSelf.uploadProgressBar.hidden= YES;
+                weakSelf.uploading = NO;
+                weakSelf.uploadProgressBar.hidden = YES;
             });
         }];
     }
@@ -1318,7 +1316,7 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if  (_doingUpload) {
+    if  (self.uploading) {
         return;
     }
     
@@ -1412,7 +1410,7 @@
 //------------------------------------------------------------------------------
 - (void)goToEmptyListScreen:(ListObject *)list
 {
-    if  (_doingUpload) {
+    if  (self.uploading) {
         return;
     }
     
@@ -1445,7 +1443,7 @@
 
 - (void) userPressedSettings;
 {
-    if  (_doingUpload || !_viewingOwnProfile) {
+    if  (self.uploading || !_viewingOwnProfile) {
         return;
     }
     __weak  ProfileVC *weakSelf = self;

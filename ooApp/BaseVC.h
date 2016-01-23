@@ -19,6 +19,7 @@
 @property (nonatomic, strong) NavTitleView *navTitleView;
 @property (nonatomic, strong) OOAIV *aiv;
 @property (nonatomic, strong) UIProgressView *uploadProgressBar;
+@property (nonatomic, assign) BOOL uploading;
 
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;

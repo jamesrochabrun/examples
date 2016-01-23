@@ -31,7 +31,6 @@
 >
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
-@property (nonatomic,readonly,assign) BOOL doingUpload;
 
 - (void)goToEmptyListScreen:(NSString *)string;
 @end

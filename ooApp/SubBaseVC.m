@@ -57,7 +57,10 @@
     _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
     self.navigationItem.leftBarButtonItem = _leftNavButton;
 
-    
+    self.uploadProgressBar = [UIProgressView new];
+    [self.view addSubview:self.uploadProgressBar];
+    self.uploadProgressBar.hidden = YES;
+
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
         self.edgesForExtendedLayout = UIRectEdgeNone;
 
