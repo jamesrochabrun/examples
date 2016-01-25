@@ -34,6 +34,8 @@
     if (self) {
         _backgroundImage = [[UIImageView alloc] init];
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+        _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
+        _backgroundImage.clipsToBounds = YES;
         
         _takeAction = [UIButton buttonWithType:UIButtonTypeCustom];
         _takeAction.translatesAutoresizingMaskIntoConstraints = NO;
@@ -100,7 +102,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _gradient.frame = CGRectMake(0, height(self)-50, width(self), 50);
+    _gradient.frame = CGRectMake(0, height(self)-40, width(self), 40);
 }
 
 - (void)showActionButton:(BOOL)show {

@@ -112,6 +112,10 @@
 {
     [super viewWillAppear:animated];
     
+    if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+        [APP registerForPushNotifications];
+    }
+    
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
     // RULE:  only re-fetch if it's the first time, or if the user altered an event.
