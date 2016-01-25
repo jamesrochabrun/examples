@@ -12,6 +12,7 @@
 #import "RestaurantVC.h"
 #import "UserObject.h"
 #import "Settings.h"
+#import "UserListVC.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIImageView *iv;
@@ -156,7 +157,15 @@
 }
 
 - (void)showYums {
-    
+    __weak ViewPhotoVC *weakSelf = self;
+    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
+        UserListVC *vc = [[UserListVC alloc] init];
+        vc.desiredTitle = @"YUMS";
+        vc.usersArray = users.mutableCopy;
+        [weakSelf.navigationController pushViewController:vc animated:YES];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
 }
 
 - (void)close {
@@ -206,10 +215,14 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     self.tabBarController.tabBar.hidden = YES;
     self.navigationController.navigationBarHidden = YES;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     [UIView animateWithDuration:0.3 animations:^{
         self.view.backgroundColor = UIColorRGBA(kColorOverlay10);
         _backgroundView.alpha = 1;

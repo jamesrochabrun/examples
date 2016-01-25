@@ -41,6 +41,14 @@
 {
     [super viewDidLoad];
     
+    _aiv = [[OOAIV alloc] initWithFrame:CGRectMake(0, 0, 100, 80)];
+    
+    CGRect frame = _aiv.frame;
+    frame.origin.x = (width(self.view) - width(_aiv))/2;
+    frame.origin.y = ((height(self.view) - kGeomHeightNavBarStatusBar - kGeomHeightTabBar) - height(_aiv))/2;
+    _aiv.frame = frame;
+    [self.view addSubview:_aiv];
+    
     _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
     [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
     [_rightBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];

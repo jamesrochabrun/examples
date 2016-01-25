@@ -106,16 +106,21 @@ typedef enum {
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"My Lists" subHeader:nil];
     self.navTitle = nto;
     
+    [self.view bringSubviewToFront:self.aiv];
+    [self.aiv startAnimating];
+    self.aiv.message = @"loading";
+    
     __weak ListsVC *weakSelf = self;
     UserObject *userInfo = [Settings sharedInstance].userObject;
     
     self.requestOperation = [api getListsOfUser:userInfo.userID withRestaurant:0 success:^(NSArray *lists) {
         weakSelf.lists = lists;
         ON_MAIN_THREAD( ^{
+            [weakSelf.aiv stopAnimating];
             [weakSelf gotLists];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
+        [weakSelf.aiv stopAnimating];
     }];
 }
 

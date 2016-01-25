@@ -13,6 +13,7 @@
 @interface SubBaseVC : UIViewController
 
 @property (nonatomic, strong) NavTitleObject *navTitle;
+@property (nonatomic, strong) OOAIV *aiv;
 @property (nonatomic, strong) UIProgressView *uploadProgressBar;
 @property (nonatomic, assign) BOOL uploading;
 

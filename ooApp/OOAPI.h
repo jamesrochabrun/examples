@@ -214,6 +214,10 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
 + (AFHTTPRequestOperation *)getAllUsersWithSuccess:(void (^)(NSArray *users))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)getMediaItemYummers:(MediaItemObject *)mediaItem
+                                        success:(void (^)(NSArray *users))success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 + (AFHTTPRequestOperation *)getFoodieUsersForUser:(UserObject*)user
                                           success:(void (^)(NSArray *users))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;

@@ -576,6 +576,33 @@ NSString *const kKeyDeviceToken = @"device_token";
     }];
 }
 
+//------------------------------------------------------------------------------
+// Name:    getMediaItemYummers
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getMediaItemYummers:(MediaItemObject *)mediaItem
+                                        success:(void (^)(NSArray *users))success
+                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/likes/users", kHTTPProtocol, [OOAPI URL], mediaItem.mediaItemId];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *users = [NSMutableArray array];
+        for (id dict in responseObject) {
+            UserObject *u = [UserObject userFromDict:dict];
+            if (u) {
+                [users addObject:u];
+            }
+        }
+        success(users);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        NSLog(@"Error: %@", error);
+        failure(operation, error);
+    }];
+}
+
 + (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)identifier
                                   success:(void (^)(UserObject *user))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
@@ -1590,7 +1617,7 @@ NSString *const kKeyDeviceToken = @"device_token";
     op = [rm GET:urlString parameters:nil
           success:^(id responseObject) {
               NSArray *array = responseObject;
-              NSMutableArray *users= [NSMutableArray new];
+              NSMutableArray *users = [NSMutableArray new];
               for (NSDictionary *d in array) {
                   UserObject *user = [UserObject userFromDict:d];
                   if (user) {

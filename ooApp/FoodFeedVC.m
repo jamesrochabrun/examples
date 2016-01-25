@@ -251,6 +251,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         weakSelf.restaurants = @[ ];
+        [weakSelf.aiv stopAnimating];
     }];
 }
 

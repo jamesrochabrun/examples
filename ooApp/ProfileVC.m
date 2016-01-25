@@ -106,9 +106,8 @@
         [self  indicateFollowing];
     }
     else  {
-        [OOAPI  getFollowersOf: _userInfo.userID
+        [OOAPI getFollowersOf:_userInfo.userID
                        success:^(NSArray *users) {
-                           
                            BOOL foundSelf= NO;
                            for (UserObject* user   in  users) {
                                // RULE: If we are following this user then we make the follow button disappear.
@@ -140,9 +139,9 @@
             if ( _userInfo.gender.length) {
                 unichar ch=[_userInfo.gender characterAtIndex:0];
                 if ( ch == 'f' || ch=='F') {
-                    pronoun=  @"her";
+                    pronoun = @"her";
                 } else {
-                    pronoun=  @"his";
+                    pronoun = @"his";
                 }
             }
             NSString*expression=[NSString  stringWithFormat: @"This user probably just needs a second to finish %@ meal, stay tuned.", pronoun ];
@@ -310,25 +309,22 @@
 {
     __weak  ProfileHeaderView *weakSelf = self;
     
-    [OOAPI getFollowingOf: _userInfo.userID
+    [OOAPI getFollowingOf:_userInfo.userID
                   success:^(NSArray *users) {
                       ON_MAIN_THREAD(^{
-                          UserListVC *vc= [[UserListVC  alloc] init];
-                          vc.desiredTitle=  @"FOLLOWEES";
-                          vc.usersArray= users.mutableCopy;
+                          UserListVC *vc = [[UserListVC alloc] init];
+                          vc.desiredTitle = @"FOLLOWEES";
+                          vc.usersArray = users.mutableCopy;
                           [weakSelf.vc.navigationController pushViewController: vc animated:YES];
-                          
-                          NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
-                                  ( unsigned long)users.count);
+                          NSLog(@"SUCCESS IN FETCHING %lu FOLLOWEES", (NSUInteger)users.count);
                       });
-                      
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                      NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
+                      NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
                   }];
     
 }
 
-- (void)userPressedFollowees: (id) sender
+- (void)userPressedFollowees:(id)sender
 {
     if  (self.vc.uploading) {
         return;
