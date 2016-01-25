@@ -27,7 +27,6 @@
                                 ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, 
                                 OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate,
                         ViewPhotoVCDelegate
-
 >
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
