@@ -815,12 +815,7 @@
     }
     
     _pickerIsForRestaurants= YES;
-    UIImagePickerController *ic = [[UIImagePickerController alloc] init];
-    [ic setAllowsEditing:NO];
-    [ic setSourceType:UIImagePickerControllerSourceTypeCamera];
-    [ic setShowsCameraControls:YES];
-    [ic setDelegate:self];
-    [self presentViewController:ic animated:YES completion:NULL];
+    [self  showPickPhotoUI];
 }
 
 //------------------------------------------------------------------------------
@@ -869,11 +864,13 @@
                        });
                    }
                                                      failure:^{
+                                                         NSLog (@"FAILED TO UPDATE USER");
                                                      }];
                    
                }
                failure:^(NSError *error) {
-                   
+                   NSLog  (@"FAILED TO UPLOAD NEW USER PHOTO");
+                   message( @"Unable to uploadprofile photo to server at this time.");
                }];
     
     
@@ -1063,7 +1060,8 @@
     if (_viewingLists ) {
         [self userPressedNewList];
     } else {
-        [self userPressedNewPhoto];
+        _pickerIsForRestaurants= YES;
+        [self showPickPhotoUI];
     }
     
 }
@@ -1487,6 +1485,7 @@
 
 - (void)userPressedChangeProfilePicture
 {
+    _pickerIsForRestaurants= NO;
     [self showPickPhotoUI];
     
 }
@@ -1510,8 +1509,6 @@
 
 - (void)showPickPhotoUI
 {
-    _pickerIsForRestaurants= NO;
-    
     BOOL haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
     BOOL havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
  
@@ -1530,10 +1527,13 @@
                                                         }];
     
     UIAlertAction *socialUI = nil;
-     socialUI= [UIAlertAction actionWithTitle:@"Update from Facebook"
-                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                            [weakSelf importPhotoFromFacebook];
-                                                        }];
+    if  (!_pickerIsForRestaurants) {
+        socialUI= [UIAlertAction actionWithTitle:@"Update from Facebook"
+                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                               [weakSelf importPhotoFromFacebook];
+                                           }];
+        
+    }
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel
@@ -1551,7 +1551,7 @@
     }
     [addPhoto addAction:cancel];
     
-    if (havePhotoLibrary ||  haveCamera )
+    if (havePhotoLibrary ||  haveCamera  || socialUI)
         [self presentViewController:addPhoto animated:YES completion:nil];
 }
 
