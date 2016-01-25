@@ -12,7 +12,7 @@
 #import "DropDownListTVC.h"
 #import "NavTitleView.h"
 
-@interface BaseVC : UIViewController <SWRevealViewControllerDelegate, DropDownListTVCDelegate>
+@interface BaseVC : UIViewController <SWRevealViewControllerDelegate, DropDownListTVCDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *leftNavButton;
 @property (nonatomic, strong) NavTitleObject *navTitle;
 @property (nonatomic, strong) DropDownListTVC *dropDownList;

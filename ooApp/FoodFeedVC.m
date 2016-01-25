@@ -256,12 +256,12 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(FoodFeedVCCVL *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (kFoodFeedNumColumnsForMediaItems == 1) return 150;
     RestaurantObject *r =[_restaurants objectAtIndex:indexPath.row];
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : [[MediaItemObject alloc] init];
     if (!mio.width || !mio.height) return width(collectionView)/kFoodFeedNumColumnsForMediaItems; //NOTE: this should not happen
     CGFloat height = floorf(((width(self.collectionView) - (kFoodFeedNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kFoodFeedNumColumnsForMediaItems)*mio.height/mio.width);
     return height;
-    return 0;
 }
 
 - (void)updateViewConstraints {
