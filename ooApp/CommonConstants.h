@@ -26,7 +26,8 @@ extern NSString *const kAPIKeyGoogleMaps;
 extern NSString *const kUserDefaultsUsingStagingServer;
 extern NSString *const kNotificationMenuWillOpen;
 
-static NSUInteger kMaximumRestaurantsPerEvent= 5;
+static NSUInteger kMaximumRestaurantsPerEvent = 5;
+static NSUInteger kMetersMovedBeforeForcedUpdate = 50;
 
 static NSInteger kHashRestaurant= 0x20000000;
 static NSInteger kHashUser= 0x40000000;

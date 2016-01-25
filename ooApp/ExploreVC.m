@@ -122,7 +122,6 @@ static NSString * const ListRowID = @"HLRCell";
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
     APP.nc = self.navigationController;
-    [self showOptionsIfTimedOut];
 }
 
 - (void)changeLocation {
@@ -273,6 +272,19 @@ static NSString * const ListRowID = @"HLRCell";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(showOptionsIfTimedOut)
                                                  name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    CLLocationCoordinate2D currentLocation = [LocationManager sharedInstance].currentUserLocation;
+    CLLocation *loc1 = [[CLLocation alloc] initWithLatitude:currentLocation.latitude longitude:currentLocation.longitude];
+    CLLocation *loc2 = [[CLLocation alloc] initWithLatitude:_desiredLocation.latitude longitude:_desiredLocation.longitude];
+    
+    if ([loc1 distanceFromLocation:loc2] > kMetersMovedBeforeForcedUpdate) {
+        [self updateLocation];
+        [self getRestaurants];
+        APP.dateLeft = [NSDate date];
+    } else {
+        [self showOptionsIfTimedOut];
+    }
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -284,7 +296,6 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)showOptionsIfTimedOut {
     if (!APP.dateLeft ||  (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:0 minutes:45 second:00])) {
-//        [self showOptions];
         [self updateLocation];
         APP.dateLeft = [NSDate date];
     } else {

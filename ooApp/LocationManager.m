@@ -148,7 +148,7 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
-    NSLog (@"Location manager error %@",error.localizedDescription);
+    NSLog (@"Location manager error %@", error.localizedDescription);
 }
 
 
