@@ -24,6 +24,7 @@
 @property (nonatomic, strong) UserObject *userObject;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 @property (nonatomic, strong) NSArray *captionConstraint;
+@property (nonatomic, strong) UILabel *yumIndicator;
 @end
 
 @implementation PhotoCVCell
@@ -44,6 +45,13 @@
         [_yumButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
         _yumButton.contentEdgeInsets = UIEdgeInsetsMake(20, 0, 0, 0);
+        
+        _yumIndicator = [[UILabel alloc] init];
+        _yumIndicator.translatesAutoresizingMaskIntoConstraints = NO;
+        [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:kGeomDimensionsIconButton] textColor:kColorYellow backgroundColor:kColorClear];
+        _yumIndicator.text = kFontIconYum;
+        [_yumIndicator sizeToFit];
+        _yumIndicator.alpha = 0;
 
         _caption = [[UILabel alloc] init];
         [_caption withFont:[UIFont fontWithName:kFontIcons size:15] textColor:kColorYellow backgroundColor:kColorClear];
@@ -78,6 +86,7 @@
         [self addSubview:_yumButton];
         [self addSubview:_numYums];
         [self addSubview:_caption];
+        [self addSubview:_yumIndicator];
         
         _doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yumPhotoTapped)];
         [_doubleTapGesture setDelaysTouchesBegan:YES];
@@ -130,8 +139,14 @@
         NSLog(@"like photo");
         NSUInteger userID = [Settings sharedInstance].userObject.userID;
         [OOAPI setMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
-            ON_MAIN_THREAD(^{
-                [_yumButton setSelected:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                weakSelf.yumIndicator.alpha = 1;
+                weakSelf.yumIndicator.center = weakSelf.center;
+                [UIView animateKeyframesWithDuration:0.7 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
+                    weakSelf.yumIndicator.alpha = 0;
+                } completion:^(BOOL finished) {
+                    [_yumButton setSelected:YES];
+                }];
                 [weakSelf updateNumYums];
                 if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
                     [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
@@ -149,16 +164,12 @@
     }
 }
 
-- (void)updateYumButton {
-    
-}
-
 - (void)updateConstraints {
     [super updateConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall), @"userNameLength" : @([_userButton sizeThatFits:CGSizeMake(200, 10)].width + 2)};
 
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage,_numYums, _takeAction, _userButton, _yumButton, _caption);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage,_numYums, _takeAction, _userButton, _yumButton, _caption, _yumIndicator);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -177,9 +188,12 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_yumButton(35)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_caption]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
 }
 
--(void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
+- (void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) return;
     _mediaItemObject = mediaItemObject;
     
@@ -236,7 +250,6 @@
     }
     
     if (_mediaItemObject.sourceUserID) {
-//        __weak PhotoCVCell *weakSelf = self;
         [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
             _userObject = user;
             NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
