@@ -26,6 +26,7 @@
 #import "NSString+MD5.h"
 #import "CreateUsernameVC.h"
 #import "OOAPI.h"
+#import "SocialMedia.h"
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -350,7 +351,7 @@
         return;
     }
     
-    [self fetchProfilePhoto];
+    [SocialMedia fetchProfilePhotoWithCompletionBlock:NULL];
     
     UserObject* userInfo = [Settings sharedInstance].userObject;
     
@@ -759,44 +760,5 @@
     NSLog (@"USER TO LOG OUT");
 }
 
-//------------------------------------------------------------------------------
-// Name:    fetchProfilePhoto
-// Purpose: Get the user's photo URL from Facebook. If the URL has changed then
-//          fetch the new image.
-//------------------------------------------------------------------------------
--(void)fetchProfilePhoto
-{
-    ENTRY;
-    
-    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/picture?width=1080&height=1080&redirect=false"
-                                       parameters: nil ]
-     startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-         if (!error) {
-             NSDictionary *dictionary = result;
-             if (![dictionary isKindOfClass:[NSDictionary class]]) {
-                 return;
-             }
-             
-             NSLog(@"FACEBOOK USER DICTIONARY:%@", dictionary);
-             
-             NSDictionary *pictureData = dictionary[@"data"];
-             if (pictureData) {
-                 NSString *urlString = pictureData[@"url"];
-                 if (urlString) {
-                     UserObject *userInfo = [Settings sharedInstance].userObject;
-                     NSString* existingURL = userInfo.facebookProfileImageURLString;
-                     if (!existingURL || ![existingURL isEqualToString:urlString]) {
-                         // RULE: Only fetch, store and upload the profile image if the URL has changed.
-                         userInfo.facebookProfileImageURLString = urlString;
-                         [[Settings sharedInstance] save];
-                         NSLog (@"NEW PROFILE PICTURE URL: %@", urlString); //Just save for now
-                     }
-                 }
-             }
-         } else {
-             NSLog(@"FACEBOOK ERROR %@", error);
-         }
-     }];
-}
 
 @end

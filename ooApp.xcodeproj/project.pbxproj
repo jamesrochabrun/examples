@@ -217,6 +217,7 @@
 		962B00C31BD95D22008790FD /* VoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 962B00C21BD95D22008790FD /* VoteObject.m */; };
 		962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 962DBB221BFFAF6E00A8A09D /* Gradient Background.png */; };
 		963A4D271C50465600E10263 /* UserListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 963A4D261C50465600E10263 /* UserListVC.m */; };
+		9643BD331C56B38F00059002 /* SocialMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 9643BD321C56B38F00059002 /* SocialMedia.m */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		964DEA691C1F444C0045BA2C /* background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 964DEA681C1F444C0045BA2C /* background_image.png */; };
@@ -558,6 +559,8 @@
 		962DBB221BFFAF6E00A8A09D /* Gradient Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Gradient Background.png"; path = "Graphic Assets/Gradient Background.png"; sourceTree = "<group>"; };
 		963A4D251C50465600E10263 /* UserListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListVC.h; sourceTree = "<group>"; };
 		963A4D261C50465600E10263 /* UserListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserListVC.m; sourceTree = "<group>"; };
+		9643BD311C56B38F00059002 /* SocialMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialMedia.h; sourceTree = "<group>"; };
+		9643BD321C56B38F00059002 /* SocialMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialMedia.m; sourceTree = "<group>"; };
 		964BC81C1B97935F00760C83 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
@@ -845,6 +848,8 @@
 				361329781C17BE34009413D6 /* NSData+Conversion.m */,
 				36FC99EC1C478D4F00768FF0 /* OOAIV.h */,
 				36FC99ED1C478D4F00768FF0 /* OOAIV.m */,
+				9643BD311C56B38F00059002 /* SocialMedia.h */,
+				9643BD321C56B38F00059002 /* SocialMedia.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -1469,6 +1474,7 @@
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
 				36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */,
 				966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */,
+				9643BD331C56B38F00059002 /* SocialMedia.m in Sources */,
 				36FDA6FC1B585F650029D29D /* WhatsNewVC.m in Sources */,
 				967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */,
 				364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */,

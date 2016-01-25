@@ -6,9 +6,6 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#ifndef _COMMON_H
-#define _COMMON_H
-
 #import <Google/Analytics.h>
 #import "Reachability.h"
 #import "UserObject.h"
@@ -128,4 +125,3 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 + (NSString *)versionString;
 
 @end
-#endif

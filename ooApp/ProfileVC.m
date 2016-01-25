@@ -27,6 +27,8 @@
 #import "RestaurantVC.h"
 #import "UserListVC.h"
 #import "LocationManager.h"
+#import "SocialMedia.h"
+#import "UIButton+AFNetworking.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -834,6 +836,8 @@
     if (!image || ![image isKindOfClass:[UIImage class]])
         return;
     
+    __weak ProfileVC *weakSelf = self;
+    
     if  (_pickerIsForRestaurants ) {
         
         CGSize s = image.size;
@@ -841,31 +845,37 @@
             _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
         }
         
-        __weak ProfileVC *weakSelf = self;
-        
         [self dismissViewControllerAnimated:YES completion:^{
             [weakSelf showRestaurantPicker];
         }];
     } else {
-        __weak ProfileVC *weakSelf = self;
-        
         [self dismissViewControllerAnimated:YES completion:^{
-            [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
-                       success:^{
-                           [_profileOwner refreshWithSuccess:^{
-                               ON_MAIN_THREAD(^(){
-                                   NOTIFY(kNotificationOwnProfileNeedsUpdate);
-                               });
-                           }
+            
+            [weakSelf setUserPhoto: image];
+        }];
+        
+    }
+}
+
+- (void)setUserPhoto: ( UIImage*)image
+{
+    __weak ProfileVC *weakSelf = self;
+    
+    [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
+               success:^{
+                   [weakSelf.profileOwner refreshWithSuccess:^{
+                       ON_MAIN_THREAD(^(){
+                           NOTIFY(kNotificationOwnProfileNeedsUpdate);
+                       });
+                   }
                                                      failure:^{
                                                      }];
-                           
-                       }
-                       failure:^(NSError *error) {
-                           
-                       }];
-        }];
-    }
+                   
+               }
+               failure:^(NSError *error) {
+                   
+               }];
+    
     
 }
 
@@ -1481,6 +1491,23 @@
     
 }
 
+- (void)importPhotoFromFacebook
+{
+    __weak  ProfileVC *weakSelf = self;
+    [ SocialMedia fetchProfilePhotoWithCompletionBlock:^(NSString*urlString) {
+        dispatch_async( dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            NSData *data = [NSData dataWithContentsOfURL: [NSURL URLWithString: urlString]];
+            UIImage*image= [ UIImage imageWithData: data];
+            if  (image ) {
+                [weakSelf setUserPhoto: image];
+            } else {
+                NSLog (@"THERE WAS A PROBLEM OBTAINING THE FACEBOOK PHOTO.");
+            }
+        });
+        
+    }];
+}
+
 - (void)showPickPhotoUI
 {
     _pickerIsForRestaurants= NO;
@@ -1501,17 +1528,27 @@
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                             [weakSelf showPhotoLibraryUI];
                                                         }];
+    
+    UIAlertAction *socialUI = nil;
+     socialUI= [UIAlertAction actionWithTitle:@"Update from Facebook"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [weakSelf importPhotoFromFacebook];
+                                                        }];
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * action) {
                                                        NSLog(@"Cancel");
                                                    }];
     
-    if (!haveCamera && ! havePhotoLibrary) {
+    if (!haveCamera && ! havePhotoLibrary && ! socialUI) {
         return;
     }
     if (haveCamera) [addPhoto addAction:cameraUI];
     if (havePhotoLibrary) [addPhoto addAction:libraryUI];
+    if  (socialUI ) {
+        [ addPhoto addAction: socialUI];
+    }
     [addPhoto addAction:cancel];
     
     if (havePhotoLibrary ||  haveCamera )
