@@ -707,9 +707,8 @@
         _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
     }
     
-    if ( _viewingOwnProfile) {
+    if (_viewingOwnProfile) {
         [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
-        
     } else {
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
@@ -1095,21 +1094,28 @@
 
 - (void)userTappedOnLists
 {
-    _viewingLists= YES;
-    [_listsAndPhotosLayout setShowingLists: YES];
-    [self setRightNavWithIcon: kFontIconAdd target:self action:@selector( handleUpperRightButton)];
+    _viewingLists = YES;
+    [_listsAndPhotosLayout setShowingLists:YES];
+
+    if (_viewingOwnProfile) {
+        [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
+    }
     
-    [_listsAndPhotosLayout  invalidateLayout];
+    [_listsAndPhotosLayout invalidateLayout];
     [self.cv reloadData];
     
 }
 
 - (void)userTappedOnPhotos
 {
-    _viewingLists= NO;
-    [_listsAndPhotosLayout setShowingLists: NO];
-    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector( handleUpperRightButton)];
-    [_listsAndPhotosLayout  invalidateLayout];
+    _viewingLists = NO;
+    [_listsAndPhotosLayout setShowingLists:NO];
+ 
+    if (_viewingOwnProfile) {
+        [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton)];
+    }
+    
+    [_listsAndPhotosLayout invalidateLayout];
     [self.cv reloadData];
 }
 
