@@ -50,9 +50,17 @@
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic, assign) BOOL followingThisUser;
 @property (nonatomic, strong) UIButton* buttonSettings;
+@property (nonatomic,assign) BOOL usingURLButton;
+@property (nonatomic,strong) UIButton*buttonURL;
 @end
 
 @implementation ProfileHeaderView
+
+- (void) prepareForReuse
+{
+    _usingURLButton= NO;
+    _buttonURL.hidden= YES;
+}
 
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector
 {
@@ -92,6 +100,11 @@
     __weak ProfileHeaderView *weakSelf = self;
     
     [_userView setUser: _userInfo];
+    
+    if  (_userInfo.isBlogger ) {
+        _usingURLButton= YES;
+        _buttonURL.hidden= NO;
+    }
     
     // Ascertain whether reviewing our own profile.
     
@@ -207,6 +220,8 @@
         
         self.buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
         
+        self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
+        
         _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
         _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
         
@@ -261,6 +276,12 @@
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user;
 {
     [self.delegate userPressedSettings];
+}
+
+- (void)userPressedURLButton: (id) sender
+{
+//    [self.delegate userPressedSettings];
+
 }
 
 - (void)userPressedSettings: (id) sender
@@ -574,10 +595,16 @@
 #endif
     y += kGeomProfileStatsItemHeight + kGeomSpaceInter;
     
+    if  (_usingURLButton ) {
+        _buttonURL.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomHeightButton);
+        y += kGeomHeightButton;
+    }
+    
     _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;
     
     _filterView.frame = CGRectMake(0, h-kGeomHeightFilters, w, kGeomHeightFilters);
+    
 }
 
 @end
@@ -1142,8 +1169,15 @@
         
         [ view setUserInfo: _profileOwner];
         view.vc = self;
+        
         view.delegate=self;
         self.topView = view;
+        
+        if (_listsAndPhotosLayout.userIsBlogger  !=  _profileOwner.isBlogger ) {
+            _listsAndPhotosLayout.userIsBlogger= _profileOwner.isBlogger;
+            [_cv setNeedsLayout];
+        }
+        
         return view;
     }
     

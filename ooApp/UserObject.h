@@ -52,6 +52,7 @@ extern NSString *const kKeyUserAbout;
 @interface UserObject : NSObject
 
 @property (nonatomic, assign) NSUInteger userID;
+@property (nonatomic, assign) BOOL isBlogger;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;

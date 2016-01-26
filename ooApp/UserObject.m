@@ -25,6 +25,7 @@ NSString *const kKeyUserParticipantType = @"participant_type";
 NSString *const kKeyUserParticipantState = @"participant_state";
 NSString *const kKeyUserMediaItem = @"media_item";
 NSString *const kKeyUserAbout = @"about";
+NSString *const kKeyUserIsBlogger = @"is_blogger";
 
 @interface UserObject()
 
@@ -61,6 +62,8 @@ BOOL isUserObject (id  object)
 - (BOOL)isEqualToDeeply:(UserObject*) other;
 {
     if  ( self.userID != other.userID)  return NO;
+    if  ( (1&self.isBlogger) != (1&other.isBlogger))  return NO;
+    
     if  ( self.mediaItem.mediaItemId != other.mediaItem.mediaItemId)  return NO;
     if  (![(self.mediaItem.url ?:  @"") isEqualToString: (other.mediaItem.url?:  @"")])  return NO;
     if  (![(self.mediaItem.reference ?:  @"") isEqualToString: (other.mediaItem.reference?:  @"")])  return NO;
@@ -96,6 +99,7 @@ BOOL isUserObject (id  object)
     user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
+    user.isBlogger = parseNumberOrNullFromServer([dict objectForKey:kKeyUserIsBlogger]) ? YES: NO;
     
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
@@ -137,6 +141,7 @@ BOOL isUserObject (id  object)
              kKeyUserImageIdentifier:self.imageIdentifier ?: @"",
              kKeyUserImageURL:self.facebookProfileImageURLString ?: @"",
              kKeyUserParticipantType: @(self.participantType),
+             kKeyUserIsBlogger: @(self.isBlogger),
              kKeyUserParticipantState: @(self.participantState)
              
              // Some data are not uploaded.
@@ -189,6 +194,7 @@ BOOL isUserObject (id  object)
                       self.email = user.email;
                       self.phoneNumber = user.phoneNumber;
                       self.gender = user.gender;
+                      self.isBlogger = user.isBlogger;
                       self.username = user.username;
                       self.facebookProfileImageURLString = user.facebookProfileImageURLString;
                       self.imageIdentifier = user.imageIdentifier;
