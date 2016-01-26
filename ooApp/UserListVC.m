@@ -225,6 +225,8 @@
     _labelUserName.text=nil;
     _labelName.text=nil;
     
+    [_userView clear];
+    
     //    _labelLists.alpha=0;
     
     _labelFollowers.alpha = 0;

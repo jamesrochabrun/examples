@@ -61,6 +61,23 @@
 {
     _usingURLButton= NO;
     _buttonURL.hidden= YES;
+    _buttonURL.enabled= NO;
+    [_buttonURL setTitle: @"" forState:UIControlStateNormal];
+    _buttonFollow.hidden = YES;
+    
+    _labelPhoto.hidden= YES;
+    _labelPhotoCount.hidden= YES;
+    _labelLikes.hidden= YES;
+    _labelLikesCount.hidden= YES;
+    _labelVenues.hidden= YES;
+    _labelVenuesCount.hidden= YES;
+}
+
+- (void) enableURLButton
+{
+    _usingURLButton= YES;
+    _buttonURL.hidden= NO;
+    _buttonURL.enabled= YES;
 }
 
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector
@@ -79,7 +96,7 @@
 
 - (void)setUserInfo:(UserObject *)u
 {
-    if ( u==_userInfo) {
+    if ( [u isEqualToDeeply: _userInfo]) {
         return;
     }
     _userInfo= u;
@@ -103,23 +120,50 @@
     [_userView setUser: _userInfo];
     
     if  (_userInfo.isBlogger ) {
-        _usingURLButton= YES;
-        _buttonURL.hidden= NO;
+        [self enableURLButton];
+        
+        if (!_userInfo.urlString.length) {
+            [_buttonURL setTitle: @"This blogger has no URL." forState:UIControlStateNormal];
+        } else {
+            [_buttonURL setTitle: _userInfo.urlString forState:UIControlStateNormal];
+        }
     }
     
     // Ascertain whether reviewing our own profile.
-    
+    //
     UserObject *currentUser = [Settings sharedInstance].userObject;
     NSUInteger ownUserIdentifier = [currentUser userID];
     _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
-    
-    [self  indicateNotFollowing];
     
     // RULE: Only update the button when we know for sure whose profile is.
     if ( _viewingOwnProfile) {
         NSLog  (@"VIEWING OWN PROFILE.");
         // RULE: Show the user's own stats.
         [self  indicateFollowing];
+        
+        [OOAPI getUserStatsFor:_userInfo.userID
+                       success:^(UserStatsObject *stats) {
+                           ON_MAIN_THREAD(^{
+                               
+                               [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                               [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                               
+                               weakSelf.buttonFollowees.alpha= 1;
+                               weakSelf.buttonFollowers.alpha= 1;
+                               weakSelf.buttonFolloweesCount.alpha= 1;
+                               weakSelf.buttonFollowersCount.alpha= 1;
+                               
+                               weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                               weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                               weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                               
+                               [weakSelf setNeedsLayout];
+                           });
+                           
+                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                           NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                           
+                       }];
     }
     else  {
         [OOAPI getFollowersOf:_userInfo.userID
@@ -138,9 +182,34 @@
                            } else {
                                [weakSelf indicateFollowing];
                            }
+                           [OOAPI getUserStatsFor:_userInfo.userID
+                                          success:^(UserStatsObject *stats) {
+                                              ON_MAIN_THREAD(^{
+                                                  
+                                                  [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                                                  [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                                                  
+                                                  weakSelf.buttonFollowees.alpha= 1;
+                                                  weakSelf.buttonFollowers.alpha= 1;
+                                                  weakSelf.buttonFolloweesCount.alpha= 1;
+                                                  weakSelf.buttonFollowersCount.alpha= 1;
+                                                  
+                                                  weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                                                  weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                                                  weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                                                  
+                                                  [weakSelf setNeedsLayout];
+                                              });
+                                              
+                                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                              NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                                              
+                                          }];
+                           
                            
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
+                           [weakSelf  indicateNotFollowing];
                        }];
     }
     
@@ -171,30 +240,6 @@
     _buttonFollowers.alpha= 0;
     _buttonFolloweesCount.alpha= 0;
     _buttonFollowersCount.alpha= 0;
-    
-    [OOAPI getUserStatsFor:_userInfo.userID
-                   success:^(UserStatsObject *stats) {
-                       ON_MAIN_THREAD(^{
-                           
-                           [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                           [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                           
-                           weakSelf.buttonFollowees.alpha= 1;
-                           weakSelf.buttonFollowers.alpha= 1;
-                           weakSelf.buttonFolloweesCount.alpha= 1;
-                           weakSelf.buttonFollowersCount.alpha= 1;
-                           
-                           weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                           weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                           weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                           
-                           [weakSelf setNeedsLayout];
-                       });
-                       
-                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                       NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                       
-                   }];
     
 }
 
@@ -230,6 +275,7 @@
         _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
         
         self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
+        _buttonURL.hidden= YES;
         
         _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
         _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
@@ -274,7 +320,8 @@
         [_buttonFollow setTitle:@"" forState:UIControlStateSelected];
         _buttonFollow.layer.borderColor=YELLOW.CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
-        
+        _buttonFollow.hidden = YES;
+
         [self registerForNotification: kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
          ];
@@ -466,13 +513,13 @@
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO UNFOLLOW USER");
                     }];
-    
 }
 
 - (void)indicateFollowing
 {
     _buttonFollow.layer.borderWidth= 0;
     _buttonFollow.selected= YES;
+    _buttonFollow.hidden = YES;
     _followingThisUser=YES;
     _labelPhoto.hidden= NO;
     _labelPhotoCount.hidden= NO;
@@ -488,14 +535,14 @@
     _followingThisUser=NO;
     _buttonFollow.selected= NO;
     _buttonFollow.layer.borderWidth= 1;
-    
+    _buttonFollow.hidden = NO;
+
     _labelPhoto.hidden= YES;
     _labelPhotoCount.hidden= YES;
     _labelLikes.hidden= YES;
     _labelLikesCount.hidden= YES;
     _labelVenues.hidden= YES;
     _labelVenuesCount.hidden= YES;
-    
     
 }
 
@@ -515,7 +562,7 @@
         [self verifyUnfollow];
         return;
     }
-    
+
     [OOAPI setFollowingUser:_userInfo
                          to: YES
                     success:^(id responseObject) {
@@ -625,10 +672,10 @@
 #endif
     y += kGeomProfileStatsItemHeight + kGeomSpaceInter;
     
-    if  (_usingURLButton ) {
-        _buttonURL.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomHeightButton);
+//    if  (_usingURLButton ) {
+        _buttonURL.frame = CGRectMake(0, y, w,kGeomHeightButton);
         y += kGeomHeightButton;
-    }
+//    }
     
     _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;
@@ -679,6 +726,8 @@
         _lastShownUser = _userInfo.userID;
     }
     
+    self.listsAndPhotosLayout.userIsBlogger=NO;
+    
     if (!_didFetch) {
         _didFetch=YES;
         [self  refetch ];
@@ -691,6 +740,11 @@
     if  (!self.uploading) {
         [self.navigationController popViewControllerAnimated:YES];
     }
+}
+
+- (void) dealloc
+{
+    self.topView=nil;
 }
 
 //------------------------------------------------------------------------------
@@ -783,7 +837,7 @@
         self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
                                                  viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
                                                                        atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
-                                                           ];
+                                            ];
             [_topView setUserInfo: weakSelf.profileOwner];
         } failure:^{
             NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
@@ -1190,17 +1244,20 @@
 {
     ProfileHeaderView *view = nil;
     
+    if (_topView)
+        return _topView;
+    
     if([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        
+
         view= [collectionView dequeueReusableSupplementaryViewOfKind: kind
-                                                 withReuseIdentifier:PROFILE_CV_HEADER_CELL
-                                                        forIndexPath:indexPath];
+                                                     withReuseIdentifier:PROFILE_CV_HEADER_CELL
+                                                            forIndexPath:indexPath];
+        self.topView = view;
         
         [ view setUserInfo: _profileOwner];
         view.vc = self;
         
         view.delegate=self;
-        self.topView = view;
         
         if (_listsAndPhotosLayout.userIsBlogger  !=  _profileOwner.isBlogger ) {
             _listsAndPhotosLayout.userIsBlogger= _profileOwner.isBlogger;

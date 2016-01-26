@@ -9,6 +9,7 @@
 #import "UserObject.h"
 #import "OOAPI.h"
 #import "Settings.h"
+#import "AppDelegate.h"
 
 NSString *const kKeyUserID = @"user_id";
 NSString *const kKeyUserFirstName = @"first_name";
@@ -26,6 +27,7 @@ NSString *const kKeyUserParticipantState = @"participant_state";
 NSString *const kKeyUserMediaItem = @"media_item";
 NSString *const kKeyUserAbout = @"about";
 NSString *const kKeyUserIsBlogger = @"is_blogger";
+NSString *const kKeyURL = @"url";
 
 @interface UserObject()
 
@@ -75,6 +77,7 @@ BOOL isUserObject (id  object)
     if  (![(self.phoneNumber?:  @"") isEqualToString: (other.phoneNumber?:  @"")])  return NO;
     if  (![(self.gender?:  @"") isEqualToString: (other.gender?:  @"")])  return NO;
     if  (![(self.username?:  @"") isEqualToString: (other.username?:  @"")])  return NO;
+    if  (![(self.urlString?:  @"") isEqualToString: (other.urlString?:  @"")])  return NO;
     return YES;
 }
 
@@ -100,6 +103,12 @@ BOOL isUserObject (id  object)
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
     user.isBlogger = parseNumberOrNullFromServer([dict objectForKey:kKeyUserIsBlogger]) ? YES: NO;
+    user.urlString = parseStringOrNullFromServer([dict objectForKey: kKeyURL]);
+    
+    // FOR TESTING: Anuj is a blogger
+    if ( [user.username isEqualToString: @"foodie"]) {
+        user.isBlogger= YES;
+    }
     
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
@@ -142,7 +151,8 @@ BOOL isUserObject (id  object)
              kKeyUserImageURL:self.facebookProfileImageURLString ?: @"",
              kKeyUserParticipantType: @(self.participantType),
              kKeyUserIsBlogger: @(self.isBlogger),
-             kKeyUserParticipantState: @(self.participantState)
+             kKeyUserParticipantState: @(self.participantState),
+             kKeyURL: self.urlString ?:  @""
              
              // Some data are not uploaded.
              
@@ -198,6 +208,7 @@ BOOL isUserObject (id  object)
                       self.username = user.username;
                       self.facebookProfileImageURLString = user.facebookProfileImageURLString;
                       self.imageIdentifier = user.imageIdentifier;
+                      self.urlString = user.urlString;
                     
                       success();
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
