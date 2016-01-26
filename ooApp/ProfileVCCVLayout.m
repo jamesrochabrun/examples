@@ -208,7 +208,7 @@
     
     NSUInteger nSections=[self.collectionView numberOfSections];
     int hdrHeight = _userIsBlogger? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
-
+    
     for (NSUInteger section = 0; section < nSections; section++) {
         NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
         

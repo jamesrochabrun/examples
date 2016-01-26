@@ -21,6 +21,7 @@
 - (void) userTappedOnLists;
 - (void) userTappedOnPhotos;
 - (void) userPressedSettings;
+- (void) userPressedURL;
 @end
 
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate,

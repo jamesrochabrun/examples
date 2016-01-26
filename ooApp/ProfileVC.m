@@ -78,6 +78,7 @@
     _usingURLButton= YES;
     _buttonURL.hidden= NO;
     _buttonURL.enabled= YES;
+//    addBorder(_buttonURL, 4, RED);
 }
 
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector
@@ -96,7 +97,7 @@
 
 - (void)setUserInfo:(UserObject *)u
 {
-    if ( [u isEqualToDeeply: _userInfo]) {
+    if ( [u isEqualToDeeply: _userInfo] && u.isBlogger== !_buttonURL.hidden) {
         return;
     }
     _userInfo= u;
@@ -123,7 +124,7 @@
         [self enableURLButton];
         
         if (!_userInfo.urlString.length) {
-            [_buttonURL setTitle: @"This blogger has no URL." forState:UIControlStateNormal];
+            [_buttonURL setTitle: @"This blogger has no blog URL." forState:UIControlStateNormal];
         } else {
             [_buttonURL setTitle: _userInfo.urlString forState:UIControlStateNormal];
         }
@@ -336,8 +337,8 @@
 
 - (void)userPressedURLButton: (id) sender
 {
-//    [self.delegate userPressedSettings];
-
+    [self.delegate userPressedURL];
+    message( @"user pressed URL one");
 }
 
 - (void)userPressedSettings: (id) sender
@@ -670,17 +671,17 @@
 
     _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
 #endif
-    y += kGeomProfileStatsItemHeight + kGeomSpaceInter;
+    y += kGeomProfileStatsItemHeight;
     
-//    if  (_usingURLButton ) {
-        _buttonURL.frame = CGRectMake(0, y, w,kGeomHeightButton);
-        y += kGeomHeightButton;
-//    }
+    if  (_usingURLButton ) {
+        _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
+        y += kGeomProfileHeaderViewHeightOfBloggerButton;
+    }
     
-    _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
+    _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;
     
-    _filterView.frame = CGRectMake(0, h-kGeomHeightFilters, w, kGeomHeightFilters);
+    _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
 }
 
 @end
@@ -830,20 +831,19 @@
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
     
-    __weak ProfileVC *weakSelf = self;
-    if  (!_profileOwner.mediaItem) {
-        [_profileOwner refreshWithSuccess:^{
-
-        self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
-                                                 viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
-                                                                       atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
-                                            ];
-            [_topView setUserInfo: weakSelf.profileOwner];
-        } failure:^{
-            NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
-        }
-         ];
-    }
+//    __weak ProfileVC *weakSelf = self;
+//    if  (!_profileOwner.mediaItem) {
+//        [_profileOwner refreshWithSuccess:^{
+//
+//        self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
+//                                                 viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
+//                                                                       atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
+//                                            ];
+//        } failure:^{
+//            NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
+//        }
+//         ];
+//    }
 }
 
 //------------------------------------------------------------------------------
@@ -1253,16 +1253,15 @@
                                                      withReuseIdentifier:PROFILE_CV_HEADER_CELL
                                                             forIndexPath:indexPath];
         self.topView = view;
-        
+        [_topView setUserInfo:  self.profileOwner];
+
         [ view setUserInfo: _profileOwner];
         view.vc = self;
         
         view.delegate=self;
         
-        if (_listsAndPhotosLayout.userIsBlogger  !=  _profileOwner.isBlogger ) {
-            _listsAndPhotosLayout.userIsBlogger= _profileOwner.isBlogger;
-            [_cv setNeedsLayout];
-        }
+        _listsAndPhotosLayout.userIsBlogger= _profileOwner.isBlogger;
+        [_cv setNeedsLayout];
         
         return view;
     }
@@ -1693,6 +1692,11 @@
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void) userPressedURL
+{
+    
 }
 
 @end

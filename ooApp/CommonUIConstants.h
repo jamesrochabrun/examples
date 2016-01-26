@@ -102,6 +102,7 @@ static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
 static CGFloat kGeomProfileHeaderViewHeightNormal = 223;
+static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = 20;
 static CGFloat kGeomProfileHeaderViewHeightBlogger = 223+20;
 static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 static CGFloat kGeomProfileStatsOverallWidth= 171;
