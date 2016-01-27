@@ -20,6 +20,9 @@ typedef enum {
 - (CGFloat)collectionView:(UICollectionView *)collectionView
                    layout:(FoodFeedVCCVL *)collectionViewLayout
  heightForItemAtIndexPath:(NSIndexPath *)indexPath;
+- (NSUInteger)collectionView:(UICollectionView *)collectionView
+                   layout:(FoodFeedVCCVL *)collectionViewLayout
+ numberOfColumnsInSection:(NSUInteger)section ;
 
 @end
 

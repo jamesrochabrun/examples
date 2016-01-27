@@ -15,7 +15,7 @@
 #import "AppDelegate.h"
 
 @interface CreateUsernameVC ()
-@property (nonatomic, strong) UIImageView *imageViewBackground, *imageViewIcon;
+@property (nonatomic, strong) UIImageView *imageViewIcon;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, strong) UILabel *labelUsernameTaken;
@@ -67,15 +67,34 @@
     
     _arrayOfSuggestions = [NSMutableArray new];
     
-    self.view.backgroundColor = WHITE;
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
     
     self.scrollView = [UIScrollView  new];
     [self.view addSubview:_scrollView];
     
-    self.imageViewBackground= makeImageView( self.scrollView,  @"Gradient Background.png");
-    self.imageViewIcon = makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
+    _imageViewIcon = [[UIImageView alloc] init];
+    _imageViewIcon.clipsToBounds = YES;
+    [_scrollView addSubview:_imageViewIcon];
+    
+    UserObject *uo = [Settings sharedInstance].userObject;
+    MediaItemObject *mio = uo.mediaItem;
+    NSURL *url = (mio && mio.url) ? [NSURL URLWithString:mio.url] : nil;
+    if (url) {
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        if (data) {
+            UIImage *image = [UIImage imageWithData:data];
+            [_imageViewIcon setImage:image];
+//            if (image) {
+//                [uo setUserProfilePhoto:image andUpload:YES];
+//                NSLog (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@", NSStringFromCGSize(image.size));
+//            }
+        }
+    } else {
+
+        self.imageViewIcon = makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
+    }
     
     self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
                                   YELLOW, CLEAR, self,
@@ -87,12 +106,17 @@
 
     self.fieldUsername = [UITextField new];
     _fieldUsername.delegate = self;
-    _fieldUsername.backgroundColor = WHITE;
-    _fieldUsername.placeholder = LOCAL(@"Desired username");
+    _fieldUsername.backgroundColor = UIColorRGBA(kColorBlack);
+//    _fieldUsername.placeholder = LOCAL(@"Enter username");
     _fieldUsername.borderStyle = UITextBorderStyleLine;
     _fieldUsername.textAlignment = NSTextAlignmentCenter;
     [_scrollView addSubview:_fieldUsername];
     _fieldUsername.clearButtonMode = UITextFieldViewModeWhileEditing;
+    NSAttributedString *str = [[NSAttributedString alloc] initWithString:LOCAL(@"Enter Username") attributes:@{ NSForegroundColorAttributeName : UIColorRGBA(kColorGrayMiddle)}];
+    _fieldUsername.attributedPlaceholder = str;
+    _fieldUsername.layer.cornerRadius = kGeomCornerRadius;
+    
+    
     
     self.labelUsernameTaken= makeLabel(_scrollView, LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
     self.labelUsernameTaken.textColor = YELLOW;
@@ -102,7 +126,7 @@
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
     self.labelMessage = makeLabel(_scrollView,
-                                   LOCAL(@"What should we call you?\r(Create your username)"),
+                                   LOCAL(@"What should we call you?"),
                                    kGeomFontSizeHeader);
     _labelMessage.textColor = WHITE;
     
@@ -288,12 +312,12 @@
 // Name:    goToLoginScreen
 // Purpose: Perform segue to login screen.
 //------------------------------------------------------------------------------
-- (void) goToLoginScreen
+- (void)goToLoginScreen
 {
     [self performSegueWithIdentifier:@"returnToLogin" sender:self];
 }
 
-- (void)wentIntoBackground:(NSNotification*) not
+- (void)wentIntoBackground:(NSNotification *)not
 {
     [self goToLoginScreen];
 }
@@ -302,11 +326,11 @@
 // Name:    goToExplore
 // Purpose: Perform segue to explore screen.
 //------------------------------------------------------------------------------
-- (void) goToExplore
+- (void)goToExplore
 {
-    [_fieldUsername  resignFirstResponder];
+    [_fieldUsername resignFirstResponder];
     
-    UserObject* userInfo= [Settings sharedInstance].userObject;
+    UserObject *userInfo= [Settings sharedInstance].userObject;
     [APP.diagnosticLogString appendFormat: @"Username set to %@" ,userInfo.username];
 
     @try {
@@ -321,7 +345,7 @@
 // Name:    keyboardHidden
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)keyboardHidden:(NSNotification*) not
+- (void)keyboardHidden:(NSNotification*)not
 {
     _scrollView.contentInset= UIEdgeInsetsMake(0, 0, 0, 0);
 }
@@ -330,7 +354,7 @@
 // Name:    keyboardShown
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)keyboardShown: (NSNotification*) not
+- (void)keyboardShown:(NSNotification *)not
 {
     NSDictionary* info = [not userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
@@ -344,51 +368,50 @@
 // Name:    userPressedSignUpButton
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)userPressedSignUpButton: (id) sender
+- (void)userPressedSignUpButton:(id)sender
 {
     [_fieldUsername resignFirstResponder];
     
-    NSString* enteredUsername= _fieldUsername.text;
+    NSString* enteredUsername = _fieldUsername.text;
     if (!enteredUsername.length) {
-        message( @"No username was entered.");
+        message(@"No username was entered.");
         return;
     }
-    [self checkWhetherUserNameIsInUse : enteredUsername];
+    [self checkWhetherUserNameIsInUse:enteredUsername];
 }
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
 // Purpose: Programmatic equivalent of constraint equations.
 //------------------------------------------------------------------------------
--(void) doLayout
+- (void)doLayout
 {
-    float h=  self.view.bounds.size.height;
-    float w=  self.view.bounds.size.width;
+    CGFloat h = height(self.view);
+    CGFloat w = width(self.view);
     
-    _scrollView.frame=  self.view.bounds;
-    _scrollView.scrollEnabled=  YES;
-    
-    self.imageViewBackground.frame=  self.view.bounds;
+    _scrollView.frame = self.view.bounds;
+    _scrollView.scrollEnabled = YES;
 
-    [self.labelMessage sizeToFit ];
-    float heightForText= _labelMessage.bounds.size.height;
+    [self.labelMessage sizeToFit];
+    CGFloat heightForText = _labelMessage.bounds.size.height;
     
-    float spacer=kGeomSpaceInter;
+    CGFloat spacer = kGeomSpaceInter;
     if (IS_IPAD) {
-        spacer=40;
+        spacer = 40;
     }
     
-    float imageSize= kGeomCreateUsernameCentralIconSize;
+    CGFloat imageSize = kGeomCreateUsernameCentralIconSize;
 
-    float totalHeightNeeded= heightForText+imageSize +3*kGeomHeightButton;
+    CGFloat totalHeightNeeded= heightForText+imageSize +3*kGeomHeightButton;
     totalHeightNeeded += 3*spacer;
     if (!IS_IPHONE4)
         totalHeightNeeded +=kGeomHeightButton;
     
-    float y= (h-totalHeightNeeded)/2;
+    CGFloat y= (h-totalHeightNeeded)/2;
 
     _imageViewIcon.frame = CGRectMake((w-imageSize)/2,y,imageSize,imageSize);
     y += imageSize+ spacer;
+    _imageViewIcon.layer.cornerRadius = _imageViewIcon.frame.size.width/2;
     
     _labelMessage.frame=CGRectMake(0, y, w, heightForText);
     y+= heightForText+ spacer;
@@ -413,10 +436,9 @@
 // Name:    viewWillLayoutSubviews
 // Purpose:
 //------------------------------------------------------------------------------
-- (void) viewWillLayoutSubviews
+- (void)viewWillLayoutSubviews
 {
-    [ super viewWillLayoutSubviews ];
-  
+    [super viewWillLayoutSubviews];
     [self doLayout];
 }
 

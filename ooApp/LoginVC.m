@@ -30,7 +30,6 @@
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
-@property (nonatomic, strong) UIImageView *gradientImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UILabel *logoLabel;
 @property (nonatomic, strong) UILabel *labelMessage;
@@ -55,11 +54,9 @@
     
     _wentToExplore = NO;
     
-    UIImage*backgroundImage= [ UIImage  imageNamed:@"background_image.png"];
-    UIImage*gradientImage= [ UIImage  imageNamed:@"Gradient Background.png"];
+    UIImage *backgroundImage= [UIImage imageNamed:@"background_image.png"];
 
-    self.gradientImageView = makeImageView( self.view, gradientImage);
-    _gradientImageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
     _backgroundImageView = makeImageView(self.view, backgroundImage);
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -110,9 +107,6 @@
     CGFloat h = height(self.view);
     CGFloat w = width(self.view);
     
-    _gradientImageView.frame= self.view.bounds;
-    [ self.view  sendSubviewToBack:_gradientImageView];
-
     CGFloat backgroundImageWidth = _backgroundImageView.image.size.width;
     CGFloat backgroundImageHeight = _backgroundImageView.image.size.height;
     CGFloat backgroundAspect = backgroundImageHeight > 0 ? backgroundImageWidth/backgroundImageHeight : 1000000;
@@ -430,7 +424,7 @@
                                              // RULE: While the above is happening take the user to the
                                              //     Explore page regardless of whether the backend was reached.
                                              
-                                             if (userInfo.username.length ) {
+                                             if (userInfo.username.length) {
                                                  [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                              } else {
                                                  [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
