@@ -40,7 +40,7 @@
     if (self) {
         _backgroundView = [[UIView alloc] init];
         _backgroundView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        _backgroundView.alpha = 0;
+        _backgroundView.alpha = 1;
         
         _iv = [[UIImageView alloc] init];
         _iv.contentMode = UIViewContentModeScaleAspectFit;
@@ -97,6 +97,7 @@
         [_backgroundView addSubview:_iv];
         [_backgroundView addSubview:_restaurantName];
 
+        [DebugUtilities addBorderToViews:@[self.view]];
 //        [DebugUtilities addBorderToViews:@[_restaurantName, _numYums, _yumButton, _captionButton, _userButton, _iv, _userViewButton]];
     }
     return self;
@@ -169,12 +170,12 @@
 }
 
 - (void)close {
-    [UIView animateWithDuration:0.4 animations:^{
-        _backgroundView.alpha = 0;
-        self.view.backgroundColor = UIColorRGBA(kColorClear);
-    } completion:^(BOOL finished) {
-        [self.navigationController popViewControllerAnimated:NO];
-    }];
+//    [UIView animateWithDuration:0.4 animations:^{
+//        _backgroundView.alpha = 0;
+//        self.view.backgroundColor = UIColorRGBA(kColorClear);
+//    } completion:^(BOOL finished) {
+        [self.navigationController popViewControllerAnimated:YES];
+//    }];
 }
 
 - (void)viewDidLoad {
@@ -217,24 +218,25 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.tabBarController.tabBar.hidden = YES;
-    self.navigationController.navigationBarHidden = YES;
+    self.view.backgroundColor = UIColorRGB(kColorOverlay10);
+//    self.tabBarController.tabBar.hidden = YES;
+//    self.navigationController.navigationBarHidden = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [UIView animateWithDuration:0.3 animations:^{
-        self.view.backgroundColor = UIColorRGBA(kColorOverlay10);
-        _backgroundView.alpha = 1;
-    } completion:^(BOOL finished) {
-        ;
-    }];
+//    [UIView animateWithDuration:0.3 animations:^{
+//        self.view.backgroundColor = UIColorRGBA(kColorOverlay10);
+//        _backgroundView.alpha = 1;
+//    } completion:^(BOOL finished) {
+//        ;
+//    }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.tabBarController.tabBar.hidden = NO;
-    self.navigationController.navigationBarHidden = NO;
+//    self.tabBarController.tabBar.hidden = NO;
+//    self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {

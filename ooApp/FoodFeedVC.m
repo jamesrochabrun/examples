@@ -316,7 +316,40 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.mio = mio;
     vc.restaurant = r;
     vc.delegate = self;
-    [self.navigationController pushViewController:vc animated:NO];
+    PhotoCVCell *cell = (PhotoCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
+    frame.origin.y += kGeomHeightNavBarStatusBar;
+    vc.originRect = frame;
+    vc.modalPresentationStyle = UIModalPresentationCustom;
+    vc.transitioningDelegate = self;
+    self.navigationController.delegate = self;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
+{
+    id<UIViewControllerAnimatedTransitioning> animationController;
+    
+    if ([toVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPush) {
+        ViewPhotoVC *vc = (ViewPhotoVC *)toVC;
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        animator.presenting = YES;
+        animator.originRect = vc.originRect;
+//        animator.duration = options.duration;
+        animationController = animator;
+    } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
+        animator.presenting = NO;
+        animator.originRect = vc.originRect;
+//        animator.duration = options.duration;
+        animationController = animator;
+    }
+    
+    return animationController;
 }
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC {
