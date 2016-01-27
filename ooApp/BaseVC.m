@@ -117,6 +117,8 @@
     [self.navigationController.view addSubview:_dropDownList.view];
     [self.navigationController.view bringSubviewToFront:self.navigationController.navigationBar];
     
+    self.navigationController.interactivePopGestureRecognizer.delegate = self;
+    
 //    [DebugUtilities addBorderToViews:@[_leftBarButtonView, _rightBarButtonView, _navTitleView]];
 }
 

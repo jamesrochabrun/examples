@@ -27,11 +27,14 @@
 #import "RestaurantVC.h"
 #import "UserListVC.h"
 #import "LocationManager.h"
+#import "SocialMedia.h"
+#import "UIButton+AFNetworking.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 @property (nonatomic, strong) UIView *viewHalo;
+@property (nonatomic, strong) UILabel *labelBlogger;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) OOUserView *userView;
@@ -47,10 +50,36 @@
 @property (nonatomic, strong) UIView *backgroundImageFade;
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic, assign) BOOL followingThisUser;
-@property (nonatomic, strong) UIButton* buttonSettings;
+@property (nonatomic, strong) UIButton* buttonSettings,*buttonSettingsInner;
+@property (nonatomic,assign) BOOL usingURLButton;
+@property (nonatomic,strong) UIButton*buttonURL;
 @end
 
 @implementation ProfileHeaderView
+
+- (void) prepareForReuse
+{
+    _usingURLButton= NO;
+    _buttonURL.hidden= YES;
+    _buttonURL.enabled= NO;
+    [_buttonURL setTitle: @"" forState:UIControlStateNormal];
+    _buttonFollow.hidden = YES;
+    
+    _labelPhoto.hidden= YES;
+    _labelPhotoCount.hidden= YES;
+    _labelLikes.hidden= YES;
+    _labelLikesCount.hidden= YES;
+    _labelVenues.hidden= YES;
+    _labelVenuesCount.hidden= YES;
+}
+
+- (void) enableURLButton
+{
+    _usingURLButton= YES;
+    _buttonURL.hidden= NO;
+    _buttonURL.enabled= YES;
+//    addBorder(_buttonURL, 4, RED);
+}
 
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector
 {
@@ -68,7 +97,7 @@
 
 - (void)setUserInfo:(UserObject *)u
 {
-    if ( u==_userInfo) {
+    if ( [u isEqualToDeeply: _userInfo] && u.isBlogger== !_buttonURL.hidden) {
         return;
     }
     _userInfo= u;
@@ -91,19 +120,51 @@
     
     [_userView setUser: _userInfo];
     
-    // Ascertain whether reviewing our own profile.
+    if  (_userInfo.isBlogger ) {
+        [self enableURLButton];
+        
+        if (!_userInfo.urlString.length) {
+            [_buttonURL setTitle: @"This blogger has no blog URL." forState:UIControlStateNormal];
+        } else {
+            [_buttonURL setTitle: _userInfo.urlString forState:UIControlStateNormal];
+        }
+    }
     
+    // Ascertain whether reviewing our own profile.
+    //
     UserObject *currentUser = [Settings sharedInstance].userObject;
     NSUInteger ownUserIdentifier = [currentUser userID];
     _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
-    
-    [self  indicateNotFollowing];
     
     // RULE: Only update the button when we know for sure whose profile is.
     if ( _viewingOwnProfile) {
         NSLog  (@"VIEWING OWN PROFILE.");
         // RULE: Show the user's own stats.
         [self  indicateFollowing];
+        
+        [OOAPI getUserStatsFor:_userInfo.userID
+                       success:^(UserStatsObject *stats) {
+                           ON_MAIN_THREAD(^{
+                               
+                               [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                               [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                               
+                               weakSelf.buttonFollowees.alpha= 1;
+                               weakSelf.buttonFollowers.alpha= 1;
+                               weakSelf.buttonFolloweesCount.alpha= 1;
+                               weakSelf.buttonFollowersCount.alpha= 1;
+                               
+                               weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                               weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                               weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                               
+                               [weakSelf setNeedsLayout];
+                           });
+                           
+                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                           NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                           
+                       }];
     }
     else  {
         [OOAPI getFollowersOf:_userInfo.userID
@@ -122,9 +183,34 @@
                            } else {
                                [weakSelf indicateFollowing];
                            }
+                           [OOAPI getUserStatsFor:_userInfo.userID
+                                          success:^(UserStatsObject *stats) {
+                                              ON_MAIN_THREAD(^{
+                                                  
+                                                  [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                                                  [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                                                  
+                                                  weakSelf.buttonFollowees.alpha= 1;
+                                                  weakSelf.buttonFollowers.alpha= 1;
+                                                  weakSelf.buttonFolloweesCount.alpha= 1;
+                                                  weakSelf.buttonFollowersCount.alpha= 1;
+                                                  
+                                                  weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                                                  weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                                                  weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                                                  
+                                                  [weakSelf setNeedsLayout];
+                                              });
+                                              
+                                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                              NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                                              
+                                          }];
+                           
                            
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                            NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
+                           [weakSelf  indicateNotFollowing];
                        }];
     }
     
@@ -156,30 +242,6 @@
     _buttonFolloweesCount.alpha= 0;
     _buttonFollowersCount.alpha= 0;
     
-    [OOAPI getUserStatsFor:_userInfo.userID
-                   success:^(UserStatsObject *stats) {
-                       ON_MAIN_THREAD(^{
-                           
-                           [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                           [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                           
-                           weakSelf.buttonFollowees.alpha= 1;
-                           weakSelf.buttonFollowers.alpha= 1;
-                           weakSelf.buttonFolloweesCount.alpha= 1;
-                           weakSelf.buttonFollowersCount.alpha= 1;
-                           
-                           weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                           weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                           weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                           
-                           [weakSelf setNeedsLayout];
-                       });
-                       
-                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                       NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                       
-                   }];
-    
 }
 
 - (instancetype) initWithFrame:(CGRect)frame
@@ -195,15 +257,26 @@
         [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];//  index 0
         [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];//  index 1
         
+        self.labelBlogger= makeIconLabel(self, kFontIconCaptionFilled,28+ kGeomProfileImageSize);
+        _labelBlogger.hidden= NO;
+        _labelBlogger.frame = CGRectMake(0,0, kGeomProfileImageSize+40,  kGeomProfileImageSize+40);
+        _labelBlogger.textColor= YELLOW;
+        
         _userView= [[OOUserView alloc] init];
         _userView.delegate= self;
         [self addSubview:_userView];
-        
+
         _viewHalo= makeView(self, CLEAR);
         addBorder(_viewHalo, 2, YELLOW);
         _viewHalo.userInteractionEnabled=NO;
         
-        self.buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
+        self.buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedSettings:) , 0);
+        
+        self.buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
+        
+        self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
+        _buttonURL.hidden= YES;
         
         _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
         _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
@@ -242,13 +315,14 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow = makeButton(self, @"FOLLOW",
-                                       kGeomFontSizeSubheader, YELLOW, CLEAR,
+                                       kGeomFontSizeSubheader, WHITE, CLEAR,
                                        self,
                                        @selector(userPressedFollow:), 0);
         [_buttonFollow setTitle:@"" forState:UIControlStateSelected];
         _buttonFollow.layer.borderColor=YELLOW.CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
-        
+        _buttonFollow.hidden = YES;
+
         [self registerForNotification: kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
          ];
@@ -259,6 +333,12 @@
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user;
 {
     [self.delegate userPressedSettings];
+}
+
+- (void)userPressedURLButton: (id) sender
+{
+    [self.delegate userPressedURL];
+    message( @"user pressed URL one");
 }
 
 - (void)userPressedSettings: (id) sender
@@ -282,6 +362,12 @@
     [OOAPI getFollowersOf: _userInfo.userID
                   success: ^(NSArray *users) {
                       ON_MAIN_THREAD(^{
+                          if  (!users.count) {
+                              ConnectVC* vc=[[ ConnectVC  alloc] init];
+                              [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+                              NSLog  (@"NO FOLLOWERS");
+                              return ;
+                          }
                           UserListVC *vc= [[UserListVC  alloc] init];
                           vc.desiredTitle=  @"FOLLOWERS";
                           vc.usersArray= users.mutableCopy;
@@ -312,6 +398,12 @@
     [OOAPI getFollowingOf:_userInfo.userID
                   success:^(NSArray *users) {
                       ON_MAIN_THREAD(^{
+                          if  (!users.count) {
+                              ConnectVC* vc=[[ ConnectVC  alloc] init];
+                              [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+                              NSLog  (@"NO FOLLOWEES");
+                              return ;
+                          }
                           UserListVC *vc = [[UserListVC alloc] init];
                           vc.desiredTitle = @"FOLLOWEES";
                           vc.usersArray = users.mutableCopy;
@@ -422,13 +514,13 @@
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO UNFOLLOW USER");
                     }];
-    
 }
 
 - (void)indicateFollowing
 {
     _buttonFollow.layer.borderWidth= 0;
     _buttonFollow.selected= YES;
+    _buttonFollow.hidden = YES;
     _followingThisUser=YES;
     _labelPhoto.hidden= NO;
     _labelPhotoCount.hidden= NO;
@@ -444,14 +536,14 @@
     _followingThisUser=NO;
     _buttonFollow.selected= NO;
     _buttonFollow.layer.borderWidth= 1;
-    
+    _buttonFollow.hidden = NO;
+
     _labelPhoto.hidden= YES;
     _labelPhotoCount.hidden= YES;
     _labelLikes.hidden= YES;
     _labelLikesCount.hidden= YES;
     _labelVenues.hidden= YES;
     _labelVenuesCount.hidden= YES;
-    
     
 }
 
@@ -471,7 +563,7 @@
         [self verifyUnfollow];
         return;
     }
-    
+
     [OOAPI setFollowingUser:_userInfo
                          to: YES
                     success:^(id responseObject) {
@@ -504,9 +596,18 @@
     _viewHalo.frame = _userView.frame;
     _viewHalo.layer.cornerRadius=kGeomProfileImageSize/2;
     
+    CGRect r;
+    _labelBlogger.center= _userView.center;
+    r= _labelBlogger.frame;
+    r.origin.y+= 4;
+    _labelBlogger.frame = r;
+    _labelBlogger.hidden= !_userInfo.isBlogger;
+    
     const  float buttonSettingsSize= _viewingOwnProfile? 30:0;
-    _buttonSettings.frame = CGRectMake(_userView.frame.origin.x+kGeomProfileImageSize-buttonSettingsSize, y + kGeomProfileImageSize-buttonSettingsSize,
+    _buttonSettings.frame = CGRectMake(_userView.frame.origin.x+kGeomProfileImageSize-buttonSettingsSize,
+                                       y + kGeomProfileImageSize-buttonSettingsSize,
                                        buttonSettingsSize,buttonSettingsSize);
+    _buttonSettingsInner.frame= _buttonSettings.frame;
     
     [_buttonFollowers sizeToFit];
     [_buttonFollowees sizeToFit];
@@ -570,12 +671,17 @@
 
     _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
 #endif
-    y += kGeomProfileStatsItemHeight + kGeomSpaceInter;
+    y += kGeomProfileStatsItemHeight;
     
-    _buttonDescription.frame = CGRectMake(0, h-kGeomHeightFilters-kGeomProfileTextviewHeight, w,kGeomProfileTextviewHeight);
+    if  (_usingURLButton ) {
+        _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
+        y += kGeomProfileHeaderViewHeightOfBloggerButton;
+    }
+    
+    _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
     y += kGeomProfileTextviewHeight;
     
-    _filterView.frame = CGRectMake(0, h-kGeomHeightFilters, w, kGeomHeightFilters);
+    _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
 }
 
 @end
@@ -621,6 +727,8 @@
         _lastShownUser = _userInfo.userID;
     }
     
+    self.listsAndPhotosLayout.userIsBlogger=NO;
+    
     if (!_didFetch) {
         _didFetch=YES;
         [self  refetch ];
@@ -633,6 +741,11 @@
     if  (!self.uploading) {
         [self.navigationController popViewControllerAnimated:YES];
     }
+}
+
+- (void) dealloc
+{
+    self.topView=nil;
 }
 
 //------------------------------------------------------------------------------
@@ -678,9 +791,8 @@
         _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
     }
     
-    if ( _viewingOwnProfile) {
+    if (_viewingOwnProfile) {
         [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
-        
     } else {
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
@@ -718,20 +830,19 @@
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
     
-    __weak ProfileVC *weakSelf = self;
-    if  (!_profileOwner.mediaItem) {
-        [_profileOwner refreshWithSuccess:^{
-
-        self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
-                                                 viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
-                                                                       atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
-                                                           ];
-            [_topView setUserInfo: weakSelf.profileOwner];
-        } failure:^{
-            NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
-        }
-         ];
-    }
+//    __weak ProfileVC *weakSelf = self;
+//    if  (!_profileOwner.mediaItem) {
+//        [_profileOwner refreshWithSuccess:^{
+//
+//        self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
+//                                                 viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
+//                                                                       atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
+//                                            ];
+//        } failure:^{
+//            NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
+//        }
+//         ];
+//    }
 }
 
 //------------------------------------------------------------------------------
@@ -813,12 +924,7 @@
     }
     
     _pickerIsForRestaurants= YES;
-    UIImagePickerController *ic = [[UIImagePickerController alloc] init];
-    [ic setAllowsEditing:NO];
-    [ic setSourceType:UIImagePickerControllerSourceTypeCamera];
-    [ic setShowsCameraControls:YES];
-    [ic setDelegate:self];
-    [self presentViewController:ic animated:YES completion:NULL];
+    [self  showPickPhotoUI];
 }
 
 //------------------------------------------------------------------------------
@@ -834,6 +940,8 @@
     if (!image || ![image isKindOfClass:[UIImage class]])
         return;
     
+    __weak ProfileVC *weakSelf = self;
+    
     if  (_pickerIsForRestaurants ) {
         
         CGSize s = image.size;
@@ -841,32 +949,39 @@
             _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
         }
         
-        __weak ProfileVC *weakSelf = self;
-        
         [self dismissViewControllerAnimated:YES completion:^{
             [weakSelf showRestaurantPicker];
         }];
     } else {
-        __weak ProfileVC *weakSelf = self;
-        
         [self dismissViewControllerAnimated:YES completion:^{
-            [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
-                       success:^{
-                           [_profileOwner refreshWithSuccess:^{
-                               ON_MAIN_THREAD(^(){
-                                   NOTIFY(kNotificationOwnProfileNeedsUpdate);
-                               });
-                           }
-                                                     failure:^{
-                                                     }];
-                           
-                       }
-                       failure:^(NSError *error) {
-                           
-                       }];
             
+            [weakSelf setUserPhoto: image];
         }];
+        
     }
+}
+
+- (void)setUserPhoto: ( UIImage*)image
+{
+    __weak ProfileVC *weakSelf = self;
+    
+    [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
+               success:^{
+                   [weakSelf.profileOwner refreshWithSuccess:^{
+                       ON_MAIN_THREAD(^(){
+                           NOTIFY(kNotificationOwnProfileNeedsUpdate);
+                       });
+                   }
+                                                     failure:^{
+                                                         NSLog (@"FAILED TO UPDATE USER");
+                                                     }];
+                   
+               }
+               failure:^(NSError *error) {
+                   NSLog  (@"FAILED TO UPLOAD NEW USER PHOTO");
+                   message( @"Unable to uploadprofile photo to server at this time.");
+               }];
+    
     
 }
 
@@ -1054,28 +1169,36 @@
     if (_viewingLists ) {
         [self userPressedNewList];
     } else {
-        [self userPressedNewPhoto];
+        _pickerIsForRestaurants= YES;
+        [self showPickPhotoUI];
     }
     
 }
 
 - (void)userTappedOnLists
 {
-    _viewingLists= YES;
-    [_listsAndPhotosLayout setShowingLists: YES];
-    [self setRightNavWithIcon: kFontIconAdd target:self action:@selector( handleUpperRightButton)];
+    _viewingLists = YES;
+    [_listsAndPhotosLayout setShowingLists:YES];
+
+    if (_viewingOwnProfile) {
+        [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
+    }
     
-    [_listsAndPhotosLayout  invalidateLayout];
+    [_listsAndPhotosLayout invalidateLayout];
     [self.cv reloadData];
     
 }
 
 - (void)userTappedOnPhotos
 {
-    _viewingLists= NO;
-    [_listsAndPhotosLayout setShowingLists: NO];
-    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector( handleUpperRightButton)];
-    [_listsAndPhotosLayout  invalidateLayout];
+    _viewingLists = NO;
+    [_listsAndPhotosLayout setShowingLists:NO];
+ 
+    if (_viewingOwnProfile) {
+        [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton)];
+    }
+    
+    [_listsAndPhotosLayout invalidateLayout];
     [self.cv reloadData];
 }
 
@@ -1127,16 +1250,25 @@
 {
     ProfileHeaderView *view = nil;
     
+    if (_topView)
+        return _topView;
+    
     if([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        
+
         view= [collectionView dequeueReusableSupplementaryViewOfKind: kind
-                                                 withReuseIdentifier:PROFILE_CV_HEADER_CELL
-                                                        forIndexPath:indexPath];
-        
+                                                     withReuseIdentifier:PROFILE_CV_HEADER_CELL
+                                                            forIndexPath:indexPath];
+        self.topView = view;
+        [_topView setUserInfo:  self.profileOwner];
+
         [ view setUserInfo: _profileOwner];
         view.vc = self;
+        
         view.delegate=self;
-        self.topView = view;
+        
+        _listsAndPhotosLayout.userIsBlogger= _profileOwner.isBlogger;
+        [_cv setNeedsLayout];
+        
         return view;
     }
     
@@ -1478,14 +1610,30 @@
 
 - (void)userPressedChangeProfilePicture
 {
+    _pickerIsForRestaurants= NO;
     [self showPickPhotoUI];
     
 }
 
+- (void)importPhotoFromFacebook
+{
+    __weak  ProfileVC *weakSelf = self;
+    [ SocialMedia fetchProfilePhotoWithCompletionBlock:^(NSString*urlString) {
+        dispatch_async( dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            NSData *data = [NSData dataWithContentsOfURL: [NSURL URLWithString: urlString]];
+            UIImage*image= [ UIImage imageWithData: data];
+            if  (image ) {
+                [weakSelf setUserPhoto: image];
+            } else {
+                NSLog (@"THERE WAS A PROBLEM OBTAINING THE FACEBOOK PHOTO.");
+            }
+        });
+        
+    }];
+}
+
 - (void)showPickPhotoUI
 {
-    _pickerIsForRestaurants= NO;
-    
     BOOL haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
     BOOL havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
  
@@ -1502,20 +1650,33 @@
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                             [weakSelf showPhotoLibraryUI];
                                                         }];
+    
+    UIAlertAction *socialUI = nil;
+    if  (!_pickerIsForRestaurants) {
+        socialUI= [UIAlertAction actionWithTitle:@"Update from Facebook"
+                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                               [weakSelf importPhotoFromFacebook];
+                                           }];
+        
+    }
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * action) {
                                                        NSLog(@"Cancel");
                                                    }];
     
-    if (!haveCamera && ! havePhotoLibrary) {
+    if (!haveCamera && ! havePhotoLibrary && ! socialUI) {
         return;
     }
     if (haveCamera) [addPhoto addAction:cameraUI];
     if (havePhotoLibrary) [addPhoto addAction:libraryUI];
+    if  (socialUI ) {
+        [ addPhoto addAction: socialUI];
+    }
     [addPhoto addAction:cancel];
     
-    if (havePhotoLibrary ||  haveCamera )
+    if (havePhotoLibrary ||  haveCamera  || socialUI)
         [self presentViewController:addPhoto animated:YES completion:nil];
 }
 
@@ -1537,6 +1698,11 @@
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void) userPressedURL
+{
+    
 }
 
 @end

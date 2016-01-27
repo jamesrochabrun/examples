@@ -63,39 +63,11 @@
         [_sectionAttributes addObject:itemAttributes];
         column = 0;
         
-//        if (section == kSectionTypeMediaItems && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
-            numberOfColumnsInRow = kFoodFeedNumColumnsForMediaItems;
-            itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
-            xOffset = kGeomSpaceEdge;
-//            UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-//            suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
-            yOffset += kGeomSpaceEdge;
-//            [itemAttributes addObject:suppattributes];
-//        } else if (section == kSectionTypeLists && [self.collectionView numberOfItemsInSection:section]) {
-//            NSLog(@"section:%ld items:%d yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
-//            numberOfColumnsInRow = 1;
-//            itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
-//            UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-//            suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
-//            xOffset = kGeomSpaceEdge;
-//            yOffset += 27;
-//            [itemAttributes addObject:suppattributes];
-//        } else if (section == kSectionTypeFollowees && [self.collectionView numberOfItemsInSection:section]) {
-//            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
-//            numberOfColumnsInRow = width(self.collectionView)/(50+kGeomSpaceEdge);
-//            itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
-//            UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-//            suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), 27));
-//            xOffset = kGeomSpaceEdge;
-//            yOffset += 27;
-//            [itemAttributes addObject:suppattributes];
-//        } else {// if (section == kSectionTypeMain && [self.collectionView numberOfItemsInSection:section]) {
-//            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
-//            numberOfColumnsInRow = 1;
-//            itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
-//            xOffset = 0;
-//        }
+        NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+    numberOfColumnsInRow = [_delegate collectionView:self.collectionView layout:self numberOfColumnsInSection:section];// kFoodFeedNumColumnsForMediaItems;
+        itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
+        xOffset = kGeomSpaceEdge;
+        yOffset += kGeomSpaceEdge;
         
         NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
 
@@ -151,7 +123,7 @@
             yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
         }
 
-        NSLog(@"after section:%ld items:%d yOffset=%f numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, numberOfColumnsInRow);
+        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, numberOfColumnsInRow);
     }
     
     // Get the last item to calculate the total height of the content

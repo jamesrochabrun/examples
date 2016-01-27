@@ -86,7 +86,8 @@
     }
     
     NSUInteger nSections=[self.collectionView numberOfSections];
-    
+    int hdrHeight = _userIsBlogger? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
+
     for (NSUInteger section = 0; section < nSections; section++) {
         NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
         
@@ -97,9 +98,10 @@
         itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow-1, 0);
         UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                                                           withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-        suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), kGeomProfileHeaderViewHeight));
+        suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView),
+                                                         hdrHeight));
         xOffset = 0;
-        yOffset += kGeomProfileHeaderViewHeight;
+        yOffset += hdrHeight;
         [itemAttributes addObject:suppattributes];
         
         NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
@@ -205,6 +207,7 @@
     }
     
     NSUInteger nSections=[self.collectionView numberOfSections];
+    int hdrHeight = _userIsBlogger? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
     
     for (NSUInteger section = 0; section < nSections; section++) {
         NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
@@ -216,9 +219,9 @@
         itemSize = CGSizeMake(width(self.collectionView)/kProfileNumColumnsForMediaItemsPhone-1, 0);
         UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                                                                                                                           withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-        suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), kGeomProfileHeaderViewHeight));
+        suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), hdrHeight));
         xOffset = kGeomSpaceEdge;
-        yOffset += kGeomProfileHeaderViewHeight  + kGeomSpaceEdge;
+        yOffset += hdrHeight  + kGeomSpaceEdge;
         [itemAttributes addObject:suppattributes];
         
         NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];

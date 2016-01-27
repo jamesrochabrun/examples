@@ -173,6 +173,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _listItem = listItem;
 
     if (_listItem) {
+        [self.view bringSubviewToFront:self.aiv];
+        self.aiv.message = @"loading";
+        [self.aiv startAnimating];
         [self getRestaurants];
     }
     
@@ -196,7 +199,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
                 [weakSelf gotRestaurants];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-            ;
+            [self.aiv stopAnimating];
         }];
     } else if (_listItem.type == kListTypeTrending||
                _listItem.type == kListTypePopular) {
@@ -207,7 +210,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
                 [weakSelf gotRestaurants];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-            ;
+            [self.aiv stopAnimating];
         }];
     } else {
         self.requestOperation = [api getRestaurantsWithKeywords:(_listItem.type == kListTypeJustForYou) ? @[@"restaurants"]: @[_listItem.name]
@@ -225,7 +228,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
                 [weakSelf gotRestaurants];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-            ;
+            [self.aiv stopAnimating];
         }];
     }
 }
@@ -234,6 +237,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 {
     NSLog(@"%@: %lu", _listItem.name, (unsigned long)[_restaurants count]);
     [_tableView reloadData];
+    [self.aiv stopAnimating];
 
 //    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }

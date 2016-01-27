@@ -52,6 +52,7 @@ extern NSString *const kKeyUserAbout;
 @interface UserObject : NSObject
 
 @property (nonatomic, assign) NSUInteger userID;
+@property (nonatomic, assign) BOOL isBlogger;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;
@@ -62,6 +63,7 @@ extern NSString *const kKeyUserAbout;
 @property (nonatomic, strong) NSString *backendAuthorizationToken;
 @property (nonatomic, strong) NSString *birthday;
 @property (nonatomic, strong) NSString *location;
+@property (nonatomic, strong) NSString *urlString; // typically for blogger
 @property (nonatomic, strong) NSString *about;
 @property (nonatomic, strong) NSString *facebookIdentifier;
 @property (nonatomic, strong) NSString *facebookProfileImageURLString;// e.g. from FB.

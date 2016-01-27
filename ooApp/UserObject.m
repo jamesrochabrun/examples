@@ -9,6 +9,7 @@
 #import "UserObject.h"
 #import "OOAPI.h"
 #import "Settings.h"
+#import "AppDelegate.h"
 
 NSString *const kKeyUserID = @"user_id";
 NSString *const kKeyUserFirstName = @"first_name";
@@ -25,6 +26,8 @@ NSString *const kKeyUserParticipantType = @"participant_type";
 NSString *const kKeyUserParticipantState = @"participant_state";
 NSString *const kKeyUserMediaItem = @"media_item";
 NSString *const kKeyUserAbout = @"about";
+NSString *const kKeyUserIsBlogger = @"is_blogger";
+NSString *const kKeyURL = @"url";
 
 @interface UserObject()
 
@@ -61,6 +64,8 @@ BOOL isUserObject (id  object)
 - (BOOL)isEqualToDeeply:(UserObject*) other;
 {
     if  ( self.userID != other.userID)  return NO;
+    if  ( (1&self.isBlogger) != (1&other.isBlogger))  return NO;
+    
     if  ( self.mediaItem.mediaItemId != other.mediaItem.mediaItemId)  return NO;
     if  (![(self.mediaItem.url ?:  @"") isEqualToString: (other.mediaItem.url?:  @"")])  return NO;
     if  (![(self.mediaItem.reference ?:  @"") isEqualToString: (other.mediaItem.reference?:  @"")])  return NO;
@@ -72,6 +77,7 @@ BOOL isUserObject (id  object)
     if  (![(self.phoneNumber?:  @"") isEqualToString: (other.phoneNumber?:  @"")])  return NO;
     if  (![(self.gender?:  @"") isEqualToString: (other.gender?:  @"")])  return NO;
     if  (![(self.username?:  @"") isEqualToString: (other.username?:  @"")])  return NO;
+    if  (![(self.urlString?:  @"") isEqualToString: (other.urlString?:  @"")])  return NO;
     return YES;
 }
 
@@ -96,6 +102,13 @@ BOOL isUserObject (id  object)
     user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
+    user.isBlogger = parseNumberOrNullFromServer([dict objectForKey:kKeyUserIsBlogger]) ? YES: NO;
+    user.urlString = parseStringOrNullFromServer([dict objectForKey: kKeyURL]);
+    
+    // FOR TESTING: Anuj is a blogger
+    if ( [user.username isEqualToString: @"foodie"]) {
+        user.isBlogger= YES;
+    }
     
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
@@ -137,7 +150,9 @@ BOOL isUserObject (id  object)
              kKeyUserImageIdentifier:self.imageIdentifier ?: @"",
              kKeyUserImageURL:self.facebookProfileImageURLString ?: @"",
              kKeyUserParticipantType: @(self.participantType),
-             kKeyUserParticipantState: @(self.participantState)
+             kKeyUserIsBlogger: @(self.isBlogger),
+             kKeyUserParticipantState: @(self.participantState),
+             kKeyURL: self.urlString ?:  @""
              
              // Some data are not uploaded.
              
@@ -189,9 +204,11 @@ BOOL isUserObject (id  object)
                       self.email = user.email;
                       self.phoneNumber = user.phoneNumber;
                       self.gender = user.gender;
+                      self.isBlogger = user.isBlogger;
                       self.username = user.username;
                       self.facebookProfileImageURLString = user.facebookProfileImageURLString;
                       self.imageIdentifier = user.imageIdentifier;
+                      self.urlString = user.urlString;
                     
                       success();
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

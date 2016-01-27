@@ -21,13 +21,13 @@
 - (void) userTappedOnLists;
 - (void) userTappedOnPhotos;
 - (void) userPressedSettings;
+- (void) userPressedURL;
 @end
 
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate,
                                 ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, 
                                 OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate,
                         ViewPhotoVCDelegate
-
 >
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
@@ -39,6 +39,7 @@
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
 - (void) refreshUserImage;
+- (void) enableURLButton;
 @property (nonatomic,weak) NSObject<ProfileHeaderViewDelegate>* delegate;
 @end
 

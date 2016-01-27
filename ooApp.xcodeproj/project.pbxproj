@@ -216,8 +216,8 @@
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
 		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; };
 		962B00C31BD95D22008790FD /* VoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 962B00C21BD95D22008790FD /* VoteObject.m */; };
-		962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 962DBB221BFFAF6E00A8A09D /* Gradient Background.png */; };
 		963A4D271C50465600E10263 /* UserListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 963A4D261C50465600E10263 /* UserListVC.m */; };
+		9643BD331C56B38F00059002 /* SocialMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 9643BD321C56B38F00059002 /* SocialMedia.m */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		964DEA691C1F444C0045BA2C /* background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 964DEA681C1F444C0045BA2C /* background_image.png */; };
@@ -558,9 +558,10 @@
 		962667461BBC8C9600D77EBE /* UserTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTVCell.m; sourceTree = "<group>"; };
 		962B00C11BD95D22008790FD /* VoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteObject.h; sourceTree = "<group>"; };
 		962B00C21BD95D22008790FD /* VoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteObject.m; sourceTree = "<group>"; };
-		962DBB221BFFAF6E00A8A09D /* Gradient Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Gradient Background.png"; path = "Graphic Assets/Gradient Background.png"; sourceTree = "<group>"; };
 		963A4D251C50465600E10263 /* UserListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListVC.h; sourceTree = "<group>"; };
 		963A4D261C50465600E10263 /* UserListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserListVC.m; sourceTree = "<group>"; };
+		9643BD311C56B38F00059002 /* SocialMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialMedia.h; sourceTree = "<group>"; };
+		9643BD321C56B38F00059002 /* SocialMedia.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocialMedia.m; sourceTree = "<group>"; };
 		964BC81C1B97935F00760C83 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
 		964BC81D1B97935F00760C83 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
@@ -785,7 +786,6 @@
 				3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */,
 				3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */,
 				3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */,
-				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
 				964DEA681C1F444C0045BA2C /* background_image.png */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
 				96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */,
@@ -850,6 +850,8 @@
 				36FC99ED1C478D4F00768FF0 /* OOAIV.m */,
 				365FB7841C59198000826629 /* ShowMediaItemAnimator.h */,
 				365FB7851C59198000826629 /* ShowMediaItemAnimator.m */,
+				9643BD311C56B38F00059002 /* SocialMedia.h */,
+				9643BD321C56B38F00059002 /* SocialMedia.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -1276,7 +1278,6 @@
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
 				3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */,
 				36FC99E51C478C8200768FF0 /* ooLoading04.png in Resources */,
-				962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */,
 				36FC99D51C478C8200768FF0 /* ooLoading13.png in Resources */,
 				36FC99B91C478C8200768FF0 /* ooLoading44.png in Resources */,
 				36FC99C11C478C8200768FF0 /* ooLoading52.png in Resources */,
@@ -1474,6 +1475,7 @@
 				363B60C41B6AE49F00987A1B /* UserObject.m in Sources */,
 				36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */,
 				966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */,
+				9643BD331C56B38F00059002 /* SocialMedia.m in Sources */,
 				36FDA6FC1B585F650029D29D /* WhatsNewVC.m in Sources */,
 				967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */,
 				364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */,
@@ -1630,6 +1632,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
+				PROVISIONING_PROFILE = "42a4771b-f427-4da6-b9d8-a65940674722";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1670,6 +1673,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
+				PROVISIONING_PROFILE = "bb30befb-e305-43ef-9f6c-9b24905d9b44";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1719,7 +1723,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oomamiapp.oomami;
 				PRODUCT_NAME = Oomami;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "42a4771b-f427-4da6-b9d8-a65940674722";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = NO;
@@ -1770,7 +1774,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oomamiapp.oomami;
 				PRODUCT_NAME = Oomami;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "bb30befb-e305-43ef-9f6c-9b24905d9b44";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
@@ -1850,6 +1854,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
+				PROVISIONING_PROFILE = "bb30befb-e305-43ef-9f6c-9b24905d9b44";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1863,7 +1868,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1899,7 +1904,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oomamiapp.oomami;
 				PRODUCT_NAME = Oomami;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "bb30befb-e305-43ef-9f6c-9b24905d9b44";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
