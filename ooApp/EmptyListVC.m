@@ -19,11 +19,11 @@
 @interface EmptyListVC ()
 
 @property (nonatomic, strong) UILabel *labelUpper;
-@property (nonatomic,strong)  UILabel *labelPacMan;
+@property (nonatomic, strong) UILabel *labelPacMan;
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UIButton *buttonExplore;
 @property (nonatomic, strong) UIButton *buttonLists;
-@property (nonatomic,strong)  UIImageView *imageViewBackground;
+
 @end
 
 @implementation EmptyListVC  {
@@ -53,7 +53,7 @@
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
-    self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
+    self.view.backgroundColor= UIColorRGBA(kColorBackgroundTheme);
 
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
@@ -61,8 +61,6 @@
     if  ([UIScreen  mainScreen].bounds.size.height  < 481 ) {
         borderWidth= .5;
     }
-    
-    self.imageViewBackground= makeImageView( self.view,  @"Gradient Background.png");
     
     self.buttonLists= makeButton( self.view, LOCAL(@"LISTS") , kGeomFontSizeSubheader,
                                  YELLOW, BLACK, self,
@@ -165,9 +163,7 @@
     if  ([UIScreen  mainScreen].bounds.size.height  < 481 ) {
         vspace/= 2;
     }
-    
-    self.imageViewBackground.frame=  self.view.bounds;
-    
+        
     [self.textView sizeToFit];
     [_labelUpper sizeToFit];
     [_labelPacMan sizeToFit];

@@ -889,12 +889,11 @@
 //==============================================================================
 
 @interface EventParticipantVC ()
-@property (nonatomic,strong)  UITableView * table;
-@property (nonatomic,assign) int mode;
-@property (nonatomic,strong) NSMutableArray* sortedArrayOfVenues;
-@property (nonatomic,assign) BOOL coordinatorVCReportedEventChanged;
-@property (nonatomic,strong)  UIImageView* imageViewBackground;
-@property (nonatomic,assign) BOOL transitioning;
+@property (nonatomic, strong) UITableView *table;
+@property (nonatomic, assign) int mode;
+@property (nonatomic, strong) NSMutableArray *sortedArrayOfVenues;
+@property (nonatomic, assign) BOOL coordinatorVCReportedEventChanged;
+@property (nonatomic, assign) BOOL transitioning;
 @end
 
 @implementation EventParticipantVC
@@ -910,11 +909,9 @@
 
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= UIColorRGBA(kColorOffBlack);
+    self.view.backgroundColor= UIColorRGBA(kColorBackgroundTheme);
     
     self.sortedArrayOfVenues= [NSMutableArray new];
-    
-    self.imageViewBackground= makeImageView( self.view,  @"Gradient Background.png");
     
     _table= makeTable( self.view,  self);
 #define TABLE_REUSE_IDENTIFIER  @"participantsCell"
@@ -1214,7 +1211,6 @@
     float w= self.view.bounds.size.width;
     float h= self.view.bounds.size.height;
     _table.frame= CGRectMake(margin, margin,w-2* margin,h-2*margin);
-    _imageViewBackground.frame= self.view.bounds;
 }
 
 - (void) userRequestToSubmit;

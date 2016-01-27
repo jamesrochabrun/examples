@@ -215,7 +215,6 @@
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
 		962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 962667461BBC8C9600D77EBE /* UserTVCell.m */; };
 		962B00C31BD95D22008790FD /* VoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 962B00C21BD95D22008790FD /* VoteObject.m */; };
-		962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 962DBB221BFFAF6E00A8A09D /* Gradient Background.png */; };
 		963A4D271C50465600E10263 /* UserListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 963A4D261C50465600E10263 /* UserListVC.m */; };
 		9643BD331C56B38F00059002 /* SocialMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = 9643BD321C56B38F00059002 /* SocialMedia.m */; };
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
@@ -556,7 +555,6 @@
 		962667461BBC8C9600D77EBE /* UserTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTVCell.m; sourceTree = "<group>"; };
 		962B00C11BD95D22008790FD /* VoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteObject.h; sourceTree = "<group>"; };
 		962B00C21BD95D22008790FD /* VoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteObject.m; sourceTree = "<group>"; };
-		962DBB221BFFAF6E00A8A09D /* Gradient Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Gradient Background.png"; path = "Graphic Assets/Gradient Background.png"; sourceTree = "<group>"; };
 		963A4D251C50465600E10263 /* UserListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListVC.h; sourceTree = "<group>"; };
 		963A4D261C50465600E10263 /* UserListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserListVC.m; sourceTree = "<group>"; };
 		9643BD311C56B38F00059002 /* SocialMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocialMedia.h; sourceTree = "<group>"; };
@@ -785,7 +783,6 @@
 				3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */,
 				3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */,
 				3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */,
-				962DBB221BFFAF6E00A8A09D /* Gradient Background.png */,
 				964DEA681C1F444C0045BA2C /* background_image.png */,
 				367704361B88552E00B594E5 /* background-image.jpg */,
 				96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */,
@@ -1276,7 +1273,6 @@
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
 				3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */,
 				36FC99E51C478C8200768FF0 /* ooLoading04.png in Resources */,
-				962DBB231BFFAF6E00A8A09D /* Gradient Background.png in Resources */,
 				36FC99D51C478C8200768FF0 /* ooLoading13.png in Resources */,
 				36FC99B91C478C8200768FF0 /* ooLoading44.png in Resources */,
 				36FC99C11C478C8200768FF0 /* ooLoading52.png in Resources */,
