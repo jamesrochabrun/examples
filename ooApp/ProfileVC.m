@@ -61,7 +61,7 @@
     _buttonURL.hidden= YES;
     _buttonURL.enabled= NO;
     [_buttonURL setTitle: @"" forState:UIControlStateNormal];
-    _buttonFollow.hidden = YES;
+//    _buttonFollow.hidden = YES;
     
     _labelPhoto.hidden= YES;
     _labelPhotoCount.hidden= YES;
@@ -118,11 +118,15 @@
     
     [_userView setUser: _userInfo];
     
-    if  (_userInfo.isFoodie ) {
+    if  (_userInfo.isFoodie  && _userInfo.urlString.length) {
         [self enableURLButton];
         
         if (!_userInfo.urlString.length) {
-            [_buttonURL setTitle: @"This blogger has no blog URL." forState:UIControlStateNormal];
+            if ( _viewingOwnProfile) {
+                [_buttonURL setTitle: @"Tap here to enter your URL." forState:UIControlStateNormal];
+            } else {
+                [_buttonURL setTitle: @"" forState:UIControlStateNormal];
+            }
         } else {
             [_buttonURL setTitle: _userInfo.urlString forState:UIControlStateNormal];
         }
@@ -185,7 +189,7 @@
                            [OOAPI getUserStatsFor:_userInfo.userID
                                           success:^(UserStatsObject *stats) {
                                               ON_MAIN_THREAD(^{
-                                                  
+                                                  NSLog (@"GOT STATS FOR  %@",_userInfo.username);
                                                   [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
                                                   [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
                                                   
@@ -255,25 +259,11 @@
         [self addSubview:_filterView];
         [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];//  index 0
         [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];//  index 1
-//        
-//        self.labelBlogger= makeIconLabel(self, kFontIconCaptionFilled,28+ kGeomProfileImageSize);
-//        _labelBlogger.hidden= NO;
-//        _labelBlogger.frame = CGRectMake(0,0, kGeomProfileImageSize+40,  kGeomProfileImageSize+40);
-//        _labelBlogger.textColor= YELLOW;
-//        
+
         _userView= [[OOUserView alloc] init];
         _userView.delegate= self;
         [self addSubview:_userView];
         
-//        _viewHalo= makeView(self, CLEAR);
-//        addBorder(_viewHalo, 2, YELLOW);
-//        _viewHalo.userInteractionEnabled=NO;
-//        
-//        self.buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedSettings:) , 0);
-//        
-//        self.buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
-//        _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
-//        
         self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
         _buttonURL.hidden= YES;
         
@@ -291,7 +281,7 @@
                                         @selector(userTappedDescription:) , 0);
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
-        _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail];
+        _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeAbout];
         
         _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeDetail);
         _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeDetail);
@@ -317,10 +307,10 @@
                                        kGeomFontSizeSubheader, WHITE, CLEAR,
                                        self,
                                        @selector(userPressedFollow:), 0);
-        [_buttonFollow setTitle:@"" forState:UIControlStateSelected];
+        [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         _buttonFollow.layer.borderColor=YELLOW.CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
-        _buttonFollow.hidden = YES;
+        _buttonFollow.layer.borderWidth= 1;
 
         [self registerForNotification: kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
@@ -517,9 +507,9 @@
 
 - (void)indicateFollowing
 {
-    _buttonFollow.layer.borderWidth= 0;
+//    _buttonFollow.layer.borderWidth= 0;
     _buttonFollow.selected= YES;
-    _buttonFollow.hidden = YES;
+//    _buttonFollow.hidden = YES;
     _followingThisUser=YES;
     _labelPhoto.hidden= NO;
     _labelPhotoCount.hidden= NO;
@@ -534,8 +524,7 @@
 {
     _followingThisUser=NO;
     _buttonFollow.selected= NO;
-    _buttonFollow.layer.borderWidth= 1;
-    _buttonFollow.hidden = NO;
+//    _buttonFollow.hidden = NO;
 
     _labelPhoto.hidden= YES;
     _labelPhotoCount.hidden= YES;
@@ -615,8 +604,6 @@
     _buttonFollowees.frame = CGRectMake(rightX, y, horizontalSpaceForText, lowerLabelHeight);
     
     y=kGeomSpaceEdge+kGeomProfileImageSize+kGeomSpaceInter;
-    _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
-                                     kGeomButtonWidth, kGeomFollowButtonHeight );
     
     // Layout the statistics labels.
 #if 0
@@ -662,9 +649,21 @@
 #endif
     y += kGeomProfileStatsItemHeight;
     
-    if  (_usingURLButton ) {
-        _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
-        y += kGeomProfileHeaderViewHeightOfBloggerButton;
+    if ( !_viewingOwnProfile) {
+        _buttonFollow.hidden= NO;
+        _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,
+                                         y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
+                                         kGeomButtonWidth,  kGeomFollowButtonHeight );
+        y +=kGeomFollowButtonHeight + kGeomSpaceInter;
+    } else {
+        _buttonFollow.hidden= YES;
+    }
+    
+    if ( _userInfo.isFoodie ) {
+        if ( _viewingOwnProfile ||  _userInfo.urlString.length) {
+            _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
+            y += kGeomProfileHeaderViewHeightOfBloggerButton;
+        }
     }
     
     _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
@@ -717,6 +716,7 @@
     }
     
     self.listsAndPhotosLayout.userIsFoodie=NO;
+    self.listsAndPhotosLayout.userIsCurrentUser=NO;
     
     if (!_didFetch) {
         _didFetch=YES;
@@ -1255,7 +1255,10 @@
         
         view.delegate=self;
         
+        _listsAndPhotosLayout.userIsCurrentUser= _viewingOwnProfile;
         _listsAndPhotosLayout.userIsFoodie= _profileOwner.isFoodie;
+        _listsAndPhotosLayout.foodieHasURL= _profileOwner.urlString.length>0;
+    
         [_cv setNeedsLayout];
         
         return view;

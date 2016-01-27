@@ -175,8 +175,8 @@
 {
     _imageView.image=nil;
     _user= nil;
+    _ivFoodie.image= nil;
     _viewHalo.hidden= NO;
-    _viewHalo.layer.shadowRadius=0;
     _isFoodie=NO;
     _showCog=NO;
 }

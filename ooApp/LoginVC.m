@@ -255,7 +255,8 @@
              // NOTE  if the Facebook server gave us the username then use it.
              [weakSelf performSelectorOnMainThread: @selector(showMainUIForUserWithEmail:) withObject:email waitUntilDone:NO   ];
              
-         } else {
+         }
+         else {
              NSInteger code= connection.URLResponse.statusCode;
             NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@, Code= %lu", error, ( unsigned long)code);
              LOGS2(@"ERROR FROM FACEBOOK", error);
@@ -423,12 +424,13 @@
                                              
                                              // RULE: While the above is happening take the user to the
                                              //     Explore page regardless of whether the backend was reached.
-                                             
-                                             if (userInfo.username.length) {
-                                                 [self performSegueWithIdentifier:@"mainUISegue" sender:self];
-                                             } else {
-                                                 [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
-                                             }
+                                             ON_MAIN_THREAD(^{
+                                                 if (userInfo.username.length) {
+                                                     [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+                                                 } else {
+                                                     [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+                                                 }
+                                             });
                                          }
                                          failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
                                              NSInteger statusCode= operation.response.statusCode;
@@ -444,7 +446,9 @@
                                                      // XX:  this is the OO log in flow
                                                  }
                                                  
-                                                 [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+                                                 ON_MAIN_THREAD(^{
+                                                     [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+                                                 });
                                              } else {
                                                  message ( @"Oomami is temporarily down, but we are working on it! Try again in a few minutes.");
                                                  NSLog  (@"OTHER NETWORK ERROR: %ld", (long)statusCode);
@@ -641,6 +645,8 @@
                                                          [Settings sharedInstance].userObject= user;
                                                          [[Settings sharedInstance] save];
                                                      }
+                                                 } else {
+                                                     NSLog (@"PROBLEMATIC RETURN RESULT");
                                                  }
                                              }
                                              failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {

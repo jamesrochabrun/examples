@@ -143,6 +143,7 @@ static void updateStoredUserIfNecessary (UserObject *user)
     if ( [user.username isEqualToString: @"foodie"]) {
         user.userType= USER_TYPE_FOODIE;
         user.isFoodie = YES;
+        user.urlString=  @"HTTP://Google.com";
     }
     
     return user;

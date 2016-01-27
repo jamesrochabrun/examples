@@ -86,7 +86,12 @@
     }
     
     NSUInteger nSections=[self.collectionView numberOfSections];
-    int hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
+    int hdrHeight = 0;
+    if ( _userIsCurrentUser) {
+        hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightSelf;
+    } else {
+        hdrHeight = _userIsFoodie && _foodieHasURL? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
+    }
 
     for (NSUInteger section = 0; section < nSections; section++) {
         NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
@@ -207,8 +212,13 @@
     }
     
     NSUInteger nSections=[self.collectionView numberOfSections];
-    int hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
-    
+    int hdrHeight = 0;
+    if ( _userIsCurrentUser) {
+        hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightSelf;
+    } else {
+        hdrHeight = _userIsFoodie && _foodieHasURL? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
+    }
+
     for (NSUInteger section = 0; section < nSections; section++) {
         NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
         
