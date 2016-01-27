@@ -102,7 +102,7 @@
     _emptyUserView.layer.cornerRadius = w/2;
     _imageView.layer.cornerRadius= w/2;
 
-    const  float buttonSettingsSize= _showCog? 30:0;
+    const  float buttonSettingsSize= _showCog? kGeomProfileSettingsBadgeSize : 0;
     _buttonSettings.frame = CGRectMake(w- buttonSettingsSize,h-buttonSettingsSize,
                                        buttonSettingsSize,buttonSettingsSize);
     _buttonSettingsInner.frame= _buttonSettings.frame;

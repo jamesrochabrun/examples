@@ -107,6 +107,7 @@ static CGFloat kGeomProfileHeaderViewHeightBlogger = 223+25;
 static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 static CGFloat kGeomProfileStatsOverallWidth= 171;
 static CGFloat kGeomProfileStatsItemHeight= 36;
+static CGFloat kGeomProfileSettingsBadgeSize=  30;
 
 static CGFloat kGeomUserListUserImageHeight=82;
 
