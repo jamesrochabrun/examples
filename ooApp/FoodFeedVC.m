@@ -36,6 +36,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) UIImage *imageToUpload;
 @property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
 @property (nonatomic) BOOL needsUpdate;
+@property (nonatomic) NSUInteger numColumns;
+@property (nonatomic) NSUInteger selectedItem;
+@property (nonatomic, strong) UIButton *toggleNumColumnsButton;
+@property (nonatomic, strong) FoodFeedVCCVL *cvl;
 @end
 
 @implementation FoodFeedVC
@@ -58,10 +62,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [_filterView setCurrent:0];
     [self.view addSubview:_filterView];
     
-    FoodFeedVCCVL *cvl = [[FoodFeedVCCVL alloc] init];
-    cvl.delegate = self;
+    _cvl = [[FoodFeedVCCVL alloc] init];
+    _cvl.delegate = self;
     
-    _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:cvl];
+    _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:_cvl];
     [_collectionView scrollsToTop];
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
@@ -72,6 +76,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     _collectionView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    _toggleNumColumnsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_toggleNumColumnsButton withIcon:kFontIconFoodFeed fontSize:40 width:40 height:40 backgroundColor:kColorClear target:self selector:@selector(toggleNumColumns)];
+//    [self.view addSubview:_toggleNumColumnsButton];
+    _toggleNumColumnsButton.hidden = YES;
 
     [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
     
@@ -80,6 +89,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                                                  name:kNotificationFoodFeedNeedsUpdate object:nil];
     [self.view bringSubviewToFront:self.uploadProgressBar];
     _needsUpdate = YES;
+    _numColumns = 2;
+    _selectedItem = -1;
 }
 
 - (void)viewWillLayoutSubviews {
@@ -255,12 +266,33 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     }];
 }
 
+- (void)toggleNumColumns {
+    _numColumns = (_numColumns == 1) ? 2 : 1;
+    UICollectionViewCell *cell = [_collectionView.visibleCells objectAtIndex:0];
+    if (!cell) return;
+    NSIndexPath *ip = [_collectionView indexPathForCell:cell];
+    [_cvl invalidateLayout];
+//    [_collectionView reloadItemsAtIndexPaths:@[ip]];
+//    [_collectionView reloadData];
+//    [_collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
+}
+
+- (NSUInteger)collectionView:(UICollectionView *)collectionView layout:(FoodFeedVCCVL *)collectionViewLayout numberOfColumnsInSection:(NSUInteger)section {
+    
+    return _numColumns;
+}
+
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(FoodFeedVCCVL *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (kFoodFeedNumColumnsForMediaItems == 1) return 150;
+    
+    if (_numColumns == 1) {
+        if (_selectedItem != indexPath.row) return 150;
+//        return height(_collectionView);
+    }
+    
     RestaurantObject *r =[_restaurants objectAtIndex:indexPath.row];
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : [[MediaItemObject alloc] init];
-    if (!mio.width || !mio.height) return width(collectionView)/kFoodFeedNumColumnsForMediaItems; //NOTE: this should not happen
-    CGFloat height = floorf(((width(self.collectionView) - (kFoodFeedNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kFoodFeedNumColumnsForMediaItems)*mio.height/mio.width);
+    if (!mio.width || !mio.height) return width(collectionView)/_numColumns; //NOTE: this should not happen
+    CGFloat height = floorf(((width(self.collectionView) - (_numColumns-1) - 2*kGeomSpaceEdge)/_numColumns)*mio.height/mio.width);
     return height;
 }
 
@@ -308,6 +340,22 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    _selectedItem = (_selectedItem == indexPath.row) ? -1 : indexPath.row;
+    
+    if (_numColumns == 1) {
+        
+        [_collectionView performBatchUpdates:^{
+           [_cvl invalidateLayout];
+        } completion:^(BOOL finished) {
+            
+        }];
+//        if (_selectedItem != -1) {
+        [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
+//        }
+//        [_collectionView reloadItemsAtIndexPaths:@[indexPath]];
+//        [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
+        return;
+    }
     RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
 
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
