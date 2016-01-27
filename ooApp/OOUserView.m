@@ -12,8 +12,12 @@
 @interface OOUserView ()
 
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIView *viewHalo;
+@property (nonatomic, strong) UIImageView *ivFoodie;
 @property (nonatomic, strong) UILabel *emptyUserView;
-
+@property (nonatomic, strong) UIButton* buttonSettings,*buttonSettingsInner;
+@property (nonatomic,assign) BOOL isFoodie;
+@property (nonatomic,assign) BOOL showCog;
 @end
 
 @implementation OOUserView
@@ -21,55 +25,103 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.clipsToBounds= NO;
+        
         _imageView = [[UIImageView alloc] init];
         [self addSubview:_imageView];
-        _imageView.translatesAutoresizingMaskIntoConstraints = NO;
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
+        _imageView.clipsToBounds= YES;
         
         _emptyUserView = [[UILabel alloc] init];
         [_emptyUserView withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorGrayMiddle];
         _emptyUserView.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_emptyUserView];
-        _emptyUserView.translatesAutoresizingMaskIntoConstraints = NO;
-               self.clipsToBounds = YES;
+        _emptyUserView.clipsToBounds= YES;
+        
+        _ivFoodie= makeImageView(self,  nil);
+        _ivFoodie.contentMode = UIViewContentModeScaleAspectFit;
+        _ivFoodie.clipsToBounds=NO;
+        
+        _viewHalo= makeView(self, CLEAR);
+        addBorder(_viewHalo, 1.5, YELLOW);
+        _viewHalo.userInteractionEnabled=NO;
+        
+        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedSettings:) , 0);
+        
+        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
+        
     }
     return self;
 }
 
-- (void)updateConstraints {
-    [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButton)};
-    
-    UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _imageView, _emptyUserView);
-    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    _imageView.layer.cornerRadius = width(_imageView)/2;
-    _imageView.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
-    _imageView.layer.borderWidth = 0;
+//- (void)updateConstraints {
+//    [super updateConstraints];
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButton)};
+//    
+//    UIView *superview = self;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _imageView, _emptyUserView);
+//    
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    
+//    _imageView.layer.cornerRadius = width(_imageView)/2;
+//    _imageView.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
+//    _imageView.layer.borderWidth = 0;
+//}
+
+- (void)setIsFoodie
+{
+    _isFoodie=YES;
+    _ivFoodie.image= [UIImage imageNamed: @"FoodieBubble.png"];
+    _viewHalo.hidden= YES;
+    [self setNeedsLayout];
 }
 
-- (void)layoutSubviews {
+- (void)setShowCog
+{
+    _showCog=YES;
+    [self setNeedsLayout];
+}
+
+- (void)layoutSubviews
+{
     [super layoutSubviews];
-//    _emptyUserView.layer.cornerRadius = width(_emptyUserView)/2;
-//    _imageView.layer.cornerRadius = width(_imageView)/2;
-    self.layer.cornerRadius = width(_imageView)/2;
+    
+    float w = self.bounds.size.width;
+    float h = self.bounds.size.height;
+    
+    _emptyUserView.frame = self.bounds;
+    _imageView.frame = self.bounds;
+    _viewHalo.frame = self.bounds;
+    _ivFoodie.frame= self.bounds;
+
+    _viewHalo.layer.cornerRadius = w/2;
+    _emptyUserView.layer.cornerRadius = w/2;
+    _imageView.layer.cornerRadius= w/2;
+
+    const  float buttonSettingsSize= _showCog? 30:0;
+    _buttonSettings.frame = CGRectMake(w- buttonSettingsSize,h-buttonSettingsSize,
+                                       buttonSettingsSize,buttonSettingsSize);
+    _buttonSettingsInner.frame= _buttonSettings.frame;
 }
 
 - (void)setUser:(UserObject *)user
 {
+    if (!user) {
+        self.imageView.image = nil;
+        _user=nil;
+        return;
+    }
     if  (user==_user && [_user isEqualToDeeply: user] ) {
         return;
     }
     _user = user;
-    if (!user) {
-        self.imageView.image = nil;
-        return;
-    }
+    
+    if (user.isFoodie)
+        [self setIsFoodie];
     
     NSString *first= _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
     NSString *last=_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
@@ -123,6 +175,15 @@
 {
     _imageView.image=nil;
     _user= nil;
+    _viewHalo.hidden= NO;
+    _viewHalo.layer.shadowRadius=0;
+    _isFoodie=NO;
+    _showCog=NO;
+}
+
+- (void)userPressedSettings: (id) sender
+{
+    [self  userTapped];
 }
 
 - (void)userTapped {

@@ -33,8 +33,6 @@
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
-@property (nonatomic, strong) UIView *viewHalo;
-@property (nonatomic, strong) UILabel *labelBlogger;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) OOUserView *userView;
@@ -97,7 +95,7 @@
 
 - (void)setUserInfo:(UserObject *)u
 {
-    if ( [u isEqualToDeeply: _userInfo] && u.isBlogger== !_buttonURL.hidden) {
+    if ( [u isEqualToDeeply: _userInfo] && u.isFoodie== !_buttonURL.hidden) {
         return;
     }
     _userInfo= u;
@@ -120,7 +118,7 @@
     
     [_userView setUser: _userInfo];
     
-    if  (_userInfo.isBlogger ) {
+    if  (_userInfo.isFoodie ) {
         [self enableURLButton];
         
         if (!_userInfo.urlString.length) {
@@ -141,7 +139,8 @@
         NSLog  (@"VIEWING OWN PROFILE.");
         // RULE: Show the user's own stats.
         [self  indicateFollowing];
-        
+        [_userView setShowCog];
+      
         [OOAPI getUserStatsFor:_userInfo.userID
                        success:^(UserStatsObject *stats) {
                            ON_MAIN_THREAD(^{
@@ -256,25 +255,25 @@
         [self addSubview:_filterView];
         [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];//  index 0
         [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];//  index 1
-        
-        self.labelBlogger= makeIconLabel(self, kFontIconCaptionFilled,28+ kGeomProfileImageSize);
-        _labelBlogger.hidden= NO;
-        _labelBlogger.frame = CGRectMake(0,0, kGeomProfileImageSize+40,  kGeomProfileImageSize+40);
-        _labelBlogger.textColor= YELLOW;
-        
+//        
+//        self.labelBlogger= makeIconLabel(self, kFontIconCaptionFilled,28+ kGeomProfileImageSize);
+//        _labelBlogger.hidden= NO;
+//        _labelBlogger.frame = CGRectMake(0,0, kGeomProfileImageSize+40,  kGeomProfileImageSize+40);
+//        _labelBlogger.textColor= YELLOW;
+//        
         _userView= [[OOUserView alloc] init];
         _userView.delegate= self;
         [self addSubview:_userView];
-
-        _viewHalo= makeView(self, CLEAR);
-        addBorder(_viewHalo, 2, YELLOW);
-        _viewHalo.userInteractionEnabled=NO;
         
-        self.buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedSettings:) , 0);
-        
-        self.buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
-        _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
-        
+//        _viewHalo= makeView(self, CLEAR);
+//        addBorder(_viewHalo, 2, YELLOW);
+//        _viewHalo.userInteractionEnabled=NO;
+//        
+//        self.buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedSettings:) , 0);
+//        
+//        self.buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
+//        _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
+//        
         self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
         _buttonURL.hidden= YES;
         
@@ -593,16 +592,6 @@
     int y = kGeomSpaceEdge;
     _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
     
-    _viewHalo.frame = _userView.frame;
-    _viewHalo.layer.cornerRadius=kGeomProfileImageSize/2;
-    
-    CGRect r;
-    _labelBlogger.center= _userView.center;
-    r= _labelBlogger.frame;
-    r.origin.y+= 4;
-    _labelBlogger.frame = r;
-    _labelBlogger.hidden= !_userInfo.isBlogger;
-    
     const  float buttonSettingsSize= _viewingOwnProfile? 30:0;
     _buttonSettings.frame = CGRectMake(_userView.frame.origin.x+kGeomProfileImageSize-buttonSettingsSize,
                                        y + kGeomProfileImageSize-buttonSettingsSize,
@@ -727,7 +716,7 @@
         _lastShownUser = _userInfo.userID;
     }
     
-    self.listsAndPhotosLayout.userIsBlogger=NO;
+    self.listsAndPhotosLayout.userIsFoodie=NO;
     
     if (!_didFetch) {
         _didFetch=YES;
@@ -1266,7 +1255,7 @@
         
         view.delegate=self;
         
-        _listsAndPhotosLayout.userIsBlogger= _profileOwner.isBlogger;
+        _listsAndPhotosLayout.userIsFoodie= _profileOwner.isFoodie;
         [_cv setNeedsLayout];
         
         return view;

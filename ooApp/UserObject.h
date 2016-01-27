@@ -24,6 +24,7 @@ typedef enum: NSUInteger {
     USER_TYPE_ADMIN = 1,
     USER_TYPE_NORMAL = 2,
     USER_TYPE_INACTIVE = 3,
+    USER_TYPE_FOODIE = 4,
 } UserType;
 
 typedef enum: NSUInteger {
@@ -52,7 +53,8 @@ extern NSString *const kKeyUserAbout;
 @interface UserObject : NSObject
 
 @property (nonatomic, assign) NSUInteger userID;
-@property (nonatomic, assign) BOOL isBlogger;
+@property (nonatomic, assign) UserType userType;
+@property (nonatomic, assign) BOOL isFoodie;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;
@@ -83,7 +85,6 @@ extern NSString *const kKeyUserAbout;
 
 - (void) refreshWithSuccess: (void (^)())success
                    failure:(void (^)())failure;
-
 
 @end
 

@@ -21,7 +21,7 @@
 @end
 
 @interface ProfileVCCVLayout : UICollectionViewLayout
-@property (nonatomic,assign) BOOL userIsBlogger;
+@property (nonatomic,assign) BOOL userIsFoodie;
 @property (nonatomic, weak) id<ProfileVCCollectionViewDelegate> delegate;
 - (void) setShowingLists: (BOOL) showing;
 @end

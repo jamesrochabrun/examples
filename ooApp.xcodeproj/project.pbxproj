@@ -220,6 +220,7 @@
 		964BC81E1B97935F00760C83 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81D1B97935F00760C83 /* Settings.m */; };
 		964BC8211B97A4E700760C83 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 964BC81F1B97A4E700760C83 /* LocationManager.m */; };
 		964DEA691C1F444C0045BA2C /* background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 964DEA681C1F444C0045BA2C /* background_image.png */; };
+		96567E871C59658C00DCEF1B /* FoodieBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = 96567E861C59658C00DCEF1B /* FoodieBubble.png */; };
 		965A1A971BBA05B500727773 /* SearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965A1A961BBA05B500727773 /* SearchVC.m */; };
 		966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 966E08391BC6E38800A4B866 /* EventWhoVC.m */; };
 		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; };
@@ -564,6 +565,7 @@
 		964BC81F1B97A4E700760C83 /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		964BC8201B97A4E700760C83 /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		964DEA681C1F444C0045BA2C /* background_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background_image.png; path = "Graphic Assets/background_image.png"; sourceTree = "<group>"; };
+		96567E861C59658C00DCEF1B /* FoodieBubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = FoodieBubble.png; path = "Graphic Assets/FoodieBubble.png"; sourceTree = "<group>"; };
 		965A1A951BBA05B500727773 /* SearchVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchVC.h; sourceTree = "<group>"; };
 		965A1A961BBA05B500727773 /* SearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchVC.m; sourceTree = "<group>"; };
 		966E08381BC6E38800A4B866 /* EventWhoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWhoVC.h; sourceTree = "<group>"; };
@@ -778,6 +780,7 @@
 			children = (
 				36FC99731C478C6400768FF0 /* ooLoading */,
 				3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */,
+				96567E861C59658C00DCEF1B /* FoodieBubble.png */,
 				3613297B1C196215009413D6 /* Oomami_AppStoreLogo(120x120).png */,
 				3613297C1C196215009413D6 /* Oomami_AppStoreLogo(152x152).png */,
 				3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */,
@@ -1236,6 +1239,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				367704571B8BF05100B594E5 /* Lato-Heavy.ttf in Resources */,
+				96567E871C59658C00DCEF1B /* FoodieBubble.png in Resources */,
 				36BA03431C50CE1D00802EF8 /* ooLoading79.png in Resources */,
 				3677045A1B8BF05100B594E5 /* Lato-Light.ttf in Resources */,
 				361329851C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png in Resources */,

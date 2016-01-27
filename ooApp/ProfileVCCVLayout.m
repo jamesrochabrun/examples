@@ -86,7 +86,7 @@
     }
     
     NSUInteger nSections=[self.collectionView numberOfSections];
-    int hdrHeight = _userIsBlogger? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
+    int hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
 
     for (NSUInteger section = 0; section < nSections; section++) {
         NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
@@ -207,7 +207,7 @@
     }
     
     NSUInteger nSections=[self.collectionView numberOfSections];
-    int hdrHeight = _userIsBlogger? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
+    int hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
     
     for (NSUInteger section = 0; section < nSections; section++) {
         NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);

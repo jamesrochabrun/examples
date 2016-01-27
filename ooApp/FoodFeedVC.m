@@ -270,7 +270,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     _numColumns = (_numColumns == 1) ? 2 : 1;
     UICollectionViewCell *cell = [_collectionView.visibleCells objectAtIndex:0];
     if (!cell) return;
-    NSIndexPath *ip = [_collectionView indexPathForCell:cell];
+//    NSIndexPath *ip = [_collectionView indexPathForCell:cell];
     [_cvl invalidateLayout];
 //    [_collectionView reloadItemsAtIndexPaths:@[ip]];
 //    [_collectionView reloadData];

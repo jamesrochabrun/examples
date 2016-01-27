@@ -39,7 +39,6 @@ static const double kDefaultSearchRadius = 10000; // meters
 {
     self = [super init];
     if (self) {
-        
         [self readUser];
         if (!_userObject) {
             _userObject= [[UserObject alloc] init];

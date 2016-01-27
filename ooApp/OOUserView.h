@@ -21,5 +21,7 @@
 @property (nonatomic, weak) id<OOUserViewDelegate> delegate;
 
 - (void) clear;
+- (void) setIsFoodie;
+- (void) setShowCog;
 
 @end

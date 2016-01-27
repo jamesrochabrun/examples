@@ -303,7 +303,7 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // NOTE: In newer iOS releases, I've found attempting to save data from here results in data getting lost. -ZS
+    // NOTE: I've found attempting to save data from here results in data getting lost. -ZS
     
     ANALYTICS_EVENT_OTHER(@"Terminate");
 }

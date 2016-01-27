@@ -85,8 +85,9 @@
 
 @interface EventCoordinatorVC : SubBaseVC <UIImagePickerControllerDelegate, UIScrollViewDelegate, 
     EventWhenVCDelegate, ParticipantsViewDelegate, EventWhoVCDelegate,EventCoordinatorWhereCellDelegate,
-    EventCoordinatorWhenCellDelegate,EventCoordinatorWhoCellDelegate,
-UINavigationControllerDelegate>
+    EventCoordinatorWhenCellDelegate,EventCoordinatorWhoCellDelegate,EventCoordinatorCoverCellDelegate,
+    UINavigationControllerDelegate
+>
 @property (nonatomic,weak) id <EventCoordinatorVCDelegate> delegate;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
 @property (nonatomic,assign) BOOL isNewEvent;

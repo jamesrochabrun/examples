@@ -26,8 +26,9 @@ NSString *const kKeyUserParticipantType = @"participant_type";
 NSString *const kKeyUserParticipantState = @"participant_state";
 NSString *const kKeyUserMediaItem = @"media_item";
 NSString *const kKeyUserAbout = @"about";
-NSString *const kKeyUserIsBlogger = @"is_blogger";
+NSString *const kKeyUserIsFoodie = @"is_blogger";
 NSString *const kKeyURL = @"url";
+NSString *const kKeyUserType = @"type";
 
 @interface UserObject()
 
@@ -64,7 +65,8 @@ BOOL isUserObject (id  object)
 - (BOOL)isEqualToDeeply:(UserObject*) other;
 {
     if  ( self.userID != other.userID)  return NO;
-    if  ( (1&self.isBlogger) != (1&other.isBlogger))  return NO;
+    if  ( self.userType != other.userType)  return NO;
+    if  ( (1&self.isFoodie) != (1&other.isFoodie))  return NO;
     
     if  ( self.mediaItem.mediaItemId != other.mediaItem.mediaItemId)  return NO;
     if  (![(self.mediaItem.url ?:  @"") isEqualToString: (other.mediaItem.url?:  @"")])  return NO;
@@ -79,6 +81,20 @@ BOOL isUserObject (id  object)
     if  (![(self.username?:  @"") isEqualToString: (other.username?:  @"")])  return NO;
     if  (![(self.urlString?:  @"") isEqualToString: (other.urlString?:  @"")])  return NO;
     return YES;
+}
+
+static void updateStoredUserIfNecessary (UserObject *user)
+{
+    if (!user) return;
+    
+    UserObject *object = [Settings sharedInstance].userObject;
+    if (user.userID != object.userID)
+        return;
+    
+    if (![user isEqualToDeeply: object]) {
+        [Settings sharedInstance].userObject = user;
+        [[Settings sharedInstance] save];
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -102,13 +118,9 @@ BOOL isUserObject (id  object)
     user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
-    user.isBlogger = parseNumberOrNullFromServer([dict objectForKey:kKeyUserIsBlogger]) ? YES: NO;
     user.urlString = parseStringOrNullFromServer([dict objectForKey: kKeyURL]);
-    
-    // FOR TESTING: Anuj is a blogger
-    if ( [user.username isEqualToString: @"foodie"]) {
-        user.isBlogger= YES;
-    }
+    user.userType=parseNumberOrNullFromServer([dict objectForKey:kKeyUserType]);
+    user.isFoodie = user.userType == USER_TYPE_FOODIE;
     
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
@@ -125,6 +137,12 @@ BOOL isUserObject (id  object)
     }
     if ([dict objectForKey:kKeyUserMediaItem]) {
         user.mediaItem = [MediaItemObject mediaItemFromDict:[dict objectForKey:kKeyUserMediaItem]];
+    }
+        
+    // FOR TESTING: Anuj is a blogger
+    if ( [user.username isEqualToString: @"foodie"]) {
+        user.userType= USER_TYPE_FOODIE;
+        user.isFoodie = YES;
     }
     
     return user;
@@ -150,9 +168,10 @@ BOOL isUserObject (id  object)
              kKeyUserImageIdentifier:self.imageIdentifier ?: @"",
              kKeyUserImageURL:self.facebookProfileImageURLString ?: @"",
              kKeyUserParticipantType: @(self.participantType),
-             kKeyUserIsBlogger: @(self.isBlogger),
+             kKeyUserIsFoodie: @(self.isFoodie),
              kKeyUserParticipantState: @(self.participantState),
-             kKeyURL: self.urlString ?:  @""
+             kKeyURL: self.urlString ?:  @"",
+             kKeyUserType:  @(self.userType),
              
              // Some data are not uploaded.
              
@@ -193,23 +212,27 @@ BOOL isUserObject (id  object)
 - (void)refreshWithSuccess:(void (^)())success
                     failure:(void (^)())failure;
 {
+    __weak UserObject *weakSelf = self;
     [OOAPI getUserWithID:self.userID
                   success:^(UserObject *user) {
-                      self.mediaItem = user.mediaItem;
-                      self.userID = user.userID;
-                      self.about = user.about;
-                      self.firstName = user.firstName;
-                      self.middleName = user.middleName;
-                      self.lastName = user.lastName ;
-                      self.email = user.email;
-                      self.phoneNumber = user.phoneNumber;
-                      self.gender = user.gender;
-                      self.isBlogger = user.isBlogger;
-                      self.username = user.username;
-                      self.facebookProfileImageURLString = user.facebookProfileImageURLString;
-                      self.imageIdentifier = user.imageIdentifier;
-                      self.urlString = user.urlString;
+                      weakSelf.mediaItem = user.mediaItem;
+                      weakSelf.userID = user.userID;
+                      weakSelf.about = user.about;
+                      weakSelf.firstName = user.firstName;
+                      weakSelf.middleName = user.middleName;
+                      weakSelf.lastName = user.lastName ;
+                      weakSelf.email = user.email;
+                      weakSelf.phoneNumber = user.phoneNumber;
+                      weakSelf.gender = user.gender;
+                      weakSelf.isFoodie = user.isFoodie;
+                      weakSelf.username = user.username;
+                      weakSelf.facebookProfileImageURLString = user.facebookProfileImageURLString;
+                      weakSelf.imageIdentifier = user.imageIdentifier;
+                      weakSelf.urlString = user.urlString;
+                      weakSelf.userType = user.userType;
                     
+                      updateStoredUserIfNecessary (user);
+
                       success();
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                       failure();
