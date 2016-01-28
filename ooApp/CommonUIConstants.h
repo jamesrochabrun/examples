@@ -70,7 +70,10 @@ static NSUInteger kGeomFontSizeListButton = 12;
 static NSUInteger kGeomFontSizeStripHeader = 13;
 static NSUInteger kGeomFontSizeBannerMain = 12;
 static NSUInteger kGeomFontSizeDetail = 11;
+static NSUInteger kGeomFontSizeStatsText = 14;
+static NSUInteger kGeomFontSizeStatsIcons = 17;
 static NSUInteger kGeomFontSizeAbout = 13;
+
 static NSInteger kGeomPeopleIconFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomIconSize = 30;

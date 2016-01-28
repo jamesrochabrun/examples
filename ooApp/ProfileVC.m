@@ -62,6 +62,9 @@
     _buttonURL.hidden= YES;
     _buttonURL.enabled= NO;
     [_buttonURL setTitle: @"" forState:UIControlStateNormal];
+    
+    // NOTE: Before we have a response from the backend we do not know what these values will be.
+    _buttonFollow.hidden= YES;
     _labelPhoto.hidden= YES;
     _labelPhotoCount.hidden= YES;
     _labelLikes.hidden= YES;
@@ -142,7 +145,7 @@
         // RULE: Show the user's own stats.
         [self  indicateFollowing];
         [_userView setShowCog];
-      
+        
         [OOAPI getUserStatsFor:_userInfo.userID
                        success:^(UserStatsObject *stats) {
                            ON_MAIN_THREAD(^{
@@ -169,53 +172,52 @@
     }
     else  {
         [OOAPI getFollowersOf:_userInfo.userID
-                       success:^(NSArray *users) {
-                           BOOL foundSelf= NO;
-                           for (UserObject* user   in  users) {
-                               // RULE: If we are following this user then we make the follow button disappear.
-                               if ( user.userID==ownUserIdentifier) {
-                                   foundSelf= YES;
-                                   break;
-                               }
-                           }
-                           
-                           ON_MAIN_THREAD(^{
-                               if  (!foundSelf) {
-                                   [weakSelf indicateNotFollowing];
-                               } else {
-                                   [weakSelf indicateFollowing];
-                               }
-                               
-                               [OOAPI getUserStatsFor:_userInfo.userID
-                                              success:^(UserStatsObject *stats) {
-                                                  ON_MAIN_THREAD(^{
-                                                      NSLog (@"GOT STATS FOR  %@",_userInfo.username);
-                                                      [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                                                      [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                                                      
-                                                      weakSelf.buttonFollowees.alpha= 1;
-                                                      weakSelf.buttonFollowers.alpha= 1;
-                                                      weakSelf.buttonFolloweesCount.alpha= 1;
-                                                      weakSelf.buttonFollowersCount.alpha= 1;
-                                                      
-                                                      weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                                                      weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                                                      weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                                                      
-                                                      [weakSelf setNeedsLayout];
-                                                  });
-                                                  
-                                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                  NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                                                  
-                                              }];
-                           });
-                           
-                           
-                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                           NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
-                           [weakSelf  indicateNotFollowing];
-                       }];
+                      success:^(NSArray *users) {
+                          BOOL foundSelf= NO;
+                          for (UserObject* user   in  users) {
+                              // RULE: If we are following this user then we make the follow button disappear.
+                              if ( user.userID==ownUserIdentifier) {
+                                  foundSelf= YES;
+                                  break;
+                              }
+                          }
+                          
+                          ON_MAIN_THREAD(^{
+                              if  (!foundSelf) {
+                                  [weakSelf indicateNotFollowing];
+                              } else {
+                                  [weakSelf indicateFollowing];
+                              }
+                              
+                              [OOAPI getUserStatsFor:_userInfo.userID
+                                             success:^(UserStatsObject *stats) {
+                                                 ON_MAIN_THREAD(^{
+                                                     NSLog (@"GOT STATS FOR  %@",_userInfo.username);
+                                                     [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                                                     [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                                                     
+                                                     weakSelf.buttonFollowees.alpha= 1;
+                                                     weakSelf.buttonFollowers.alpha= 1;
+                                                     weakSelf.buttonFolloweesCount.alpha= 1;
+                                                     weakSelf.buttonFollowersCount.alpha= 1;
+                                                     
+                                                     weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                                                     weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                                                     weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                                                     
+                                                     [weakSelf setNeedsLayout];
+                                                 });
+                                                 
+                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                 NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                                                 
+                                             }];
+                          });
+                          
+                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
+                          [weakSelf  indicateNotFollowing];
+                      }];
     }
     
     if  (_userInfo.about.length) {
@@ -260,7 +262,7 @@
         [self addSubview:_filterView];
         [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];//  index 0
         [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];//  index 1
-
+        
         _userView= [[OOUserView alloc] init];
         _userView.delegate= self;
         [self addSubview:_userView];
@@ -284,12 +286,12 @@
         _buttonDescription.titleLabel.numberOfLines= 0;
         _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeAbout];
         
-        _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeDetail);
-        _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeDetail);
-        _labelLikesCount= makeLabel(self,  @"", kGeomFontSizeDetail);
-        _labelVenues= makeIconLabel(self, kFontIconPin, kGeomFontSizeHeader);
-        _labelPhoto= makeIconLabel(self, kFontIconPhoto, kGeomFontSizeHeader);
-        _labelLikes= makeIconLabel(self, kFontIconYum, kGeomFontSizeHeader);
+        _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
+        _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
+        _labelLikesCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
+        _labelVenues= makeIconLabel(self, kFontIconPin, kGeomFontSizeStatsIcons);
+        _labelPhoto= makeIconLabel(self, kFontIconPhoto, kGeomFontSizeStatsIcons);
+        _labelLikes= makeIconLabel(self, kFontIconYum, kGeomFontSizeStatsIcons);
         
         _labelVenuesCount.textColor= WHITE;
         _labelPhotoCount.textColor= WHITE;
@@ -304,7 +306,7 @@
         
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
-        self.buttonFollow = makeButton(self, @"FOLLOW",
+        self.buttonFollow= makeButton(self, @"FOLLOW",
                                        kGeomFontSizeSubheader, WHITE, CLEAR,
                                        self,
                                        @selector(userPressedFollow:), 0);
@@ -312,7 +314,8 @@
         _buttonFollow.layer.borderColor=YELLOW.CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
         _buttonFollow.layer.borderWidth= 1;
-
+        _buttonFollow.hidden= YES;
+        
         [self registerForNotification: kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
          ];
@@ -508,6 +511,7 @@
 
 - (void)indicateFollowing
 {
+    _buttonFollow.hidden= NO;
     _buttonFollow.selected= YES;
     _followingThisUser=YES;
     _labelPhoto.hidden= NO;
@@ -522,13 +526,14 @@
 - (void)indicateNotFollowing
 {
     _followingThisUser=NO;
+    _buttonFollow.hidden= NO;
     _buttonFollow.selected= NO;
-    _labelPhoto.hidden= YES;
-    _labelPhotoCount.hidden= YES;
-    _labelLikes.hidden= YES;
-    _labelLikesCount.hidden= YES;
-    _labelVenues.hidden= YES;
-    _labelVenuesCount.hidden= YES;
+//    _labelPhoto.hidden= YES;
+//    _labelPhotoCount.hidden= YES;
+//    _labelLikes.hidden= YES;
+//    _labelLikesCount.hidden= YES;
+//    _labelVenues.hidden= YES;
+//    _labelVenuesCount.hidden= YES;
     
 }
 
@@ -548,7 +553,7 @@
         [self verifyUnfollow];
         return;
     }
-
+    
     [OOAPI setFollowingUser:_userInfo
                          to: YES
                     success:^(id responseObject) {
@@ -629,7 +634,7 @@
     float x= (w-w1-w2-w3-w4-w6-w5-2*kGeomSpaceInter)/2;
     _labelVenues.frame = CGRectMake(x,y ,w1,kGeomProfileStatsItemHeight);
     x += w1;
-  
+    
     _labelVenuesCount.frame = CGRectMake(x,y,w2,kGeomProfileStatsItemHeight);
     x += w2+kGeomSpaceInter;
     
@@ -638,22 +643,22 @@
     
     _labelPhotoCount.frame = CGRectMake(x,y,w4,kGeomProfileStatsItemHeight);
     x += w4 +kGeomSpaceInter;
-   
+    
     _labelLikes.frame = CGRectMake(x,y ,w5,kGeomProfileStatsItemHeight);
     x += w5;
-
+    
     _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
 #endif
     y += kGeomProfileStatsItemHeight;
     
     if ( !_viewingOwnProfile) {
-        _buttonFollow.hidden= NO;
+//        _buttonFollow.hidden= NO;
         _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,
                                          y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
                                          kGeomButtonWidth,  kGeomFollowButtonHeight );
         y +=kGeomFollowButtonHeight + kGeomSpaceInter;
     } else {
-        _buttonFollow.hidden= YES;
+//        _buttonFollow.hidden= YES;
     }
     
     if ( _userInfo.isFoodie ) {
@@ -972,7 +977,7 @@
     if (_restaurantPicker) return;
     
     self.selectedRestaurant= nil;
-
+    
     _restaurantPicker = [[RestaurantPickerVC alloc] init];
     _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
     _restaurantPicker.delegate = self;
@@ -990,13 +995,13 @@
 {
     self.selectedRestaurant= restaurant;
     __weak  ProfileVC *weakSelf = self;
-
+    
     [restaurantPickerVC dismissViewControllerAnimated:YES completion:^{
         weakSelf.restaurantPicker = nil;
         [weakSelf performUpload];
     }
      ];
- }
+}
 
 - (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerVC;
 {
@@ -1022,7 +1027,7 @@
                            weakSelf.imageToUpload= nil;
                            weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
-
+                           
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
                    }
@@ -1090,7 +1095,7 @@
             });
         }];
     }
-
+    
     
 }
 
@@ -1162,7 +1167,7 @@
 {
     _viewingLists = YES;
     [_listsAndPhotosLayout setShowingLists:YES];
-
+    
     if (_viewingOwnProfile) {
         [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
     }
@@ -1176,7 +1181,7 @@
 {
     _viewingLists = NO;
     [_listsAndPhotosLayout setShowingLists:NO];
- 
+    
     if (_viewingOwnProfile) {
         [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton)];
     }
@@ -1237,13 +1242,13 @@
         return _topView;
     
     if([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-
+        
         view= [collectionView dequeueReusableSupplementaryViewOfKind: kind
-                                                     withReuseIdentifier:PROFILE_CV_HEADER_CELL
-                                                            forIndexPath:indexPath];
+                                                 withReuseIdentifier:PROFILE_CV_HEADER_CELL
+                                                        forIndexPath:indexPath];
         self.topView = view;
         [_topView setUserInfo:  self.profileOwner];
-
+        
         [ view setUserInfo: _profileOwner];
         view.vc = self;
         
@@ -1252,7 +1257,7 @@
         _listsAndPhotosLayout.userIsCurrentUser= _viewingOwnProfile;
         _listsAndPhotosLayout.userIsFoodie= _profileOwner.isFoodie;
         _listsAndPhotosLayout.foodieHasURL= _profileOwner.urlString.length>0;
-    
+        
         [_cv setNeedsLayout];
         
         return view;
@@ -1460,7 +1465,7 @@
                                      }
                                  });
                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
- 
+                                 
                                  dispatch_async(dispatch_get_main_queue(), ^{
                                      [weakSelf launchViewPhoto:mediaObject restaurant:nil];
                                  });
@@ -1471,11 +1476,11 @@
 
 - (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject*)restaurant
 {
-
-//    PhotoCVCell *cell = (PhotoCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
-//    CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
-//    frame.origin.y += kGeomHeightNavBarStatusBar;
-//    vc.originRect = frame;
+    
+    //    PhotoCVCell *cell = (PhotoCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    //    CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
+    //    frame.origin.y += kGeomHeightNavBarStatusBar;
+    //    vc.originRect = frame;
     
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
     [vc setDelegate:self];
@@ -1516,7 +1521,7 @@
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC
 {
-
+    
 }
 
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant
@@ -1661,7 +1666,7 @@
 {
     BOOL haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
     BOOL havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
- 
+    
     UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:@"Set Your Profile Photo"
                                                                       message:nil
                                                                preferredStyle:UIAlertControllerStyleAlert];
