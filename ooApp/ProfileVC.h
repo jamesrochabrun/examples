@@ -24,11 +24,8 @@
 - (void) userPressedURL;
 @end
 
-@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate,ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate,
-                                ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, 
-                                OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate,
-                        ViewPhotoVCDelegate
->
+@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate,
+                        ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 

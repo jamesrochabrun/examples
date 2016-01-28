@@ -349,11 +349,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         } completion:^(BOOL finished) {
             
         }];
-//        if (_selectedItem != -1) {
+
         [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
-//        }
-//        [_collectionView reloadItemsAtIndexPaths:@[indexPath]];
-//        [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
         return;
     }
     RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
@@ -364,7 +361,40 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.mio = mio;
     vc.restaurant = r;
     vc.delegate = self;
-    [self.navigationController pushViewController:vc animated:NO];
+    PhotoCVCell *cell = (PhotoCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
+    frame.origin.y += kGeomHeightNavBarStatusBar;
+    vc.originRect = frame;
+    vc.modalPresentationStyle = UIModalPresentationCustom;
+    vc.transitioningDelegate = self;
+    self.navigationController.delegate = self;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
+{
+    id<UIViewControllerAnimatedTransitioning> animationController;
+    
+    if ([toVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPush) {
+        ViewPhotoVC *vc = (ViewPhotoVC *)toVC;
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        animator.presenting = YES;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.6;
+        animationController = animator;
+    } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
+        animator.presenting = NO;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.6;
+        animationController = animator;
+    }
+    
+    return animationController;
 }
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC {

@@ -26,4 +26,9 @@
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;
 @property (nonatomic, weak) UINavigationController *nc;
+@property (nonatomic, strong) UIImageView *iv;
+@property (nonatomic) CGRect originRect;
+@property (nonatomic, strong) UIView *backgroundView;
+
+- (void)showComponents:(BOOL)show;
 @end
