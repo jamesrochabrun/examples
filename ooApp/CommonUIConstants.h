@@ -229,6 +229,7 @@ extern NSString *const kNotificationEventDeleted;
 extern NSString *const kNotificationOwnProfileNeedsUpdate;
 extern NSString *const kNotificationPhotoDeleted;
 extern NSString *const kNotificationRestaurantDeleted;
+extern NSString *const kNotificationListDeleted;
 
 #define BLACK UIColorRGB(kColorBlack)
 #define WHITE UIColorRGB(kColorWhite)

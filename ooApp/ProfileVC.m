@@ -61,8 +61,6 @@
     _buttonURL.hidden= YES;
     _buttonURL.enabled= NO;
     [_buttonURL setTitle: @"" forState:UIControlStateNormal];
-//    _buttonFollow.hidden = YES;
-    
     _labelPhoto.hidden= YES;
     _labelPhotoCount.hidden= YES;
     _labelLikes.hidden= YES;
@@ -76,7 +74,6 @@
     _usingURLButton= YES;
     _buttonURL.hidden= NO;
     _buttonURL.enabled= YES;
-//    addBorder(_buttonURL, 4, RED);
 }
 
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector
@@ -181,34 +178,37 @@
                                }
                            }
                            
-                           if  (!foundSelf) {
-                               [weakSelf indicateNotFollowing];
-                           } else {
-                               [weakSelf indicateFollowing];
-                           }
-                           [OOAPI getUserStatsFor:_userInfo.userID
-                                          success:^(UserStatsObject *stats) {
-                                              ON_MAIN_THREAD(^{
-                                                  NSLog (@"GOT STATS FOR  %@",_userInfo.username);
-                                                  [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                                                  [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                           ON_MAIN_THREAD(^{
+                               if  (!foundSelf) {
+                                   [weakSelf indicateNotFollowing];
+                               } else {
+                                   [weakSelf indicateFollowing];
+                               }
+                               
+                               [OOAPI getUserStatsFor:_userInfo.userID
+                                              success:^(UserStatsObject *stats) {
+                                                  ON_MAIN_THREAD(^{
+                                                      NSLog (@"GOT STATS FOR  %@",_userInfo.username);
+                                                      [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                                                      [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                                                      
+                                                      weakSelf.buttonFollowees.alpha= 1;
+                                                      weakSelf.buttonFollowers.alpha= 1;
+                                                      weakSelf.buttonFolloweesCount.alpha= 1;
+                                                      weakSelf.buttonFollowersCount.alpha= 1;
+                                                      
+                                                      weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                                                      weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                                                      weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                                                      
+                                                      [weakSelf setNeedsLayout];
+                                                  });
                                                   
-                                                  weakSelf.buttonFollowees.alpha= 1;
-                                                  weakSelf.buttonFollowers.alpha= 1;
-                                                  weakSelf.buttonFolloweesCount.alpha= 1;
-                                                  weakSelf.buttonFollowersCount.alpha= 1;
+                                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                  NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
                                                   
-                                                  weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                                                  weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                                                  weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                                                  
-                                                  [weakSelf setNeedsLayout];
-                                              });
-                                              
-                                          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                              NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                                              
-                                          }];
+                                              }];
+                           });
                            
                            
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -507,9 +507,7 @@
 
 - (void)indicateFollowing
 {
-//    _buttonFollow.layer.borderWidth= 0;
     _buttonFollow.selected= YES;
-//    _buttonFollow.hidden = YES;
     _followingThisUser=YES;
     _labelPhoto.hidden= NO;
     _labelPhotoCount.hidden= NO;
@@ -524,8 +522,6 @@
 {
     _followingThisUser=NO;
     _buttonFollow.selected= NO;
-//    _buttonFollow.hidden = NO;
-
     _labelPhoto.hidden= YES;
     _labelPhotoCount.hidden= YES;
     _labelLikes.hidden= YES;
@@ -692,7 +688,6 @@
 @property (nonatomic, assign) MediaItemObject *mediaItemBeingEdited;
 @property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
 @property (nonatomic, strong) UIImage *imageToUpload;
-//@property (nonatomic,assign) BOOL uploading;
 @property (nonatomic, strong) RestaurantObject *selectedRestaurant;
 @property (nonatomic, assign) BOOL viewingLists; // false => viewing photos
 @property (nonatomic, assign) BOOL pickerIsForRestaurants;
@@ -764,6 +759,9 @@
     [self registerForNotification: kNotificationPhotoDeleted
                           calling:@selector(handlePhotoDeleted:)
      ];
+    [self registerForNotification: kNotificationListDeleted
+                          calling:@selector(handleListDeleted:)
+     ];
     // NOTE:  Unregistered in dealloc.
     
     // Ascertain whether reviewing our own profile based on passed-in UserObject pointer.
@@ -790,7 +788,6 @@
     
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers  == 1) {
-//        [self setLeftNavWithIcon:kFontIconMenu target:self action:@selector(showOptions)];
         [self setLeftNavWithIcon:nil target:nil action:NULL ];
     } else {
         [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:) ];
@@ -818,20 +815,16 @@
     [self setNavTitle:nto];
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
+}
+
+//------------------------------------------------------------------------------
+// Name:    handleListDeleted
+// Purpose: If one of our list objects was deleted then update our UI.
+//------------------------------------------------------------------------------
+- (void)handleListDeleted: (NSNotification*)not
+{
+    NSLog (@"LIST DELETED");
     
-//    __weak ProfileVC *weakSelf = self;
-//    if  (!_profileOwner.mediaItem) {
-//        [_profileOwner refreshWithSuccess:^{
-//
-//        self.topView= (ProfileHeaderView*) [weakSelf collectionView: weakSelf.cv
-//                                                 viewForSupplementaryElementOfKind:UICollectionElementKindSectionHeader
-//                                                                       atIndexPath:[NSIndexPath  indexPathForRow:0 inSection:0]
-//                                            ];
-//        } failure:^{
-//            NSLog  (@"UNABLE TO REFRESH USER OBJECT.");
-//        }
-//         ];
-//    }
 }
 
 //------------------------------------------------------------------------------
