@@ -15,8 +15,6 @@
 #import "UserListVC.h"
 
 @interface ViewPhotoVC ()
-@property (nonatomic, strong) UIImageView *iv;
-@property (nonatomic, strong) UIView *backgroundView;
 @property (nonatomic, strong) UIButton *captionButton;
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UIButton *numYums;
@@ -26,8 +24,8 @@
 @property (nonatomic, strong) UIButton *restaurantName;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
-@property (nonatomic, strong) UITapGestureRecognizer *closeTapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 @property (nonatomic, strong) UserObject *user;
 @property (nonatomic, strong) UINavigationController *aNC;
 @property (nonatomic) CGPoint originPoint;
@@ -39,12 +37,12 @@
     self = [super init];
     if (self) {
         _backgroundView = [[UIView alloc] init];
-        _backgroundView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        _backgroundView.alpha = 1;
+        _backgroundView.backgroundColor = UIColorRGBA(kColorOverlay10);
+        _backgroundView.alpha = 0;
         
         _iv = [[UIImageView alloc] init];
         _iv.contentMode = UIViewContentModeScaleAspectFit;
-        _iv.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        _iv.backgroundColor = UIColorRGBA(kColorClear);
         
 //        _caption = [[UILabel alloc] init];
 //        [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
@@ -63,9 +61,13 @@
         _restaurantName.titleLabel.numberOfLines = 0;
         
         _tapGesture = [[UITapGestureRecognizer alloc] init];
-        _closeTapGesture = [[UITapGestureRecognizer alloc] init];
+        [_tapGesture setDelaysTouchesBegan:YES];
+        
         _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
-    
+
+        _doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yumPhotoTapped)];
+        [_doubleTapGesture setDelaysTouchesBegan:YES];
+        [_doubleTapGesture setNumberOfTapsRequired:2];
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_yumButton withIcon:kFontIconYumOutline fontSize:40 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
@@ -88,16 +90,18 @@
         _userViewButton.delegate = self;
 
         [self.view addSubview:_backgroundView];
-        [_backgroundView addSubview:_closeButton];
-        [_backgroundView addSubview:_captionButton];
-        [_backgroundView addSubview:_userButton];
-        [_backgroundView addSubview:_userViewButton];
-        [_backgroundView addSubview:_numYums];
-        [_backgroundView addSubview:_yumButton];
-        [_backgroundView addSubview:_iv];
-        [_backgroundView addSubview:_restaurantName];
+        [self.view addSubview:_closeButton];
+        [self.view addSubview:_captionButton];
+        [self.view addSubview:_userButton];
+        [self.view addSubview:_userViewButton];
+        [self.view addSubview:_numYums];
+        [self.view addSubview:_yumButton];
+        [self.view addSubview:_iv];
+        [self.view addSubview:_restaurantName];
+        
+        [self.view sendSubviewToBack:_backgroundView];
 
-        [DebugUtilities addBorderToViews:@[self.view]];
+//        [DebugUtilities addBorderToViews:@[self.view]];
 //        [DebugUtilities addBorderToViews:@[_restaurantName, _numYums, _yumButton, _captionButton, _userButton, _iv, _userViewButton]];
     }
     return self;
@@ -134,23 +138,11 @@
 }
 
 - (void)showRestaurant {
-    [UIView animateWithDuration:0.4 animations:^{
-        _backgroundView.alpha = 0;
-        self.view.backgroundColor = UIColorRGBA(kColorClear);
-    } completion:^(BOOL finished) {
-        [self.navigationController popViewControllerAnimated:NO];
         [_delegate viewPhotoVC:self showRestaurant:_restaurant];
-    }];
 }
 
 - (void)showProfile {
-    [UIView animateWithDuration:0.4 animations:^{
-        _backgroundView.alpha = 0;
-        self.view.backgroundColor = UIColorRGBA(kColorClear);
-    } completion:^(BOOL finished) {
-        [self.navigationController popViewControllerAnimated:NO];
         [_delegate viewPhotoVC:self showProfile:_user];
-    }];
 }
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
@@ -170,42 +162,43 @@
 }
 
 - (void)close {
-//    [UIView animateWithDuration:0.4 animations:^{
-//        _backgroundView.alpha = 0;
-//        self.view.backgroundColor = UIColorRGBA(kColorClear);
-//    } completion:^(BOOL finished) {
-        [self.navigationController popViewControllerAnimated:YES];
-//    }];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [_tapGesture addTarget:self action:@selector(showRestaurant)];
-    [_closeTapGesture addTarget:self action:@selector(close)];
     [self.view addGestureRecognizer:_panGesture];
+    [_backgroundView addGestureRecognizer:_doubleTapGesture];
 }
 
 - (void)pan:(UIGestureRecognizer *)gestureRecognizer {
     if (_panGesture != gestureRecognizer) return;
     
     CGPoint newPoint;
-//    NSLog(@"translation %@", NSStringFromCGPoint(_originPoint));
+
     if (_panGesture.state == UIGestureRecognizerStateBegan) {
         _originPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
     } else if (_panGesture.state == UIGestureRecognizerStateChanged) {
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
-        _backgroundView.transform = CGAffineTransformMakeTranslation(delta.x, delta.y);
-        self.view.alpha = 0.5;
+        _iv.transform = CGAffineTransformMakeTranslation(delta.x, delta.y);
+        NSLog(@"%@", NSStringFromCGPoint(delta));
+        _iv.alpha = 1-fabs(delta.x)/CGRectGetWidth(_iv.frame);
+        _backgroundView.alpha = _backgroundView.alpha-fabs(delta.x)/CGRectGetWidth(_iv.frame);
     } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
         newPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
         CGFloat distance = distanceBetweenPoints(newPoint, _originPoint);
 //        NSLog(@"distance moved: %f", distance);
         if (distance > 40) {
             [self close];
+            [UIView animateWithDuration:0.2 animations:^{
+                _iv.transform = CGAffineTransformIdentity;
+            }];
         } else {
             [UIView animateWithDuration:0.2 animations:^{
-                _backgroundView.transform = CGAffineTransformIdentity;
-                self.view.alpha = 1;
+                _iv.transform = CGAffineTransformIdentity;
+                _iv.alpha = 1;
+                _backgroundView.alpha = 0.98;
             }];
         }
     }
@@ -216,15 +209,38 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showComponents:(BOOL)show {
+    _closeButton.hidden =
+    _captionButton.hidden =
+    _restaurantName.hidden =
+    _yumButton.hidden =
+    _userButton.hidden =
+    _userViewButton.hidden = !show;
+    
+    if (show) {
+        if (_numYums) {
+            _numYums.hidden = NO;
+        } else {
+            _numYums.hidden = YES;
+        }
+    } else {
+        _numYums.hidden = YES;
+    }
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.view.backgroundColor = UIColorRGB(kColorOverlay10);
-//    self.tabBarController.tabBar.hidden = YES;
-//    self.navigationController.navigationBarHidden = YES;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.tabBarController.tabBar.hidden = YES;
+        self.navigationController.navigationBarHidden = YES;
+    } completion:^(BOOL finished) {
+        ;
+    }];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+
 //    [UIView animateWithDuration:0.3 animations:^{
 //        self.view.backgroundColor = UIColorRGBA(kColorOverlay10);
 //        _backgroundView.alpha = 1;
@@ -235,8 +251,12 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    self.tabBarController.tabBar.hidden = NO;
-//    self.navigationController.navigationBarHidden = NO;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.tabBarController.tabBar.hidden = NO;
+        self.navigationController.navigationBarHidden = NO;
+        } completion:^(BOOL finished) {
+        ;
+    }];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -277,9 +297,8 @@
     }
 
     OOAPI *api = [[OOAPI alloc] init];
-    
+
     [_backgroundView addGestureRecognizer:_tapGesture];
-    [self.view addGestureRecognizer:_closeTapGesture];
     
     __weak UIImageView *weakIV = _iv;
     __weak ViewPhotoVC *weakSelf = self;
@@ -307,19 +326,15 @@
     }];
     
     if (_mio.source == kMediaItemTypeOomami) {
-        _yumButton.hidden = NO;
-        
         [self updateNumYums];
         
         [OOAPI getMediaItemLiked:_mio.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_yumButton setSelected:liked];
-                _yumButton.hidden = NO;
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_yumButton setSelected:NO];
-                _yumButton.hidden = NO;
             });
         }];
         //get the state of the yum button for this user
@@ -334,9 +349,7 @@
                 _userViewButton.user = user;
                 [_userButton setTitle:userName forState:UIControlStateNormal];
                 [_userButton sizeToFit];
-                _userButton.hidden = NO;
-                _userViewButton.hidden = NO;
-                [_backgroundView bringSubviewToFront:_userViewButton];
+                [weakSelf.view bringSubviewToFront:_userViewButton];
                 [weakSelf.view setNeedsLayout];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -349,36 +362,35 @@
 {
     [super viewWillLayoutSubviews];
     
-    if (!height(self.view)) {
+    if (!_iv.image.size.width) {
         return; // Fix for NaN crash.
     }
     
     CGRect frame;
-    CGFloat maxImageHeight = 0.7 * height(self.view);
     CGFloat imageMaxY;
     
-    //adjust backgroundview horizontal parameters
-    frame = _backgroundView.frame;
-    frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
-    frame.origin.x = (width(self.view) - frame.size.width)/2;
-    _backgroundView.frame = frame;
+    _backgroundView.frame = self.view.frame;
     
-    frame = _restaurantName.frame;
-    frame.size.width = width(_backgroundView)-2*kGeomSpaceEdge-2*kGeomDimensionsIconButton;
-    frame.origin.y = kGeomSpaceEdge;
-    frame.origin.x = (width(_backgroundView) - width(_restaurantName))/2;
-    frame.size.height = kGeomDimensionsIconButton;
-    _restaurantName.frame = frame;
-
+//    _iv.center = self.view.center;
     frame = _iv.frame;
-
-    CGFloat imageHeight = _iv.image.size.height/((_iv.image.size.width) ? (_iv.image.size.width) : 1) * width(_backgroundView) - 2*kGeomSpaceEdge;
-    frame.size.height = (imageHeight > maxImageHeight) ? maxImageHeight : imageHeight;
-    frame.size.width = width(_backgroundView) - 2*kGeomSpaceEdge;
-    frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceCellPadding);
+    frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
     _iv.frame = frame;
     
-    imageMaxY = CGRectGetMaxY(_iv.frame);
+    CGFloat imageWidth = _iv.image.size.width/_iv.image.size.height * height(_iv);
+    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/(_iv.image.size.width) * width(self.view);
+    
+    frame = _restaurantName.frame;
+    frame.size.width = width(self.view)-2*kGeomSpaceEdge-2*kGeomDimensionsIconButton;
+    frame.origin.y = CGRectGetMidY(_iv.frame) - imageHeight/2 - kGeomDimensionsIconButton;
+    frame.origin.x = (width(self.view) - width(_restaurantName))/2;
+    frame.size.height = kGeomDimensionsIconButton;
+    _restaurantName.frame = frame;
+    
+    frame = _closeButton.frame;
+    frame.origin = CGPointMake(CGRectGetWidth(self.view.frame) - CGRectGetWidth(_closeButton.frame), CGRectGetMinY(_restaurantName.frame));
+    _closeButton.frame = frame;
+
+    imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
 
     frame = _userViewButton.frame;
     frame.origin.y = imageMaxY + kGeomSpaceCellPadding;
@@ -394,38 +406,26 @@
     
     frame = _yumButton.frame;
     frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-    frame.origin = CGPointMake(width(_backgroundView) - kGeomDimensionsIconButton - kGeomSpaceEdge, imageMaxY + kGeomSpaceCellPadding);
+    frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, imageMaxY + kGeomSpaceCellPadding);
     _yumButton.frame = frame;
 
     [_numYums sizeToFit];
     frame = _numYums.frame;
 //    frame.size = CGSizeMake(width(_numYums), kGeomDimensionsIconButton);
-    frame.origin = CGPointMake(width(_backgroundView) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
+    frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
     _numYums.frame = frame;
     _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
 
-    CGFloat distanceFromEdge = (CGRectGetMaxX(_userButton.frame) > (width(_backgroundView) - CGRectGetMinX(_numYums.frame))) ? CGRectGetMaxX(_userButton.frame) + kGeomSpaceCellPadding : (width(_backgroundView) - CGRectGetMinX(_numYums.frame) - kGeomSpaceCellPadding);
+    CGFloat distanceFromEdge = (CGRectGetMaxX(_userButton.frame) > (width(self.view) - CGRectGetMinX(_numYums.frame))) ? CGRectGetMaxX(_userButton.frame) + kGeomSpaceCellPadding : (width(self.view) - CGRectGetMinX(_numYums.frame) - kGeomSpaceCellPadding);
     
     frame = _captionButton.frame;
     frame.size = _captionButton.intrinsicContentSize;
-    frame.size.width = (frame.size.width > (width(_backgroundView) - 2*distanceFromEdge)) ? width(_backgroundView) - 2*distanceFromEdge : frame.size.width;
+    frame.size.width = (frame.size.width > (width(self.view) - 2*distanceFromEdge)) ? width(self.view) - 2*distanceFromEdge : frame.size.width;
     frame.size.height = imageMaxY + kGeomSpaceCellPadding - CGRectGetMaxY(_userButton.frame);
     frame.origin.y = imageMaxY + kGeomSpaceCellPadding +
         ((CGRectGetMaxY(_userButton.frame) - (imageMaxY + kGeomSpaceCellPadding)) - (frame.size.height))/2;
-    frame.origin.x = (width(_backgroundView) - frame.size.width)/2;
+    frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;
-
-    //adjust backgroundview vertical parameters based on content
-    frame = _backgroundView.frame;
-    frame.size.height = CGRectGetMaxY(_userButton.frame) + kGeomSpaceEdge;
-    frame.origin.y = (height(self.view) - frame.size.height)/2;
-    _backgroundView.frame = frame;
-    
-    frame = _closeButton.frame;
-    frame.origin = CGPointMake(CGRectGetWidth(_backgroundView.frame)-CGRectGetWidth(_closeButton.frame), 0);
-    _closeButton.frame = frame;
-    
-   // [_backgroundView bringSubviewToFront:_restaurantName];
 }
 
 - (void)yumPhotoTapped {
@@ -469,18 +469,11 @@
         if (count) {
             [_numYums setTitle:[NSString stringWithFormat:@"%lu %@", (unsigned long)count, (count == 1) ? @"yum" : @"yums"] forState:UIControlStateNormal];
             dispatch_async(dispatch_get_main_queue(), ^{
-                _numYums.hidden = NO;
-                [weakSelf.view setNeedsLayout];
-            });
-        } else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                _numYums.hidden = YES;
                 [weakSelf.view setNeedsLayout];
             });
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            _numYums.hidden = YES;
             [weakSelf.view setNeedsLayout];
         });
     }];

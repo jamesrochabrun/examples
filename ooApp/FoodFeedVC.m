@@ -349,11 +349,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         } completion:^(BOOL finished) {
             
         }];
-//        if (_selectedItem != -1) {
+
         [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
-//        }
-//        [_collectionView reloadItemsAtIndexPaths:@[indexPath]];
-//        [_collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
         return;
     }
     RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
@@ -386,14 +383,14 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-//        animator.duration = options.duration;
+        animator.duration = 0.6;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
         animator.presenting = NO;
         animator.originRect = vc.originRect;
-//        animator.duration = options.duration;
+        animator.duration = 0.6;
         animationController = animator;
     }
     

@@ -29,6 +29,7 @@
 #import "LocationManager.h"
 #import "SocialMedia.h"
 #import "UIButton+AFNetworking.h"
+#import "ShowMediaItemAnimator.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -1444,49 +1445,88 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if  (self.uploading) {
+    if (self.uploading) {
         return;
     }
     
     NSInteger row= indexPath.row;
-    if  (_viewingLists ) {
-        ListObject*object= _arrayLists[row];
-        RestaurantListVC *vc= [[RestaurantListVC  alloc] init];
-        vc.listItem=  object;
+    if  (_viewingLists) {
+        ListObject*object = _arrayLists[row];
+        RestaurantListVC *vc = [[RestaurantListVC  alloc] init];
+        vc.listItem = object;
         [self.navigationController pushViewController:vc animated:YES];
-    }
-    else {
+    } else {
         NSUInteger row = indexPath.row;
-        MediaItemObject* mediaObject=_arrayPhotos[ row];
-        NSUInteger restaurantID= mediaObject.restaurantID;
-        if  (!restaurantID) {
-            [self launchViewPhoto: mediaObject restaurant:nil];
+        MediaItemObject *mediaObject = _arrayPhotos[ row];
+        NSUInteger restaurantID = mediaObject.restaurantID;
+        if (!restaurantID) {
+            [self launchViewPhoto:mediaObject restaurant:nil];
         } else {
-            __weak  ProfileVC *weakSelf = self;
+            __weak ProfileVC *weakSelf = self;
             OOAPI *api=[[OOAPI alloc]init];
-            [api getRestaurantWithID: stringFromUnsigned(restaurantID)
-                              source: kRestaurantSourceTypeOomami
+            [api getRestaurantWithID:stringFromUnsigned(restaurantID)
+                              source:kRestaurantSourceTypeOomami
                              success:^(RestaurantObject *restaurant) {
-                                 if ( restaurant) {
-                                     [weakSelf launchViewPhoto: mediaObject restaurant:restaurant];
-                                 } else {
-                                     [weakSelf launchViewPhoto: mediaObject restaurant:nil];
-                                 }
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     if (restaurant) {
+                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant];
+                                     } else {
+                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil];
+                                     }
+                                 });
                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                 [weakSelf launchViewPhoto: mediaObject restaurant:nil];
+ 
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil];
+                                 });
                              }];
         }
     }
 }
 
-- (void) launchViewPhoto:(MediaItemObject*) mediaObject restaurant:(RestaurantObject*)restaurant
+- (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject*)restaurant
 {
+
+//    PhotoCVCell *cell = (PhotoCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
+//    CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
+//    frame.origin.y += kGeomHeightNavBarStatusBar;
+//    vc.originRect = frame;
+    
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
-    [vc setDelegate: self];
-    [vc setMio: mediaObject];
-    [vc setRestaurant: restaurant];
+    [vc setDelegate:self];
+    [vc setMio:mediaObject];
+    [vc setRestaurant:restaurant];
+    vc.modalPresentationStyle = UIModalPresentationCustom;
+    vc.transitioningDelegate = self;
+    self.navigationController.delegate = self;
     [vc.view setNeedsUpdateConstraints];
-    [self.navigationController pushViewController:vc animated:NO];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
+{
+    id<UIViewControllerAnimatedTransitioning> animationController;
+    
+    if ([toVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPush) {
+        ViewPhotoVC *vc = (ViewPhotoVC *)toVC;
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        animator.presenting = YES;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.6;
+        animationController = animator;
+    } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
+        animator.presenting = NO;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.6;
+        animationController = animator;
+    }
+    
+    return animationController;
 }
 
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC
