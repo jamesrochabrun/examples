@@ -85,7 +85,7 @@
 - (void)closeTextEntry
 {
     [_textView resignFirstResponder];
-    [_delegate textEntryFinished:[self text]];
+    [_delegate textEntryFinished:_defaultText]; //close cancels the changes made by the user
 }
 
 - (void)updateViewConstraints

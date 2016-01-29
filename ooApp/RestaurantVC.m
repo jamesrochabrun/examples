@@ -47,7 +47,7 @@
 @property (nonatomic) NSUInteger toTryID;
 @property (nonatomic, strong) NSArray *followees;
 @property (nonatomic) BOOL listsNeedUpdate;
-
+@property (nonatomic, strong) UINavigationController *aNC;
 @end
 
 static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
@@ -797,22 +797,21 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 - (void)tagPhoto:(MediaItemObject *)mio {
-    UINavigationController *nc = [[UINavigationController alloc] init];
+    _aNC = [[UINavigationController alloc] init];
     
     AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
     vc.delegate = self;
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     vc.mio = mio;
-    [nc addChildViewController:vc];
     
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
-    [nc.navigationBar setTranslucent:YES];
-    nc.view.backgroundColor = [UIColor clearColor];
+    [_aNC addChildViewController:vc];
+    [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [_aNC.navigationBar setTranslucent:YES];
+    _aNC.view.backgroundColor = [UIColor clearColor];
 
-    [self.navigationController presentViewController:nc animated:YES completion:^{
-//        vc.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [self.navigationController presentViewController:_aNC animated:YES completion:^{
+        _aNC.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     }];
 }
 

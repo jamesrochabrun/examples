@@ -233,24 +233,28 @@
                  object:nil];
 }
 
-- (void)unregisterFromNotifications
-{
+- (void)unregisterFromNotifications {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center removeObserver: self  ];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [self unregisterFromNotifications];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    CGRect frame = self.navigationController.navigationBar.frame;
+    frame.origin.y = kGeomHeightStatusBar;
+    self.navigationController.navigationBar.frame = frame;
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (BOOL)prefersStatusBarHidden {
+    return NO;
+}
+
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }

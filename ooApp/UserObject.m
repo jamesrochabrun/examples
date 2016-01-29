@@ -28,7 +28,7 @@ NSString *const kKeyUserMediaItem = @"media_item";
 NSString *const kKeyUserAbout = @"about";
 NSString *const kKeyUserIsFoodie = @"is_blogger";
 NSString *const kKeyURL = @"url";
-NSString *const kKeyUserType = @"type";
+NSString *const kKeyUserType = @"user_type";
 
 @interface UserObject()
 
@@ -119,9 +119,12 @@ static void updateStoredUserIfNecessary (UserObject *user)
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
     user.urlString = parseStringOrNullFromServer([dict objectForKey: kKeyURL]);
-    user.userType=parseNumberOrNullFromServer([dict objectForKey:kKeyUserType]);
+    user.userType = parseNumberOrNullFromServer([dict objectForKey:kKeyUserType]);
     user.isFoodie = user.userType == USER_TYPE_FOODIE;
     
+    if (user.userType == 4) {
+        NSLog(@"%@ is a foodie", user.username);
+    }
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
     }
@@ -139,13 +142,6 @@ static void updateStoredUserIfNecessary (UserObject *user)
         user.mediaItem = [MediaItemObject mediaItemFromDict:[dict objectForKey:kKeyUserMediaItem]];
     }
         
-    // FOR TESTING: Anuj is a blogger
-    if ( [user.username isEqualToString: @"foodie"]) {
-        user.userType= USER_TYPE_FOODIE;
-        user.isFoodie = YES;
-        user.urlString=  @"HTTP://test.Google.com";
-    }
-    
     return user;
 }
 

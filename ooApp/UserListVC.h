@@ -37,6 +37,6 @@
 @end
 
 @interface UserListVC : BaseVC <UserListTableSectionHeaderDelegate,UserListTableCellDelegate>
-@property (nonatomic,strong) NSMutableArray *usersArray;
-@property (nonatomic,strong) NSString* desiredTitle;
+@property (nonatomic, strong) NSMutableArray *usersArray;
+@property (nonatomic, strong) NSString* desiredTitle;
 @end

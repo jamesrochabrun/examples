@@ -13,6 +13,7 @@
 #import "UserObject.h"
 #import "Settings.h"
 #import "UserListVC.h"
+#import "AppDelegate.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -37,15 +38,13 @@
     self = [super init];
     if (self) {
         _backgroundView = [[UIView alloc] init];
-        _backgroundView.backgroundColor = UIColorRGBA(kColorOverlay10);
-        _backgroundView.alpha = 0;
+        _backgroundView.backgroundColor = UIColorRGBA(kColorBlack);
+        _backgroundView.alpha = kAlphaBackground;
         
         _iv = [[UIImageView alloc] init];
         _iv.contentMode = UIViewContentModeScaleAspectFit;
         _iv.backgroundColor = UIColorRGBA(kColorClear);
         
-//        _caption = [[UILabel alloc] init];
-//        [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         _captionButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_captionButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:nil selector:nil];
         _captionButton.titleLabel.numberOfLines = 0;
@@ -88,7 +87,7 @@
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
-
+        
         [self.view addSubview:_backgroundView];
         [self.view addSubview:_closeButton];
         [self.view addSubview:_captionButton];
@@ -107,16 +106,20 @@
     return self;
 }
 
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
 - (void)addCaption {
     _aNC = [[UINavigationController alloc] init];
+
     AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
-    
+    vc.delegate = self;
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     vc.mio = _mio;
-    vc.delegate = self;
-    
+
+
     [_aNC addChildViewController:vc];
-    
     [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
     [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
     [_aNC.navigationBar setTranslucent:YES];
@@ -131,18 +134,17 @@
     _mio.caption = text;
     [_captionButton setTitle:text forState:UIControlStateNormal];
     [self.view setNeedsLayout];
-//    [self.navigationController popViewControllerAnimated:NO];
+
     [self dismissViewControllerAnimated:YES completion:^{
-        ;
     }];
 }
 
 - (void)showRestaurant {
-        [_delegate viewPhotoVC:self showRestaurant:_restaurant];
+    [_delegate viewPhotoVC:self showRestaurant:_restaurant];
 }
 
 - (void)showProfile {
-        [_delegate viewPhotoVC:self showProfile:_user];
+    [_delegate viewPhotoVC:self showProfile:_user];
 }
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
@@ -152,13 +154,19 @@
 - (void)showYums {
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
-        UserListVC *vc = [[UserListVC alloc] init];
-        vc.desiredTitle = @"YUMS";
-        vc.usersArray = users.mutableCopy;
-        [weakSelf.navigationController pushViewController:vc animated:YES];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf showYummers:users];
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
+}
+
+- (void)showYummers:(NSArray *)users {
+    UserListVC *vc = [[UserListVC alloc] init];
+    vc.desiredTitle = @"YUMS";
+    vc.usersArray = [NSMutableArray arrayWithArray:users];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)close {
@@ -184,7 +192,7 @@
         _iv.transform = CGAffineTransformMakeTranslation(delta.x, delta.y);
         NSLog(@"%@", NSStringFromCGPoint(delta));
         _iv.alpha = 1-fabs(delta.x)/CGRectGetWidth(_iv.frame);
-        _backgroundView.alpha = _backgroundView.alpha-fabs(delta.x)/CGRectGetWidth(_iv.frame);
+        _backgroundView.alpha = kAlphaBackground-fabs(delta.x)/CGRectGetWidth(_iv.frame);
     } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
         newPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
         CGFloat distance = distanceBetweenPoints(newPoint, _originPoint);
@@ -198,7 +206,7 @@
             [UIView animateWithDuration:0.2 animations:^{
                 _iv.transform = CGAffineTransformIdentity;
                 _iv.alpha = 1;
-                _backgroundView.alpha = 0.98;
+                _backgroundView.alpha = kAlphaBackground;
             }];
         }
     }
@@ -230,9 +238,12 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
+    _backgroundView.alpha = 0;
     [UIView animateWithDuration:0.3 animations:^{
         self.tabBarController.tabBar.hidden = YES;
         self.navigationController.navigationBarHidden = YES;
+        _backgroundView.alpha = kAlphaBackground;
     } completion:^(BOOL finished) {
         ;
     }];
@@ -240,13 +251,6 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-
-//    [UIView animateWithDuration:0.3 animations:^{
-//        self.view.backgroundColor = UIColorRGBA(kColorOverlay10);
-//        _backgroundView.alpha = 1;
-//    } completion:^(BOOL finished) {
-//        ;
-//    }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -303,7 +307,9 @@
     __weak UIImageView *weakIV = _iv;
     __weak ViewPhotoVC *weakSelf = self;
     
-    _requestOperation = [api getRestaurantImageWithMediaItem:_mio maxWidth:self.view.frame.size.width maxHeight:0 success:^(NSString *link) {
+    _requestOperation = [api getRestaurantImageWithMediaItem:_mio
+                                                    maxWidth:self.view.frame.size.width
+                                                   maxHeight:0 success:^(NSString *link) {
         
         [_iv setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                 placeholderImage:nil
@@ -316,25 +322,28 @@
                                                  [weakIV setAlpha:1.0];
                                                  [UIView commitAnimations];
                                                  [weakSelf.view setNeedsLayout];
+                                                 NSLog(@"iv got image viewFrame %@", NSStringFromCGRect(weakSelf.view.frame));
                                              });
                                          }
                                          failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-                                             ;
+                                             NSLog(@"ERROR: failed to get image: %@", error);
                                          }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
+        NSLog(@"ERROR: failed to get image: %@", error);;
     }];
     
     if (_mio.source == kMediaItemTypeOomami) {
         [self updateNumYums];
         
+        __weak ViewPhotoVC *weakSelf = self;
+    
         [OOAPI getMediaItemLiked:_mio.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_yumButton setSelected:liked];
+                [weakSelf.yumButton setSelected:liked];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_yumButton setSelected:NO];
+                [weakSelf.yumButton setSelected:NO];
             });
         }];
         //get the state of the yum button for this user
@@ -346,35 +355,36 @@
             _user = user;
             NSString *userName = [NSString stringWithFormat:@"@%@", user.username];
             dispatch_async(dispatch_get_main_queue(), ^{
-                _userViewButton.user = user;
-                [_userButton setTitle:userName forState:UIControlStateNormal];
-                [_userButton sizeToFit];
+                weakSelf.userViewButton.user = user;
+                [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
+                [weakSelf.userButton sizeToFit];
                 [weakSelf.view bringSubviewToFront:_userViewButton];
                 [weakSelf.view setNeedsLayout];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+            NSLog(@"ERROR: failed to get user: %@", error);;
         }];
     }
 }
 
-- (void)viewWillLayoutSubviews
-{
+- (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
     if (!_iv.image.size.width) {
         return; // Fix for NaN crash.
     }
     
+    self.view.frame = APP.window.bounds;
     CGRect frame;
     CGFloat imageMaxY;
-    
+        
     _backgroundView.frame = self.view.frame;
     
 //    _iv.center = self.view.center;
     frame = _iv.frame;
     frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
     _iv.frame = frame;
+    
     
     CGFloat imageWidth = _iv.image.size.width/_iv.image.size.height * height(_iv);
     CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/(_iv.image.size.width) * width(self.view);
@@ -435,24 +445,24 @@
         NSUInteger userID = [Settings sharedInstance].userObject.userID;
         [OOAPI unsetMediaItemLike:_mio.mediaItemId forUser:userID success:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_yumButton setSelected:NO];
+                [weakSelf.yumButton setSelected:NO];
                 [weakSelf updateNumYums];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+            NSLog(@"ERROR: failed to unlike photo: %@", error);;
         }];
     } else {
         NSLog(@"like photo");
         NSUInteger userID = [Settings sharedInstance].userObject.userID;
         [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_yumButton setSelected:YES];
+                [weakSelf.yumButton setSelected:YES];
                 [weakSelf updateNumYums];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+            NSLog(@"ERROR: failed to like photo: %@", error);;
         }];
     }
     
@@ -467,8 +477,8 @@
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getNumMediaItemLikes:_mio.mediaItemId success:^(NSUInteger count) {
         if (count) {
-            [_numYums setTitle:[NSString stringWithFormat:@"%lu %@", (unsigned long)count, (count == 1) ? @"yum" : @"yums"] forState:UIControlStateNormal];
             dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.numYums setTitle:[NSString stringWithFormat:@"%lu %@", (unsigned long)count, (count == 1) ? @"yum" : @"yums"] forState:UIControlStateNormal];
                 [weakSelf.view setNeedsLayout];
             });
         }

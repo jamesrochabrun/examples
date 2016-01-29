@@ -74,15 +74,15 @@
 
 - (void)setIsFoodie
 {
-    _isFoodie=YES;
-    _ivFoodie.image= [UIImage imageNamed: @"FoodieBubble.png"];
-    _viewHalo.hidden= YES;
+    _isFoodie = YES;
+    _ivFoodie.image = [UIImage imageNamed:@"FoodieBubble.png"];
+    _viewHalo.hidden = YES;
     [self setNeedsLayout];
 }
 
 - (void)setShowCog
 {
-    _showCog=YES;
+    _showCog = YES;
     [self setNeedsLayout];
 }
 
@@ -120,14 +120,15 @@
     }
     _user = user;
     
-    if (user.isFoodie)
+    if (user.isFoodie) {
         [self setIsFoodie];
+    }
     
-    NSString *first= _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
-    NSString *last=_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
+    NSString *first = _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
+    NSString *last =_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
     NSString *initials = [NSString stringWithFormat:@"%@%@",  first, last];
     _emptyUserView.text = initials;
-    UIImage *image= nil;
+    UIImage *image = nil;
         
     if (_user.mediaItem) {
         OOAPI *api = [[OOAPI alloc] init];
@@ -155,7 +156,7 @@
         }];
     } else if (( image= [_user userProfilePhoto]) ) {
         // NOTE: This would have been fetched from Facebook when the app started.
-        _imageView.image =  image;
+        _imageView.image = image;
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self displayEmptyView:YES];
@@ -171,19 +172,19 @@
     }
 }
 
-- (void) clear;
+- (void)clear;
 {
-    _imageView.image=nil;
-    _user= nil;
-    _ivFoodie.image= nil;
-    _viewHalo.hidden= NO;
-    _isFoodie=NO;
-    _showCog=NO;
+    _imageView.image = nil;
+    _user = nil;
+    _ivFoodie.image = nil;
+    _viewHalo.hidden = NO;
+    _isFoodie = NO;
+    _showCog = NO;
 }
 
-- (void)userPressedSettings: (id) sender
+- (void)userPressedSettings:(id)sender
 {
-    [self  userTapped];
+    [self userTapped];
 }
 
 - (void)userTapped {

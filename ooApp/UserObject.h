@@ -29,7 +29,7 @@ typedef enum: NSUInteger {
 
 typedef enum: NSUInteger {
     PARTICIPANT_STATE_NONE = 0,
-    PARTICIPANT_STATE_ATTENDING  = 1, // accepted
+    PARTICIPANT_STATE_ATTENDING = 1, // accepted
     PARTICIPANT_STATE_NOT_ATTENDING = 2,// declined
     PARTICIPANT_STATE_NO_RESPONSE= 3,
     PARTICIPANT_STATE_MAYBE = 4,

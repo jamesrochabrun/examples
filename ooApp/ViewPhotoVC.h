@@ -13,6 +13,8 @@
 #import "AddCaptionToMIOVC.h"
 #import "OOUserView.h"
 
+static CGFloat kAlphaBackground = 0.9;
+
 @class ViewPhotoVC;
 
 @protocol ViewPhotoVCDelegate <NSObject>
@@ -21,11 +23,10 @@
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC;
 @end
 
-@interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate, OOTextEntryVCDelegate>
+@interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate, OOTextEntryVCDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;
-@property (nonatomic, weak) UINavigationController *nc;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic) CGRect originRect;
 @property (nonatomic, strong) UIView *backgroundView;

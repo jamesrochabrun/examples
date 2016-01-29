@@ -29,10 +29,11 @@
 
 - (void)post:(UIButton *)sender
 {
+    __weak AddCaptionToMIOVC *weakSelf = self;
     [OOAPI setMediaItemCaption:_mio.mediaItemId
-                       caption: [self text]
+                       caption:[self text]
                        success:^{
-        [self.delegate textEntryFinished: [self text]];
+        [weakSelf.delegate textEntryFinished:[self text]];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];

@@ -78,6 +78,7 @@ static CGFloat kGeomIconSizeSmall = 27;
 static CGFloat kGeomDimensionsIconButtonSmall = 35.0;
 static CGFloat kGeomDimensionsIconButton = 40.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
+static CGFloat kGeomHeightStatusBar = 20.0;
 static CGFloat kGeomHeightTabBar = 49;
 static CGFloat kGeomHeightFilters = 40.0;
 static CGFloat kGeomButtonWidth = 100;

@@ -383,7 +383,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-        animator.duration = 0.6;
+        animator.duration = 0.8;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
@@ -392,6 +392,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         animator.originRect = vc.originRect;
         animator.duration = 0.6;
         animationController = animator;
+    } else {
+        
     }
     
     return animationController;

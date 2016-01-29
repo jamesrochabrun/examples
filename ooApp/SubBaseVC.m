@@ -68,10 +68,29 @@
     self.uploadProgressBar = [UIProgressView new];
     [self.view addSubview:self.uploadProgressBar];
     self.uploadProgressBar.hidden = YES;
-
+    
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
         self.edgesForExtendedLayout = UIRectEdgeNone;
+}
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    CGRect frame = self.navigationController.navigationBar.frame;
+    frame.origin.y = kGeomHeightStatusBar;
+    self.navigationController.navigationBar.frame = frame;
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return NO;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
 }
 
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector

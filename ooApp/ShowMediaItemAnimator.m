@@ -21,8 +21,10 @@
     UIView *containerView = [transitionContext containerView];
     NSTimeInterval duration = [self transitionDuration:transitionContext];
     
-    CGRect initialFrame = [transitionContext initialFrameForViewController:fromVC];
-    initialFrame.origin.y = kGeomHeightNavBarStatusBar;
+    CGRect imageViewFrame = [transitionContext initialFrameForViewController:fromVC];
+    CGRect vcViewFrame = [transitionContext initialFrameForViewController:fromVC];
+    
+    imageViewFrame.origin.y = kGeomHeightNavBarStatusBar;
     
     // Presenting
     if (_presenting) {
@@ -38,32 +40,32 @@
         }
         
         UIView *snapshotView = [fromVC.view snapshotViewAfterScreenUpdates:NO];
-//        snapshotView.alpha = 0.1;
-        snapshotView.frame = initialFrame;
+        snapshotView.frame = imageViewFrame;
         [toVC.view addSubview:snapshotView];
         [toVC.view sendSubviewToBack:snapshotView];
         
         toView.frame = _originRect;
         toView.alpha = 0;
-        vpvc.view.backgroundColor = UIColorRGBA(kColorClear);
         [containerView addSubview:toVC.view];
         
-        // Animate the view onscreen
+        vcViewFrame.size.height += (kGeomHeightNavBarStatusBar + kGeomHeightTabBar);
+        vcViewFrame.origin.y = 0;
+        vpvc.backgroundView.alpha = 0;
+        
         [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            toView.frame = initialFrame;
+            toView.frame = imageViewFrame;
+            toView.center = vpvc.view.center;
             toView.alpha = 1;
-            vpvc.backgroundView.alpha = 0.98;
+
+            vpvc.backgroundView.alpha = kAlphaBackground;
             toVC.tabBarController.tabBar.hidden = YES;
             toVC.navigationController.navigationBarHidden = YES;
         } completion:^(BOOL finished) {
             [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;
-            vpvc.view.frame = fromVC.view.bounds;
-            vpvc.view.backgroundColor = UIColorRGBA(kColorOverlay10);
+            vpvc.view.frame = vcViewFrame;
             [vpvc showComponents:YES];
         }];
-    }
-    // Dismissing
-    else {
+    } else {
         [containerView addSubview:toView];
         [containerView sendSubviewToBack:toView];
         
