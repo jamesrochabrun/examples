@@ -814,8 +814,8 @@
    withReuseIdentifier:PROFILE_CV_HEADER_CELL];
     
     NSString *string= _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username) :  @"Missing username";
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: string
-                                                       subHeader:nil];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:string
+                                                       subHeader:[NSString stringWithFormat:@"%@ %@", _profileOwner.firstName, _profileOwner.lastName]];
     [self setNavTitle:nto];
     
     [self.view bringSubviewToFront:self.uploadProgressBar];

@@ -19,8 +19,6 @@
 @property (nonatomic, strong) ListObject *listToAddTo;
 @property (nonatomic, strong) EventObject *eventBeingEdited;
 
-- (void)showOptionsIfTimedOut;
-
 - (void)getRestaurants;
 
 @end
