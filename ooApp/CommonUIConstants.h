@@ -73,11 +73,11 @@ static NSUInteger kGeomFontSizeDetail = 11;
 static NSUInteger kGeomFontSizeStatsText = 14;
 static NSUInteger kGeomFontSizeStatsIcons = 17;
 static NSUInteger kGeomFontSizeAbout = 13;
+static CGFloat kGeomIconSize = 30;
+static CGFloat kGeomIconSizeSmall = 27;
 
 static NSInteger kGeomPeopleIconFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;
-static CGFloat kGeomIconSize = 30;
-static CGFloat kGeomIconSizeSmall = 27;
 static CGFloat kGeomDimensionsIconButtonSmall = 35.0;
 static CGFloat kGeomDimensionsIconButton = 40.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
@@ -113,6 +113,7 @@ static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 static CGFloat kGeomProfileStatsOverallWidth= 171;
 static CGFloat kGeomProfileStatsItemHeight= 30;
 static CGFloat kGeomProfileSettingsBadgeSize=  30;
+static CGFloat kGeomProfileEmptyPlusSize= 40;
 
 static CGFloat kGeomUserListUserImageHeight=82;
 
@@ -168,7 +169,7 @@ static CGFloat kGeomFollowButtonHeight= 24; // Connect screen, profile screen
 // Images
 extern NSString *const kImageNoProfileImage;
 
-// Custom FontsGood and yet so as
+// Custom Fonts
 extern NSString *const kFontIcons;
 extern NSString *const kFontLatoThin;
 extern NSString *const kFontLatoRegular;

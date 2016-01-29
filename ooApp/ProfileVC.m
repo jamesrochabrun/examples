@@ -257,7 +257,7 @@
         self.autoresizesSubviews= NO;
         _backgroundImageView=  makeImageView(self, @"background-image.jpg");
         _backgroundImageFade= makeView( self,  UIColorRGBA(0x80000000));
-        
+
         _filterView= [[OOFilterView alloc] init];
         [self addSubview:_filterView];
         [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];//  index 0
@@ -356,8 +356,7 @@
                   success: ^(NSArray *users) {
                       ON_MAIN_THREAD(^{
                           if  (!users.count) {
-                              ConnectVC* vc=[[ ConnectVC  alloc] init];
-                              [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+                              [APP.tabBar setSelectedIndex: kTabIndexConnect];
                               NSLog  (@"NO FOLLOWERS");
                               return ;
                           }
@@ -392,8 +391,8 @@
                   success:^(NSArray *users) {
                       ON_MAIN_THREAD(^{
                           if  (!users.count) {
-                              ConnectVC* vc=[[ ConnectVC  alloc] init];
-                              [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+                              [APP.tabBar setSelectedIndex: kTabIndexConnect];
+
                               NSLog  (@"NO FOLLOWEES");
                               return ;
                           }
@@ -401,7 +400,7 @@
                           vc.desiredTitle = @"FOLLOWEES";
                           vc.usersArray = users.mutableCopy;
                           [weakSelf.vc.navigationController pushViewController: vc animated:YES];
-                          NSLog(@"SUCCESS IN FETCHING %lu FOLLOWEES", (NSUInteger)users.count);
+                          NSLog(@"SUCCESS IN FETCHING %lu FOLLOWEES", (unsigned long)users.count);
                       });
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                       NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
@@ -716,9 +715,6 @@
         _lastShownUser = _userInfo.userID;
     }
     
-    self.listsAndPhotosLayout.userIsFoodie=NO;
-    self.listsAndPhotosLayout.userIsCurrentUser=NO;
-    
     if (!_didFetch) {
         _didFetch=YES;
         [self  refetch ];
@@ -801,17 +797,19 @@
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
     _listsAndPhotosLayout.delegate= self;
+    _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
     [_listsAndPhotosLayout setShowingLists: YES];
     
     _cv = makeCollectionView(self.view, self, _listsAndPhotosLayout);
 #define PROFILE_CV_PHOTO_CELL  @"profilephotocell"
 #define PROFILE_CV_LIST_CELL  @"profilelistCell"
 #define PROFILE_CV_HEADER_CELL  @"profileHeaderCell"
+#define PROFILE_CV_EMPTY_CELL  @"profileEmptyCell"    
     
     // NOTE: When _viewingLists==YES, use ProfileCVListRow else use PhotoCVCell.
     [_cv registerClass:[PhotoCVCell class] forCellWithReuseIdentifier: PROFILE_CV_PHOTO_CELL];
     [_cv registerClass:[ListStripCVCell class] forCellWithReuseIdentifier: PROFILE_CV_LIST_CELL];
-    
+    [_cv registerClass:[ProfileEmptyCell class] forCellWithReuseIdentifier: PROFILE_CV_EMPTY_CELL];
     [_cv registerClass:[ProfileHeaderView class ] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
    withReuseIdentifier:PROFILE_CV_HEADER_CELL];
     
@@ -949,6 +947,14 @@
     }
 }
 
+- (void) userPressedEmptyCell;
+{
+    if ( _viewingOwnProfile) {
+        // RULE: Behavior is the same as the upper right button.
+        [self handleUpperRightButton];
+    }
+}
+
 - (void)setUserPhoto: ( UIImage*)image
 {
     __weak ProfileVC *weakSelf = self;
@@ -973,7 +979,8 @@
     
 }
 
-- (void)showRestaurantPicker {
+- (void)showRestaurantPicker
+{
     if (_restaurantPicker) return;
     
     self.selectedRestaurant= nil;
@@ -1172,6 +1179,7 @@
         [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
     }
     
+    _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;
     [_listsAndPhotosLayout invalidateLayout];
     [self.cv reloadData];
     
@@ -1186,6 +1194,7 @@
         [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton)];
     }
     
+    _listsAndPhotosLayout.thereAreNoItems= _arrayPhotos.count==0;
     [_listsAndPhotosLayout invalidateLayout];
     [self.cv reloadData];
 }
@@ -1197,6 +1206,9 @@
     if  (_viewingLists ) {
         return kGeomHeightStripListRow;
     } else {
+        if (!_arrayPhotos.count) {
+            return kGeomHeightStripListRow;
+        }
         NSInteger row= indexPath.row;
         MediaItemObject* object=  row <_arrayPhotos.count ? _arrayPhotos[row] :nil;
         if  (object ) {
@@ -1207,7 +1219,7 @@
             float height= availableWidth/aspect;
             return height;
         } else {
-            return 10;
+            return 0;
         }
     }
 }
@@ -1225,6 +1237,11 @@
     } else {
         total=  self.arrayPhotos.count;
     }
+    
+    if  (!total) {
+        // NOTE: We want to show an empty cell when there are no items to show.
+        total= 1;
+    }
     return total;
 }
 
@@ -1238,25 +1255,30 @@
 {
     ProfileHeaderView *view = nil;
     
-    if (_topView)
-        return _topView;
-    
     if([kind isEqualToString:UICollectionElementKindSectionHeader]) {
+        
+        _listsAndPhotosLayout.userIsSelf= _viewingOwnProfile;
+        _listsAndPhotosLayout.userIsFoodie= _profileOwner.isFoodie;
+        _listsAndPhotosLayout.foodieHasURL= _profileOwner.urlString.length>0;
+        
+        if (_topView) {
+            [_topView removeFromSuperview];
+            //        _topView.frame=CGRectZero;
+            return _topView;
+        }
         
         view= [collectionView dequeueReusableSupplementaryViewOfKind: kind
                                                  withReuseIdentifier:PROFILE_CV_HEADER_CELL
                                                         forIndexPath:indexPath];
         self.topView = view;
+        [_topView removeFromSuperview];
         [_topView setUserInfo:  self.profileOwner];
+        //        _topView.frame=CGRectZero;
         
         [ view setUserInfo: _profileOwner];
         view.vc = self;
         
         view.delegate=self;
-        
-        _listsAndPhotosLayout.userIsCurrentUser= _viewingOwnProfile;
-        _listsAndPhotosLayout.userIsFoodie= _profileOwner.isFoodie;
-        _listsAndPhotosLayout.foodieHasURL= _profileOwner.urlString.length>0;
         
         [_cv setNeedsLayout];
         
@@ -1272,6 +1294,20 @@
     
     if  (_viewingLists ) {
         NSUInteger  total= self.arrayLists.count;
+        if  (!total ) {
+            ProfileEmptyCell*cell= [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_EMPTY_CELL
+                                                                             forIndexPath:indexPath];
+            
+            if ( _viewingOwnProfile) {
+                [ cell setListMode];
+                cell.message=  @"Make your first list!";
+                //                cell.backgroundColor= GREEN;
+            } else {
+                [ cell setMessageMode];
+                cell.message=  @"This user is still making their first list.";
+            }
+            return  cell;
+        }
         if  (row>= total ) {
             return nil;
         }
@@ -1291,6 +1327,20 @@
     }
     else {
         NSUInteger  total= self.arrayPhotos.count;
+        if  (!total ) {
+            ProfileEmptyCell*cell= [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_EMPTY_CELL
+                                                                             forIndexPath:indexPath];
+            
+            if ( _viewingOwnProfile) {
+                [ cell setPhotoMode];
+                cell.message=  @"Take your first picture!";
+            } else {
+                [ cell setMessageMode];
+                cell.message=  @"Artfully crafted photos coming soon.";
+            }
+
+            return  cell;
+        }
         if  (row>= total ) {
             return nil;
         }
@@ -1441,11 +1491,19 @@
     
     NSInteger row= indexPath.row;
     if  (_viewingLists) {
+        if (!_arrayLists.count) {
+            [self userPressedEmptyCell];
+            return;
+        }
         ListObject*object = _arrayLists[row];
         RestaurantListVC *vc = [[RestaurantListVC  alloc] init];
         vc.listItem = object;
         [self.navigationController pushViewController:vc animated:YES];
     } else {
+        if (!_arrayPhotos.count) {
+            [self userPressedEmptyCell];
+            return;
+        }
         NSUInteger row = indexPath.row;
         MediaItemObject *mediaObject = _arrayPhotos[ row];
         NSUInteger restaurantID = mediaObject.restaurantID;
@@ -1735,5 +1793,90 @@
     
 }
 
+@end
+
+@interface ProfileEmptyCell()
+@property (nonatomic,strong) UILabel*labelMessage;
+@property (nonatomic,strong) UILabel* labelIcon;
+
+@property (nonatomic,assign)  enum  {
+        PROFILE_EMPTYCELL_LIST, PROFILE_EMPTYCELL_PHOTO, PROFILE_EMPTYCELL_MESSAGE
+    } mode;
+@end
+
+@implementation ProfileEmptyCell
+- (instancetype) initWithFrame:(CGRect)frame
+{
+    self=[ super initWithFrame:frame];
+    if (self) {
+        self.autoresizesSubviews= NO;
+        _labelIcon= makeIconLabel( self,  @"",kGeomIconSize);
+        _labelIcon.textColor= YELLOW;
+
+        _labelMessage= makeLabel(self,  @"?", kGeomFontSizeHeader);
+        _labelMessage.textColor=   UIColorRGB(0xff808080);
+        _labelMessage.textAlignment= NSTextAlignmentLeft;
+      
+    }
+    return self;
+}
+
+- (void) setMessage:(NSString *)message;
+{
+    _labelMessage.text= message;
+}
+
+- (void)setListMode
+{
+    _labelIcon.text=kFontIconAdd;
+    _mode= PROFILE_EMPTYCELL_LIST;
+    [self setNeedsLayout];
+}
+- (void)setMessageMode
+{
+    _labelIcon.text= @"";
+    _mode= PROFILE_EMPTYCELL_MESSAGE;
+    [self setNeedsLayout];
+}
+- (void)setPhotoMode
+{
+    _labelIcon.text=kFontIconPhoto;
+    _mode= PROFILE_EMPTYCELL_PHOTO;
+    [self setNeedsLayout];
+}
+
+- (void)layoutSubviews
+{
+    [super  layoutSubviews];
+    
+    float w = self.bounds.size.width;
+    CGSize messageSize= [_labelMessage sizeThatFits:CGSizeMake(w,200)];
+
+    switch (_mode) {
+        case PROFILE_EMPTYCELL_LIST:
+        case PROFILE_EMPTYCELL_PHOTO:{
+            [_labelIcon sizeToFit];
+            float w1= _labelIcon.frame.size.width;
+            float w2= messageSize.width;
+            float requiredWidth= w1+w2 +kGeomSpaceInter;
+            float x=  (w-requiredWidth)/2;
+
+            _labelIcon.frame= CGRectMake(x,0, w1,kGeomHeightButton);
+            x+= w1 +kGeomSpaceInter;
+            _labelMessage.frame= CGRectMake(x,0,w2,kGeomHeightButton);
+        } break;
+            
+        default:{
+            float w1= messageSize.width;
+            float x=  (w-w1)/2;
+            _labelMessage.frame= CGRectMake(x,0,w1,kGeomHeightButton);
+        } break;
+    }
+}
+
+- (void) prepareForReuse
+{
+    [self setMessageMode];
+}
 @end
 
