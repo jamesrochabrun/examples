@@ -17,6 +17,10 @@
 #import "RestaurantPickerVC.h"
 #import "ViewPhotoVC.h"
 
+@protocol ProfileEmptyCellDelegate
+- (void) userPressedEmptyCell;
+@end
+
 @protocol ProfileHeaderViewDelegate
 - (void) userTappedOnLists;
 - (void) userTappedOnPhotos;
@@ -24,8 +28,8 @@
 - (void) userPressedURL;
 @end
 
-@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate,
-                        ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate>
+@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
+    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
@@ -43,3 +47,13 @@
 @interface ProfileCVPhotoCell : UICollectionViewCell
 - (void)setMediaObject:(MediaItemObject *)mediaObject;
 @end
+
+@interface ProfileEmptyCell: UICollectionViewCell
+@property (nonatomic,weak) NSObject<ProfileEmptyCellDelegate>* delegate;
+- (void) setListMode;
+- (void) setMessageMode;
+- (void) setPhotoMode;
+- (void) setMessage:(NSString *)message;
+
+@end
+

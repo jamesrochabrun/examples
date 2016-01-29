@@ -71,10 +71,11 @@ static NSUInteger kGeomFontSizeStripHeader = 13;
 static NSUInteger kGeomFontSizeBannerMain = 12;
 static NSUInteger kGeomFontSizeDetail = 11;
 static NSUInteger kGeomFontSizeAbout = 13;
-static NSInteger kGeomPeopleIconFontSize = 30;
-static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomIconSize = 30;
 static CGFloat kGeomIconSizeSmall = 27;
+
+static NSInteger kGeomPeopleIconFontSize = 30;
+static CGFloat kGeomHeightButton = 44.0;
 static CGFloat kGeomDimensionsIconButtonSmall = 35.0;
 static CGFloat kGeomDimensionsIconButton = 40.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
@@ -100,6 +101,7 @@ static CGFloat kGeomInterImageGap = 2;
 
 static CGFloat kGeomUploadWidth = 750;
 
+// Profile screen.
 static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
@@ -111,6 +113,9 @@ static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 static CGFloat kGeomProfileStatsOverallWidth= 171;
 static CGFloat kGeomProfileStatsItemHeight= 30;
 static CGFloat kGeomProfileSettingsBadgeSize=  30;
+static CGFloat kGeomProfileEmptyPlusSize= 40;
+static NSUInteger kGeomFontSizeStatsText = 14;
+static NSUInteger kGeomFontSizeStatsIcons = 22;
 
 static CGFloat kGeomUserListUserImageHeight=82;
 
@@ -166,7 +171,7 @@ static CGFloat kGeomFollowButtonHeight= 24; // Connect screen, profile screen
 // Images
 extern NSString *const kImageNoProfileImage;
 
-// Custom FontsGood and yet so as
+// Custom Fonts
 extern NSString *const kFontIcons;
 extern NSString *const kFontLatoThin;
 extern NSString *const kFontLatoRegular;

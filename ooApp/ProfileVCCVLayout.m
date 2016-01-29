@@ -55,7 +55,7 @@
 
 - (void)prepareLayout
 {
-    if  ( _showingLists) {
+    if  ( _showingLists || _thereAreNoItems) {
         [self prepareListsLayout];
     } else {
         [self preparePhotosLayout];
@@ -81,93 +81,90 @@
     CGSize itemSize;
     
     float allowableHorizontalSpace= round ((width(self.collectionView)));
-    if (numberOfColumnsInRow==2 ) {
-        allowableHorizontalSpace -= kGeomInterImageGap/2;
-    }
     
     NSUInteger nSections=[self.collectionView numberOfSections];
     int hdrHeight = 0;
-    if ( _userIsCurrentUser) {
+    if ( _userIsSelf) {
         hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightSelf;
     } else {
         hdrHeight = _userIsFoodie && _foodieHasURL? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
     }
 
-    for (NSUInteger section = 0; section < nSections; section++) {
-        NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
+    NSUInteger section = 0;
+    
+    NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
+    
+    itemAttributes = [NSMutableArray array];
+    [_sectionAttributes addObject:itemAttributes];
+    column = 0;
+    
+    itemSize = CGSizeMake( (width(self.collectionView)/numberOfColumnsInRow)-1, 0);
+    UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+                                                                                                                      withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+    suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView),
+                                                     hdrHeight));
+    xOffset = 0;
+    yOffset += hdrHeight;
+    [itemAttributes addObject:suppattributes];
+    
+    NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
+    
+    NSMutableArray *lastRowAttributes = [NSMutableArray array];
+    
+    // Loop through all items in section and calculate the UICollectionViewLayoutAttributes for each one
+    for (NSUInteger index = 0; index < numberOfItems; index++)
+    {
+        //get the items height
+        itemSize.height = [_delegate collectionView:self.collectionView layout:self
+                           heightForItemAtIndexPath:[NSIndexPath
+                                                     indexPathForItem:index
+                                                     inSection:section]];
         
-        itemAttributes = [NSMutableArray array];
-        [_sectionAttributes addObject:itemAttributes];
-        column = 0;
+        // Create the actual UICollectionViewLayoutAttributes and add it to your array. We'll use this later in layoutAttributesForItemAtIndexPath:
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:section];
+        UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
         
-        itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow-1, 0);
-        UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                                                                                          withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-        suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView),
-                                                         hdrHeight));
-        xOffset = 0;
-        yOffset += hdrHeight;
-        [itemAttributes addObject:suppattributes];
+        if ([lastRowAttributes count] > index%numberOfColumnsInRow) {
+            UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
+            yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + 2;
+        }
         
-        NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
+        attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, allowableHorizontalSpace, itemSize.height));
         
-        NSMutableArray *lastRowAttributes = [NSMutableArray array];
+        NSLog(@"attribute frame=%@, column=%lu", NSStringFromCGRect(attributes.frame), (unsigned long)column);
         
-        // Loop through all items in section and calculate the UICollectionViewLayoutAttributes for each one
-        for (NSUInteger index = 0; index < numberOfItems; index++)
+        [itemAttributes addObject:attributes];
+        
+        if ([lastRowAttributes count] > index%numberOfColumnsInRow &&
+            [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow]) {
+            [lastRowAttributes replaceObjectAtIndex:index%numberOfColumnsInRow withObject:attributes];
+        } else {
+            [lastRowAttributes addObject:attributes];
+        }
+        
+        xOffset += allowableHorizontalSpace + kGeomInterImageGap;
+        column++;
+        
+        // Create a new row if this was the last column
+        if (column == numberOfColumnsInRow)
         {
-            //get the items height
-            itemSize.height = [_delegate collectionView:self.collectionView layout:self
-                               heightForItemAtIndexPath:[NSIndexPath
-                                                         indexPathForItem:index
-                                                         inSection:section]];
+            if (CGRectGetMaxX(attributes.frame) > contentWidth)
+                contentWidth = CGRectGetMaxX(attributes.frame);
             
-            // Create the actual UICollectionViewLayoutAttributes and add it to your array. We'll use this later in layoutAttributesForItemAtIndexPath:
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:section];
-            UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
-            
-            if ([lastRowAttributes count] > index%numberOfColumnsInRow) {
-                UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
-                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + 2;
-            }
-            
-            attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, allowableHorizontalSpace, itemSize.height));
-            
-            NSLog(@"attribute frame=%@, column=%lu", NSStringFromCGRect(attributes.frame), (unsigned long)column);
-            
-            [itemAttributes addObject:attributes];
-            
-            if ([lastRowAttributes count] > index%numberOfColumnsInRow &&
-                [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow]) {
-                [lastRowAttributes replaceObjectAtIndex:index%numberOfColumnsInRow withObject:attributes];
-            } else {
-                [lastRowAttributes addObject:attributes];
-            }
-            
-            xOffset += allowableHorizontalSpace + kGeomInterImageGap;
-            column++;
-            
-            // Create a new row if this was the last column
-            if (column == numberOfColumnsInRow)
-            {
-                if (CGRectGetMaxX(attributes.frame) > contentWidth)
-                    contentWidth = CGRectGetMaxX(attributes.frame);
-                
-                // Reset values
-                column = 0;
-                xOffset = 0;
-                yOffset += /*itemSize.height+*/kGeomInterImageGap;
-            }
+            // Reset values
+            column = 0;
+            xOffset = 0;
+            yOffset += /*itemSize.height+*/kGeomInterImageGap;
         }
-        //done with section, set the x & y offsets for the new section appropriately
-        xOffset = 0;
-        UICollectionViewLayoutAttributes *theLastAttribute = [itemAttributes lastObject];
-        if (theLastAttribute) {
-            yOffset = theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
-        }
-        
-        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld",(long) section,(long) [self.collectionView numberOfItemsInSection:section], yOffset, (long)numberOfColumnsInRow);
     }
+    //done with section, set the x & y offsets for the new section appropriately
+    xOffset = 0;
+    UICollectionViewLayoutAttributes *theLastAttribute = [itemAttributes lastObject];
+    if (theLastAttribute) {
+        yOffset = theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
+    }
+    
+    NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld",(long) section,(long) [self.collectionView numberOfItemsInSection:section], yOffset, (long)numberOfColumnsInRow);
     
     // Get the last item to calculate the total height of the content
     NSArray *lastSectionAttributes = [_sectionAttributes lastObject];
@@ -213,7 +210,7 @@
     
     NSUInteger nSections=[self.collectionView numberOfSections];
     int hdrHeight = 0;
-    if ( _userIsCurrentUser) {
+    if ( _userIsSelf) {
         hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightSelf;
     } else {
         hdrHeight = _userIsFoodie && _foodieHasURL? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
@@ -272,12 +269,12 @@
             xOffset += allowableHorizontalSpace + kGeomInterImageGap;
             column++;
             
+            if (CGRectGetMaxX(attributes.frame) > contentWidth)
+                contentWidth = CGRectGetMaxX(attributes.frame);
+            
             // Create a new row if this was the last column
             if (column == kProfileNumColumnsForMediaItemsPhone)
             {
-                if (CGRectGetMaxX(attributes.frame) > contentWidth)
-                    contentWidth = CGRectGetMaxX(attributes.frame);
-                
                 // Reset values
                 column = 0;
                 xOffset = kGeomSpaceEdge;
