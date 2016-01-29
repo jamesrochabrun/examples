@@ -61,6 +61,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _tableView.layoutMargins = UIEdgeInsetsZero;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
+    [self registerForNotification: kNotificationListAltered
+                          calling:@selector(handleListAltered:)
+     ];
+    
     _requestOperation = nil;
     
     UserObject *userInfo = [Settings sharedInstance].userObject;
@@ -135,6 +139,21 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [self presentViewController:_alertController animated:YES completion:nil]; // 6
 }
 
+//------------------------------------------------------------------------------
+// Name:    handleListAltered
+// Purpose: If one of our list objects was deleted then update our UI.
+//------------------------------------------------------------------------------
+- (void)handleListAltered: (NSNotification*)not
+{
+    NSNumber* listObjectIDNumber= not.object;
+    NSUInteger listObjectID= [listObjectIDNumber isKindOfClass: [NSNumber class ]] ?listObjectIDNumber.unsignedIntegerValue:0;
+    if (listObjectID && listObjectID==_listItem.listID ) {
+        
+        NSLog (@"LIST ALTERED");
+        [self fetchRestaurants];
+    }
+}
+
 - (void)deleteList
 {
     __weak  RestaurantListVC *weakSelf = self;
@@ -173,19 +192,26 @@ static NSString * const cellIdentifier = @"horizontalCell";
     // Dispose of any resources that can be recreated.
 }
 
+- (void) fetchRestaurants
+{
+    if (_listItem) {
+        [self getRestaurants];
+    }
+    
+}
+
 - (void)setListItem:(ListObject *)listItem {
     if (_listItem == listItem) return;
     _listItem = listItem;
 
-    if (_listItem) {
-        [self.view bringSubviewToFront:self.aiv];
-        self.aiv.message = @"loading";
-        [self.aiv startAnimating];
-        [self getRestaurants];
-    }
-    
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listItem.name subHeader:nil];
     self.navTitle = nto;
+    
+    [self.view bringSubviewToFront:self.aiv];
+    self.aiv.message = @"loading";
+    [self.aiv startAnimating];
+    
+    [self fetchRestaurants];
 }
 
 - (void)getRestaurants
@@ -197,15 +223,17 @@ static NSString * const cellIdentifier = @"horizontalCell";
         _listItem.type == kListTypeFavorites ||
         _listItem.type == kListTypeUser) {
         self.requestOperation = [api getRestaurantsWithListID:_listItem.listID
-                          andLocation:[LocationManager sharedInstance].currentUserLocation
-                                                      success:^(NSArray *r) {
-            weakSelf.restaurants = r;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf gotRestaurants];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-            [self.aiv stopAnimating];
-        }];
+                                                  andLocation:[LocationManager sharedInstance].currentUserLocation
+                                                      success:^(NSArray *r)
+                                 {
+                                     weakSelf.restaurants = r;
+                                     weakSelf.listItem.venues= r.mutableCopy;
+                                     dispatch_async(dispatch_get_main_queue(), ^{
+                                         [weakSelf gotRestaurants];
+                                     });
+                                 } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
+                                     [self.aiv stopAnimating];
+                                 }];
     } else if (_listItem.type == kListTypeTrending||
                _listItem.type == kListTypePopular) {
         
@@ -263,6 +291,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
     cell.restaurant = restaurant;
+    cell.listToAddTo= self.listItem;
     cell.nc = self.navigationController;
     cell.eventBeingEdited=self.eventBeingEdited;
     [cell updateConstraintsIfNeeded];
@@ -277,6 +306,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantVC *vc = [[RestaurantVC alloc] init];
     ANALYTICS_EVENT_UI(@"RestaurantVC-from-RestaurantListVC");
     vc.eventBeingEdited= self.eventBeingEdited;
+    vc.listToAddTo= self.listItem;
     vc.restaurant = restaurant;
     [self.navigationController pushViewController:vc animated:YES];
     
@@ -301,18 +331,19 @@ static NSString * const cellIdentifier = @"horizontalCell";
         
         [api deleteRestaurant:restaurant.restaurantID fromList:_listItem.listID
                       success:^(NSArray *lists) {
-            [api getRestaurantsWithListID:_listItem.listID
-                          andLocation:[LocationManager sharedInstance].currentUserLocation
-                                  success:^(NSArray *restaurants) {
-                _restaurants = restaurants;
-                ON_MAIN_THREAD(^{
-                    [weakSelf.tableView reloadData];
-                });
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
-            }];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+                          [api getRestaurantsWithListID:_listItem.listID
+                                            andLocation:[LocationManager sharedInstance].currentUserLocation
+                                                success:^(NSArray *restaurants) {
+                                                    _restaurants = restaurants;
+                                                    weakSelf.listItem.venues= restaurants.mutableCopy;
+                                                    ON_MAIN_THREAD(^{
+                                                        [weakSelf.tableView reloadData];
+                                                    });
+                                                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                    ;
+                                                }];
+                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                          ;
         }];
     }
 }

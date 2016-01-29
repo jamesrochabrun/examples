@@ -74,4 +74,5 @@ NSString *const kNotificationEventDeleted = @"notificationEventDeleted";
 NSString *const kNotificationPhotoDeleted = @"notificationPhotoDeleted";
 NSString *const kNotificationRestaurantDeleted = @"notificationRestaurantDeleted";
 NSString *const kNotificationListDeleted=  @"notificationListDeleted";
+NSString *const kNotificationListAltered=  @"notificationListAltered";
 

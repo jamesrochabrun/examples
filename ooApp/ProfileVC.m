@@ -12,7 +12,8 @@
 #import "Common.h"
 #import "ListStripCVCell.h"
 #import "OOAPI.h"
-#import "EmptyListVC.h"
+//#import "EmptyListVC.h"
+#import "ExploreVC.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
@@ -764,6 +765,9 @@
     [self registerForNotification: kNotificationListDeleted
                           calling:@selector(handleListDeleted:)
      ];
+    [self registerForNotification: kNotificationListAltered
+                          calling:@selector(handleListAltered:)
+     ];
     // NOTE:  Unregistered in dealloc.
     
     // Ascertain whether reviewing our own profile based on passed-in UserObject pointer.
@@ -819,6 +823,16 @@
     [self setNavTitle:nto];
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
+}
+
+//------------------------------------------------------------------------------
+// Name:    handleListAltered
+// Purpose: If one of our list objects was deleted then update our UI.
+//------------------------------------------------------------------------------
+- (void)handleListAltered: (NSNotification*)not
+{
+    NSLog (@"LIST ALTERED");
+    [self refetch];
 }
 
 //------------------------------------------------------------------------------
@@ -1137,7 +1151,7 @@
              success:^(ListObject *list) {
                  ON_MAIN_THREAD(^{
                      if (list) {
-                         [weakSelf performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
+                         [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
                          [weakSelf refetch];
                      } else {
                          message( @"That list name is already in use.");
@@ -1158,6 +1172,13 @@
     [alert addAction:newList];
     [alert addAction:cancel];
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)goToExploreScreen: (ListObject*)list
+{
+    ExploreVC*vc= [[ExploreVC alloc] init];
+    vc.listToAddTo= list;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)handleUpperRightButton
@@ -1625,18 +1646,17 @@
 // Name:    goToEmptyListScreen
 // Purpose:
 //------------------------------------------------------------------------------
+#if 0
 - (void)goToEmptyListScreen:(ListObject *)list
 {
     if  (self.uploading) {
         return;
     }
-    
-    
-    
     EmptyListVC *vc= [[EmptyListVC alloc] init];
     vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];
 }
+#endif
 
 //------------------------------------------------------------------------------
 // Name:    getNumberOfLists

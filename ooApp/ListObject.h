@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+@class RestaurantObject;
+
 typedef enum {
     kListDisplayTypeFeatured,
     KListDisplayTypeStrip,
@@ -38,6 +40,7 @@ extern NSString *const kKeyListNumRestaurants;
 
 @property (nonatomic) NSUInteger listID;
 @property (nonatomic, strong) NSArray *userIDs;
+@property (nonatomic,strong) NSMutableArray *venues;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) ListType type;
 @property (nonatomic, strong) NSString *imageURL;
@@ -48,6 +51,9 @@ extern NSString *const kKeyListNumRestaurants;
 + (ListObject *)listFromDict:(NSDictionary *)dict;
 + (NSDictionary *)dictFromList:(ListObject *)list;
 - (BOOL)isListOwner:(NSUInteger)userID;
+- (void)removeVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock;
+- (BOOL)alreadyHasVenue:(RestaurantObject *)venue;
+- (void)addVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock;
 
 @end
 
