@@ -50,7 +50,7 @@
         
         _yumIndicator = [[UILabel alloc] init];
         _yumIndicator.translatesAutoresizingMaskIntoConstraints = NO;
-        [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:kGeomDimensionsIconButton] textColor:kColorYellow backgroundColor:kColorClear];
+        [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:60] textColor:kColorYellow backgroundColor:kColorClear];
         _yumIndicator.text = kFontIconYum;
         [_yumIndicator sizeToFit];
         _yumIndicator.alpha = 0;

@@ -121,10 +121,7 @@ static void updateStoredUserIfNecessary (UserObject *user)
     user.urlString = parseStringOrNullFromServer([dict objectForKey: kKeyURL]);
     user.userType = parseNumberOrNullFromServer([dict objectForKey:kKeyUserType]);
     user.isFoodie = user.userType == USER_TYPE_FOODIE;
-    
-    if (user.userType == 4) {
-        NSLog(@"%@ is a foodie", user.username);
-    }
+
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
     }
