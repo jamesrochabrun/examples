@@ -290,6 +290,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+    cell.useModalForListedVenues= YES;
     cell.restaurant = restaurant;
     cell.listToAddTo= self.listItem;
     cell.nc = self.navigationController;

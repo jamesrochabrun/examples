@@ -140,19 +140,26 @@ enum  {
     NSString *string = @"";
     if (!self.eventBeingEdited) {
         if (self.listToAddTo) {
-            if ( !self.listToAddTo.venues) {
-                // NOTE: We do not yet know what venues are in this list.
-                self.mode= MODE_NONE;
-                string=  @"";
+            if ( _useModalForListedVenues) {
+                
+                string= kFontIconMore;
+                self.mode= MODE_MODAL;
             } else {
-                if ( [_listToAddTo alreadyHasVenue:_restaurant]) {
-                    string= kFontIconRemove;
-                    self.mode= MODE_REMOVE;
+                
+                if ( !self.listToAddTo.venues) {
+                    // NOTE: We do not yet know what venues are in this list.
+                    self.mode= MODE_NONE;
+                    string=  @"";
                 } else {
-                    string= kFontIconAdd;
-                    self.mode= MODE_ADD;
+                    if ( [_listToAddTo alreadyHasVenue:_restaurant]) {
+                        string= kFontIconRemove;
+                        self.mode= MODE_REMOVE;
+                    } else {
+                        string= kFontIconAdd;
+                        self.mode= MODE_ADD;
+                    }
                 }
-            }    
+            }
         } else {
             string= kFontIconMore;
             self.mode= MODE_MODAL;
@@ -199,7 +206,6 @@ enum  {
     } else {
         NSLog (@"THERE IS NO LIST TO REMOVE FROM.");
     }
-    
 }
 
 - (void)showLists {
@@ -268,13 +274,27 @@ enum  {
     
     UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
                                                               style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                  [self sharePressed];
+                                                                  [weakSelf  sharePressed];
                                                               }];
     
-    UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add/Remove from List"
-                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                            [self addToList];
-                                                        }];
+    UIAlertAction *addToList = nil;
+    UIAlertAction *removeFromList =nil;
+    
+    if ( _listToAddTo) {
+        if  ([_listToAddTo alreadyHasVenue: _restaurant] ) {
+            removeFromList= [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Remove from \"%@\"", _listToAddTo.name] : @"Remove from List"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                         [ weakSelf   removeFromList];
+                                                     }];
+        } else {
+            
+            addToList= [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add from List"
+                                                style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                    [weakSelf  addToList];
+                                                }];
+        }
+    }
+    
     UIAlertAction *addToEvent = nil;
     UIAlertAction *removeFromEvent = nil;
     if (self.eventBeingEdited) {
@@ -312,7 +332,13 @@ enum  {
                                                      }];
     
     [_restaurantOptionsAC addAction:shareRestaurant];
-    [_restaurantOptionsAC addAction:addToList];
+    if ( addToList) {
+        [_restaurantOptionsAC addAction:addToList];
+    }
+    if (  removeFromList) {
+        [_restaurantOptionsAC addAction:removeFromList];
+    }
+
     [_restaurantOptionsAC addAction:addToNewList];
     if (addToEvent) {
         [_restaurantOptionsAC addAction:addToEvent];
