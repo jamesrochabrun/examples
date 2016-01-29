@@ -70,8 +70,6 @@ static NSUInteger kGeomFontSizeListButton = 12;
 static NSUInteger kGeomFontSizeStripHeader = 13;
 static NSUInteger kGeomFontSizeBannerMain = 12;
 static NSUInteger kGeomFontSizeDetail = 11;
-static NSUInteger kGeomFontSizeStatsText = 14;
-static NSUInteger kGeomFontSizeStatsIcons = 17;
 static NSUInteger kGeomFontSizeAbout = 13;
 static CGFloat kGeomIconSize = 30;
 static CGFloat kGeomIconSizeSmall = 27;
@@ -102,6 +100,7 @@ static CGFloat kGeomInterImageGap = 2;
 
 static CGFloat kGeomUploadWidth = 750;
 
+// Profile screen.
 static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
@@ -114,6 +113,8 @@ static CGFloat kGeomProfileStatsOverallWidth= 171;
 static CGFloat kGeomProfileStatsItemHeight= 30;
 static CGFloat kGeomProfileSettingsBadgeSize=  30;
 static CGFloat kGeomProfileEmptyPlusSize= 40;
+static NSUInteger kGeomFontSizeStatsText = 14;
+static NSUInteger kGeomFontSizeStatsIcons = 22;
 
 static CGFloat kGeomUserListUserImageHeight=82;
 
