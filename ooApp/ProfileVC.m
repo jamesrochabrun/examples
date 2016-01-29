@@ -828,7 +828,7 @@
 - (void)handleListDeleted: (NSNotification*)not
 {
     NSLog (@"LIST DELETED");
-    
+    [self refetch];
 }
 
 //------------------------------------------------------------------------------
@@ -1138,6 +1138,7 @@
                  ON_MAIN_THREAD(^{
                      if (list) {
                          [weakSelf performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
+                         [weakSelf refetch];
                      } else {
                          message( @"That list name is already in use.");
                      }
@@ -1629,6 +1630,8 @@
     if  (self.uploading) {
         return;
     }
+    
+    
     
     EmptyListVC *vc= [[EmptyListVC alloc] init];
     vc.listItem = list;

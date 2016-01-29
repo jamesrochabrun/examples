@@ -97,22 +97,23 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
     _alertController.view.tintColor = UIColorRGBA(kColorBlack);
 
+    __weak  RestaurantListVC *weakSelf = self;
     UIAlertAction *addRestaurantsFromExplore = [UIAlertAction actionWithTitle:@"Add Restaurants from Explore"
                                                                          style:UIAlertActionStyleDefault
                                                                        handler:^(UIAlertAction * action) {
-                                                                           [self addRestaurantsFromExplore];
+                                                                           [weakSelf addRestaurantsFromExplore];
                                                                        }];
 
     UIAlertAction *addRestaurantsFromList = [UIAlertAction actionWithTitle:@"Add Restaurants from List"
                                                                      style:UIAlertActionStyleDefault
                                                                    handler:^(UIAlertAction * action) {
-                                                                       [self addRestaurantsFromList];
+                                                                       [weakSelf addRestaurantsFromList];
                                                                    }];
 
     UIAlertAction *deleteList = [UIAlertAction actionWithTitle:@"Delete List"
                                                          style:UIAlertActionStyleDestructive
                                                        handler:^(UIAlertAction * action) {
-                                                           [self deleteList];
+                                                           [weakSelf deleteList];
                                                        }];
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
@@ -134,10 +135,14 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [self presentViewController:_alertController animated:YES completion:nil]; // 6
 }
 
-- (void)deleteList {
+- (void)deleteList
+{
+    __weak  RestaurantListVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
     [api deleteList:_listItem.listID success:^(NSArray *lists) {
-        [self.navigationController popViewControllerAnimated:YES];
+        NOTIFY_WITH(kNotificationListDeleted, @(_listItem.listID));
+        
+        [ weakSelf.navigationController popViewControllerAnimated:YES];
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
