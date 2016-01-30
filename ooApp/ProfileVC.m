@@ -111,6 +111,46 @@
     [_userView setUser: _userInfo];
 }
 
+- (void)updateUserStats: (NSNotification*)not
+{
+    NSNumber*userNumber= not.object;
+    NSUInteger userid= [userNumber isKindOfClass:[NSNumber class ] ]? userNumber.unsignedIntegerValue : 0;
+    UserObject*currentUser= [Settings sharedInstance].userObject;
+    if  (userid== currentUser.userID) {
+        [self refreshUserStats];
+    }
+}
+
+- (void)refreshUserStats
+{
+    __weak ProfileHeaderView *weakSelf = self;
+
+    [OOAPI getUserStatsFor:_userInfo.userID
+                   success:^(UserStatsObject *stats) {
+                       ON_MAIN_THREAD(^{
+                           
+                           [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                           [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                           
+                           weakSelf.buttonFollowees.alpha= 1;
+                           weakSelf.buttonFollowers.alpha= 1;
+                           weakSelf.buttonFolloweesCount.alpha= 1;
+                           weakSelf.buttonFollowersCount.alpha= 1;
+                           
+                           weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                           weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                           weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                           
+                           [weakSelf setNeedsLayout];
+                       });
+                       
+                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                       NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                       
+                   }];
+    
+}
+
 - (void) loadUserInfo
 {
     if (!_userInfo) {
@@ -146,30 +186,7 @@
         // RULE: Show the user's own stats.
         [self  indicateFollowing];
         [_userView setShowCog];
-        
-        [OOAPI getUserStatsFor:_userInfo.userID
-                       success:^(UserStatsObject *stats) {
-                           ON_MAIN_THREAD(^{
-                               
-                               [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                               [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                               
-                               weakSelf.buttonFollowees.alpha= 1;
-                               weakSelf.buttonFollowers.alpha= 1;
-                               weakSelf.buttonFolloweesCount.alpha= 1;
-                               weakSelf.buttonFollowersCount.alpha= 1;
-                               
-                               weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                               weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                               weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                               
-                               [weakSelf setNeedsLayout];
-                           });
-                           
-                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                           NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                           
-                       }];
+        [self refreshUserStats];
     }
     else  {
         [OOAPI getFollowersOf:_userInfo.userID
@@ -190,29 +207,8 @@
                                   [weakSelf indicateFollowing];
                               }
                               
-                              [OOAPI getUserStatsFor:_userInfo.userID
-                                             success:^(UserStatsObject *stats) {
-                                                 ON_MAIN_THREAD(^{
-                                                     NSLog (@"GOT STATS FOR  %@",_userInfo.username);
-                                                     [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                                                     [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                                                     
-                                                     weakSelf.buttonFollowees.alpha= 1;
-                                                     weakSelf.buttonFollowers.alpha= 1;
-                                                     weakSelf.buttonFolloweesCount.alpha= 1;
-                                                     weakSelf.buttonFollowersCount.alpha= 1;
-                                                     
-                                                     weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                                                     weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                                                     weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                                                     
-                                                     [weakSelf setNeedsLayout];
-                                                 });
-                                                 
-                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                 NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                                                 
-                                             }];
+                              [ weakSelf  refreshUserStats];
+
                           });
                           
                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -317,6 +313,9 @@
         _buttonFollow.layer.borderWidth= 1;
         _buttonFollow.hidden= YES;
         
+        [self registerForNotification: kNotificationUserStatsChanged
+                              calling:@selector(updateUserStats:)
+         ];
         [self registerForNotification: kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
          ];
@@ -907,6 +906,7 @@
     [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
                    success:^(NSArray *mediaObjects) {
                        weakSelf.arrayPhotos= mediaObjects;
+                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
                        NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
                        ON_MAIN_THREAD(^(){
                            [weakSelf.cv  reloadData];
@@ -1049,6 +1049,8 @@
                            weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
                            
+                           [weakSelf refetch];
+
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
                    }
@@ -1411,6 +1413,7 @@
                                                                                   NOTIFY(kNotificationFoodFeedNeedsUpdate);
                                                                                   
                                                                                   NOTIFY_WITH(kNotificationPhotoDeleted, @( mio.mediaItemId));
+                                                                            
                                                                                   
                                                                               }
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
