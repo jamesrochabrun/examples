@@ -224,7 +224,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)showMissinGPSMessage {
     UIAlertController *showMissingGPSAlert = [UIAlertController alertControllerWithTitle:@"Missing Location"
-                                                        message:@"This photo does not appear to have location information so we need help figuring out what restaurant it belongs to. It's ok though! You can still upload it from the restaurant's page."
+                                                        message:@"This photo does not appear to have location information so we need help figuring out what restaurant it belongs to. Don’t work, you can still upload it from the restaurant's page!"
                                                  preferredStyle:UIAlertControllerStyleAlert];
 
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
