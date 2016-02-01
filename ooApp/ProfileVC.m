@@ -1004,11 +1004,17 @@
     _restaurantPicker.delegate = self;
     _restaurantPicker.location = [LocationManager sharedInstance].currentUserLocation;
     _restaurantPicker.imageToUpload = _imageToUpload;
-    [self.view addSubview:_restaurantPicker.view];
-    [_restaurantPicker.view  setNeedsUpdateConstraints];
     
-    [self presentViewController: _restaurantPicker animated:YES completion:^{
-        
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    [nc addChildViewController:_restaurantPicker];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        [_restaurantPicker.view setNeedsUpdateConstraints];
     }];
 }
 
