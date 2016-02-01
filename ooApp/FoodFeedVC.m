@@ -228,20 +228,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)showMissinGPSMessage {
     [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
-    
-//    UIAlertController *showMissingGPSAlert = [UIAlertController alertControllerWithTitle:@"Missing Location"
-//                                                        message:@"This photo does not appear to have location information so we need help figuring out what restaurant it belongs to. It's ok though! You can still upload it from the restaurant's page."
-//                                                 preferredStyle:UIAlertControllerStyleAlert];
-//
-//    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
-//                                                     style:UIAlertActionStyleDefault
-//                                                   handler:^(UIAlertAction * action) {
-//                                                   }];
-//
-//    [showMissingGPSAlert addAction:ok];
-//    [self presentViewController:showMissingGPSAlert animated:YES completion:^{
-//        ;
-//    }];
 }
 
 - (void)showRestaurantPickerAtCoordinate:(CLLocationCoordinate2D)location {

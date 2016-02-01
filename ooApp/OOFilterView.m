@@ -8,6 +8,7 @@
 
 #import "OOFilterView.h"
 #import "FilterObject.h"
+#import "DebugUtilities.h"
 
 @interface OOFilterView()
 

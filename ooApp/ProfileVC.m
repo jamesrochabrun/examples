@@ -96,7 +96,7 @@
 
 - (void)setUserInfo:(UserObject *)u
 {
-    if ( [u isEqualToDeeply: _userInfo] && u.isFoodie== !_buttonURL.hidden) {
+    if ([u isEqualToDeeply: _userInfo] && u.isFoodie== !_buttonURL.hidden) {
         return;
     }
     _userInfo= u;
@@ -104,7 +104,7 @@
     [self loadUserInfo];
 }
 
-- (void) refreshUserImage
+- (void)refreshUserImage
 {
     [_userView clear];
     [_userView setUser: _userInfo];
@@ -1546,6 +1546,13 @@
         return;
     }
     
+    CGRect originRect = CGRectMake(self.view.center.x, self.view.center.y, 0, 0);
+    id cell = [collectionView cellForItemAtIndexPath:indexPath];
+    if ([cell isKindOfClass:[PhotoCVCell class]]) {
+        originRect = [self.view convertRect:[cell frame] fromView:collectionView];
+        originRect.origin.y = originRect.origin.y + kGeomHeightNavBarStatusBar;
+    }
+    
     NSInteger row= indexPath.row;
     if  (_viewingLists) {
         if (!_arrayLists.count) {
@@ -1565,7 +1572,7 @@
         MediaItemObject *mediaObject = _arrayPhotos[row];
         NSUInteger restaurantID = mediaObject.restaurantID;
         if (!restaurantID) {
-            [self launchViewPhoto:mediaObject restaurant:nil];
+            [self launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
         } else {
             __weak ProfileVC *weakSelf = self;
             OOAPI *api=[[OOAPI alloc]init];
@@ -1574,33 +1581,27 @@
                              success:^(RestaurantObject *restaurant) {
                                  dispatch_async(dispatch_get_main_queue(), ^{
                                      if (restaurant) {
-                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant];
+                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant originFrame:originRect];
                                      } else {
-                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil];
+                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
                                      }
                                  });
                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                 
                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil];
+                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
                                  });
                              }];
         }
     }
 }
 
-- (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject*)restaurant
+- (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject*)restaurant originFrame:(CGRect)originFrame
 {
-    
-    //    PhotoCVCell *cell = (PhotoCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
-    //    CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
-    //    frame.origin.y += kGeomHeightNavBarStatusBar;
-    //    vc.originRect = frame;
-    
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
     [vc setDelegate:self];
     [vc setMio:mediaObject];
     [vc setRestaurant:restaurant];
+    vc.originRect = originFrame;
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
     self.navigationController.delegate = self;
