@@ -1530,7 +1530,7 @@
             return;
         }
         NSUInteger row = indexPath.row;
-        MediaItemObject *mediaObject = _arrayPhotos[ row];
+        MediaItemObject *mediaObject = _arrayPhotos[row];
         NSUInteger restaurantID = mediaObject.restaurantID;
         if (!restaurantID) {
             [self launchViewPhoto:mediaObject restaurant:nil];
