@@ -95,9 +95,28 @@
         [_doubleTapGesture setNumberOfTapsRequired:2];
         [self addGestureRecognizer:_doubleTapGesture];
         
+        [self registerForNotification: kNotificationMediaItemAltered
+                              calling:@selector(handleMediaItemAltered:)];
 //        [DebugUtilities addBorderToViews:@[_yumButton, _numYums, _userButton]];
     }
     return self;
+}
+
+- (void)registerForNotification:(NSString*) name calling:(SEL)selector
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector: selector
+                   name: name
+                 object:nil];
+}
+
+- (void)unregisterFromNotifications {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver: self  ];
+}
+
+- (void)dealloc {
+    [self unregisterFromNotifications];
 }
 
 - (void)layoutSubviews {
@@ -162,7 +181,7 @@
     UserObject* myself= [Settings sharedInstance].userObject;
     if ( _mediaItemObject.sourceUserID==myself.userID) {
         // RULE: If I like or unlike my own photo, I will need to update my profile screen.
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationOwnProfileNeedsUpdate object:nil];
+        NOTIFY(kNotificationOwnProfileNeedsUpdate);
     }
 }
 
@@ -264,6 +283,15 @@
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
+    }
+}
+
+- (void)handleMediaItemAltered: (NSNotification*)not
+{
+    NSNumber*number= not.object;
+    NSUInteger  identifier= [number isKindOfClass:[NSNumber class]]? number.unsignedIntegerValue:0;
+    if  (identifier ==_mediaItemObject.mediaItemId ) {
+        [self updateNumYums];
     }
 }
 

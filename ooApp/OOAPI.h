@@ -127,6 +127,11 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                success:(void (^)(NSArray *lists))success
                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)removeVenue:(RestaurantObject *)venue
+                               fromList:(ListObject *)list
+                                success:(void (^)(id response))success
+                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 //------------------------------------------------------------------------------
 // Users
 //

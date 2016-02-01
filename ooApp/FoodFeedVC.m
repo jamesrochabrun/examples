@@ -34,7 +34,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) UIAlertController *showPhotoOptions;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIImage *imageToUpload;
-@property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
 @property (nonatomic) BOOL needsUpdate;
 @property (nonatomic) NSUInteger numColumns;
 @property (nonatomic) NSUInteger selectedItem;
@@ -152,7 +151,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     if (havePhotoLibrary) [addPhoto addAction:libraryUI];
     [addPhoto addAction:cancel];
     
-    if (havePhotoLibrary && haveCamera )[self presentViewController:addPhoto animated:YES completion:nil];
+    if (havePhotoLibrary && haveCamera ) {
+        [self presentViewController:addPhoto animated:YES completion:nil];
+    } else {
+        [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
+    }
 }
 
 - (void)showCameraUI {
@@ -202,7 +205,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                 if (longitude && latitude) {
                     CLLocationCoordinate2D photoLocation = CLLocationCoordinate2DMake([latitude doubleValue],
                                                        [longitude doubleValue]);
-                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
+//                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
                     [weakSelf showRestaurantPickerAtCoordinate:photoLocation];
                 } else {
                     [weakSelf showMissinGPSMessage];
@@ -216,6 +219,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
             [weakSelf showMissinGPSMessage];
         }];
     } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
         [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
     }
     
@@ -223,32 +227,41 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (void)showMissinGPSMessage {
-    UIAlertController *showMissingGPSAlert = [UIAlertController alertControllerWithTitle:@"Missing Location"
-                                                        message:@"This photo does not appear to have location information so we need help figuring out what restaurant it belongs to. Don’t work, you can still upload it from the restaurant's page!"
-                                                 preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
-                                                     style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction * action) {
-                                                   }];
-
-    [showMissingGPSAlert addAction:ok];
-    [self presentViewController:showMissingGPSAlert animated:YES completion:^{
-        ;
-    }];
+    [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
+    
+//    UIAlertController *showMissingGPSAlert = [UIAlertController alertControllerWithTitle:@"Missing Location"
+//                                                        message:@"This photo does not appear to have location information so we need help figuring out what restaurant it belongs to. It's ok though! You can still upload it from the restaurant's page."
+//                                                 preferredStyle:UIAlertControllerStyleAlert];
+//
+//    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
+//                                                     style:UIAlertActionStyleDefault
+//                                                   handler:^(UIAlertAction * action) {
+//                                                   }];
+//
+//    [showMissingGPSAlert addAction:ok];
+//    [self presentViewController:showMissingGPSAlert animated:YES completion:^{
+//        ;
+//    }];
 }
 
 - (void)showRestaurantPickerAtCoordinate:(CLLocationCoordinate2D)location {
+    RestaurantPickerVC *restaurantPicker = [[RestaurantPickerVC alloc] init];
+    restaurantPicker.location = location;
+    restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
+    restaurantPicker.delegate = self;
+    restaurantPicker.imageToUpload = _imageToUpload;
+
+    UINavigationController *nc = [[UINavigationController alloc] init];
     
-    if (_restaurantPicker) return;
-    _restaurantPicker = [[RestaurantPickerVC alloc] init];
-    _restaurantPicker.location = location;
-    _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
-    _restaurantPicker.delegate = self;
-    _restaurantPicker.imageToUpload = _imageToUpload;
-    _restaurantPicker.view.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_restaurantPicker.view];
-    [self.view setNeedsUpdateConstraints];
+    [nc addChildViewController:restaurantPicker];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        [restaurantPicker.view setNeedsUpdateConstraints];
+    }];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
@@ -322,22 +335,13 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
     
     NSDictionary *views;
-    if (_restaurantPicker) {
-        UIView *restaurantPickerView = _restaurantPicker.view;
-        views = NSDictionaryOfVariableBindings(_filterView, _collectionView, restaurantPickerView);
-    } else {
-        views = NSDictionaryOfVariableBindings(_filterView, _collectionView);
-    }
+    views = NSDictionaryOfVariableBindings(_filterView, _collectionView);
+
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_filterView(heightFilters)][_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    if (_restaurantPicker) {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[restaurantPickerView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[restaurantPickerView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    }
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -515,8 +519,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)restaurantPickerVC:(RestaurantPickerVC *)restaurantPickerVC restaurantSelected:(RestaurantObject *)restaurant {
     NSLog(@"restaurant selected %@", restaurant.name);
-    [_restaurantPicker.view removeFromSuperview];
-    _restaurantPicker = nil;
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
     
     self.uploading = YES;
     self.uploadProgressBar.hidden = NO;
@@ -578,9 +583,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerTVC {
     NSLog(@"restaurant picker canceled");
-    [_restaurantPicker.view removeFromSuperview];
-    _restaurantPicker = nil;
-    [self.view setNeedsUpdateConstraints];
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
     _imageToUpload = nil;
 }
 

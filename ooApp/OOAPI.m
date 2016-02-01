@@ -1164,9 +1164,45 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     return op;
 }
+//------------------------------------------------------------------------------
+// Name:    removeVenue fromList
+// Purpose: Remove a restaurant from a list.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)removeVenue:(RestaurantObject *)venue
+                                   fromList:(ListObject *)list
+                                     success:(void (^)(id response))success
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!list  || !venue) {
+        failure( nil,nil);
+        return nil;
+    }
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userid = userInfo.userID;
+    if (!userid) {
+        failure(nil,nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu/restaurants/%lu",
+                           kHTTPProtocol,
+                           [OOAPI URL],
+                           (unsigned long)list.listID,
+                           (unsigned long)venue.restaurantID];
+    
+    AFHTTPRequestOperation *op = [rm DELETE: urlString parameters:nil
+                                    success:^(id responseObject) {
+                                        NSLog (@"REMOVED VENUE FROM LIST");
+                                        success(responseObject);
+                                    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                        NSLog  (@"FAILED TO REMOVE VENUE FROM LIST");
+                                        failure(operation, error);
+                                    }];
+    return op;
+}
 
 //------------------------------------------------------------------------------
-// Name:    addRestaurants:ToList
+// Name:    addRestaurants:toList
 // Purpose: Add restaurants to a user's favorites list
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listID

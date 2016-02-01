@@ -12,7 +12,8 @@
 #import "Common.h"
 #import "ListStripCVCell.h"
 #import "OOAPI.h"
-#import "EmptyListVC.h"
+//#import "EmptyListVC.h"
+#import "ExploreVC.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
@@ -110,6 +111,46 @@
     [_userView setUser: _userInfo];
 }
 
+- (void)updateUserStats: (NSNotification*)not
+{
+    NSNumber*userNumber= not.object;
+    NSUInteger userid= [userNumber isKindOfClass:[NSNumber class ] ]? userNumber.unsignedIntegerValue : 0;
+    UserObject*currentUser= [Settings sharedInstance].userObject;
+    if  (userid== currentUser.userID) {
+        [self refreshUserStats];
+    }
+}
+
+- (void)refreshUserStats
+{
+    __weak ProfileHeaderView *weakSelf = self;
+
+    [OOAPI getUserStatsFor:_userInfo.userID
+                   success:^(UserStatsObject *stats) {
+                       ON_MAIN_THREAD(^{
+                           
+                           [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
+                           [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                           
+                           weakSelf.buttonFollowees.alpha= 1;
+                           weakSelf.buttonFollowers.alpha= 1;
+                           weakSelf.buttonFolloweesCount.alpha= 1;
+                           weakSelf.buttonFollowersCount.alpha= 1;
+                           
+                           weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
+                           weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
+                           weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                           
+                           [weakSelf setNeedsLayout];
+                       });
+                       
+                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                       NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
+                       
+                   }];
+    
+}
+
 - (void) loadUserInfo
 {
     if (!_userInfo) {
@@ -145,30 +186,7 @@
         // RULE: Show the user's own stats.
         [self  indicateFollowing];
         [_userView setShowCog];
-        
-        [OOAPI getUserStatsFor:_userInfo.userID
-                       success:^(UserStatsObject *stats) {
-                           ON_MAIN_THREAD(^{
-                               
-                               [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                               [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                               
-                               weakSelf.buttonFollowees.alpha= 1;
-                               weakSelf.buttonFollowers.alpha= 1;
-                               weakSelf.buttonFolloweesCount.alpha= 1;
-                               weakSelf.buttonFollowersCount.alpha= 1;
-                               
-                               weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                               weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                               weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                               
-                               [weakSelf setNeedsLayout];
-                           });
-                           
-                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                           NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                           
-                       }];
+        [self refreshUserStats];
     }
     else  {
         [OOAPI getFollowersOf:_userInfo.userID
@@ -189,29 +207,8 @@
                                   [weakSelf indicateFollowing];
                               }
                               
-                              [OOAPI getUserStatsFor:_userInfo.userID
-                                             success:^(UserStatsObject *stats) {
-                                                 ON_MAIN_THREAD(^{
-                                                     NSLog (@"GOT STATS FOR  %@",_userInfo.username);
-                                                     [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                                                     [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
-                                                     
-                                                     weakSelf.buttonFollowees.alpha= 1;
-                                                     weakSelf.buttonFollowers.alpha= 1;
-                                                     weakSelf.buttonFolloweesCount.alpha= 1;
-                                                     weakSelf.buttonFollowersCount.alpha= 1;
-                                                     
-                                                     weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                                                     weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                                                     weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
-                                                     
-                                                     [weakSelf setNeedsLayout];
-                                                 });
-                                                 
-                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                 NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
-                                                 
-                                             }];
+                              [ weakSelf  refreshUserStats];
+
                           });
                           
                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -316,6 +313,9 @@
         _buttonFollow.layer.borderWidth= 1;
         _buttonFollow.hidden= YES;
         
+        [self registerForNotification: kNotificationUserStatsChanged
+                              calling:@selector(updateUserStats:)
+         ];
         [self registerForNotification: kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
          ];
@@ -764,6 +764,9 @@
     [self registerForNotification: kNotificationListDeleted
                           calling:@selector(handleListDeleted:)
      ];
+    [self registerForNotification: kNotificationListAltered
+                          calling:@selector(handleListAltered:)
+     ];
     // NOTE:  Unregistered in dealloc.
     
     // Ascertain whether reviewing our own profile based on passed-in UserObject pointer.
@@ -819,6 +822,16 @@
     [self setNavTitle:nto];
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
+}
+
+//------------------------------------------------------------------------------
+// Name:    handleListAltered
+// Purpose: If one of our list objects was deleted then update our UI.
+//------------------------------------------------------------------------------
+- (void)handleListAltered: (NSNotification*)not
+{
+    NSLog (@"LIST ALTERED");
+    [self refetch];
 }
 
 //------------------------------------------------------------------------------
@@ -893,6 +906,7 @@
     [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
                    success:^(NSArray *mediaObjects) {
                        weakSelf.arrayPhotos= mediaObjects;
+                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
                        NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
                        ON_MAIN_THREAD(^(){
                            [weakSelf.cv  reloadData];
@@ -990,11 +1004,17 @@
     _restaurantPicker.delegate = self;
     _restaurantPicker.location = [LocationManager sharedInstance].currentUserLocation;
     _restaurantPicker.imageToUpload = _imageToUpload;
-    [self.view addSubview:_restaurantPicker.view];
-    [_restaurantPicker.view  setNeedsUpdateConstraints];
     
-    [self presentViewController: _restaurantPicker animated:YES completion:^{
-        
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    [nc addChildViewController:_restaurantPicker];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        [_restaurantPicker.view setNeedsUpdateConstraints];
     }];
 }
 
@@ -1035,6 +1055,8 @@
                            weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
                            
+                           [weakSelf refetch];
+
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
                    }
@@ -1137,7 +1159,7 @@
              success:^(ListObject *list) {
                  ON_MAIN_THREAD(^{
                      if (list) {
-                         [weakSelf performSelectorOnMainThread:@selector(goToEmptyListScreen:) withObject:list waitUntilDone:NO];
+                         [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
                          [weakSelf refetch];
                      } else {
                          message( @"That list name is already in use.");
@@ -1158,6 +1180,13 @@
     [alert addAction:newList];
     [alert addAction:cancel];
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)goToExploreScreen: (ListObject*)list
+{
+    ExploreVC*vc= [[ExploreVC alloc] init];
+    vc.listToAddTo= list;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)handleUpperRightButton
@@ -1390,6 +1419,7 @@
                                                                                   NOTIFY(kNotificationFoodFeedNeedsUpdate);
                                                                                   
                                                                                   NOTIFY_WITH(kNotificationPhotoDeleted, @( mio.mediaItemId));
+                                                                            
                                                                                   
                                                                               }
                                                                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1506,7 +1536,7 @@
             return;
         }
         NSUInteger row = indexPath.row;
-        MediaItemObject *mediaObject = _arrayPhotos[ row];
+        MediaItemObject *mediaObject = _arrayPhotos[row];
         NSUInteger restaurantID = mediaObject.restaurantID;
         if (!restaurantID) {
             [self launchViewPhoto:mediaObject restaurant:nil];
@@ -1625,18 +1655,17 @@
 // Name:    goToEmptyListScreen
 // Purpose:
 //------------------------------------------------------------------------------
+#if 0
 - (void)goToEmptyListScreen:(ListObject *)list
 {
     if  (self.uploading) {
         return;
     }
-    
-    
-    
     EmptyListVC *vc= [[EmptyListVC alloc] init];
     vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];
 }
+#endif
 
 //------------------------------------------------------------------------------
 // Name:    getNumberOfLists

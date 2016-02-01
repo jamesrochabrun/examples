@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RestaurantObject.h"
+#import "SubBaseVC.h"
 
 @class RestaurantPickerVC;
 
@@ -16,7 +17,7 @@
 - (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerVC;
 @end
 
-@interface RestaurantPickerVC : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface RestaurantPickerVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate>
 
 @property (nonatomic, weak) id<RestaurantPickerVCDelegate> delegate;
 @property (nonatomic, strong) UIImage *imageToUpload;

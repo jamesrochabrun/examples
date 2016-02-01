@@ -10,12 +10,19 @@
 #import "OOAPI.h"
 #import "LocationManager.h"
 #import "DebugUtilities.h"
+#import "NavTitleObject.h"
 
 @interface RestaurantPickerVC ()
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) NSArray *searchRestaurants;
+@property (nonatomic, strong) NSArray *nearbyRestaurants;
+@property (nonatomic, strong) NSArray *autoCompleteRestaurants;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UIImageView *iv;
+@property (nonatomic, strong) UISearchBar *searchBar;
+@property (nonatomic, strong) UIButton *cancelButton;
+@property (nonatomic, strong) NavTitleObject *nto;
 @end
 
 @implementation RestaurantPickerVC
@@ -30,26 +37,73 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _iv.backgroundColor = UIColorRGBA(kColorClear);
         _iv.contentMode = UIViewContentModeScaleAspectFill;
         _iv.alpha = 0.45;
-        [self.view addSubview:_iv];
         
         _tableView = [[UITableView alloc] init];
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
-        _tableView.backgroundColor = UIColorRGBA(kColorOverlay35);
-        _tableView.rowHeight = 35;
+        _tableView.backgroundColor = UIColorRGBA(kColorOverlay20);
+        _tableView.rowHeight = 44;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.dataSource = self;
         _tableView.delegate = self;
-        self.view.layer.cornerRadius = kGeomCornerRadius;
         _tableView.translatesAutoresizingMaskIntoConstraints = NO;
         _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
         _tableView.layer.borderWidth = 1;
-        [self.view addSubview:_tableView];
+        
+        _nto = [[NavTitleObject alloc] initWithHeader:@"Restaurant" subHeader:@"Where did you take the photo?"];
+        
+        _searchBar = [[UISearchBar alloc] init];
+        _searchBar.searchBarStyle = UISearchBarStyleMinimal;
+        _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        _searchBar.placeholder = LOCAL( @"Search for venue");
+        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
+        _searchBar.barTintColor = UIColorRGBA(kColorBlack);
+        _searchBar.keyboardType = UIKeyboardTypeAlphabet;
+        _searchBar.delegate = self;
+        _searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
+        _searchBar.keyboardType = UIKeyboardTypeAlphabet;
+        _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+        _searchBar.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        _cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_cancelButton withText:@"Cancel" fontSize:kGeomFontSizeH2 width:75 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorOffBlack target:self selector:@selector(cancelSearch)];
+        _cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(pickerCanceled)];
+    
+    [self.view addSubview:_tableView];
+    [self.view addSubview:_iv];
+    [self.view addSubview:_searchBar];
+    [self.view addSubview:_cancelButton];
+    
+    self.navTitle = _nto;
+}
+
+- (void)cancelSearch {
+    _searchBar.text = @"";
+    [_searchBar resignFirstResponder];
+    _restaurants = _nearbyRestaurants;
+    [_tableView reloadData];
+}
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    _searchRestaurants = nil;
+    _restaurants = _searchRestaurants;
+    [_tableView reloadData];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    if ([searchText length] > 3) {
+        [self searchForRestaurants];
+    }
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [_searchBar resignFirstResponder];
 }
 
 - (void)setLocation:(CLLocationCoordinate2D)location {
@@ -63,23 +117,21 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     
     NSDictionary *views;
 
-    views = NSDictionaryOfVariableBindings(_tableView, _iv);
+    views = NSDictionaryOfVariableBindings(_tableView, _iv, _searchBar, _cancelButton);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_tableView(270)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_tableView(200)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_searchBar][_cancelButton(75)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_cancelButton(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_searchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_tableView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_tableView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-}
+    }
 
 - (void)getNearbyRestaurants {
     OOAPI *api = [[OOAPI alloc] init];
-    
     __weak RestaurantPickerVC *weakSelf = self;
-    
     _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[]]
                                             andLocation:_location
                                               andFilter:@""
@@ -90,16 +142,44 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
                                                maxPrice:0
                                                  isPlay:NO
                                                 success:^(NSArray *r) {
-                                                    _restaurants = r;
+                                                    _nearbyRestaurants = r;
                                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                                        [weakSelf gotRestaurants];
+                                                        [weakSelf gotNearbyRestaurants];
                                                     });
                                                 } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
                                                     ;
                                                 }];
 }
 
-- (void)gotRestaurants {
+- (void)gotNearbyRestaurants {
+    _restaurants = _nearbyRestaurants;
+    [self.tableView reloadData];
+}
+
+- (void)searchForRestaurants {
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantPickerVC *weakSelf = self;
+    _requestOperation = [api getRestaurantsWithKeywords:@[_searchBar.text]
+                                            andLocation:_location
+                                              andFilter:@""
+                                              andRadius:50000
+                                            andOpenOnly:NO
+                                                andSort:kSearchSortTypeDistance
+                                               minPrice:0
+                                               maxPrice:0
+                                                 isPlay:NO
+                                                success:^(NSArray *r) {
+                                                    _searchRestaurants = r;
+                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                        [weakSelf gotRestaurantsFromSearch];
+                                                    });
+                                                } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
+                                                    ;
+                                                }];
+}
+
+- (void)gotRestaurantsFromSearch {
+    _restaurants = _searchRestaurants;
     [self.tableView reloadData];
 }
 
@@ -124,7 +204,6 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     return [_restaurants count];
 }
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
@@ -133,9 +212,12 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     // Configure the cell...
     cell.textLabel.text = r.name;
     [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
+    [cell.detailTextLabel setTextColor:UIColorRGBA(kColorWhite)];
+    cell.detailTextLabel.text = r.address;
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]];
+    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2]];
+    [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]];
     return cell;
 }
 
@@ -144,48 +226,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [_delegate restaurantPickerVC:self restaurantSelected:restaurant];
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return @"Which restaurant";
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 35;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    
-    UIView *header = [[UIView alloc] init];
-    header.backgroundColor = UIColorRGBA(kColorBlack);
-    
-    CGRect frame = header.frame;
-    frame.size.width = width(tableView);
-    header.frame = frame;
-    
-    UILabel *headerLabel = [[UILabel alloc] init];
-    [headerLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear];
-    headerLabel.text = @"Where did you take this photo?";
-    [headerLabel sizeToFit];
-    frame = headerLabel.frame;
-    frame.origin.x = 10;
-    frame.origin.y = 0;//(height(header) - height(headerLabel))/2;
-    frame.size.height = [self tableView:tableView heightForHeaderInSection:0];
-    headerLabel.frame = frame;
-    [header addSubview:headerLabel];
-    
-    UIButton *cancel = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cancel withIcon:kFontIconRemove fontSize:kGeomIconSizeSmall width:30 height:30 backgroundColor:kColorClear target:self selector:@selector(pickerCanceled)];
-    [cancel setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-    frame = cancel.frame;
-    frame.size.height = [self tableView:tableView heightForHeaderInSection:0];
-    frame.origin.y = 0;
-    frame.origin.x = width(header) - width(cancel) - kGeomSpaceEdge;
-    cancel.frame = frame;
-    [header addSubview:cancel];
-    
-    return header;
-}
-
 - (void)pickerCanceled {
+    [_searchBar resignFirstResponder];
     UIImageWriteToSavedPhotosAlbum(_imageToUpload, nil, nil, nil);
     [_delegate restaurantPickerVCCanceled:self];
 }

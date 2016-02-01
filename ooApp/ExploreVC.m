@@ -243,9 +243,26 @@ static NSString * const ListRowID = @"HLRCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
-- (void)setListToAddTo:(ListObject *)listToAddTo {
+- (void)setListToAddTo:(ListObject *)listToAddTo
+{
     if (_listToAddTo == listToAddTo) return;
     _listToAddTo = listToAddTo;
+    
+    __weak  ExploreVC *weakSelf = self;
+    if (_listToAddTo && _listToAddTo.listID) {
+        OOAPI*api= [[OOAPI alloc] init];
+        [api getRestaurantsWithListID: _listToAddTo.listID
+                          andLocation:[LocationManager sharedInstance].currentUserLocation
+                              success:^(NSArray *restaurants) {
+                                  ON_MAIN_THREAD(^ {
+                                      weakSelf.listToAddTo.venues= restaurants.mutableCopy;
+                                      [weakSelf.tableView reloadData];
+                                  });
+                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                  ;
+                              }];
+    }
+    
 }
 
 - (void)done:(id)sender {
@@ -368,8 +385,8 @@ static NSString * const ListRowID = @"HLRCell";
     RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
     
     cell.eventBeingEdited= self.eventBeingEdited;
-    cell.restaurant = ro;
     cell.listToAddTo = _listToAddTo;
+    cell.restaurant = ro;
     cell.nc = self.navigationController;
     cell.index = indexPath.row + 1;
     [cell updateConstraintsIfNeeded];

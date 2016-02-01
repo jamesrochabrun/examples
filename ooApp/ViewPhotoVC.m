@@ -448,6 +448,8 @@
                 [weakSelf.yumButton setSelected:NO];
                 [weakSelf updateNumYums];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
+                NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
+                NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"ERROR: failed to unlike photo: %@", error);;
@@ -460,6 +462,8 @@
                 [weakSelf.yumButton setSelected:YES];
                 [weakSelf updateNumYums];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
+                NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
+                NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"ERROR: failed to like photo: %@", error);;

@@ -33,7 +33,8 @@ enum  {
     return self;
 }
 
-- (void)setRestaurant:(RestaurantObject *)restaurant {
+- (void)setRestaurant:(RestaurantObject *)restaurant
+{
     if (restaurant == _restaurant) return;
     _restaurant = restaurant;
     self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
@@ -117,7 +118,8 @@ enum  {
     [self setupActionButton];
 }
 
-- (void)setListToAddTo:(ListObject *)listToAddTo {
+- (void)setListToAddTo:(ListObject *)listToAddTo
+{
     if (_listToAddTo == listToAddTo) return;
     _listToAddTo = listToAddTo;
     [self setupActionButton];
@@ -129,6 +131,7 @@ enum  {
     [self.actionButton setTitle:  @"" forState:UIControlStateNormal];
     self.restaurant= nil;
     self.eventBeingEdited= nil;
+    self.listToAddTo=nil;
     self.mode= MODE_NONE;
 }
 
@@ -136,8 +139,31 @@ enum  {
 {
     NSString *string = @"";
     if (!self.eventBeingEdited) {
-        string= kFontIconMore;
-        self.mode= MODE_MODAL;
+        if (self.listToAddTo) {
+            if ( _useModalForListedVenues) {
+                
+                string= kFontIconMore;
+                self.mode= MODE_MODAL;
+            } else {
+                
+                if ( !self.listToAddTo.venues) {
+                    // NOTE: We do not yet know what venues are in this list.
+                    self.mode= MODE_NONE;
+                    string=  @"";
+                } else {
+                    if ( [_listToAddTo alreadyHasVenue:_restaurant]) {
+                        string= kFontIconRemove;
+                        self.mode= MODE_REMOVE;
+                    } else {
+                        string= kFontIconAdd;
+                        self.mode= MODE_ADD;
+                    }
+                }
+            }
+        } else {
+            string= kFontIconMore;
+            self.mode= MODE_MODAL;
+        }
     } else {
         if ( [self.eventBeingEdited alreadyHasVenue:_restaurant ]) {
             string=kFontIconRemove;
@@ -159,11 +185,26 @@ enum  {
     self.actionButton.hidden = NO;
 }
 
-- (void)addToList {
+- (void)addToList
+{
     if (_listToAddTo) {
         [self addRestaurantToList:_listToAddTo];
     } else {
         [self showLists];
+    }
+}
+
+- (void)removeFromList
+{
+    if (_listToAddTo) {
+        __weak  RestaurantTVCell *weakSelf = self;
+        [_listToAddTo removeVenue: _restaurant
+                  completionBlock:^(BOOL success) {
+                      [weakSelf expressMode];
+                      NOTIFY_WITH(kNotificationListAltered, @(_listToAddTo.listID));
+                  }];
+    } else {
+        NSLog (@"THERE IS NO LIST TO REMOVE FROM.");
     }
 }
 
@@ -183,11 +224,27 @@ enum  {
         if (_restaurant.restaurantID) {
             switch (weakSelf.mode) {
                 case MODE_ADD:
-                    [weakSelf addToEvent];
+                    if ( weakSelf.listToAddTo) {
+                        [weakSelf addToList];
+                    }
+                    else if ( weakSelf.eventBeingEdited) {
+                        [weakSelf addToEvent];
+                    }
+                    else {
+                        NSLog (@"WARNING: NOTHING TO ADD RESTAURANT TO.");
+                    }
                     break;
                     
                 case MODE_REMOVE:
-                    [weakSelf removeFromEvent];
+                    if ( weakSelf.listToAddTo) {
+                        [weakSelf removeFromList];
+                    }
+                    else if ( weakSelf.eventBeingEdited) {
+                        [weakSelf removeFromEvent];
+                    }
+                    else {
+                        NSLog (@"WARNING: NOTHING TO REMOVE RESTAURANT FROM.");
+                    }
                     break;
                     
                 case MODE_MODAL:
@@ -198,7 +255,7 @@ enum  {
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
+        NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
     }];
 }
 
@@ -217,13 +274,27 @@ enum  {
     
     UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
                                                               style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                  [self sharePressed];
+                                                                  [weakSelf  sharePressed];
                                                               }];
     
-    UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add/Remove from List"
-                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                            [self addToList];
-                                                        }];
+    UIAlertAction *addToList = nil;
+    UIAlertAction *removeFromList =nil;
+    
+    if ( _listToAddTo) {
+        if  ([_listToAddTo alreadyHasVenue: _restaurant] ) {
+            removeFromList= [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Remove from \"%@\"", _listToAddTo.name] : @"Remove from List"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                         [ weakSelf   removeFromList];
+                                                     }];
+        } else {
+            
+            addToList= [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add from List"
+                                                style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                    [weakSelf  addToList];
+                                                }];
+        }
+    }
+    
     UIAlertAction *addToEvent = nil;
     UIAlertAction *removeFromEvent = nil;
     if (self.eventBeingEdited) {
@@ -261,7 +332,13 @@ enum  {
                                                      }];
     
     [_restaurantOptionsAC addAction:shareRestaurant];
-    [_restaurantOptionsAC addAction:addToList];
+    if ( addToList) {
+        [_restaurantOptionsAC addAction:addToList];
+    }
+    if (  removeFromList) {
+        [_restaurantOptionsAC addAction:removeFromList];
+    }
+
     [_restaurantOptionsAC addAction:addToNewList];
     if (addToEvent) {
         [_restaurantOptionsAC addAction:addToEvent];
@@ -403,14 +480,14 @@ enum  {
     }];
 }
 
-- (void)addRestaurantToList:(ListObject *)list {
-    OOAPI *api = [[OOAPI alloc] init];
-    [api addRestaurants:@[_restaurant] toList:list.listID success:^(id response) {
+- (void)addRestaurantToList:(ListObject *)list
+{
+    __weak  RestaurantTVCell *weakSelf = self;
+    [list addVenue:_restaurant completionBlock:^(BOOL success) {
         ON_MAIN_THREAD(^{
-            
+            [weakSelf expressMode];
+            NOTIFY_WITH(kNotificationListAltered, list);
         });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Could add restaurant to list: %@", error);
     }];
 }
 
