@@ -744,7 +744,7 @@
 {
     if (!_didFetchStats) {
         _didFetchStats=YES;
-        [self  refetchStats ];
+        [self  refetchListsPhotosAndStats ];
     }
     
 }
@@ -859,7 +859,7 @@
 - (void)handleListAltered: (NSNotification*)not
 {
     NSLog (@"LIST ALTERED");
-    [self refetchStats];
+    [self refetchListsPhotosAndStats];
 }
 
 //------------------------------------------------------------------------------
@@ -869,7 +869,7 @@
 - (void)handleListDeleted: (NSNotification*)not
 {
     NSLog (@"LIST DELETED");
-    [self refetchStats];
+    [self refetchListsPhotosAndStats];
 }
 
 //------------------------------------------------------------------------------
@@ -889,14 +889,14 @@
     }
     
     if  (foundIt ) {
-        [self refetchStats];
+        [self refetchListsPhotosAndStats];
     }
     
 }
 
 - (void)handleRestaurantListAltered: (NSNotification*)not
 {
-    [self refetchStats];
+    [self refetchListsPhotosAndStats];
 }
 
 //------------------------------------------------------------------------------
@@ -913,8 +913,12 @@
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
 }
 
-- (void) refetchStats
+- (void) refetchListsPhotosAndStats
 {
+    [self.view bringSubviewToFront:self.aiv];
+    [self.aiv startAnimating];
+    self.aiv.message = @"loading";
+
     __weak  ProfileVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
@@ -922,26 +926,31 @@
                     NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
                     weakSelf.arrayLists = foundLists;
                     ON_MAIN_THREAD(^(){
+                        [weakSelf.aiv stopAnimating];
                         [weakSelf.listsAndPhotosLayout  invalidateLayout];
                         [weakSelf.cv reloadData];
                     });
+                    
+                    float w=  [UIScreen mainScreen ].bounds.size.width;
+                    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
+                                   success:^(NSArray *mediaObjects) {
+                                       weakSelf.arrayPhotos= mediaObjects;
+                                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
+                                       NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
+                                       ON_MAIN_THREAD(^(){
+                                           [weakSelf.aiv stopAnimating];
+                                           [weakSelf.cv  reloadData];
+                                       });
+                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                       NSLog  (@"FAILED TO GET PHOTOS");
+                                       ON_MAIN_THREAD(^(){ [weakSelf.aiv stopAnimating]; });
+                                   }];
                 }
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
+                    ON_MAIN_THREAD(^(){ [weakSelf.aiv stopAnimating]; });
                 }];
     
-    float w=  [UIScreen mainScreen ].bounds.size.width;
-    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
-                   success:^(NSArray *mediaObjects) {
-                       weakSelf.arrayPhotos= mediaObjects;
-                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
-                       NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
-                       ON_MAIN_THREAD(^(){
-                           [weakSelf.cv  reloadData];
-                       });
-                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                       NSLog  (@"FAILED TO GET PHOTOS");
-                   }];
 }
 
 - (void)userPressedNewPhoto
@@ -1081,7 +1090,7 @@
                            weakSelf.imageToUpload= nil;
                            weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
-                           [weakSelf refetchStats];
+                           [weakSelf refetchListsPhotosAndStats];
 
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
@@ -1109,7 +1118,7 @@
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                            success:^{
                                ON_MAIN_THREAD(^{
-                                   [weakSelf refetchStats];
+                                   [weakSelf refetchListsPhotosAndStats];
                                    weakSelf.imageToUpload= nil;
                                    weakSelf.uploading= NO;
                                    weakSelf.uploadProgressBar.hidden= YES;
@@ -1186,7 +1195,7 @@
                  ON_MAIN_THREAD(^{
                      if (list) {
                          [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
-                         [weakSelf refetchStats];
+                         [weakSelf refetchListsPhotosAndStats];
                      } else {
                          message( @"That list name is already in use.");
                      }
@@ -1294,8 +1303,9 @@
         total=  self.arrayPhotos.count;
     }
     
-    if  (!total) {
-        // NOTE: We want to show an empty cell when there are no items to show.
+    if  (!total && !self.aiv.isAnimating) {
+        // NOTE: We want to show an empty cell when there are no items to show,
+        //  but not before the network call has finished.
         total= 1;
     }
     return total;
@@ -1440,7 +1450,7 @@
                                                                    [OOAPI deletePhoto:mio
                                                                               success:^{
                                                                                   NSLog  (@"SUCCESS IN DELETING PHOTO");
-                                                                                  [weakSelf refetchStats];
+                                                                                  [weakSelf refetchListsPhotosAndStats];
                                                                                   
                                                                                   NOTIFY(kNotificationFoodFeedNeedsUpdate);
                                                                                   
