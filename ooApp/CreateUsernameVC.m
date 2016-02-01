@@ -115,7 +115,7 @@
     NSAttributedString *str = [[NSAttributedString alloc] initWithString:LOCAL(@"Enter Username") attributes:@{ NSForegroundColorAttributeName : UIColorRGBA(kColorGrayMiddle)}];
     _fieldUsername.attributedPlaceholder = str;
     _fieldUsername.layer.cornerRadius = kGeomCornerRadius;
-    
+    _fieldUsername.textColor= WHITE;
     
     
     self.labelUsernameTaken= makeLabel(_scrollView, LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);

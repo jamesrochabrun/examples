@@ -171,7 +171,7 @@ static NSString * const ListRowID = @"HLRCell";
                          [weakSelf moveToCurrentLocation];
 
                      } else {
-                         message( @"Unknown location.");
+                         message( @"I can't find that location.");
                      }
                  }];
     

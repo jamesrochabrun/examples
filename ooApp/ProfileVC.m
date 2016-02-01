@@ -56,22 +56,22 @@
 
 @implementation ProfileHeaderView
 
-- (void) prepareForReuse
-{
-    _usingURLButton= NO;
-    _buttonURL.hidden= YES;
-    _buttonURL.enabled= NO;
-    [_buttonURL setTitle: @"" forState:UIControlStateNormal];
-    
-    // NOTE: Before we have a response from the backend we do not know what these values will be.
-    _buttonFollow.hidden= YES;
-    _labelPhoto.hidden= YES;
-    _labelPhotoCount.hidden= YES;
-    _labelLikes.hidden= YES;
-    _labelLikesCount.hidden= YES;
-    _labelVenues.hidden= YES;
-    _labelVenuesCount.hidden= YES;
-}
+//- (void) prepareForReuse
+//{
+//    _usingURLButton= NO;
+//    _buttonURL.hidden= YES;
+//    _buttonURL.enabled= NO;
+//    [_buttonURL setTitle: @"" forState:UIControlStateNormal];
+//    
+//    // NOTE: Before we have a response from the backend we do not know what these values will be.
+//    _buttonFollow.hidden= YES;
+//    _labelPhoto.hidden= YES;
+//    _labelPhotoCount.hidden= YES;
+//    _labelLikes.hidden= YES;
+//    _labelLikesCount.hidden= YES;
+//    _labelVenues.hidden= YES;
+//    _labelVenuesCount.hidden= YES;
+//}
 
 - (void) enableURLButton
 {
@@ -159,14 +159,14 @@
     
     [_userView setUser: _userInfo];
     
-    if  (_userInfo.isFoodie  && _userInfo.urlString.length) {
+    if  (_userInfo.isFoodie ) {
         [self enableURLButton];
         
         if (!_userInfo.urlString.length) {
             if ( _viewingOwnProfile) {
                 [_buttonURL setTitle: @"Tap here to enter your URL." forState:UIControlStateNormal];
             } else {
-                [_buttonURL setTitle: @"" forState:UIControlStateNormal];
+                [_buttonURL setTitle: @"This blogger has no web link." forState:UIControlStateNormal];
             }
         } else {
             [_buttonURL setTitle: _userInfo.urlString forState:UIControlStateNormal];
@@ -276,7 +276,7 @@
         _buttonFolloweesCount.titleLabel.font = _buttonFollowersCount.titleLabel.font;
         
         _buttonDescription = makeButton(self,  @"", 1, WHITE,
-                                        UIColorRGBA(0x80000000),  self,
+                                        BLACK,  self,
                                         @selector(userTappedDescription:) , 0);
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
@@ -512,13 +512,6 @@
     _buttonFollow.hidden= NO;
     _buttonFollow.selected= YES;
     _followingThisUser=YES;
-    _labelPhoto.hidden= NO;
-    _labelPhotoCount.hidden= NO;
-    _labelLikes.hidden= NO;
-    _labelLikesCount.hidden= NO;
-    _labelVenues.hidden= NO;
-    _labelVenuesCount.hidden= NO;
-    
 }
 
 - (void)indicateNotFollowing
@@ -526,13 +519,6 @@
     _followingThisUser=NO;
     _buttonFollow.hidden= NO;
     _buttonFollow.selected= NO;
-//    _labelPhoto.hidden= YES;
-//    _labelPhotoCount.hidden= YES;
-//    _labelLikes.hidden= YES;
-//    _labelLikesCount.hidden= YES;
-//    _labelVenues.hidden= YES;
-//    _labelVenuesCount.hidden= YES;
-    
 }
 
 //------------------------------------------------------------------------------
@@ -574,6 +560,8 @@
     
     float w = self.bounds.size.width;
     float h = self.bounds.size.height;
+//    float spacing=  _userInfo.isFoodie? 2*kGeomSpaceInter : kGeomSpaceInter; // per Jay
+    float spacing=  kGeomSpaceInter;
     
     _backgroundImageView.frame= CGRectMake(0,0,w,h-kGeomHeightFilters);
     _backgroundImageFade.frame= CGRectMake(0,0,w,h-kGeomHeightFilters);
@@ -586,7 +574,8 @@
                                        y + kGeomProfileImageSize-buttonSettingsSize,
                                        buttonSettingsSize,buttonSettingsSize);
     _buttonSettingsInner.frame= _buttonSettings.frame;
-    
+    y += kGeomProfileImageSize + spacing;
+
     [_buttonFollowers sizeToFit];
     [_buttonFollowees sizeToFit];
     [_buttonFollowersCount sizeToFit];
@@ -594,16 +583,15 @@
     float upperLabelHeight=  20;
     float lowerLabelHeight= 18;
     float horizontalSpaceForText=  (320-kGeomProfileImageSize)/2;
-    y= (kGeomProfileImageSize +2*kGeomSpaceEdge -upperLabelHeight-lowerLabelHeight)/2;
+    float yFollowers = (kGeomProfileImageSize +2*kGeomSpaceEdge -upperLabelHeight-lowerLabelHeight)/2;
+    
     float leftX= w/2 - kGeomProfileImageSize/2  - horizontalSpaceForText;
     float rightX= w/2 + kGeomProfileImageSize/2;
-    _buttonFollowersCount.frame = CGRectMake(leftX, y, horizontalSpaceForText, upperLabelHeight);
-    _buttonFolloweesCount.frame = CGRectMake(rightX, y, horizontalSpaceForText, upperLabelHeight);
-    y+=upperLabelHeight;
-    _buttonFollowers.frame = CGRectMake(leftX, y, horizontalSpaceForText, lowerLabelHeight);
-    _buttonFollowees.frame = CGRectMake(rightX, y, horizontalSpaceForText, lowerLabelHeight);
-    
-    y=kGeomSpaceEdge+kGeomProfileImageSize+kGeomSpaceInter;
+    _buttonFollowersCount.frame = CGRectMake(leftX, yFollowers, horizontalSpaceForText, upperLabelHeight);
+    _buttonFolloweesCount.frame = CGRectMake(rightX, yFollowers, horizontalSpaceForText, upperLabelHeight);
+    yFollowers +=upperLabelHeight;
+    _buttonFollowers.frame = CGRectMake(leftX, yFollowers, horizontalSpaceForText, lowerLabelHeight);
+    _buttonFollowees.frame = CGRectMake(rightX, yFollowers, horizontalSpaceForText, lowerLabelHeight);
     
     // Layout the statistics labels.
 #if 0
@@ -616,7 +604,8 @@
     x += kGeomProfileStatsItemWidth;
     _labelLikesCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
     _labelLikes.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
-#else
+#endif
+    
     [_labelVenues sizeToFit];
     [_labelVenuesCount sizeToFit];
     [_labelPhoto sizeToFit];
@@ -646,23 +635,20 @@
     x += w5;
     
     _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
-#endif
+
     y += kGeomProfileStatsItemHeight;
     
     if ( !_viewingOwnProfile) {
-//        _buttonFollow.hidden= NO;
         _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,
                                          y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
                                          kGeomButtonWidth,  kGeomFollowButtonHeight );
-        y +=kGeomFollowButtonHeight + kGeomSpaceInter;
-    } else {
-//        _buttonFollow.hidden= YES;
+        y +=kGeomFollowButtonHeight + spacing;
     }
     
     if ( _userInfo.isFoodie ) {
         if ( _viewingOwnProfile ||  _userInfo.urlString.length) {
             _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
-            y += kGeomProfileHeaderViewHeightOfBloggerButton;
+            y += kGeomProfileHeaderViewHeightOfBloggerButton + spacing;
         }
     }
     
