@@ -24,7 +24,8 @@
     _bar = [UINavigationBar new];
     [ self.view addSubview: _bar];
     
-    self.nto = [[NavTitleObject alloc] initWithHeader:@"CAPTION" subHeader:@""];
+    self.nto = [[NavTitleObject alloc] initWithHeader: self.title ?: @"CAPTION"
+                                            subHeader: self.subtitle ?: @""];
     self.navTitle = self.nto;
     
     _textView = [[UITextView alloc] init];

@@ -24,8 +24,9 @@
 #import "ListObject.h"
 #import "TagObject.h"
 #import "AppDelegate.h"
+#import "OOTextEntryModalVC.h"
 
-@interface ExploreVC () <GMSMapViewDelegate>
+@interface ExploreVC () <GMSMapViewDelegate, OOTextEntryModalVCDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
@@ -87,9 +88,14 @@ static NSString * const ListRowID = @"HLRCell";
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
     _changeLocationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _changeLocationButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [_changeLocationButton withIcon:kFontIconDiscover fontSize:kGeomIconSize width:10 height:10 backgroundColor:kColorClear target:self selector:@selector(changeLocation)];
-    [_changeLocationButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+//    _changeLocationButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [_changeLocationButton withIcon:kFontIconSearch fontSize:kGeomIconSize width:10 height:10 backgroundColor:kColorClear target:self selector:@selector(userPressedChangeLocation:)];
+    [_changeLocationButton setTitleColor: BLACK forState:UIControlStateNormal];
+    [self.mapView addSubview: _changeLocationButton];
+    addBorder(_changeLocationButton, 1,  UIColorRGB(kColorGrayMiddle));
+    _changeLocationButton.layer.cornerRadius=kGeomIconSize/2;
+    _changeLocationButton.frame = CGRectMake(kGeomSpaceEdge,kGeomSpaceEdge,
+                                             kGeomIconSize,kGeomIconSize);
     
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:13 bearing:0 viewingAngle:1];
     
@@ -124,9 +130,51 @@ static NSString * const ListRowID = @"HLRCell";
     APP.nc = self.navigationController;
 }
 
-- (void)changeLocation {
-    OOTextEntryVC *textEntry = [[OOTextEntryVC alloc] init];
+- (void)userPressedChangeLocation: (UIButton*)sender
+{
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
+    vc.title=  @"CHANGE LOCATION";
+    vc.subtitle=  @"Enter a ZIP Code or City, State";
+    vc.delegate = self;
+    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
 
+}
+
+- (void)textEntryFinished:(NSString *)text;
+{
+    if (!text.length) {
+        return;
+    }
+    
+    __weak  ExploreVC *weakSelf = self;
+    CLGeocoder* geocoder = [[CLGeocoder alloc] init];
+    [geocoder geocodeAddressString: text
+                 completionHandler:^(NSArray* placemarks, NSError* error) {
+                     NSLog  (@"TOTAL PLACE MARKS %lu", (unsigned long)placemarks.count);
+                     if  ( placemarks.count) {
+                         CLPlacemark* aPlacemark= [placemarks  firstObject];
+                         CLLocation *location= aPlacemark.location;
+                         weakSelf.currentLocation = location.coordinate;
+                         [weakSelf moveToCurrentLocation];
+
+                     } else {
+                         message( @"Unknown location.");
+                     }
+                 }];
+    
 }
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
@@ -366,6 +414,11 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)updateLocation
 {
     self.currentLocation = [[LocationManager sharedInstance] currentUserLocation];
+    [self moveToCurrentLocation];
+}
+
+- (void)moveToCurrentLocation
+{
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:_camera.zoom bearing:_camera.bearing viewingAngle:_camera.viewingAngle];
     [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
     _desiredLocation = _currentLocation;
