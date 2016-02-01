@@ -120,21 +120,17 @@
     }
     _user = user;
     
-    if (user.isFoodie) {
-        [self setIsFoodie];
-    }
-    
     NSString *first = _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
     NSString *last =_user.lastName.length? [_user.lastName substringToIndex:1] : @"";
     NSString *initials = [NSString stringWithFormat:@"%@%@",  first, last];
     _emptyUserView.text = initials;
     UIImage *image = nil;
-        
+    __weak OOUserView *weakSelf = self;
+
     if (_user.mediaItem) {
         OOAPI *api = [[OOAPI alloc] init];
         [api getRestaurantImageWithMediaItem:_user.mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
             __weak UIImageView *weakIV = _imageView;
-            __weak OOUserView *weakSelf = self;
             [_imageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                               placeholderImage:nil
                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
@@ -144,22 +140,43 @@
                                                  weakSelf.emptyUserView.alpha = 0;
                                                  [weakSelf updateConstraintsIfNeeded];
                                            });
+                                           
+                                           if (user.isFoodie) {
+                                               [weakSelf setIsFoodie];
+                                           }
+                                           
                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                [weakSelf displayEmptyView:YES];
                                            });
+                                           
+                                           if (user.isFoodie) {
+                                               [weakSelf setIsFoodie];
+                                           }
                                        }];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self displayEmptyView:YES];
+                [weakSelf displayEmptyView:YES];
+                
+                if (user.isFoodie) {
+                    [weakSelf setIsFoodie];
+                }
             });
         }];
     } else if (( image= [_user userProfilePhoto]) ) {
         // NOTE: This would have been fetched from Facebook when the app started.
         _imageView.image = image;
+        
+        if (user.isFoodie) {
+            [self setIsFoodie];
+        }
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self displayEmptyView:YES];
+            [weakSelf displayEmptyView:YES];
+            
+            if (user.isFoodie) {
+                [weakSelf setIsFoodie];
+            }
         });
     }
 }

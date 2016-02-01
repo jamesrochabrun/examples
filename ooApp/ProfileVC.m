@@ -805,6 +805,7 @@
         self.profileOwner = userInfo;
     } else {
         self.profileOwner = _userInfo;
+        _didFetchUserObject = YES; // By caller.
         UserObject *currentUser = [Settings sharedInstance].userObject;
         NSUInteger ownUserIdentifier = [currentUser userID];
         _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
