@@ -33,7 +33,6 @@
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
-- (void)goToEmptyListScreen:(NSString *)string;
 @end
 
 @interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryModalVCDelegate, OOUserViewDelegate>

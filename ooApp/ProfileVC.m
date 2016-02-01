@@ -12,7 +12,6 @@
 #import "Common.h"
 #import "ListStripCVCell.h"
 #import "OOAPI.h"
-//#import "EmptyListVC.h"
 #import "ExploreVC.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
@@ -688,7 +687,8 @@
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @property (nonatomic, strong) ProfileHeaderView* topView;
-@property (nonatomic, assign) BOOL didFetch;
+@property (nonatomic, assign) BOOL didFetchUserObject;
+@property (nonatomic, assign) BOOL didFetchStats;
 @property (nonatomic, assign) NSUInteger lastShownUser;
 @property (nonatomic, assign) MediaItemObject *mediaItemBeingEdited;
 @property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
@@ -711,13 +711,40 @@
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
     if (_lastShownUser && _lastShownUser != _userInfo.userID) {
-        _didFetch=NO;
+        _didFetchStats=NO;
         _lastShownUser = _userInfo.userID;
     }
     
-    if (!_didFetch) {
-        _didFetch=YES;
-        [self  refetch ];
+    __weak  ProfileVC *weakSelf = self;
+    if ( !_didFetchUserObject) {
+        [_profileOwner refreshWithSuccess:^(BOOL changed){
+            weakSelf.didFetchUserObject= YES;
+            [weakSelf.cv reloadData ];
+            [weakSelf checkThatStatsAreUpToDate];
+        } failure:^{
+            NSLog  (@"NETWORK ERROR");
+        }];
+    } else {
+        [self checkThatStatsAreUpToDate];
+        
+        // NOTE: There's no explicit requirement to re-fetch the UserObject, but
+        // if we find that it has changed e.g. from a different device updating
+        // the backend, then tell the supplementary view.
+        [_profileOwner refreshWithSuccess:^(BOOL changed){
+            if  ( changed) {
+                NOTIFY(kNotificationOwnProfileNeedsUpdate);
+            }
+        } failure:^{
+            NSLog  (@"NETWORK ERROR");
+        }];
+    }
+}
+
+- (void)checkThatStatsAreUpToDate
+{
+    if (!_didFetchStats) {
+        _didFetchStats=YES;
+        [self  refetchStats ];
     }
     
 }
@@ -773,11 +800,11 @@
     //
     if (!_userInfo) {
         _viewingOwnProfile=YES;
+        _didFetchUserObject= NO;
         UserObject *userInfo = [Settings sharedInstance].userObject;
         self.profileOwner = userInfo;
     } else {
         self.profileOwner = _userInfo;
-        
         UserObject *currentUser = [Settings sharedInstance].userObject;
         NSUInteger ownUserIdentifier = [currentUser userID];
         _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
@@ -831,7 +858,7 @@
 - (void)handleListAltered: (NSNotification*)not
 {
     NSLog (@"LIST ALTERED");
-    [self refetch];
+    [self refetchStats];
 }
 
 //------------------------------------------------------------------------------
@@ -841,7 +868,7 @@
 - (void)handleListDeleted: (NSNotification*)not
 {
     NSLog (@"LIST DELETED");
-    [self refetch];
+    [self refetchStats];
 }
 
 //------------------------------------------------------------------------------
@@ -861,14 +888,14 @@
     }
     
     if  (foundIt ) {
-        [self refetch];
+        [self refetchStats];
     }
     
 }
 
 - (void)handleRestaurantListAltered: (NSNotification*)not
 {
-    [self refetch];
+    [self refetchStats];
 }
 
 //------------------------------------------------------------------------------
@@ -885,7 +912,7 @@
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
 }
 
-- (void) refetch
+- (void) refetchStats
 {
     __weak  ProfileVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
@@ -975,7 +1002,7 @@
     
     [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
                success:^{
-                   [weakSelf.profileOwner refreshWithSuccess:^{
+                   [weakSelf.profileOwner refreshWithSuccess:^(BOOL changed){
                        ON_MAIN_THREAD(^(){
                            NOTIFY(kNotificationOwnProfileNeedsUpdate);
                        });
@@ -1050,12 +1077,10 @@
         [OOAPI uploadPhoto:_imageToUpload forObject:_selectedRestaurant
                    success:^{
                        ON_MAIN_THREAD(^{
-                           [weakSelf refetch];
                            weakSelf.imageToUpload= nil;
                            weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
-                           
-                           [weakSelf refetch];
+                           [weakSelf refetchStats];
 
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
@@ -1083,7 +1108,7 @@
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                            success:^{
                                ON_MAIN_THREAD(^{
-                                   [weakSelf refetch];
+                                   [weakSelf refetchStats];
                                    weakSelf.imageToUpload= nil;
                                    weakSelf.uploading= NO;
                                    weakSelf.uploadProgressBar.hidden= YES;
@@ -1160,7 +1185,7 @@
                  ON_MAIN_THREAD(^{
                      if (list) {
                          [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
-                         [weakSelf refetch];
+                         [weakSelf refetchStats];
                      } else {
                          message( @"That list name is already in use.");
                      }
@@ -1414,7 +1439,7 @@
                                                                    [OOAPI deletePhoto:mio
                                                                               success:^{
                                                                                   NSLog  (@"SUCCESS IN DELETING PHOTO");
-                                                                                  [weakSelf refetch];
+                                                                                  [weakSelf refetchStats];
                                                                                   
                                                                                   NOTIFY(kNotificationFoodFeedNeedsUpdate);
                                                                                   
@@ -1650,22 +1675,6 @@
     }
     return nil;
 }
-
-//------------------------------------------------------------------------------
-// Name:    goToEmptyListScreen
-// Purpose:
-//------------------------------------------------------------------------------
-#if 0
-- (void)goToEmptyListScreen:(ListObject *)list
-{
-    if  (self.uploading) {
-        return;
-    }
-    EmptyListVC *vc= [[EmptyListVC alloc] init];
-    vc.listItem = list;
-    [self.navigationController pushViewController:vc animated:YES];
-}
-#endif
 
 //------------------------------------------------------------------------------
 // Name:    getNumberOfLists

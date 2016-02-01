@@ -407,11 +407,17 @@
                                                  
                                                  NSDictionary *subdictionary = d[ @"user"];
                                                  if (subdictionary) {
-                                                     NSString *userid = subdictionary[@"user_id"];
-                                                     [weakSelf updateUserID:userid];
-                                                     NSString* username = subdictionary[@"username"];
-                                                     [weakSelf updateUsername:username];
-                                                 }                                             }
+                                                     UserObject* mostRecentUserData= [UserObject userFromDict:subdictionary ];
+                                                     if  ( mostRecentUserData) {
+                                                         [userInfo reviseWith: mostRecentUserData];
+                                                         [[Settings sharedInstance] save];
+                                                     }
+//                                                     NSString *userid = subdictionary[@"user_id"];
+//                                                     [weakSelf updateUserID:userid];
+//                                                     NSString* username = subdictionary[@"username"];
+//                                                     [weakSelf updateUsername:username];
+                                                 }
+                                             }
                                              else  {
                                                  NSLog  (@"result was not parsed into a dictionary.");
                                              }

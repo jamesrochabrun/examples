@@ -83,20 +83,6 @@ BOOL isUserObject (id  object)
     return YES;
 }
 
-static void updateStoredUserIfNecessary (UserObject *user)
-{
-    if (!user) return;
-    
-    UserObject *object = [Settings sharedInstance].userObject;
-    if (user.userID != object.userID)
-        return;
-    
-    if (![user isEqualToDeeply: object]) {
-        [Settings sharedInstance].userObject = user;
-        [[Settings sharedInstance] save];
-    }
-}
-
 //------------------------------------------------------------------------------
 // Name:    +userFromDict
 // Purpose: Instantiates user object from user dictionary.
@@ -209,6 +195,8 @@ static void updateStoredUserIfNecessary (UserObject *user)
     __weak UserObject *weakSelf = self;
     [OOAPI getUserWithID:self.userID
                   success:^(UserObject *user) {
+                      BOOL changed= ![weakSelf isEqualToDeeply: user];
+                      
                       weakSelf.mediaItem = user.mediaItem;
                       weakSelf.userID = user.userID;
                       weakSelf.about = user.about;
@@ -225,12 +213,36 @@ static void updateStoredUserIfNecessary (UserObject *user)
                       weakSelf.urlString = user.urlString;
                       weakSelf.userType = user.userType;
                     
-                      updateStoredUserIfNecessary (user);
-
-                      success();
+                      success( changed);
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                       failure();
                   }];
+}
+
+
+//------------------------------------------------------------------------------
+// Name:    reviseWith
+// Purpose: Updates a user object when new data is available that may be
+//       incomplete.
+//------------------------------------------------------------------------------
+- (void) reviseWith:(UserObject*)user;
+{
+    if (!user) return;
+    
+    if (user.username.length) self.username= user.username;
+    if (user.about.length) self.about= user.about;
+    if (user.firstName.length) self.firstName= user.firstName;
+    if (user.middleName.length) self.middleName= user.middleName;
+    if (user.lastName.length) self.lastName= user.lastName;
+    if (user.email.length) self.email= user.email;
+    if (user.phoneNumber.length) self.phoneNumber= user.phoneNumber;
+    if (user.gender.length) self.gender= user.gender;
+    if (user.facebookProfileImageURLString.length) self.facebookProfileImageURLString= user.facebookProfileImageURLString;
+    if (user.urlString.length) self.urlString= user.urlString;
+    if (user.imageIdentifier.length) self.imageIdentifier= user.imageIdentifier;
+    if (user.mediaItem) self.mediaItem= user.mediaItem;
+    if (user.userType) self.userType= user.userType;
+    self.isFoodie = self.userType == USER_TYPE_FOODIE;
 }
 
 - (UIImage *)userProfilePhoto;
