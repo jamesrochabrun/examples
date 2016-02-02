@@ -348,7 +348,7 @@
     
     [SocialMedia fetchProfilePhotoWithCompletionBlock:NULL];
     
-    UserObject* userInfo = [Settings sharedInstance].userObject;
+    __block UserObject* userInfo = [Settings sharedInstance].userObject;
     
     //---------------------------------------------------
     // RULE: If the day has changed, we will need to request
@@ -407,15 +407,12 @@
                                                  
                                                  NSDictionary *subdictionary = d[ @"user"];
                                                  if (subdictionary) {
-                                                     UserObject* mostRecentUserData= [UserObject userFromDict:subdictionary ];
-                                                     if  ( mostRecentUserData) {
-                                                         [userInfo reviseWith: mostRecentUserData];
-                                                         [[Settings sharedInstance] save];
-                                                     }
-//                                                     NSString *userid = subdictionary[@"user_id"];
-//                                                     [weakSelf updateUserID:userid];
-//                                                     NSString* username = subdictionary[@"username"];
-//                                                     [weakSelf updateUsername:username];
+                                                     UserObject* latestData= [UserObject userFromDict:subdictionary ];
+                                                     
+                                                     // RULE: Data is complete therefore use it in its entirety.
+                                                     [Settings sharedInstance].userObject = latestData;
+                                                     userInfo = latestData;
+                                                     [[Settings sharedInstance] save];
                                                  }
                                              }
                                              else  {
@@ -430,6 +427,7 @@
                                              
                                              // RULE: While the above is happening take the user to the
                                              //     Explore page regardless of whether the backend was reached.
+                                             NSLog (@"USERNAME %@",userInfo.username);
                                              ON_MAIN_THREAD(^{
                                                  if (userInfo.username.length) {
                                                      [self performSegueWithIdentifier:@"mainUISegue" sender:self];
@@ -648,6 +646,8 @@
                                                      NSDictionary *subdictionary=d[ @"user"];
                                                      if (subdictionary) {
                                                          UserObject*user= [UserObject  userFromDict: subdictionary];
+                                                         
+                                                         // RULE: Data is complete therefore use it in its entirety.
                                                          [Settings sharedInstance].userObject= user;
                                                          [[Settings sharedInstance] save];
                                                      }
@@ -746,12 +746,11 @@
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email"
                                        parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-//         NSInteger code= connection.URLResponse.statusCode;
          if (!error) {
              NSLog(@"fetched user:%@", result);
          } else {
              
-//             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
+             NSLog (@"Facebook server gave error %@", error);
              NSString*string=  @"We encountered a problem logging you in via Facebook.";
              message( string);
          }
