@@ -367,15 +367,46 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
 
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
-    
-    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
-    vc.mio = mio;
-    vc.restaurant = r;
-    vc.delegate = self;
+
     PhotoCVCell *cell = (PhotoCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
     CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
     frame.origin.y += kGeomHeightNavBarStatusBar;
-    vc.originRect = frame;
+    
+    [self showExpandedPhoto:mio forRestaurant:r fromRect:frame];
+}
+
+- (void)showExpandedPhoto:(MediaItemObject *)mio {
+    if (!(mio.restaurantID)) return;
+
+    __weak FoodFeedVC *weakSelf = self;
+    OOAPI *api = [[OOAPI alloc] init];
+    CGRect originRect = CGRectMake(self.view.center.x, self.view.center.y, 20, 20);
+
+    
+    [api getRestaurantWithID:stringFromUnsigned(mio.restaurantID)
+                      source:kRestaurantSourceTypeOomami
+                     success:^(RestaurantObject *restaurant) {
+                             if (restaurant) {
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     [weakSelf showExpandedPhoto:mio forRestaurant:restaurant fromRect:originRect];
+                                 });
+                             } else {
+                                 NSLog(@"Did not get a restaurant.");
+                             }
+                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                         dispatch_async(dispatch_get_main_queue(), ^{
+                             NSLog(@"Could not find the restaurant.");
+                         });
+                     }];
+}
+
+- (void)showExpandedPhoto:(MediaItemObject *)mio forRestaurant:(RestaurantObject *)restautant fromRect:(CGRect)originRect {
+    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+    vc.originRect = originRect;
+    vc.mio = mio;
+    vc.restaurant = restautant;
+    vc.delegate = self;
+    
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
     self.navigationController.delegate = self;
@@ -518,13 +549,18 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     if (restaurant.restaurantID) {
         [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
-               success:^{
+               success:^(MediaItemObject *mio){
                    weakSelf.uploading = NO;
-                   weakSelf.uploadProgressBar.hidden = YES;
-                   [weakSelf.filterView selectCurrent];
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       weakSelf.uploadProgressBar.hidden = YES;
+                       [weakSelf.filterView selectCurrent];
+                       //[weakSelf showExpandedPhoto:mio]; Comment out for now.
+                   });
                } failure:^(NSError *error) {
                    weakSelf.uploading = NO;
-                   weakSelf.uploadProgressBar.hidden = YES;
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       weakSelf.uploadProgressBar.hidden = YES;
+                   });
                    NSLog(@"Failed to upload photo");
                } progress:^(NSUInteger __unused bytesWritten,
                             long long totalBytesWritten,
@@ -540,13 +576,18 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         [api getRestaurantWithID:restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
             if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
-                           success:^{
+                           success:^(MediaItemObject *mio){
                                weakSelf.uploading = NO;
-                               weakSelf.uploadProgressBar.hidden = YES;
-                               [weakSelf.filterView selectCurrent];
+                               dispatch_async(dispatch_get_main_queue(), ^{
+                                   weakSelf.uploadProgressBar.hidden = YES;
+                                   [weakSelf.filterView selectCurrent];
+                                   //[weakSelf showExpandedPhoto:mio]; Comment out for now.
+                               });
                            } failure:^(NSError *error) {
                                weakSelf.uploading = NO;
-                               weakSelf.uploadProgressBar.hidden = YES;
+                               dispatch_async(dispatch_get_main_queue(), ^{
+                                   weakSelf.uploadProgressBar.hidden = YES;
+                               });
                                NSLog(@"Failed to upload photo");
                            } progress:^(NSUInteger __unused bytesWritten,
                                        long long totalBytesWritten,

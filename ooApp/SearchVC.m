@@ -343,7 +343,7 @@ static const NSUInteger maximumKeywords= 4;
             self.fetchOperation = [api getRestaurantsWithKeywords: @[expression]
                                                      andLocation:location
                                                        andFilter: @"" // Not used.
-                                                       andRadius:50000
+                                                       andRadius:kMaxSearchRadius
                                                      andOpenOnly:NO
                                                          andSort:kSearchSortTypeDistance
                                                         minPrice:0

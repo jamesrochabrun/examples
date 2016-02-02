@@ -12,7 +12,8 @@ typedef enum {
     kNotificationTypeViewUser = 1,
     kNotificationTypeViewEvent = 2,
     kNotificationTypeViewList = 3,
-    kNotificationTypeViewRestaurant = 4
+    kNotificationTypeViewRestaurant = 4,
+    kNotificationTypeViewMediaItem = 5
 } NotificationObjectType;
 
 extern NSString *const kKeyNotificationType;
