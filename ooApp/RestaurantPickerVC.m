@@ -36,7 +36,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _iv.translatesAutoresizingMaskIntoConstraints = NO;
         _iv.backgroundColor = UIColorRGBA(kColorClear);
         _iv.contentMode = UIViewContentModeScaleAspectFill;
-        _iv.alpha = 0.45;
+        _iv.alpha = 0.20;
         
         _tableView = [[UITableView alloc] init];
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
@@ -162,7 +162,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     _requestOperation = [api getRestaurantsWithKeywords:@[_searchBar.text]
                                             andLocation:_location
                                               andFilter:@""
-                                              andRadius:50000
+                                              andRadius:kMaxSearchRadius
                                             andOpenOnly:NO
                                                 andSort:kSearchSortTypeDistance
                                                minPrice:0
@@ -216,7 +216,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     cell.detailTextLabel.text = r.address;
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2]];
+    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2]];
     [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]];
     return cell;
 }

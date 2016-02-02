@@ -1916,8 +1916,30 @@ NSString *const kKeyDeviceToken = @"device_token";
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
     return [rm DELETE:urlString parameters:nil success:^(id responseObject) {
-        NSLog(@"delete photo:%lu response: %@",(unsigned long) mio.mediaItemId, responseObject);
+        NSLog(@"delete photo:%lu response: %@",(unsigned long)mio.mediaItemId, responseObject);
         success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)getMediaItem:(NSUInteger)mediaItemID
+                                 success:(void (^)(MediaItemObject *mio))success
+                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if  (!mediaItemID) {
+        failure (nil,nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSLog(@"getting media item id:%lu response: %@",(unsigned long)mediaItemID, responseObject);
+        MediaItemObject *mio = [MediaItemObject mediaItemFromDict:responseObject];
+        success(mio);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
@@ -1988,7 +2010,7 @@ NSString *const kKeyDeviceToken = @"device_token";
 //------------------------------------------------------------------------------
 + (void)uploadPhoto:(UIImage *)image
           forObject:(id)object
-            success:(void (^)(void))success
+            success:(void (^)(MediaItemObject *mio))success
             failure:(void (^)( NSError *error))failure
             progress:(void (^)(NSUInteger , long long , long long ))progress;
 {
@@ -2031,7 +2053,8 @@ NSString *const kKeyDeviceToken = @"device_token";
         [formData appendPartWithFileData:imageData name:@"upload" fileName:@"photo.png" mimeType:@"image/png"];
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@ ***** %@", operation.responseString, responseObject);
-        success();
+        MediaItemObject *mio = [MediaItemObject mediaItemFromDict:responseObject];
+        success(mio);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@ ***** %@", operation.responseString, error);
         failure(error);

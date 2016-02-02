@@ -1115,7 +1115,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     
     __weak RestaurantVC *weakSelf = self;
     [OOAPI uploadPhoto:newImage forObject:_restaurant
-               success:^{
+               success:^(MediaItemObject *mio){
                    weakSelf.uploading = NO;
                    weakSelf.uploadProgressBar.hidden = YES;
                    [weakSelf getMediaItemsForRestaurant];

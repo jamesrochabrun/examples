@@ -21,6 +21,7 @@
 #import <GoogleMaps/GoogleMaps.h>
 #import "NotificationObject.h"
 #import "RestaurantListVC.h"
+#import "ViewPhotoVC.h"
 
 @interface AppDelegate ()
 @property (nonatomic, strong) NSMutableArray *notifications;
@@ -202,10 +203,45 @@
             }];
         }
             break;
+        case kNotificationTypeViewMediaItem:
+            //show restaurant
+        {
+            NSLog(@"Show media item: %lu", (unsigned long)notif.identifier);
             
+            OOAPI *api = [[OOAPI alloc] init];
+            
+            [OOAPI getMediaItem:notif.identifier success:^(MediaItemObject *mio){
+                [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)mio.restaurantID] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
+                    if (restaurant) {
+                        [self launchViewPhoto:mio restaurant:restaurant originFrame:CGRectMake(0, 0, 0, 0)];
+                    }
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    ;
+                }];
+                ;
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
+            
+        }
+            break;
         default:
             break;
     }
+}
+
+- (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject *)restaurant originFrame:(CGRect)originFrame
+{
+//    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+//    [vc setDelegate:self];
+//    [vc setMio:mediaObject];
+//    [vc setRestaurant:restaurant];
+//    vc.originRect = originFrame;
+//    vc.modalPresentationStyle = UIModalPresentationCustom;
+//    vc.transitioningDelegate = self;
+//    self.navigationController.delegate = self;
+//    [vc.view setNeedsUpdateConstraints];
+//    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)testRemoteNotification {

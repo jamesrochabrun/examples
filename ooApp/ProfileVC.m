@@ -1073,7 +1073,7 @@
     
     if (_selectedRestaurant.restaurantID) {
         [OOAPI uploadPhoto:_imageToUpload forObject:_selectedRestaurant
-                   success:^{
+                   success:^(MediaItemObject *mio){
                        ON_MAIN_THREAD(^{
                            weakSelf.imageToUpload= nil;
                            weakSelf.uploading= NO;
@@ -1104,7 +1104,7 @@
         [OOAPI convertGoogleIDToRestaurant: _selectedRestaurant.googleID success:^(RestaurantObject *restaurant) {
             if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
-                           success:^{
+                           success:^(MediaItemObject *mio){
                                ON_MAIN_THREAD(^{
                                    [weakSelf refetchListsPhotosAndStats];
                                    weakSelf.imageToUpload= nil;
