@@ -86,8 +86,6 @@ extern NSString *const kKeyUserAbout;
 - (void) refreshWithSuccess: (void (^)(BOOL changed))success
                    failure:(void (^)())failure;
 
-- (void) reviseWith:(UserObject*)user;
-
 @end
 
 extern BOOL isUserObject (id  object);
