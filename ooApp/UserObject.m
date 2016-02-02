@@ -219,7 +219,6 @@ BOOL isUserObject (id  object)
                   }];
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    reviseWith
 // Purpose: Updates a user object when new data is available that may be
@@ -229,6 +228,7 @@ BOOL isUserObject (id  object)
 {
     if (!user) return;
     
+    if (!self.userID && user.userID) self.userID = user.userID;
     if (user.username.length) self.username= user.username;
     if (user.about.length) self.about= user.about;
     if (user.firstName.length) self.firstName= user.firstName;
