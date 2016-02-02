@@ -165,6 +165,7 @@
 - (void)showYummers:(NSArray *)users {
     UserListVC *vc = [[UserListVC alloc] init];
     vc.desiredTitle = @"YUMS";
+    vc.user= _user;
     vc.usersArray = [NSMutableArray arrayWithArray:users];
     [self.navigationController pushViewController:vc animated:YES];
 }

@@ -16,8 +16,8 @@
 enum : int {
     kConnectSectionFriends = 0,
     kConnectSectionFoodies = 1,
-    kConnectSectionFollowers = 2,
-    kConnectSectionFollowees = 3,
+//    kConnectSectionFollowers = 2,
+//    kConnectSectionFollowees = 3,
 };
 
 @protocol ConnectTableSectionHeaderDelegate

@@ -221,13 +221,10 @@
 
 - (void)prepareForReuse
 {
-    //    [_op cancel];
     _labelUserName.text=nil;
     _labelName.text=nil;
     
     [_userView clear];
-    
-    //    _labelLists.alpha=0;
     
     _labelFollowers.alpha = 0;
     _labelFollowing.alpha = 0;
@@ -238,7 +235,6 @@
     _labelPlacesNumber.alpha = 0;
     _labelPhotosNumber.alpha = 0;
     
-    //    [_labelLists setText:  @""];
     [_labelPlaces setText:@""];
     [_labelFollowers setText:@""];
     [_labelFollowing setText:@""];
@@ -352,10 +348,8 @@
 //==============================================================================
 @interface UserListVC ()
 @property (nonatomic,strong) UITableView *tableUsers;
-
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection1; //
-@property (nonatomic,strong) NSArray *arraySectionHeaderViews;
-
+@property (nonatomic,strong) NSMutableArray *followeesArray; 
+@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationFollowees;
 @end
 
 @implementation UserListVC
@@ -364,7 +358,10 @@
 {
     [_usersArray removeAllObjects];
     self.usersArray=nil;
-    self.arraySectionHeaderViews=nil;
+    [_followeesArray removeAllObjects];
+    self.followeesArray=nil;
+    [_fetchOperationFollowees cancel];
+    _fetchOperationFollowees= nil;
 }
 
 //------------------------------------------------------------------------------
@@ -397,6 +394,8 @@
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     [self setRightNavWithIcon:@"" target:nil action:nil];
+    
+    [self fetchFollowees];
 }
 
 - (void)done:(id)sender {
@@ -453,6 +452,37 @@
     _tableUsers.frame = self.view.bounds; // Replaces 4 constraints.
 }
 
+- (BOOL) user: (UserObject*)user isFollowingUser: (NSUInteger) identifier
+{
+    for (UserObject* user  in  _followeesArray) {
+        if ( user.userID == identifier) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void) fetchFollowees
+{
+    // NOTE: Need to make the call to find out who we are following before anything else is displayed.
+    
+    __weak  UserListVC *weakSelf = self;
+    
+    UserObject* currentUser= [Settings sharedInstance].userObject;
+    
+    [OOAPI getFollowingOf:currentUser.userID success:^(NSArray *users) {
+        @synchronized(weakSelf.followeesArray)  {
+            weakSelf.followeesArray= users.mutableCopy;
+            NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
+                    ( unsigned long)weakSelf.followeesArray.count);
+        }
+        
+        [weakSelf.tableUsers  reloadData];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
+    }];
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row=indexPath.row;
@@ -483,24 +513,15 @@
     cell.delegate= self;
     [cell provideUser:u];
     
+    @synchronized(self.followeesArray) {
+        if ( [self user: self.user isFollowingUser: u.userID]) {
+            
+        }
+    }
+    
     [cell commenceFetchingStats];
     
     return cell;
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewForHeaderInSection
-// Purpose:
-//------------------------------------------------------------------------------
-- (UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    if (section >= _arraySectionHeaderViews.count)
-        return nil;
-    
-    UserListTableSectionHeader *view = _arraySectionHeaderViews[section];
-    view.delegate= self;
-    view.tag= section;
-    return view;
 }
 
 //------------------------------------------------------------------------------

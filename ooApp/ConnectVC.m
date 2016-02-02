@@ -356,19 +356,13 @@
 @property (nonatomic,strong) NSMutableArray *suggestedUsersArray; // section 0
 @property (nonatomic,strong) NSMutableArray *foodiesArray; // section 1
 @property (nonatomic,strong) NSMutableArray *followeesArray; // section 2
-//@property (nonatomic,strong) NSMutableArray *followersArray; // section 3
 
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection1; // fb
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection2; // foodies
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection3; // users who follow you
-//@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection4; // users you're following
 
 @property (nonatomic,strong) NSArray *arraySectionHeaderViews;
-@property (nonatomic,assign) BOOL canSeeSection1Items,
-                                canSeeSection2Items,
-                                canSeeSection3Items,
-                                canSeeSection4Items
-;
+@property (nonatomic,assign) BOOL canSeeSection1Items,canSeeSection2Items;
 
 @end
 
@@ -395,8 +389,6 @@
     
     self.canSeeSection1Items=YES;
     self.canSeeSection2Items=YES;
-    self.canSeeSection3Items= _defaultSection == kConnectSectionFollowers;
-    self.canSeeSection4Items= _defaultSection == kConnectSectionFollowees;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -405,24 +397,15 @@
     _suggestedUsersArray = [NSMutableArray new];
     _foodiesArray = [NSMutableArray new];
     _followeesArray = [NSMutableArray new];
-//    _followersArray = [NSMutableArray new];
     
     ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection1Items];
     ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
-//    ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
-//    ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection4Items];
     
     headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView1.labelTitle.text=@"Friends On Oomami";
     
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";
-    
-//    headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
-//    headerView3.labelTitle.text=@"Users Who Follow You";
-//    
-//    headerView4.backgroundColor=UIColorRGB(kColorOffBlack);
-//    headerView4.labelTitle.text=@"Users You Follow";
     
     _arraySectionHeaderViews= @[
                                 headerView1, headerView2
