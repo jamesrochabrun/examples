@@ -774,6 +774,8 @@
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
+    [self.aiv startAnimating];
+    
     [self registerForNotification: kNotificationRestaurantListsNeedsUpdate
                           calling:@selector(handleRestaurantListAltered:)
      ];
@@ -1502,7 +1504,6 @@
         [a addAction:reportAction];
         
         [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
-        
     }
 }
 
@@ -1930,6 +1931,7 @@
 
 - (void) prepareForReuse
 {
+    [super prepareForReuse];
     [self setMessageMode];
 }
 @end

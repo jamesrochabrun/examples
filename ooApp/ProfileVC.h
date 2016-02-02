@@ -43,10 +43,6 @@
 @property (nonatomic,weak) NSObject<ProfileHeaderViewDelegate>* delegate;
 @end
 
-@interface ProfileCVPhotoCell : UICollectionViewCell
-- (void)setMediaObject:(MediaItemObject *)mediaObject;
-@end
-
 @interface ProfileEmptyCell: UICollectionViewCell
 @property (nonatomic,weak) NSObject<ProfileEmptyCellDelegate>* delegate;
 - (void) setListMode;
