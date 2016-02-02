@@ -10,5 +10,6 @@
 @interface SocialMedia : NSObject
 
 + (void)fetchProfilePhotoWithCompletionBlock:(void (^)(NSString*))completionBlock;
++ (void) fetchUserFriendListFromFacebook:(void (^)(NSArray *friends))completionBlock;
 
 @end

@@ -82,7 +82,6 @@
     
     float allowableHorizontalSpace= round ((width(self.collectionView)));
     
-    NSUInteger nSections=[self.collectionView numberOfSections];
     int hdrHeight = 0;
     if ( _userIsSelf) {
         hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightSelf;

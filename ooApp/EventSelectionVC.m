@@ -291,4 +291,10 @@
     self.needToRefreshEventList= YES;
 }
 
+- (void)userTappedOnProfilePicture:(NSUInteger)userid
+{
+    
+    
+}
+
 @end

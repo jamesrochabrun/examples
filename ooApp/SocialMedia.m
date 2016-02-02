@@ -58,4 +58,64 @@
 		}];
 }
 
+//------------------------------------------------------------------------------
+// Name:    fetchUserFriendListFromFacebook
+// Purpose:
+//------------------------------------------------------------------------------
++ (void) fetchUserFriendListFromFacebook:(void (^)(NSArray*friends))completionBlock;
+{
+    //---------------------------------------------
+    //  Make a formal request for friend information.
+    //
+    NSMutableString *facebookRequest = [NSMutableString new];
+    [facebookRequest appendString:@"/me/friends?fields=id,name,email&limit=200"];
+    
+    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                  initWithGraphPath:facebookRequest
+                                  parameters:nil
+                                  HTTPMethod:@"GET"];
+    [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
+                                           id result, NSError *error) {
+        if (error) {
+            NSLog (@"FACEBOOK ERR %@",error);
+            completionBlock(nil);
+            return;
+        }
+        if (![result isKindOfClass: [NSDictionary class] ] ) {
+            NSLog (@"FACEBOOK RESULT NOT ARY");
+            return;
+        }
+        NSArray *arrayData= ((NSDictionary*)result) [@"data"];
+        if ([arrayData isKindOfClass: [NSArray  class] ] ) {
+            NSUInteger  total= arrayData.count;
+            NSLog  (@"SUCCESSFULLY FOUND %lu FRIENDS", (unsigned long) total);
+            if  (!total) {
+                completionBlock ( @[] );
+
+            } else {
+                NSMutableArray* facebookIDs = [NSMutableArray new];
+                for (id object in arrayData) {
+                    if ([object isKindOfClass: [NSDictionary  class] ] ) {
+                        
+                        NSDictionary*d= (NSDictionary*)object;
+                        
+                        NSString *identifier= d[ @"id"];
+                        NSString *name= d[ @"name"];
+                        
+                        NSLog (@"FOUND FRIEND %@: id=%@", name,  identifier);
+                        if  (identifier ) {
+                            [facebookIDs  addObject: identifier];
+                        }
+                    }
+                }
+                completionBlock ( [NSArray arrayWithArray: facebookIDs ]);
+            }
+        }
+        
+    }
+     ];
+}
+
+
+
 @end

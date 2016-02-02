@@ -1194,7 +1194,7 @@
             forEvent: object.eventID
        andRestaurant: object.venueID
              success:^(NSInteger eventID) {
-                 NSLog  (@"DID SAVE VOTE AS %d.", object.vote);
+                 NSLog  (@"DID SAVE VOTE AS %lu.", (unsigned long) object.vote);
              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                  NSLog  (@"CANNOT SAVE VOTE.");
              }

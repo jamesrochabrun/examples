@@ -508,7 +508,7 @@ static const NSUInteger maximumKeywords= 4;
 - (void)userPressedKeyword: (UIButton*) button
 {
     NSUInteger index=  button.tag;
-    NSLog  (@"USER PRESSED KEYWORD BUTTON %d",index);
+    NSLog  (@"USER PRESSED KEYWORD BUTTON %lu", (unsigned long)index);
     if  (index >= _keywordButtonsArray.count ) {
         return;
     }

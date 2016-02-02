@@ -2762,15 +2762,16 @@ NSString *const kKeyDeviceToken = @"device_token";
 // create a new build target which is a duplicate of Release
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
-#ifdef ADHOC
+//#ifdef ADHOC
+    APP.usingStagingServer=NO;
     return kOOURLProduction;
-#else
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#endif
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 @end

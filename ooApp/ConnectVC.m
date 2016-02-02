@@ -16,6 +16,7 @@
 #import "ConnectVC.h"
 #import "Settings.h"
 #import "ProfileVC.h"
+#import "SocialMedia.h"
 
 #define CONNECT_TABLE_REUSE_IDENTIFIER  @"connectTableCell"
 #define CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY  @"connectTableCellEmpty"
@@ -355,12 +356,12 @@
 @property (nonatomic,strong) NSMutableArray *suggestedUsersArray; // section 0
 @property (nonatomic,strong) NSMutableArray *foodiesArray; // section 1
 @property (nonatomic,strong) NSMutableArray *followeesArray; // section 2
-@property (nonatomic,strong) NSMutableArray *followersArray; // section 3
+//@property (nonatomic,strong) NSMutableArray *followersArray; // section 3
 
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection1; // fb
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection2; // foodies
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection3; // users who follow you
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection4; // users you're following
+//@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationSection4; // users you're following
 
 @property (nonatomic,strong) NSArray *arraySectionHeaderViews;
 @property (nonatomic,assign) BOOL canSeeSection1Items,
@@ -404,12 +405,12 @@
     _suggestedUsersArray = [NSMutableArray new];
     _foodiesArray = [NSMutableArray new];
     _followeesArray = [NSMutableArray new];
-    _followersArray = [NSMutableArray new];
+//    _followersArray = [NSMutableArray new];
     
     ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection1Items];
     ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
-    ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
-    ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection4Items];
+//    ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
+//    ConnectTableSectionHeader *headerView4 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection4Items];
     
     headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView1.labelTitle.text=@"Friends On Oomami";
@@ -417,14 +418,15 @@
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";
     
-    headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView3.labelTitle.text=@"Users Who Follow You";
-    
-    headerView4.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView4.labelTitle.text=@"Users You Follow";
+//    headerView3.backgroundColor=UIColorRGB(kColorOffBlack);
+//    headerView3.labelTitle.text=@"Users Who Follow You";
+//    
+//    headerView4.backgroundColor=UIColorRGB(kColorOffBlack);
+//    headerView4.labelTitle.text=@"Users You Follow";
     
     _arraySectionHeaderViews= @[
-                                headerView1, headerView2, headerView3, headerView4
+                                headerView1, headerView2
+//                                , headerView3, headerView4
                                 ];
     
     NavTitleObject *nto;
@@ -447,6 +449,7 @@
 
 }
 
+#if 0
 - (void)fetchFollowers
 {
     __weak ConnectVC *weakSelf = self;
@@ -470,6 +473,7 @@
                       NSLog  (@"UNABLE TO FETCH FOLLOWERS");
                   }     ];
 }
+#endif
 
 - (void)fetchFoodies
 {
@@ -537,29 +541,29 @@
                     ( unsigned long)weakSelf.followeesArray.count);
         }
         
-        if (weakSelf.canSeeSection3Items) {
-            ON_MAIN_THREAD(^() {
-                if ( weakSelf.defaultSection == kConnectSectionFollowers) {
-                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
-                                                   atScrollPosition:UITableViewScrollPositionTop
-                                                           animated:YES];
-                    weakSelf.defaultSection = -1;
-                }
-            });
-        }
-        
-        if (weakSelf.canSeeSection4Items) {
-            ON_MAIN_THREAD(^() {
-                [weakSelf.tableAccordion reloadData];
-                
-                if ( weakSelf.defaultSection == kConnectSectionFollowees) {
-                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
-                                                   atScrollPosition:UITableViewScrollPositionTop
-                                                           animated:YES];
-                    weakSelf.defaultSection = -1;
-                }
-            });
-        }
+//        if (weakSelf.canSeeSection3Items) {
+//            ON_MAIN_THREAD(^() {
+//                if ( weakSelf.defaultSection == kConnectSectionFollowers) {
+//                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
+//                                                   atScrollPosition:UITableViewScrollPositionTop
+//                                                           animated:YES];
+//                    weakSelf.defaultSection = -1;
+//                }
+//            });
+//        }
+//        
+//        if (weakSelf.canSeeSection4Items) {
+//            ON_MAIN_THREAD(^() {
+//                [weakSelf.tableAccordion reloadData];
+//                
+//                if ( weakSelf.defaultSection == kConnectSectionFollowees) {
+//                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
+//                                                   atScrollPosition:UITableViewScrollPositionTop
+//                                                           animated:YES];
+//                    weakSelf.defaultSection = -1;
+//                }
+//            });
+//        }
         
         [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -571,14 +575,14 @@
 {
     [self.fetchOperationSection1 cancel];
     [self.fetchOperationSection2 cancel];
-    [self.fetchOperationSection3 cancel];
+//    [self.fetchOperationSection3 cancel];
     self.fetchOperationSection1= nil;
     self.fetchOperationSection2= nil;
     self.fetchOperationSection3= nil;
     
     [self fetchUserFriendListFromFacebook];
     [self fetchFoodies];
-    [self fetchFollowers];
+//    [self fetchFollowers];
 }
 
 - (BOOL) weAreFollowingUser: (NSUInteger) identifier
@@ -642,21 +646,21 @@
             }
             break;
             
-        case 2:
-            @synchronized(self.followersArray)  {
-                if ( row<_followersArray.count) {
-                    u=_followersArray[row];
-                }
-            }
-            break;
-            
-        case 3:
-            @synchronized(self.followeesArray)  {
-                if ( row<_followeesArray.count) {
-                    u=_followeesArray[row];
-                }
-            }
-            break;
+//        case 2:
+//            @synchronized(self.followersArray)  {
+//                if ( row<_followersArray.count) {
+//                    u=_followersArray[row];
+//                }
+//            }
+//            break;
+//            
+//        case 3:
+//            @synchronized(self.followeesArray)  {
+//                if ( row<_followeesArray.count) {
+//                    u=_followeesArray[row];
+//                }
+//            }
+//            break;
             
         default:
             break;
@@ -693,7 +697,8 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    return 4;
+//    return 4;
+    return 2;
 }
 
 //------------------------------------------------------------------------------
@@ -754,20 +759,20 @@
                 }
             }
             break;
-        case 2:
-            @synchronized(self.followersArray)  {
-                if ( row<_followersArray.count) {
-                    u=_followersArray[row];
-                }
-            }
-            break;
-        case 3:
-            @synchronized(self.followeesArray)  {
-                if ( row<_followeesArray.count) {
-                    u=_followeesArray[row];
-                }
-            }
-            break;
+//        case 2:
+//            @synchronized(self.followersArray)  {
+//                if ( row<_followersArray.count) {
+//                    u=_followersArray[row];
+//                }
+//            }
+//            break;
+//        case 3:
+//            @synchronized(self.followeesArray)  {
+//                if ( row<_followeesArray.count) {
+//                    u=_followeesArray[row];
+//                }
+//            }
+//            break;
             
         default:
             break;
@@ -803,16 +808,16 @@
                 return _canSeeSection2Items? MAX(1,_foodiesArray.count): 0;
             }
             break;
-        case 2:
-            @synchronized(self.followersArray)  {
-                return _canSeeSection3Items? MAX(1,_followersArray.count): 0;
-            }
-            break;
-        case 3:
-            @synchronized(self.followeesArray)  {
-                return _canSeeSection4Items? MAX(1,_followeesArray.count): 0;
-            }
-            break;
+//        case 2:
+//            @synchronized(self.followersArray)  {
+//                return _canSeeSection3Items? MAX(1,_followersArray.count): 0;
+//            }
+//            break;
+//        case 3:
+//            @synchronized(self.followeesArray)  {
+//                return _canSeeSection4Items? MAX(1,_followeesArray.count): 0;
+//            }
+//            break;
             
         default:
             break;
@@ -836,12 +841,12 @@
             _canSeeSection2Items= !_canSeeSection2Items;
             break;
             
-        case 2:
-            _canSeeSection3Items= !_canSeeSection3Items;
-            break;
-        case 3:
-            _canSeeSection4Items= !_canSeeSection4Items;
-            break;
+//        case 2:
+//            _canSeeSection3Items= !_canSeeSection3Items;
+//            break;
+//        case 3:
+//            _canSeeSection4Items= !_canSeeSection4Items;
+//            break;
     }
     
     NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:  which];
@@ -861,62 +866,19 @@
 {
     ENTRY;
     
-    //---------------------------------------------
-    //  Make a formal request for user information.
-    //
     __weak ConnectVC *weakSelf= self;
-    NSMutableString *facebookRequest = [NSMutableString new];
-    [facebookRequest appendString:@"/me/friends?fields=id,name,email&limit=200"];
-    
-    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                  initWithGraphPath:facebookRequest
-                                  parameters:nil
-                                  HTTPMethod:@"GET"];
-    [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
-                                           id result, NSError *error) {
-        if (error) {
-            NSLog (@"FACEBOOK ERR %@",error);
+    [SocialMedia fetchUserFriendListFromFacebook:^(NSArray *friends) {
+        if (!friends) {
             return;
         }
-        if (![result isKindOfClass: [NSDictionary class] ] ) {
-            NSLog (@"FACEBOOK RESULT NOT ARY");
-            return;
+        if  (!friends.count) {
+            [weakSelf refreshSuggestedUsersSection ];
         }
-        NSArray *arrayData= ((NSDictionary*)result) [@"data"];
-        if ([arrayData isKindOfClass: [NSArray  class] ] ) {
-            [weakSelf.suggestedUsersArray removeAllObjects];
-            NSUInteger  total= arrayData.count;
-            if  (!total) {
-                NSLog  (@"SUCCESSFULLY FOUND ZERO FRIENDS; BUT THAT'S OKAY");
-                ON_MAIN_THREAD(^{
-                    [weakSelf refreshSuggestedUsersSection ];
-                });
-            } else {
-                NSMutableArray* facebookIDs = [NSMutableArray new];
-                for (id object in arrayData) {
-                    if ([object isKindOfClass: [NSDictionary  class] ] ) {
-                        
-                        NSDictionary*d= (NSDictionary*)object;
-                        
-                        NSString *identifier= d[ @"id"];
-                        NSString *name= d[ @"name"];
-                        
-                        NSLog (@"FOUND FRIEND %@: id=%@", name,  identifier);
-                        if  (identifier ) {
-                            [facebookIDs  addObject: identifier];
-                        }
-                    }
-                }
-                
-                [weakSelf determineWhichFriendsAreNotOOUsers:facebookIDs];
-            }
-        }
-        
-    }
-     ];
+        [weakSelf determineWhichFriendsAreNotOOUsers: friends];
+    }];
 }
 
-- (void) determineWhichFriendsAreNotOOUsers: (NSMutableArray*) array
+- (void) determineWhichFriendsAreNotOOUsers: (NSArray*) array
 {
     if  (!array || ! array.count) {
         return;

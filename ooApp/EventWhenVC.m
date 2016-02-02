@@ -174,7 +174,7 @@ static int votingEndingValues[3]= {
         return;
 
     _lowerSelectionModified= YES;
-    _lowerSelection=sender.tag;
+    _lowerSelection=(int)sender.tag;
     NSUInteger durationBefore=  0;
     if  ( _lowerSelection<(sizeof(votingEndingValues)/ sizeof(int))) {
         durationBefore= votingEndingValues[ _lowerSelection];

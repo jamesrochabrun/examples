@@ -483,10 +483,11 @@ enum  {
 - (void)addRestaurantToList:(ListObject *)list
 {
     __weak  RestaurantTVCell *weakSelf = self;
+    __weak ListObject *weakList =  list;
     [list addVenue:_restaurant completionBlock:^(BOOL success) {
         ON_MAIN_THREAD(^{
             [weakSelf expressMode];
-            NOTIFY_WITH(kNotificationListAltered, list);
+            NOTIFY_WITH(kNotificationListAltered, weakList);
         });
     }];
 }

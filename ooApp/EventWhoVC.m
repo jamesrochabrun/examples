@@ -831,4 +831,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                       }];
     
 }
+
+- (BOOL)personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
+{
+    return YES;
+}
+
 @end

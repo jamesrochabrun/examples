@@ -189,7 +189,7 @@ BOOL isUserObject (id  object)
     }
 }
 
-- (void)refreshWithSuccess:(void (^)())success
+- (void)refreshWithSuccess:(void (^)(BOOL ))success
                     failure:(void (^)())failure;
 {
     __weak UserObject *weakSelf = self;
