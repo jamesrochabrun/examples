@@ -157,6 +157,7 @@
     }
     __weak ProfileHeaderView *weakSelf = self;
     
+//    addBorder(self, 3, RED);
     [_userView setUser: _userInfo];
     
     if  (_userInfo.isFoodie ) {
@@ -251,6 +252,7 @@
     self=[ super initWithFrame:frame];
     if (self) {
         self.autoresizesSubviews= NO;
+        self.clipsToBounds=YES;
         _backgroundImageView=  makeImageView(self, @"background-image.jpg");
         _backgroundImageFade= makeView( self,  UIColorRGBA(0x80000000));
 
@@ -658,6 +660,8 @@
     y += kGeomProfileTextviewHeight;
     
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
+    [self bringSubviewToFront:_filterView];
+    _filterView.userInteractionEnabled=YES;
 }
 
 @end
@@ -789,8 +793,8 @@
     if (!_userInfo) {
         _viewingOwnProfile=YES;
         _didFetchUserObject= NO;
-        UserObject *userInfo = [Settings sharedInstance].userObject;
-        self.profileOwner = userInfo;
+        _userInfo = [Settings sharedInstance].userObject;
+        self.profileOwner = _userInfo;
     } else {
         self.profileOwner = _userInfo;
         _didFetchUserObject = YES; // By caller.
@@ -817,6 +821,7 @@
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
     _listsAndPhotosLayout.delegate= self;
     _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
+    _listsAndPhotosLayout.userIsFoodie=_userInfo.isFoodie;
     [_listsAndPhotosLayout setShowingLists: YES];
     
     _cv = makeCollectionView(self.view, self, _listsAndPhotosLayout);
@@ -915,6 +920,7 @@
                     weakSelf.arrayLists = foundLists;
                     ON_MAIN_THREAD(^(){
                         [weakSelf.aiv stopAnimating];
+                        [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                         [weakSelf.listsAndPhotosLayout  invalidateLayout];
                         [weakSelf.cv reloadData];
                     });
@@ -927,16 +933,23 @@
                                        NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
                                        ON_MAIN_THREAD(^(){
                                            [weakSelf.aiv stopAnimating];
+                                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                                            [weakSelf.cv  reloadData];
                                        });
                                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                        NSLog  (@"FAILED TO GET PHOTOS");
-                                       ON_MAIN_THREAD(^(){ [weakSelf.aiv stopAnimating]; });
+                                       ON_MAIN_THREAD(^(){
+                                           [weakSelf.aiv stopAnimating];
+                                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                                       });
                                    }];
                 }
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
-                    ON_MAIN_THREAD(^(){ [weakSelf.aiv stopAnimating]; });
+                    ON_MAIN_THREAD(^(){
+                        [weakSelf.aiv stopAnimating];
+                        [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                    });
                 }];
     
 }
