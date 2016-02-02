@@ -213,9 +213,11 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
+    
 //    _requestOperation = nil;
 
     [self.backgroundImage cancelImageRequestOperation];
+    [self.backgroundImage setImage: nil];
     
     // AFNetworking
     [_requestOperation cancel];

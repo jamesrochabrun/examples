@@ -95,8 +95,10 @@
                                      height(self) - CGRectGetMaxY(_ooaiv.frame));
 }
 
-- (void)startAnimating {
+- (void)startAnimating
+{
     self.hidden = NO;
+    _isAnimating = YES;
     _messageLabel.alpha = 1.0;
     
     [UIView animateWithDuration:0.5 animations:^{
@@ -104,21 +106,21 @@
     }];
     
     [_ooaiv startAnimating];
-    _isAnimating = YES;
 }
 
-- (void)stopAnimating {
-    _isAnimating = NO;
-    
+- (void)stopAnimating
+{
     if (_hideWhenStopped) {
         [UIView animateWithDuration:1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             self.alpha = 0.0;
         } completion:^(BOOL finished) {
             [_ooaiv stopAnimating];
+            _isAnimating = NO;
         }];
     } else {
         _messageLabel.alpha = 0.0;
         [_ooaiv stopAnimating];
+        _isAnimating = NO;
     }
 }
 
