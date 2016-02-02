@@ -412,6 +412,7 @@
                                                      // RULE: Data is complete therefore use it in its entirety.
                                                      [Settings sharedInstance].userObject = latestData;
                                                      userInfo = latestData;
+                                                     latestData.backendAuthorizationToken = token;
                                                      [[Settings sharedInstance] save];
                                                  }
                                              }
@@ -646,7 +647,8 @@
                                                      NSDictionary *subdictionary=d[ @"user"];
                                                      if (subdictionary) {
                                                          UserObject*user= [UserObject  userFromDict: subdictionary];
-                                                         
+                                                         user.backendAuthorizationToken = token;
+
                                                          // RULE: Data is complete therefore use it in its entirety.
                                                          [Settings sharedInstance].userObject= user;
                                                          [[Settings sharedInstance] save];
