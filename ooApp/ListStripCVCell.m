@@ -70,8 +70,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 
 - (void)prepareForReuse
 {
-    // NOTE:  for some reason this is not been called.
-    
     [super prepareForReuse];
     
     self.listItem = nil;
