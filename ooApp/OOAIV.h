@@ -13,7 +13,7 @@
 @property (nonatomic, strong) NSString *message;
 @property (nonatomic, strong) UILabel *messageLabel;
 @property (nonatomic) BOOL hideWhenStopped;
-@property (nonatomic) BOOL isAnimating;
+@property (nonatomic) BOOL isAnimating, endingAnimation;
 
 - (id)initWithFrame:(CGRect)frame simple:(BOOL)simple;
 - (void)startAnimating;

@@ -1299,7 +1299,7 @@
         total=  self.arrayPhotos.count;
     }
     
-    if  (!total && !self.aiv.isAnimating) {
+    if  (!total && (!self.aiv.isAnimating || self.aiv.endingAnimation)) {
         // NOTE: We want to show an empty cell when there are no items to show,
         //  but not before the network call has finished.
         total= 1;
