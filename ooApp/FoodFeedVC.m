@@ -553,8 +553,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                    weakSelf.uploading = NO;
                    dispatch_async(dispatch_get_main_queue(), ^{
                        weakSelf.uploadProgressBar.hidden = YES;
-                       [weakSelf.filterView selectCurrent];
-                       //[weakSelf showExpandedPhoto:mio]; Comment out for now.
+                       [weakSelf showExpandedPhoto:mio];
+                       [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                    });
                } failure:^(NSError *error) {
                    weakSelf.uploading = NO;
@@ -580,8 +580,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                                weakSelf.uploading = NO;
                                dispatch_async(dispatch_get_main_queue(), ^{
                                    weakSelf.uploadProgressBar.hidden = YES;
-                                   [weakSelf.filterView selectCurrent];
-                                   //[weakSelf showExpandedPhoto:mio]; Comment out for now.
+                                   [weakSelf showExpandedPhoto:mio];
+                                   [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                                });
                            } failure:^(NSError *error) {
                                weakSelf.uploading = NO;

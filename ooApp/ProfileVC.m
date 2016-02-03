@@ -549,8 +549,8 @@
 {
     [super layoutSubviews];
     
-    float w = self.bounds.size.width;
-    float h = self.bounds.size.height;
+    float w = width(self);
+    float h = height(self);
 //    float spacing=  _userInfo.isFoodie? 2*kGeomSpaceInter : kGeomSpaceInter; // per Jay
     float spacing=  kGeomSpaceInter;
     
@@ -603,13 +603,13 @@
     [_labelPhotoCount sizeToFit];
     [_labelLikes sizeToFit];
     [_labelLikesCount sizeToFit];
-    float w1= widthOfView(_labelVenues);
-    float w2= widthOfView(_labelVenuesCount);
-    float w3= widthOfView(_labelPhoto);
-    float w4= widthOfView(_labelPhotoCount);
-    float w5= widthOfView(_labelLikes);
-    float w6= widthOfView(_labelLikesCount);
-    float x= (w-w1-w2-w3-w4-w6-w5-2*kGeomSpaceInter)/2;
+    float w1 = width(_labelVenues);
+    float w2 = width(_labelVenuesCount);
+    float w3 = width(_labelPhoto);
+    float w4 = width(_labelPhotoCount);
+    float w5 = width(_labelLikes);
+    float w6 = width(_labelLikesCount);
+    float x = (w-w1-w2-w3-w4-w6-w5-2*kGeomSpaceInter)/2;
     _labelVenues.frame = CGRectMake(x,y ,w1,kGeomProfileStatsItemHeight);
     x += w1;
     

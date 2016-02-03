@@ -104,9 +104,6 @@ extern NSInteger getLocalHour(NSDate *date);
 [[NSNotificationCenter defaultCenter] postNotificationName:NNN object:OOO]; \
 }
 
-static inline CGFloat widthOfView(UIView *view) { return view.frame.size.width; }
-static inline CGFloat heightOfView(UIView *view) { return view.frame.size.height; }
-
 static inline BOOL is_reachable(void) {
 	NetworkStatus status = [Reachability reachabilityForInternetConnection].currentReachabilityStatus;
 	return status ==ReachableViaWiFi || status==ReachableViaWWAN;
