@@ -50,7 +50,7 @@
     [_diagnosticLogString appendFormat:  @"APPLICATION %@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
 
 #else
-    #define INTERNAL_RELEASE //XX add this to a scheme.
+    #define INTERNAL_RELEASE
 
     #ifndef INTERNAL_RELEASE
         _usingStagingServer= NO;

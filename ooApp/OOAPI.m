@@ -2778,24 +2778,6 @@ NSString *const kKeyDeviceToken = @"device_token";
             ];
 }
 
-//+ (AFHTTPRequestOperation *)getUserStatsFor:(NSUInteger)userID
-//                                    success:(void (^)(UserStatsObject *))success
-//                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-//{
-//
-////https://maps.googleapis.com/maps/api/geocode/json?address=bombay&components=locality
-//    NSString *requestString =[NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
-//    
-//    return [[OONetworkManager sharedRequestManager] PUT:requestString
-//                                             parameters: @{
-//                                                           @"about": text ?:  @""
-//                                                           }
-//                                                success:^(id  response)  {
-//                                                    success ();
-//                                                }
-//                                                failure:failure];
-//}
-
 + (NSString *)URL
 {
 // To alleviate the need for commenting this out
@@ -2803,16 +2785,16 @@ NSString *const kKeyDeviceToken = @"device_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
-//    APP.usingStagingServer=NO;
+#ifdef ADHOC
+    APP.usingStagingServer=NO;
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end

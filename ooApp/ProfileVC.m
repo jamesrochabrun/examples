@@ -140,7 +140,6 @@
     }
     __weak ProfileHeaderView *weakSelf = self;
     
-//    addBorder(self, 3, RED);
     [_userView setUser: _userInfo];
     
     if  (_userInfo.isFoodie ) {
@@ -150,7 +149,7 @@
             if ( _viewingOwnProfile) {
                 [_buttonURL setTitle: @"Tap here to enter your URL." forState:UIControlStateNormal];
             } else {
-                [_buttonURL setTitle: @"This blogger has no web link." forState:UIControlStateNormal];
+                [_buttonURL setTitle: @"This foodie has no web link." forState:UIControlStateNormal];
             }
         } else {
             [_buttonURL setTitle: _userInfo.urlString forState:UIControlStateNormal];
@@ -314,8 +313,15 @@
 
 - (void)userPressedURLButton: (id) sender
 {
-    [self.delegate userPressedURL];
-    message( @"user pressed URL one");
+    NSString *urlString= _userInfo.urlString;
+    if  (!urlString) {
+        return;
+    }
+    NSString *urlStringLower= [_userInfo.urlString lowercaseString ];
+    if  (![urlStringLower hasPrefix: @"http://"] && ![urlStringLower hasPrefix: @"https://"]) {
+        urlString= concatenateStrings(@"http://", urlString);
+    }
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString: urlString]];
 }
 
 - (void)userPressedSettings: (id) sender
@@ -636,11 +642,9 @@
         y +=kGeomFollowButtonHeight + spacing;
     }
     
-    if ( _userInfo.isFoodie ) {
-        if ( _viewingOwnProfile ||  _userInfo.urlString.length) {
-            _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
-            y += kGeomProfileHeaderViewHeightOfBloggerButton + spacing;
-        }
+    if ( _userInfo.isFoodie && _userInfo.urlString.length) {
+        _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
+        y += kGeomProfileHeaderViewHeightOfBloggerButton + spacing;
     }
     
     _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
@@ -698,6 +702,7 @@
     if ( !_didFetchUserObject) {
         [_profileOwner refreshWithSuccess:^(BOOL changed){
             weakSelf.didFetchUserObject= YES;
+            
             [weakSelf.cv reloadData ];
             [weakSelf checkThatStatsAreUpToDate];
         } failure:^{
@@ -811,6 +816,7 @@
     _listsAndPhotosLayout.delegate= self;
     _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
     _listsAndPhotosLayout.userIsFoodie=_userInfo.isFoodie;
+    _listsAndPhotosLayout.foodieHasURL = _userInfo.urlString.length > 0;
     [_listsAndPhotosLayout setShowingLists: YES];
     
     _cv = makeCollectionView(self.view, self, _listsAndPhotosLayout);
@@ -1830,10 +1836,6 @@
     [self presentViewController:picker animated:YES completion:NULL];
 }
 
-- (void) userPressedURL
-{
-    
-}
 
 @end
 
