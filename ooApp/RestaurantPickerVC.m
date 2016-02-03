@@ -18,11 +18,15 @@
 @property (nonatomic, strong) NSArray *nearbyRestaurants;
 @property (nonatomic, strong) NSArray *autoCompleteRestaurants;
 @property (nonatomic, strong) NSArray *restaurants;
+@property (nonatomic, strong) NSArray *locations;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UISearchBar *searchBar;
+@property (nonatomic, strong) UISearchBar *locationSearchBar;
 @property (nonatomic, strong) UIButton *cancelButton;
 @property (nonatomic, strong) NavTitleObject *nto;
+@property (nonatomic, strong) UISearchBar *currentSearchBar;
+@property (nonatomic) CLLocationCoordinate2D selectedLocation;
 @end
 
 @implementation RestaurantPickerVC
@@ -63,10 +67,24 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _searchBar.keyboardType = UIKeyboardTypeAlphabet;
         _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         _searchBar.translatesAutoresizingMaskIntoConstraints = NO;
+
+        _locationSearchBar = [[UISearchBar alloc] init];
+        _locationSearchBar.searchBarStyle = UISearchBarStyleMinimal;
+        _locationSearchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        _locationSearchBar.placeholder = LOCAL( @"Current Location");
+        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
+        _locationSearchBar.barTintColor = UIColorRGBA(kColorBlack);
+        _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
+        _locationSearchBar.delegate = self;
+        _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
+        _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
+        _locationSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+        _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
         
         _cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_cancelButton withText:@"Cancel" fontSize:kGeomFontSizeH2 width:75 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorOffBlack target:self selector:@selector(cancelSearch)];
         _cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
+        _currentSearchBar = _searchBar;
     }
     return self;
 }
@@ -79,8 +97,31 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [self.view addSubview:_iv];
     [self.view addSubview:_searchBar];
     [self.view addSubview:_cancelButton];
+    [self.view addSubview:_locationSearchBar];
     
     self.navTitle = _nto;
+}
+
+- (void)searchLocations {
+    __weak  RestaurantPickerVC *weakSelf = self;
+    CLGeocoder * geocoder = [[CLGeocoder alloc] init];
+    CLRegion *region = [[CLRegion alloc] init];
+
+
+    [geocoder geocodeAddressString:_locationSearchBar.text inRegion:region
+                 completionHandler:^(NSArray* placemarks, NSError* error) {
+                     _locations = placemarks;
+                     if (![_locations count]) {
+                         NSLog(@"Could find a location that matched: %@", _locationSearchBar.text);
+                     } else {
+                         NSLog(@"Found %lu locations that matched: %@", (unsigned long)[_locations count], _locationSearchBar.text);
+                         for (CLPlacemark *pm in placemarks) {
+                             NSLog(@"placemark name: %@", pm.addressDictionary);
+                         }
+                        
+                     }
+                     [_tableView reloadData];
+                 }];
 }
 
 - (void)cancelSearch {
@@ -91,14 +132,28 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    _searchRestaurants = nil;
-    _restaurants = _searchRestaurants;
-    [_tableView reloadData];
+    _currentSearchBar = searchBar;
+    if (searchBar == _searchBar) {
+        _searchRestaurants = nil;
+        _restaurants = _searchRestaurants;
+        [_tableView reloadData];
+    } else if (searchBar == _locationSearchBar) {
+        _locations = nil;
+        [self searchLocations];
+    }
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    if ([searchText length] > 3) {
-        [self searchForRestaurants];
+    if (searchBar == _searchBar) {
+        if ([searchText length] > 3) {
+            [self searchForRestaurants];
+        }
+    } else if (searchBar == _locationSearchBar) {
+        if ([searchText length] > 0) {
+            [self searchLocations];
+        } else if ([searchText length] == 0) {
+            _selectedLocation = _location;
+        }
     }
 }
 
@@ -108,6 +163,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 
 - (void)setLocation:(CLLocationCoordinate2D)location {
     _location = location;
+    _selectedLocation = location;
+    
     [self getNearbyRestaurants];
 }
 
@@ -117,14 +174,15 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     
     NSDictionary *views;
 
-    views = NSDictionaryOfVariableBindings(_tableView, _iv, _searchBar, _cancelButton);
+    views = NSDictionaryOfVariableBindings(_tableView, _iv, _searchBar, _cancelButton, _locationSearchBar);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_searchBar][_cancelButton(75)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_cancelButton(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_searchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_cancelButton(40)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_searchBar(40)][_locationSearchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     }
@@ -133,7 +191,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantPickerVC *weakSelf = self;
     _requestOperation = [api getRestaurantsWithKeywords:[NSMutableArray arrayWithArray:@[]]
-                                            andLocation:_location
+                                            andLocation: _location
                                               andFilter:@""
                                               andRadius:20
                                             andOpenOnly:NO
@@ -160,7 +218,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantPickerVC *weakSelf = self;
     _requestOperation = [api getRestaurantsWithKeywords:@[_searchBar.text]
-                                            andLocation:_location
+                                            andLocation:_selectedLocation
                                               andFilter:@""
                                               andRadius:kMaxSearchRadius
                                             andOpenOnly:NO
@@ -201,29 +259,45 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [_restaurants count];
+    if (_currentSearchBar == _searchBar) {
+        return [_restaurants count];
+    } else if (_currentSearchBar == _locationSearchBar) {
+        return [_locations count];
+    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
-    
-    // Configure the cell...
-    cell.textLabel.text = r.name;
     [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
     [cell.detailTextLabel setTextColor:UIColorRGBA(kColorWhite)];
-    cell.detailTextLabel.text = r.address;
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
     [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2]];
     [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]];
+
+    if (_currentSearchBar == _searchBar) {
+        RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
+        // Configure the cell...
+        cell.textLabel.text = r.name;
+        cell.detailTextLabel.text = r.address;
+    } else if (_currentSearchBar == _locationSearchBar) {
+        CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
+        cell.textLabel.text = [placemark.addressDictionary objectForKey:@"City"];
+    }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
-    [_delegate restaurantPickerVC:self restaurantSelected:restaurant];
+    if (_currentSearchBar == _searchBar) {
+        RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+        [_delegate restaurantPickerVC:self restaurantSelected:restaurant];
+    } else if (_currentSearchBar == _locationSearchBar) {
+        CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
+        _locationSearchBar.text = [placemark.addressDictionary objectForKey:@"City"];
+        _selectedLocation = placemark.location.coordinate;
+    }
 }
 
 - (void)pickerCanceled {

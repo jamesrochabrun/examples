@@ -26,6 +26,7 @@
 #import "ProfileVC.h"
 #import "EventSelectionVC.h"
 #import <MapKit/MapKit.h>
+#import "ShowMediaItemAnimator.h"
 
 #import "DebugUtilities.h"
 
@@ -920,22 +921,66 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == kRestaurantSectionTypeMediaItems) {
-        NSUInteger row = indexPath.row;
-        __weak RestaurantVC *weakSelf = self;
-        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
-        [photoBrowser setCurrentPhotoIndex:row];
-        __weak MediaItemObject *mio = [_mediaItems objectAtIndex:row];
+        MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
+        UIView *v = [collectionView cellForItemAtIndexPath:indexPath];
+        CGRect originRect = v.frame;
+        originRect.origin.y += kGeomHeightNavBarStatusBar;
         
-        OOAPI *api = [[OOAPI alloc] init];
-        [api getRestaurantImageWithMediaItem:[_mediaItems objectAtIndex:row] maxWidth:width(self.view) maxHeight:0 success:^(NSString *link) {
-            mio.url = link;
-            ON_MAIN_THREAD(^ {
-                [self.navigationController pushViewController:photoBrowser animated:YES];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
+        ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+        vc.originRect = originRect;
+        vc.mio = mio;
+        vc.restaurant = _restaurant;
+        vc.delegate = self;
+        
+        vc.modalPresentationStyle = UIModalPresentationCustom;
+        vc.transitioningDelegate = self;
+        self.navigationController.delegate = self;
+        [self.navigationController pushViewController:vc animated:YES];
+
+//        NSUInteger row = indexPath.row;
+//        __weak RestaurantVC *weakSelf = self;
+//        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
+//        [photoBrowser setCurrentPhotoIndex:row];
+//        __weak MediaItemObject *mio = [_mediaItems objectAtIndex:row];
+//        
+//        OOAPI *api = [[OOAPI alloc] init];
+//        [api getRestaurantImageWithMediaItem:[_mediaItems objectAtIndex:row] maxWidth:width(self.view) maxHeight:0 success:^(NSString *link) {
+//            mio.url = link;
+//            ON_MAIN_THREAD(^ {
+//                [self.navigationController pushViewController:photoBrowser animated:YES];
+//            });
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            ;
+//        }];
     }
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
+{
+    id<UIViewControllerAnimatedTransitioning> animationController;
+    
+    if ([toVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPush) {
+        ViewPhotoVC *vc = (ViewPhotoVC *)toVC;
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        animator.presenting = YES;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.8;
+        animationController = animator;
+    } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
+        animator.presenting = NO;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.6;
+        animationController = animator;
+    } else {
+        
+    }
+    
+    return animationController;
 }
 
 #pragma MWPhotoBrowser delegates
