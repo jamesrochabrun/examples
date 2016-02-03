@@ -42,18 +42,6 @@
     return self;
 }
 
-- (void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    //    [self.delegate userTappedSectionHeader:( int)self.tag];
-    //
-    //    _isExpanded=!_isExpanded;
-    //
-    //    [UIView animateWithDuration:.4
-    //                     animations:^{
-    //                         [self layoutSubviews];
-    //                     }];
-}
-
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -131,7 +119,14 @@
         
         _labelUserName= makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
         _labelName= makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
+        _labelName.numberOfLines=1;
         
+//        _labelName.minimumFontSize DEPRECATED
+        _labelUserName.adjustsFontSizeToFitWidth = NO;
+        _labelName.adjustsFontSizeToFitWidth = NO;
+        _labelUserName.lineBreakMode = NSLineBreakByTruncatingTail;
+        _labelName.lineBreakMode = NSLineBreakByTruncatingTail;
+
         _labelUserName.textColor=WHITE;
         _labelName.textColor=WHITE;
         
@@ -144,14 +139,55 @@
         _labelPhotosNumber.alpha=0;
         _labelPlacesNumber.alpha=0;
         
-        _buttonFollow = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_buttonFollow withText:@"FOLLOW" fontSize:kGeomFontSizeSubheader width:40 height:40 backgroundColor:kColorClear textColor:kColorYellow borderColor:kColorYellow target:self
-                       selector:@selector (userPressedFollow:)];
+        _buttonFollow = makeButton(self, @"FOLLOW", kGeomFontSizeSubheader,
+                                   YELLOW, BLACK, self, @selector(userPressedFollow:), .5);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
-        [self addSubview:_buttonFollow];
     }
     return self;
+}
+
+- (void) verifyUnfollow
+{
+    __weak  UserListTableCell *weakSelf = self;
+
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
+                                                              message:nil
+                                                       preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style: UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
+                                                 style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     [weakSelf  doUnfollow];
+                                                 }];
+    
+    [a addAction:cancel];
+    [a addAction:ok];
+    
+    [self.vc presentViewController:a animated:YES completion:nil];
+}
+
+- (void)doUnfollow
+{
+    __weak UserListTableCell *weakSelf = self;
+    
+    [OOAPI setFollowingUser:_userInfo
+                         to: NO
+                    success:^(id responseObject) {
+                        ON_MAIN_THREAD(^{
+                            
+                            weakSelf.buttonFollow.selected= NO;
+
+                            NOTIFY( kNotificationOwnProfileNeedsUpdate);
+
+                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
+                        });
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                        NSLog (@"FAILED TO UNFOLLOW USER");
+                    }];
 }
 
 //------------------------------------------------------------------------------
@@ -160,19 +196,23 @@
 //------------------------------------------------------------------------------
 - (void)userPressedFollow:(id)sender
 {
+    if ( self.buttonFollow.selected) {
+        [self verifyUnfollow];
+        return;
+    }
+    
     __weak UserListTableCell *weakSelf = self;
     [OOAPI setFollowingUser:_userInfo
-                         to: !weakSelf.buttonFollow.selected
+                         to: YES
                     success:^(id responseObject) {
-                        weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected;
-                        if (weakSelf.buttonFollow.selected ) {
+                        ON_MAIN_THREAD(^{
+                            weakSelf.buttonFollow.selected= YES;
                             NSLog (@"SUCCESSFULLY FOLLOWED USER");
-                        } else {
-                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
-                        }
-                        [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo];
-                        
-                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                            NOTIFY( kNotificationOwnProfileNeedsUpdate);
+                            [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo];
+                        });
+                    }
+                    failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
                     }];
 }
@@ -181,6 +221,7 @@
 {
     _buttonFollow.hidden = NO;
     _buttonFollow.selected = following;
+    [self bringSubviewToFront: _buttonFollow];
 }
 
 - (void)commenceFetchingStats
@@ -221,6 +262,7 @@
 
 - (void)prepareForReuse
 {
+    [super prepareForReuse];
     _labelUserName.text=nil;
     _labelName.text=nil;
     
@@ -248,7 +290,6 @@
 
 - (void)provideStats:(UserStatsObject *)stats
 {
-    //    NSInteger lists= stats.totalLists;
     NSUInteger followers = stats.totalFollowers;
     NSUInteger following = stats.totalFollowees;
     NSUInteger restaurantCount = stats.totalVenues;
@@ -296,22 +337,29 @@
     float imageSize = kGeomUserListUserImageHeight;
     _userView.frame = CGRectMake(margin, margin, imageSize, imageSize);
     
-    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, 15,kGeomButtonWidth, kGeomFollowButtonHeight);
-    
     float x=margin+imageSize+kGeomUserListVCCellMiddleGap;
     float y=margin;
-    float remainingWidth=w-margin-x;
     float labelHeight=_labelUserName.intrinsicContentSize.height;
     if  ( labelHeight<1) {
         labelHeight= kGeomHeightButton;
     }
-    _labelUserName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
-    y +=  labelHeight+ spacing;
+    _labelUserName.frame=CGRectMake(x, y, w-margin-x, labelHeight);
+    
+    y +=  labelHeight;
+    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, y+3,kGeomButtonWidth, kGeomFollowButtonHeight);
+
+    y += spacing;
     labelHeight=_labelName.intrinsicContentSize.height;
     if  ( labelHeight<1) {
         labelHeight= kGeomHeightButton;
     }
-    _labelName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
+    
+    if  (_buttonFollow.hidden ) {
+        _labelName.frame=CGRectMake(x, y, w-margin-x, labelHeight);
+    } else {
+        _labelName.frame=CGRectMake(x, y, w-kGeomButtonWidth-margin-spacing-x, labelHeight);
+    }
+    
     y += labelHeight+ spacing;
     
     float iconWidth = 30;
@@ -454,9 +502,15 @@
 
 - (BOOL) user: (UserObject*)user isFollowingUser: (NSUInteger) identifier
 {
-    for (UserObject* user  in  _followeesArray) {
-        if ( user.userID == identifier) {
-            return YES;
+    if (!_followeesArray) {
+        return NO;
+    }
+    @synchronized(self.followeesArray) {
+        
+        for (UserObject* user  in  _followeesArray) {
+            if ( user.userID == identifier) {
+                return YES;
+            }
         }
     }
     return NO;
@@ -476,8 +530,7 @@
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
                     ( unsigned long)weakSelf.followeesArray.count);
         }
-        
-        [weakSelf.tableUsers  reloadData];
+        ON_MAIN_THREAD(^{ [weakSelf.tableUsers  reloadData]; });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
     }];
@@ -511,11 +564,12 @@
     cell.textLabel.textAlignment=NSTextAlignmentCenter;
     cell.selectionStyle= UITableViewCellSeparatorStyleNone;
     cell.delegate= self;
+    cell.vc=self;
     [cell provideUser:u];
     
-    @synchronized(self.followeesArray) {
-        if ( [self user: self.user isFollowingUser: u.userID]) {
-            
+    if (_followeesArray ) {
+        @synchronized(self.followeesArray) {
+            [cell showFollowButton: [self user: self.user isFollowingUser: u.userID] ];
         }
     }
     

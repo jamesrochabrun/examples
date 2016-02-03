@@ -69,6 +69,7 @@
 
 - (void)prepareForReuse
 {
+    [super prepareForReuse];
     [self.buttonAddAll removeFromSuperview];
     self.buttonAddAll= nil;
     self.listToAddTo= nil;

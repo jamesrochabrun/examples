@@ -223,6 +223,7 @@
 
 - (void)prepareForReuse
 {
+    [super prepareForReuse];
 //    [_op cancel];
     _labelUserName.text=nil;
     _labelName.text=nil;
