@@ -85,6 +85,7 @@
 
 - (void)prepareForReuse
 {
+    [super prepareForReuse];
     [self.requestOperation cancel];
     [_userView clear];
     self.header.text= nil;

@@ -28,16 +28,16 @@
 - (void) userTappedFollowButtonForUser:(UserObject*)user;
 @end
 
-@interface UserListTableCell : UITableViewCell <OOUserViewDelegate>
-- (void) provideUser: (UserObject*) user;
-- (void)commenceFetchingStats;
-- (void) showFollowButton: (BOOL)following;
-
-@property (nonatomic,weak) id<UserListTableCellDelegate>delegate;
-@end
-
 @interface UserListVC : BaseVC <UserListTableSectionHeaderDelegate,UserListTableCellDelegate>
 @property (nonatomic, strong) NSMutableArray *usersArray;
 @property (nonatomic, strong) NSString* desiredTitle;
 @property (nonatomic,strong) UserObject* user;
+@end
+
+@interface UserListTableCell : UITableViewCell <OOUserViewDelegate>
+- (void) provideUser: (UserObject*) user;
+- (void)commenceFetchingStats;
+- (void) showFollowButton: (BOOL)following;
+@property (nonatomic,weak) UserListVC*vc;
+@property (nonatomic,weak) id<UserListTableCellDelegate>delegate;
 @end

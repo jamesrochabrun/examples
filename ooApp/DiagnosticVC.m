@@ -27,7 +27,7 @@
 @property (nonatomic,strong)  UIButton* buttonUploadPhoto;
 @property (nonatomic,strong)  UIButton* buttonHardCrash;
 @property (nonatomic,strong)  UIButton* buttonTakePhoto;
-@property (nonatomic,strong)  UIButton* buttonCrash;
+@property (nonatomic,strong)  UIButton* buttonLongName;
 @property (nonatomic,strong)  UIButton* buttonCreateUsername;
 @property (nonatomic,strong)  UISwitch* switchUsingStage;
 @property (nonatomic,strong)  UILabel* labelUsingStage;
@@ -104,9 +104,9 @@
     _buttonSearchRadius.titleLabel.numberOfLines= 0;
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    _buttonCrash= makeButton(self.view, [NSString stringWithFormat:@"SOFT\rCRASH"] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(deliberateCrash:), 1);
-    _buttonCrash.titleLabel.numberOfLines= 0;
-    _buttonCrash.titleLabel.textAlignment= NSTextAlignmentCenter;
+    _buttonLongName= makeButton(self.view, [NSString stringWithFormat:@"LONG NAME"] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(setLongName:), 1);
+    _buttonLongName.titleLabel.numberOfLines= 0;
+    _buttonLongName.titleLabel.textAlignment= NSTextAlignmentCenter;
     
     _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doTakePhoto:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
@@ -166,6 +166,42 @@
     }
     [_textviewDiagnosticLog setContentSize: _textviewDiagnosticLog.textContainer.size];
     [_textviewDiagnosticLog scrollRangeToVisible:NSMakeRange(length-1, 1)];
+}
+
+- (void)setLongName: (id) sender
+{
+    UserObject* userInfo= [Settings sharedInstance].userObject;
+    NSUInteger userid= userInfo.userID;
+    
+    NSString*requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
+                   [OOAPI URL],( unsigned long) userid];
+    
+    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+    
+    NSDictionary*parameters=@{
+                              @"first_name": @"VeryLongFirstName",
+                              @"last_name": @"EvenLongerLastNameForAUser",
+                              };
+    
+    [[OONetworkManager sharedRequestManager] PUT: requestString
+                                      parameters:  parameters                                         success:^void(id   result) {
+                                          NSDictionary *dictionary=result;
+                                          NSDictionary*userDictionary= dictionary[ @"user" ];
+                                          UserObject* latestData= [UserObject userFromDict: userDictionary ];
+                                          NSString *first=latestData.firstName;
+                                          NSString *last=latestData.lastName;
+                                          NSString*resultString= [NSString stringWithFormat: @"GOT BACK %@ %@", first, last];
+                                          message( resultString);
+                                          
+                                          // RULE: Data is complete therefore use it in its entirety.
+                                          [Settings sharedInstance].userObject.firstName=@"VeryLongFirstName";
+                                          [Settings sharedInstance].userObject.firstName=@"EvenLongerLastNameForAUser";
+                                          [[Settings sharedInstance] save];
+                                      }
+                                         failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
+                                             message  (@"PUT FAILED");
+     }];
+    
 }
 
 //------------------------------------------------------------------------------
@@ -310,7 +346,7 @@
     y= margin;
     _buttonTakePhoto.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
-    _buttonCrash.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
+    _buttonLongName.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;
     _buttonCreateUsername.frame=  CGRectMake(x,y,buttonWidth,kGeomHeightButton);
     y+=  spacing +kGeomHeightButton;

@@ -56,23 +56,6 @@
 
 @implementation ProfileHeaderView
 
-//- (void) prepareForReuse
-//{
-//    _usingURLButton= NO;
-//    _buttonURL.hidden= YES;
-//    _buttonURL.enabled= NO;
-//    [_buttonURL setTitle: @"" forState:UIControlStateNormal];
-//    
-//    // NOTE: Before we have a response from the backend we do not know what these values will be.
-//    _buttonFollow.hidden= YES;
-//    _labelPhoto.hidden= YES;
-//    _labelPhotoCount.hidden= YES;
-//    _labelLikes.hidden= YES;
-//    _labelLikesCount.hidden= YES;
-//    _labelVenues.hidden= YES;
-//    _labelVenuesCount.hidden= YES;
-//}
-
 - (void) enableURLButton
 {
     _usingURLButton= YES;
@@ -453,8 +436,9 @@
                        self.userInfo.about = text;
                        [Settings sharedInstance].userObject.about = text;
                        [[Settings sharedInstance] save];
-                       
-                       [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
+                       ON_MAIN_THREAD(^{
+                           [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
+                       });
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog(@"FAILED TO SET ABOUT INFO FOR USER");
                    }
@@ -476,6 +460,7 @@
 
 - (void) verifyUnfollow
 {
+    __weak  ProfileHeaderView *weakSelf = self;
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleActionSheet];
@@ -486,7 +471,7 @@
                                                    }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
                                                  style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     [self doUnfollow];
+                                                     [weakSelf doUnfollow];
                                                  }];
     
     [a addAction:cancel];
@@ -502,10 +487,12 @@
     [OOAPI setFollowingUser:_userInfo
                          to: NO
                     success:^(id responseObject) {
-                        [weakSelf indicateNotFollowing];
-                        
-                        NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
-                        
+                        ON_MAIN_THREAD(^{
+                            
+                            [weakSelf indicateNotFollowing];
+                            
+                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
+                        });
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO UNFOLLOW USER");
                     }];
