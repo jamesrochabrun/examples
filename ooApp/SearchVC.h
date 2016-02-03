@@ -10,8 +10,9 @@
 #import "BaseVC.h"
 #import "EventObject.h"
 #import "UserTVCell.h"
+#import "OOTextEntryModalVC.h"
 
-@interface SearchVC : BaseVC <UISearchBarDelegate, UserTVCellDelegate>
+@interface SearchVC : BaseVC <UISearchBarDelegate, UserTVCellDelegate,OOTextEntryModalVCDelegate>
 @property (nonatomic,strong) EventObject *eventBeingEdited;
 
 @end

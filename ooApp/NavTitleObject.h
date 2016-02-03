@@ -14,5 +14,5 @@
 @property (nonatomic, strong) NSString *subheader;
 
 - (id)initWithHeader:(NSString *)header subHeader:(NSString *)subHeader;
-    
+
 @end

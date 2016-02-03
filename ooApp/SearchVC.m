@@ -60,6 +60,8 @@ static const NSUInteger maximumKeywords= 4;
 @property (nonatomic,strong)  UILabel *labelPreSearchInstructiveMessage2;
 @property (nonatomic,strong)  UILabel *labelPreSearchInstructiveMessage3;
 @property (nonatomic,assign) BOOL haveSearchedPeople, haveSearchedPlaces, haveSearchedYou;
+@property (nonatomic, strong) UIButton *changeLocationButton;
+@property (nonatomic,assign) CLLocationCoordinate2D currentLocation;
 @end
 
 @implementation SearchVC
@@ -81,6 +83,8 @@ static const NSUInteger maximumKeywords= 4;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _currentFilter=FILTER_NONE;
+    
+    _currentLocation= CLLocationCoordinate2DMake(0, 0);
     
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
@@ -112,6 +116,8 @@ static const NSUInteger maximumKeywords= 4;
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
+    [self setRightNavWithIcon:kFontIconSearch target:self action:@selector(userPressedChangeLocation:)];
+
     _buttonCancel= makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), CLEAR, self, @selector(userPressedCancel:), .5);
     [_buttonCancel setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
     
@@ -330,19 +336,22 @@ static const NSUInteger maximumKeywords= 4;
             self.haveSearchedPlaces=YES;
             [self showAppropriateTableAnimated:NO];
             
-            CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
+            CLLocationCoordinate2D location=_currentLocation;
             if (!location.latitude && !location.longitude) {
-                // XX
-                NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
-                location.latitude = 37.775;
-                location.longitude = -122.4183333;
+                location=  [LocationManager sharedInstance].currentUserLocation;
+                if (!location.latitude && !location.longitude) {
+                    
+                    NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
+                    location.latitude = 37.775;
+                    location.longitude = -122.4183333;
+                }
             }
             
             OOAPI *api= [[OOAPI alloc] init];
             
             self.fetchOperation = [api getRestaurantsWithKeywords: @[expression]
-                                                     andLocation:location
-                                                       andFilter: @"" // Not used.
+                                                      andLocation:location
+                                                        andFilter: @"" // Not used.
                                                        andRadius:kMaxSearchRadius
                                                      andOpenOnly:NO
                                                          andSort:kSearchSortTypeDistance
@@ -403,6 +412,55 @@ static const NSUInteger maximumKeywords= 4;
     [_searchBar resignFirstResponder];
     [self doSearchFor: _searchBar.text];
 }
+
+#pragma mark - LOCATION CHANGE
+
+- (void)textEntryFinished:(NSString *)text;
+{
+    if (!text.length) {
+        return;
+    }
+    
+    __weak  SearchVC *weakSelf = self;
+    CLGeocoder* geocoder = [[CLGeocoder alloc] init];
+    [geocoder geocodeAddressString: text
+                 completionHandler:^(NSArray* placemarks, NSError* error) {
+                     NSLog  (@"TOTAL PLACE MARKS %lu", (unsigned long)placemarks.count);
+                     if  ( placemarks.count) {
+                         CLPlacemark* aPlacemark= [placemarks  firstObject];
+                         CLLocation *location= aPlacemark.location;
+                         weakSelf.currentLocation = location.coordinate;
+                         weakSelf.navTitle.subheader = text;
+                         [weakSelf.navTitleView setNavTitle: weakSelf.navTitle];
+                     } else {
+                         message( @"I can't find that location.");
+                     }
+                 }];
+}
+
+- (void)userPressedChangeLocation: (UIButton*)sender
+{
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
+    vc.title=  @"CHANGE LOCATION";
+    vc.subtitle=  @"Enter a ZIP Code or City, State";
+    vc.delegate = self;
+    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
+}
+
+#pragma mark - SEARCH BAR
 
 //------------------------------------------------------------------------------
 // Name:    textDidChange
@@ -470,14 +528,7 @@ static const NSUInteger maximumKeywords= 4;
     }];
 }
 
-- (void)clearResultsTables
-{
-    self.restaurantsArray = nil;
-    [self.tableRestaurants reloadData];
-    
-    self.peopleArray = nil;
-    [self.tablePeople reloadData];
-}
+#pragma mark - KEYWORDS
 
 - (void)doKeywordLookup: (NSString*)expression
 {
@@ -643,6 +694,17 @@ static const NSUInteger maximumKeywords= 4;
     [UIView beginAnimations:nil context:NULL];
     [self doLayout];
     [UIView  commitAnimations];
+}
+
+#pragma mark - TABLES
+
+- (void)clearResultsTables
+{
+    self.restaurantsArray = nil;
+    [self.tableRestaurants reloadData];
+    
+    self.peopleArray = nil;
+    [self.tablePeople reloadData];
 }
 
 //------------------------------------------------------------------------------
