@@ -1773,8 +1773,11 @@
     BOOL haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
     BOOL havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
     
-    UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:@"Set Your Profile Photo"
-                                                                      message:nil
+    NSString* titleString = _pickerIsForRestaurants ?  @"Add photo to a restaurant": @"Set Your Profile Photo";
+    NSString* message = _pickerIsForRestaurants ?  @"Take a photo with your camera or add one from your photo library.": nil;
+    
+    UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:titleString
+                                                                      message:message
                                                                preferredStyle:UIAlertControllerStyleAlert];
     __weak  ProfileVC *weakSelf = self;
     UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"From the Camera"

@@ -2782,16 +2782,16 @@ NSString *const kKeyDeviceToken = @"device_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
+#ifdef ADHOC
 //    APP.usingStagingServer=NO;
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end
