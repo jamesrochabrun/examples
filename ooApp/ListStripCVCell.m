@@ -72,6 +72,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 {
     [super prepareForReuse];
     
+    _restaurants= nil;
     self.listItem = nil;
 //    self.name.text =  nil;
     _nameHeader.name = nil;
