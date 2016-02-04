@@ -185,9 +185,15 @@ static const NSUInteger maximumKeywords= 4;
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuOpened:) name:kNotificationMenuWillOpen object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuOpened:)
+                                                 name:kNotificationMenuWillOpen
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
 }
 
 //------------------------------------------------------------------------------
@@ -444,6 +450,7 @@ static const NSUInteger maximumKeywords= 4;
     
     OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
     vc.title=  @"CHANGE LOCATION";
+    vc.buttonText=  @"Change\rLocation";
     vc.subtitle=  @"Enter a ZIP Code or City, State";
     vc.delegate = self;
     vc.textLengthLimit= kUserObjectMaximumAboutTextLength;

@@ -20,5 +20,6 @@
 @property (nonatomic, assign) NSUInteger textLengthLimit;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic,strong) NSString *subtitle;
+@property (nonatomic,strong) NSString *buttonText;
 - (NSString*)text;
 @end
