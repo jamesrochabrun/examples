@@ -100,6 +100,7 @@
     self.hidden = NO;
     _isAnimating = YES;
     _messageLabel.alpha = 1.0;
+    _endingAnimation= NO;
     
     [UIView animateWithDuration:0.5 animations:^{
         self.alpha = 1.0;
@@ -110,6 +111,8 @@
 
 - (void)stopAnimating
 {
+    _endingAnimation= YES;
+    
     if (_hideWhenStopped) {
         [UIView animateWithDuration:1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             self.alpha = 0.0;
