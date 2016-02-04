@@ -141,6 +141,7 @@
 }
 
 - (void)yumPhotoTapped {
+    if (_mediaItemObject.source != kMediaItemTypeOomami) return;
     __weak PhotoCVCell *weakSelf = self;
     if (_yumButton.isSelected) {
         NSLog(@"unlike photo");

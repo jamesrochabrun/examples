@@ -140,11 +140,15 @@
 }
 
 - (void)showRestaurant {
-    [_delegate viewPhotoVC:self showRestaurant:_restaurant];
+    if ([_delegate respondsToSelector:@selector(viewPhotoVC:showRestaurant:)]) {
+        [_delegate viewPhotoVC:self showRestaurant:_restaurant];
+    }
 }
 
 - (void)showProfile {
-    [_delegate viewPhotoVC:self showProfile:_user];
+    if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
+        [_delegate viewPhotoVC:self showProfile:_user];
+    }
 }
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
@@ -403,29 +407,38 @@
 
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
 
-    frame = _userViewButton.frame;
-    frame.origin.y = imageMaxY + kGeomSpaceCellPadding;
-    frame.origin.x = kGeomSpaceEdge;
-    frame.size.height = kGeomDimensionsIconButton;
-    frame.size.width = kGeomDimensionsIconButton;
-    _userViewButton.frame = frame;
+    if (_mio.source == kMediaItemTypeOomami) {
+        frame = _userViewButton.frame;
+        frame.origin.y = imageMaxY + kGeomSpaceCellPadding;
+        frame.origin.x = kGeomSpaceEdge;
+        frame.size.height = kGeomDimensionsIconButton;
+        frame.size.width = kGeomDimensionsIconButton;
+        _userViewButton.frame = frame;
+    } else {
+        _userViewButton.frame = CGRectZero;
+    }
 
     frame = _userButton.frame;
     frame.origin.y = CGRectGetMaxY(_userViewButton.frame);
     frame.origin.x = kGeomSpaceEdge;
     _userButton.frame = frame;
     
-    frame = _yumButton.frame;
-    frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-    frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, imageMaxY + kGeomSpaceCellPadding);
-    _yumButton.frame = frame;
+    if (_mio.source == kMediaItemTypeOomami) {
+        frame = _yumButton.frame;
+        frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, imageMaxY + kGeomSpaceCellPadding);
+        _yumButton.frame = frame;
 
-    [_numYums sizeToFit];
-    frame = _numYums.frame;
-//    frame.size = CGSizeMake(width(_numYums), kGeomDimensionsIconButton);
-    frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
-    _numYums.frame = frame;
-    _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
+        [_numYums sizeToFit];
+        frame = _numYums.frame;
+    //    frame.size = CGSizeMake(width(_numYums), kGeomDimensionsIconButton);
+        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
+        _numYums.frame = frame;
+        _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
+    } else {
+        _yumButton.frame = CGRectZero;
+        _numYums.frame = CGRectZero;
+    }
 
     CGFloat distanceFromEdge = (CGRectGetMaxX(_userButton.frame) > (width(self.view) - CGRectGetMinX(_numYums.frame))) ? CGRectGetMaxX(_userButton.frame) + kGeomSpaceCellPadding : (width(self.view) - CGRectGetMinX(_numYums.frame) - kGeomSpaceCellPadding);
     

@@ -22,6 +22,7 @@ extern NSString *const kKeyMediaItemWidth;
 extern NSString *const kKeyMediaItemURL;
 extern NSString *const kKeyMediaItemSourceUserID;
 extern NSString *const kKeyMediaItemCaption;
+extern NSString *const kKeyMediaItemIsFood;
 
 @interface MediaItemObject : NSObject
 
@@ -35,6 +36,7 @@ extern NSString *const kKeyMediaItemCaption;
 @property (nonatomic) CGFloat height;
 @property (nonatomic) NSUInteger sourceUserID;
 @property (nonatomic) NSUInteger restaurantID; // if given.
+@property (nonatomic) BOOL isFood;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryOfMediaItem;
