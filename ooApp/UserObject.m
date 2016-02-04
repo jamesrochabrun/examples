@@ -27,7 +27,7 @@ NSString *const kKeyUserParticipantState = @"participant_state";
 NSString *const kKeyUserMediaItem = @"media_item";
 NSString *const kKeyUserAbout = @"about";
 NSString *const kKeyUserIsFoodie = @"is_blogger";
-NSString *const kKeyURL = @"url";
+NSString *const kKeyURL = @"website";
 NSString *const kKeyUserType = @"user_type";
 
 @interface UserObject()
