@@ -1011,12 +1011,12 @@ NSString *const kKeyDeviceToken = @"device_token";
 {    
     UserObject *uo = [Settings sharedInstance].userObject;
 
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], uo.userID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, kFoodFeedPageSize];
     
     if (type == 1) {
-        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?filter=2", kHTTPProtocol, [OOAPI URL], uo.userID];
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?filter=2&limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, kFoodFeedPageSize];
     } else if (type == 2) {
-        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], uo.userID];
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, kFoodFeedPageSize];
     } else {
         failure(nil, nil);
         return nil;
@@ -1036,9 +1036,6 @@ NSString *const kKeyDeviceToken = @"device_token";
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
     }];
-    
-    
-    //return [rm GET:urlString parameters:nil success:success failure:failure];
 }
 
 //------------------------------------------------------------------------------
