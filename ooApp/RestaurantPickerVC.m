@@ -53,12 +53,12 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
         _tableView.layer.borderWidth = 1;
         
-        _nto = [[NavTitleObject alloc] initWithHeader:@"Restaurant" subHeader:@"Where did you take the photo?"];
+        _nto = [[NavTitleObject alloc] initWithHeader:@"Place" subHeader:@"Where did you take the photo?"];
         
         _searchBar = [[UISearchBar alloc] init];
         _searchBar.searchBarStyle = UISearchBarStyleMinimal;
         _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        _searchBar.placeholder = LOCAL( @"Search for venue");
+        _searchBar.placeholder = LOCAL( @"Search for the restaurant, bar, etc");
         [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
         _searchBar.barTintColor = UIColorRGBA(kColorBlack);
         _searchBar.keyboardType = UIKeyboardTypeAlphabet;
