@@ -12,8 +12,9 @@
 #import "RestaurantPickerVC.h"
 #import "ViewPhotoVC.h"
 #import "ShowMediaItemAnimator.h"
+#import "AddCaptionToMIOVC.h"
 
-@interface FoodFeedVC : BaseVC <FoodFeedVCCollectionViewDelegate, UICollectionViewDataSource, PhotoCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RestaurantPickerVCDelegate, ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate>
+@interface FoodFeedVC : BaseVC <FoodFeedVCCollectionViewDelegate, UICollectionViewDataSource, PhotoCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RestaurantPickerVCDelegate, ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate, OOTextEntryVCDelegate>
 
 - (void)selectAll;
 

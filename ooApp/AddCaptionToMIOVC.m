@@ -18,7 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.nto = [[NavTitleObject alloc] initWithHeader:@"Caption" subHeader:@""];
+    self.nto = [[NavTitleObject alloc] initWithHeader:@"Add a Caption" subHeader:@""];
     self.navTitle = self.nto;
 }
 

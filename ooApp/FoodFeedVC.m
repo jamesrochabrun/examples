@@ -375,30 +375,58 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [self showExpandedPhoto:mio forRestaurant:r fromRect:frame];
 }
 
-- (void)showExpandedPhoto:(MediaItemObject *)mio {
-    if (!(mio.restaurantID)) return;
-
-    __weak FoodFeedVC *weakSelf = self;
-    OOAPI *api = [[OOAPI alloc] init];
-    CGRect originRect = CGRectMake(self.view.center.x, self.view.center.y, 20, 20);
-
+- (void)addCaption:(MediaItemObject *)mio {
+    UINavigationController *nc = [[UINavigationController alloc] init];
     
-    [api getRestaurantWithID:stringFromUnsigned(mio.restaurantID)
-                      source:kRestaurantSourceTypeOomami
-                     success:^(RestaurantObject *restaurant) {
-                             if (restaurant) {
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                     [weakSelf showExpandedPhoto:mio forRestaurant:restaurant fromRect:originRect];
-                                 });
-                             } else {
-                                 NSLog(@"Did not get a restaurant.");
-                             }
-                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                         dispatch_async(dispatch_get_main_queue(), ^{
-                             NSLog(@"Could not find the restaurant.");
-                         });
-                     }];
+    AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
+    vc.delegate = self;
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    vc.mio = mio;
+    
+    
+    [nc addChildViewController:vc];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
 }
+
+- (void)textEntryFinished:(NSString *)text {
+//    [_captionButton setTitle:text forState:UIControlStateNormal];
+//    [self.view setNeedsLayout];
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+    }];
+}
+
+//- (void)showExpandedPhoto:(MediaItemObject *)mio {
+//    if (!(mio.restaurantID)) return;
+//
+//    __weak FoodFeedVC *weakSelf = self;
+//    OOAPI *api = [[OOAPI alloc] init];
+//    CGRect originRect = CGRectMake(self.view.center.x, self.view.center.y, 20, 20);
+//
+//    
+//    [api getRestaurantWithID:stringFromUnsigned(mio.restaurantID)
+//                      source:kRestaurantSourceTypeOomami
+//                     success:^(RestaurantObject *restaurant) {
+//                             if (restaurant) {
+//                                 dispatch_async(dispatch_get_main_queue(), ^{
+//                                     [weakSelf showExpandedPhoto:mio forRestaurant:restaurant fromRect:originRect];
+//                                 });
+//                             } else {
+//                                 NSLog(@"Did not get a restaurant.");
+//                             }
+//                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                         dispatch_async(dispatch_get_main_queue(), ^{
+//                             NSLog(@"Could not find the restaurant.");
+//                         });
+//                     }];
+//}
 
 - (void)showExpandedPhoto:(MediaItemObject *)mio forRestaurant:(RestaurantObject *)restautant fromRect:(CGRect)originRect {
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
@@ -553,7 +581,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                    weakSelf.uploading = NO;
                    dispatch_async(dispatch_get_main_queue(), ^{
                        weakSelf.uploadProgressBar.hidden = YES;
-                       [weakSelf showExpandedPhoto:mio];
+                       [weakSelf addCaption:mio];
                        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                    });
                } failure:^(NSError *error) {
@@ -580,7 +608,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                                weakSelf.uploading = NO;
                                dispatch_async(dispatch_get_main_queue(), ^{
                                    weakSelf.uploadProgressBar.hidden = YES;
-                                   [weakSelf showExpandedPhoto:mio];
+                                   [weakSelf addCaption:mio];
                                    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                                });
                            } failure:^(NSError *error) {
