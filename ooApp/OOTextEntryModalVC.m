@@ -13,6 +13,7 @@
 @property (nonatomic, strong) UIButton *postButton;
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic,strong) UINavigationBar *bar;
+@property (nonatomic,assign)  float spaceRequiredForButton;
 @end
 
 @implementation OOTextEntryModalVC
@@ -39,11 +40,24 @@
     _textView.layer.cornerRadius = kGeomCornerRadius;
     [_textView setScrollEnabled:NO];
     [self.view addSubview:_textView];
+
+    NSString *textToDisplayInTheButton= self.buttonText ?:  @"Post";
+    UIFont *font= [UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
+    CGSize labelSize = [textToDisplayInTheButton sizeWithAttributes:@{NSFontAttributeName: font}];
+    self.spaceRequiredForButton=  labelSize.width +2*kGeomSpaceInter;
     
     _postButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_postButton withText:@"Post" fontSize:kGeomFontSizeH2 width:50 height:40 backgroundColor:kColorOffBlack target:self selector:@selector(post:)];
+    [_postButton withText: textToDisplayInTheButton
+                 fontSize:kGeomFontSizeH2
+                    width:66
+                   height:40
+          backgroundColor:kColorOffBlack
+                   target:self
+                  selector:@selector(post:)];
     [_postButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
     _postButton.translatesAutoresizingMaskIntoConstraints = NO;
+    _postButton.titleLabel.numberOfLines= 0;
+    _postButton.titleLabel.textAlignment= NSTextAlignmentCenter;
     _postButton.layer.borderWidth = 0.5;
     _postButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
     _postButton.layer.cornerRadius = kGeomCornerRadius;
@@ -107,14 +121,14 @@
 - (void)updateViewConstraints
 {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"height":@(2*kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButton)};
+    NSDictionary *metrics = @{@"height":@(2*kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(_spaceRequiredForButton)};
     
     UIView *superview = self.view;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _textView, _postButton);
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_textView(>=60)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_postButton(30)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_textView]-[_postButton(50)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_postButton(44)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_textView]-[_postButton(buttonWidth)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 
