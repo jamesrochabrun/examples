@@ -769,9 +769,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                                                               });
                                                               
                                                           }];
-    UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Add Caption"
+    UIAlertAction *addCaption = [UIAlertAction actionWithTitle:@"Add Caption"
                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                              [self tagPhoto:mio];
+                                                              [self addCaption:mio forceIsFoodFeed:NO];
                                                           }];
     UIAlertAction *flagPhoto = [UIAlertAction actionWithTitle:@"Flag"
                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -786,7 +786,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     UserObject *uo = [Settings sharedInstance].userObject;
 
     if (mio.sourceUserID == uo.userID) {
-        [_showPhotoOptions addAction:tagPhoto];
+        [_showPhotoOptions addAction:addCaption];
         [_showPhotoOptions addAction:deletePhoto];
     }
     [_showPhotoOptions addAction:flagPhoto];
@@ -797,13 +797,16 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }];
 }
 
-- (void)tagPhoto:(MediaItemObject *)mio {
+- (void)addCaption:(MediaItemObject *)mio forceIsFoodFeed:(BOOL)overrideFoodFeed {
     _aNC = [[UINavigationController alloc] init];
     
     AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
     vc.delegate = self;
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     vc.mio = mio;
+    if (overrideFoodFeed) {
+        [vc overrideIsFoodWith:NO];
+    }
     
     [_aNC addChildViewController:vc];
     [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
@@ -818,7 +821,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)textEntryFinished:(NSString *)text {
     [self dismissViewControllerAnimated:YES completion:^{
-        ;
+        [self getMediaItemsForRestaurant];
     }];
 }
 
@@ -1162,12 +1165,15 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [OOAPI uploadPhoto:newImage forObject:_restaurant
                success:^(MediaItemObject *mio){
                    weakSelf.uploading = NO;
-                   weakSelf.uploadProgressBar.hidden = YES;
-                   
-                   [weakSelf getMediaItemsForRestaurant];
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       weakSelf.uploadProgressBar.hidden = YES;
+                       [self addCaption:mio forceIsFoodFeed:YES];
+                   });
                } failure:^(NSError *error) {
                    weakSelf.uploading = NO;
-                   weakSelf.uploadProgressBar.hidden = YES;
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       weakSelf.uploadProgressBar.hidden = YES;
+                   });
                } progress:^(NSUInteger __unused bytesWritten,
                           long long totalBytesWritten,
                           long long totalBytesExpectedToWrite) {
