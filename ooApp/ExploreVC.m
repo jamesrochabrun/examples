@@ -88,8 +88,7 @@ static NSString * const ListRowID = @"HLRCell";
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
     _changeLocationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    _changeLocationButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [_changeLocationButton withIcon:kFontIconSearch fontSize:kGeomIconSize width:10 height:10 backgroundColor:kColorClear target:self selector:@selector(userPressedChangeLocation:)];
+    [_changeLocationButton withIcon:kFontIconLocation fontSize:kGeomIconSizeSmall width:10 height:10 backgroundColor:kColorClear target:self selector:@selector(userPressedChangeLocation:)];
     [_changeLocationButton setTitleColor: BLACK forState:UIControlStateNormal];
     [self.mapView addSubview: _changeLocationButton];
     addBorder(_changeLocationButton, 1,  UIColorRGB(kColorGrayMiddle));
@@ -135,7 +134,7 @@ static NSString * const ListRowID = @"HLRCell";
     UINavigationController *nc = [[UINavigationController alloc] init];
     
     OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
-    vc.title=  @"CHANGE LOCATION";
+    vc.title =  @"CHANGE LOCATION";
     vc.subtitle=  @"Enter a ZIP Code or City, State";
     vc.delegate = self;
     vc.textLengthLimit= kUserObjectMaximumAboutTextLength;

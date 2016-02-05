@@ -116,9 +116,9 @@ static const NSUInteger maximumKeywords= 4;
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
-    [self setRightNavWithIcon:kFontIconSearch target:self action:@selector(userPressedChangeLocation:)];
+    [self setRightNavWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:)];
 
-    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel") , kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), CLEAR, self, @selector(userPressedCancel:), .5);
+    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), CLEAR, self, @selector(userPressedCancel:), .5);
     [_buttonCancel setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
     
     self.filterView = [[OOFilterView alloc] init];
