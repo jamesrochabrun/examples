@@ -207,6 +207,32 @@ NSString *const kKeyDeviceToken = @"device_token";
     return op;
 }
 
++ (AFHTTPRequestOperation *)setMediaItem:(NSUInteger)mediaItemID
+                              properties:(NSDictionary *)properties
+                                 success:(void (^)())success
+                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    if  (!mediaItemID || ![properties isKindOfClass:[NSDictionary class]]) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu",
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
+    
+    NSDictionary *parameters = properties;
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
+                                 success:^(id responseObject) {
+                                     success(responseObject);
+                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                     failure(operation, error);
+                                 }];
+    
+    return op;
+}
+
 //------------------------------------------------------------------------------
 // Name:    getRestaurantMediaItems
 // Purpose:
@@ -2743,7 +2769,7 @@ NSString *const kKeyDeviceToken = @"device_token";
                                     success:(void (^)( void))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *requestString =[NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
 
     return [[OONetworkManager sharedRequestManager] PUT:requestString
                                              parameters: @{
@@ -2782,16 +2808,16 @@ NSString *const kKeyDeviceToken = @"device_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
-//    APP.usingStagingServer=NO;
+#ifdef ADHOC
+    APP.usingStagingServer=NO;
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end

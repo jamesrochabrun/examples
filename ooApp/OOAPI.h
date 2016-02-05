@@ -383,6 +383,11 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                         caption:(NSString *)caption
                                         success:(void (^)())success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)setMediaItem:(NSUInteger)mediaItemID
+                              properties:(NSDictionary *)properties
+                                 success:(void (^)())success
+                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 
 
 // Auto complete

@@ -13,4 +13,6 @@
 
 @property (nonatomic, strong) MediaItemObject *mio;
 
+- (void)overrideIsFoodWith:(BOOL)isFood;
+
 @end

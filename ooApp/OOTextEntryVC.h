@@ -21,5 +21,6 @@
 @property (nonatomic, strong) NSString *defaultText;
 @property (nonatomic, assign) NSUInteger textLengthLimit;
 @property (nonatomic, strong) NavTitleObject *nto;
+@property (nonatomic, strong) UITextView *textView;
 - (NSString*)text;
 @end

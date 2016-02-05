@@ -382,6 +382,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.delegate = self;
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     vc.mio = mio;
+    [vc overrideIsFoodWith:YES];
     
     
     [nc addChildViewController:vc];

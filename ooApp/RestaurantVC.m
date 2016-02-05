@@ -1163,6 +1163,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
                success:^(MediaItemObject *mio){
                    weakSelf.uploading = NO;
                    weakSelf.uploadProgressBar.hidden = YES;
+                   
                    [weakSelf getMediaItemsForRestaurant];
                } failure:^(NSError *error) {
                    weakSelf.uploading = NO;

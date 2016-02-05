@@ -11,8 +11,6 @@
 
 @interface OOTextEntryVC ()
 @property (nonatomic, strong) UIButton *postButton;
-@property (nonatomic, strong) UITextView *textView;
-
 @end
 
 @implementation OOTextEntryVC
