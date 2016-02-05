@@ -108,7 +108,7 @@ static CGFloat kGeomProfileTextviewHeight= 36;
 static CGFloat kGeomProfileStatsItemHeight= 30;
 #define PROFILE_HEADERVIEW_BASE_HEIGHT 213
 #define PROFILE_HEADERVIEW_FOLLOW_HEIGHT 35
-#define PROFILE_HEADERVIEW_URL_HEIGHT 27
+#define PROFILE_HEADERVIEW_URL_HEIGHT 29
 static CGFloat kGeomProfileHeaderViewHeightSelf = PROFILE_HEADERVIEW_BASE_HEIGHT;
 static CGFloat kGeomProfileHeaderViewHeightNormal = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
 static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = 25;
