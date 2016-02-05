@@ -214,8 +214,7 @@
 {
     [super prepareForReuse];
     
-//    _requestOperation = nil;
-
+    [self.backgroundImage.layer removeAllAnimations];
     [self.backgroundImage cancelImageRequestOperation];
     [self.backgroundImage setImage: nil];
     
