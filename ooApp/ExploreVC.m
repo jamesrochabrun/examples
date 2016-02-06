@@ -37,7 +37,6 @@
 @property (nonatomic, strong) GMSCameraPosition *camera;
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) OOFilterView *filterView;
-//@property (nonatomic, assign) BOOL openOnly;
 @property (nonatomic, assign) BOOL nearby;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
@@ -63,7 +62,6 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-//    _openOnly = YES;
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
     _mapView.translatesAutoresizingMaskIntoConstraints = NO;
     _mapView.mapType = kGMSTypeNormal;
@@ -222,7 +220,6 @@ static NSString * const ListRowID = @"HLRCell";
     _maxPrice = maxPrice;
     _listToDisplay = nil;
     [_filterView setNeedsLayout];
-//    _openOnly = NO;
     _nearby = NO;
     [self getRestaurants];
     [self dismissViewControllerAnimated:YES completion:^{
@@ -540,7 +537,7 @@ static NSString * const ListRowID = @"HLRCell";
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""
                                                   andRadius:distanceInMeters
-                                               andOpenOnly:NO//_openOnly
+                                               andOpenOnly:NO
                                                     andSort:(_nearby) ? kSearchSortTypeDistance : kSearchSortTypeBestMatch
                                                    minPrice:_minPrice
                                                    maxPrice:_maxPrice

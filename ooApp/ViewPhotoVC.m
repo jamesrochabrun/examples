@@ -21,6 +21,7 @@
 @property (nonatomic, strong) UIButton *numYums;
 @property (nonatomic, strong) UIButton *userButton;
 @property (nonatomic, strong) UIButton *closeButton;
+@property (nonatomic, strong) UIButton *optionsButton;
 @property (nonatomic, strong) OOUserView *userViewButton;
 @property (nonatomic, strong) UIButton *restaurantName;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
@@ -54,7 +55,11 @@
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
         [_closeButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-        
+
+        _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
+        [_optionsButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
         [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
@@ -90,6 +95,7 @@
         
         [self.view addSubview:_backgroundView];
         [self.view addSubview:_closeButton];
+        [self.view addSubview:_optionsButton];
         [self.view addSubview:_captionButton];
         [self.view addSubview:_userButton];
         [self.view addSubview:_userViewButton];
@@ -223,6 +229,7 @@
 }
 
 - (void)showComponents:(BOOL)show {
+    _optionsButton.hidden =
     _closeButton.hidden =
     _captionButton.hidden =
     _restaurantName.hidden =
@@ -404,6 +411,10 @@
     frame = _closeButton.frame;
     frame.origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
     _closeButton.frame = frame;
+    
+    frame = _optionsButton.frame;
+    frame.origin = CGPointMake(width(self.view)-width(_optionsButton) - kGeomSpaceEdge, kGeomSpaceEdge);
+    _optionsButton.frame = frame;
 
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
 
