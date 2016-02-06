@@ -7,7 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SubBaseVC.h"
+#import "OOAPI.h"
 
-@interface ChangeLocationVC : UIViewController
+@class ChangeLocationVC;
 
+@protocol ChangeLocationVCDelegate <NSObject>
+- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark;
+- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC;
+@end
+
+
+@interface ChangeLocationVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate>
+@property (nonatomic) CLLocationCoordinate2D location;
+@property (nonatomic, strong) id<ChangeLocationVCDelegate> delegate;
 @end

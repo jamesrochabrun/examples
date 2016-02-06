@@ -7,6 +7,7 @@
 //
 
 #import <Google/Analytics.h>
+#import "OOAPI.h"
 #import "Reachability.h"
 #import "UserObject.h"
 
@@ -120,5 +121,6 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 @interface Common : NSObject
 
 + (NSString *)versionString;
++ (NSString *)locationString:(CLPlacemark *)placemark;
 
 @end

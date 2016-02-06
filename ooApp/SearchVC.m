@@ -40,28 +40,28 @@ typedef enum: char {
 static const NSUInteger maximumKeywords= 4;
 
 @interface SearchVC ()
-@property (nonatomic,strong) UISearchBar *searchBar;
-@property (nonatomic,strong)  UILabel *labelMessageAboutGoogle;
-@property (nonatomic,strong) OOFilterView *filterView;
-@property (nonatomic,strong) UIButton *buttonCancel;
-@property (nonatomic,strong) UITableView *tableRestaurants;
-@property (nonatomic,strong) UITableView *tablePeople;
-@property (nonatomic,assign) FilterType currentFilter;
-@property (nonatomic,strong) NSArray *restaurantsArray;
-@property (nonatomic,strong) NSArray *peopleArray;
-@property (nonatomic,strong) NSMutableArray *keywordButtonsArray;
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperation;
-@property (nonatomic,strong) UIActivityIndicatorView *activityView;
-@property (atomic,assign) BOOL doingSearchNow;
-@property (nonatomic,strong) NSArray *keywordsArray;
-@property (nonatomic,strong) UIView *viewForKeywordButtons;
-@property (nonatomic,assign) NSUInteger numberOfMatchingKeywords;
-@property (nonatomic,strong)  UILabel *labelPreSearchInstructiveMessage1;
-@property (nonatomic,strong)  UILabel *labelPreSearchInstructiveMessage2;
-@property (nonatomic,strong)  UILabel *labelPreSearchInstructiveMessage3;
-@property (nonatomic,assign) BOOL haveSearchedPeople, haveSearchedPlaces, haveSearchedYou;
+@property (nonatomic, strong) UISearchBar *searchBar;
+@property (nonatomic, strong) UILabel *labelMessageAboutGoogle;
+@property (nonatomic, strong) OOFilterView *filterView;
+@property (nonatomic, strong) UIButton *buttonCancel;
+@property (nonatomic, strong) UITableView *tableRestaurants;
+@property (nonatomic, strong) UITableView *tablePeople;
+@property (nonatomic, assign) FilterType currentFilter;
+@property (nonatomic, strong) NSArray *restaurantsArray;
+@property (nonatomic, strong) NSArray *peopleArray;
+@property (nonatomic, strong) NSMutableArray *keywordButtonsArray;
+@property (nonatomic, strong) AFHTTPRequestOperation *fetchOperation;
+@property (nonatomic, strong) UIActivityIndicatorView *activityView;
+@property (atomic, assign) BOOL doingSearchNow;
+@property (nonatomic, strong) NSArray *keywordsArray;
+@property (nonatomic, strong) UIView *viewForKeywordButtons;
+@property (nonatomic, assign) NSUInteger numberOfMatchingKeywords;
+@property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage1;
+@property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage2;
+@property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage3;
+@property (nonatomic, assign) BOOL haveSearchedPeople, haveSearchedPlaces, haveSearchedYou;
 @property (nonatomic, strong) UIButton *changeLocationButton;
-@property (nonatomic,assign) CLLocationCoordinate2D currentLocation;
+@property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
 @end
 
 @implementation SearchVC
@@ -89,7 +89,7 @@ static const NSUInteger maximumKeywords= 4;
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
            initWithHeader:LOCAL(@"Search")
-           subHeader: LOCAL(@"for restaurants and people")];
+           subHeader: LOCAL(@"around here")];
     
     self.navTitle = nto;
     
@@ -103,11 +103,11 @@ static const NSUInteger maximumKeywords= 4;
         [_keywordButtonsArray addObject: button];
     }
     
-    _searchBar= [UISearchBar new];
+    _searchBar = [UISearchBar new];
     [ self.view addSubview:_searchBar];
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
     _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    _searchBar.placeholder = LOCAL( @"Type your search here");
+    _searchBar.placeholder = LOCAL(@"Type your search here");
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
     _searchBar.barTintColor = UIColorRGBA(kColorBlack);
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
@@ -149,14 +149,14 @@ static const NSUInteger maximumKeywords= 4;
     _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    self.labelPreSearchInstructiveMessage1=  makeLabel( self.view,  @"Find Your Foodies (Search for Users by Name)", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage1.textColor=   UIColorRGB(0xff808080);
+    self.labelPreSearchInstructiveMessage1 = makeLabel( self.view,  @"Find Your Foodies (Search for Users by Name)", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage1.textColor = UIColorRGB(0xff808080);
     
-    self.labelPreSearchInstructiveMessage2=  makeLabel( self.view,  @"Search for places on your lists", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage2.textColor=  UIColorRGB(0xff808080);
+    self.labelPreSearchInstructiveMessage2 = makeLabel( self.view,  @"Search for places on your lists", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage2.textColor = UIColorRGB(0xff808080);
     
-    self.labelPreSearchInstructiveMessage3=  makeLabel( self.view,  @"Search for places to eat\rPowered by Google™", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage3.textColor=  UIColorRGB(0xff808080);
+    self.labelPreSearchInstructiveMessage3 = makeLabel( self.view,  @"Search for places to eat\rPowered by Google™", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage3.textColor = UIColorRGB(0xff808080);
     
     [self changeFilter:FILTER_PLACES];
 
@@ -391,6 +391,15 @@ static const NSUInteger maximumKeywords= 4;
         return;
     }
     
+    if (which == FILTER_PEOPLE) {
+        _searchBar.placeholder = kSearchPlaceholderPeople;
+    } else if (which == FILTER_PLACES) {
+        _searchBar.placeholder = kSearchPlaceholderPlaces;
+    } else if (which == FILTER_YOU) {
+        _searchBar.placeholder = kSearchPlaceholderYou;
+    } else {
+        _searchBar.placeholder = @"Type your search here";
+    }
     [_filterView setCurrent:which];
     
     self.currentFilter = which;
@@ -421,40 +430,12 @@ static const NSUInteger maximumKeywords= 4;
 
 #pragma mark - LOCATION CHANGE
 
-- (void)textEntryFinished:(NSString *)text;
-{
-    if (!text.length) {
-        return;
-    }
-    
-    __weak  SearchVC *weakSelf = self;
-    CLGeocoder* geocoder = [[CLGeocoder alloc] init];
-    [geocoder geocodeAddressString: text
-                 completionHandler:^(NSArray* placemarks, NSError* error) {
-                     NSLog  (@"TOTAL PLACE MARKS %lu", (unsigned long)placemarks.count);
-                     if  ( placemarks.count) {
-                         CLPlacemark* aPlacemark= [placemarks  firstObject];
-                         CLLocation *location= aPlacemark.location;
-                         weakSelf.currentLocation = location.coordinate;
-                         weakSelf.navTitle.subheader = text;
-                         [weakSelf.navTitleView setNavTitle: weakSelf.navTitle];
-                     } else {
-                         message( @"I can't find that location.");
-                     }
-                 }];
-}
-
 - (void)userPressedChangeLocation: (UIButton*)sender
 {
     UINavigationController *nc = [[UINavigationController alloc] init];
     
-    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
-    vc.title=  @"CHANGE LOCATION";
-    vc.buttonText=  @"Change\rLocation";
-    vc.subtitle=  @"Enter a ZIP Code or City, State";
+    ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
     vc.delegate = self;
-    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
-    vc.view.frame = CGRectMake(0, 0, 40, 44);
     [nc addChildViewController:vc];
     
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
@@ -464,6 +445,30 @@ static const NSUInteger maximumKeywords= 4;
     
     [self.navigationController presentViewController:nc animated:YES completion:^{
         nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
+}
+
+- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
+    _currentLocation = placemark.location.coordinate;
+    self.navTitle.subheader = [Common locationString:placemark];
+    [self.navTitleView setNavTitle:self.navTitle];
+    if ([_searchBar.text length] && _currentFilter == FILTER_PLACES) {
+        [self doSearchFor:_searchBar.text];
+    }
+}
+
+- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC {
+    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
+    self.navTitle.subheader = @"around here";
+    [self.navTitleView setNavTitle:self.navTitle];
+    if ([_searchBar.text length] && _currentFilter == FILTER_PLACES) {
+        [self doSearchFor:_searchBar.text];
+    }
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
     }];
 }
 
@@ -515,7 +520,7 @@ static const NSUInteger maximumKeywords= 4;
     }
 }
 
-- (void) setUpKeywordsArray
+- (void)setUpKeywordsArray
 {
     if (_keywordsArray)
         return;
@@ -537,7 +542,7 @@ static const NSUInteger maximumKeywords= 4;
 
 #pragma mark - KEYWORDS
 
-- (void)doKeywordLookup: (NSString*)expression
+- (void)doKeywordLookup:(NSString*)expression
 {
 //    NSMutableArray*array= [NSMutableArray new];
 //    int  counter= 0;
@@ -563,7 +568,7 @@ static const NSUInteger maximumKeywords= 4;
 //    NSLog  (@"KEYWORDS: %@",array);
 }
 
-- (void)userPressedKeyword: (UIButton*) button
+- (void)userPressedKeyword:(UIButton*) button
 {
     NSUInteger index=  button.tag;
     NSLog  (@"USER PRESSED KEYWORD BUTTON %lu", (unsigned long)index);
@@ -623,6 +628,8 @@ static const NSUInteger maximumKeywords= 4;
     __weak SearchVC *weakSelf = self;
     switch (_currentFilter) {
         case FILTER_PEOPLE:
+            _searchBar.placeholder = kSearchPlaceholderPeople;
+
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
             if  (!_haveSearchedPeople) {
@@ -641,6 +648,8 @@ static const NSUInteger maximumKeywords= 4;
             break;
             
         case FILTER_YOU:
+            _searchBar.placeholder = kSearchPlaceholderYou;
+
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
             if  (!_haveSearchedYou) {
@@ -658,6 +667,7 @@ static const NSUInteger maximumKeywords= 4;
             break;
             
         case FILTER_PLACES:
+            _searchBar.placeholder = kSearchPlaceholderPlaces;
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden = NO;
             

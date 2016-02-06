@@ -12,7 +12,7 @@
 
 @class RestaurantPickerVC;
 
-@protocol RestaurantPickerVCDelegate
+@protocol RestaurantPickerVCDelegate <NSObject>
 - (void)restaurantPickerVC:(RestaurantPickerVC *)restaurantPickerVC restaurantSelected:(RestaurantObject *)restaurant;
 - (void)restaurantPickerVCCanceled:(RestaurantPickerVC *)restaurantPickerVC;
 @end

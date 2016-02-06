@@ -389,24 +389,20 @@ NSString *const kKeyDeviceToken = @"device_token";
         failure(nil,nil);
         return nil;
     } else {
-//        if (![keywords count]) {
-            
-//        } else {
-            [keywords enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                NSString *s = (NSString *)obj;
-                NSString *fs;
-                if ([s containsString:@" "]) {
-                    fs = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
-                } else {
-                    fs = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
-                }
-                    
-                if ([searchTerms length]) {
-                    [searchTerms appendString:@"OR"];
-                }
-                [searchTerms appendString:fs];
-            }];
-//        }
+        [keywords enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+            NSString *s = (NSString *)obj;
+            NSString *fs;
+            if ([s containsString:@" "]) {
+                fs = [NSString stringWithFormat:@"(\"%@\")", (NSString *)obj];
+            } else {
+                fs = [NSString stringWithFormat:@"(%@)", (NSString *)obj];
+            }
+                
+            if ([searchTerms length]) {
+                [searchTerms appendString:@"OR"];
+            }
+            [searchTerms appendString:fs];
+        }];
     }
     
     if (!filterName) {
