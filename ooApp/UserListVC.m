@@ -231,7 +231,7 @@
     _buttonFollow.selected = following;
     _buttonFollow.backgroundColor = following ? BLACK:YELLOW;
     _buttonFollow.layer.borderWidth = following ? 1:0;
-    [self bringSubviewToFront: _buttonFollow];
+    [self bringSubviewToFront:_buttonFollow];
 }
 
 - (void)commenceFetchingStats
