@@ -116,8 +116,6 @@ static const NSUInteger maximumKeywords= 4;
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
-    [self setRightNavWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:)];
-
     _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), CLEAR, self, @selector(userPressedCancel:), .5);
     [_buttonCancel setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
     
@@ -613,7 +611,7 @@ static const NSUInteger maximumKeywords= 4;
     }
 }
 
-- (void) enableMessageLabel:(int)n
+- (void)enableMessageLabel:(int)n
 {
     _labelPreSearchInstructiveMessage1.alpha= n==0?1:0;
     _labelPreSearchInstructiveMessage2.alpha= n==1?1:0;
@@ -629,6 +627,7 @@ static const NSUInteger maximumKeywords= 4;
     switch (_currentFilter) {
         case FILTER_PEOPLE:
             _searchBar.placeholder = kSearchPlaceholderPeople;
+            [self setRightNavWithIcon:@"" target:nil action:nil];
 
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
@@ -649,7 +648,8 @@ static const NSUInteger maximumKeywords= 4;
             
         case FILTER_YOU:
             _searchBar.placeholder = kSearchPlaceholderYou;
-
+            [self setRightNavWithIcon:@"" target:nil action:nil];
+            
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
             if  (!_haveSearchedYou) {
@@ -668,6 +668,8 @@ static const NSUInteger maximumKeywords= 4;
             
         case FILTER_PLACES:
             _searchBar.placeholder = kSearchPlaceholderPlaces;
+            [self setRightNavWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:)];
+
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden = NO;
             
