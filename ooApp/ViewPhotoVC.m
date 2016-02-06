@@ -395,14 +395,14 @@
     CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/(_iv.image.size.width) * width(self.view);
     
     frame = _restaurantName.frame;
-    frame.size.width = width(self.view)-2*kGeomSpaceEdge-2*kGeomDimensionsIconButton;
+    frame.size.width = width(self.view)-2*kGeomSpaceEdge;
     frame.origin.y = CGRectGetMidY(_iv.frame) - imageHeight/2 - kGeomDimensionsIconButton;
     frame.origin.x = (width(self.view) - width(_restaurantName))/2;
     frame.size.height = kGeomDimensionsIconButton;
     _restaurantName.frame = frame;
     
     frame = _closeButton.frame;
-    frame.origin = CGPointMake(CGRectGetWidth(self.view.frame) - CGRectGetWidth(_closeButton.frame), CGRectGetMinY(_restaurantName.frame));
+    frame.origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
     _closeButton.frame = frame;
 
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
