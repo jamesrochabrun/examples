@@ -403,7 +403,7 @@
     ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
     
     headerView1.backgroundColor=UIColorRGB(kColorOffBlack);
-    headerView1.labelTitle.text=@"Friends On Oomami";
+    headerView1.labelTitle.text=@"Friends you can follow";
     
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";
@@ -651,11 +651,17 @@
     }
     
     if (!u) {
+        NSString *lamentString = !section ?
+        @"We haven't found any more of your Facebook friends on Oomami. Invite them to start using Oomami. When they join you'll be able to follow them."
+        :
+        @"We haven't found any new foodies for you.";
+        
         UITableViewCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         cell.textLabel.textAlignment=NSTextAlignmentCenter;
-        cell.textLabel.text=  @"Alas there are none.";
+        cell.textLabel.text= lamentString;
+        cell.textLabel.numberOfLines=0;
         cell.textLabel.textColor=WHITE;
         cell.selectionStyle= UITableViewCellSeparatorStyleNone;
         return cell;
@@ -706,6 +712,37 @@
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    BOOL haveData=NO;
+    NSInteger section=indexPath.section;
+    NSInteger row=indexPath.row;
+
+    switch (section) {
+        case 0:
+            @synchronized(self.suggestedUsersArray)  {
+                if ( row<_suggestedUsersArray.count) {
+                    haveData=YES;
+                }
+            }
+            break;
+        case 1:
+            @synchronized(self.foodiesArray)  {
+                if ( row<_foodiesArray.count) {
+                    haveData=YES;
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    
+    if (!haveData) {
+        if (!section) {
+            return 130;
+        } else {
+            return 80;
+        }
+    }
+    
     return kGeomHeightHorizontalListRow;
 }
 
@@ -743,21 +780,6 @@
                 }
             }
             break;
-//        case 2:
-//            @synchronized(self.followersArray)  {
-//                if ( row<_followersArray.count) {
-//                    u=_followersArray[row];
-//                }
-//            }
-//            break;
-//        case 3:
-//            @synchronized(self.followeesArray)  {
-//                if ( row<_followeesArray.count) {
-//                    u=_followeesArray[row];
-//                }
-//            }
-//            break;
-            
         default:
             break;
     }
@@ -792,17 +814,6 @@
                 return _canSeeSection2Items? MAX(1,_foodiesArray.count): 0;
             }
             break;
-//        case 2:
-//            @synchronized(self.followersArray)  {
-//                return _canSeeSection3Items? MAX(1,_followersArray.count): 0;
-//            }
-//            break;
-//        case 3:
-//            @synchronized(self.followeesArray)  {
-//                return _canSeeSection4Items? MAX(1,_followeesArray.count): 0;
-//            }
-//            break;
-            
         default:
             break;
     }
@@ -825,12 +836,6 @@
             _canSeeSection2Items= !_canSeeSection2Items;
             break;
             
-//        case 2:
-//            _canSeeSection3Items= !_canSeeSection3Items;
-//            break;
-//        case 3:
-//            _canSeeSection4Items= !_canSeeSection4Items;
-//            break;
     }
     
     NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:  which];
