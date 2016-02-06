@@ -24,9 +24,8 @@
 #import "ListObject.h"
 #import "TagObject.h"
 #import "AppDelegate.h"
-#import "OOTextEntryModalVC.h"
 
-@interface ExploreVC () <GMSMapViewDelegate, OOTextEntryModalVCDelegate>
+@interface ExploreVC () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;

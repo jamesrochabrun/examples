@@ -734,7 +734,7 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
             cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             cvc.mediaItemObject = mio;
-            [cvc showActionButton:(mio.source == kMediaItemTypeOomami) ? YES : NO];
+            [cvc showActionButton:NO];
             //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;

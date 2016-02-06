@@ -14,6 +14,7 @@
 #import "Settings.h"
 #import "UserListVC.h"
 #import "AppDelegate.h"
+#import "ListsVC.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -57,7 +58,7 @@
         [_closeButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
+        [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -114,6 +115,76 @@
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
+}
+
+-(void)showOptions {
+    UIAlertController *photoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
+
+
+
+    UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete Photo"
+                                                          style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+                                                              __weak ViewPhotoVC *weakSelf = self;
+                                                              ON_MAIN_THREAD(^{
+                                                                  [weakSelf deletePhoto:_mio];
+                                                              });
+                                                              
+                                                          }];
+    UIAlertAction *addRestaurantToList = [UIAlertAction actionWithTitle:@"Add To Restaurant List"
+                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                             [self addToList:_restaurant];
+                                                         }];
+    UIAlertAction *flagPhoto = [UIAlertAction actionWithTitle:@"Flag Photo"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [self flagPhoto:_mio];
+                                                        }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                       NSLog(@"Cancel");
+                                                   }];
+
+    UserObject *uo = [Settings sharedInstance].userObject;
+
+    if (_mio.sourceUserID == uo.userID) {
+        [photoOptions addAction:addRestaurantToList];
+        [photoOptions addAction:deletePhoto];
+    }
+    [photoOptions addAction:flagPhoto];
+    [photoOptions addAction:cancel];
+
+    [self presentViewController:photoOptions animated:YES completion:^{
+        ;
+    }];
+}
+
+- (void)deletePhoto:(MediaItemObject *)mio {
+    NSUInteger userID = [Settings sharedInstance].userObject.userID;
+    __weak ViewPhotoVC *weakSelf = self;
+    
+    if (mio.sourceUserID == userID) {
+        [OOAPI deletePhoto:mio success:^{
+            [weakSelf close];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    }
+}
+
+- (void)flagPhoto:(MediaItemObject *)mio {
+    [OOAPI flagMediaItem:mio.mediaItemId success:^(NSArray *names) {
+        NSLog(@"photo flagged: %lu", (unsigned long)mio.mediaItemId);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"could not flag the photo: %@", error);
+    }];
+}
+
+- (void)addToList:(RestaurantObject *)restaurant {
+    ListsVC *vc = [[ListsVC alloc] init];
+    vc.restaurantToAdd = restaurant;
+    [vc getLists];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)addCaption {
@@ -174,7 +245,7 @@
 
 - (void)showYummers:(NSArray *)users {
     UserListVC *vc = [[UserListVC alloc] init];
-    vc.desiredTitle = @"YUMS";
+    vc.desiredTitle = @"Yummers";
     vc.user= _user;
     vc.usersArray = [NSMutableArray arrayWithArray:users];
     [self.navigationController pushViewController:vc animated:YES];
