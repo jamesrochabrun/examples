@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ListObject.h"
 #import "MediaItemObject.h"
+#import "OONetworkManager.h"
 
 static NSUInteger kUserObjectMaximumAboutTextLength = 140;
 
@@ -49,12 +50,14 @@ extern NSString *const kKeyUserImageIdentifier;
 extern NSString *const kKeyUserParticipantType;
 extern NSString *const kKeyUserParticipantState;
 extern NSString *const kKeyUserAbout;
+extern NSString *const kKeyHasSpecialties;
 
 @interface UserObject : NSObject
 
 @property (nonatomic, assign) NSUInteger userID;
 @property (nonatomic, assign) UserType userType;
-@property (nonatomic, assign) BOOL isFoodie;
+@property (nonatomic, assign) BOOL isFoodie, hasSpecialties;
+@property (nonatomic,strong) NSArray *specialties;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;
 @property (nonatomic, strong) NSString *lastName;
@@ -86,6 +89,8 @@ extern NSString *const kKeyUserAbout;
 - (void) refreshWithSuccess: (void (^)(BOOL changed))success
                    failure:(void (^)())failure;
 
+- (AFHTTPRequestOperation *)refreshSpecialtiesWithSuccess:(void (^)(BOOL  changed))success
+                                                      failure:(void (^)())failure;
 @end
 
 extern BOOL isUserObject (id  object);

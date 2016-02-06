@@ -82,20 +82,7 @@
     
     float allowableHorizontalSpace= round ((width(self.collectionView)));
     
-    int hdrHeight = 0;
-    if ( _userIsSelf) {
-        if ( _foodieHasURL) {
-            hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightSelf;
-        } else {
-            hdrHeight = kGeomProfileHeaderViewHeightSelf;
-        }
-    } else {
-        if ( _foodieHasURL) {
-            hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
-        } else {
-            hdrHeight = kGeomProfileHeaderViewHeightNormal;
-        }
-    }
+    int hdrHeight = [self heightOfHeader];
 
     NSUInteger section = 0;
     
@@ -194,6 +181,18 @@
     NSLog (@"CV SIZE %@",NSStringFromCGSize(_contentSize));
 }
 
+- (float)heightOfHeader
+{
+    float hdrHeight = PROFILE_HEADERVIEW_BASE_HEIGHT;
+    if (! _userIsSelf)
+        hdrHeight += PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
+    if (_userIsFoodie &&  _foodieHasURL)
+        hdrHeight += PROFILE_HEADERVIEW_URL_HEIGHT;
+    if (_userHasSpecialties)
+        hdrHeight += PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT;
+    return hdrHeight;
+}
+
 - (void)preparePhotosLayout
 {
     NSUInteger column = 0;    // Current column inside row
@@ -215,21 +214,8 @@
         allowableHorizontalSpace -= kGeomInterImageGap;
     }
     
-    int hdrHeight = 0;
-    if ( _userIsSelf) {
-        if ( _foodieHasURL) {
-            hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightSelf;
-        } else {
-            hdrHeight = kGeomProfileHeaderViewHeightSelf;
-        }
-    } else {
-        if ( _foodieHasURL) {
-            hdrHeight = _userIsFoodie? kGeomProfileHeaderViewHeightBlogger: kGeomProfileHeaderViewHeightNormal;
-        } else {
-            hdrHeight = kGeomProfileHeaderViewHeightNormal;
-        }
-    }
-    
+    int hdrHeight = [self heightOfHeader];
+
     NSUInteger section=0;
     NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
     

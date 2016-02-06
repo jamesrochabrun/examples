@@ -30,6 +30,7 @@
 #import "SocialMedia.h"
 #import "UIButton+AFNetworking.h"
 #import "ShowMediaItemAnimator.h"
+#import "SpecialtyObject.h"
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -52,6 +53,8 @@
 @property (nonatomic, strong) UIButton* buttonSettings,*buttonSettingsInner;
 @property (nonatomic,assign) BOOL usingURLButton;
 @property (nonatomic,strong) UIButton*buttonURL;
+@property (nonatomic,strong)  UILabel*labelSpecialtyHeader;
+@property (nonatomic,strong)  UILabel*labelSpecialties;
 @end
 
 @implementation ProfileHeaderView
@@ -247,6 +250,12 @@
         _userView.delegate= self;
         [self addSubview:_userView];
         
+        self.labelSpecialtyHeader=  makeLabel( self,  @"Specialties:", kGeomFontSizeSubheader);
+        _labelSpecialtyHeader.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
+        self.labelSpecialties=  makeLabel( self,  @"", kGeomFontSizeSubheader);
+        _labelSpecialtyHeader.textColor=WHITE;
+        _labelSpecialties.textColor=WHITE;
+        
         self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
         _buttonURL.hidden= YES;
         
@@ -279,7 +288,7 @@
         _labelVenues.textColor= WHITE;
         _labelPhoto.textColor= WHITE;
         _labelLikes.textColor= WHITE;
-        
+
         _labelVenuesCount.textAlignment= NSTextAlignmentLeft;
         _labelPhotoCount.textAlignment= NSTextAlignmentLeft;
         _labelLikesCount.textAlignment= NSTextAlignmentLeft;
@@ -310,6 +319,33 @@
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user;
 {
     [self.delegate userPressedSettings];
+}
+
+- (void)updateSpecialtiesLabel
+{
+    if (!_userInfo.specialties.count) {
+        _labelSpecialties.text=  @"None";
+        return;
+    }
+    
+    if (_userInfo.specialties.count != 1)
+        _labelSpecialtyHeader.text=@"Specialties:";
+    else
+        _labelSpecialtyHeader.text=@"Specialty:";
+    
+    NSMutableString *specialtyString= @"".mutableCopy;
+    NSUInteger total= _userInfo.specialties.count;
+    NSUInteger counter= 0;
+    for (SpecialtyObject* object  in  _userInfo.specialties) {
+        NSString *string= object.name ?: @"?";
+        if  (counter !=  total-1 ) {
+            [specialtyString  appendFormat:@"%@, ",string];
+        } else {
+            [specialtyString  appendString:string];
+        }
+        counter ++;
+    }
+    _labelSpecialties.text= specialtyString;
 }
 
 - (void)userPressedURLButton: (id) sender
@@ -563,7 +599,6 @@
     
     float w = width(self);
     float h = height(self);
-//    float spacing=  _userInfo.isFoodie? 2*kGeomSpaceInter : kGeomSpaceInter; // per Jay
     float spacing=  kGeomSpaceInter;
     
     _backgroundImageView.frame= CGRectMake(0,0,w,h-kGeomHeightFilters);
@@ -597,18 +632,6 @@
     _buttonFollowees.frame = CGRectMake(rightX, yFollowers, horizontalSpaceForText, lowerLabelHeight);
     
     // Layout the statistics labels.
-#if 0
-    float x= (w-3*kGeomProfileStatsItemWidth)/2;
-    _labelVenuesCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
-    _labelVenues.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
-    x += kGeomProfileStatsItemWidth;
-    _labelPhotoCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
-    _labelPhoto.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
-    x += kGeomProfileStatsItemWidth;
-    _labelLikesCount.frame = CGRectMake(x,y,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
-    _labelLikes.frame = CGRectMake(x,y +kGeomProfileStatsItemHeight/2,kGeomProfileStatsItemWidth,kGeomProfileStatsItemHeight/2);
-#endif
-    
     [_labelVenues sizeToFit];
     [_labelVenuesCount sizeToFit];
     [_labelPhoto sizeToFit];
@@ -639,18 +662,34 @@
     
     _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
 
-    y += kGeomProfileStatsItemHeight;
+    y +=kGeomProfileStatsItemHeight;
     
     if ( !_viewingOwnProfile) {
         _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,
                                          y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
                                          kGeomButtonWidth,  kGeomFollowButtonHeight );
-        y +=kGeomFollowButtonHeight + spacing;
+        y += PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
     }
     
     if ( _userInfo.isFoodie && _userInfo.urlString.length) {
         _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
-        y += kGeomProfileHeaderViewHeightOfBloggerButton + spacing;
+        y += PROFILE_HEADERVIEW_URL_HEIGHT;
+    }
+    
+    if (_userInfo.hasSpecialties ) {
+        [_labelSpecialtyHeader sizeToFit];
+        [_labelSpecialties sizeToFit];
+        float requiredHeaderHeight=_labelSpecialtyHeader.frame.size.height;
+        float requiredSpecialtiesHeight=_labelSpecialtyHeader.frame.size.height;
+        float requiredHeight=requiredHeaderHeight+requiredSpecialtiesHeight ;
+        float yHeader= y + (PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT - requiredHeight)/2;
+        _labelSpecialtyHeader.frame= CGRectMake(0,yHeader,w, requiredHeaderHeight);
+        yHeader +=requiredHeaderHeight;
+        _labelSpecialties.frame= CGRectMake(0,yHeader,w, requiredSpecialtiesHeight);
+        y += PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT;
+    } else {
+        _labelSpecialtyHeader.frame= CGRectMake(0,y,w, 0);
+        _labelSpecialties.frame= CGRectMake(0,y,w, 0);
     }
     
     _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
@@ -659,6 +698,9 @@
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     [self bringSubviewToFront:_filterView];
     _filterView.userInteractionEnabled=YES;
+    y+=kGeomHeightFilters;
+    
+    self.frame= CGRectMake(0,0,w,y);
 }
 
 @end
@@ -823,6 +865,7 @@
     _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
     _listsAndPhotosLayout.userIsFoodie=_userInfo.isFoodie;
     _listsAndPhotosLayout.foodieHasURL = _userInfo.urlString.length > 0;
+    _listsAndPhotosLayout.userHasSpecialties = _userInfo.hasSpecialties;
     [_listsAndPhotosLayout setShowingLists: YES];
     
     _cv = makeCollectionView(self.view, self, _listsAndPhotosLayout);
@@ -907,51 +950,75 @@
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
 }
 
+- (void)updateSpecialtiesLabel
+{
+    [_topView updateSpecialtiesLabel];
+}
+
 - (void) refetchListsPhotosAndStats
 {
+    __weak  ProfileVC *weakSelf = self;
+    
     [self.view bringSubviewToFront:self.aiv];
     [self.aiv startAnimating];
     self.aiv.message = @"loading";
-
-    __weak  ProfileVC *weakSelf = self;
-    OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
-                success:^(NSArray *foundLists) {
-                    NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
-                    weakSelf.arrayLists = foundLists;
-                    ON_MAIN_THREAD(^(){
-                        [weakSelf.aiv stopAnimating];
-                        [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                        [weakSelf.listsAndPhotosLayout  invalidateLayout];
-                        [weakSelf.cv reloadData];
-                    });
-                    
-                    float w=  [UIScreen mainScreen ].bounds.size.width;
-                    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
-                                   success:^(NSArray *mediaObjects) {
-                                       weakSelf.arrayPhotos= mediaObjects;
-                                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
-                                       NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
-                                       ON_MAIN_THREAD(^(){
-                                           [weakSelf.aiv stopAnimating];
-                                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                                           [weakSelf.cv  reloadData];
-                                       });
-                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                       NSLog  (@"FAILED TO GET PHOTOS");
-                                       ON_MAIN_THREAD(^(){
-                                           [weakSelf.aiv stopAnimating];
-                                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                                       });
-                                   }];
-                }
-                failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                    NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
-                    ON_MAIN_THREAD(^(){
-                        [weakSelf.aiv stopAnimating];
-                        [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                    });
-                }];
+    
+    [_profileOwner refreshSpecialtiesWithSuccess:^(BOOL changed) {
+        ON_MAIN_THREAD(^(){
+            [weakSelf updateSpecialtiesLabel];
+            weakSelf.listsAndPhotosLayout.userHasSpecialties = weakSelf.profileOwner.hasSpecialties;
+            [weakSelf.topView setNeedsLayout];
+            [weakSelf.cv setNeedsLayout];
+            [weakSelf.cv reloadData];
+        });
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
+                    success:^(NSArray *foundLists) {
+                        NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
+                        weakSelf.arrayLists = foundLists;
+                        ON_MAIN_THREAD(^(){
+                            [weakSelf.aiv stopAnimating];
+                            [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                            [weakSelf.listsAndPhotosLayout  invalidateLayout];
+                            [weakSelf.cv reloadData];
+                        });
+                        
+                        float w=  [UIScreen mainScreen ].bounds.size.width;
+                        [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
+                                       success:^(NSArray *mediaObjects) {
+                                           weakSelf.arrayPhotos= mediaObjects;
+                                           weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
+                                           NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
+                                           ON_MAIN_THREAD(^(){
+                                               [weakSelf.aiv stopAnimating];
+                                               [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                                               [weakSelf.cv  reloadData];
+                                           });
+                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                           NSLog  (@"FAILED TO GET PHOTOS");
+                                           ON_MAIN_THREAD(^(){
+                                               [weakSelf.aiv stopAnimating];
+                                               [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                                           });
+                                       }];
+                    }
+                    failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                        NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
+                        ON_MAIN_THREAD(^(){
+                            [weakSelf.aiv stopAnimating];
+                            [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                        });
+                    }];
+        
+    } failure:^{
+        NSLog (@"UNABLE TO FETCH SPECIALTIES!");
+        ON_MAIN_THREAD(^(){
+            [weakSelf.aiv stopAnimating];
+            [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+        });
+    }
+     ];
     
 }
 
@@ -1369,7 +1436,6 @@
             if ( _viewingOwnProfile) {
                 [ cell setListMode];
                 cell.message=  @"Make your first list!";
-                //                cell.backgroundColor= GREEN;
             } else {
                 [ cell setMessageMode];
                 cell.message=  @"This user is still making their first list.";

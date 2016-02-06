@@ -236,6 +236,7 @@
 		96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96ACD7891BC3487E00E37DC1 /* EventCoordinatorVC.m */; };
 		96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */; };
 		96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */; };
+		96C5330D1C655018009C84BB /* SpecialtyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 96C5330C1C655018009C84BB /* SpecialtyObject.m */; };
 		96CA59D01BE14C2E00618B57 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96CA59CF1BE14C2E00618B57 /* UIKit.framework */; };
 		96CA59D21BE14E2200618B57 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96CA59D11BE14E2200618B57 /* MessageUI.framework */; };
 		96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */ = {isa = PBXBuildFile; fileRef = 96CC3A201BE97E1C00A43A04 /* PieView.m */; };
@@ -596,6 +597,8 @@
 		96BF31221BB36C55002BFDD2 /* CreateUsernameVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateUsernameVC.m; sourceTree = "<group>"; };
 		96C3A3F21BC5F335009689E3 /* EventParticipantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventParticipantVC.h; sourceTree = "<group>"; };
 		96C3A3F31BC5F335009689E3 /* EventParticipantVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventParticipantVC.m; sourceTree = "<group>"; };
+		96C5330B1C655018009C84BB /* SpecialtyObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecialtyObject.h; sourceTree = "<group>"; };
+		96C5330C1C655018009C84BB /* SpecialtyObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpecialtyObject.m; sourceTree = "<group>"; };
 		96CA59CF1BE14C2E00618B57 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		96CA59D11BE14E2200618B57 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		96CC3A1F1BE97E1C00A43A04 /* PieView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PieView.h; sourceTree = "<group>"; };
@@ -703,6 +706,8 @@
 				363B60C01B6AC15400987A1B /* RestaurantObject.m */,
 				363B60C21B6AE49F00987A1B /* UserObject.h */,
 				363B60C31B6AE49F00987A1B /* UserObject.m */,
+				96C5330B1C655018009C84BB /* SpecialtyObject.h */,
+				96C5330C1C655018009C84BB /* SpecialtyObject.m */,
 				96AC04611C0D22E2002B1264 /* AutoCompleteObject.h */,
 				96AC04621C0D22E2002B1264 /* AutoCompleteObject.m */,
 				960F72541C2B5E2000DE31AC /* UserStatsObject.h */,
@@ -1452,6 +1457,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				36FDA6FF1B585F650029D29D /* PlayVC.m in Sources */,
+				96C5330D1C655018009C84BB /* SpecialtyObject.m in Sources */,
 				36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */,
 				366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */,
 				36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */,
