@@ -93,7 +93,7 @@
 @property (nonatomic,strong) UILabel *labelUserName;
 @property (nonatomic,strong) UILabel *labelName;
 @property (nonatomic,strong) UserObject *userInfo;
-@property (nonatomic,strong) AFHTTPRequestOperation* op;
+//@property (nonatomic,strong) AFHTTPRequestOperation* op;
 @property (nonatomic, strong) UIButton *buttonFollow;
 @end
 
@@ -147,9 +147,19 @@
         _labelPlacesNumber.alpha=0;
         
         _buttonFollow = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_buttonFollow withText:@"FOLLOW" fontSize:kGeomFontSizeSubheader width:40 height:40 backgroundColor:kColorClear textColor:kColorYellow borderColor:kColorYellow target:self
-                       selector:@selector (userPressedFollow:)];
+        [_buttonFollow
+         withText:@"FOLLOW"
+         fontSize:kGeomFontSizeSubheader // NOTE: Reformatted for readability.
+         width:40 // <-- seems superfluous
+         height:40 // <-- seems superfluous
+         backgroundColor:kColorClear
+         textColor:kColorBlack
+         borderColor:kColorYellow
+         target:self
+         selector:@selector (userPressedFollow:)];
+        _buttonFollow.backgroundColor=YELLOW;
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
+        [_buttonFollow setTitleColor: WHITE forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
         [self addSubview:_buttonFollow];
     }
@@ -166,14 +176,22 @@
     [OOAPI setFollowingUser:_userInfo
                          to: !weakSelf.buttonFollow.selected
                     success:^(id responseObject) {
-                        weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected;
+                        if (( weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected )) {
+                            weakSelf.buttonFollow.backgroundColor= BLACK;
+                            weakSelf.buttonFollow.layer.borderWidth= 0;
+                        }
+                        else {
+                            weakSelf.buttonFollow.backgroundColor= YELLOW;
+                            weakSelf.buttonFollow.layer.borderWidth= 1;
+                        }
+                        
                         if (weakSelf.buttonFollow.selected ) {
                             NSLog (@"SUCCESSFULLY FOLLOWED USER");
                         } else {
                             NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
                         }
                         [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo];
-
+                        
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
                     }];
@@ -224,11 +242,8 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-//    [_op cancel];
     _labelUserName.text=nil;
     _labelName.text=nil;
-    
-//    _labelLists.alpha=0;
     
     _labelFollowers.alpha = 0;
     _labelFollowing.alpha = 0;

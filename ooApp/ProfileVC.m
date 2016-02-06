@@ -287,10 +287,11 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow= makeButton(self, @"FOLLOW",
-                                       kGeomFontSizeSubheader, WHITE, CLEAR,
+                                       kGeomFontSizeSubheader, BLACK, YELLOW,
                                        self,
                                        @selector(userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
+        [_buttonFollow setTitleColor:WHITE forState:UIControlStateSelected];
         _buttonFollow.layer.borderColor=YELLOW.CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
         _buttonFollow.layer.borderWidth= 1;
@@ -506,16 +507,21 @@
 
 - (void)indicateFollowing
 {
-    _buttonFollow.hidden= NO;
     _buttonFollow.selected= YES;
     _followingThisUser=YES;
+    _buttonFollow.backgroundColor= CLEAR;
+    _buttonFollow.layer.borderWidth= 1;
+    _buttonFollow.hidden= NO;
 }
 
 - (void)indicateNotFollowing
 {
     _followingThisUser=NO;
-    _buttonFollow.hidden= NO;
     _buttonFollow.selected= NO;
+    _buttonFollow.backgroundColor= YELLOW;
+    _buttonFollow.layer.borderWidth= 0;
+    _buttonFollow.hidden= NO;
+
 }
 
 //------------------------------------------------------------------------------
