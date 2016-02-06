@@ -148,8 +148,9 @@
     if (_mio.sourceUserID == uo.userID) {
         [photoOptions addAction:addRestaurantToList];
         [photoOptions addAction:deletePhoto];
+    } else {
+        [photoOptions addAction:flagPhoto];
     }
-    [photoOptions addAction:flagPhoto];
     [photoOptions addAction:cancel];
 
     [self presentViewController:photoOptions animated:YES completion:^{

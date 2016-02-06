@@ -597,14 +597,14 @@
 {
     [super layoutSubviews];
     
-    float w = width(self);
-    float h = height(self);
-    float spacing=  kGeomSpaceInter;
+    CGFloat w = width(self);
+    CGFloat h = height(self);
+    CGFloat spacing=  kGeomSpaceInter;
     
-    _backgroundImageView.frame= CGRectMake(0,0,w,h-kGeomHeightFilters);
-    _backgroundImageFade.frame= CGRectMake(0,0,w,h-kGeomHeightFilters);
-    _backgroundImageView.backgroundColor= YELLOW;
-    int y = kGeomSpaceEdge;
+    _backgroundImageView.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
+    _backgroundImageFade.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
+    _backgroundImageView.backgroundColor = YELLOW;
+    NSUInteger y = kGeomSpaceEdge;
     _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
     
     const  float buttonSettingsSize= _viewingOwnProfile? 30:0;
@@ -816,16 +816,16 @@
     
     [self.aiv startAnimating];
     
-    [self registerForNotification: kNotificationRestaurantListsNeedsUpdate
+    [self registerForNotification:kNotificationRestaurantListsNeedsUpdate
                           calling:@selector(handleRestaurantListAltered:)
      ];
-    [self registerForNotification: kNotificationPhotoDeleted
+    [self registerForNotification:kNotificationPhotoDeleted
                           calling:@selector(handlePhotoDeleted:)
      ];
-    [self registerForNotification: kNotificationListDeleted
+    [self registerForNotification:kNotificationListDeleted
                           calling:@selector(handleListDeleted:)
      ];
-    [self registerForNotification: kNotificationListAltered
+    [self registerForNotification:kNotificationListAltered
                           calling:@selector(handleListAltered:)
      ];
     // NOTE:  Unregistered in dealloc.
@@ -833,8 +833,8 @@
     // Ascertain whether reviewing our own profile based on passed-in UserObject pointer.
     //
     if (!_userInfo) {
-        _viewingOwnProfile=YES;
-        _didFetchUserObject= NO;
+        _viewingOwnProfile = YES;
+        _didFetchUserObject = NO;
         _userInfo = [Settings sharedInstance].userObject;
         self.profileOwner = _userInfo;
     } else {
@@ -1485,94 +1485,31 @@
         MediaItemObject *object = a[row];
         cell.mediaItemObject =  object;
         cell.delegate=  self;
+        [cell showActionButton:NO];
         return cell;
     }
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject
 {
-    if  (_viewingOwnProfile ) {
-        NSLog  (@"OWN PROFILE");
+    if (_viewingOwnProfile) {
+        NSLog(@"OWN PROFILE");
         return;
     }
-    
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio
 {
-    __weak  ProfileVC *weakSelf = self;
-    if  (_viewingOwnProfile ) {
-        
-        UIAlertController *a= [UIAlertController alertControllerWithTitle: nil
-                                                                  message:nil
-                                                           preferredStyle:UIAlertControllerStyleActionSheet];
-        
-        UIAlertAction *cancel = nil;
-        cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                          style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
-                                              
-                                          }];
-        
-        UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:@"Delete photo"
-                                                               style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                   [OOAPI deletePhoto:mio
-                                                                              success:^{
-                                                                                  NSLog  (@"SUCCESS IN DELETING PHOTO");
-                                                                                  [weakSelf refetchListsPhotosAndStats];
-                                                                                  
-                                                                                  NOTIFY(kNotificationFoodFeedNeedsUpdate);
-                                                                                  
-                                                                                  NOTIFY_WITH(kNotificationPhotoDeleted, @( mio.mediaItemId));
-                                                                            
-                                                                                  
-                                                                              }
-                                                                              failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                                  NSLog  (@"FAILED TO DELETE PHOTO, error=%@",error);
-                                                                              }];
-                                                               }];
-        UIAlertAction *captionAction = [UIAlertAction actionWithTitle:@"Add caption to photo"
-                                                                style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                    [weakSelf userAddingCaptionTo:mio];
-                                                                }];
-        
-        [a addAction:cancel];
-        [a addAction:deleteAction];
-        [a addAction:captionAction];
-        
-        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
-        
+//    __weak ProfileVC *weakSelf = self;
+    if (_viewingOwnProfile) {
+        NSLog(@"OWN PROFILE");
     } else {
-        
-        UIAlertController *a= [UIAlertController alertControllerWithTitle: nil
-                                                                  message:nil
-                                                           preferredStyle:UIAlertControllerStyleActionSheet];
-        
-        UIAlertAction *cancel = nil;
-        cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                          style: UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
-                                              
-                                          }];
-        
-        UIAlertAction *reportAction = [UIAlertAction actionWithTitle:@"Report photo"
-                                                               style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                   [OOAPI deletePhoto:mio
-                                                                              success:^{
-                                                                                  message( @"You have reported the photo successfully.");
-                                                                              }
-                                                                              failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                                  NSLog  (@"FAILED TO REPORT PHOTO, error=%@",error);
-                                                                              }];
-                                                                   
-                                                               }];
-        
-        [a addAction:cancel];
-        [a addAction:reportAction];
-        
-        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
+        NSLog(@"Another's PROFILE");
+//        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
     }
 }
 
-- (void)userAddingCaptionTo: ( MediaItemObject*)mediaObject
+- (void)userAddingCaptionTo:( MediaItemObject*)mediaObject
 {
     UINavigationController *nc = [[UINavigationController alloc] init];
     
