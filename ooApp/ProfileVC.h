@@ -40,6 +40,7 @@
 @property (nonatomic,weak) ProfileVC* vc;
 - (void) refreshUserImage;
 - (void) enableURLButton;
+- (void)updateSpecialtiesLabel;
 @property (nonatomic,weak) NSObject<ProfileHeaderViewDelegate>* delegate;
 @end
 

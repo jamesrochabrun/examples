@@ -10,6 +10,7 @@
 #import "OOAPI.h"
 #import "Settings.h"
 #import "AppDelegate.h"
+#import "SpecialtyObject.h"
 
 NSString *const kKeyUserID = @"user_id";
 NSString *const kKeyUserFirstName = @"first_name";
@@ -29,6 +30,7 @@ NSString *const kKeyUserAbout = @"about";
 NSString *const kKeyUserIsFoodie = @"is_blogger";
 NSString *const kKeyURL = @"website";
 NSString *const kKeyUserType = @"user_type";
+NSString *const kKeyHasSpecialties= @"has_specialties";
 
 @interface UserObject()
 
@@ -66,7 +68,8 @@ BOOL isUserObject (id  object)
 {
     if  ( self.userID != other.userID)  return NO;
     if  ( self.userType != other.userType)  return NO;
-    if  ( (1&self.isFoodie) != (1&other.isFoodie))  return NO;
+    if  ( self.hasSpecialties != other.hasSpecialties)  return NO;
+    if  ( self.isFoodie != other.isFoodie)  return NO;
     
     if  ( self.mediaItem.mediaItemId != other.mediaItem.mediaItemId)  return NO;
     if  (![(self.mediaItem.url ?:  @"") isEqualToString: (other.mediaItem.url?:  @"")])  return NO;
@@ -90,23 +93,26 @@ BOOL isUserObject (id  object)
 + (UserObject *)userFromDict:(NSDictionary *)dict
 {
     UserObject *user =[[UserObject alloc] init];
-    user.userID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyUserID]);
-    user.firstName = parseStringOrNullFromServer([dict objectForKey:kKeyUserFirstName]);
-    user.middleName = parseStringOrNullFromServer([dict objectForKey:kKeyUserMiddleName]);
-    user.lastName = parseStringOrNullFromServer([dict objectForKey:kKeyUserLastName]);
-    user.email = parseStringOrNullFromServer([dict objectForKey:kKeyUserEmail]);
-    user.phoneNumber = parseStringOrNullFromServer([dict objectForKey:kKeyUserPhoneNumber]);
-    user.backendAuthorizationToken = parseStringOrNullFromServer([dict objectForKey:kKeyUserToken]);
-    user.gender = parseStringOrNullFromServer([dict objectForKey:kKeyUserGender]);
-    user.username = parseStringOrNullFromServer([dict objectForKey:kKeyUserUsername]);
-    user.facebookProfileImageURLString = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageURL]);
-    user.imageIdentifier = parseStringOrNullFromServer([dict objectForKey:kKeyUserImageIdentifier]);
+    user.userID = parseUnsignedIntegerOrNullFromServer(dict [kKeyUserID]);
+    user.firstName = parseStringOrNullFromServer(dict [kKeyUserFirstName]);
+    user.middleName = parseStringOrNullFromServer(dict [kKeyUserMiddleName]);
+    user.lastName = parseStringOrNullFromServer(dict [kKeyUserLastName]);
+    user.email = parseStringOrNullFromServer(dict [kKeyUserEmail]);
+    user.phoneNumber = parseStringOrNullFromServer(dict [kKeyUserPhoneNumber]);
+    user.backendAuthorizationToken = parseStringOrNullFromServer(dict [kKeyUserToken]);
+    user.gender = parseStringOrNullFromServer(dict [kKeyUserGender]);
+    user.username = parseStringOrNullFromServer(dict [kKeyUserUsername]);
+    user.facebookProfileImageURLString = parseStringOrNullFromServer(dict [kKeyUserImageURL]);
+    user.imageIdentifier = parseStringOrNullFromServer(dict [kKeyUserImageIdentifier]);
     user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
-    user.about = parseStringOrNullFromServer([dict objectForKey:kKeyUserAbout]);
-    user.urlString = parseStringOrNullFromServer([dict objectForKey: kKeyURL]);
-    user.userType = parseNumberOrNullFromServer([dict objectForKey:kKeyUserType]);
+    user.about = parseStringOrNullFromServer(dict [kKeyUserAbout]);
+    user.urlString = parseStringOrNullFromServer(dict [ kKeyURL]);
+    user.userType = parseNumberOrNullFromServer(dict [kKeyUserType]);
     user.isFoodie = user.userType == USER_TYPE_FOODIE;
+    
+    user.hasSpecialties= parseUnsignedIntegerOrNullFromServer( dict[kKeyHasSpecialties] ) > 0;
+    user.specialties= nil;
 
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
@@ -121,8 +127,8 @@ BOOL isUserObject (id  object)
             user.facebookProfileImageURLString= currentUser.facebookProfileImageURLString;
         }
     }
-    if ([dict objectForKey:kKeyUserMediaItem]) {
-        user.mediaItem = [MediaItemObject mediaItemFromDict:[dict objectForKey:kKeyUserMediaItem]];
+    if (dict [kKeyUserMediaItem]) {
+        user.mediaItem = [MediaItemObject mediaItemFromDict:dict [kKeyUserMediaItem]];
     }
         
     return user;
@@ -187,6 +193,25 @@ BOOL isUserObject (id  object)
                    }];
         }
     }
+}
+
+
+- (AFHTTPRequestOperation *)refreshSpecialtiesWithSuccess:(void (^)(BOOL))success
+                                                  failure:(void (^)())failure;
+{
+    __weak UserObject *weakSelf = self;
+    return [OOAPI getUserSpecialties:self.userID
+                 success:^(NSArray *specialties) {
+                     NSUInteger previousCount=weakSelf.specialties.count;
+                     BOOL previousFlag=weakSelf.hasSpecialties;
+                     weakSelf.specialties = specialties;
+                     weakSelf.hasSpecialties = specialties.count>0;
+                     NSLog (@"USER HAS %lu SPECIALTIES", (unsigned long)specialties.count);
+                     success( previousCount != specialties.count  ||
+                             previousFlag != weakSelf.hasSpecialties);
+                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                     failure();
+                 }];
 }
 
 - (void)refreshWithSuccess:(void (^)(BOOL ))success

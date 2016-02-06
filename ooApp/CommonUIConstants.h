@@ -106,10 +106,17 @@ static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
 static CGFloat kGeomProfileStatsItemHeight= 30;
-static CGFloat kGeomProfileHeaderViewHeightSelf = 213;
-static CGFloat kGeomProfileHeaderViewHeightNormal = 248;
-static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = 25;
-static CGFloat kGeomProfileHeaderViewHeightBlogger = 277;
+#define PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT 24
+static CGFloat kGeomFollowButtonHeight= PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT; // Connect screen, profile screen
+#define PROFILE_HEADERVIEW_FOLLOW_HEIGHT (PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT+11) // includes spacer
+#define PROFILE_HEADERVIEW_BASE_HEIGHT 213
+#define PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT 38
+#define PROFILE_HEADERVIEW_URL_BUTTON_HEIGHT 25
+static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = PROFILE_HEADERVIEW_URL_BUTTON_HEIGHT;
+#define PROFILE_HEADERVIEW_URL_HEIGHT (PROFILE_HEADERVIEW_URL_BUTTON_HEIGHT+4)
+static CGFloat kGeomProfileHeaderViewHeightSelf = PROFILE_HEADERVIEW_BASE_HEIGHT;
+static CGFloat kGeomProfileHeaderViewHeightNormal = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
+static CGFloat kGeomProfileHeaderViewHeightBlogger = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT+PROFILE_HEADERVIEW_URL_HEIGHT;
 static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 static CGFloat kGeomProfileStatsOverallWidth= 171;
 static CGFloat kGeomProfileSettingsBadgeSize=  30;
@@ -165,8 +172,6 @@ static CGFloat kGeomCreateUsernameCentralIconSize= 180;
 
 static CGFloat kGeomConnectScreenHeaderHeight= 33;
 static CGFloat kGeomConnectScreenUserImageHeight= 82;
-
-static CGFloat kGeomFollowButtonHeight= 24; // Connect screen, profile screen
 
 // Images
 extern NSString *const kImageNoProfileImage;

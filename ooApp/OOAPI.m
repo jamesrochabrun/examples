@@ -17,6 +17,7 @@
 #import "FeedObject.h"
 #import "TagObject.h"
 #import "AutoCompleteObject.h"
+#import "SpecialtyObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -2448,6 +2449,42 @@ NSString *const kKeyDeviceToken = @"device_token";
                    [users addObject:[UserObject userFromDict:dict]];
                }
                success(users);
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               NSLog(@"Error: %@", error);
+               failure(operation, error);
+           }];
+}
+
+//------------------------------------------------------------------------------
+// Name:    getUserSpecialties
+// Purpose: Fetch an array of specialties of a user.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getUserSpecialties: (NSUInteger)userid
+                                   success:(void (^)(NSArray *specialties))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!userid) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/specialties",
+                           kHTTPProtocol,
+                           [OOAPI URL],
+                           (unsigned long)userid];
+    
+//    https://stage.oomamiapp.com/api/v1/users/118/specialties
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               NSMutableArray *specialties = [NSMutableArray array];
+               for (id dict in responseObject) {
+                   SpecialtyObject*object=[SpecialtyObject specialtyFromDictionary:dict];
+                    if( object) [specialties addObject: object];
+               }
+               success(specialties);
            } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
                failure(operation, error);
