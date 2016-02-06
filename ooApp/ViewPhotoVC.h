@@ -18,6 +18,8 @@ static CGFloat kAlphaBackground = 0.9;
 @class ViewPhotoVC;
 
 @protocol ViewPhotoVCDelegate <NSObject>
+
+@optional
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant;
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showProfile:(UserObject *)user;
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC;

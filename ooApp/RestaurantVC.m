@@ -35,7 +35,6 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIAlertController *styleSheetAC;
 @property (nonatomic, strong) UIAlertController *createListAC;
-@property (nonatomic, strong) UIAlertController *showPhotoOptions;
 @property (nonatomic, strong) NSArray *lists;
 @property (nonatomic, strong) UserObject* userInfo;
 @property (nonatomic, strong) NSMutableSet *listButtons;
@@ -757,44 +756,19 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio {
-    _showPhotoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do with this photo?" preferredStyle:UIAlertControllerStyleActionSheet];
-    
-
-    
-    UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete"
-                                                          style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
-                                                              __weak RestaurantVC *weakSelf = self;
-                                                              ON_MAIN_THREAD(^{
-                                                                [weakSelf deletePhoto:mio];
-                                                              });
-                                                              
-                                                          }];
-    UIAlertAction *addCaption = [UIAlertAction actionWithTitle:@"Add Caption"
-                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                              [self addCaption:mio forceIsFoodFeed:NO];
-                                                          }];
-    UIAlertAction *flagPhoto = [UIAlertAction actionWithTitle:@"Flag"
-                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           [self flagPhoto:mio];
-                                                       }];
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                         NSLog(@"Cancel");
-                                                     }];
-    
-    UserObject *uo = [Settings sharedInstance].userObject;
-
-    if (mio.sourceUserID == uo.userID) {
-        [_showPhotoOptions addAction:addCaption];
-        [_showPhotoOptions addAction:deletePhoto];
-    }
-    [_showPhotoOptions addAction:flagPhoto];
-    [_showPhotoOptions addAction:cancel];
-    
-    [self presentViewController:_showPhotoOptions animated:YES completion:^{
-        ;
-    }];
+//    UIAlertController *showPhotoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do with this photo?" preferredStyle:UIAlertControllerStyleActionSheet];
+//    
+//    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+//                                                     style:UIAlertActionStyleCancel
+//                                                   handler:^(UIAlertAction * action) {
+//                                                         NSLog(@"Cancel");
+//                                                     }];
+//    
+//    [_showPhotoOptions addAction:cancel];
+//    
+//    [self presentViewController:_showPhotoOptions animated:YES completion:^{
+//        ;
+//    }];
 }
 
 - (void)addCaption:(MediaItemObject *)mio forceIsFoodFeed:(BOOL)overrideFoodFeed {
@@ -827,28 +801,6 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)ooTextEntryVC:(AddCaptionToMIOVC *)textEntryVC textToSubmit:(NSString *)text {
     
-}
-
-- (void)flagPhoto:(MediaItemObject *)mio {
-    [OOAPI flagMediaItem:mio.mediaItemId success:^(NSArray *names) {
-        NSLog(@"photo flagged: %lu", (unsigned long)mio.mediaItemId);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"could not flag the photo: %@", error);
-    }];
-}
-
-- (void)deletePhoto:(MediaItemObject *)mio {
-    NSUInteger userID = [Settings sharedInstance].userObject.userID;
-    __weak RestaurantVC *weakSelf = self;
-    
-    if (mio.sourceUserID == userID) {
-        [OOAPI deletePhoto:mio success:^{
-            [weakSelf getMediaItemsForRestaurant];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
-    }
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {

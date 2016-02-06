@@ -96,7 +96,6 @@
         
         [self.view addSubview:_backgroundView];
         [self.view addSubview:_closeButton];
-        [self.view addSubview:_optionsButton];
         [self.view addSubview:_captionButton];
         [self.view addSubview:_userButton];
         [self.view addSubview:_userViewButton];
@@ -252,6 +251,9 @@
 }
 
 - (void)close {
+    if ([_delegate respondsToSelector:@selector(viewPhotoVCClosed:)]) {
+        [_delegate viewPhotoVCClosed:self];
+    }
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -365,7 +367,11 @@
     if (mio == _mio) return;
     _mio = mio;
     
-//    _caption.text = _mio.caption;
+    if (_mio.source == kMediaItemTypeOomami) {
+        [self.view addSubview:_optionsButton];
+    } else {
+        [_optionsButton removeFromSuperview];
+    }
     
     UserObject *user = [Settings sharedInstance].userObject;
     
