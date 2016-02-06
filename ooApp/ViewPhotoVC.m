@@ -129,7 +129,7 @@
                                                               });
                                                               
                                                           }];
-    UIAlertAction *addRestaurantToList = [UIAlertAction actionWithTitle:@"Add To Restaurant List"
+    UIAlertAction *addRestaurantToList = [UIAlertAction actionWithTitle:@"Add Restaurant to a List"
                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                              [self addToList:_restaurant];
                                                          }];
@@ -145,8 +145,8 @@
 
     UserObject *uo = [Settings sharedInstance].userObject;
 
+    [photoOptions addAction:addRestaurantToList];
     if (_mio.sourceUserID == uo.userID) {
-        [photoOptions addAction:addRestaurantToList];
         [photoOptions addAction:deletePhoto];
     } else {
         [photoOptions addAction:flagPhoto];
