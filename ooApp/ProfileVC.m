@@ -55,6 +55,8 @@
 @property (nonatomic,strong) UIButton*buttonURL;
 @property (nonatomic,strong)  UILabel*labelSpecialtyHeader;
 @property (nonatomic,strong)  UILabel*labelSpecialties;
+@property (nonatomic,strong)  UIView *viewSpecialties;
+
 @end
 
 @implementation ProfileHeaderView
@@ -238,6 +240,7 @@
     if (self) {
         self.autoresizesSubviews= NO;
         self.clipsToBounds=YES;
+
         _backgroundImageView=  makeImageView(self, @"background-image.jpg");
         _backgroundImageFade= makeView( self,  UIColorRGBA(0x80000000));
 
@@ -250,11 +253,14 @@
         _userView.delegate= self;
         [self addSubview:_userView];
         
-        self.labelSpecialtyHeader=  makeLabel( self,  @"Specialties:", kGeomFontSizeSubheader);
+        self.viewSpecialties=makeView(self, BLACK);
+        self.labelSpecialtyHeader=  makeLabel( _viewSpecialties,  @"Specialties:", kGeomFontSizeSubheader);
         _labelSpecialtyHeader.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
-        self.labelSpecialties=  makeLabel( self,  @"", kGeomFontSizeSubheader);
+        self.labelSpecialties=  makeLabel( _viewSpecialties,  @"", kGeomFontSizeSubheader);
         _labelSpecialtyHeader.textColor=WHITE;
         _labelSpecialties.textColor=WHITE;
+        _labelSpecialtyHeader.backgroundColor=BLACK;
+        _labelSpecialties.backgroundColor=BLACK;
         
         self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
         _buttonURL.hidden= YES;
@@ -311,6 +317,8 @@
         [self registerForNotification: kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
          ];
+        
+        self.backgroundColor=BLACK;
     }
     return self;
 }
@@ -670,24 +678,25 @@
         y += PROFILE_HEADERVIEW_URL_HEIGHT;
     }
     
+    _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
+    y += kGeomProfileTextviewHeight;
+    
     if (_userInfo.hasSpecialties ) {
+        _viewSpecialties.frame= CGRectMake(0,y,w, PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT);
         [_labelSpecialtyHeader sizeToFit];
         [_labelSpecialties sizeToFit];
         float requiredHeaderHeight=_labelSpecialtyHeader.frame.size.height;
         float requiredSpecialtiesHeight=_labelSpecialtyHeader.frame.size.height;
-        float requiredHeight=requiredHeaderHeight+requiredSpecialtiesHeight ;
-        float yHeader= y + (PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT - requiredHeight)/2;
+        float yHeader= 0;
         _labelSpecialtyHeader.frame= CGRectMake(0,yHeader,w, requiredHeaderHeight);
         yHeader +=requiredHeaderHeight;
         _labelSpecialties.frame= CGRectMake(0,yHeader,w, requiredSpecialtiesHeight);
         y += PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT;
+        
     } else {
         _labelSpecialtyHeader.frame= CGRectMake(0,y,w, 0);
         _labelSpecialties.frame= CGRectMake(0,y,w, 0);
     }
-    
-    _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
-    y += kGeomProfileTextviewHeight;
     
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     [self bringSubviewToFront:_filterView];
