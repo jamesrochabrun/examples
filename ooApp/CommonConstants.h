@@ -26,6 +26,10 @@ extern NSString *const kAPIKeyGoogleMaps;
 extern NSString *const kUserDefaultsUsingStagingServer;
 extern NSString *const kNotificationMenuWillOpen;
 
+extern NSString *const kSearchPlaceholderPeople;
+extern NSString *const kSearchPlaceholderYou;
+extern NSString *const kSearchPlaceholderPlaces;
+
 static NSUInteger kFoodFeedPageSize = 100;
 
 static NSUInteger kMaximumRestaurantsPerEvent = 5;

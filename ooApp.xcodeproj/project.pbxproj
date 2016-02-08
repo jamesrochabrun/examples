@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		360CB9B91C6541D10017E21F /* ChangeLocationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 360CB9B81C6541D10017E21F /* ChangeLocationVC.m */; };
 		361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = 361329781C17BE34009413D6 /* NSData+Conversion.m */; };
 		361329801C196215009413D6 /* Oomami_AppStoreLogo(76x76).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */; };
 		361329811C196215009413D6 /* Oomami_AppStoreLogo(120x120).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297B1C196215009413D6 /* Oomami_AppStoreLogo(120x120).png */; };
@@ -263,6 +264,8 @@
 
 /* Begin PBXFileReference section */
 		2BB75701B92FE168B3785FD8 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		360CB9B71C6541D10017E21F /* ChangeLocationVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeLocationVC.h; sourceTree = "<group>"; };
+		360CB9B81C6541D10017E21F /* ChangeLocationVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangeLocationVC.m; sourceTree = "<group>"; };
 		361329771C17BE34009413D6 /* NSData+Conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Conversion.h"; sourceTree = "<group>"; };
 		361329781C17BE34009413D6 /* NSData+Conversion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Conversion.m"; sourceTree = "<group>"; };
 		3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(76x76).png"; path = "Graphic Assets/Oomami_AppStoreLogo(76x76).png"; sourceTree = "<group>"; };
@@ -860,6 +863,8 @@
 				365FB7851C59198000826629 /* ShowMediaItemAnimator.m */,
 				9643BD311C56B38F00059002 /* SocialMedia.h */,
 				9643BD321C56B38F00059002 /* SocialMedia.m */,
+				360CB9B71C6541D10017E21F /* ChangeLocationVC.h */,
+				360CB9B81C6541D10017E21F /* ChangeLocationVC.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -1533,6 +1538,7 @@
 				36F872D91B919BC200006C29 /* ListObject.m in Sources */,
 				36C572DA1C01309900C57DA2 /* TagObject.m in Sources */,
 				367704081B88103900B594E5 /* UIImage+Additions.m in Sources */,
+				360CB9B91C6541D10017E21F /* ChangeLocationVC.m in Sources */,
 				3637E93B1BB439290074A01C /* RestaurantTVCell.m in Sources */,
 				96F7C1351C4704BB0002C01E /* OOTextEntryModalVC.m in Sources */,
 				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,

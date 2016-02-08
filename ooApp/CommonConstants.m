@@ -11,5 +11,9 @@
 
 NSString *const kAPIKeyGoogleMaps = @"AIzaSyDXafe9HUhTGZ_aWBfSo340uLYlJOpA95Q";
 
-NSString *const kUserDefaultsUsingStagingServer=  @"usingStaging";
-NSString *const kNotificationMenuWillOpen=  @"notificationMenuWillOpen";
+NSString *const kUserDefaultsUsingStagingServer = @"usingStaging";
+NSString *const kNotificationMenuWillOpen = @"notificationMenuWillOpen";
+
+NSString *const kSearchPlaceholderPeople = @"Find friends and foodies";
+NSString *const kSearchPlaceholderYou = @"Find places on your lists";
+NSString *const kSearchPlaceholderPlaces = @"Find restaurants, bars, etc";

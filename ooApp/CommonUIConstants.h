@@ -106,6 +106,14 @@ static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;
 static CGFloat kGeomProfileTextviewHeight= 36;
 static CGFloat kGeomProfileStatsItemHeight= 30;
+//<<<<<<< HEAD
+//#define PROFILE_HEADERVIEW_BASE_HEIGHT 213
+//#define PROFILE_HEADERVIEW_FOLLOW_HEIGHT 35
+//#define PROFILE_HEADERVIEW_URL_HEIGHT 29
+//static CGFloat kGeomProfileHeaderViewHeightSelf = PROFILE_HEADERVIEW_BASE_HEIGHT;
+//static CGFloat kGeomProfileHeaderViewHeightNormal = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
+//static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = 25;
+//=======
 #define PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT 24
 static CGFloat kGeomFollowButtonHeight= PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT; // Connect screen, profile screen
 #define PROFILE_HEADERVIEW_FOLLOW_HEIGHT (PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT+11) // includes spacer
@@ -116,6 +124,7 @@ static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = PROFILE_HEADERVIEW_
 #define PROFILE_HEADERVIEW_URL_HEIGHT (PROFILE_HEADERVIEW_URL_BUTTON_HEIGHT+4)
 static CGFloat kGeomProfileHeaderViewHeightSelf = PROFILE_HEADERVIEW_BASE_HEIGHT;
 static CGFloat kGeomProfileHeaderViewHeightNormal = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
+//>>>>>>> OOAP-417
 static CGFloat kGeomProfileHeaderViewHeightBlogger = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT+PROFILE_HEADERVIEW_URL_HEIGHT;
 static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
 static CGFloat kGeomProfileStatsOverallWidth= 171;
@@ -209,8 +218,8 @@ extern NSString *const kFontIconFavorite;
 extern NSString *const kFontIconFavoriteFilled;
 extern NSString *const kFontIconPhoto;
 extern NSString *const kFontIconUpload;
-extern NSString *const kFontIconUserTag;
-//extern NSString *const kFontIconLocation;
+extern NSString *const kFontIconLocation;
+extern NSString *const kFontIconLocationFilled;
 extern NSString *const kFontIconToTry;
 extern NSString *const kFontIconToTryFilled;
 extern NSString *const kFontIconList;

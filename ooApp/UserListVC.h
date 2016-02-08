@@ -25,7 +25,7 @@
 
 @protocol UserListTableCellDelegate
 - (void) userTappedImageOfUser:(UserObject*)user;
-- (void) userTappedFollowButtonForUser:(UserObject*)user;
+- (void) userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following;
 @end
 
 @interface UserListVC : BaseVC <UserListTableSectionHeaderDelegate,UserListTableCellDelegate>

@@ -24,9 +24,8 @@
 #import "ListObject.h"
 #import "TagObject.h"
 #import "AppDelegate.h"
-#import "OOTextEntryModalVC.h"
 
-@interface ExploreVC () <GMSMapViewDelegate, OOTextEntryModalVCDelegate>
+@interface ExploreVC () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
@@ -37,7 +36,6 @@
 @property (nonatomic, strong) GMSCameraPosition *camera;
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) OOFilterView *filterView;
-//@property (nonatomic, assign) BOOL openOnly;
 @property (nonatomic, assign) BOOL nearby;
 @property (nonatomic, strong) ListObject *listToDisplay;
 @property (nonatomic, strong) NavTitleObject *nto;
@@ -63,7 +61,6 @@ static NSString * const ListRowID = @"HLRCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-//    _openOnly = YES;
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
     _mapView.translatesAutoresizingMaskIntoConstraints = NO;
     _mapView.mapType = kGMSTypeNormal;
@@ -88,14 +85,10 @@ static NSString * const ListRowID = @"HLRCell";
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
     _changeLocationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    _changeLocationButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [_changeLocationButton withIcon:kFontIconSearch fontSize:kGeomIconSize width:10 height:10 backgroundColor:kColorClear target:self selector:@selector(userPressedChangeLocation:)];
-    [_changeLocationButton setTitleColor: BLACK forState:UIControlStateNormal];
+    [_changeLocationButton roundButtonWithIcon:kFontIconLocation fontSize:kGeomIconSize width:30 height:30 backgroundColor:kColorClear target:self selector:@selector(userPressedChangeLocation:)];
+    [_changeLocationButton setTitleColor:UIColorRGBA(kColorBlack) forState:UIControlStateNormal];
+    _changeLocationButton.layer.borderColor = UIColorRGBA(kColorGrayMiddle).CGColor;
     [self.mapView addSubview: _changeLocationButton];
-    addBorder(_changeLocationButton, 1,  UIColorRGB(kColorGrayMiddle));
-    _changeLocationButton.layer.cornerRadius=kGeomIconSize/2;
-    _changeLocationButton.frame = CGRectMake(kGeomSpaceEdge,kGeomSpaceEdge,
-                                             kGeomIconSize,kGeomIconSize);
     
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:13 bearing:0 viewingAngle:1];
     
@@ -134,12 +127,13 @@ static NSString * const ListRowID = @"HLRCell";
 {
     UINavigationController *nc = [[UINavigationController alloc] init];
     
-    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
-    vc.title=  @"CHANGE LOCATION";
-    vc.subtitle=  @"Enter a ZIP Code or City, State";
+    
+    ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
+//    vc.title =  @"CHANGE LOCATION";
+//    vc.subtitle=  @"Enter a ZIP Code or City, State";
     vc.delegate = self;
-    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
-    vc.view.frame = CGRectMake(0, 0, 40, 44);
+//    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
+//    vc.view.frame = CGRectMake(0, 0, 40, 44);
     [nc addChildViewController:vc];
     
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
@@ -153,29 +147,44 @@ static NSString * const ListRowID = @"HLRCell";
 
 }
 
-- (void)textEntryFinished:(NSString *)text;
-{
-    if (!text.length) {
-        return;
-    }
-    
-    __weak  ExploreVC *weakSelf = self;
-    CLGeocoder* geocoder = [[CLGeocoder alloc] init];
-    [geocoder geocodeAddressString: text
-                 completionHandler:^(NSArray* placemarks, NSError* error) {
-                     NSLog  (@"TOTAL PLACE MARKS %lu", (unsigned long)placemarks.count);
-                     if  ( placemarks.count) {
-                         CLPlacemark* aPlacemark= [placemarks  firstObject];
-                         CLLocation *location= aPlacemark.location;
-                         weakSelf.currentLocation = location.coordinate;
-                         [weakSelf moveToCurrentLocation];
-
-                     } else {
-                         message( @"I can't find that location.");
-                     }
-                 }];
-    
+- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC {
+    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
+
+- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark {
+    _currentLocation = placemark.location.coordinate;
+    [self moveToCurrentLocation];
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
+}
+//
+//- (void)textEntryFinished:(NSString *)text;
+//{
+//    if (!text.length) {
+//        return;
+//    }
+//    
+//    __weak  ExploreVC *weakSelf = self;
+//    CLGeocoder* geocoder = [[CLGeocoder alloc] init];
+//    [geocoder geocodeAddressString: text
+//                 completionHandler:^(NSArray* placemarks, NSError* error) {
+//                     NSLog  (@"TOTAL PLACE MARKS %lu", (unsigned long)placemarks.count);
+//                     if  ( placemarks.count) {
+//                         CLPlacemark* aPlacemark= [placemarks  firstObject];
+//                         CLLocation *location= aPlacemark.location;
+//                         weakSelf.currentLocation = location.coordinate;
+//                         [weakSelf moveToCurrentLocation];
+//
+//                     } else {
+//                         message( @"I can't find that location.");
+//                     }
+//                 }];
+//    
+//}
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
     NSLog(@"The map became idle at %f,%f", position.target.latitude, position.target.longitude);
@@ -210,7 +219,6 @@ static NSString * const ListRowID = @"HLRCell";
     _maxPrice = maxPrice;
     _listToDisplay = nil;
     [_filterView setNeedsLayout];
-//    _openOnly = NO;
     _nearby = NO;
     [self getRestaurants];
     [self dismissViewControllerAnimated:YES completion:^{
@@ -224,17 +232,19 @@ static NSString * const ListRowID = @"HLRCell";
     self.dropDownList.delegate = self;
     OOAPI *api = [[OOAPI alloc] init];
     [api getListsOfUser:[Settings sharedInstance].userObject.userID withRestaurant:0 success:^(NSArray *lists) {
-
-        _defaultListObject = [[ListObject alloc] init];
-        _defaultListObject.listID = 0;
-        _defaultListObject.name = [self getFilteredListName];
-        NSMutableArray *theLists = [NSMutableArray arrayWithObject:_defaultListObject];
-        
-        [theLists addObjectsFromArray:lists];
-        weakSelf.dropDownList.options = theLists;
-        ON_MAIN_THREAD(^{
-            [self.navTitleView setDDLState:YES];
-        });
+        if ([lists count]) {
+            _defaultListObject = [[ListObject alloc] init];
+            _defaultListObject.listID = 0;
+            _defaultListObject.name = [self getFilteredListName];
+            NSMutableArray *theLists = [NSMutableArray arrayWithObject:_defaultListObject];
+            
+            [theLists addObjectsFromArray:lists];
+            weakSelf.dropDownList.options = theLists;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navTitleView setDDLState:YES];
+            });
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -254,7 +264,6 @@ static NSString * const ListRowID = @"HLRCell";
     
     [self displayDropDown:NO];
     [self getRestaurants];
-    
 }
 
 - (void)selectNearby {
@@ -527,7 +536,7 @@ static NSString * const ListRowID = @"HLRCell";
                                                andLocation:center // _desiredLocation
                                                  andFilter:@""
                                                   andRadius:distanceInMeters
-                                               andOpenOnly:NO//_openOnly
+                                               andOpenOnly:NO
                                                     andSort:(_nearby) ? kSearchSortTypeDistance : kSearchSortTypeBestMatch
                                                    minPrice:_minPrice
                                                    maxPrice:_maxPrice

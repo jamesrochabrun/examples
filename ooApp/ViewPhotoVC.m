@@ -14,6 +14,7 @@
 #import "Settings.h"
 #import "UserListVC.h"
 #import "AppDelegate.h"
+#import "ListsVC.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -21,6 +22,7 @@
 @property (nonatomic, strong) UIButton *numYums;
 @property (nonatomic, strong) UIButton *userButton;
 @property (nonatomic, strong) UIButton *closeButton;
+@property (nonatomic, strong) UIButton *optionsButton;
 @property (nonatomic, strong) OOUserView *userViewButton;
 @property (nonatomic, strong) UIButton *restaurantName;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
@@ -54,7 +56,11 @@
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
         [_closeButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-        
+
+        _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions)];
+        [_optionsButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
         [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
@@ -108,6 +114,77 @@
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
+}
+
+-(void)showOptions {
+    UIAlertController *photoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
+
+
+
+    UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete Photo"
+                                                          style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+                                                              __weak ViewPhotoVC *weakSelf = self;
+                                                              ON_MAIN_THREAD(^{
+                                                                  [weakSelf deletePhoto:_mio];
+                                                              });
+                                                              
+                                                          }];
+    UIAlertAction *addRestaurantToList = [UIAlertAction actionWithTitle:@"Add Restaurant to a List"
+                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                             [self addToList:_restaurant];
+                                                         }];
+    UIAlertAction *flagPhoto = [UIAlertAction actionWithTitle:@"Flag Photo"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [self flagPhoto:_mio];
+                                                        }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                       NSLog(@"Cancel");
+                                                   }];
+
+    UserObject *uo = [Settings sharedInstance].userObject;
+
+    [photoOptions addAction:addRestaurantToList];
+    if (_mio.sourceUserID == uo.userID) {
+        [photoOptions addAction:deletePhoto];
+    } else {
+        [photoOptions addAction:flagPhoto];
+    }
+    [photoOptions addAction:cancel];
+
+    [self presentViewController:photoOptions animated:YES completion:^{
+        ;
+    }];
+}
+
+- (void)deletePhoto:(MediaItemObject *)mio {
+    NSUInteger userID = [Settings sharedInstance].userObject.userID;
+    __weak ViewPhotoVC *weakSelf = self;
+    
+    if (mio.sourceUserID == userID) {
+        [OOAPI deletePhoto:mio success:^{
+            [weakSelf close];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    }
+}
+
+- (void)flagPhoto:(MediaItemObject *)mio {
+    [OOAPI flagMediaItem:mio.mediaItemId success:^(NSArray *names) {
+        NSLog(@"photo flagged: %lu", (unsigned long)mio.mediaItemId);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"could not flag the photo: %@", error);
+    }];
+}
+
+- (void)addToList:(RestaurantObject *)restaurant {
+    ListsVC *vc = [[ListsVC alloc] init];
+    vc.restaurantToAdd = restaurant;
+    [vc getLists];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)addCaption {
@@ -168,13 +245,16 @@
 
 - (void)showYummers:(NSArray *)users {
     UserListVC *vc = [[UserListVC alloc] init];
-    vc.desiredTitle = @"YUMS";
+    vc.desiredTitle = @"Yummers";
     vc.user= _user;
     vc.usersArray = [NSMutableArray arrayWithArray:users];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)close {
+    if ([_delegate respondsToSelector:@selector(viewPhotoVCClosed:)]) {
+        [_delegate viewPhotoVCClosed:self];
+    }
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -223,6 +303,7 @@
 }
 
 - (void)showComponents:(BOOL)show {
+    _optionsButton.hidden =
     _closeButton.hidden =
     _captionButton.hidden =
     _restaurantName.hidden =
@@ -287,7 +368,11 @@
     if (mio == _mio) return;
     _mio = mio;
     
-//    _caption.text = _mio.caption;
+    if (_mio.source == kMediaItemTypeOomami) {
+        [self.view addSubview:_optionsButton];
+    } else {
+        [_optionsButton removeFromSuperview];
+    }
     
     UserObject *user = [Settings sharedInstance].userObject;
     
@@ -395,15 +480,19 @@
     CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/(_iv.image.size.width) * width(self.view);
     
     frame = _restaurantName.frame;
-    frame.size.width = width(self.view)-2*kGeomSpaceEdge-2*kGeomDimensionsIconButton;
+    frame.size.width = width(self.view)-2*kGeomSpaceEdge;
     frame.origin.y = CGRectGetMidY(_iv.frame) - imageHeight/2 - kGeomDimensionsIconButton;
     frame.origin.x = (width(self.view) - width(_restaurantName))/2;
     frame.size.height = kGeomDimensionsIconButton;
     _restaurantName.frame = frame;
     
     frame = _closeButton.frame;
-    frame.origin = CGPointMake(CGRectGetWidth(self.view.frame) - CGRectGetWidth(_closeButton.frame), CGRectGetMinY(_restaurantName.frame));
+    frame.origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
     _closeButton.frame = frame;
+    
+    frame = _optionsButton.frame;
+    frame.origin = CGPointMake(width(self.view)-width(_optionsButton) - kGeomSpaceEdge, kGeomSpaceEdge);
+    _optionsButton.frame = frame;
 
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
 

@@ -11,7 +11,6 @@
 #import "UIImageView+AFNetworking.h"
 #import "UserObject.h"
 #import "AppDelegate.h"
-#import "OOAPI.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreImage/CoreImage.h>
 
@@ -855,6 +854,15 @@ void ANALYTICS_EVENT_UI (NSString* name)
     NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
     NSString *s = [NSString stringWithFormat:@"v%@b%@", majorVersion, minorVersion];
     return s;
+}
+
++ (NSString *)locationString:(CLPlacemark *)placemark {
+    NSMutableArray *locationElements = [NSMutableArray array];
+    if ([placemark.addressDictionary objectForKey:@"City"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"City"]];
+    if ([placemark.addressDictionary objectForKey:@"State"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"State"]];
+    if ([placemark.addressDictionary objectForKey:@"Country"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"Country"]];
+
+    return [locationElements componentsJoinedByString:@", "];
 }
 
 @end

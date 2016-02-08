@@ -140,9 +140,12 @@
         _labelPlacesNumber.alpha=0;
         
         _buttonFollow = makeButton(self, @"FOLLOW", kGeomFontSizeSubheader,
-                                   YELLOW, BLACK, self, @selector(userPressedFollow:), .5);
+                                   BLACK,YELLOW, self, @selector(userPressedFollow:), .5);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
+        [_buttonFollow setTitleColor: WHITE forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
+        _buttonFollow.layer.borderColor= YELLOW.CGColor;
+
     }
     return self;
 }
@@ -180,7 +183,9 @@
                         ON_MAIN_THREAD(^{
                             
                             weakSelf.buttonFollow.selected= NO;
-
+                            weakSelf.buttonFollow.backgroundColor= YELLOW;
+                            [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo
+                                                                   following: NO];
                             NOTIFY( kNotificationOwnProfileNeedsUpdate);
 
                             NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
@@ -207,9 +212,12 @@
                     success:^(id responseObject) {
                         ON_MAIN_THREAD(^{
                             weakSelf.buttonFollow.selected= YES;
+                            weakSelf.buttonFollow.backgroundColor= BLACK;
+
                             NSLog (@"SUCCESSFULLY FOLLOWED USER");
                             NOTIFY( kNotificationOwnProfileNeedsUpdate);
-                            [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo];
+                            [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo
+                             following: YES];
                         });
                     }
                     failure:^(AFHTTPRequestOperation *operation, NSError *e) {
@@ -221,7 +229,9 @@
 {
     _buttonFollow.hidden = NO;
     _buttonFollow.selected = following;
-    [self bringSubviewToFront: _buttonFollow];
+    _buttonFollow.backgroundColor = following ? BLACK:YELLOW;
+    _buttonFollow.layer.borderWidth = following ? 1:0;
+    [self bringSubviewToFront:_buttonFollow];
 }
 
 - (void)commenceFetchingStats
@@ -285,6 +295,8 @@
     [_labelFollowersNumber setText:@""];
     [_labelFollowingNumber setText:@""];
     
+    _buttonFollow.backgroundColor= YELLOW;
+    _buttonFollow.selected= NO;
     _buttonFollow.hidden= YES;
 }
 
@@ -632,9 +644,13 @@
     
 }
 
-- (void)userTappedFollowButtonForUser:(UserObject*)user
+- (void)userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following
 {
-    //    [self reload];
+    if (following ) {
+        [_followeesArray addObject: user];
+    } else {
+        [_followeesArray removeObject: user];
+    }
 }
 
 - (void) userTappedImageOfUser:(UserObject*)user;

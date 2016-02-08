@@ -12,9 +12,9 @@
 #import "ListObject.h"
 #import "EventObject.h"
 #import "OptionsVC.h"
-#import "OOTextEntryVC.h"
+#import "ChangeLocationVC.h"
 
-@interface ExploreVC : BaseVC <UITableViewDataSource, UITableViewDelegate, OptionsVCDelegate, OOTextEntryVCDelegate>
+@interface ExploreVC : BaseVC <UITableViewDataSource, UITableViewDelegate, OptionsVCDelegate, ChangeLocationVCDelegate>
 
 @property (nonatomic, strong) ListObject *listToAddTo;
 @property (nonatomic, strong) EventObject *eventBeingEdited;
