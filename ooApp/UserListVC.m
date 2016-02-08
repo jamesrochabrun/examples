@@ -512,15 +512,14 @@
     _tableUsers.frame = self.view.bounds; // Replaces 4 constraints.
 }
 
-- (BOOL) user: (UserObject*)user isFollowingUser: (NSUInteger) identifier
+- (BOOL)user:(UserObject *)user isFollowingUser:(NSUInteger)userID
 {
     if (!_followeesArray) {
         return NO;
     }
     @synchronized(self.followeesArray) {
-        
-        for (UserObject* user  in  _followeesArray) {
-            if ( user.userID == identifier) {
+        for (UserObject *user in _followeesArray) {
+            if (user.userID == userID) {
                 return YES;
             }
         }
@@ -532,9 +531,9 @@
 {
     // NOTE: Need to make the call to find out who we are following before anything else is displayed.
     
-    __weak  UserListVC *weakSelf = self;
+    __weak UserListVC *weakSelf = self;
     
-    UserObject* currentUser= [Settings sharedInstance].userObject;
+    UserObject *currentUser = [Settings sharedInstance].userObject;
     
     [OOAPI getFollowingOf:currentUser.userID success:^(NSArray *users) {
         @synchronized(weakSelf.followeesArray)  {
@@ -544,18 +543,18 @@
         }
         ON_MAIN_THREAD(^{ [weakSelf.tableUsers  reloadData]; });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
+        NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
     }];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row=indexPath.row;
-    UserObject*u=nil;
+    NSInteger row = indexPath.row;
+    UserObject *u = nil;
     
     @synchronized(self.usersArray)  {
-        if ( row<_usersArray.count) {
-            u=_usersArray[row];
+        if (row < _usersArray.count) {
+            u = _usersArray[row];
         }
     }
     
@@ -579,9 +578,13 @@
     cell.vc=self;
     [cell provideUser:u];
     
-    if (_followeesArray ) {
+    if (_followeesArray) {
         @synchronized(self.followeesArray) {
-            [cell showFollowButton: [self user: self.user isFollowingUser: u.userID] ];
+            if ([Settings sharedInstance].userObject.userID == u.userID) {
+                cell.buttonFollow.hidden = YES;
+            } else {
+                [cell showFollowButton:[self user:self.user isFollowingUser:u.userID]];
+            }
         }
     }
     
