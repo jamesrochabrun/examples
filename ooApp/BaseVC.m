@@ -67,8 +67,9 @@
 //        [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
         _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
         self.navigationItem.leftBarButtonItem = _leftNavButton;
-        
+#ifdef DEBUG
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+#endif
     } else {
         _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
         _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
@@ -77,7 +78,7 @@
         _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
         [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
         _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
-        self.navigationItem.leftBarButtonItem = _leftNavButton;        
+        self.navigationItem.leftBarButtonItem = _leftNavButton;
     }
     
     _navTitleView = [[NavTitleView alloc] init];
