@@ -8,10 +8,13 @@
 
 #import "AddCaptionToMIOVC.h"
 #import "OOAPI.h"
+#import "DebugUtilities.h"
 
 @interface AddCaptionToMIOVC ()
+@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIButton *isFoodButton;
 @property (nonatomic, strong) UILabel *isFoodLabel;
+@property (nonatomic, strong) UIImageView *iv;
 @end
 
 @implementation AddCaptionToMIOVC
@@ -38,9 +41,20 @@
     _isFoodLabel.text = @"photo of food or drink";
     [_isFoodLabel sizeToFit];
     
+    _iv = [[UIImageView alloc] init];
+    _iv.contentMode = UIViewContentModeScaleAspectFit;
+    _iv.clipsToBounds = YES;
+    _iv.backgroundColor = UIColorRGBA(kColorClear);
+    
+    [self.view addSubview:_iv];
     [self.view addSubview:_isFoodLabel];
     [self.view addSubview:_isFoodButton];
-    _isFoodLabel.translatesAutoresizingMaskIntoConstraints = _isFoodButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _iv.translatesAutoresizingMaskIntoConstraints =
+    _isFoodLabel.translatesAutoresizingMaskIntoConstraints =
+    _isFoodButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
+//    [DebugUtilities addBorderToViews:@[_iv, self.textView]];
 }
 
 - (void)toggleIsFoodItem {
@@ -68,13 +82,34 @@
     
     UIView *superview = self.view;
     UIView *textEntryBox = self.textView;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _isFoodButton, _isFoodLabel, textEntryBox);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _isFoodButton, _isFoodLabel, _iv, textEntryBox);
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[textEntryBox]-spaceEdge-[_isFoodButton(buttonDimensions)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_isFoodButton(buttonDimensions)]-[_isFoodLabel]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodLabel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_isFoodButton attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[textEntryBox]-spaceEdge-[_iv(60)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_iv]-spaceInter-[_isFoodLabel]-spaceInter-[_isFoodButton(buttonDimensions)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_iv
+                                                          attribute:NSLayoutAttributeWidth
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_iv
+                                                          attribute:NSLayoutAttributeHeight
+                                                         multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodButton
+                                                          attribute:NSLayoutAttributeWidth
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_isFoodButton
+                                                          attribute:NSLayoutAttributeHeight
+                                                         multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodLabel
+                                                          attribute:NSLayoutAttributeCenterY
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_iv
+                                                          attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodButton
+                                                          attribute:NSLayoutAttributeCenterY
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_iv
+                                                          attribute:NSLayoutAttributeCenterY
+                                                         multiplier:1 constant:0]];
 }
 
 - (void)post:(UIButton *)sender
@@ -95,6 +130,34 @@
 - (void)setMio:(MediaItemObject *)mio {
     if (_mio == mio) return;
     _mio = mio;
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    __weak UIImageView *weakIV = _iv;
+    __weak AddCaptionToMIOVC *weakSelf = self;
+    
+    _requestOperation = [api getRestaurantImageWithMediaItem:_mio maxWidth:width(_iv) maxHeight:0 success:^(NSString *link) {
+        [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                placeholderImage:nil
+                                         success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [weakIV setAlpha:0.0];
+                                                 weakIV.image = image;
+                                                 [UIView beginAnimations:nil context:NULL];
+                                                 [UIView setAnimationDuration:0.3];
+                                                 [weakIV setAlpha:1.0];
+                                                 [UIView commitAnimations];
+                                                 [weakSelf.view setNeedsUpdateConstraints];
+                                                 [weakSelf.view setNeedsLayout];
+                                             });
+                                         }
+                                         failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                             ;
+                                         }];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+
     self.defaultText = mio.caption;
     _isFoodButton.selected = _mio.isFood;
     [self.view setNeedsUpdateConstraints];

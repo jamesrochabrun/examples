@@ -219,6 +219,7 @@ extern NSString *const kFontIconFavoriteFilled;
 extern NSString *const kFontIconPhoto;
 extern NSString *const kFontIconUpload;
 extern NSString *const kFontIconLocation;
+extern NSString *const kFontIconLocationFilled;
 extern NSString *const kFontIconToTry;
 extern NSString *const kFontIconToTryFilled;
 extern NSString *const kFontIconList;
