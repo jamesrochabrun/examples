@@ -36,7 +36,10 @@
 }
 
 - (void)highLight:(BOOL)highlight {
-    _markerIcon.textColor = (highlight) ? UIColorRGBA(kColorMarker) : UIColorRGBA(kColorMarkerFaded) ;
+    _markerIcon.textColor = (highlight) ? UIColorRGBA(kColorMarker):UIColorRGBA(kColorMarkerFaded);
+    _markerIcon.font = [UIFont fontWithName:kFontIcons size:(highlight) ? kGeomIconSize:kGeomIconSize/2];
+    _indexLabel.hidden = (highlight) ? NO:YES;
+    
     self.icon = [UIImage imageFromView:_markerIcon];
     
 //    [GMSMarker markerImageWithColor:((highlight) ? UIColorRGBA(kColorNavyBlue) : UIColorRGBA(kColorRed))];
