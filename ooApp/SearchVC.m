@@ -37,7 +37,7 @@ typedef enum: char {
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
 
-static const NSUInteger maximumKeywords= 4;
+//static const NSUInteger maximumKeywords= 4;
 
 @interface SearchVC ()
 @property (nonatomic, strong) UISearchBar *searchBar;
@@ -49,13 +49,8 @@ static const NSUInteger maximumKeywords= 4;
 @property (nonatomic, assign) FilterType currentFilter;
 @property (nonatomic, strong) NSArray *restaurantsArray;
 @property (nonatomic, strong) NSArray *peopleArray;
-@property (nonatomic, strong) NSMutableArray *keywordButtonsArray;
 @property (nonatomic, strong) AFHTTPRequestOperation *fetchOperation;
-@property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @property (atomic, assign) BOOL doingSearchNow;
-@property (nonatomic, strong) NSArray *keywordsArray;
-@property (nonatomic, strong) UIView *viewForKeywordButtons;
-@property (nonatomic, assign) NSUInteger numberOfMatchingKeywords;
 @property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage1;
 @property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage2;
 @property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage3;
@@ -93,16 +88,6 @@ static const NSUInteger maximumKeywords= 4;
     
     self.navTitle = nto;
     
-    self.viewForKeywordButtons= makeView( self.view,  UIColorRGB(0xff404040));
-    self.keywordButtonsArray= [NSMutableArray new];
-    for (int i=0; i <maximumKeywords ; i++) {
-        UIButton *button= makeButton(self.viewForKeywordButtons,   @"", kGeomFontSizeSubheader, UIColorRGB(0xff808000), CLEAR, self, @selector(userPressedKeyword:) , 0);
-        button.tag=  i;
-        button.titleLabel.numberOfLines= 0;
-        button.titleLabel.textAlignment= NSTextAlignmentCenter;
-        [_keywordButtonsArray addObject: button];
-    }
-    
     _searchBar = [UISearchBar new];
     [ self.view addSubview:_searchBar];
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
@@ -139,10 +124,10 @@ static const NSUInteger maximumKeywords= 4;
     [_tablePeople registerClass:[UITableViewCell class]
          forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY];
     
-    self.activityView=[UIActivityIndicatorView new];
-    [self.view addSubview:_activityView];
-    _activityView.hidden =  YES;
-    [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+//    self.activityView=[UIActivityIndicatorView new];
+//    [self.view addSubview:_activityView];
+//    _activityView.hidden =  YES;
+//    [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     
     _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -158,8 +143,6 @@ static const NSUInteger maximumKeywords= 4;
     
     [self changeFilter:FILTER_PLACES];
 
-    [self setUpKeywordsArray];
-    
     [self setLeftNavWithIcon:@"" target:nil action:nil];
 }
 
@@ -241,20 +224,20 @@ static const NSUInteger maximumKeywords= 4;
 // Name:    showSpinner
 // Purpose: Mechanism to give me diagnostic feedback.
 //------------------------------------------------------------------------------
-- (void)showSpinner: (id)show
-{
-    float h =  self.view.bounds.size.height;
-    float w =  self.view.bounds.size.width;
-    CGRect r = CGRectMake(w/2-50,h/3,100,100);
-    _activityView.frame = r;
-    _activityView.hidden =  show ? NO:YES;
-    if (show) {
-        [_activityView startAnimating];
-    } else {
-        [_activityView stopAnimating];
-    }
-    [self.view bringSubviewToFront:_activityView];
-}
+//- (void)showSpinner: (id)show
+//{
+//    float h =  self.view.bounds.size.height;
+//    float w =  self.view.bounds.size.width;
+//    CGRect r = CGRectMake(w/2-50,h/3,100,100);
+//    _activityView.frame = r;
+//    _activityView.hidden =  show ? NO:YES;
+//    if (show) {
+//        [_activityView startAnimating];
+//    } else {
+//        [_activityView stopAnimating];
+//    }
+//    [self.view bringSubviewToFront:_activityView];
+//}
 
 //------------------------------------------------------------------------------
 // Name:    doSearchFor
@@ -275,7 +258,7 @@ static const NSUInteger maximumKeywords= 4;
             break;
             
         case FILTER_PEOPLE:  {
-            [self showSpinner: @""];
+//            [self showSpinner: @""];
             
             NSString *searchText=_searchBar.text;
             NSLog (@"SEARCHING FOR USER:  %@",searchText);
@@ -291,16 +274,16 @@ static const NSUInteger maximumKeywords= 4;
                                                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                         NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
                                                         
-                                                        [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
-                                                                                   withObject:nil
-                                                                                waitUntilDone:NO];
+//                                                        [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
+//                                                                                   withObject:nil
+//                                                                                waitUntilDone:NO];
                                                     }
                                   ];
         } break;
             
         case FILTER_YOU: {
             
-            [self showSpinner: @""];
+//            [self showSpinner: @""];
             _doingSearchNow=YES;
             
             self.haveSearchedYou=YES;
@@ -325,16 +308,16 @@ static const NSUInteger maximumKeywords= 4;
                                                                   } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                                       NSLog  (@"ERROR FETCHING YOU'S RESTAURANTS: %@",e );
 
-                                                                      [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
-                                                                                                 withObject:nil
-                                                                                              waitUntilDone:NO];
+//                                                                      [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
+//                                                                                                 withObject:nil
+//                                                                                              waitUntilDone:NO];
                                                                   }
                                   ];
         } break;
             
         case  FILTER_PLACES: {
             
-            [self showSpinner: @""];
+//            [self showSpinner: @""];
             _doingSearchNow=YES;
             
             self.haveSearchedPlaces=YES;
@@ -369,9 +352,9 @@ static const NSUInteger maximumKeywords= 4;
                                                              
                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                              NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
-                                                             [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
-                                                                                        withObject:nil
-                                                                                     waitUntilDone:NO];
+//                                                             [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
+//                                                                                        withObject:nil
+//                                                                                     waitUntilDone:NO];
                                                          }
                                   ];
         } break;
@@ -403,8 +386,7 @@ static const NSUInteger maximumKeywords= 4;
     self.currentFilter = which;
     
     [self showAppropriateTableAnimated:NO];
-//    [self showOrHideKeywordsBar];
-    
+
     // RULE: If the user was searching for "Fred" in the people category and
     //  then switched to the places category, then we should redo the search
     //  in the new category.
@@ -420,8 +402,6 @@ static const NSUInteger maximumKeywords= 4;
 //------------------------------------------------------------------------------
 - (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    [self hideKeywordsBar];
-    
     [_searchBar resignFirstResponder];
     [self doSearchFor: _searchBar.text];
 }
@@ -480,8 +460,6 @@ static const NSUInteger maximumKeywords= 4;
 {
     NSString* text = _searchBar.text;
     if (!text.length) {
-        [self hideKeywordsBar];
-        
         // Clear the appropriate table; no need to start a search.
         if (_currentFilter == FILTER_PEOPLE ) {
             [self loadPeople:@[]];
@@ -495,19 +473,10 @@ static const NSUInteger maximumKeywords= 4;
         [self cancelSearch];
     }
     
-    if ( _currentFilter==FILTER_PEOPLE  || _currentFilter==FILTER_YOU ) {
-        _numberOfMatchingKeywords= 0;
+    if ( _currentFilter == FILTER_PEOPLE  || _currentFilter == FILTER_YOU ) {
         [self doSearchFor: text];
-
     } else {
-        int noKeywords= _numberOfMatchingKeywords ?1:0;
-        [self doKeywordLookup: text];
-        int stillNoKeywords= _numberOfMatchingKeywords ?1:0;
-        if  (noKeywords ^ stillNoKeywords ) {
-            [self showKeywordsBar];
-        } else {
-            [self  doLayout];
-        }
+        [self  doLayout];
         
         // RULE: In order to minimize the number of Google search lookups, we only search when the user taps on Search.
         if ( text.length >= 3) {
@@ -515,99 +484,6 @@ static const NSUInteger maximumKeywords= 4;
         } else {
             [self clearResultsTables];
         }
-    }
-}
-
-- (void)setUpKeywordsArray
-{
-    if (_keywordsArray)
-        return;
-    
-    __weak SearchVC *weakSelf = self;
-    [OOAPI getAllTagsWithSuccess:^(NSArray *tags) {
-        NSMutableArray *results= [NSMutableArray new];
-        for (TagObject* tag   in  tags) {
-            NSString *tagString=tag.term;
-            if  (tagString ) {
-                [results  addObject: tagString];
-            }
-            weakSelf.keywordsArray= results;
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog  (@"FAILED TO OBTAIN TAGS.");
-    }];
-}
-
-#pragma mark - KEYWORDS
-
-- (void)doKeywordLookup:(NSString*)expression
-{
-//    NSMutableArray*array= [NSMutableArray new];
-//    int  counter= 0;
-//    expression= [ expression lowercaseString];
-//    _numberOfMatchingKeywords=0;
-//    
-//    for (NSString* string  in _keywordsArray) {
-//        NSString *lowerString= [ string lowercaseString];
-//        if ( [lowerString  containsString:expression]) {
-//            NSLog  (@"MATCHED STRINGS %@, %@", expression,lowerString);
-//            NSString *hashtagString=[NSString  stringWithFormat: @"#%@", string];
-//            [ array addObject: hashtagString];
-//            UIButton*b= _keywordButtonsArray[counter];
-//            [b setTitle:hashtagString forState:UIControlStateNormal];
-//            
-//            counter++;
-//            if  (counter ==maximumKeywords ) {
-//                break;
-//            }
-//        }
-//    }
-//    _numberOfMatchingKeywords=counter;
-//    NSLog  (@"KEYWORDS: %@",array);
-}
-
-- (void)userPressedKeyword:(UIButton*) button
-{
-    NSUInteger index=  button.tag;
-    NSLog  (@"USER PRESSED KEYWORD BUTTON %lu", (unsigned long)index);
-    if  (index >= _keywordButtonsArray.count ) {
-        return;
-    }
-    NSString*string=button.titleLabel.text;
-    if  ([string hasPrefix: @"#"] ) {
-        string= [ string stringByReplacingOccurrencesOfString:@"#" withString: @""];
-    }
-    [self doSearchFor:string];
-}
-
-- (void)showOrHideKeywordsBar
-{
-    switch (_currentFilter) {
-        case FILTER_PEOPLE:
-            [self hideKeywordsBar];
-            break;
-        case FILTER_YOU:
-            if (_numberOfMatchingKeywords )
-#if 0
-                [self showKeywordsBar];
-            else
-                [self hideKeywordsBar];
-#else
-            [self hideKeywordsBar];
-#endif
-            break;
-        case FILTER_PLACES:
-            [self doKeywordLookup:_searchBar.text];
-            if (_numberOfMatchingKeywords )
-                [self showKeywordsBar];
-            else
-                [self hideKeywordsBar];
-            
-            break;
-        case FILTER_NONE:
-            [self hideKeywordsBar];
-            break;
-            
     }
 }
 
@@ -697,24 +573,6 @@ static const NSUInteger maximumKeywords= 4;
     }
 }
 
-- (void)hideKeywordsBar
-{
-    NSUInteger previousValue= _numberOfMatchingKeywords;
-    _numberOfMatchingKeywords=0;
-    if (previousValue )
-        [UIView beginAnimations:nil context:NULL];
-    [self doLayout];
-    if (previousValue )
-        [UIView  commitAnimations];
-}
-
-- (void)showKeywordsBar
-{
-    [UIView beginAnimations:nil context:NULL];
-    [self doLayout];
-    [UIView  commitAnimations];
-}
-
 #pragma mark - TABLES
 
 - (void)clearResultsTables
@@ -732,7 +590,7 @@ static const NSUInteger maximumKeywords= 4;
 //------------------------------------------------------------------------------
 - (void)loadRestaurants: (NSArray*)array
 {
-    [self showSpinner:nil];
+//    [self showSpinner:nil];
     self.doingSearchNow = NO;
     self.fetchOperation = nil;
     
@@ -752,7 +610,7 @@ static const NSUInteger maximumKeywords= 4;
 //------------------------------------------------------------------------------
 - (void)loadPeople:(NSArray *)array
 {
-    [self showSpinner:nil];
+//    [self showSpinner:nil];
     self.doingSearchNow = NO;
     self.fetchOperation = nil;
     
@@ -771,12 +629,11 @@ static const NSUInteger maximumKeywords= 4;
 //------------------------------------------------------------------------------
 - (void)cancelSearch
 {
-    [self showSpinner:nil];
+//    [self showSpinner:nil];
     [self.fetchOperation cancel];
     self.fetchOperation = nil;
     self.doingSearchNow = NO;
     [self showAppropriateTableAnimated:NO];
-    [ self  hideKeywordsBar];
 }
 
 //------------------------------------------------------------------------------
@@ -798,28 +655,6 @@ static const NSUInteger maximumKeywords= 4;
 }
 
 //------------------------------------------------------------------------------
-// Name:    doSelectList
-// Purpose:
-//------------------------------------------------------------------------------
-//- (void)doSelectList:(id)sender
-//{
-//    if (_currentFilter == FILTER_LISTS ) {
-//        return;
-//    }
-//    _currentFilter = FILTER_LISTS;
-//    
-//    if (self.doingSearchNow) {
-//        [self cancelSearch];
-//    }
-//    
-//    // RULE: If there is a search string then redo the current search for the new context.
-//    if (_searchBar.text.length) {
-//        [self clearResultsTables];
-//        [self doSearchFor: _searchBar.text];
-//    }
-//}
-
-//------------------------------------------------------------------------------
 // Name:    userTappedOnPeopleFilter
 // Purpose:
 //------------------------------------------------------------------------------
@@ -839,8 +674,6 @@ static const NSUInteger maximumKeywords= 4;
     }
     
     [self showAppropriateTableAnimated:YES];
-//    [self showOrHideKeywordsBar];
-
 }
 
 //------------------------------------------------------------------------------
@@ -863,7 +696,6 @@ static const NSUInteger maximumKeywords= 4;
     }
     
     [self showAppropriateTableAnimated:YES];
-//   [self showOrHideKeywordsBar];
 }
 
 //------------------------------------------------------------------------------
@@ -880,7 +712,6 @@ static const NSUInteger maximumKeywords= 4;
         return;
     }
     _currentFilter = FILTER_YOU;
-//    [self showOrHideKeywordsBar];
     
     if (self.doingSearchNow) {
         [self cancelSearch];
@@ -902,8 +733,8 @@ static const NSUInteger maximumKeywords= 4;
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float h = self.view.bounds.size.height;
-    float w = self.view.bounds.size.width;
+    float h = height(self.view);
+    float w = width(self.view);
     
     float y = 0;
     
@@ -916,21 +747,6 @@ static const NSUInteger maximumKeywords= 4;
     
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     y += kGeomHeightFilters;
-    
-    if ( _numberOfMatchingKeywords) {
-        _viewForKeywordButtons.frame= CGRectMake(0, y, w, kGeomHeightButton);
-      
-        float buttonWidth= w/_numberOfMatchingKeywords;
-        NSUInteger totalButtons= _keywordButtonsArray.count;
-        for (NSInteger i=0; i <totalButtons ; i++) {
-            UIButton *b= _keywordButtonsArray[i];
-            float x=  floorf(i*buttonWidth);
-            b.frame = CGRectMake(x,0,buttonWidth,kGeomHeightButton);
-        }
-        y += kGeomHeightButton;
-    } else {
-        _viewForKeywordButtons.frame= CGRectMake(0, y, w, 1);
-    }
     
     float psih= 100;
     _labelPreSearchInstructiveMessage1.frame = CGRectMake((w-200)/2,y+(h-y-psih)/3,200,psih);
@@ -952,19 +768,22 @@ static const NSUInteger maximumKeywords= 4;
             UITableViewCell *cell;
             cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
             cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-            cell.textLabel.textAlignment=NSTextAlignmentCenter;
+            cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             
-            if ( _doingSearchNow) {
-                cell.textLabel.text=  @"Searching...";
+            if (_doingSearchNow) {
+                cell.textLabel.text =  @"Searching...";
             } else {
-                if (_searchBar.text.length ) {
-                    cell.textLabel.text=  @"No restaurants found for that search term.";
+                if (_searchBar.text.length > 2) {
+                    cell.textLabel.text = @"No restaurants found for that search term.";
+                } else if (_searchBar.text.length > 0) {
+                    cell.textLabel.text = @"Type in at least three characters";
                 } else {
-                    cell.textLabel.text= nil;
+                    cell.textLabel.text = @"";
                 }
             }
-            cell.textLabel.textColor=  WHITE;
-            cell.textLabel.font= [ UIFont  fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
+            cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+            cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
             return cell;
         }
         
@@ -995,7 +814,7 @@ static const NSUInteger maximumKeywords= 4;
                 }
             }
             cell.textLabel.textColor=  WHITE;
-            cell.textLabel.font= [ UIFont  fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
+            cell.textLabel.font= [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
             return cell;
         }
         UserTVCell *cell;

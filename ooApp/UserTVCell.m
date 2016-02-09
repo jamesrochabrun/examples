@@ -32,7 +32,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.backgroundColor = UIColorRGBA(kColorBlack);
+        self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         _userView = [[OOUserView alloc] init];
         [self addSubview:_userView];
