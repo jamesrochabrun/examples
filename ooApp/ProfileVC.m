@@ -434,7 +434,7 @@
                           }
                           UserListVC *vc = [[UserListVC alloc] init];
                           vc.user= _userInfo;
-                          vc.desiredTitle = @"FOLLOWEES";
+                          vc.desiredTitle = @"Following";
                           vc.usersArray = users.mutableCopy;
                           [weakSelf.vc.navigationController pushViewController: vc animated:YES];
                           NSLog(@"SUCCESS IN FETCHING %lu FOLLOWEES", (unsigned long)users.count);

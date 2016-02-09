@@ -274,18 +274,22 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [cell.detailTextLabel setTextColor:UIColorRGBA(kColorWhite)];
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2]];
-    [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]];
+    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];
+    [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
 
     if (_currentSearchBar == _searchBar) {
         RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
         // Configure the cell...
         cell.textLabel.text = r.name;
+        cell.textLabel.numberOfLines = 1;
         cell.detailTextLabel.text = r.address;
     } else if (_currentSearchBar == _locationSearchBar) {
         CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
-        cell.textLabel.text = [placemark.addressDictionary objectForKey:@"City"];
+        cell.textLabel.numberOfLines = 2;
+        cell.textLabel.text = [Common locationString:placemark];
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
     return cell;
 }
 

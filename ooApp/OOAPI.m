@@ -1221,6 +1221,49 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 //------------------------------------------------------------------------------
+// Name:    addRestaurantsFromList:toList
+// Purpose: Add restaurants to a user's favorites list
+//------------------------------------------------------------------------------
+- (AFHTTPRequestOperation *)addRestaurantsFromList:(NSUInteger)fromListID toList:(NSUInteger)toListID
+                                   success:(void (^)(id response))success
+                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+//    NSMutableArray *restaurantIDs;
+    if (!fromListID || !toListID) {
+        failure(nil,nil);
+        return nil;
+    }
+//    else {
+//        restaurantIDs = [NSMutableArray array];
+//        [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//            RestaurantObject *ro = (RestaurantObject *)obj;
+//            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu", (unsigned long)ro.restaurantID]];
+//        }];
+//    }
+    UserObject *userInfo= [Settings sharedInstance].userObject;
+    NSUInteger userID= userInfo.userID;
+    if (!userID) {
+        failure(nil,nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)fromListID];
+    
+//    NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
+    NSDictionary *parameters = @{
+                                 kKeyListID: [NSString stringWithFormat:@"[%lu]", (unsigned long)fromListID]
+                                 };
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    return op;
+}
+
+
+//------------------------------------------------------------------------------
 // Name:    addRestaurants:toList
 // Purpose: Add restaurants to a user's favorites list
 //------------------------------------------------------------------------------

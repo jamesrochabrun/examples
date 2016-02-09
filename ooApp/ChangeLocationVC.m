@@ -151,9 +151,9 @@ static NSString * const cellIdentifier = @"locationCell";
     [cell.detailTextLabel setTextColor:UIColorRGBA(kColorWhite)];
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2]];
-    [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]];
-
+    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];
+    [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
+    cell.textLabel.numberOfLines = 2;
     CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
     cell.textLabel.text = [Common locationString:placemark];
     return cell;

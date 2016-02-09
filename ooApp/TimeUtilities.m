@@ -9,6 +9,7 @@
 #import "TimeUtilities.h"
 
 NSString *const kMealCategoryBreakfast = @"breakfast";
+NSString *const kMealCategoryBrunch = @"brunch";
 NSString *const kMealCategoryLunch = @"lunch";
 NSString *const kMealCategoryDinner = @"dinner";
 NSString *const kMealCategoryBar = @"(bar)OR(restaurant)";
@@ -41,7 +42,7 @@ NSString *const kMealCategoryBar = @"(bar)OR(restaurant)";
     } else if (([breakfastStart compare:date] == NSOrderedAscending ||
                [breakfastStart compare:date] == NSOrderedSame) &&
                [lunchStart compare:date] == NSOrderedDescending) {
-        category = @[kMealCategoryBreakfast];
+        category = @[kMealCategoryBreakfast, kMealCategoryBrunch];
     } else if (([lunchStart compare:date] == NSOrderedAscending ||
                 [lunchStart compare:date] == NSOrderedSame) &&
                [dinnerStart compare:date] == NSOrderedDescending) {

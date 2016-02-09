@@ -107,7 +107,7 @@
         [self.view sendSubviewToBack:_backgroundView];
 
 //        [DebugUtilities addBorderToViews:@[self.view]];
-//        [DebugUtilities addBorderToViews:@[_restaurantName, _numYums, _yumButton, _captionButton, _userButton, _iv, _userViewButton]];
+//        [DebugUtilities addBorderToViews:@[_restaurantName, _iv]];
     }
     return self;
 }
@@ -362,6 +362,7 @@
         [_restaurantName setTitle:@"NO RESTAURANT" forState:UIControlStateNormal];
     }
     [self.view setNeedsLayout];
+    [self.view layoutIfNeeded];
 }
 
 - (void)setMio:(MediaItemObject *)mio {
@@ -401,7 +402,7 @@
                                                     maxWidth:self.view.frame.size.width
                                                    maxHeight:0 success:^(NSString *link) {
         
-        [_iv setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+        [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                 placeholderImage:nil
                                          success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                                              dispatch_async(dispatch_get_main_queue(), ^{
@@ -412,6 +413,7 @@
                                                  [weakIV setAlpha:1.0];
                                                  [UIView commitAnimations];
                                                  [weakSelf.view setNeedsLayout];
+                                                 [weakSelf.view layoutIfNeeded];
                                                  NSLog(@"iv got image viewFrame %@", NSStringFromCGRect(weakSelf.view.frame));
                                              });
                                          }
@@ -481,7 +483,7 @@
     
     frame = _restaurantName.frame;
     frame.size.width = width(self.view)-2*kGeomSpaceEdge;
-    frame.origin.y = CGRectGetMidY(_iv.frame) - imageHeight/2 - kGeomDimensionsIconButton;
+    frame.origin.y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
     frame.origin.x = (width(self.view) - width(_restaurantName))/2;
     frame.size.height = kGeomDimensionsIconButton;
     _restaurantName.frame = frame;

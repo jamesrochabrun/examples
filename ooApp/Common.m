@@ -858,8 +858,11 @@ void ANALYTICS_EVENT_UI (NSString* name)
 
 + (NSString *)locationString:(CLPlacemark *)placemark {
     NSMutableArray *locationElements = [NSMutableArray array];
+    if ([placemark.addressDictionary objectForKey:@"Street"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"Street"]];
+    if (![locationElements count] && [placemark.addressDictionary objectForKey:@"SubLocality"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"SubLocality"]];
     if ([placemark.addressDictionary objectForKey:@"City"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"City"]];
     if ([placemark.addressDictionary objectForKey:@"State"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"State"]];
+    if ([placemark.addressDictionary objectForKey:@"ZIP"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"ZIP"]];
     if ([placemark.addressDictionary objectForKey:@"Country"]) [locationElements addObject:[placemark.addressDictionary objectForKey:@"Country"]];
 
     return [locationElements componentsJoinedByString:@", "];
