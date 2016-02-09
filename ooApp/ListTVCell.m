@@ -24,6 +24,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.icon.text = kFontIconList;
+        [self.actionButton setTitle:@"" forState:UIControlStateNormal];
     }
     return self;
 }
@@ -139,7 +140,7 @@
 - (void)setOnList:(BOOL)onList {
     if (onList == _onList) return;
     _onList = onList;
-    [self.actionButton setTitle:((_onList) ? kFontIconRemove : kFontIconAdd) forState:UIControlStateNormal];
+    [self.actionButton setTitle:((_onList) ? kFontIconCheckmark : @"") forState:UIControlStateNormal];
 }
 
 - (void)setList:(ListObject *)list {

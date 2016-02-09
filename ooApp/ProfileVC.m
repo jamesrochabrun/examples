@@ -387,11 +387,13 @@
 {
     __weak ProfileHeaderView *weakSelf = self;
     
-    [OOAPI getFollowersOf: _userInfo.userID
-                  success: ^(NSArray *users) {
+    [OOAPI getFollowersOf:_userInfo.userID
+                  success:^(NSArray *users) {
                       ON_MAIN_THREAD(^{
                           if  (!users.count) {
-                              [APP.tabBar setSelectedIndex: kTabIndexConnect];
+                              if (_userInfo.userID == [Settings sharedInstance].userObject.userID) {
+                                  [APP.tabBar setSelectedIndex: kTabIndexConnect];
+                              }
                               NSLog  (@"NO FOLLOWERS");
                               return ;
                           }
@@ -427,7 +429,9 @@
                   success:^(NSArray *users) {
                       ON_MAIN_THREAD(^{
                           if  (!users.count) {
-                              [APP.tabBar setSelectedIndex: kTabIndexConnect];
+                              if (_userInfo.userID == [Settings sharedInstance].userObject.userID) {
+                                  [APP.tabBar setSelectedIndex:kTabIndexConnect];
+                              }
 
                               NSLog  (@"NO FOLLOWEES");
                               return ;
