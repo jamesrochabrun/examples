@@ -1730,7 +1730,7 @@
     }
     __weak  ProfileVC *weakSelf = self;
     
-    _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
+    _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:[NSString stringWithFormat:@"What would you like to do?\n%@", [Common versionString]] preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
