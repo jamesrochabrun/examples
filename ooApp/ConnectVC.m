@@ -177,7 +177,7 @@
                          to: !weakSelf.buttonFollow.selected
                     success:^(id responseObject) {
                         if (( weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected )) {
-                            weakSelf.buttonFollow.backgroundColor= BLACK;
+                            weakSelf.buttonFollow.backgroundColor = UIColorRGB(kColorBlack);
                             weakSelf.buttonFollow.layer.borderWidth= 0;
                         }
                         else {
@@ -441,7 +441,7 @@
     [_tableAccordion registerClass:[UITableViewCell class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY];
     [_tableAccordion setLayoutMargins:UIEdgeInsetsZero];
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    _tableAccordion.separatorColor= BLACK;
+    _tableAccordion.separatorColor = UIColorRGB(kColorBlack);
     _tableAccordion.showsVerticalScrollIndicator= NO;
     
     [self setLeftNavWithIcon:@"" target:nil action:nil];

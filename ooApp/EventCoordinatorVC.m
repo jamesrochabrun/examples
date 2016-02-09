@@ -44,7 +44,7 @@
     if (self) {
         self.autoresizesSubviews= NO;
         self.buttonAddRestaurant=makeRoundIconButton(self.contentView, kFontIconAdd,
-                                                     30, YELLOW, BLACK,
+                                                     30, UIColorRGB(kColorYellow), UIColorRGB(kColorBlack),
                                                      self, @selector(newRestaurant:),
                                                      0, kGeomHeightButton/2);
         

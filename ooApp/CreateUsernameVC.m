@@ -17,6 +17,7 @@
 @interface CreateUsernameVC ()
 @property (nonatomic, strong) UIImageView *imageViewIcon;
 @property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UILabel *welcomeMessageLabel;
 @property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, strong) UILabel *labelUsernameTaken;
 @property (nonatomic, strong) UITextField *fieldUsername;
@@ -92,8 +93,17 @@
 //            }
         }
     } else {
-
         self.imageViewIcon = makeImageView(_scrollView,  @"No-Profile_Image(circled).png");
+    }
+    
+    _welcomeMessageLabel = [UILabel new];
+    [_welcomeMessageLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeBig] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    [_scrollView addSubview:_welcomeMessageLabel];
+    
+    if (uo.firstName && [uo.firstName length]) {
+        _welcomeMessageLabel.text = [NSString stringWithFormat:@"Hi %@!\nWelcome to Oomami", uo.firstName];
+    } else {
+        _welcomeMessageLabel.text = [NSString stringWithFormat:@"Welcome to Oomami"];
     }
     
     self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
@@ -227,9 +237,9 @@
 // Name:    textFieldShouldReturn
 // Purpose: Control what characters users can enter.
 //------------------------------------------------------------------------------
-- (BOOL) textFieldShouldReturn:(UITextField *)textField
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    NSString* enteredUsername= textField.text;
+    NSString *enteredUsername = textField.text;
     if (!enteredUsername.length) {
         message( LOCAL(@"You did not enter a username."));
         return NO;
@@ -245,10 +255,10 @@
 //------------------------------------------------------------------------------
 - (void)checkWhetherUserNameIsInUse:(NSString*)enteredUsername
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSUInteger userid= userInfo.userID;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userid = userInfo.userID;
     
-    NSString *requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol,
                    [OOAPI URL], (unsigned long)userid];
     
     requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
@@ -258,23 +268,23 @@
                                            };
     
     __weak  CreateUsernameVC *weakSelf = self;
-    [[OONetworkManager sharedRequestManager] PUT: requestString
-                                      parameters: parametersDictionary
-                                         success:^void(id   result) {
-                                             NSLog  (@"PUT OF USERNAME SUCCEEDED.");
+    [[OONetworkManager sharedRequestManager] PUT:requestString
+                                      parameters:parametersDictionary
+                                         success:^void(id result) {
+                                             NSLog(@"PUT OF USERNAME SUCCEEDED.");
                                              
-                                             if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                                                 NSDictionary *subdictionary= ((NSDictionary*)result) [ @"user"];
-                                                 if  (subdictionary ) {
-                                                     NSString* usernameForConfirmation= subdictionary[ @"username"];
-                                                     if  (usernameForConfirmation && [usernameForConfirmation isEqualToString:enteredUsername] ) {
+                                             if ([result isKindOfClass:[NSDictionary class]]) {
+                                                 NSDictionary *subdictionary= ((NSDictionary *)result) [@"user"];
+                                                 if (subdictionary) {
+                                                     NSString* usernameForConfirmation= subdictionary[@"username"];
+                                                     if (usernameForConfirmation && [usernameForConfirmation isEqualToString:enteredUsername] ) {
                                                          NSLog (@"SAVE OF USERNAME TO BACKEND CONFIRMED.");
                                                          
                                                          [weakSelf performSelectorOnMainThread:@selector(indicateNotTaken) withObject:nil waitUntilDone:YES];
                                                          
-                                                         UserObject* userInfo= [Settings sharedInstance].userObject;
-                                                         userInfo.username= enteredUsername;
-                                                         [[Settings sharedInstance ]save ];
+                                                         UserObject *userInfo = [Settings sharedInstance].userObject;
+                                                         userInfo.username = enteredUsername;
+                                                         [[Settings sharedInstance] save];
                                                          
                                                          [weakSelf performSelectorOnMainThread:@selector(goToExplore) withObject:nil waitUntilDone:NO];
                                                          return;
@@ -290,8 +300,8 @@
                                          }
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                              NSInteger statusCode= operation.response.statusCode;
-                                             NSLog (@"PUT OF USERNAME FAILED %@ w/%ld",error,(long)statusCode);
-                                             if (statusCode==403)
+                                             NSLog (@"PUT OF USERNAME FAILED %@ w/%ld", error, (long)statusCode);
+                                             if (statusCode == 403)
                                                  [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
                                              
 
@@ -331,7 +341,7 @@
     [_fieldUsername resignFirstResponder];
     
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    [APP.diagnosticLogString appendFormat: @"Username set to %@" ,userInfo.username];
+    [APP.diagnosticLogString appendFormat:@"Username set to %@", userInfo.username];
 
     @try {
         [self performSegueWithIdentifier:@"gotoExploreFromCreateUsername" sender:self];
@@ -388,6 +398,7 @@
 {
     CGFloat h = height(self.view);
     CGFloat w = width(self.view);
+    CGRect frame;
     
     _scrollView.frame = self.view.bounds;
     _scrollView.scrollEnabled = YES;
@@ -407,11 +418,18 @@
     if (!IS_IPHONE4)
         totalHeightNeeded +=kGeomHeightButton;
     
-    CGFloat y= (h-totalHeightNeeded)/2;
+    CGFloat y = h/5;// (h-totalHeightNeeded)/2;
 
     _imageViewIcon.frame = CGRectMake((w-imageSize)/2,y,imageSize,imageSize);
     y += imageSize+ spacer;
     _imageViewIcon.layer.cornerRadius = _imageViewIcon.frame.size.width/2;
+    
+    frame = _welcomeMessageLabel.frame;
+    frame.size = [_welcomeMessageLabel sizeThatFits:CGSizeMake(width(self.view), 200)];
+    frame.origin.x = (width(self.view)-width(_welcomeMessageLabel))/2;
+    frame.origin.y = (CGRectGetMinY(_imageViewIcon.frame) - height(_welcomeMessageLabel))/2;
+    _welcomeMessageLabel.frame = frame;
+
     
     _labelMessage.frame=CGRectMake(0, y, w, heightForText);
     y+= heightForText+ spacer;

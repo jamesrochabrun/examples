@@ -58,6 +58,7 @@ static CGFloat kColorEventOverlayAlpha = 0.3;
 
 // Geometry and metrics
 static CGFloat kGeomCornerRadius = 3.0;
+static NSUInteger kGeomFontSizeBig = 19;
 static NSUInteger kGeomFontSizeH1 = 17;
 static NSUInteger kGeomFontSizeH2 = 15;
 static NSUInteger kGeomFontSizeH3 = 13;
@@ -177,7 +178,7 @@ static CGFloat kNumDropDownListRows = 5;
 static CGFloat kGeomHeightFeedWithImageTableCellHeight= 180;
 static CGFloat kGeomHeightFeedWithoutImageTableCellHeight=  60;
 
-static CGFloat kGeomCreateUsernameCentralIconSize= 180;
+static CGFloat kGeomCreateUsernameCentralIconSize= 150;
 
 static CGFloat kGeomConnectScreenHeaderHeight= 33;
 static CGFloat kGeomConnectScreenUserImageHeight= 82;

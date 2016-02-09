@@ -63,12 +63,12 @@
     }
     
     self.buttonLists= makeButton( self.view, LOCAL(@"LISTS") , kGeomFontSizeSubheader,
-                                 YELLOW, BLACK, self,
+                                 YELLOW, UIColorRGB(kColorBlack), self,
                                  @selector(userPressedListsButton:),
                                  borderWidth);
     
     self.buttonExplore = makeButton( self.view, LOCAL(@"EXPLORE") , kGeomFontSizeSubheader,
-                                    YELLOW, BLACK, self,
+                                    YELLOW, UIColorRGB(kColorBlack), self,
                                     @selector(userPressedExploreButton:),
                                     borderWidth);
     if ( borderWidth>0) {

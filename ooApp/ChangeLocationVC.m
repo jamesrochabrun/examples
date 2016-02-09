@@ -161,7 +161,7 @@ static NSString * const cellIdentifier = @"locationCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
-    _locationSearchBar.text = [placemark.addressDictionary objectForKey:@"City"];
+    _locationSearchBar.text = [Common locationString:placemark];
     _selectedLocation = placemark.location.coordinate;
     [_delegate changeLocationVC:self locationSelected:placemark];
 }

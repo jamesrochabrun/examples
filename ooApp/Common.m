@@ -486,7 +486,7 @@ void addShadowTo (UIView*v)
 {
     v.opaque= YES;
     v.layer.shadowOffset= CGSizeMake ( 2, 2);
-    v.layer.shadowColor= BLACK.CGColor;
+    v.layer.shadowColor= UIColorRGB(kColorBlack).CGColor;
     v.layer.shadowOpacity= .5;
     v.layer.shadowRadius= 4;
     v.clipsToBounds= NO;
