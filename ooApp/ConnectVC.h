@@ -36,10 +36,9 @@ enum : int {
 @end
 
 @interface ConnectTableCell : UITableViewCell <OOUserViewDelegate>
-- (void) provideUser: (UserObject*) user;
+- (void)provideUser:(UserObject *)user;
 - (void)commenceFetchingStats;
-- (void) showFollowButton: (BOOL)following;
-
+- (void)showFollowButton:(BOOL)following;
 @property (nonatomic,weak) id<ConnectTableCellDelegate>delegate;
 @end
 

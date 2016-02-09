@@ -35,9 +35,9 @@
 @end
 
 @interface UserListTableCell : UITableViewCell <OOUserViewDelegate>
-- (void) provideUser: (UserObject*) user;
+- (void)provideUser:(UserObject *)user;
 - (void)commenceFetchingStats;
-- (void) showFollowButton: (BOOL)following;
-@property (nonatomic,weak) UserListVC*vc;
+- (void)showFollowButton:(BOOL)following;
+@property (nonatomic,weak) UserListVC *vc;
 @property (nonatomic,weak) id<UserListTableCellDelegate>delegate;
 @end

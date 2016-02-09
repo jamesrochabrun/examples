@@ -624,9 +624,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row=indexPath.row;
-    NSInteger section=indexPath.section;
-    UserObject*u=nil;
+    NSInteger row = indexPath.row;
+    NSInteger section = indexPath.section;
+    UserObject *u = nil;
     
     switch (section) {
         case 0:
@@ -644,23 +644,7 @@
                 }
             }
             break;
-            
-//        case 2:
-//            @synchronized(self.followersArray)  {
-//                if ( row<_followersArray.count) {
-//                    u=_followersArray[row];
-//                }
-//            }
-//            break;
-//            
-//        case 3:
-//            @synchronized(self.followeesArray)  {
-//                if ( row<_followeesArray.count) {
-//                    u=_followeesArray[row];
-//                }
-//            }
-//            break;
-            
+
         default:
             break;
     }
@@ -674,11 +658,12 @@
         UITableViewCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        cell.textLabel.textAlignment=NSTextAlignmentCenter;
-        cell.textLabel.text= lamentString;
-        cell.textLabel.numberOfLines=0;
-        cell.textLabel.textColor=WHITE;
-        cell.selectionStyle= UITableViewCellSeparatorStyleNone;
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        cell.textLabel.text = lamentString;
+        cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3];
+        cell.textLabel.numberOfLines = 0;
+        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+        cell.selectionStyle = UITableViewCellSeparatorStyleNone;
         return cell;
     }
     

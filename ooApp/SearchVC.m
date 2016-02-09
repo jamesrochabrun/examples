@@ -28,7 +28,6 @@ typedef enum: char {
     FILTER_NONE = -1,
     FILTER_PLACES = 1,
     FILTER_PEOPLE = 0,
-//    FILTER_LISTS= 0,
     FILTER_YOU = 2,
 } FilterType;
 
@@ -36,8 +35,6 @@ typedef enum: char {
 #define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchRestaurantsCellEmpty"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
-
-//static const NSUInteger maximumKeywords= 4;
 
 @interface SearchVC ()
 @property (nonatomic, strong) UISearchBar *searchBar;
@@ -84,12 +81,12 @@ typedef enum: char {
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
            initWithHeader:LOCAL(@"Search")
-           subHeader: LOCAL(@"around here")];
+           subHeader:LOCAL(@"around here")];
     
     self.navTitle = nto;
     
     _searchBar = [UISearchBar new];
-    [ self.view addSubview:_searchBar];
+    [self.view addSubview:_searchBar];
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
     _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _searchBar.placeholder = LOCAL(@"Type your search here");
@@ -132,13 +129,13 @@ typedef enum: char {
     _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    self.labelPreSearchInstructiveMessage1 = makeLabel( self.view,  @"Find Your Foodies (Search for Users by Name)", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage1 = makeLabel( self.view, @"Find Your Foodies (Search for Users by Name)", kGeomFontSizeHeader);
     self.labelPreSearchInstructiveMessage1.textColor = UIColorRGB(0xff808080);
     
-    self.labelPreSearchInstructiveMessage2 = makeLabel( self.view,  @"Search for places on your lists", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage2 = makeLabel( self.view, @"Search for places on your lists", kGeomFontSizeHeader);
     self.labelPreSearchInstructiveMessage2.textColor = UIColorRGB(0xff808080);
     
-    self.labelPreSearchInstructiveMessage3 = makeLabel( self.view,  @"Search for places to eat\rPowered by Google™", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage3 = makeLabel( self.view, @"Search for places to eat\rPowered by Google™", kGeomFontSizeHeader);
     self.labelPreSearchInstructiveMessage3.textColor = UIColorRGB(0xff808080);
     
     [self changeFilter:FILTER_PLACES];
@@ -282,7 +279,6 @@ typedef enum: char {
         } break;
             
         case FILTER_YOU: {
-            
 //            [self showSpinner: @""];
             _doingSearchNow=YES;
             
@@ -316,7 +312,6 @@ typedef enum: char {
         } break;
             
         case  FILTER_PLACES: {
-            
 //            [self showSpinner: @""];
             _doingSearchNow=YES;
             
@@ -392,7 +387,7 @@ typedef enum: char {
     //  in the new category.
     //
     if (_searchBar.text.length) {
-        [self doSearchFor: _searchBar.text];
+        [self doSearchFor:_searchBar.text];
     }
 }
 
@@ -403,7 +398,7 @@ typedef enum: char {
 - (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
     [_searchBar resignFirstResponder];
-    [self doSearchFor: _searchBar.text];
+    [self doSearchFor:_searchBar.text];
 }
 
 #pragma mark - LOCATION CHANGE
@@ -419,7 +414,7 @@ typedef enum: char {
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
     [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
     [nc.navigationBar setTranslucent:YES];
-    nc.view.backgroundColor = [UIColor clearColor];
+    nc.view.backgroundColor = UIColorRGBA(kColorClear);
     
     [self.navigationController presentViewController:nc animated:YES completion:^{
         nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -507,7 +502,8 @@ typedef enum: char {
 
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
-            if  (!_haveSearchedPeople) {
+
+            if (![_peopleArray count]) {
                 if  (animated ) {
                     [UIView animateWithDuration:.2
                                      animations:^{
@@ -528,8 +524,9 @@ typedef enum: char {
             
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
-            if  (!_haveSearchedYou) {
-                if  (animated ) {
+            
+            if (![_restaurantsArray count]) {
+                if (animated) {
                     [UIView animateWithDuration:.2
                                      animations:^{
                                          [weakSelf enableMessageLabel:1];
@@ -549,7 +546,7 @@ typedef enum: char {
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden = NO;
             
-            if  (!_haveSearchedPlaces) {
+            if (![_restaurantsArray count]) {
                 if  (animated ) {
                     [UIView animateWithDuration:.2
                                      animations:^{
@@ -571,6 +568,7 @@ typedef enum: char {
             break;
 
     }
+    [self.view setNeedsDisplay];
 }
 
 #pragma mark - TABLES
@@ -642,13 +640,13 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)userPressedCancel:(id)sender
 {
-    [self cancelSearch];
-    
     _searchBar.text=@"";
     [_searchBar resignFirstResponder];
     
     self.restaurantsArray= nil;
     self.peopleArray= nil;
+    
+    [self cancelSearch];
     
     [self.tableRestaurants reloadData];
     [self.tablePeople reloadData];
