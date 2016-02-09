@@ -108,11 +108,12 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                                            [weakSelf addRestaurantsFromExplore];
                                                                        }];
 
-    UIAlertAction *addRestaurantsFromList = [UIAlertAction actionWithTitle:@"Add Restaurants from List"
-                                                                     style:UIAlertActionStyleDefault
-                                                                   handler:^(UIAlertAction * action) {
-                                                                       [weakSelf addRestaurantsFromList];
-                                                                   }];
+//remove for now...this seems like a corner case when one wants to manage lists
+//    UIAlertAction *addRestaurantsFromList = [UIAlertAction actionWithTitle:@"Add Restaurants from List"
+//                                                                     style:UIAlertActionStyleDefault
+//                                                                   handler:^(UIAlertAction * action) {
+//                                                                       [weakSelf addRestaurantsFromList];
+//                                                                   }];
 
     UIAlertAction *deleteList = [UIAlertAction actionWithTitle:@"Delete List"
                                                          style:UIAlertActionStyleDestructive
@@ -128,7 +129,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     
 
     [_alertController addAction:addRestaurantsFromExplore];
-    [_alertController addAction:addRestaurantsFromList];
+//    [_alertController addAction:addRestaurantsFromList];
     [_alertController addAction:deleteList];
     [_alertController addAction:cancel];
     
