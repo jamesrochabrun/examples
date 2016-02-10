@@ -21,8 +21,6 @@
         alpha:(rgbValue >> 24)/255.0f ]
 
 // App colors
-// NOTE: Correct hex format for RGBA is 0xAARRGGBB on little-endian systems.
-//
 static NSUInteger kColorBlack = 0xFF000000;
 static NSUInteger kColorBackgroundTheme = 0xFF171717;
 static NSUInteger kColorButtonSelected = 0xFF0000FF;
