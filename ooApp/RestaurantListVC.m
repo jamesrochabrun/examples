@@ -316,7 +316,12 @@ static NSString * const cellIdentifier = @"horizontalCell";
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
+    if (_listItem.type == kListTypeUser &&
+        [_listItem isListOwner:[Settings sharedInstance].userObject.userID]) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath

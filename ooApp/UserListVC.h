@@ -12,6 +12,7 @@
 #import "UserTVCell.h"
 #import "OOUserView.h"
 #import "UserObject.h"
+#import "UserListTVC.h"
 
 @protocol UserListTableSectionHeaderDelegate
 - (void) userTappedSectionHeader:(int)which;
@@ -23,21 +24,21 @@
 @property (nonatomic,assign) BOOL isExpanded;
 @end
 
-@protocol UserListTableCellDelegate
-- (void) userTappedImageOfUser:(UserObject*)user;
-- (void) userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following;
-@end
+//@protocol UserListTableCellDelegate
+//- (void) userTappedImageOfUser:(UserObject*)user;
+//- (void) userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following;
+//@end
 
-@interface UserListVC : BaseVC <UserListTableSectionHeaderDelegate,UserListTableCellDelegate>
+@interface UserListVC : BaseVC <UserListTableSectionHeaderDelegate, UserListTVCDelegate>
 @property (nonatomic, strong) NSMutableArray *usersArray;
 @property (nonatomic, strong) NSString* desiredTitle;
-@property (nonatomic,strong) UserObject* user;
+@property (nonatomic, strong) UserObject* user;
 @end
 
-@interface UserListTableCell : UITableViewCell <OOUserViewDelegate>
-- (void)provideUser:(UserObject *)user;
-- (void)commenceFetchingStats;
-- (void)showFollowButton:(BOOL)following;
-@property (nonatomic,weak) UserListVC *vc;
-@property (nonatomic,weak) id<UserListTableCellDelegate>delegate;
-@end
+//@interface UserListTableCell : UITableViewCell <OOUserViewDelegate>
+//- (void)provideUser:(UserObject *)user;
+//- (void)commenceFetchingStats;
+//- (void)showFollowButton:(BOOL)following;
+//@property (nonatomic,weak) UserListVC *vc;
+//@property (nonatomic,weak) id<UserListTableCellDelegate>delegate;
+//@end

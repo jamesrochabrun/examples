@@ -372,16 +372,13 @@
     // forgot to delete the app after we instituted
     // the new rule that all devices get the same token.
     
-    NSString *saltedString= [NSString  stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
+    NSString *saltedString = [NSString stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
     NSString* md5= [ saltedString MD5String];
     md5 = [md5 lowercaseString];
     seekingToken= YES;
     
-    requestString = [NSString stringWithFormat:  @"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol,
-                     [OOAPI URL],
-                     md5,
-                     [Settings sharedInstance].uniqueDeviceKey
-                     ];
+    requestString = [NSString stringWithFormat:@"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol,
+                     [OOAPI URL], md5, [Settings sharedInstance].uniqueDeviceKey];
     
     // NOTE:  this may be helpful if we need to identify the reason
     //  why the new authorization token is being requested.
@@ -429,7 +426,7 @@
                                              // RULE: While the above is happening take the user to the
                                              //     Explore page regardless of whether the backend was reached.
                                              NSLog (@"USERNAME %@",userInfo.username);
-                                             ON_MAIN_THREAD(^{
+                                             dispatch_async(dispatch_get_main_queue() ,^{
                                                  if (userInfo.username.length) {
                                                      [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                                  } else {
@@ -451,7 +448,8 @@
                                                      // XX:  this is the OO log in flow
                                                  }
                                                  
-                                                 ON_MAIN_THREAD(^{
+                                             
+                                                 dispatch_async(dispatch_get_main_queue() ,^{
                                                      [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                                  });
                                              } else {

@@ -12,12 +12,11 @@
 #import "UserTVCell.h"
 #import "OOUserView.h"
 #import "UserObject.h"
+#import "UserListTVC.h"
 
 enum : int {
     kConnectSectionFriends = 0,
     kConnectSectionFoodies = 1,
-//    kConnectSectionFollowers = 2,
-//    kConnectSectionFollowees = 3,
 };
 
 @protocol ConnectTableSectionHeaderDelegate
@@ -25,25 +24,13 @@ enum : int {
 @end
 
 @interface ConnectTableSectionHeader : UIView
-@property (nonatomic,weak) id<ConnectTableSectionHeaderDelegate> delegate;
-@property (nonatomic,strong) UILabel *labelTitle;
-@property (nonatomic,assign) BOOL isExpanded;
+@property (nonatomic, weak) id<ConnectTableSectionHeaderDelegate> delegate;
+@property (nonatomic, strong) UILabel *labelTitle;
+@property (nonatomic, assign) BOOL isExpanded;
 @end
 
-@protocol ConnectTableCellDelegate
-- (void) userTappedImageOfUser:(UserObject*)user;
-- (void) userTappedFollowButtonForUser:(UserObject*)user;
-@end
-
-@interface ConnectTableCell : UITableViewCell <OOUserViewDelegate>
-- (void)provideUser:(UserObject *)user;
-- (void)commenceFetchingStats;
-- (void)showFollowButton:(BOOL)following;
-@property (nonatomic,weak) id<ConnectTableCellDelegate>delegate;
-@end
-
-@interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate,ConnectTableCellDelegate>
-@property (nonatomic,assign) NSInteger defaultSection;
+@interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate, UserListTVCDelegate>
+@property (nonatomic, assign) NSInteger defaultSection;
 @end
 
 

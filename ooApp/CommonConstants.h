@@ -20,7 +20,7 @@ static inline BOOL isRetinaDisplay() {return ([[UIScreen mainScreen] respondsToS
 
 extern NSString *const kAPIKeyGoogleMaps;
 
-#define SECRET_BACKEND_SALT @"48723492NaCl"
+#define SECRET_BACKEND_SALT @"48723492NaCl"      //@"48723492NaCl"
 #define GOOGLE_ANALYTICS_ID  @"UA-70502958-1"
 
 extern NSString *const kUserDefaultsUsingStagingServer;

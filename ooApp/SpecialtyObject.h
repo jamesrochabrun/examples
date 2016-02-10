@@ -9,8 +9,6 @@
 @property (nonatomic,strong) NSString*name;
 @property (nonatomic, assign) NSUInteger specialtyID;
 @property (nonatomic, assign) NSUInteger userID;
-@property (nonatomic, strong) NSDate *createdAt;
-@property (nonatomic, strong) NSDate *updatedAt;
 
 + (instancetype)specialtyFromDictionary:(NSDictionary *)dictionary;
 

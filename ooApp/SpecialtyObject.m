@@ -11,6 +11,7 @@
 @implementation SpecialtyObject
 
 
+
 + (instancetype)specialtyFromDictionary:(NSDictionary *)dictionary;
 {
     if  (!dictionary) {
@@ -18,11 +19,9 @@
     }
     
     SpecialtyObject *object = [[SpecialtyObject alloc] init];
-    object.specialtyID= parseIntegerOrNullFromServer( dictionary[@"specialty_id"]);
-    object.userID = parseIntegerOrNullFromServer( dictionary[@"user_id"]);
-    object.name = parseStringOrNullFromServer( dictionary[@"name"]);
-    object.createdAt=  parseUTCDateFromServer(dictionary[@"created_at"]);
-    object.updatedAt=  parseUTCDateFromServer(dictionary[@"updated_at"]);
+    object.specialtyID = parseIntegerOrNullFromServer(dictionary[@"specialty_id"]);
+    object.userID = parseIntegerOrNullFromServer(dictionary[@"user_id"]);
+    object.name = parseStringOrNullFromServer(dictionary[@"name"]);
     
     return object;
 }

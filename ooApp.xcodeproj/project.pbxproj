@@ -98,6 +98,7 @@
 		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3697D9F61C02A95C0022944F /* DropDownListTVC.m */; };
+		36AF0CCA1C6A9ABF0063A58E /* UserListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */; };
 		36BA03301C50CE1D00802EF8 /* ooLoading60.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03121C50CE1D00802EF8 /* ooLoading60.png */; };
 		36BA03311C50CE1D00802EF8 /* ooLoading61.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03131C50CE1D00802EF8 /* ooLoading61.png */; };
 		36BA03321C50CE1D00802EF8 /* ooLoading62.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03141C50CE1D00802EF8 /* ooLoading62.png */; };
@@ -417,6 +418,8 @@
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		3697D9F51C02A95C0022944F /* DropDownListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropDownListTVC.h; sourceTree = "<group>"; };
 		3697D9F61C02A95C0022944F /* DropDownListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropDownListTVC.m; sourceTree = "<group>"; };
+		36AF0CC81C6A9ABF0063A58E /* UserListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListTVC.h; sourceTree = "<group>"; };
+		36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserListTVC.m; sourceTree = "<group>"; };
 		36BA03121C50CE1D00802EF8 /* ooLoading60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading60.png; path = "Graphic Assets/ooLoading/ooLoading60.png"; sourceTree = "<group>"; };
 		36BA03131C50CE1D00802EF8 /* ooLoading61.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading61.png; path = "Graphic Assets/ooLoading/ooLoading61.png"; sourceTree = "<group>"; };
 		36BA03141C50CE1D00802EF8 /* ooLoading62.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading62.png; path = "Graphic Assets/ooLoading/ooLoading62.png"; sourceTree = "<group>"; };
@@ -681,6 +684,8 @@
 				3625598F1C102ECD002553B4 /* TagTileCVCell.m */,
 				36D887DA1C1A2CDD0002A412 /* PriceSelectorCVCell.h */,
 				36D887DB1C1A2CDD0002A412 /* PriceSelectorCVCell.m */,
+				36AF0CC81C6A9ABF0063A58E /* UserListTVC.h */,
+				36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -1474,6 +1479,7 @@
 				366BBC971BA9304900292F80 /* SubBaseVC.m in Sources */,
 				367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */,
 				367B45401BD06AB600E96B69 /* OOStripHeader.m in Sources */,
+				36AF0CCA1C6A9ABF0063A58E /* UserListTVC.m in Sources */,
 				3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */,
 				3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */,
 				96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */,

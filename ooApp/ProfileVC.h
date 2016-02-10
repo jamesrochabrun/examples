@@ -16,6 +16,7 @@
 #import "PhotoCVCell.h"
 #import "RestaurantPickerVC.h"
 #import "ViewPhotoVC.h"
+#import "AddCaptionToMIOVC.h"
 
 @protocol ProfileEmptyCellDelegate
 - (void) userPressedEmptyCell;
@@ -29,7 +30,7 @@
 @end
 
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
-    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate>
+    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate, OOUserViewDelegate, OOTextEntryVCDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 

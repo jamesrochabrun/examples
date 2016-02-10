@@ -18,7 +18,7 @@
 #import "ProfileVC.h"
 #import "SocialMedia.h"
 
-#define CONNECT_TABLE_REUSE_IDENTIFIER  @"connectTableCell"
+#define CONNECT_TABLE_REUSE_IDENTIFIER  @"userTableCell"
 #define CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY  @"connectTableCellEmpty"
 
 //==============================================================================
@@ -75,297 +75,6 @@
 @end
 
 //==============================================================================
-
-@interface ConnectTableCell ()
-//@property (nonatomic,strong) UILabel *labelLists;
-
-@property (nonatomic,strong) UILabel *labelFollowers;
-@property (nonatomic,strong) UILabel *labelFollowing;
-@property (nonatomic,strong) UILabel *labelPlaces;
-@property (nonatomic,strong) UILabel *labelPhotos;
-
-@property (nonatomic,strong) UILabel *labelFollowersNumber;
-@property (nonatomic,strong) UILabel *labelFollowingNumber;
-@property (nonatomic,strong) UILabel *labelPlacesNumber;
-@property (nonatomic,strong) UILabel *labelPhotosNumber;
-
-@property (nonatomic,strong) OOUserView *userView;
-@property (nonatomic,strong) UILabel *labelUserName;
-@property (nonatomic,strong) UILabel *labelName;
-@property (nonatomic,strong) UserObject *userInfo;
-//@property (nonatomic,strong) AFHTTPRequestOperation* op;
-@property (nonatomic, strong) UIButton *buttonFollow;
-@end
-
-@implementation ConnectTableCell
-
-- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
-    self = [super initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier];
-    if (self) {
-        _userView=[[OOUserView alloc]init];
-        [self  addSubview: _userView];
-        _userView.delegate=self;
-        self.autoresizesSubviews= NO;
-        [self setSeparatorInset:UIEdgeInsetsZero];
-
-        self.backgroundColor=  UIColorRGB(kColorOffBlack);
-        
-        _labelFollowers= makeLabel(self,nil, kGeomFontSizeDetail);
-        _labelFollowing= makeLabel(self, nil, kGeomFontSizeDetail);
-        _labelPhotos=  makeIconLabel(self, kFontIconPhoto, kGeomIconSizeSmall);
-        _labelPlaces=makeLabel( self, nil, kGeomFontSizeDetail);
-        
-        _labelFollowers.textColor= MIDDLEGRAY;
-        _labelFollowing.textColor= MIDDLEGRAY;
-        _labelPhotos.textColor= MIDDLEGRAY;
-        _labelPlaces.textColor= MIDDLEGRAY;
-        
-        _labelFollowersNumber= makeLabel(self, @"", kGeomFontSizeSubheader);
-        _labelFollowingNumber= makeLabel(self,  @"", kGeomFontSizeSubheader);
-        _labelPhotosNumber= makeLabelLeft(self,  @"", kGeomFontSizeSubheader);
-        _labelPlacesNumber=makeLabel( self,  @"", kGeomFontSizeSubheader);
-        
-        _labelFollowersNumber.textColor= WHITE;
-        _labelFollowingNumber.textColor= WHITE;
-        _labelPhotosNumber.textColor= WHITE;
-        _labelPlacesNumber.textColor= WHITE;
-        
-        _labelUserName= makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
-        _labelName= makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
-        
-        _labelUserName.textColor=WHITE;
-        _labelName.textColor=WHITE;
-        
-        _labelFollowers.alpha=0;
-        _labelFollowing.alpha=0;
-        _labelPhotos.alpha=0;
-        _labelPlaces.alpha=0;
-        _labelFollowersNumber.alpha=0;
-        _labelFollowingNumber.alpha=0;
-        _labelPhotosNumber.alpha=0;
-        _labelPlacesNumber.alpha=0;
-        
-        _buttonFollow = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_buttonFollow
-         withText:@"FOLLOW"
-         fontSize:kGeomFontSizeSubheader // NOTE: Reformatted for readability.
-         width:40 // <-- seems superfluous
-         height:40 // <-- seems superfluous
-         backgroundColor:kColorClear
-         textColor:kColorBlack
-         borderColor:kColorYellow
-         target:self
-         selector:@selector (userPressedFollow:)];
-        _buttonFollow.backgroundColor=YELLOW;
-        [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        [_buttonFollow setTitleColor: WHITE forState:UIControlStateSelected];
-        _buttonFollow.hidden= YES;
-        [self addSubview:_buttonFollow];
-    }
-    return self;
-}
-
-//------------------------------------------------------------------------------
-// Name:    userPressedFollow
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)userPressedFollow:(id)sender
-{
-    __weak ConnectTableCell *weakSelf = self;
-    [OOAPI setFollowingUser:_userInfo
-                         to: !weakSelf.buttonFollow.selected
-                    success:^(id responseObject) {
-                        if (( weakSelf.buttonFollow.selected= !weakSelf.buttonFollow.selected )) {
-                            weakSelf.buttonFollow.backgroundColor = UIColorRGB(kColorBlack);
-                            weakSelf.buttonFollow.layer.borderWidth= 0;
-                        }
-                        else {
-                            weakSelf.buttonFollow.backgroundColor= YELLOW;
-                            weakSelf.buttonFollow.layer.borderWidth= 1;
-                        }
-                        
-                        if (weakSelf.buttonFollow.selected ) {
-                            NSLog (@"SUCCESSFULLY FOLLOWED USER");
-                        } else {
-                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
-                        }
-                        [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo];
-                        
-                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                        NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
-                    }];
-}
-
-- (void)showFollowButton:(BOOL)following
-{
-    _buttonFollow.hidden = NO;
-    _buttonFollow.selected = following;
-}
-
-- (void)commenceFetchingStats
-{
-    __weak ConnectTableCell *weakSelf = self;
-    NSUInteger userid = self.userInfo.userID;
-    [OOAPI getUserStatsFor:userid success:^(UserStatsObject *object) {
-        ON_MAIN_THREAD(^{
-            [weakSelf provideStats:object];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog  (@"STATS ERROR %@",error);
-    }
-     ];
-    
-}
-
-- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
-{
-    [self.delegate userTappedImageOfUser:user];
-}
-
-- (void)provideUser:(UserObject *)user;
-{
-    if (!user) return;
-    
-    self.userInfo = user;
-    
-    [_userView setUser:user];
-    
-    NSString *string= user.username ? [NSString stringWithFormat:@"@%@",user.username] : @"Unknown";
-    _labelUserName.text = string;
-    
-    _labelName.text = [NSString stringWithFormat:@"%@ %@",
-                       user.firstName ? : @"First",
-                       user.lastName ? : @"Last"];
-}
-
-- (void)prepareForReuse
-{
-    [super prepareForReuse];
-    _labelUserName.text=nil;
-    _labelName.text=nil;
-    
-    _labelFollowers.alpha = 0;
-    _labelFollowing.alpha = 0;
-    _labelPlaces.alpha = 0;
-    _labelPhotos.alpha = 0;
-    _labelFollowersNumber.alpha = 0;
-    _labelFollowingNumber.alpha = 0;
-    _labelPlacesNumber.alpha = 0;
-    _labelPhotosNumber.alpha = 0;
-    
-    //    [_labelLists setText:  @""];
-    [_labelPlaces setText:@""];
-    [_labelFollowers setText:@""];
-    [_labelFollowing setText:@""];
-    [_labelPlacesNumber setText:@""];
-    [_labelPhotosNumber setText:@""];
-    [_labelFollowersNumber setText:@""];
-    [_labelFollowingNumber setText:@""];
-   
-    _buttonFollow.hidden= YES;
-}
-
-- (void)provideStats:(UserStatsObject *)stats
-{
-    //    NSInteger lists= stats.totalLists;
-    NSUInteger followers = stats.totalFollowers;
-    NSUInteger following = stats.totalFollowees;
-    NSUInteger restaurantCount = stats.totalVenues;
-    NSUInteger photosCount = stats.totalPhotos;
-    
-    if (followers == 1) {
-        [_labelFollowersNumber setText:@"1"];
-        [_labelFollowers setText:@"follower"];
-    } else {
-        [_labelFollowersNumber setText:stringFromUnsigned(followers)];
-        [_labelFollowers setText:@"followers"];
-    }
-    
-    [_labelFollowingNumber setText:stringFromUnsigned(following)];
-    [_labelFollowing setText:@"following"];
-    
-    if (restaurantCount == 1) {
-        [_labelPlacesNumber setText:@"1"];
-        [_labelPlaces setText:@"place"];
-    } else {
-        [_labelPlacesNumber setText:stringFromUnsigned(restaurantCount)];
-        [_labelPlaces setText: @"places"];
-    }
-    
-    [_labelPhotosNumber setText:stringFromUnsigned(photosCount)];
-    
-    self.labelFollowers.alpha = 1;
-    self.labelPhotos.alpha = 1;
-    self.labelFollowing.alpha = 1;
-    self.labelPlaces.alpha = 1;
-    self.labelFollowersNumber.alpha = 1;
-    self.labelPhotosNumber.alpha = 1;
-    self.labelFollowingNumber.alpha = 1;
-    self.labelPlacesNumber.alpha = 1;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    const float kGeomConnectCellMiddleGap= 7;
-    
-    float w = self.frame.size.width;
-    const float margin = kGeomSpaceEdge;
-    const float spacing = kGeomSpaceInter;
-    float imageSize = kGeomConnectScreenUserImageHeight;
-    _userView.frame = CGRectMake(margin, margin, imageSize, imageSize);
-    
-    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, 15,kGeomButtonWidth, kGeomFollowButtonHeight);
-    
-    float x=margin+imageSize+kGeomConnectCellMiddleGap;
-    float y=margin;
-    float remainingWidth=w-margin-x;
-    float labelHeight=_labelUserName.intrinsicContentSize.height;
-    if  ( labelHeight<1) {
-        labelHeight= kGeomHeightButton;
-    }
-    _labelUserName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
-    y +=  labelHeight+ spacing;
-    labelHeight=_labelName.intrinsicContentSize.height;
-    if  ( labelHeight<1) {
-        labelHeight= kGeomHeightButton;
-    }
-    _labelName.frame=CGRectMake(x, y, remainingWidth, labelHeight);
-    y += labelHeight+ spacing;
-    
-    float iconWidth = 30;
-    labelHeight = 20;
-    
-    x=  margin + imageSize + spacing;
-    y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
-    _labelPhotos.frame=CGRectMake(x, y, iconWidth, labelHeight);
-    x += iconWidth;
-    _labelPhotosNumber.frame=CGRectMake(x, y, 55,  labelHeight);
-    y += labelHeight+ spacing;
-    
-    labelHeight= 17;//  from mockup
-    y = _userView.frame.size.height + _userView.frame.origin.y - 2*labelHeight;
-  
-    float rightAreaWidth= 150;//  from mockup
-    int leftLabelWidth = (int) rightAreaWidth*4/14.;
-    int rightLabelWidth = (int) rightAreaWidth*5/14.;
-    x= w-rightAreaWidth;
-    _labelPlacesNumber.frame=CGRectMake(x, y, leftLabelWidth, labelHeight);
-    _labelPlaces.frame=CGRectMake(x, y +labelHeight, leftLabelWidth, labelHeight);
-    x += leftLabelWidth;
-    _labelFollowersNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
-    _labelFollowers.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);
-    x += rightLabelWidth;
-    _labelFollowingNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
-    _labelFollowing.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);
-    
-    [_userView layoutIfNeeded];
-}
-
-@end
-
-//==============================================================================
 @interface ConnectVC ()
 @property (nonatomic,strong) UITableView *tableAccordion;
 
@@ -389,10 +98,10 @@
     [_suggestedUsersArray removeAllObjects];
     [_foodiesArray removeAllObjects];
     [_followeesArray removeAllObjects];
-    self.suggestedUsersArray=nil;
-    self.foodiesArray=nil;
-    self.followeesArray=nil;
-    self.arraySectionHeaderViews=nil;
+    self.suggestedUsersArray = nil;
+    self.foodiesArray = nil;
+    self.followeesArray = nil;
+    self.arraySectionHeaderViews = nil;
 }
 
 //------------------------------------------------------------------------------
@@ -403,8 +112,8 @@
 {
     [super viewDidLoad];
     
-    self.canSeeSection1Items=YES;
-    self.canSeeSection2Items=YES;
+    self.canSeeSection1Items = YES;
+    self.canSeeSection2Items = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -423,21 +132,17 @@
     headerView2.backgroundColor=UIColorRGB(kColorOffBlack);
     headerView2.labelTitle.text=@"Foodies";
     
-    _arraySectionHeaderViews= @[
-                                headerView1, headerView2
-//                                , headerView3, headerView4
-                                ];
+    _arraySectionHeaderViews= @[headerView1, headerView2];
     
     NavTitleObject *nto;
-    nto = [[NavTitleObject alloc]
-           initWithHeader:LOCAL(@"Connect")
-           subHeader: LOCAL(@"find your foodies")];
+    nto = [[NavTitleObject alloc] initWithHeader:LOCAL(@"Connect")
+                                       subHeader:LOCAL(@"find your foodies")];
     
     self.navTitle = nto;
     
     self.tableAccordion = makeTable(self.view,self);
     _tableAccordion.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [_tableAccordion registerClass:[ConnectTableCell class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER];
+    [_tableAccordion registerClass:[UserListTVC class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER];
     [_tableAccordion registerClass:[UITableViewCell class] forCellReuseIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY];
     [_tableAccordion setLayoutMargins:UIEdgeInsetsZero];
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
@@ -447,32 +152,6 @@
     [self setLeftNavWithIcon:@"" target:nil action:nil];
 
 }
-
-#if 0
-- (void)fetchFollowers
-{
-    __weak ConnectVC *weakSelf = self;
-    UserObject* currentUser= [Settings sharedInstance].userObject;
-    
-    self.fetchOperationSection4 =
-    [OOAPI getFollowersOf:currentUser.userID
-                  success: ^(NSArray *users) {
-                      @synchronized(weakSelf.followersArray)  {
-                          weakSelf.followersArray= users.mutableCopy;
-                          NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWERS",
-                                  ( unsigned long)weakSelf.followersArray.count);
-                      }
-                      if (weakSelf.canSeeSection4Items) {
-                          // RULE: Don't reload the section unless the followers users are visible.
-                          ON_MAIN_THREAD(^() {
-                              [weakSelf.tableAccordion reloadData];
-                          });
-                      }
-                  } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                      NSLog  (@"UNABLE TO FETCH FOLLOWERS");
-                  }     ];
-}
-#endif
 
 - (void)fetchFoodies
 {
@@ -490,7 +169,8 @@
                              if (weakSelf.canSeeSection2Items) {
                                  // RULE: Don't reload the section unless the foodies are visible.
                                  ON_MAIN_THREAD(^() {
-                                     [weakSelf.tableAccordion reloadData];
+                                    // [weakSelf.tableAccordion reloadData];
+                                    [self.tableAccordion reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:NO];
                                  });
                              }
                          }
@@ -539,31 +219,6 @@
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
                     ( unsigned long)weakSelf.followeesArray.count);
         }
-        
-//        if (weakSelf.canSeeSection3Items) {
-//            ON_MAIN_THREAD(^() {
-//                if ( weakSelf.defaultSection == kConnectSectionFollowers) {
-//                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
-//                                                   atScrollPosition:UITableViewScrollPositionTop
-//                                                           animated:YES];
-//                    weakSelf.defaultSection = -1;
-//                }
-//            });
-//        }
-//        
-//        if (weakSelf.canSeeSection4Items) {
-//            ON_MAIN_THREAD(^() {
-//                [weakSelf.tableAccordion reloadData];
-//                
-//                if ( weakSelf.defaultSection == kConnectSectionFollowees) {
-//                    [weakSelf.tableAccordion scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection: weakSelf.defaultSection]
-//                                                   atScrollPosition:UITableViewScrollPositionTop
-//                                                           animated:YES];
-//                    weakSelf.defaultSection = -1;
-//                }
-//            });
-//        }
-        
         [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog  (@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
@@ -651,9 +306,9 @@
     
     if (!u) {
         NSString *lamentString = !section ?
-        @"We haven't found any more of your Facebook friends on Oomami. Invite them to start using Oomami. When they join you'll be able to follow them."
+        @"Invite Facebook friends to use Oomami. When they join you'll be able to find out what the like to eat."
         :
-        @"We haven't found any new foodies for you.";
+        @"We'll keep an eye out for foodies you can follow.";
         
         UITableViewCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
@@ -667,7 +322,7 @@
         return cell;
     }
     
-    ConnectTableCell *cell;
+    UserListTVC *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:CONNECT_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     cell.textLabel.textAlignment=NSTextAlignmentCenter;
@@ -680,14 +335,13 @@
         [cell showFollowButton: following];
     }
     
-    [cell commenceFetchingStats];
+    [cell fetchStats];
     
     return cell;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-//    return 4;
     return 2;
 }
 
@@ -761,22 +415,22 @@
 //------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row=indexPath.row;
-    NSInteger section=indexPath.section;
-    UserObject*u=nil;
+    NSInteger row = indexPath.row;
+    NSInteger section = indexPath.section;
+    UserObject *u = nil;
     
     switch (section) {
         case 0:
-            @synchronized(self.suggestedUsersArray)  {
-                if ( row<_suggestedUsersArray.count) {
-                    u=_suggestedUsersArray[row];
+            @synchronized(self.suggestedUsersArray) {
+                if (row<_suggestedUsersArray.count) {
+                    u = _suggestedUsersArray[row];
                 }
             }
             break;
         case 1:
-            @synchronized(self.foodiesArray)  {
-                if ( row<_foodiesArray.count) {
-                    u=_foodiesArray[row];
+            @synchronized(self.foodiesArray) {
+                if (row < _foodiesArray.count) {
+                    u = _foodiesArray[row];
                 }
             }
             break;
@@ -791,10 +445,10 @@
 
 - (void)goToProfile: (UserObject*)u
 {
-    ProfileVC* vc= [[ProfileVC alloc] init];
-    vc.userInfo= u;
-    vc.userID= u.userID;
-    [self.navigationController  pushViewController:vc animated:YES];
+    ProfileVC *vc= [[ProfileVC alloc] init];
+    vc.userInfo = u;
+    vc.userID = u.userID;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 //------------------------------------------------------------------------------
@@ -806,12 +460,12 @@
     switch (section) {
         case 0:
             @synchronized(self.suggestedUsersArray)  {
-                return _canSeeSection1Items? MAX(1,_suggestedUsersArray.count): 0;
+                return _canSeeSection1Items? MAX(1,_suggestedUsersArray.count):0;
             }
             break;
         case 1:
             @synchronized(self.foodiesArray)  {
-                return _canSeeSection2Items? MAX(1,_foodiesArray.count): 0;
+                return _canSeeSection2Items? MAX(1,_foodiesArray.count):0;
             }
             break;
         default:
@@ -820,7 +474,7 @@
     return 0;
 }
 
-- (void)userTappedFollowButtonForUser:(UserObject*)user
+- (void)userTappedFollowButtonForUser:(UserObject *)user following:(BOOL)following
 {
     [self reload];
 }
@@ -829,20 +483,19 @@
 {
     switch ( which) {
         case 0:
-            _canSeeSection1Items= !_canSeeSection1Items;
+            _canSeeSection1Items = !_canSeeSection1Items;
             break;
             
         case 1:
-            _canSeeSection2Items= !_canSeeSection2Items;
+            _canSeeSection2Items = !_canSeeSection2Items;
             break;
-            
     }
     
-    NSIndexSet *indexSet=[[NSIndexSet alloc]initWithIndex:  which];
+    NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndex:which];
     [_tableAccordion reloadSections:indexSet withRowAnimation: UITableViewRowAnimationAutomatic];
 }
 
-- (void) userTappedImageOfUser:(UserObject*)user;
+- (void)userTappedImageOfUser:(UserObject *)user;
 {
     [self goToProfile:user];
 }
@@ -851,7 +504,7 @@
 // Name:    fetchUserFriendListFromFacebook
 // Purpose:
 //------------------------------------------------------------------------------
-- (void) fetchUserFriendListFromFacebook
+- (void)fetchUserFriendListFromFacebook
 {
     ENTRY;
     
@@ -860,28 +513,27 @@
         if (!friends) {
             return;
         }
-        if  (!friends.count) {
-            [weakSelf refreshSuggestedUsersSection ];
+        if (!friends.count) {
+            [weakSelf refreshSuggestedUsersSection];
         }
-        [weakSelf determineWhichFriendsAreNotOOUsers: friends];
+        [weakSelf determineWhichFriendsAreNotOOUsers:friends];
     }];
 }
 
-- (void) determineWhichFriendsAreNotOOUsers: (NSArray*) array
+- (void)determineWhichFriendsAreNotOOUsers:(NSArray *)array
 {
-    if  (!array || ! array.count) {
+    if (!array || !array.count) {
         return;
     }
     
-    NSString*string=  [array firstObject];
+    NSString *string = [array firstObject];
     __weak ConnectVC *weakSelf= self;
 
-    if  (![string containsString:@"@"  ]) {
-        
-        [OOAPI getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs:  array
+    if  (![string containsString:@"@"]) {
+        [OOAPI getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs:array
                                                        success:^(NSArray *users) {
                                                            @synchronized(weakSelf.suggestedUsersArray)  {
-                                                               weakSelf.suggestedUsersArray=users.mutableCopy;
+                                                               weakSelf.suggestedUsersArray = users.mutableCopy;
                                                            }
                                                            ON_MAIN_THREAD(^{
                                                                [weakSelf refreshSuggestedUsersSection];
@@ -895,8 +547,8 @@
 - (void)refreshSuggestedUsersSection
 {
     // RULE: Don't reload the section unless the foodies are visible.
-    if (self.canSeeSection2Items) {
-        [self.tableAccordion reloadData];
+    if (self.canSeeSection1Items) {
+        [self.tableAccordion reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:NO];
     }
 }
 

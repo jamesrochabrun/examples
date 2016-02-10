@@ -341,18 +341,13 @@
     else
         _labelSpecialtyHeader.text=@"Specialty:";
     
-    NSMutableString *specialtyString= @"".mutableCopy;
-    NSUInteger total= _userInfo.specialties.count;
-    NSUInteger counter= 0;
-    for (SpecialtyObject* object  in  _userInfo.specialties) {
-        NSString *string= object.name ?: @"?";
-        if  (counter !=  total-1 ) {
-            [specialtyString  appendFormat:@"%@, ",string];
-        } else {
-            [specialtyString  appendString:string];
-        }
-        counter ++;
+    NSString *specialtyString;
+    NSMutableArray *s = [NSMutableArray array];
+    for (SpecialtyObject *object in _userInfo.specialties) {
+        [s addObject:[NSString stringWithFormat:@"#%@",object.name]];
     }
+    
+    specialtyString = [s componentsJoinedByString:@", "];
     _labelSpecialties.text= specialtyString;
 }
 
@@ -1522,46 +1517,48 @@
     }
 }
 
-- (void)userAddingCaptionTo:( MediaItemObject*)mediaObject
-{
-    UINavigationController *nc = [[UINavigationController alloc] init];
-    
-    self.mediaItemBeingEdited = mediaObject;
-    
-    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
-    vc.delegate = self;
-    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;// XX:
-    vc.defaultText = mediaObject.caption;
-    vc.view.frame = CGRectMake(0, 0, 40, 44);
-    [nc addChildViewController:vc];
-    
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
-    [nc.navigationBar setTranslucent:YES];
-    nc.view.backgroundColor = [UIColor clearColor];
-    
-    [self.navigationController presentViewController:nc animated:YES completion:^{
-        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    }];
-}
+//- (void)userAddingCaptionTo:( MediaItemObject*)mediaObject
+//{
+//    UINavigationController *nc = [[UINavigationController alloc] init];
+//    
+//    self.mediaItemBeingEdited = mediaObject;
+//    
+//    AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
+//    vc.delegate = self;
+//    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;// XX:
+//    vc.defaultText = mediaObject.caption;
+//    vc.view.frame = CGRectMake(0, 0, 40, 44);
+//    [nc addChildViewController:vc];
+//    
+//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+//    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+//    [nc.navigationBar setTranslucent:YES];
+//    nc.view.backgroundColor = [UIColor clearColor];
+//    
+//    [self.navigationController presentViewController:nc animated:YES completion:^{
+//        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+//    }];
+//}
 
-- (void)textEntryFinished:(NSString*)text;
-{
-    __weak ProfileVC *weakSelf = self;
-    [OOAPI setMediaItemCaption:_mediaItemBeingEdited.mediaItemId
-                       caption:text
-                       success:^{
-                           weakSelf.mediaItemBeingEdited.caption= text;
-                           weakSelf.mediaItemBeingEdited= nil;
-                           NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
-                           
-                       }
-                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                           weakSelf.mediaItemBeingEdited= nil;
-                           NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
-                       }
-     ];
-}
+//- (void)textEntryFinished:(NSString*)text;
+//{
+//    __weak ProfileVC *weakSelf = self;
+//    [OOAPI setMediaItemCaption:_mediaItemBeingEdited.mediaItemId
+//                       caption:text
+//                       success:^{
+//                           weakSelf.mediaItemBeingEdited.caption= text;
+//                           weakSelf.mediaItemBeingEdited= nil;
+//                           NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
+//                           
+//                       }
+//                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                           weakSelf.mediaItemBeingEdited= nil;
+//                           NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
+//                       }
+//     ];
+//    [self dismissViewControllerAnimated:YES completion:^{
+//    }];
+//}
 
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio
 {
