@@ -114,8 +114,7 @@
 
     [OOAPI getUserStatsFor:_userInfo.userID
                    success:^(UserStatsObject *stats) {
-                       ON_MAIN_THREAD(^{
-                           
+                       dispatch_async(dispatch_get_main_queue(), ^{
                            [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
                            [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
                            
@@ -187,7 +186,7 @@
                               }
                           }
                           
-                          ON_MAIN_THREAD(^{
+                          dispatch_async(dispatch_get_main_queue(), ^{
                               if  (!foundSelf) {
                                   [weakSelf indicateNotFollowing];
                               } else {
@@ -312,10 +311,10 @@
         _buttonFollow.layer.borderWidth= 1;
         _buttonFollow.hidden= YES;
         
-        [self registerForNotification: kNotificationUserStatsChanged
+        [self registerForNotification:kNotificationUserStatsChanged
                               calling:@selector(updateUserStats:)
          ];
-        [self registerForNotification: kNotificationOwnProfileNeedsUpdate
+        [self registerForNotification:kNotificationOwnProfileNeedsUpdate
                               calling:@selector(updateOwnProfile:)
          ];
         
@@ -384,7 +383,7 @@
     
     [OOAPI getFollowersOf:_userInfo.userID
                   success:^(NSArray *users) {
-                      ON_MAIN_THREAD(^{
+                      dispatch_async(dispatch_get_main_queue(), ^{
                           if  (!users.count) {
                               if (_userInfo.userID == [Settings sharedInstance].userObject.userID) {
                                   [APP.tabBar setSelectedIndex: kTabIndexConnect];
@@ -422,7 +421,7 @@
     
     [OOAPI getFollowingOf:_userInfo.userID
                   success:^(NSArray *users) {
-                      ON_MAIN_THREAD(^{
+                      dispatch_async(dispatch_get_main_queue(), ^{
                           if  (!users.count) {
                               if (_userInfo.userID == [Settings sharedInstance].userObject.userID) {
                                   [APP.tabBar setSelectedIndex:kTabIndexConnect];
@@ -486,7 +485,7 @@
                        self.userInfo.about = text;
                        [Settings sharedInstance].userObject.about = text;
                        [[Settings sharedInstance] save];
-                       ON_MAIN_THREAD(^{
+                       dispatch_async(dispatch_get_main_queue(), ^{
                            [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
                        });
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -537,7 +536,7 @@
     [OOAPI setFollowingUser:_userInfo
                          to: NO
                     success:^(id responseObject) {
-                        ON_MAIN_THREAD(^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             
                             [weakSelf indicateNotFollowing];
                             
@@ -771,7 +770,7 @@
         // if we find that it has changed e.g. from a different device updating
         // the backend, then tell the supplementary view.
         [_profileOwner refreshWithSuccess:^(BOOL changed){
-            if  ( changed) {
+            if (changed) {
                 NOTIFY(kNotificationOwnProfileNeedsUpdate);
             }
         } failure:^{
@@ -963,16 +962,16 @@
     [_topView updateSpecialtiesLabel];
 }
 
-- (void) refetchListsPhotosAndStats
+- (void)refetchListsPhotosAndStats
 {
-    __weak  ProfileVC *weakSelf = self;
+    __weak ProfileVC *weakSelf = self;
     
     [self.view bringSubviewToFront:self.aiv];
     [self.aiv startAnimating];
     self.aiv.message = @"loading";
     
     [_profileOwner refreshSpecialtiesWithSuccess:^(BOOL changed) {
-        ON_MAIN_THREAD(^(){
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf updateSpecialtiesLabel];
             weakSelf.listsAndPhotosLayout.userHasSpecialties = weakSelf.profileOwner.hasSpecialties;
             [weakSelf.topView setNeedsLayout];
@@ -985,7 +984,7 @@
                     success:^(NSArray *foundLists) {
                         NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
                         weakSelf.arrayLists = foundLists;
-                        ON_MAIN_THREAD(^(){
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             [weakSelf.aiv stopAnimating];
                             [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                             [weakSelf.listsAndPhotosLayout  invalidateLayout];
@@ -998,14 +997,14 @@
                                            weakSelf.arrayPhotos= mediaObjects;
                                            weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
                                            NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
-                                           ON_MAIN_THREAD(^(){
+                                           dispatch_async(dispatch_get_main_queue(), ^{
                                                [weakSelf.aiv stopAnimating];
                                                [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                                                [weakSelf.cv  reloadData];
                                            });
                                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                            NSLog  (@"FAILED TO GET PHOTOS");
-                                           ON_MAIN_THREAD(^(){
+                                           dispatch_async(dispatch_get_main_queue(), ^{
                                                [weakSelf.aiv stopAnimating];
                                                [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                                            });
@@ -1013,7 +1012,7 @@
                     }
                     failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
-                        ON_MAIN_THREAD(^(){
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             [weakSelf.aiv stopAnimating];
                             [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                         });
@@ -1021,7 +1020,7 @@
         
     } failure:^{
         NSLog (@"UNABLE TO FETCH SPECIALTIES!");
-        ON_MAIN_THREAD(^(){
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.aiv stopAnimating];
             [weakSelf.view sendSubviewToBack: weakSelf.aiv];
         });
@@ -1090,7 +1089,7 @@
     [OOAPI uploadPhoto:image forObject: weakSelf.profileOwner
                success:^{
                    [weakSelf.profileOwner refreshWithSuccess:^(BOOL changed){
-                       ON_MAIN_THREAD(^(){
+                       dispatch_async(dispatch_get_main_queue(), ^{
                            NOTIFY(kNotificationOwnProfileNeedsUpdate);
                        });
                    }
@@ -1163,18 +1162,19 @@
     if (_selectedRestaurant.restaurantID) {
         [OOAPI uploadPhoto:_imageToUpload forObject:_selectedRestaurant
                    success:^(MediaItemObject *mio){
-                       ON_MAIN_THREAD(^{
+                       dispatch_async(dispatch_get_main_queue(), ^{
                            weakSelf.imageToUpload= nil;
                            weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
                            [weakSelf refetchListsPhotosAndStats];
+                           [weakSelf userAddingCaptionTo:mio];
 
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
                        });
                    }
                    failure:^(NSError *error) {
                        NSLog(@"Failed to upload photo");
-                       ON_MAIN_THREAD(^{
+                       dispatch_async(dispatch_get_main_queue(), ^{
                            weakSelf.uploading = NO;
                            weakSelf.uploadProgressBar.hidden = YES;
                        });
@@ -1184,7 +1184,7 @@
                              long long totalBytesExpectedToWrite) {
                       long double d = totalBytesWritten;
                       d/=totalBytesExpectedToWrite;
-                      ON_MAIN_THREAD(^{
+                      dispatch_async(dispatch_get_main_queue(), ^{
                           weakSelf.uploadProgressBar.progress = (float)d;
                       });
                   }
@@ -1194,18 +1194,19 @@
             if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                            success:^(MediaItemObject *mio){
-                               ON_MAIN_THREAD(^{
+                               dispatch_async(dispatch_get_main_queue(), ^{
                                    [weakSelf refetchListsPhotosAndStats];
                                    weakSelf.imageToUpload= nil;
                                    weakSelf.uploading= NO;
                                    weakSelf.uploadProgressBar.hidden= YES;
+                                   [weakSelf userAddingCaptionTo:mio];
                                    
                                    NOTIFY(kNotificationFoodFeedNeedsUpdate);
                                });
                            }
                            failure:^(NSError *error) {
                                NSLog(@"Failed to upload photo");
-                               ON_MAIN_THREAD(^{
+                               dispatch_async(dispatch_get_main_queue(), ^{
                                    weakSelf.uploading = NO;
                                    weakSelf.uploadProgressBar.hidden = YES;
                                });
@@ -1215,7 +1216,7 @@
                                      long long totalBytesExpectedToWrite) {
                               long double d= totalBytesWritten;
                               d/=totalBytesExpectedToWrite;
-                              ON_MAIN_THREAD(^{
+                              dispatch_async(dispatch_get_main_queue(), ^{
                                   weakSelf.uploadProgressBar.progress = (float)d;
                               });
                           }
@@ -1223,14 +1224,14 @@
                 
             } else {
                 NSLog(@"Failed to upload photo because didn't get back a restaurant object");
-                ON_MAIN_THREAD(^{
+                dispatch_async(dispatch_get_main_queue(), ^{
                     weakSelf.uploading = NO;
                     weakSelf.uploadProgressBar.hidden = YES;
                 });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Failed to upload photo because the google ID was not found");
-            ON_MAIN_THREAD(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 weakSelf.uploading = NO;
                 weakSelf.uploadProgressBar.hidden = YES;
             });
@@ -1269,7 +1270,7 @@
         __weak ProfileVC *weakSelf = self;
         [api addList:string
              success:^(ListObject *list) {
-                 ON_MAIN_THREAD(^{
+                 dispatch_async(dispatch_get_main_queue(), ^{
                      if (list) {
                          [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
                          [weakSelf refetchListsPhotosAndStats];
@@ -1517,48 +1518,52 @@
     }
 }
 
-//- (void)userAddingCaptionTo:( MediaItemObject*)mediaObject
-//{
-//    UINavigationController *nc = [[UINavigationController alloc] init];
-//    
-//    self.mediaItemBeingEdited = mediaObject;
-//    
-//    AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
-//    vc.delegate = self;
-//    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;// XX:
-//    vc.defaultText = mediaObject.caption;
-//    vc.view.frame = CGRectMake(0, 0, 40, 44);
-//    [nc addChildViewController:vc];
-//    
-//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-//    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
-//    [nc.navigationBar setTranslucent:YES];
-//    nc.view.backgroundColor = [UIColor clearColor];
-//    
-//    [self.navigationController presentViewController:nc animated:YES completion:^{
-//        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-//    }];
-//}
+- (void)userAddingCaptionTo:(MediaItemObject*)mio
+{
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    self.mediaItemBeingEdited = mio;
+    
+    AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
+    vc.delegate = self;
+    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;// XX:
+    vc.defaultText = mio.caption;
+    
+    vc.view.frame = CGRectMake(0, 0, 40, 44);
+    vc.mio = mio;
+    [vc overrideIsFoodWith:NO];
 
-//- (void)textEntryFinished:(NSString*)text;
-//{
-//    __weak ProfileVC *weakSelf = self;
-//    [OOAPI setMediaItemCaption:_mediaItemBeingEdited.mediaItemId
-//                       caption:text
-//                       success:^{
-//                           weakSelf.mediaItemBeingEdited.caption= text;
-//                           weakSelf.mediaItemBeingEdited= nil;
-//                           NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
-//                           
-//                       }
-//                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                           weakSelf.mediaItemBeingEdited= nil;
-//                           NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
-//                       }
-//     ];
-//    [self dismissViewControllerAnimated:YES completion:^{
-//    }];
-//}
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
+}
+
+- (void)textEntryFinished:(NSString*)text;
+{
+    __weak ProfileVC *weakSelf = self;
+    [OOAPI setMediaItemCaption:_mediaItemBeingEdited.mediaItemId
+                       caption:text
+                       success:^{
+                           weakSelf.mediaItemBeingEdited.caption= text;
+                           weakSelf.mediaItemBeingEdited= nil;
+                           NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
+                           
+                       }
+                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                           weakSelf.mediaItemBeingEdited= nil;
+                           NSLog  (@"FAILED TO SET PHOTO CAPTION %@",error);
+                       }
+     ];
+    [self dismissViewControllerAnimated:YES completion:^{
+    }];
+}
 
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio
 {
@@ -1619,17 +1624,17 @@
     }
 }
 
-- (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject*)restaurant originFrame:(CGRect)originFrame
+- (void)launchViewPhoto:(MediaItemObject*)mio restaurant:(RestaurantObject*)restaurant originFrame:(CGRect)originFrame
 {
-    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
-    [vc setDelegate:self];
-    [vc setMio:mediaObject];
-    [vc setRestaurant:restaurant];
+    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];    
     vc.originRect = originFrame;
+    vc.mio = mio;
+    vc.restaurant = restaurant;
+    vc.delegate = self;
+    
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
     self.navigationController.delegate = self;
-    [vc.view setNeedsUpdateConstraints];
     [self.navigationController pushViewController:vc animated:YES];
 }
 

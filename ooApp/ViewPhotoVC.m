@@ -195,7 +195,6 @@
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     vc.mio = _mio;
 
-
     [_aNC addChildViewController:vc];
     [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
     [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];

@@ -73,9 +73,10 @@ NSString *const kNotificationEventAltered = @"notificationEventAltered";
 NSString *const kNotificationEventDeleted = @"notificationEventDeleted";
 NSString *const kNotificationPhotoDeleted = @"notificationPhotoDeleted";
 NSString *const kNotificationRestaurantDeleted = @"notificationRestaurantDeleted";
-NSString *const kNotificationListDeleted=  @"notificationListDeleted";
-NSString *const kNotificationListAltered=  @"notificationListAltered";
-NSString *const kNotificationMediaItemAltered=  @"notificationMediaItemAltered";
-NSString *const kNotificationUserStatsChanged=  @"notificationUserStatsChanged";
-NSString *const kNotificationUserFollowingChanged=  @"notificationUserFollowingChanged";
+NSString *const kNotificationListDeleted = @"notificationListDeleted";
+NSString *const kNotificationListAltered = @"notificationListAltered";
+NSString *const kNotificationMediaItemAltered = @"notificationMediaItemAltered";
+NSString *const kNotificationUserStatsChanged = @"notificationUserStatsChanged";
+NSString *const kNotificationUserFollowingChanged = @"notificationUserFollowingChanged";
+NSString *const kNotificationUpdatePhotos = @"notificationUpdatePhotos";
 

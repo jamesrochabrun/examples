@@ -429,11 +429,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 //                     }];
 //}
 
-- (void)showExpandedPhoto:(MediaItemObject *)mio forRestaurant:(RestaurantObject *)restautant fromRect:(CGRect)originRect {
+- (void)showExpandedPhoto:(MediaItemObject *)mio forRestaurant:(RestaurantObject *)restaurant fromRect:(CGRect)originRect {
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
     vc.originRect = originRect;
     vc.mio = mio;
-    vc.restaurant = restautant;
+    vc.restaurant = restaurant;
     vc.delegate = self;
     
     vc.modalPresentationStyle = UIModalPresentationCustom;
