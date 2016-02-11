@@ -196,27 +196,6 @@ UIImageView* makeImageView (UIView *parent, id image_)
     return iv;
 }
 
-NSMutableArray* makeImageViewsForUsers (UIView *parent, NSMutableOrderedSet*users, NSUInteger  maximum,id target,SEL callback)
-{
-    NSMutableArray* array= [NSMutableArray new];
-    NSUInteger i= 0;
-    for (UserObject* user  in  users) {
-        
-        UIButton* b= makeProfileImageButton(parent, user, target, callback);
-        
-        b.backgroundColor= WHITE;
-
-        b.frame = CGRectMake(0,0, kGeomFaceBubbleDiameter, kGeomFaceBubbleDiameter);
-        
-        [array addObject: b];
-        i++;
-        if  (i>=  maximum ) {
-            break;
-        }
-    }
-    return array;
-}
-
 UILabel* makeAttributedLabel (UIView *parent, NSString*  text, float fontSize)
 {
     UILabel* l= [[ UILabel alloc ]init ];
@@ -329,14 +308,6 @@ UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
     UILabel *l= makeLabel( parent, text,fontSize);
     l.textAlignment= NSTextAlignmentLeft;
     return l;
-}
-
-UIScrollView* makeScrollView (UIView*parent, id  delegate)
-{
-    UIScrollView *v= [UIScrollView new];
-    v.delegate = delegate;
-    [parent addSubview:v];
-    return v;
 }
 
 UIWebView *makeWebView(UIView *parent, id delegate)
@@ -646,21 +617,6 @@ NSString* parseStringOrNullFromServer (id object)
         return  (NSString*)object;
     }
     return nil;
-}
-
-NSMutableAttributedString *createPeopleIconString (NSInteger count)
-{
-    NSString *iconicRepresentationOfNumberOfPeople= [NSString stringWithFormat: @"%@",kFontIconPerson ];
-    NSAttributedString *countString= attributedStringOf([NSString stringWithFormat: @"%lu ",
-                                                         ( unsigned long)  count], kGeomFontSizeHeader);
-    NSAttributedString *iconString= [[NSAttributedString alloc]
-                                     initWithString: iconicRepresentationOfNumberOfPeople
-                                     attributes: @{
-                                                   NSFontAttributeName: [UIFont fontWithName: kFontIcons size:kGeomPeopleIconFontSize]
-                                                   }];
-    NSMutableAttributedString* a= [[NSMutableAttributedString  alloc] initWithAttributedString:countString];
-    [a appendAttributedString:iconString];
-    return a;
 }
 
 NSString* expressLocalDateTime(NSDate* date)

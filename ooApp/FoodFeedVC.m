@@ -121,7 +121,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)updateIfNeeded {
     if (_needsUpdate) {
-        [_filterView selectCurrent];
+        [self refreshFeed];
         _needsUpdate = NO;
     }
 }
@@ -272,11 +272,13 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)selectAll {
     _feedType = kFoodFeedTypeAll;
     [self getFoodFeed:kFoodFeedTypeAll];
+    _noPhotosMessage.hidden = YES;
 }
 
 - (void)selectFriends {
     _feedType = kFoodFeedTypeFriends;
     [self getFoodFeed:kFoodFeedTypeFriends];
+    _noPhotosMessage.hidden = YES;
 }
 
 - (void)getFoodFeed:(FoodFeedType)type {
@@ -294,21 +296,37 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
             [weakSelf.aiv stopAnimating];
             if ([weakSelf.restaurants count]) {
                 [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-                    weakSelf.noPhotosMessage.hidden = YES;
+                [self hideNoPhotosMessage];
             } else {
                 if (weakSelf.feedType == kFoodFeedTypeFriends) {
-                    [weakSelf.noPhotosMessage setTitle:@"You'll see food photos from people you follow here. You can find people to follow in connect." forState:UIControlStateNormal];
-                    [weakSelf.noPhotosMessage sizeToFit];
-                    weakSelf.noPhotosMessage.hidden = NO;
+                    [weakSelf setNoPhotosMessage:@"You'll see food photos from people you follow here. You can find people to follow in connect." target:self selector:@selector(goToConnect) show:YES];
                 } else {
-                    weakSelf.noPhotosMessage.hidden = YES;
+                    [self hideNoPhotosMessage];
                 }
             }
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [weakSelf setNoPhotosMessage:@"There was a problem getting food feed items. Make sure you are connected to the internet and then give it another shot." target:self selector:@selector(refreshFeed) show:YES];
         weakSelf.restaurants = @[ ];
+        [weakSelf.collectionView reloadData];
         [weakSelf.aiv stopAnimating];
     }];
+}
+
+- (void)refreshFeed {
+    [_filterView selectCurrent];
+}
+
+- (void)hideNoPhotosMessage {
+    [self setNoPhotosMessage:@"" target:nil selector:nil show:NO];
+}
+
+- (void)setNoPhotosMessage:(NSString *)message target:(id)target selector:(SEL)selector show:(BOOL)show {
+    [_noPhotosMessage removeTarget:nil action:nil forControlEvents:UIControlEventAllTouchEvents];
+    _noPhotosMessage.hidden = !show;
+    [_noPhotosMessage setTitle:message forState:UIControlStateNormal];
+    [_noPhotosMessage addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+    [_noPhotosMessage sizeToFit];
 }
 
 - (void)toggleNumColumns {
@@ -381,7 +399,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kPhotoCellIdentifier forIndexPath:indexPath];
+    NSUInteger row = indexPath.row;
+
     RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
+
     cvc.delegate = self;
     cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     cvc.mediaItemObject = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
@@ -596,7 +617,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     if (mio.sourceUserID == userID) {
         [OOAPI deletePhoto:mio success:^{
             ON_MAIN_THREAD(^{
-                [weakSelf.filterView selectCurrent];
+                [weakSelf refreshFeed];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;

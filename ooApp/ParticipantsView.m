@@ -53,7 +53,6 @@
         }
         
         NSInteger nBubbles = (availableWidth-2*kGeomSpaceEdge)/(kGeomFaceBubbleDiameter + kGeomFaceBubbleSpacing);
-//        self.viewsForFaces =  makeImageViewsForUsers (self, event.users, nBubbles,self,@selector(userPressedFaceBubble:) );
         
         self.viewsForFaces = [NSMutableArray array];
         OOUserView *uv;

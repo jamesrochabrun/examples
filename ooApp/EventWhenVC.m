@@ -109,7 +109,6 @@ static int votingEndingValues[3]= {
     _viewOver1.alpha = 0.5f;
     [_pickerEventDate addSubview: _viewOver1];
     
-//    addShadowTo(_pickerEventDate);
     _pickerEventDate.timeZone= [NSTimeZone systemTimeZone];
     _pickerEventDate.minuteInterval=15;
     _pickerEventDate.datePickerMode= UIDatePickerModeDateAndTime;

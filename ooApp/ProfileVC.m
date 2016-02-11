@@ -85,11 +85,6 @@
 {
     if (u == _userInfo) return;
     _userInfo = u;
-
-//    if ([u isEqualToDeeply: _userInfo] && u.isFoodie== !_buttonURL.hidden) {
-//        return;
-//    }
-//    _userInfo= u;
     
     [self loadUserInfo];
 }
@@ -164,7 +159,7 @@
             } else {
                 [_buttonURL setTitle:@"This foodie has no web link." forState:UIControlStateNormal];
             }
-            [_buttonURL setTitle:@"" forState:UIControlStateNormal];
+            [_buttonURL setTitle:@"" forState:UIControlStateNormal]; //For now the url is not editable
         } else {
             [_buttonURL setTitle:_userInfo.website forState:UIControlStateNormal];
         }
@@ -361,7 +356,7 @@
     if  (!urlString) {
         return;
     }
-    NSString *urlStringLower= [_userInfo.website lowercaseString ];
+    NSString *urlStringLower = [_userInfo.website lowercaseString ];
     if  (![urlStringLower hasPrefix: @"http://"] && ![urlStringLower hasPrefix: @"https://"]) {
         urlString= concatenateStrings(@"http://", urlString);
     }
@@ -721,12 +716,12 @@
 @property (nonatomic, strong) ProfileVCCVLayout *listsAndPhotosLayout;
 
 @property (nonatomic, strong) NSArray *arrayLists;
-@property (nonatomic,strong) NSArray *arrayPhotos;
+@property (nonatomic, strong) NSArray *arrayPhotos;
 
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIAlertController *optionsAC;
-@property (nonatomic, strong) ProfileHeaderView* topView;
+@property (nonatomic, strong) ProfileHeaderView * topView;
 @property (nonatomic, assign) BOOL didFetchUserObject;
 @property (nonatomic, assign) BOOL didFetchStats;
 @property (nonatomic, assign) NSUInteger lastShownUser;
@@ -751,7 +746,7 @@
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
     if (_lastShownUser && _lastShownUser != _userInfo.userID) {
-        _didFetchStats=NO;
+        _didFetchStats = NO;
         _lastShownUser = _userInfo.userID;
     }
     
@@ -810,9 +805,6 @@
 {
     ENTRY;
     [super viewDidLoad];
-    
-    CGSize size= [ UIScreen mainScreen].bounds.size;
-    NSLog  (@"SCREEN SIZE:  %@",NSStringFromCGSize(size));
     
     _userID = 0;
     _viewingLists= YES;

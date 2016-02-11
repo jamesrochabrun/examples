@@ -47,7 +47,6 @@ extern NSString *stringFromUnsigned(NSUInteger);
 
 extern NSAttributedString *attributedStringOf(NSString *, double fontSize);
 extern NSAttributedString *underlinedAttributedStringOf(NSString *, double fontSize);
-extern NSMutableAttributedString *createPeopleIconString (NSInteger count);
 extern NSAttributedString *attributedIconStringOf(NSString *string, double fontSize);
 extern NSAttributedString *attributedStringWithColorOf(NSString *string, double fontSize, UIColor *color);
 extern NSAttributedString *attributedIconStringWithColorOf(NSString *string, double fontSize, UIColor *color);
@@ -75,9 +74,7 @@ extern UICollectionView *makeHorizontalCollectionView(UIView *parent,id  delegat
 extern UICollectionView *makeVerticalCollectionView(UIView *parent,id  delegate, CGSize itemSize);
 extern UIButton *makeAttributedButton(UIView *parent, NSString *title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UIView *makeView(UIView *parent, UIColor *backgroundColor);
-extern UIScrollView *makeScrollView(UIView *parent, id delegate);
 extern void addShadowTo(UIView *v);
-extern NSMutableArray *makeImageViewsForUsers(UIView *parent, NSMutableOrderedSet *users, NSUInteger maximum, id target, SEL callback);
 
 extern void addBorder(UIView *, float width, UIColor *color);
 

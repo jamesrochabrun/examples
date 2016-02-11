@@ -192,7 +192,7 @@ BOOL isUserObject (id  object)
     }
 }
 
-
+//AUG: Is this code required?
 - (AFHTTPRequestOperation *)refreshSpecialtiesWithSuccess:(void (^)(BOOL))success
                                                   failure:(void (^)())failure;
 {
@@ -211,6 +211,7 @@ BOOL isUserObject (id  object)
                  }];
 }
 
+//AUG: Is this code required?
 - (void)refreshWithSuccess:(void (^)(BOOL ))success
                     failure:(void (^)())failure;
 {
