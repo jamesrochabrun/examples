@@ -17,6 +17,7 @@
 #import "ProfileVC.h"
 #import "LocationManager.h"
 #import "UIImage+Additions.h"
+#import "AppDelegate.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
 typedef enum {
@@ -39,6 +40,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic) NSUInteger selectedItem;
 @property (nonatomic, strong) UIButton *toggleNumColumnsButton;
 @property (nonatomic, strong) FoodFeedVCCVL *cvl;
+@property (nonatomic) FoodFeedType feedType;
+@property (nonatomic, strong) UIButton *noPhotosMessage;
 @end
 
 @implementation FoodFeedVC
@@ -90,6 +93,17 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     _needsUpdate = YES;
     _numColumns = 2;
     _selectedItem = -1;
+    
+    _noPhotosMessage = [UIButton buttonWithType:UIButtonTypeCustom];
+    _noPhotosMessage.translatesAutoresizingMaskIntoConstraints = NO;
+    [_noPhotosMessage withText:@"" fontSize:kGeomFontSizeH2 width:40 height:40 backgroundColor:kColorClear textColor:kColorLightGray borderColor:kColorClear target:self selector:@selector(goToConnect)];
+    _noPhotosMessage.titleLabel.numberOfLines = 0;
+    _noPhotosMessage.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [_collectionView addSubview:_noPhotosMessage];
+}
+
+- (void)goToConnect {
+    [APP.tabBar setSelectedIndex: kTabIndexConnect];
 }
 
 - (void)viewWillLayoutSubviews {
@@ -256,10 +270,12 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (void)selectAll {
+    _feedType = kFoodFeedTypeAll;
     [self getFoodFeed:kFoodFeedTypeAll];
 }
 
 - (void)selectFriends {
+    _feedType = kFoodFeedTypeFriends;
     [self getFoodFeed:kFoodFeedTypeFriends];
 }
 
@@ -278,6 +294,15 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
             [weakSelf.aiv stopAnimating];
             if ([weakSelf.restaurants count]) {
                 [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+                    weakSelf.noPhotosMessage.hidden = YES;
+            } else {
+                if (weakSelf.feedType == kFoodFeedTypeFriends) {
+                    [weakSelf.noPhotosMessage setTitle:@"You'll see food photos from people you follow here. You can find people to follow in connect." forState:UIControlStateNormal];
+                    [weakSelf.noPhotosMessage sizeToFit];
+                    weakSelf.noPhotosMessage.hidden = NO;
+                } else {
+                    weakSelf.noPhotosMessage.hidden = YES;
+                }
             }
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -321,13 +346,29 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
     
     NSDictionary *views;
-    views = NSDictionaryOfVariableBindings(_filterView, _collectionView);
+    views = NSDictionaryOfVariableBindings(_filterView, _collectionView, _noPhotosMessage);
 
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_filterView(heightFilters)][_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_noPhotosMessage(60)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_noPhotosMessage]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_noPhotosMessage
+                                                         attribute:NSLayoutAttributeCenterX
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:_collectionView
+                                                         attribute:NSLayoutAttributeCenterX
+                                                        multiplier:1
+                                                          constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_noPhotosMessage
+                                                          attribute:NSLayoutAttributeCenterY
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_collectionView
+                                                          attribute:NSLayoutAttributeCenterY
+                                                         multiplier:1
+                                                           constant:0]];
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {

@@ -26,6 +26,7 @@ static NSUInteger kColorBackgroundTheme = 0xFF171717;
 static NSUInteger kColorButtonSelected = 0xFF0000FF;
 static NSUInteger kColorCellSelected =  0xFF323232;//0xFFF9FF00;
 static NSUInteger kColorClear = 0x00000000;
+static NSUInteger kColorLightGray = 0xFF808080;
 static NSUInteger kColorGray = 0xFFE5E5E5;
 static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
 static NSUInteger kColorNavBar = 0xFF000000;

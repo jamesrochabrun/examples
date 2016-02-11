@@ -130,13 +130,13 @@ typedef enum: char {
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     self.labelPreSearchInstructiveMessage1 = makeLabel( self.view, @"Find Your Foodies (Search for Users by Name)", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage1.textColor = UIColorRGB(0xff808080);
+    self.labelPreSearchInstructiveMessage1.textColor = UIColorRGB(kColorLightGray);
     
     self.labelPreSearchInstructiveMessage2 = makeLabel( self.view, @"Search for places on your lists", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage2.textColor = UIColorRGB(0xff808080);
+    self.labelPreSearchInstructiveMessage2.textColor = UIColorRGB(kColorLightGray);
     
     self.labelPreSearchInstructiveMessage3 = makeLabel( self.view, @"Search for places to eat\rPowered by Google™", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage3.textColor = UIColorRGB(0xff808080);
+    self.labelPreSearchInstructiveMessage3.textColor = UIColorRGB(kColorLightGray);
     
     [self changeFilter:FILTER_PLACES];
 

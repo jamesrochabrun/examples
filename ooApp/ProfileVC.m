@@ -50,13 +50,12 @@
 @property (nonatomic, strong) UIView *backgroundImageFade;
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic, assign) BOOL followingThisUser;
-@property (nonatomic, strong) UIButton* buttonSettings,*buttonSettingsInner;
-@property (nonatomic,assign) BOOL usingURLButton;
-@property (nonatomic,strong) UIButton*buttonURL;
-@property (nonatomic,strong)  UILabel*labelSpecialtyHeader;
-@property (nonatomic,strong)  UILabel*labelSpecialties;
-@property (nonatomic,strong)  UIView *viewSpecialties;
-
+@property (nonatomic, strong) UIButton *buttonSettings,*buttonSettingsInner;
+@property (nonatomic, assign) BOOL usingURLButton;
+@property (nonatomic, strong) UIButton *buttonURL;
+@property (nonatomic, strong) UILabel *labelSpecialtyHeader;
+@property (nonatomic, strong) UILabel *labelSpecialties;
+@property (nonatomic, strong) UIView *viewSpecialties;
 @end
 
 @implementation ProfileHeaderView
@@ -68,26 +67,29 @@
     _buttonURL.enabled= YES;
 }
 
-- (void)registerForNotification:(NSString*) name calling:(SEL)selector
+- (void)registerForNotification:(NSString *)name calling:(SEL)selector
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector: selector
-                   name: name
+    [center addObserver:self selector:selector
+                   name:name
                  object:nil];
 }
 
 - (void)unregisterFromNotifications
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center removeObserver: self  ];
+    [center removeObserver:self];
 }
 
 - (void)setUserInfo:(UserObject *)u
 {
-    if ([u isEqualToDeeply: _userInfo] && u.isFoodie== !_buttonURL.hidden) {
-        return;
-    }
-    _userInfo= u;
+    if (u == _userInfo) return;
+    _userInfo = u;
+
+//    if ([u isEqualToDeeply: _userInfo] && u.isFoodie== !_buttonURL.hidden) {
+//        return;
+//    }
+//    _userInfo= u;
     
     [self loadUserInfo];
 }
@@ -95,15 +97,15 @@
 - (void)refreshUserImage
 {
     [_userView clear];
-    [_userView setUser: _userInfo];
+    [_userView setUser:_userInfo];
 }
 
-- (void)updateUserStats: (NSNotification*)not
+- (void)updateUserStats:(NSNotification*)not
 {
-    NSNumber*userNumber= not.object;
-    NSUInteger userid= [userNumber isKindOfClass:[NSNumber class ] ]? userNumber.unsignedIntegerValue : 0;
-    UserObject*currentUser= [Settings sharedInstance].userObject;
-    if  (userid== currentUser.userID) {
+    NSNumber *userNumber = not.object;
+    NSUInteger userid = [userNumber isKindOfClass:[NSNumber class]] ? userNumber.unsignedIntegerValue:0;
+    UserObject *currentUser = [Settings sharedInstance].userObject;
+    if (userid == currentUser.userID) {
         [self refreshUserStats];
     }
 }
@@ -142,29 +144,32 @@
     if (!_userInfo) {
         return;
     }
-    __weak ProfileHeaderView *weakSelf = self;
-    
-    [_userView setUser: _userInfo];
-    
-    if  (_userInfo.isFoodie ) {
-        [self enableURLButton];
-        
-        if (!_userInfo.urlString.length) {
-            if ( _viewingOwnProfile) {
-                [_buttonURL setTitle: @"Tap here to enter your URL." forState:UIControlStateNormal];
-            } else {
-                [_buttonURL setTitle: @"This foodie has no web link." forState:UIControlStateNormal];
-            }
-        } else {
-            [_buttonURL setTitle: _userInfo.urlString forState:UIControlStateNormal];
-        }
-    }
     
     // Ascertain whether reviewing our own profile.
     //
     UserObject *currentUser = [Settings sharedInstance].userObject;
     NSUInteger ownUserIdentifier = [currentUser userID];
     _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
+
+    __weak ProfileHeaderView *weakSelf = self;
+    
+    [_userView setUser:_userInfo];
+    
+    if  (_userInfo.isFoodie) {
+        [self enableURLButton];
+        
+        if (!_userInfo.website.length) {
+            if (_viewingOwnProfile) {
+                [_buttonURL setTitle:@"Tap here to enter your URL." forState:UIControlStateNormal];
+            } else {
+                [_buttonURL setTitle:@"This foodie has no web link." forState:UIControlStateNormal];
+            }
+            [_buttonURL setTitle:@"" forState:UIControlStateNormal];
+        } else {
+            [_buttonURL setTitle:_userInfo.website forState:UIControlStateNormal];
+        }
+        [_buttonURL sizeToFit];
+    }
     
     // RULE: Only update the button when we know for sure whose profile is.
     if ( _viewingOwnProfile) {
@@ -177,11 +182,11 @@
     else  {
         [OOAPI getFollowersOf:_userInfo.userID
                       success:^(NSArray *users) {
-                          BOOL foundSelf= NO;
-                          for (UserObject* user   in  users) {
+                          BOOL foundSelf = NO;
+                          for (UserObject *user in users) {
                               // RULE: If we are following this user then we make the follow button disappear.
-                              if ( user.userID==ownUserIdentifier) {
-                                  foundSelf= YES;
+                              if (user.userID == ownUserIdentifier) {
+                                  foundSelf = YES;
                                   break;
                               }
                           }
@@ -193,13 +198,13 @@
                                   [weakSelf indicateFollowing];
                               }
                               
-                              [ weakSelf  refreshUserStats];
+                              [weakSelf refreshUserStats];
 
                           });
                           
                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                          NSLog  (@"CANNOT FETCH FOLLOWERS OF USER");
-                          [weakSelf  indicateNotFollowing];
+                          NSLog(@"CANNOT FETCH FOLLOWERS OF USER");
+                          [weakSelf indicateNotFollowing];
                       }];
     }
     
@@ -207,41 +212,41 @@
         [_buttonDescription setTitle:_userInfo.about forState:UIControlStateNormal];
     } else {
         if (_viewingOwnProfile) {
-            [_buttonDescription setTitle: @"Tap here and tell us about yourself." forState:UIControlStateNormal ];
+            [_buttonDescription setTitle:@"Tap here and tell us about yourself." forState:UIControlStateNormal ];
         } else {
-            NSString *pronoun=  @"their";
+            NSString *pronoun = @"their";
             
-            if ( _userInfo.gender.length) {
-                unichar ch=[_userInfo.gender characterAtIndex:0];
-                if ( ch == 'f' || ch=='F') {
+            if (_userInfo.gender.length) {
+                unichar ch = [_userInfo.gender characterAtIndex:0];
+                if ( ch == 'f' || ch == 'F') {
                     pronoun = @"her";
                 } else {
                     pronoun = @"his";
                 }
             }
-            NSString*expression=[NSString  stringWithFormat: @"This user probably just needs a second to finish %@ meal, stay tuned.", pronoun ];
-            [_buttonDescription setTitle: expression forState:UIControlStateNormal ];
+
+            NSString *expression=[NSString  stringWithFormat: @"This user probably just needs a second to finish %@ meal, stay tuned.", pronoun];
+            [_buttonDescription setTitle:expression forState:UIControlStateNormal];
         }
     }
     
     [self layoutSubviews];
     
-    _buttonFollowees.alpha= 0;
-    _buttonFollowers.alpha= 0;
-    _buttonFolloweesCount.alpha= 0;
-    _buttonFollowersCount.alpha= 0;
-    
+    _buttonFollowees.alpha = 0;
+    _buttonFollowers.alpha = 0;
+    _buttonFolloweesCount.alpha = 0;
+    _buttonFollowersCount.alpha = 0;
 }
 
-- (instancetype) initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    self=[ super initWithFrame:frame];
+    self = [super initWithFrame:frame];
     if (self) {
         self.autoresizesSubviews= NO;
         self.clipsToBounds=YES;
 
         _backgroundImageView=  makeImageView(self, @"background-image.jpg");
-        _backgroundImageFade= makeView( self,  UIColorRGBA(0x80000000));
+        _backgroundImageFade= makeView( self, UIColorRGBA(0x80000000));
 
         _filterView= [[OOFilterView alloc] init];
         [self addSubview:_filterView];
@@ -331,14 +336,14 @@
 - (void)updateSpecialtiesLabel
 {
     if (!_userInfo.specialties.count) {
-        _labelSpecialties.text=  @"None";
+        _labelSpecialties.text = @"None";
         return;
     }
     
     if (_userInfo.specialties.count != 1)
-        _labelSpecialtyHeader.text=@"Specialties:";
+        _labelSpecialtyHeader.text = @"Specialties:";
     else
-        _labelSpecialtyHeader.text=@"Specialty:";
+        _labelSpecialtyHeader.text = @"Specialty:";
     
     NSString *specialtyString;
     NSMutableArray *s = [NSMutableArray array];
@@ -352,11 +357,11 @@
 
 - (void)userPressedURLButton: (id) sender
 {
-    NSString *urlString= _userInfo.urlString;
+    NSString *urlString= _userInfo.website;
     if  (!urlString) {
         return;
     }
-    NSString *urlStringLower= [_userInfo.urlString lowercaseString ];
+    NSString *urlStringLower= [_userInfo.website lowercaseString ];
     if  (![urlStringLower hasPrefix: @"http://"] && ![urlStringLower hasPrefix: @"https://"]) {
         urlString= concatenateStrings(@"http://", urlString);
     }
@@ -391,16 +396,15 @@
                               NSLog  (@"NO FOLLOWERS");
                               return ;
                           }
-                          UserListVC *vc= [[UserListVC  alloc] init];
-                          vc.desiredTitle=  @"FOLLOWERS";
-                          vc.usersArray= users.mutableCopy;
-                          vc.user= _userInfo;
-                          [weakSelf.vc.navigationController pushViewController: vc animated:YES];
                           
-                          NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWERS",
-                                  ( unsigned long)users.count);
+                          UserListVC *vc = [[UserListVC alloc] init];
+                          vc.desiredTitle = @"FOLLOWERS";
+                          vc.usersArray = users.mutableCopy;
+                          vc.user = _userInfo;
+                          [weakSelf.vc.navigationController pushViewController:vc animated:YES];
+                          
+                          NSLog (@"SUCCESS IN FETCHING %lu FOLLOWERS", (unsigned long)users.count);
                       });
-                      
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                       NSLog  (@"UNABLE TO FETCH FOLLOWERS");
                   }     ];
@@ -494,14 +498,14 @@
      ];
 }
 
-- (void)userTappedOnListsFilter: (id) sender
+- (void)userTappedOnListsFilter:(id)sender
 {
     [self.delegate userTappedOnLists];
 }
 
-- (void)userTappedOnPhotosFilter: (id) sender
+- (void)userTappedOnPhotosFilter:(id)sender
 {
-    [self.delegate  performSelector:@selector(userTappedOnPhotos)
+    [self.delegate performSelector:@selector(userTappedOnPhotos)
                          withObject:nil
                          afterDelay:.1
      ];
@@ -509,19 +513,20 @@
 
 - (void) verifyUnfollow
 {
-    __weak  ProfileHeaderView *weakSelf = self;
-    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
-                                                              message:nil
-                                                       preferredStyle:UIAlertControllerStyleActionSheet];
-    
+    __weak ProfileHeaderView *weakSelf = self;
+
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
+                                                               message:nil
+                                                        preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style: UIAlertActionStyleCancel
+                                                     style:UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * action) {
                                                    }];
     UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Yes"
-                                                 style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                     [weakSelf doUnfollow];
-                                                 }];
+                                                 style:UIAlertActionStyleDefault
+                                               handler:^(UIAlertAction * action) {
+                                                   [weakSelf doUnfollow];
+                                               }];
     
     [a addAction:cancel];
     [a addAction:ok];
@@ -532,14 +537,11 @@
 - (void)doUnfollow
 {
     __weak ProfileHeaderView *weakSelf = self;
-    
     [OOAPI setFollowingUser:_userInfo
                          to: NO
                     success:^(id responseObject) {
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            
                             [weakSelf indicateNotFollowing];
-                            
                             NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
                         });
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
@@ -677,7 +679,7 @@
         y += PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
     }
     
-    if ( _userInfo.isFoodie && _userInfo.urlString.length) {
+    if ( _userInfo.isFoodie && _userInfo.website.length) {
         _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
         y += PROFILE_HEADERVIEW_URL_HEIGHT;
     }
@@ -871,7 +873,7 @@
     _listsAndPhotosLayout.delegate= self;
     _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
     _listsAndPhotosLayout.userIsFoodie=_userInfo.isFoodie;
-    _listsAndPhotosLayout.foodieHasURL = _userInfo.urlString.length > 0;
+    _listsAndPhotosLayout.foodieHasURL = _userInfo.website.length > 0;
     _listsAndPhotosLayout.userHasSpecialties = _userInfo.hasSpecialties;
     [_listsAndPhotosLayout setShowingLists: YES];
     
@@ -1295,22 +1297,21 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)goToExploreScreen: (ListObject*)list
+- (void)goToExploreScreen:(ListObject *)list
 {
-    ExploreVC*vc= [[ExploreVC alloc] init];
+    ExploreVC *vc= [[ExploreVC alloc] init];
     vc.listToAddTo= list;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)handleUpperRightButton
 {
-    if (_viewingLists ) {
+    if (_viewingLists) {
         [self userPressedNewList];
     } else {
         _pickerIsForRestaurants= YES;
         [self showPickPhotoUI];
     }
-    
 }
 
 - (void)userTappedOnLists
@@ -1399,27 +1400,26 @@
 {
     ProfileHeaderView *view = nil;
     
-    if([kind isEqualToString:UICollectionElementKindSectionHeader]) {
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         
-        _listsAndPhotosLayout.userIsSelf= _viewingOwnProfile;
-        _listsAndPhotosLayout.userIsFoodie= _profileOwner.isFoodie;
-        _listsAndPhotosLayout.foodieHasURL= _profileOwner.urlString.length>0;
-        
+        _listsAndPhotosLayout.userIsSelf = _viewingOwnProfile;
+        _listsAndPhotosLayout.userIsFoodie = _profileOwner.isFoodie;
+        _listsAndPhotosLayout.foodieHasURL = _profileOwner.website.length>0;
+
         if (_topView) {
             [_topView removeFromSuperview];
-            //        _topView.frame=CGRectZero;
             return _topView;
         }
         
-        view= [collectionView dequeueReusableSupplementaryViewOfKind: kind
+        view = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                  withReuseIdentifier:PROFILE_CV_HEADER_CELL
                                                         forIndexPath:indexPath];
+
         self.topView = view;
         [_topView removeFromSuperview];
-        [_topView setUserInfo:  self.profileOwner];
-        //        _topView.frame=CGRectZero;
+        [_topView setUserInfo:self.profileOwner];
         
-        [ view setUserInfo: _profileOwner];
+        [view setUserInfo:_profileOwner];
         view.vc = self;
         
         view.delegate=self;
@@ -1885,9 +1885,8 @@
         _labelIcon.textColor= YELLOW;
 
         _labelMessage= makeLabel(self,  @"?", kGeomFontSizeHeader);
-        _labelMessage.textColor=   UIColorRGB(0xff808080);
-        _labelMessage.textAlignment= NSTextAlignmentLeft;
-      
+        _labelMessage.textColor = UIColorRGB(kColorLightGray);
+        _labelMessage.textAlignment = NSTextAlignmentLeft;
     }
     return self;
 }

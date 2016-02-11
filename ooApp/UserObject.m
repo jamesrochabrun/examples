@@ -28,9 +28,8 @@ NSString *const kKeyUserParticipantState = @"participant_state";
 NSString *const kKeyUserMediaItem = @"media_item";
 NSString *const kKeyUserAbout = @"about";
 NSString *const kKeyUserIsFoodie = @"is_blogger";
-NSString *const kKeyURL = @"website";
+NSString *const kKeyUserWebsite = @"website";
 NSString *const kKeyUserType = @"user_type";
-NSString *const kKeyHasSpecialties= @"has_specialties";
 
 @interface UserObject()
 
@@ -82,7 +81,7 @@ BOOL isUserObject (id  object)
     if  (![(self.phoneNumber?:  @"") isEqualToString: (other.phoneNumber?:  @"")])  return NO;
     if  (![(self.gender?:  @"") isEqualToString: (other.gender?:  @"")])  return NO;
     if  (![(self.username?:  @"") isEqualToString: (other.username?:  @"")])  return NO;
-    if  (![(self.urlString?:  @"") isEqualToString: (other.urlString?:  @"")])  return NO;
+    if  (![(self.website?:  @"") isEqualToString: (other.website?:  @"")])  return NO;
     return YES;
 }
 
@@ -107,11 +106,9 @@ BOOL isUserObject (id  object)
     user.participantType = parseIntegerOrNullFromServer(dict[kKeyUserParticipantType]);
     user.participantState = parseIntegerOrNullFromServer(dict[kKeyUserParticipantState]);
     user.about = parseStringOrNullFromServer(dict [kKeyUserAbout]);
-    user.urlString = parseStringOrNullFromServer(dict [ kKeyURL]);
+    user.website = parseStringOrNullFromServer(dict [kKeyUserWebsite]);
     user.userType = parseNumberOrNullFromServer(dict [kKeyUserType]);
     user.isFoodie = user.userType == USER_TYPE_FOODIE;
-    
-    user.hasSpecialties= parseUnsignedIntegerOrNullFromServer( dict[kKeyHasSpecialties] ) > 0;
     user.specialties= nil;
 
     if ( user.about.length > kUserObjectMaximumAboutTextLength) {
@@ -156,7 +153,7 @@ BOOL isUserObject (id  object)
              kKeyUserParticipantType: @(self.participantType),
              kKeyUserIsFoodie: @(self.isFoodie),
              kKeyUserParticipantState: @(self.participantState),
-             kKeyURL: self.urlString ?:  @"",
+             kKeyUserWebsite: self.website ?:  @"",
              kKeyUserType:  @(self.userType),
              
              // Some data are not uploaded.
@@ -235,7 +232,7 @@ BOOL isUserObject (id  object)
                       weakSelf.username = user.username;
                       weakSelf.facebookProfileImageURLString = user.facebookProfileImageURLString;
                       weakSelf.imageIdentifier = user.imageIdentifier;
-                      weakSelf.urlString = user.urlString;
+                      weakSelf.website = user.website;
                       weakSelf.userType = user.userType;
                     
                       success( changed);

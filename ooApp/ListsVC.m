@@ -164,9 +164,18 @@ typedef enum {
 - (void)createListNamed:(NSString *)name {
     OOAPI *api = [[OOAPI alloc] init];
     __weak ListsVC *weakSelf = self;
+    __weak OOAPI *weakAPI = api;
     [api addList:name success:^(ListObject *listObject) {
         if (listObject.listID) {
-            [weakSelf addRestaurantToList:listObject];
+            [weakAPI addRestaurants:@[_restaurantToAdd] toList:listObject.listID success:^(id response) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf getLists];
+                    [weakSelf getListsForRestaurant];
+                });
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                NSLog(@"Could not add restaurant to list: %@", error);
+            }];
+//            [weakSelf addRestaurantToList:listObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Could not create list: %@", error);
@@ -177,11 +186,11 @@ typedef enum {
     OOAPI *api = [[OOAPI alloc] init];
     __weak ListsVC *weakSelf = self;
     [api addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
-        ON_MAIN_THREAD(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf getListsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Could add restaurant to list: %@", error);
+        NSLog(@"Could not add restaurant to list: %@", error);
     }];
 }
 

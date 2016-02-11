@@ -45,16 +45,14 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
-    float w=self.frame.size.width;
-    float h=self.frame.size.height;
-    const float kGeomUserListVCHeaderLeftMargin=29;
-    const float kGeomUserListVCHeaderRightMargin=24;
-    self.labelTitle.frame = CGRectMake(kGeomUserListVCHeaderLeftMargin,0,w/2,h);
+    CGFloat w = width(self);
+    CGFloat h = height(self);
+    const float kGeomUserListVCHeaderLeftMargin = 29;
+    const float kGeomUserListVCHeaderRightMargin = 24;
+    self.labelTitle.frame = CGRectMake(kGeomUserListVCHeaderLeftMargin, 0, w/2, h);
     [self.labelExpander sizeToFit];
-    float labelWidth= h;
-    self.labelExpander.frame = CGRectMake(w-kGeomUserListVCHeaderRightMargin-labelWidth,0
-                                          ,labelWidth,h);
+    CGFloat labelWidth = h;
+    self.labelExpander.frame = CGRectMake(w-kGeomUserListVCHeaderRightMargin-labelWidth, 0, labelWidth, h);
     double angle = _isExpanded ? 3*M_PI/2 : M_PI/2;
     _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
 }
@@ -73,11 +71,11 @@
 - (void)dealloc
 {
     [_usersArray removeAllObjects];
-    self.usersArray=nil;
+    self.usersArray = nil;
     [_followeesArray removeAllObjects];
-    self.followeesArray=nil;
+    self.followeesArray = nil;
     [_fetchOperationFollowees cancel];
-    _fetchOperationFollowees= nil;
+    _fetchOperationFollowees = nil;
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +181,7 @@
     return NO;
 }
 
-- (void) fetchFollowees
+- (void)fetchFollowees
 {
     // NOTE: Need to make the call to find out who we are following before anything else is displayed.
     
@@ -264,16 +262,16 @@
 //------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row=indexPath.row;
-    UserObject*u=nil;
+    NSInteger row = indexPath.row;
+    UserObject *u = nil;
     
     @synchronized(self.usersArray)  {
-        if ( row<_usersArray.count) {
-            u=_usersArray[row];
+        if (row < _usersArray.count) {
+            u = _usersArray[row];
         }
     }
-    
-    if ( u) {
+
+    if (u) {
         [self goToProfile:u];
     }
 }

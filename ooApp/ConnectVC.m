@@ -43,24 +43,24 @@
     return self;
 }
 
-- (void) touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    [self.delegate userTappedSectionHeader:( int)self.tag];
+    [self.delegate userTappedSectionHeader:(int)self.tag];
     
     _isExpanded=!_isExpanded;
     
-    [UIView animateWithDuration:.4
-                     animations:^{
+//    [UIView animateWithDuration:.4
+//                     animations:^{
                          [self layoutSubviews];
-                     }];
+//                     }];
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
 
-    float w=self.frame.size.width;
-    float h=self.frame.size.height;
+    float w =self.frame.size.width;
+    float h = self.frame.size.height;
     const float kGeomConnectHeaderLeftMargin=29;
     const float kGeomConnectHeaderRightMargin=24;
     self.labelTitle.frame = CGRectMake(kGeomConnectHeaderLeftMargin,0,w/2,h);
