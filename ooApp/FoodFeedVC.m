@@ -42,6 +42,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) FoodFeedVCCVL *cvl;
 @property (nonatomic) FoodFeedType feedType;
 @property (nonatomic, strong) UIButton *noPhotosMessage;
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
 @end
 
 @implementation FoodFeedVC

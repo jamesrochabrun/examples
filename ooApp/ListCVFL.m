@@ -21,6 +21,7 @@
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"list CVFL: section=%lu row=%lu", indexPath.section, indexPath.row);
     UICollectionViewLayoutAttributes* currentItemAttributes = [super layoutAttributesForItemAtIndexPath:indexPath];
     NSInteger numberOfItemsPerLine = floor([self collectionViewContentSize].width / [self itemSize].width);
     

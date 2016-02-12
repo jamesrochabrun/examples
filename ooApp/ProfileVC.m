@@ -112,8 +112,8 @@
     [OOAPI getUserStatsFor:_userInfo.userID
                    success:^(UserStatsObject *stats) {
                        dispatch_async(dispatch_get_main_queue(), ^{
-                           [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal ] ;
-                           [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal ] ;
+                           [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal] ;
+                           [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal] ;
                            
                            weakSelf.buttonFollowees.alpha= 1;
                            weakSelf.buttonFollowers.alpha= 1;
@@ -131,7 +131,6 @@
                        NSLog (@"CANNOT FETCH STATS FOR PROFILE SCREEN.");
                        
                    }];
-    
 }
 
 - (void) loadUserInfo
@@ -185,16 +184,14 @@
                                   break;
                               }
                           }
-                          
+
                           dispatch_async(dispatch_get_main_queue(), ^{
                               if  (!foundSelf) {
                                   [weakSelf indicateNotFollowing];
                               } else {
                                   [weakSelf indicateFollowing];
                               }
-                              
                               [weakSelf refreshUserStats];
-
                           });
                           
                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -237,11 +234,11 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.autoresizesSubviews= NO;
-        self.clipsToBounds=YES;
+        self.autoresizesSubviews = NO;
+        self.clipsToBounds = YES;
 
-        _backgroundImageView=  makeImageView(self, @"background-image.jpg");
-        _backgroundImageFade= makeView( self, UIColorRGBA(0x80000000));
+        _backgroundImageView = makeImageView(self, @"background-image.jpg");
+        _backgroundImageFade = makeView( self, UIColorRGBA(0x80000000));
 
         _filterView= [[OOFilterView alloc] init];
         [self addSubview:_filterView];
@@ -721,7 +718,7 @@
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIAlertController *optionsAC;
-@property (nonatomic, strong) ProfileHeaderView * topView;
+@property (nonatomic, strong) ProfileHeaderView *headerView;
 @property (nonatomic, assign) BOOL didFetchUserObject;
 @property (nonatomic, assign) BOOL didFetchStats;
 @property (nonatomic, assign) NSUInteger lastShownUser;
@@ -745,43 +742,44 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
-    if (_lastShownUser && _lastShownUser != _userInfo.userID) {
-        _didFetchStats = NO;
-        _lastShownUser = _userInfo.userID;
-    }
+    [self checkThatStatsAreUpToDate];
+//    if (_lastShownUser && _lastShownUser != _userInfo.userID) {
+//        _didFetchStats = NO;
+//        _lastShownUser = _userInfo.userID;
+//    }
     
-    __weak  ProfileVC *weakSelf = self;
-    if ( !_didFetchUserObject) {
-        [_profileOwner refreshWithSuccess:^(BOOL changed){
-            weakSelf.didFetchUserObject= YES;
-            
-            [weakSelf.cv reloadData ];
-            [weakSelf checkThatStatsAreUpToDate];
-        } failure:^{
-            NSLog  (@"NETWORK ERROR");
-        }];
-    } else {
-        [self checkThatStatsAreUpToDate];
-        
-        // NOTE: There's no explicit requirement to re-fetch the UserObject, but
-        // if we find that it has changed e.g. from a different device updating
-        // the backend, then tell the supplementary view.
-        [_profileOwner refreshWithSuccess:^(BOOL changed){
-            if (changed) {
-                NOTIFY(kNotificationOwnProfileNeedsUpdate);
-            }
-        } failure:^{
-            NSLog  (@"NETWORK ERROR");
-        }];
-    }
+//    __weak  ProfileVC *weakSelf = self;
+//    if ( !_didFetchUserObject) {
+//        [_profileOwner refreshWithSuccess:^(BOOL changed){
+//            weakSelf.didFetchUserObject= YES;
+//            
+//            [weakSelf.cv reloadData ];
+//            [weakSelf checkThatStatsAreUpToDate];
+//        } failure:^{
+//            NSLog  (@"NETWORK ERROR");
+//        }];
+//    } else {
+//        [self checkThatStatsAreUpToDate];
+//        
+//        // NOTE: There's no explicit requirement to re-fetch the UserObject, but
+//        // if we find that it has changed e.g. from a different device updating
+//        // the backend, then tell the supplementary view.
+//        [_profileOwner refreshWithSuccess:^(BOOL changed){
+//            if (changed) {
+//                NOTIFY(kNotificationOwnProfileNeedsUpdate);
+//            }
+//        } failure:^{
+//            NSLog  (@"NETWORK ERROR");
+//        }];
+//    }
 }
 
 - (void)checkThatStatsAreUpToDate
 {
-    if (!_didFetchStats) {
-        _didFetchStats=YES;
+//    if (!_didFetchStats) {
+//        _didFetchStats=YES;
         [self  refetchListsPhotosAndStats ];
-    }
+//    }
     
 }
 
@@ -794,7 +792,7 @@
 
 - (void) dealloc
 {
-    self.topView=nil;
+    self.headerView = nil;
 }
 
 //------------------------------------------------------------------------------
@@ -852,7 +850,7 @@
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
     
-    _lastShownUser = _userInfo.userID;
+//    _lastShownUser = _userInfo.userID;
     
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers  == 1) {
@@ -897,7 +895,7 @@
 - (void)handleListAltered: (NSNotification*)not
 {
     NSLog (@"LIST ALTERED");
-    [self refetchListsPhotosAndStats];
+    [self getLists];
 }
 
 //------------------------------------------------------------------------------
@@ -907,34 +905,38 @@
 - (void)handleListDeleted: (NSNotification*)not
 {
     NSLog (@"LIST DELETED");
-    [self refetchListsPhotosAndStats];
+    [self getLists];
 }
 
 //------------------------------------------------------------------------------
 // Name:    handlePhotoDeleted
 // Purpose: If one of our media objects was deleted then update our UI.
 //------------------------------------------------------------------------------
-- (void)handlePhotoDeleted: (NSNotification*)not
+- (void)handlePhotoDeleted:(NSNotification*)not
 {
-    BOOL foundIt= NO;
-    NSNumber* mediaObjectIDNumber= not.object;
-    NSUInteger mediaObjectID= [mediaObjectIDNumber isKindOfClass: [NSNumber class ]] ?mediaObjectIDNumber.unsignedIntegerValue:0;
-    for (MediaItemObject* item  in  _arrayPhotos) {
-        if ( item.mediaItemId == mediaObjectID) {
-            foundIt= YES;
+    BOOL foundIt = NO;
+
+    NSNumber *mediaObjectIDNumber = not.object;
+    NSUInteger mediaObjectID = [mediaObjectIDNumber isKindOfClass: [NSNumber class ]] ?mediaObjectIDNumber.unsignedIntegerValue:0;
+
+    for (MediaItemObject* item in _arrayPhotos) {
+        if (item.mediaItemId == mediaObjectID) {
+            foundIt = YES;
             break;
         }
     }
-    
-    if  (foundIt ) {
-        [self refetchListsPhotosAndStats];
+
+    if (foundIt) {
+        [self getPhotos];
     }
-    
+
+    [_headerView refreshUserStats];
 }
 
-- (void)handleRestaurantListAltered: (NSNotification*)not
+- (void)handleRestaurantListAltered:(NSNotification*)not
 {
-    [self refetchListsPhotosAndStats];
+    [self getLists];
+    [_headerView refreshUserStats];
 }
 
 //------------------------------------------------------------------------------
@@ -953,74 +955,98 @@
 
 - (void)updateSpecialtiesLabel
 {
-    [_topView updateSpecialtiesLabel];
+    [_headerView updateSpecialtiesLabel];
 }
 
-- (void)refetchListsPhotosAndStats
-{
-    __weak ProfileVC *weakSelf = self;
-    
+- (void)getSpecialties {
     [self.view bringSubviewToFront:self.aiv];
-    [self.aiv startAnimating];
-    self.aiv.message = @"loading";
-    
+    if (![self.aiv isAnimating]) {
+        [self.aiv startAnimating];
+        self.aiv.message = @"loading";
+    }
+
+    __weak ProfileVC *weakSelf = self;
     [_profileOwner refreshSpecialtiesWithSuccess:^(BOOL changed) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf updateSpecialtiesLabel];
             weakSelf.listsAndPhotosLayout.userHasSpecialties = weakSelf.profileOwner.hasSpecialties;
-            [weakSelf.topView setNeedsLayout];
+            [weakSelf.headerView setNeedsLayout];
             [weakSelf.cv setNeedsLayout];
             [weakSelf.cv reloadData];
         });
-        
-        OOAPI *api = [[OOAPI alloc] init];
-        [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
-                    success:^(NSArray *foundLists) {
-                        NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
-                        weakSelf.arrayLists = foundLists;
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [weakSelf.aiv stopAnimating];
-                            [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                            [weakSelf.listsAndPhotosLayout  invalidateLayout];
-                            [weakSelf.cv reloadData];
-                        });
-                        
-                        float w=  [UIScreen mainScreen ].bounds.size.width;
-                        [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth: w maxHeight:0
-                                       success:^(NSArray *mediaObjects) {
-                                           weakSelf.arrayPhotos= mediaObjects;
-                                           weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
-                                           NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
-                                           dispatch_async(dispatch_get_main_queue(), ^{
-                                               [weakSelf.aiv stopAnimating];
-                                               [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                                               [weakSelf.cv  reloadData];
-                                           });
-                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                           NSLog  (@"FAILED TO GET PHOTOS");
-                                           dispatch_async(dispatch_get_main_queue(), ^{
-                                               [weakSelf.aiv stopAnimating];
-                                               [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                                           });
-                                       }];
-                    }
-                    failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                        NSLog  (@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [weakSelf.aiv stopAnimating];
-                            [weakSelf.view sendSubviewToBack: weakSelf.aiv];
-                        });
-                    }];
-        
     } failure:^{
         NSLog (@"UNABLE TO FETCH SPECIALTIES!");
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.aiv stopAnimating];
             [weakSelf.view sendSubviewToBack: weakSelf.aiv];
         });
+    }];
+}
+
+- (void)getLists {
+    __weak ProfileVC *weakSelf = self;
+    [self.view bringSubviewToFront:self.aiv];
+    if (![self.aiv isAnimating]) {
+        [self.aiv startAnimating];
+        self.aiv.message = @"loading";
     }
-     ];
     
+    OOAPI *api = [[OOAPI alloc] init];
+    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
+                success:^(NSArray *foundLists) {
+                    NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
+                    weakSelf.arrayLists = foundLists;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.aiv stopAnimating];
+                        [weakSelf.view sendSubviewToBack:weakSelf.aiv];
+                        [weakSelf.cv reloadData];
+                        [weakSelf.headerView refreshUserStats];
+                    });
+                } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                    NSLog(@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.aiv stopAnimating];
+                        [weakSelf.view sendSubviewToBack:weakSelf.aiv];
+                    });
+                }];
+}
+
+- (void)getPhotos {
+    __weak ProfileVC *weakSelf = self;
+    [self.view bringSubviewToFront:self.aiv];
+    if (![self.aiv isAnimating]) {
+        [self.aiv startAnimating];
+        self.aiv.message = @"loading";
+    }
+    
+    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth:width(self.view) maxHeight:0
+                   success:^(NSArray *mediaObjects) {
+                       weakSelf.arrayPhotos= mediaObjects;
+                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
+                       NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
+                       dispatch_async(dispatch_get_main_queue(), ^{
+                           [weakSelf.aiv stopAnimating];
+                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                           [weakSelf.cv reloadData];
+                           [weakSelf.headerView refreshUserStats];
+                       });
+                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                       NSLog  (@"FAILED TO GET PHOTOS");
+                       dispatch_async(dispatch_get_main_queue(), ^{
+                           [weakSelf.aiv stopAnimating];
+                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
+                       });
+                   }];
+}
+
+- (void)refetchListsPhotosAndStats
+{
+    [self getSpecialties];
+    if (_viewingLists) {
+        [self getLists];
+    } else {
+        [self getPhotos];
+    }
 }
 
 - (void)userPressedNewPhoto
@@ -1031,7 +1057,7 @@
     }
     
     _pickerIsForRestaurants= YES;
-    [self  showPickPhotoUI];
+    [self showPickPhotoUI];
 }
 
 //------------------------------------------------------------------------------
@@ -1160,7 +1186,7 @@
                            weakSelf.imageToUpload= nil;
                            weakSelf.uploading= NO;
                            weakSelf.uploadProgressBar.hidden= YES;
-                           [weakSelf refetchListsPhotosAndStats];
+                           [weakSelf getPhotos];
                            [weakSelf userAddingCaptionTo:mio];
 
                            NOTIFY(kNotificationFoodFeedNeedsUpdate);
@@ -1189,7 +1215,7 @@
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                            success:^(MediaItemObject *mio){
                                dispatch_async(dispatch_get_main_queue(), ^{
-                                   [weakSelf refetchListsPhotosAndStats];
+                                   [weakSelf getPhotos];
                                    weakSelf.imageToUpload= nil;
                                    weakSelf.uploading= NO;
                                    weakSelf.uploadProgressBar.hidden= YES;
@@ -1267,7 +1293,7 @@
                  dispatch_async(dispatch_get_main_queue(), ^{
                      if (list) {
                          [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
-                         [weakSelf refetchListsPhotosAndStats];
+                         [weakSelf getLists];
                      } else {
                          message( @"That list name is already in use.");
                      }
@@ -1316,8 +1342,9 @@
     }
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;
-    [_listsAndPhotosLayout invalidateLayout];
-    [self.cv reloadData];
+//    [_listsAndPhotosLayout invalidateLayout];
+//    [self.cv reloadData];
+    [self getLists];
     
 }
 
@@ -1331,8 +1358,9 @@
     }
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayPhotos.count==0;
-    [_listsAndPhotosLayout invalidateLayout];
-    [self.cv reloadData];
+    [self getPhotos];
+//    [_listsAndPhotosLayout invalidateLayout];
+//    [self.cv reloadData];
 }
 
 #pragma mark - Collection View stuff
@@ -1393,30 +1421,29 @@
     ProfileHeaderView *view = nil;
     
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        
         _listsAndPhotosLayout.userIsSelf = _viewingOwnProfile;
         _listsAndPhotosLayout.userIsFoodie = _profileOwner.isFoodie;
-        _listsAndPhotosLayout.foodieHasURL = _profileOwner.website.length>0;
+        _listsAndPhotosLayout.foodieHasURL = _profileOwner.website.length > 0;
 
-        if (_topView) {
-            [_topView removeFromSuperview];
-            return _topView;
-        }
-        
+//        if (_headerView) {
+//            [_headerView removeFromSuperview];
+//            return _headerView;
+//        }
+
         view = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                  withReuseIdentifier:PROFILE_CV_HEADER_CELL
                                                         forIndexPath:indexPath];
 
-        self.topView = view;
-        [_topView removeFromSuperview];
-        [_topView setUserInfo:self.profileOwner];
+//        self.headerView = view;
+//        [_headerView removeFromSuperview];
+//        [_headerView setUserInfo:self.profileOwner];
         
         [view setUserInfo:_profileOwner];
         view.vc = self;
         
-        view.delegate=self;
+        view.delegate = self;
         
-        [_cv setNeedsLayout];
+        //[_cv setNeedsLayout];
         
         return view;
     }
@@ -1426,29 +1453,29 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger row= indexPath.row;
-    
-    if  (_viewingLists ) {
-        NSUInteger  total= self.arrayLists.count;
-        if  (!total ) {
-            ProfileEmptyCell*cell= [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_EMPTY_CELL
+    NSInteger row = indexPath.row;
+    if (_viewingLists) {
+        NSLog(@"section:%lu row:%lu", indexPath.section, indexPath.row);
+        
+        NSUInteger total= self.arrayLists.count;
+        if (!total) {
+            ProfileEmptyCell *cell= [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_EMPTY_CELL
                                                                              forIndexPath:indexPath];
-            
-            if ( _viewingOwnProfile) {
-                [ cell setListMode];
-                cell.message=  @"Make your first list!";
+            if (_viewingOwnProfile) {
+                [cell setListMode];
+                cell.message = @"Make your first list!";
             } else {
-                [ cell setMessageMode];
-                cell.message=  @"This user is still making their first list.";
+                [cell setMessageMode];
+                cell.message = @"This user is still making their first list.";
             }
             return  cell;
         }
-        if  (row>= total ) {
+        if (row >= total) {
             return nil;
         }
         
-        ListStripCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:  PROFILE_CV_LIST_CELL
-                                                                          forIndexPath:indexPath ] ;
+        ListStripCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_LIST_CELL
+                                                                          forIndexPath:indexPath];
         
         NSArray *a = self.arrayLists;
         ListObject *listItem = a[row];
@@ -1456,36 +1483,35 @@
         
         cell.navigationController = self.navigationController;
         cell.listItem = listItem;
-        [cell getRestaurants];
         
         return cell;
     }
     else {
-        NSUInteger  total= self.arrayPhotos.count;
-        if  (!total ) {
+        NSUInteger total= self.arrayPhotos.count;
+        if (!total) {
             ProfileEmptyCell*cell= [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_EMPTY_CELL
                                                                              forIndexPath:indexPath];
-            
-            if ( _viewingOwnProfile) {
-                [ cell setPhotoMode];
-                cell.message=  @"Take your first picture!";
+
+            if (_viewingOwnProfile) {
+                [cell setPhotoMode];
+                cell.message = @"Take your first picture!";
             } else {
-                [ cell setMessageMode];
-                cell.message=  @"Artfully crafted photos coming soon.";
+                [cell setMessageMode];
+                cell.message = @"Artfully crafted photos coming soon.";
             }
 
             return  cell;
         }
-        if  (row>= total ) {
+        if (row >= total) {
             return nil;
         }
         
-        PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:  PROFILE_CV_PHOTO_CELL
-                                                                      forIndexPath:indexPath ] ;
+        PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_PHOTO_CELL
+                                                                      forIndexPath:indexPath];
         NSArray *a = self.arrayPhotos;
         MediaItemObject *object = a[row];
-        cell.mediaItemObject =  object;
-        cell.delegate=  self;
+        cell.mediaItemObject = object;
+        cell.delegate = self;
         [cell showActionButton:NO];
         return cell;
     }

@@ -23,14 +23,15 @@
 @end
 
 @protocol ProfileHeaderViewDelegate
-- (void) userTappedOnLists;
-- (void) userTappedOnPhotos;
-- (void) userPressedSettings;
-
+- (void)userTappedOnLists;
+- (void)userTappedOnPhotos;
+- (void)userPressedSettings;
 @end
 
-@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate,  UINavigationControllerDelegate, PhotoCVCellDelegate, OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
-    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate, OOUserViewDelegate, OOTextEntryVCDelegate>
+@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate,
+    OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
+    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate, OOUserViewDelegate,
+    OOTextEntryVCDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
@@ -39,18 +40,18 @@
 @interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryModalVCDelegate, OOUserViewDelegate>
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
-- (void) refreshUserImage;
-- (void) enableURLButton;
+- (void)refreshUserImage;
+- (void)enableURLButton;
 - (void)updateSpecialtiesLabel;
 @property (nonatomic,weak) NSObject<ProfileHeaderViewDelegate>* delegate;
 @end
 
 @interface ProfileEmptyCell: UICollectionViewCell
 @property (nonatomic,weak) NSObject<ProfileEmptyCellDelegate>* delegate;
-- (void) setListMode;
-- (void) setMessageMode;
-- (void) setPhotoMode;
-- (void) setMessage:(NSString *)message;
+- (void)setListMode;
+- (void)setMessageMode;
+- (void)setPhotoMode;
+- (void)setMessage:(NSString *)message;
 
 @end
 

@@ -224,8 +224,7 @@
     column = 0;
     
     itemSize = CGSizeMake(width(self.collectionView)/kProfileNumColumnsForMediaItemsPhone-1, 0);
-    UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                                                                                      withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+    UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader                                        withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
     suppattributes.frame = CGRectIntegral(CGRectMake(0, yOffset, width(self.collectionView), hdrHeight));
     xOffset = kGeomSpaceEdge;
     yOffset += hdrHeight  + kGeomSpaceEdge;
