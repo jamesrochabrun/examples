@@ -1425,26 +1425,15 @@
         _listsAndPhotosLayout.userIsFoodie = _profileOwner.isFoodie;
         _listsAndPhotosLayout.foodieHasURL = _profileOwner.website.length > 0;
 
-//        if (_headerView) {
-//            [_headerView removeFromSuperview];
-//            return _headerView;
-//        }
-
         view = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                  withReuseIdentifier:PROFILE_CV_HEADER_CELL
                                                         forIndexPath:indexPath];
-
-//        self.headerView = view;
-//        [_headerView removeFromSuperview];
-//        [_headerView setUserInfo:self.profileOwner];
         
         [view setUserInfo:_profileOwner];
+
         view.vc = self;
-        
         view.delegate = self;
-        
-        //[_cv setNeedsLayout];
-        
+
         return view;
     }
     
