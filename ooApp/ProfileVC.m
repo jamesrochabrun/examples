@@ -998,7 +998,6 @@
                     weakSelf.arrayLists = foundLists;
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [weakSelf.aiv stopAnimating];
-                        [weakSelf.view sendSubviewToBack:weakSelf.aiv];
                         [weakSelf.cv reloadData];
                         [weakSelf.headerView refreshUserStats];
                     });
@@ -1006,7 +1005,6 @@
                     NSLog(@"ERROR WHILE GETTING LISTS FOR USER: %@",e);
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [weakSelf.aiv stopAnimating];
-                        [weakSelf.view sendSubviewToBack:weakSelf.aiv];
                     });
                 }];
 }
@@ -1026,7 +1024,6 @@
                        NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
                        dispatch_async(dispatch_get_main_queue(), ^{
                            [weakSelf.aiv stopAnimating];
-                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                            [weakSelf.cv reloadData];
                            [weakSelf.headerView refreshUserStats];
                        });
@@ -1034,7 +1031,6 @@
                        NSLog  (@"FAILED TO GET PHOTOS");
                        dispatch_async(dispatch_get_main_queue(), ^{
                            [weakSelf.aiv stopAnimating];
-                           [weakSelf.view sendSubviewToBack: weakSelf.aiv];
                        });
                    }];
 }
