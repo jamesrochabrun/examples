@@ -13,7 +13,10 @@
 
 @interface PhotoCVCell ()
 
-@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) AFHTTPRequestOperation *roGetImage;
+@property (nonatomic, strong) AFHTTPRequestOperation *roGetLiked;
+@property (nonatomic, strong) AFHTTPRequestOperation *roGetUser;
+@property (nonatomic, strong) AFHTTPRequestOperation *roGetNumLikes;
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIButton *takeAction;
 @property (nonatomic, strong) UIButton *userButton;
@@ -216,20 +219,20 @@
 }
 
 - (void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
-    if (mediaItemObject == _mediaItemObject) return;
+    if (mediaItemObject == _mediaItemObject) {
+        return;
+    }
     _mediaItemObject = mediaItemObject;
     
-    _userButton.hidden = _gradient.hidden = _yumButton.hidden = _numYums.hidden = _caption.hidden = YES;
-    
     _backgroundImage.image = nil;
-    if (_mediaItemObject.caption.length) _caption.hidden = NO;
+    _caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
     
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak UIImageView *weakIV = _backgroundImage;
     __weak PhotoCVCell *weakSelf = self;
     
-    _requestOperation = [api getRestaurantImageWithMediaItem:mediaItemObject maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+    _roGetImage = [api getRestaurantImageWithMediaItem:mediaItemObject maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
         
         [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                 placeholderImage:nil
@@ -257,63 +260,70 @@
         
         [self updateNumYums];
         
-        [OOAPI getMediaItemLiked:_mediaItemObject.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
+        _roGetLiked = [OOAPI getMediaItemLiked:_mediaItemObject.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
             ON_MAIN_THREAD(^{
-                [_yumButton setSelected:liked];
-                _yumButton.hidden = NO;
+                [weakSelf.yumButton setSelected:liked];
+                weakSelf.yumButton.hidden = NO;
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ON_MAIN_THREAD(^{
-                [_yumButton setSelected:NO];
-                _yumButton.hidden = NO;
+                [weakSelf.yumButton setSelected:NO];
+                weakSelf.yumButton.hidden = YES;
             });
         }];
         //get the state of the yum button for this user
+    } else {
+        _yumButton.hidden = YES;
+        _numYums.hidden = YES;
     }
     
     if (_mediaItemObject.sourceUserID) {
-        [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
+        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
             _userObject = user;
             NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
             ON_MAIN_THREAD(^{
-                [_userButton setTitle:userName forState:UIControlStateNormal];
-                _userButton.hidden = NO;
-                _gradient.hidden = NO;
+                [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
                 [weakSelf setNeedsUpdateConstraints];
+                weakSelf.userButton.hidden = NO;
+                weakSelf.gradient.hidden = NO;
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+            weakSelf.userButton.hidden = YES;
+            weakSelf.gradient.hidden = YES;
         }];
+    } else {
+        _gradient.hidden = YES;
+        _userButton.hidden = YES;
     }
 }
 
-- (void)handleMediaItemAltered: (NSNotification*)not
+- (void)handleMediaItemAltered:(NSNotification*)not
 {
-    NSNumber*number= not.object;
-    NSUInteger  identifier= [number isKindOfClass:[NSNumber class]]? number.unsignedIntegerValue:0;
-    if  (identifier ==_mediaItemObject.mediaItemId ) {
+    NSNumber *number= not.object;
+    NSUInteger identifier = [number isKindOfClass:[NSNumber class]]? number.unsignedIntegerValue:0;
+    if (identifier ==_mediaItemObject.mediaItemId) {
         [self updateNumYums];
     }
 }
 
 - (void)updateNumYums {
     __weak PhotoCVCell *weakSelf = self;
-    [OOAPI getNumMediaItemLikes:_mediaItemObject.mediaItemId success:^(NSUInteger count) {
+    _roGetNumLikes = [OOAPI getNumMediaItemLikes:_mediaItemObject.mediaItemId success:^(NSUInteger count) {
         if (count) {
             _numYums.text = [NSString stringWithFormat:@"%lu", count];
             ON_MAIN_THREAD(^ {
-                _numYums.hidden = NO;
+                weakSelf.numYums.hidden = NO;
                 [weakSelf setNeedsUpdateConstraints];
             });
         } else {
             ON_MAIN_THREAD(^ {
-                _numYums.hidden = YES;
+                weakSelf.numYums.hidden = YES;
                 [weakSelf setNeedsUpdateConstraints];
             });
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ON_MAIN_THREAD(^ {
-            _numYums.hidden = YES;
+            weakSelf.numYums.hidden = YES;
             [weakSelf setNeedsUpdateConstraints];
         });
     }];
@@ -321,9 +331,21 @@
 
 - (void)prepareForReuse {
     [super prepareForReuse];
+    [_backgroundImage.layer removeAllAnimations];
+    [_backgroundImage cancelImageRequestOperation];
+//    [self.backgroundImage setImage: nil];
     
-    [_requestOperation cancel];
-    _requestOperation = nil;
+    [_roGetImage cancel];
+    _roGetImage = nil;
+
+    [_roGetLiked cancel];
+    _roGetLiked = nil;
+
+    [_roGetNumLikes cancel];
+    _roGetNumLikes = nil;
+
+    [_roGetUser cancel];
+    _roGetUser = nil;
 }
 
 

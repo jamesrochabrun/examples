@@ -813,6 +813,7 @@ typedef enum: char {
             }
             cell.textLabel.textColor=  WHITE;
             cell.textLabel.font= [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             return cell;
         }
         UserTVCell *cell;
