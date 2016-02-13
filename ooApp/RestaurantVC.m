@@ -910,6 +910,13 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     }
 }
 
+- (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showProfile:(UserObject *)user {
+    ProfileVC *vc = [[ProfileVC alloc] init];
+    vc.userID = user.userID;
+    vc.userInfo = user;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
                                   animationControllerForOperation:(UINavigationControllerOperation)operation
                                                fromViewController:(UIViewController *)fromVC

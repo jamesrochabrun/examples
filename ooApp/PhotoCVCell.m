@@ -333,7 +333,6 @@
     [super prepareForReuse];
     [_backgroundImage.layer removeAllAnimations];
     [_backgroundImage cancelImageRequestOperation];
-//    [self.backgroundImage setImage: nil];
     
     [_roGetImage cancel];
     _roGetImage = nil;
