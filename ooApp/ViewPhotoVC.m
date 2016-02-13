@@ -94,20 +94,7 @@
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
         
-        [self.view addSubview:_backgroundView];
-        [self.view addSubview:_closeButton];
-        [self.view addSubview:_captionButton];
-        [self.view addSubview:_userButton];
-        [self.view addSubview:_userViewButton];
-        [self.view addSubview:_numYums];
-        [self.view addSubview:_yumButton];
-        [self.view addSubview:_iv];
-        [self.view addSubview:_restaurantName];
-        
-        [self.view sendSubviewToBack:_backgroundView];
-
-//        [DebugUtilities addBorderToViews:@[self.view]];
-//        [DebugUtilities addBorderToViews:@[_restaurantName, _iv]];
+//        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton]];
     }
     return self;
 }
@@ -259,6 +246,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.view addSubview:_iv];
+    [self.view addSubview:_restaurantName];
+    [self.view addSubview:_closeButton];
+    [self.view addSubview:_captionButton];
+    [self.view addSubview:_userButton];
+    [self.view addSubview:_userViewButton];
+    [self.view addSubview:_numYums];
+    [self.view addSubview:_yumButton];
+    [self.view addSubview:_backgroundView];
+    [self.view sendSubviewToBack:_backgroundView];
+
     [_tapGesture addTarget:self action:@selector(showRestaurant)];
     [self.view addGestureRecognizer:_panGesture];
     [_backgroundView addGestureRecognizer:_doubleTapGesture];
@@ -476,7 +474,6 @@
     frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
     _iv.frame = frame;
     
-    
     CGFloat imageWidth = _iv.image.size.width/_iv.image.size.height * height(_iv);
     CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/(_iv.image.size.width) * width(self.view);
     
@@ -488,11 +485,11 @@
     _restaurantName.frame = frame;
     
     frame = _closeButton.frame;
-    frame.origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
+    frame.origin = CGPointMake(0, 0);
     _closeButton.frame = frame;
     
     frame = _optionsButton.frame;
-    frame.origin = CGPointMake(width(self.view)-width(_optionsButton) - kGeomSpaceEdge, kGeomSpaceEdge);
+    frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
     _optionsButton.frame = frame;
 
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
@@ -511,6 +508,7 @@
     frame = _userButton.frame;
     frame.origin.y = CGRectGetMaxY(_userViewButton.frame);
     frame.origin.x = kGeomSpaceEdge;
+    frame.size.height = kGeomDimensionsIconButton/2;
     _userButton.frame = frame;
     
     if (_mio.source == kMediaItemTypeOomami) {
@@ -521,8 +519,8 @@
 
         [_numYums sizeToFit];
         frame = _numYums.frame;
-    //    frame.size = CGSizeMake(width(_numYums), kGeomDimensionsIconButton);
         frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
+        frame.size.height = kGeomDimensionsIconButton/2;
         _numYums.frame = frame;
         _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
     } else {
