@@ -153,6 +153,7 @@
         [OOAPI deletePhoto:mio success:^{
             [weakSelf close];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationPhotoDeleted object:mio];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];

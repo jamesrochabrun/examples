@@ -109,6 +109,9 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setListsUpdateNeeded)
                                                  name:kNotificationRestaurantListsNeedsUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handlePhotoDeleted:)
+                                                 name:kNotificationPhotoDeleted object:nil];
     [self.view bringSubviewToFront:self.uploadProgressBar];
 }
 
@@ -118,6 +121,10 @@ static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHe
 
 - (void)setListsUpdateNeeded {
     _listsNeedUpdate = YES;
+}
+
+- (void)handlePhotoDeleted:(NSNotification*)not {
+    [self getMediaItemsForRestaurant];
 }
 
 - (void)updateIfNeeded {
