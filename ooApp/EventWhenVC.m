@@ -66,35 +66,35 @@ static int votingEndingValues[3]= {
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"WHEN IS THE EVENT" subHeader: nil];
     self.navTitle = nto;
     
-    self.view.backgroundColor= BLACK;
+    self.view.backgroundColor= UIColorRGBA(kColorBlack);
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
-    self.buttonEventDate=makeButton(self.view, @"Press here to set.", kGeomFontSizeHeader,  WHITE, CLEAR,
+    self.buttonEventDate=makeButton(self.view, @"Press here to set.", kGeomFontSizeHeader,  UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),
                                     self, @selector(userPressedUpperButton:), 0);
     
     self.pickerEventDate= [[UIDatePicker  alloc] init];
     [self.view addSubview: _pickerEventDate ];
     _pickerEventDate.backgroundColor= UIColorRGB(kColorOffBlack);
-    _pickerEventDate.tintColor= WHITE;
+    _pickerEventDate.tintColor= UIColorRGBA(kColorWhite);
     _pickerEventDate.tintAdjustmentMode= UIViewTintAdjustmentModeAutomatic;
     [_pickerEventDate addTarget:self action:@selector(userAlteredPicker:) forControlEvents:UIControlEventValueChanged];
     [_pickerEventDate setValue:[UIColor whiteColor] forKey:@"textColor"];
     
     self.labelOptions= makeLabel( self.view,  @"When is Voting Closed?", kGeomFontSizeHeader);
-    _labelOptions.textColor= WHITE;
+    _labelOptions.textColor= UIColorRGBA(kColorWhite);
     self.lowerSelection=  -1;
 
     UIButton* buttonVotingOption0= makeButton( self.view,  @"30 minutes before",
-                                              kGeomFontSizeHeader, WHITE, CLEAR,
+                                              kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),
                                               self, @selector(userPressedOption:) , 0);
     buttonVotingOption0.tag= 0;
     UIButton* buttonVotingOption1= makeButton( self.view,  @"1 day before",
-                                              kGeomFontSizeHeader, WHITE, CLEAR,
+                                              kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),
                                               self, @selector(userPressedOption:) , 0);
     buttonVotingOption1.tag= 1;
     UIButton* buttonVotingOption2= makeButton( self.view,  @"1 week before",
-                                             kGeomFontSizeHeader, WHITE, CLEAR,
+                                             kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),
                                              self, @selector(userPressedOption:) , 0);
     buttonVotingOption2.tag= 2;
 
@@ -105,7 +105,7 @@ static int votingEndingValues[3]= {
                                         ];
     
     self.viewOver1 = [[UIView alloc] init];
-    _viewOver1.backgroundColor = YELLOW;
+    _viewOver1.backgroundColor = UIColorRGB(kColorYellow);
     _viewOver1.alpha = 0.5f;
     [_pickerEventDate addSubview: _viewOver1];
     
@@ -154,8 +154,8 @@ static int votingEndingValues[3]= {
 
     self.headerWhen= makeLabelLeft(self.view, @" WHEN IS THIS?", kGeomFontSizeStripHeader);
     self.headerEndOfVoting= makeLabelLeft(self.view, @" WHEN IS VOTING CLOSED?", kGeomFontSizeStripHeader);
-    _headerWhen.textColor=GRAY;
-    _headerEndOfVoting.textColor=GRAY;
+    _headerWhen.textColor=UIColorRGB(kColorGray);
+    _headerEndOfVoting.textColor=UIColorRGB(kColorGray);
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 }
@@ -195,7 +195,7 @@ static int votingEndingValues[3]= {
 {
     int i= 0;
     for (UIButton* button  in  _arrayOfVotingOptionButtons) {
-        button.backgroundColor=  _lowerSelection==i? RED:CLEAR;
+        button.backgroundColor=  _lowerSelection==i? UIColorRGB(kColorRed):UIColorRGBA(kColorClear);
         i ++;
     }
     

@@ -32,7 +32,7 @@
 - (void)addTheAddAllButton;
 {
     _buttonAddAll= makeButton(self,  @"ADD ALL", kGeomFontSizeHeader,
-                              WHITE, CLEAR, self,
+                              UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self,
                               @selector(userPressedAddAll:) , 1);
     _buttonAddAll.translatesAutoresizingMaskIntoConstraints = NO;
     

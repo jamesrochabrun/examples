@@ -20,11 +20,6 @@
 #import "AppDelegate.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
-typedef enum {
-    kFoodFeedTypeFriends = 1,
-    kFoodFeedTypeAll = 2
-} FoodFeedType;
-
 static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 @interface FoodFeedVC ()
@@ -60,7 +55,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     _filterView = [[OOFilterView alloc] init];
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_filterView addFilter:@"All" target:self selector:@selector(selectAll)];
+    [_filterView addFilter:@"Around Me" target:self selector:@selector(selectAroundMe)];
+    [_filterView addFilter:@"Newest" target:self selector:@selector(selectAll)];
     [_filterView addFilter:@"Following" target:self selector:@selector(selectFriends)];
     [_filterView setCurrent:0];
     [self.view addSubview:_filterView];
@@ -166,7 +162,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     if (havePhotoLibrary) [addPhoto addAction:libraryUI];
     [addPhoto addAction:cancel];
     
-    if (havePhotoLibrary && haveCamera ) {
+    if (havePhotoLibrary && haveCamera) {
         [self presentViewController:addPhoto animated:YES completion:nil];
     } else {
         [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
@@ -212,7 +208,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                 NSString *latitudeRef = metadata[@"{GPS}"][@"LatitudeRef"];
                 NSNumber *latitude = metadata[@"{GPS}"][@"Latitude"];
                 
-                
                 if ([longitudeRef isEqualToString:@"W"]) longitude = [NSNumber numberWithDouble:-[longitude doubleValue]];
                 
                 if ([latitudeRef isEqualToString:@"S"]) latitude = [NSNumber numberWithDouble:-[latitude doubleValue]];
@@ -234,8 +229,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
             [weakSelf showMissinGPSMessage];
         }];
     } else {
-        [self dismissViewControllerAnimated:YES completion:nil];
-        [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
+        [weakSelf showMissinGPSMessage];
     }
     
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -268,6 +262,12 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)selectAroundMe {
+    _feedType = kFoodFeedTypeAroundMe;
+    [self getFoodFeed:kFoodFeedTypeAroundMe];
+    _noPhotosMessage.hidden = YES;
 }
 
 - (void)selectAll {

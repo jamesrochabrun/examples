@@ -11,8 +11,8 @@
 {
     self = [super init];
     if (self) {
-        self.backgroundColor= CLEAR;
-        self.layer.borderColor= BLACK.CGColor;
+        self.backgroundColor= UIColorRGBA(kColorClear);
+        self.layer.borderColor= UIColorRGBA(kColorBlack).CGColor;
         self.layer.borderWidth= 1;
     }
     return self;

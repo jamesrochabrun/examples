@@ -42,13 +42,13 @@
         _ivFoodie.contentMode = UIViewContentModeScaleAspectFit;
         _ivFoodie.clipsToBounds=NO;
         
-        _viewHalo= makeView(self, CLEAR);
-        addBorder(_viewHalo, 1.5, YELLOW);
+        _viewHalo= makeView(self, UIColorRGBA(kColorClear));
+        addBorder(_viewHalo, 1.5, UIColorRGB(kColorYellow));
         _viewHalo.userInteractionEnabled=NO;
         
-        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, BLACK, CLEAR, self, @selector(userPressedSettings:) , 0);
+        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, UIColorRGBA(kColorBlack), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
         
-        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, YELLOW, CLEAR, self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
         _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
         
     }
@@ -90,8 +90,8 @@
 {
     [super layoutSubviews];
     
-    float w = self.bounds.size.width;
-    float h = self.bounds.size.height;
+    float w = width(self);
+    float h = height(self);
     
     _emptyUserView.frame = self.bounds;
     _imageView.frame = self.bounds;
@@ -110,14 +110,15 @@
 
 - (void)setUser:(UserObject *)user
 {
-    if (!user) {
-        self.imageView.image = nil;
-        _user=nil;
-        return;
-    }
-    if  (user==_user && [_user isEqualToDeeply: user] ) {
-        return;
-    }
+    if (_user == user) return;
+//    if (!user) {
+//        self.imageView.image = nil;
+//        _user=nil;
+//        return;
+//    }
+//    if  (user==_user && [_user isEqualToDeeply: user] ) {
+//        return;
+//    }
     _user = user;
     
     NSString *first = _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
@@ -126,33 +127,29 @@
     _emptyUserView.text = initials;
     UIImage *image = nil;
     __weak OOUserView *weakSelf = self;
-
+    __weak UIImageView *weakIV = _imageView;
+    
     if (_user.mediaItem) {
         OOAPI *api = [[OOAPI alloc] init];
         [api getRestaurantImageWithMediaItem:_user.mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
-            __weak UIImageView *weakIV = _imageView;
-            [_imageView setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+            [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                               placeholderImage:nil
                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                  weakIV.image = image;
                                                  [weakIV setAlpha:1.0];
                                                  weakSelf.emptyUserView.alpha = 0;
-                                                 [weakSelf updateConstraintsIfNeeded];
-                                           });
-                                           
-                                           if (user.isFoodie) {
-                                               [weakSelf setIsFoodie];
-                                           }
-                                           
+                                                 if (user.isFoodie) {
+                                                     [weakSelf setIsFoodie];
+                                                 }
+                                             });
                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
                                              dispatch_async(dispatch_get_main_queue(), ^{
                                                [weakSelf displayEmptyView:YES];
-                                           });
-                                           
-                                           if (user.isFoodie) {
-                                               [weakSelf setIsFoodie];
-                                           }
+                                                 if (user.isFoodie) {
+                                                     [weakSelf setIsFoodie];
+                                                 }
+                                             });
                                        }];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{

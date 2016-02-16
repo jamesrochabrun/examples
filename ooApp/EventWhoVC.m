@@ -42,7 +42,7 @@
     if (self) {
         self.backgroundColor= UIColorRGBA(kColorOffBlack);
 
-        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomIconSize, WHITE, CLEAR, self, @selector(userPressRadioButton:), 0);
+        _radioButton= makeButton(self, kFontIconEmptyCircle, kGeomIconSize, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(userPressRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
         _radioButton.titleLabel.font= [UIFont fontWithName:kFontIcons size: kGeomFontSizeHeader];
         
@@ -53,10 +53,10 @@
         self.selectionStyle= UITableViewCellSelectionStyleNone;
         
         _labelName= makeLabelLeft(self, nil, kGeomFontSizeHeader);
-        _labelName.textColor= WHITE;
+        _labelName.textColor= UIColorRGBA(kColorWhite);
         
         _labelUserName= makeLabelLeft(self, nil, kGeomFontSizeHeader);
-        _labelUserName.textColor= WHITE;
+        _labelUserName.textColor= UIColorRGBA(kColorWhite);
         [_labelUserName withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear];
 
         self.textLabel.hidden= YES;
@@ -272,13 +272,13 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     
     if ( self.editable) {
         self.buttonAddEmailManually=makeButton(self.view, @"INVITE\rBY EMAIL",
-                                               kGeomFontSizeSubheader,  WHITE, CLEAR,
+                                               kGeomFontSizeSubheader,  UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),
                                                self, @selector(userPressedInviteByEmail:), 1);
         _buttonAddEmailManually.titleLabel.numberOfLines=2;
         _buttonAddEmailManually.titleLabel.textAlignment=NSTextAlignmentCenter;
         
         self.buttonAddEmailFromContacts=makeButton(self.view, @"INVITE\rCONTACTS",
-                                               kGeomFontSizeSubheader,  WHITE, CLEAR,
+                                               kGeomFontSizeSubheader,  UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),
                                                self, @selector(userPressedInviteFromContacts:), 1);
         _buttonAddEmailFromContacts.titleLabel.numberOfLines=2;
         _buttonAddEmailFromContacts.titleLabel.textAlignment=NSTextAlignmentCenter;

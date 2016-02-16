@@ -33,7 +33,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _labelCentered= makeLabel(self, @"This event has no restaurants.", kGeomFontSizeHeader);
-        _labelCentered.textColor= WHITE;
+        _labelCentered.textColor= UIColorRGBA(kColorWhite);
         self.backgroundColor= UIColorRGB(kColorOffBlack);
     }
     return self;
@@ -78,13 +78,13 @@
 {
     self = [super  initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.viewShadow= makeView( self, WHITE);
+        self.viewShadow= makeView( self, UIColorRGBA(kColorWhite));
         addShadowTo (_viewShadow);
         
         self.clipsToBounds= NO;
-        self.backgroundColor= CLEAR;
+        self.backgroundColor= UIColorRGBA(kColorClear);
         
-        self.viewOverlay=makeView(self, BLACK);
+        self.viewOverlay=makeView(self, UIColorRGBA(kColorBlack));
         _viewOverlay.alpha= kColorEventOverlayAlpha;
         
         self.backgroundImageView=  makeImageView( self,  @"background-image.jpg" );
@@ -92,29 +92,29 @@
         _backgroundImageView.clipsToBounds= YES;
         
         self.labelDateTime= makeLabel( self,nil, kGeomFontSizeSubheader);
-        _labelDateTime.textColor= WHITE;
+        _labelDateTime.textColor= UIColorRGBA(kColorWhite);
         _labelDateTime.font= [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
         
         self.labelTitle= makeLabel( self, nil,
                                    kGeomEventHeadingFontSize);
-        _labelTitle.textColor= WHITE;
+        _labelTitle.textColor= UIColorRGBA(kColorWhite);
         _labelTitle.font= [UIFont  fontWithName: kFontLatoBold size:kGeomEventHeadingFontSize];
         
         self.labelTimeLeft= makeLabel( self, nil, kGeomFontSizeSubheader);
-        _labelTimeLeft.textColor= BLACK;
-        _labelTimeLeft.backgroundColor= YELLOW;
+        _labelTimeLeft.textColor= UIColorRGBA(kColorBlack);
+        _labelTimeLeft.backgroundColor= UIColorRGB(kColorYellow);
         
         self.participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
         _participantsView.delegate= self;
         
         _buttonSubmitVote= makeButton(self,  @"SUBMIT VOTE", kGeomFontSizeSubheader,
-                                      WHITE,  BLACK, self, @selector(doSubmitVote:), 0);
+                                      UIColorRGBA(kColorWhite),  UIColorRGBA(kColorBlack), self, @selector(doSubmitVote:), 0);
         _buttonSubmitVote.titleLabel.font= [UIFont fontWithName:kFontLatoBold
                                                            size:kGeomFontSizeSubheader];
         
         _buttonAttendees= makeButton(self,  @"WHO'S GOING", kGeomFontSizeSubheader,
-                                         WHITE, BLACK,  self, @selector(userPressedToViewAttendees:) , 0);
+                                         UIColorRGBA(kColorWhite), UIColorRGBA(kColorBlack),  self, @selector(userPressedToViewAttendees:) , 0);
         
         _buttonAttendees.titleLabel.font= [UIFont fontWithName:kFontLatoBold
                                                            size:kGeomFontSizeSubheader];
@@ -395,28 +395,28 @@
         _thumbnail.contentMode= UIViewContentModeScaleAspectFill;
         _thumbnail.clipsToBounds= YES;
         
-        self.viewOverlay= makeView( self, CLEAR);
+        self.viewOverlay= makeView( self, UIColorRGBA(kColorClear));
         _viewOverlay.alpha=  kColorEventOverlayAlpha;
         
-        _radioButtonBacking= makeView(self, BLACK);
+        _radioButtonBacking= makeView(self, UIColorRGBA(kColorBlack));
         _radioButtonBacking.layer.cornerRadius= 11;
         _radioButtonBacking.frame = CGRectMake(0,0, 22 ,22);
         
-        _buttonVoteYes= makeIconButton(self, kFontIconThumbsUp, 20, WHITE, CLEAR, self, @selector(userPressedVoteUp:), 0);
-        _buttonVoteNo= makeIconButton(self, kFontIconThumbsUp, 20, WHITE, CLEAR, self, @selector(userPressedVoteDown:), 0);
+        _buttonVoteYes= makeIconButton(self, kFontIconThumbsUp, 20, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(userPressedVoteUp:), 0);
+        _buttonVoteNo= makeIconButton(self, kFontIconThumbsUp, 20, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(userPressedVoteDown:), 0);
         _buttonVoteNo.layer.transform=CATransform3DMakeRotation(M_PI, 0, 0, 1);
-        _buttonVoteYes.layer.shadowColor=BLACK.CGColor;
-        _buttonVoteNo.layer.shadowColor=BLACK.CGColor;
+        _buttonVoteYes.layer.shadowColor=UIColorRGBA(kColorBlack).CGColor;
+        _buttonVoteNo.layer.shadowColor=UIColorRGBA(kColorBlack).CGColor;
         
         _radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
-                                      WHITE, CLEAR, self, @selector(userPressedRadioButton:), 0);
+                                      UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(userPressedRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
 
         self.labelName= makeLabelLeft( self,  @"", kGeomFontSizeHeader);
         _labelName.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         self.labelDistance= makeLabelLeft( self,  @"", kGeomFontSizeSubheader);
-        _labelName.textColor= WHITE;
-        _labelDistance.textColor= WHITE;
+        _labelName.textColor= UIColorRGBA(kColorWhite);
+        _labelDistance.textColor= UIColorRGBA(kColorWhite);
         
         [self applyThinBorder];
         self.clipsToBounds= YES;
@@ -436,7 +436,7 @@
 - (void)applyThinBorder
 {
     _thumbnail.layer.borderWidth= 0.5;
-    _thumbnail.layer.borderColor= GRAY.CGColor;
+    _thumbnail.layer.borderColor= UIColorRGB(kColorGray).CGColor;
 }
 
 - (void)userPressedVoteUp: (id) sender
@@ -461,15 +461,15 @@
     switch (state) {
         case VOTE_STATE_DONT_CARE:
             [button setTitle: kFontIconDontCare forState:UIControlStateNormal];
-            self.viewOverlay.backgroundColor= BLACK;
+            self.viewOverlay.backgroundColor= UIColorRGBA(kColorBlack);
             break;
         case VOTE_STATE_YES:
             [button setTitle: kFontIconCheckmarkCircle forState:UIControlStateNormal];
-            self.viewOverlay.backgroundColor= GREEN;
+            self.viewOverlay.backgroundColor= UIColorRGB(kColorGreen);
             break;
         case VOTE_STATE_NO:
             [button setTitle: kFontIconRemove forState:UIControlStateNormal];
-            self.viewOverlay.backgroundColor= RED;
+            self.viewOverlay.backgroundColor= UIColorRGB(kColorRed);
             break;
     }
     _radioButtonState= state;

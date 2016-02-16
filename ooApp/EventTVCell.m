@@ -30,13 +30,13 @@
         self.header.textAlignment= NSTextAlignmentCenter;
         self.subHeader1.textAlignment= NSTextAlignmentCenter;
         self.subHeader2.textAlignment= NSTextAlignmentCenter;
-        self.header.textColor= WHITE;
-        self.subHeader1.textColor= WHITE;
-        self.subHeader2.textColor= WHITE;
+        self.header.textColor= UIColorRGBA(kColorWhite);
+        self.subHeader1.textColor= UIColorRGBA(kColorWhite);
+        self.subHeader2.textColor= UIColorRGBA(kColorWhite);
         self.header.font= [ UIFont  fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         self.subHeader1.font= [ UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader];
 
-        self.viewFadeOverlay= makeView(self, BLACK);
+        self.viewFadeOverlay= makeView(self, UIColorRGBA(kColorBlack));
         self.viewFadeOverlay.alpha= kColorEventOverlayAlpha;
        
         _participantsView= [[ParticipantsView alloc] init];
@@ -64,23 +64,23 @@
     self.subHeader2.text= nil;
     self.thumbnail.image= nil;
     _isMessage= NO;
-    self.header.textColor= WHITE;
+    self.header.textColor= UIColorRGBA(kColorWhite);
     
 }
 
 - (void)setMessageMode:(NSString *)message;
 {
     self.thumbnail.image= nil;
-    self.viewShadow.backgroundColor= CLEAR;
-    self.thumbnail.backgroundColor = CLEAR;
+    self.viewShadow.backgroundColor= UIColorRGBA(kColorClear);
+    self.thumbnail.backgroundColor = UIColorRGBA(kColorClear);
     self.header.text=  message;
     [self hideShadow];
     _isMessage= YES;
-    self.backgroundColor= CLEAR;
-    self.header.textColor= WHITE;
+    self.backgroundColor= UIColorRGBA(kColorClear);
+    self.header.textColor= UIColorRGBA(kColorWhite);
     self.header.layer.shadowRadius= 0;
     self.header.layer.shadowOffset= CGSizeZero;
-    self.header.layer.shadowColor= CLEAR.CGColor;
+    self.header.layer.shadowColor= UIColorRGBA(kColorClear).CGColor;
 }
 
 - (void)setIsFirst

@@ -107,10 +107,10 @@
     }
     
     self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
-                                  YELLOW, CLEAR, self,
+                                  UIColorRGB(kColorYellow), UIColorRGBA(kColorClear), self,
                                   @selector(userPressedSignUpButton:),
                                   .6);
-    _buttonSignUp.layer.borderColor = YELLOW.CGColor;
+    _buttonSignUp.layer.borderColor = UIColorRGB(kColorYellow).CGColor;
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
@@ -125,11 +125,11 @@
     NSAttributedString *str = [[NSAttributedString alloc] initWithString:LOCAL(@"Enter Username") attributes:@{ NSForegroundColorAttributeName : UIColorRGBA(kColorGrayMiddle)}];
     _fieldUsername.attributedPlaceholder = str;
     _fieldUsername.layer.cornerRadius = kGeomCornerRadius;
-    _fieldUsername.textColor= WHITE;
+    _fieldUsername.textColor= UIColorRGBA(kColorWhite);
     
     
     self.labelUsernameTaken= makeLabel(_scrollView, LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
-    self.labelUsernameTaken.textColor = YELLOW;
+    self.labelUsernameTaken.textColor = UIColorRGB(kColorYellow);
     _labelUsernameTaken.hidden = YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
@@ -138,7 +138,7 @@
     self.labelMessage = makeLabel(_scrollView,
                                    LOCAL(@"What should we call you?"),
                                    kGeomFontSizeHeader);
-    _labelMessage.textColor = WHITE;
+    _labelMessage.textColor = UIColorRGBA(kColorWhite);
     
     NavTitleObject *nto = [[NavTitleObject alloc]
                            initWithHeader:LOCAL(@"Create Username")

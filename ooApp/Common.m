@@ -90,7 +90,7 @@ NSString *trimString(NSString *s)
 void addBorder (UIView*v, float width, UIColor *color)
 {
     if (!color) {
-        color= WHITE;
+        color= UIColorRGBA(kColorWhite);
     }
     v.layer.borderColor= color.CGColor;
     v.layer.borderWidth= width;
@@ -117,12 +117,12 @@ UIImageView *makeImageViewFromURL(UIView *parent, NSString *urlString, NSString 
 
 UIButton *makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SEL callback)
 {
-    UIButton* b= makeButton( parent, nil, 0, WHITE, CLEAR,  delegate,  callback, 1);
+    UIButton* b= makeButton( parent, nil, 0, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),  delegate,  callback, 1);
     b.tag=  user.userID;
     [b setImage:APP.imageForNoProfileSilhouette forState:UIControlStateNormal];
     b.layer.cornerRadius=kGeomFaceBubbleDiameter/2;
     b.clipsToBounds= YES;
-    b.layer.borderColor= WHITE.CGColor;
+    b.layer.borderColor= UIColorRGBA(kColorWhite).CGColor;
 
     if ( user.imageIdentifier && user.imageIdentifier.length) {
         
@@ -252,7 +252,7 @@ UICollectionView* makeCollectionView (UIView *parent,id  delegate, UICollectionV
     cv.showsVerticalScrollIndicator = NO;
     cv.alwaysBounceHorizontal = NO;
     cv.allowsSelection = YES;
-    cv.backgroundColor= CLEAR;
+    cv.backgroundColor= UIColorRGBA(kColorClear);
     [parent addSubview: cv];
     return cv;
 }
@@ -457,7 +457,7 @@ void addShadowTo (UIView*v)
 {
     v.opaque= YES;
     v.layer.shadowOffset= CGSizeMake ( 2, 2);
-    v.layer.shadowColor= UIColorRGB(kColorBlack).CGColor;
+    v.layer.shadowColor= UIColorRGBA(kColorBlack).CGColor;
     v.layer.shadowOpacity= .5;
     v.layer.shadowRadius= 4;
     v.clipsToBounds= NO;

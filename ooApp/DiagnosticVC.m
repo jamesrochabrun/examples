@@ -70,22 +70,22 @@
     self.view.autoresizesSubviews= NO;
     self.view.backgroundColor= [UIColor lightGrayColor];
     
-    _textviewDiagnosticLog= makeTextView(self.view, WHITE, NO);
-    _textviewDiagnosticLog.layer.borderColor= GRAY.CGColor;
+    _textviewDiagnosticLog= makeTextView(self.view, UIColorRGBA(kColorWhite), NO);
+    _textviewDiagnosticLog.layer.borderColor= UIColorRGB(kColorGray).CGColor;
     _textviewDiagnosticLog.layer.borderWidth= 0.5;
     _textviewDiagnosticLog.layer.cornerRadius= 5;
     _textviewDiagnosticLog.textAlignment= NSTextAlignmentLeft;
     _textviewDiagnosticLog.font= [ UIFont systemFontOfSize:kGeomFontSizeDetail ];
 
-    _buttonClearUsername= makeButton(self.view,  @"CLEAR USERNAME", kGeomFontSizeHeader-2, WHITE, CLEAR, self, @selector(doClearUsername:), 1);
+    _buttonClearUsername= makeButton(self.view,  @"UIColorRGBA(kColorClear) USERNAME", kGeomFontSizeHeader-2, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doClearUsername:), 1);
     _buttonClearUsername.titleLabel.numberOfLines= 0;
     _buttonClearUsername.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    _buttonClearCache= makeButton(self.view,  @"CLEAR CACHE", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doClearCache:), 1);
+    _buttonClearCache= makeButton(self.view,  @"UIColorRGBA(kColorClear) CACHE", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doClearCache:), 1);
     _buttonClearCache.titleLabel.numberOfLines= 0;
     _buttonClearCache.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonSendLog= makeButton(self.view,  @"SEND LOG", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doSendLog:), 1);
+    self.buttonSendLog= makeButton(self.view,  @"SEND LOG", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doSendLog:), 1);
     _buttonSendLog.titleLabel.numberOfLines= 0;
     _buttonSendLog.titleLabel.textAlignment= NSTextAlignmentCenter;
     
@@ -96,31 +96,31 @@
     [ self.view addSubview: _switchUsingStage];
     _switchUsingStage.on= APP.usingStagingServer;
     self.labelUsingStage=  makeLabel( self.view,  @"USE\rSTAGE", kGeomFontSizeHeader);
-    _labelUsingStage.textColor= WHITE;
+    _labelUsingStage.textColor= UIColorRGBA(kColorWhite);
     _labelUsingStage.textAlignment= NSTextAlignmentRight;
     [_switchUsingStage addTarget:self action:@selector(stageValueChanged:)  forControlEvents:UIControlEventValueChanged];
     
-    _buttonSearchRadius= makeButton(self.view, [NSString stringWithFormat:@"%dkM RADIUS", radius] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doSearchRadius:), 1);
+    _buttonSearchRadius= makeButton(self.view, [NSString stringWithFormat:@"%dkM RADIUS", radius] , kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doSearchRadius:), 1);
     _buttonSearchRadius.titleLabel.numberOfLines= 0;
     _buttonSearchRadius.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    _buttonLongName= makeButton(self.view, [NSString stringWithFormat:@"LONG NAME"] , kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(setLongName:), 1);
+    _buttonLongName= makeButton(self.view, [NSString stringWithFormat:@"LONG NAME"] , kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(setLongName:), 1);
     _buttonLongName.titleLabel.numberOfLines= 0;
     _buttonLongName.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doTakePhoto:), 1);
+    _buttonTakePhoto= makeButton(self.view,  @"TAKE PHOTO", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doTakePhoto:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonCreateUsername= makeButton(self.view,  @"USER NAME", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doCreateUsername:), 1);
+    self.buttonCreateUsername= makeButton(self.view,  @"USER NAME", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doCreateUsername:), 1);
     _buttonTakePhoto.titleLabel.numberOfLines= 0;
     _buttonTakePhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-    self.buttonHardCrash= makeButton(self.view, @"HARD CRASH", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(doHardCrash:), 1);
+    self.buttonHardCrash= makeButton(self.view, @"HARD CRASH", kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doHardCrash:), 1);
     _buttonHardCrash.titleLabel.numberOfLines= 0;
     _buttonHardCrash.titleLabel.textAlignment= NSTextAlignmentCenter;
     
-//    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, WHITE, CLEAR, self, @selector(doPhotoUpload:), 1);
+//    _buttonUploadPhoto= makeButton(self.view,  @"UPLOAD PHOTO", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doPhotoUpload:), 1);
 //    _buttonUploadPhoto.titleLabel.numberOfLines= 0;
 //    _buttonUploadPhoto.titleLabel.textAlignment= NSTextAlignmentCenter;
     

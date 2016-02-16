@@ -218,7 +218,7 @@
 {
     _viewShadow.opaque = YES;
     _viewShadow.layer.shadowOffset = CGSizeMake(0, 0);
-    _viewShadow.layer.shadowColor = CLEAR.CGColor;
+    _viewShadow.layer.shadowColor = UIColorRGBA(kColorClear).CGColor;
     _viewShadow.layer.shadowOpacity = 0;
     _viewShadow.layer.shadowRadius = 0;
 }
@@ -227,7 +227,7 @@
 {
     _viewShadow.opaque = YES;
     _viewShadow.layer.shadowOffset = CGSizeMake(0, 5);
-    _viewShadow.layer.shadowColor = BLACK.CGColor;
+    _viewShadow.layer.shadowColor = UIColorRGBA(kColorBlack).CGColor;
     _viewShadow.layer.shadowOpacity = 0.25;
     _viewShadow.layer.shadowRadius = 4;
 }

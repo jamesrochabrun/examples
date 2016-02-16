@@ -44,7 +44,7 @@
     if (self) {
         self.autoresizesSubviews= NO;
         self.buttonAddRestaurant=makeRoundIconButton(self.contentView, kFontIconAdd,
-                                                     30, UIColorRGB(kColorYellow), UIColorRGB(kColorBlack),
+                                                     30, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack),
                                                      self, @selector(newRestaurant:),
                                                      0, kGeomHeightButton/2);
         
@@ -82,13 +82,13 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.buttonAdd=  makeRoundIconButton(self.contentView, kFontIconAdd, 20,
-                                             YELLOW, BLACK,
+                                             UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack),
                                              self, @selector(userPressedAdd:), 0,
                                              kGeomHeightButton/2);
         _buttonAdd.enabled= NO;
         self.labelMessage= makeLabel(self.contentView, @"Tap Me", kGeomFontSizeSubheader);
         _labelMessage.clipsToBounds= NO;
-        _labelMessage.textColor= WHITE;
+        _labelMessage.textColor= UIColorRGBA(kColorWhite);
         self.selectionStyle= UITableViewCellSelectionStyleNone;
         self.backgroundColor= UIColorRGBA( kColorCoordinatorBoxBackground);
     }
@@ -145,19 +145,19 @@
         _imageViewContainer1.contentMode= UIViewContentModeScaleAspectFill;
         _imageViewContainer1.clipsToBounds= YES;
         
-        self.viewOverlay=makeView(self.contentView, BLACK);
+        self.viewOverlay=makeView(self.contentView, UIColorRGBA(kColorBlack));
         _viewOverlay.alpha= kColorEventOverlayAlpha;
         
         self.labelTitle=makeAttributedLabel(self.contentView, self.eventBeingEdited.name ?: @"UNNAMED EVENT", kGeomEventHeadingFontSize);
         
-        _labelTitle.textColor= WHITE;
+        _labelTitle.textColor= UIColorRGBA(kColorWhite);
         
         self.clipsToBounds= NO;
         self.contentView.clipsToBounds= NO;
         
         if  (_inE3LMode ) {
-            _buttonAccept= makeButton(self.contentView,  @"Accept",kGeomFontSizeHeader, YELLOW, BLACK, self, @selector(doAccept:), 0);
-            _buttonDecline= makeButton(self.contentView,  @"Decline",kGeomFontSizeHeader, YELLOW, BLACK, self, @selector(doDecline:), 0);
+            _buttonAccept= makeButton(self.contentView,  @"Accept",kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self, @selector(doAccept:), 0);
+            _buttonDecline= makeButton(self.contentView,  @"Decline",kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self, @selector(doDecline:), 0);
         } else {
             NSString* submitButtonMessage;
             if  (self.eventBeingEdited.isComplete) {
@@ -167,7 +167,7 @@
             }
             
             _buttonSubmit= makeButton(self.contentView, submitButtonMessage,
-                                      kGeomFontSizeHeader, YELLOW, BLACK, self, @selector(doSubmit:), 0);
+                                      kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self, @selector(doSubmit:), 0);
             _buttonSubmit.titleLabel.numberOfLines= 0;
             _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
         }
@@ -215,15 +215,15 @@
     self.labelIcon=makeIconLabel(self.contentView, kFontIconPhoto, 20);
     self.labelTitle=makeAttributedLabel(self.contentView, @"UPLOAD A COVER PHOTO", kGeomFontSizeHeader);
     self.labelSubtitle=makeAttributedLabel(self.contentView, @"(think “tasty”)", kGeomFontSizeSubheader);
-    _labelTitle.textColor= WHITE;
-    _labelIcon.textColor= WHITE;
-    _labelSubtitle.textColor= WHITE;
+    _labelTitle.textColor= UIColorRGBA(kColorWhite);
+    _labelIcon.textColor= UIColorRGBA(kColorWhite);
+    _labelSubtitle.textColor= UIColorRGBA(kColorWhite);
     
-//    _labelTitle.shadowColor = BLACK;
+//    _labelTitle.shadowColor = UIColorRGBA(kColorBlack);
 //    _labelTitle.shadowOffset = CGSizeMake(0, -1.0);
-//    _labelIcon.shadowColor = BLACK;
+//    _labelIcon.shadowColor = UIColorRGBA(kColorBlack);
 //    _labelIcon.shadowOffset = CGSizeMake(0, -1.0);
-//    _labelSubtitle.shadowColor = BLACK;
+//    _labelSubtitle.shadowColor = UIColorRGBA(kColorBlack);
 //    _labelSubtitle.shadowOffset = CGSizeMake(0, -1.0);
     
     [self doLayout];
@@ -454,15 +454,15 @@
         self.labelWhoPending = makeAttributedLabel(self.contentView, @"", kGeomFontSizeHeader);
 //        self.labelWhoResponded = makeAttributedLabel(self.contentView, @"", kGeomFontSizeHeader);
         self.labelWhoVoted = makeAttributedLabel(self.contentView, @"", kGeomFontSizeHeader);
-        _labelWhoPending.textColor= WHITE;
-//        _labelWhoResponded.textColor= WHITE;
-        _labelWhoVoted.textColor= WHITE;
+        _labelWhoPending.textColor= UIColorRGBA(kColorWhite);
+//        _labelWhoResponded.textColor= UIColorRGBA(kColorWhite);
+        _labelWhoVoted.textColor= UIColorRGBA(kColorWhite);
         
         self.clipsToBounds= YES;
         self.contentView.clipsToBounds= YES;
         
-        self.viewVerticalLine1= makeView(self, BLACK);
-        self.viewVerticalLine2= makeView(self, BLACK);
+        self.viewVerticalLine1= makeView(self, UIColorRGBA(kColorBlack));
+        self.viewVerticalLine2= makeView(self, UIColorRGBA(kColorBlack));
         self.participantsView= [[ ParticipantsView alloc] init];
         [self.contentView addSubview: _participantsView];
         _participantsView.delegate= self;
@@ -651,7 +651,7 @@
     
     TileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
                                                                 forIndexPath:indexPath];
-    cvc.backgroundColor = GRAY;
+    cvc.backgroundColor = UIColorRGB(kColorGray);
     RestaurantObject *venue = [self.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
     cvc.displayType = KListDisplayTypeStrip;
@@ -708,7 +708,7 @@
         
         self.labelTime= makeLabel(self,  @"", 18);
         self.labelTime.font= [UIFont  fontWithName: kFontLatoBold  size:18];
-        _labelTime.textColor= WHITE;
+        _labelTime.textColor= UIColorRGBA(kColorWhite);
         
         self.pieHour= [[PieView alloc] init];
         [self  addSubview: _pieHour];
@@ -720,13 +720,13 @@
         self.labelDay4 = makeLabel(self, @"R", kGeomFontSizeHeader);
         self.labelDay5 = makeLabel(self, @"F", kGeomFontSizeHeader);
         self.labelDay6 = makeLabel(self, @"S", kGeomFontSizeHeader);
-        _labelDay0.textColor = GRAY;
-        _labelDay1.textColor = GRAY;
-        _labelDay2.textColor = GRAY;
-        _labelDay3.textColor = GRAY;
-        _labelDay4.textColor = GRAY;
-        _labelDay5.textColor = GRAY;
-        _labelDay6.textColor = GRAY;
+        _labelDay0.textColor = UIColorRGB(kColorGray);
+        _labelDay1.textColor = UIColorRGB(kColorGray);
+        _labelDay2.textColor = UIColorRGB(kColorGray);
+        _labelDay3.textColor = UIColorRGB(kColorGray);
+        _labelDay4.textColor = UIColorRGB(kColorGray);
+        _labelDay5.textColor = UIColorRGB(kColorGray);
+        _labelDay6.textColor = UIColorRGB(kColorGray);
         
         self.labelDate0= makeLabel(self,  @"", kGeomFontSizeHeader);
         self.labelDate1= makeLabel(self,  @"", kGeomFontSizeHeader);
@@ -735,14 +735,14 @@
         self.labelDate4= makeLabel(self,  @"", kGeomFontSizeHeader);
         self.labelDate5= makeLabel(self,  @"", kGeomFontSizeHeader);
         self.labelDate6= makeLabel(self,  @"", kGeomFontSizeHeader);
-        self.viewTodayBubble= makeView(self, BLACK);
+        self.viewTodayBubble= makeView(self, UIColorRGBA(kColorBlack));
         
         self.labelMonth= makeLabel(self,  @"", kGeomFontSizeHeader);
         _labelMonth.font= [UIFont  fontWithName: kFontLatoBold  size:kGeomFontSizeHeader];
-        _labelMonth.textColor= WHITE;
+        _labelMonth.textColor= UIColorRGBA(kColorWhite);
         
-        self.viewhorizontalLine=makeView(self, GRAY);
-        _viewhorizontalLine.backgroundColor= GRAY;
+        self.viewhorizontalLine=makeView(self, UIColorRGB(kColorGray));
+        _viewhorizontalLine.backgroundColor= UIColorRGB(kColorGray);
         
     }
     
@@ -830,8 +830,8 @@
         u-= ONE_DAY*dayNumber;
     }
     
-    UIColor *inactiveColor= GRAY;
-    UIColor *activeColor= YELLOW;
+    UIColor *inactiveColor= UIColorRGB(kColorGray);
+    UIColor *activeColor= UIColorRGB(kColorYellow);
     
     for (int i=0; i < 7; i++) {
         NSDate *date= [NSDate dateWithTimeIntervalSince1970:u];
@@ -921,14 +921,14 @@
     self.navTitle = nto;
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
-    self.view.backgroundColor= BLACK;
+    self.view.backgroundColor= UIColorRGBA(kColorBlack);
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
     
     self.table= makeTable(  self.view, self);
     _table.separatorStyle=  UITableViewCellSeparatorStyleNone;
     _table.sectionHeaderHeight= kGeomSeparatorHeight;
-    _table.backgroundColor= BLACK;
+    _table.backgroundColor= UIColorRGBA(kColorBlack);
     _table.delaysContentTouches= YES;
     _table.showsVerticalScrollIndicator= NO;
 
@@ -1059,10 +1059,10 @@
     }
     
     UILabel *sectionHeader = [[UILabel alloc] initWithFrame: CGRectNull];
-    sectionHeader.backgroundColor = BLACK;
+    sectionHeader.backgroundColor = UIColorRGBA(kColorBlack);
     sectionHeader.textAlignment = NSTextAlignmentLeft;
     sectionHeader.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader];
-    sectionHeader.textColor = WHITE;
+    sectionHeader.textColor = UIColorRGBA(kColorWhite);
     sectionHeader.text = sectionString;
     return sectionHeader;
 }

@@ -50,7 +50,7 @@
     [super viewDidLoad];
     
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= WHITE;
+    self.view.backgroundColor= UIColorRGBA(kColorWhite);
     
     _wentToExplore = NO;
     
@@ -80,7 +80,7 @@
     [self.view addSubview:_facebookLoginButton];
     
     self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
-    _labelMessage.textColor= WHITE;
+    _labelMessage.textColor= UIColorRGBA(kColorWhite);
     
 #ifdef DEBUG
     self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];

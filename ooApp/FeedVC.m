@@ -42,16 +42,16 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.backgroundColor=BLACK;
+        self.backgroundColor=UIColorRGBA(kColorBlack);
 
         self.autoresizesSubviews= NO;
         self.iconImageView= makeImageView( self.contentView, APP.imageForNoProfileSilhouette);
-        _iconImageView.backgroundColor= CLEAR;
+        _iconImageView.backgroundColor= UIColorRGBA(kColorClear);
         self.labelVerb= makeLabelLeft(self.contentView, @"", kGeomFontSizeSubheader);
-        _labelVerb.textColor= WHITE;
+        _labelVerb.textColor= UIColorRGBA(kColorWhite);
         _labelVerb.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
         self.labelDescription= makeLabelLeft(self.contentView, @"?", kGeomFontSizeSubheader);
-        _labelDescription.textColor= WHITE;
+        _labelDescription.textColor= UIColorRGBA(kColorWhite);
         self.selectionStyle= UITableViewCellSelectionStyleNone;
         
         self.photoImageView=makeImageView( self.contentView, nil);
@@ -61,14 +61,14 @@
         _iconImageView.contentMode= UIViewContentModeScaleAspectFill;
         _photoImageView.contentMode= UIViewContentModeScaleAspectFill;
         
-        self.buttonSubjectName= makeButton(self.contentView, @"", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(userTappedSubject:), 0);
+        self.buttonSubjectName= makeButton(self.contentView, @"", kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(userTappedSubject:), 0);
         _buttonSubjectName.titleLabel.font= [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
         _buttonSubjectName.titleLabel.textAlignment=NSTextAlignmentLeft;
         
-        self.buttonIcon= makeButton(self.contentView, nil, 0, CLEAR, CLEAR, self, @selector(userTappedIcon:), 0);
-        self.buttonPhotoArea= makeButton(self.contentView, nil, 0, CLEAR, CLEAR, self, @selector(userTappedPhotos:), 0);
+        self.buttonIcon= makeButton(self.contentView, nil, 0, UIColorRGBA(kColorClear), UIColorRGBA(kColorClear), self, @selector(userTappedIcon:), 0);
+        self.buttonPhotoArea= makeButton(self.contentView, nil, 0, UIColorRGBA(kColorClear), UIColorRGBA(kColorClear), self, @selector(userTappedPhotos:), 0);
         
-        self.buttonObjectName=makeButton(self.contentView, @"", kGeomFontSizeSubheader, WHITE, CLEAR, self, @selector(userTappedObject:), 0);
+        self.buttonObjectName=makeButton(self.contentView, @"", kGeomFontSizeSubheader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(userTappedObject:), 0);
         _buttonObjectName.titleLabel.textAlignment=NSTextAlignmentLeft;
     }
     return self;
@@ -328,13 +328,13 @@ static NSString * const FeedCellID = @"FeedCell";
     self.tableViewUpdates = makeTable( self.view,  self);
 //    _tableViewUpdates.translatesAutoresizingMaskIntoConstraints = NO;
         _tableViewUpdates.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableViewUpdates.backgroundColor = WHITE;
+    _tableViewUpdates.backgroundColor = UIColorRGBA(kColorWhite);
     [_tableViewUpdates registerClass:[FeedCell class] forCellReuseIdentifier:FeedCellID];
     
     self.tableViewNotifications = makeTable( self.view,  self);
 //    _tableViewNotifications.translatesAutoresizingMaskIntoConstraints = NO;
         _tableViewNotifications.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableViewNotifications.backgroundColor = GRAY;
+    _tableViewNotifications.backgroundColor = UIColorRGB(kColorGray);
     [_tableViewNotifications registerClass:[FeedCell class] forCellReuseIdentifier:FeedCellID];
     
 //    _tableViewUpdates.opaque= YES;
@@ -370,8 +370,8 @@ static NSString * const FeedCellID = @"FeedCell";
     
     _tableViewUpdates.frame = CGRectMake(kGeomSpaceEdge, y, w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
     _tableViewNotifications.frame = CGRectMake(kGeomSpaceEdge, y, w-2*kGeomSpaceEdge, h-y-kGeomSpaceEdge);
-    _tableViewUpdates.backgroundColor=BLACK;
-    _tableViewNotifications.backgroundColor=BLACK;
+    _tableViewUpdates.backgroundColor=UIColorRGBA(kColorBlack);
+    _tableViewNotifications.backgroundColor=UIColorRGBA(kColorBlack);
     
     BOOL firstIsSelected= _currentFilter==0;
     _tableViewUpdates.userInteractionEnabled= firstIsSelected;

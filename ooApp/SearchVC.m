@@ -98,7 +98,7 @@ typedef enum: char {
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
-    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), CLEAR, self, @selector(userPressedCancel:), .5);
+    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), UIColorRGBA(kColorClear), self, @selector(userPressedCancel:), .5);
     [_buttonCancel setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
     
     self.filterView = [[OOFilterView alloc] init];
@@ -811,7 +811,7 @@ typedef enum: char {
                     cell.textLabel.text= nil;
                 }
             }
-            cell.textLabel.textColor=  WHITE;
+            cell.textLabel.textColor=  UIColorRGBA(kColorWhite);
             cell.textLabel.font= [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             return cell;

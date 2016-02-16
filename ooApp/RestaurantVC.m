@@ -50,10 +50,10 @@
 @property (nonatomic, strong) UINavigationController *aNC;
 @end
 
-static NSString * const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
-static NSString * const kRestaurantListsCellIdentifier = @"RestaurantListsCell";
-static NSString * const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
-static NSString * const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHeader";
+static NSString *const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
+static NSString *const kRestaurantListsCellIdentifier = @"RestaurantListsCell";
+static NSString *const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
+static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHeader";
 
 @implementation RestaurantVC
 

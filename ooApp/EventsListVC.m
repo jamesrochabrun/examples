@@ -361,7 +361,7 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    UIView *v = makeView(nil, CLEAR);
+    UIView *v = makeView(nil, UIColorRGBA(kColorClear));
     return v;
 }
 
@@ -461,7 +461,7 @@
                                                  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
                                                      [weakSelf verifyDeletionOfEvent: event];
                                                  }];
-                deleteAction.backgroundColor = RED;
+                deleteAction.backgroundColor = UIColorRGB(kColorRed);
                 return @[deleteAction];
             }
                 break;
@@ -474,7 +474,7 @@
                                                  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
                                                      [weakSelf leaveEvent: event];
                                                  }];
-                leaveAction.backgroundColor = BLUE;
+                leaveAction.backgroundColor = UIColorRGB(kColorBlue);
                 return @[leaveAction];
             }
                 break;
@@ -698,9 +698,9 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
 {
-    view.tintColor = BLACK;
+    view.tintColor = UIColorRGBA(kColorBlack);
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
-    [header.textLabel setTextColor: WHITE];
+    [header.textLabel setTextColor: UIColorRGBA(kColorWhite)];
     [header.textLabel setFont: [UIFont fontWithName: kFontLatoBold size:kGeomFontSizeStripHeader]];
 }
 

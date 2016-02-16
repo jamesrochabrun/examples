@@ -33,10 +33,10 @@
     self=[super init];
     if (self) {
         _labelTitle=makeLabelLeft (self, nil, kGeomFontSizeStripHeader);
-        _labelTitle.textColor=WHITE;
+        _labelTitle.textColor=UIColorRGBA(kColorWhite);
         _labelExpander=makeIconLabel(self, kFontIconBack, kGeomIconSize);
         _labelExpander.textColor= UIColorRGBA(kColorYellow);
-        self.backgroundColor=GRAY;
+        self.backgroundColor=UIColorRGB(kColorGray);
         _isExpanded=expanded_;
     }
     return self;
@@ -103,7 +103,7 @@
     [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
     [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
     _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    _tableUsers.separatorColor= BLACK;
+    _tableUsers.separatorColor= UIColorRGBA(kColorBlack);
     _tableUsers.showsVerticalScrollIndicator= NO;
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
@@ -218,7 +218,7 @@
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         cell.textLabel.textAlignment=NSTextAlignmentCenter;
         cell.textLabel.text=  @"Alas there are none.";
-        cell.textLabel.textColor=WHITE;
+        cell.textLabel.textColor=UIColorRGBA(kColorWhite);
         cell.selectionStyle= UITableViewCellSeparatorStyleNone;
         return cell;
     }

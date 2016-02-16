@@ -249,29 +249,29 @@
         _userView.delegate= self;
         [self addSubview:_userView];
         
-        self.viewSpecialties=makeView(self, BLACK);
+        self.viewSpecialties=makeView(self, UIColorRGBA(kColorBlack));
         self.labelSpecialtyHeader=  makeLabel( _viewSpecialties,  @"Specialties:", kGeomFontSizeSubheader);
         _labelSpecialtyHeader.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
         self.labelSpecialties=  makeLabel( _viewSpecialties,  @"", kGeomFontSizeSubheader);
-        _labelSpecialtyHeader.textColor=WHITE;
-        _labelSpecialties.textColor=WHITE;
-        _labelSpecialtyHeader.backgroundColor=BLACK;
-        _labelSpecialties.backgroundColor=BLACK;
+        _labelSpecialtyHeader.textColor=UIColorRGBA(kColorWhite);
+        _labelSpecialties.textColor=UIColorRGBA(kColorWhite);
+        _labelSpecialtyHeader.backgroundColor=UIColorRGBA(kColorBlack);
+        _labelSpecialties.backgroundColor=UIColorRGBA(kColorBlack);
         
-        self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedURLButton:), 0);
+        self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear),  self, @selector(userPressedURLButton:), 0);
         _buttonURL.hidden= YES;
         
-        _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowees:), 0);
-        _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, YELLOW, CLEAR,  self, @selector(userPressedFollowers:), 0);
+        _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowers:), 0);
         
-        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, WHITE, CLEAR,  self, @selector(userPressedFollowees:), 0);
-        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, WHITE, CLEAR,  self, @selector(userPressedFollowers:), 0);
+        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowers:), 0);
         
         _buttonFollowersCount.titleLabel.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         _buttonFolloweesCount.titleLabel.font = _buttonFollowersCount.titleLabel.font;
         
-        _buttonDescription = makeButton(self,  @"", 1, WHITE,
-                                        BLACK,  self,
+        _buttonDescription = makeButton(self,  @"", 1, UIColorRGBA(kColorWhite),
+                                        UIColorRGBA(kColorBlack),  self,
                                         @selector(userTappedDescription:) , 0);
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
@@ -284,12 +284,12 @@
         _labelPhoto= makeIconLabel(self, kFontIconPhoto, kGeomFontSizeStatsIcons);
         _labelLikes= makeIconLabel(self, kFontIconYum, kGeomFontSizeStatsIcons);
         
-        _labelVenuesCount.textColor= WHITE;
-        _labelPhotoCount.textColor= WHITE;
-        _labelLikesCount.textColor= WHITE;
-        _labelVenues.textColor= WHITE;
-        _labelPhoto.textColor= WHITE;
-        _labelLikes.textColor= WHITE;
+        _labelVenuesCount.textColor= UIColorRGBA(kColorWhite);
+        _labelPhotoCount.textColor= UIColorRGBA(kColorWhite);
+        _labelLikesCount.textColor= UIColorRGBA(kColorWhite);
+        _labelVenues.textColor= UIColorRGBA(kColorWhite);
+        _labelPhoto.textColor= UIColorRGBA(kColorWhite);
+        _labelLikes.textColor= UIColorRGBA(kColorWhite);
 
         _labelVenuesCount.textAlignment= NSTextAlignmentLeft;
         _labelPhotoCount.textAlignment= NSTextAlignmentLeft;
@@ -298,12 +298,12 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow= makeButton(self, @"FOLLOW",
-                                       kGeomFontSizeSubheader, BLACK, YELLOW,
+                                       kGeomFontSizeSubheader, UIColorRGBA(kColorBlack), UIColorRGB(kColorYellow),
                                        self,
                                        @selector(userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        [_buttonFollow setTitleColor:WHITE forState:UIControlStateSelected];
-        _buttonFollow.layer.borderColor=YELLOW.CGColor;
+        [_buttonFollow setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateSelected];
+        _buttonFollow.layer.borderColor=UIColorRGB(kColorYellow).CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
         _buttonFollow.layer.borderWidth= 1;
         _buttonFollow.hidden= YES;
@@ -315,7 +315,7 @@
                               calling:@selector(updateOwnProfile:)
          ];
         
-        self.backgroundColor=BLACK;
+        self.backgroundColor=UIColorRGBA(kColorBlack);
     }
     return self;
 }
@@ -347,7 +347,7 @@
     _labelSpecialties.text= specialtyString;
 }
 
-- (void)userPressedURLButton: (id) sender
+- (void)userPressedURLButton:(id)sender
 {
     NSString *urlString= _userInfo.website;
     if  (!urlString) {
@@ -554,7 +554,7 @@
 {
     _followingThisUser=NO;
     _buttonFollow.selected= NO;
-    _buttonFollow.backgroundColor= YELLOW;
+    _buttonFollow.backgroundColor= UIColorRGB(kColorYellow);
     _buttonFollow.layer.borderWidth= 0;
     _buttonFollow.hidden= NO;
 
@@ -603,7 +603,7 @@
     
     _backgroundImageView.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
     _backgroundImageFade.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
-    _backgroundImageView.backgroundColor = YELLOW;
+    _backgroundImageView.backgroundColor = UIColorRGB(kColorYellow);
     NSUInteger y = kGeomSpaceEdge;
     _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
     
@@ -1885,7 +1885,7 @@
     if (self) {
         self.autoresizesSubviews= NO;
         _labelIcon= makeIconLabel( self,  @"",kGeomIconSize);
-        _labelIcon.textColor= YELLOW;
+        _labelIcon.textColor= UIColorRGB(kColorYellow);
 
         _labelMessage= makeLabel(self,  @"?", kGeomFontSizeHeader);
         _labelMessage.textColor = UIColorRGB(kColorLightGray);

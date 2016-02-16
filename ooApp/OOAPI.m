@@ -26,6 +26,7 @@ NSString *const kKeySearchMinPrice = @"minprice";
 NSString *const kKeySearchMaxPrice = @"maxprice";
 NSString *const kKeySearchLatitude = @"latitude";
 NSString *const kKeySearchLongitude = @"longitude";
+NSString *const kKeySearchLimit = @"limit";
 
 NSString *const kKeyRestaurantIDs = @"restaurant_ids";
 NSString *const kKeyUserIDs = @"user_ids";
@@ -1036,19 +1037,29 @@ NSString *const kKeyDeviceToken = @"device_token";
 
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, kFoodFeedPageSize];
     
-    if (type == 1) {
-        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?filter=2&limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, kFoodFeedPageSize];
-    } else if (type == 2) {
-        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, kFoodFeedPageSize];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (type == kFoodFeedTypeFriends) {
+        [parameters setObject:[NSNumber numberWithUnsignedInteger:kFoodFeedPageSize] forKey:kKeySearchLimit];
+        [parameters setObject:[NSNumber numberWithInt:2] forKey:kKeySearchFilter];
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID];
+    } else if (type == kFoodFeedTypeAll) {
+        [parameters setObject:[NSNumber numberWithUnsignedInteger:kFoodFeedPageSize] forKey:kKeySearchLimit];
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID];
+    } else if (type == kFoodFeedTypeAroundMe) {
+        CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+        [parameters setObject:[NSNumber numberWithUnsignedInteger:kFoodFeedPageSize] forKey:kKeySearchLimit];
+        [parameters setObject:[NSNumber numberWithFloat:loc.latitude] forKey:kKeySearchLatitude];
+        [parameters setObject:[NSNumber numberWithFloat:loc.longitude] forKey:kKeySearchLongitude];
+        urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID];
     } else {
         failure(nil, nil);
         return nil;
     }
-    
 
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         NSMutableArray *restaurants = [NSMutableArray array];
         if ([responseObject count]) {
             for (id dict in responseObject) {
@@ -1731,12 +1742,13 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs
+// Name:    getUnfollowedFacebookUsers
 // Purpose:
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs: (NSArray*) array
-                                                                    success:(void (^)(NSArray *users))success
-                                                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getUnfollowedFacebookUsers:(NSArray *)array
+                                               forUser:(NSUInteger)userID
+                                               success:(void (^)(NSArray *users))success
+                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!array.count) {
         failure(nil,nil);
@@ -1744,8 +1756,8 @@ NSString *const kKeyDeviceToken = @"device_token";
     }
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSUInteger userID = userInfo.userID;
+//    UserObject *userInfo = [Settings sharedInstance].userObject;
+//    NSUInteger userID = userInfo.userID;
     NSMutableString *urlString= [NSMutableString stringWithFormat:@"%@://%@/users/%lu/connect/facebookIds?",
                                  kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     

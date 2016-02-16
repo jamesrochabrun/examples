@@ -17,6 +17,7 @@
 #import "EventObject.h"
 #import "UserObject.h"
 #import "UserStatsObject.h"
+#import "LocationManager.h"
 
 //extern NSString *const kKeyName;
 
@@ -24,6 +25,12 @@ typedef enum {
     kSearchSortTypeDistance = 1,
     kSearchSortTypeBestMatch = 2,
 } SearchSortType;
+
+typedef enum {
+    kFoodFeedTypeFriends = 1,
+    kFoodFeedTypeAll = 2,
+    kFoodFeedTypeAroundMe = 3
+} FoodFeedType;
 
 static NSUInteger kAllUsersID = 0; //means user not specified so trying to get info for all users
 
@@ -245,9 +252,11 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                                                     success:(void (^)(NSArray *users))success
                                                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)getUsersTheCurrentUserIsNotFollowingUsingFacebookIDs: (NSArray*) array
-                                                                         success:(void (^)(NSArray *users))success
-                                                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++ (AFHTTPRequestOperation *)getUnfollowedFacebookUsers:(NSArray *)array
+                                               forUser:(NSUInteger)userID
+                                               success:(void (^)(NSArray *users))success
+                                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
 //------------------------------------------------------------------------------
 // Groups
 //
