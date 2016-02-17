@@ -86,6 +86,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setUpdateNeeded)
                                                  name:kNotificationFoodFeedNeedsUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appBecameActive)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+
     [self.view bringSubviewToFront:self.uploadProgressBar];
     _needsUpdate = YES;
     _numColumns = 2;
@@ -110,6 +114,12 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationFoodFeedNeedsUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
+- (void)appBecameActive {
+    [self setUpdateNeeded];
+    [self updateIfNeeded];
 }
 
 - (void)setUpdateNeeded {
