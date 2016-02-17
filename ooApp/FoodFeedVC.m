@@ -118,8 +118,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (void)appBecameActive {
-    [self setUpdateNeeded];
-    [self updateIfNeeded];
+    if (!APP.dateLeft || (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:0 minutes:3 second:00])) {
+        [self setUpdateNeeded];
+        [self updateIfNeeded];
+        APP.dateLeft = [NSDate date];
+    }
 }
 
 - (void)setUpdateNeeded {

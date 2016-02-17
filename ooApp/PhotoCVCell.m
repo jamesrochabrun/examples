@@ -98,7 +98,7 @@
         [_doubleTapGesture setNumberOfTapsRequired:2];
         [self addGestureRecognizer:_doubleTapGesture];
         
-        [self registerForNotification: kNotificationMediaItemAltered
+        [self registerForNotification:kNotificationMediaItemAltered
                               calling:@selector(handleMediaItemAltered:)];
 //        [DebugUtilities addBorderToViews:@[_yumButton, _numYums, _userButton]];
     }
@@ -255,27 +255,7 @@
         ;
     }];
 
-    if (_mediaItemObject.source == kMediaItemTypeOomami) {
-        _yumButton.hidden = NO;
-        
-        [self updateNumYums];
-        
-        _roGetLiked = [OOAPI getMediaItemLiked:_mediaItemObject.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
-            ON_MAIN_THREAD(^{
-                [weakSelf.yumButton setSelected:liked];
-                weakSelf.yumButton.hidden = NO;
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ON_MAIN_THREAD(^{
-                [weakSelf.yumButton setSelected:NO];
-                weakSelf.yumButton.hidden = YES;
-            });
-        }];
-        //get the state of the yum button for this user
-    } else {
-        _yumButton.hidden = YES;
-        _numYums.hidden = YES;
-    }
+    [self updateLikedState];
     
     if (_mediaItemObject.sourceUserID) {
         _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
@@ -302,7 +282,33 @@
     NSNumber *number= not.object;
     NSUInteger identifier = [number isKindOfClass:[NSNumber class]]? number.unsignedIntegerValue:0;
     if (identifier ==_mediaItemObject.mediaItemId) {
+        [self updateLikedState];
+    }
+}
+
+- (void)updateLikedState {
+    __weak PhotoCVCell *weakSelf = self;
+    
+    if (_mediaItemObject.source == kMediaItemTypeOomami) {
+        _yumButton.hidden = NO;
+        
         [self updateNumYums];
+        
+        _roGetLiked = [OOAPI getMediaItemLiked:_mediaItemObject.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
+            ON_MAIN_THREAD(^{
+                [weakSelf.yumButton setSelected:liked];
+                weakSelf.yumButton.hidden = NO;
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ON_MAIN_THREAD(^{
+                [weakSelf.yumButton setSelected:NO];
+                weakSelf.yumButton.hidden = YES;
+            });
+        }];
+        //get the state of the yum button for this user
+    } else {
+        _yumButton.hidden = YES;
+        _numYums.hidden = YES;
     }
 }
 

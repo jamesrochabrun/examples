@@ -550,7 +550,6 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.yumButton setSelected:NO];
                 [weakSelf updateNumYums];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                 NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
                 NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
             });
@@ -564,7 +563,6 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.yumButton setSelected:YES];
                 [weakSelf updateNumYums];
-                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                 NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
                 NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
             });
@@ -586,6 +584,11 @@
         if (count) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.numYums setTitle:[NSString stringWithFormat:@"%lu %@", (unsigned long)count, (count == 1) ? @"yum" : @"yums"] forState:UIControlStateNormal];
+                [weakSelf.view setNeedsLayout];
+            });
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                weakSelf.numYums.hidden = YES;
                 [weakSelf.view setNeedsLayout];
             });
         }
