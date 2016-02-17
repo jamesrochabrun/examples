@@ -31,6 +31,7 @@
 #import "UIButton+AFNetworking.h"
 #import "ShowMediaItemAnimator.h"
 #import "SpecialtyObject.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -1858,12 +1859,37 @@
 
 - (void)showPhotoLibraryUI
 {
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    picker.allowsEditing = NO;
-    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
+    // check the status for ALAuthorizationStatusAuthorized or ALAuthorizationStatusDenied e.g
     
-    [self presentViewController:picker animated:YES completion:NULL];
+    if (status != ALAuthorizationStatusAuthorized) {
+        //show alert for asking the user to give permission
+        
+        UIAlertController *photosAccess = [UIAlertController alertControllerWithTitle:@"Access Required" message:@"You will need to give Oomami access to your photos from settings in order to pick a photo to upload." preferredStyle:UIAlertControllerStyleAlert];
+        
+        
+        
+        UIAlertAction *gotoSettings = [UIAlertAction actionWithTitle:@"Give Access"
+                                                               style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                   [Common goToSettings:kAppSettingsPhotos];
+                                                               }];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                         }];
+        [photosAccess addAction:gotoSettings];
+        [photosAccess addAction:cancel];
+        [self presentViewController:photosAccess animated:YES completion:^{
+            ;
+        }];
+        
+    } else {
+        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = self;
+        picker.allowsEditing = NO;
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        
+        [self presentViewController:picker animated:YES completion:NULL];
+    }
 }
 
 

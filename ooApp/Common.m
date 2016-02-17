@@ -824,4 +824,26 @@ void ANALYTICS_EVENT_UI (NSString* name)
     return [locationElements componentsJoinedByString:@", "];
 }
 
++ (void)goToSettings:(kAppSettings)settings
+{
+    NSString *path;
+    
+    switch (settings) {
+        case kAppSettingsCamera:
+            path = @"prefs:root=Privacy&path=CAMERA";
+            break;
+        case kAppSettingsPhotos:
+            path = @"prefs:root=Privacy&path=PHOTOS";
+            break;
+        default:
+            break;
+    }
+    
+    NSURL*url=[NSURL URLWithString:path];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url];
+    }
+}
+
+
 @end

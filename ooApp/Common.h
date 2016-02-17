@@ -11,6 +11,13 @@
 #import "Reachability.h"
 #import "UserObject.h"
 
+typedef enum {
+    kAppSettingsPhotos,
+    kAppSettingsCamera,
+    kAppSettingsLocation,
+    kAppSettingsContacts
+} kAppSettings;
+
 #define HALF_HOUR (30*60)
 #define ONE_HOUR (60*60)
 #define ONE_DAY (24*ONE_HOUR)
@@ -119,5 +126,6 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 
 + (NSString *)versionString;
 + (NSString *)locationString:(CLPlacemark *)placemark;
++ (void)goToSettings:(kAppSettings)settings;
 
 @end
