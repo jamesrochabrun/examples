@@ -1847,14 +1847,57 @@
         [self presentViewController:addPhoto animated:YES completion:nil];
 }
 
-- (void)showCameraUI
-{
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    picker.allowsEditing = NO;
-    picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+- (void)showCameraUI {
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if(authStatus == AVAuthorizationStatusAuthorized) {
+        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = self;
+        picker.allowsEditing = NO;
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+        
+        [self presentViewController:picker animated:YES completion:NULL];
+    } else if(authStatus == AVAuthorizationStatusDenied) {
+        [self getAccessToCamera];
+    } else if(authStatus == AVAuthorizationStatusRestricted) {
+        [self getAccessToCamera];
+    } else if(authStatus == AVAuthorizationStatusNotDetermined){
+        // not determined?!
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            if(granted){
+                NSLog(@"Granted access to %@", AVMediaTypeVideo);
+                UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+                picker.delegate = self;
+                picker.allowsEditing = NO;
+                picker.sourceType = UIImagePickerControllerSourceTypeCamera ;
+                
+                [self presentViewController:picker animated:YES completion:NULL];
+            } else {
+                NSLog(@"Not granted access to %@", AVMediaTypeVideo);
+                [self getAccessToCamera];
+            }
+        }];
+    } else {
+        // impossible, unknown authorization status
+    }
+}
+
+- (void)getAccessToCamera {
+    UIAlertController *cameraAccess = [UIAlertController alertControllerWithTitle:@"Access Required" message:@"You will need to give Oomami access to your camera from settings in order to take a photo that you can upload." preferredStyle:UIAlertControllerStyleAlert];
     
-    [self presentViewController:picker animated:YES completion:NULL];
+    
+    
+    UIAlertAction *gotoSettings = [UIAlertAction actionWithTitle:@"Give Access"
+                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                               [Common goToSettings:kAppSettingsCamera];
+                                                           }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     }];
+    [cameraAccess addAction:gotoSettings];
+    [cameraAccess addAction:cancel];
+    [self presentViewController:cameraAccess animated:YES completion:^{
+        ;
+    }];
 }
 
 - (void)showPhotoLibraryUI
@@ -1862,7 +1905,7 @@
     ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
     // check the status for ALAuthorizationStatusAuthorized or ALAuthorizationStatusDenied e.g
     
-    if (status != ALAuthorizationStatusAuthorized) {
+    if (status == ALAuthorizationStatusDenied) {
         //show alert for asking the user to give permission
         
         UIAlertController *photosAccess = [UIAlertController alertControllerWithTitle:@"Access Required" message:@"You will need to give Oomami access to your photos from settings in order to pick a photo to upload." preferredStyle:UIAlertControllerStyleAlert];
