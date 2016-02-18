@@ -225,7 +225,6 @@
     _mediaItemObject = mediaItemObject;
     
     _backgroundImage.image = nil;
-    _caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
     
     OOAPI *api = [[OOAPI alloc] init];
     
@@ -266,14 +265,18 @@
                 [weakSelf setNeedsUpdateConstraints];
                 weakSelf.userButton.hidden = NO;
                 weakSelf.gradient.hidden = NO;
+                weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             weakSelf.userButton.hidden = YES;
             weakSelf.gradient.hidden = YES;
+            weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
         }];
+        
     } else {
         _gradient.hidden = YES;
         _userButton.hidden = YES;
+        _caption.hidden = YES;
     }
 }
 
@@ -290,10 +293,7 @@
     __weak PhotoCVCell *weakSelf = self;
     
     if (_mediaItemObject.source == kMediaItemTypeOomami) {
-        _yumButton.hidden = NO;
-        
-        [self updateNumYums];
-        
+        //get the state of the yum button for this user
         _roGetLiked = [OOAPI getMediaItemLiked:_mediaItemObject.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
             ON_MAIN_THREAD(^{
                 [weakSelf.yumButton setSelected:liked];
@@ -305,7 +305,7 @@
                 weakSelf.yumButton.hidden = YES;
             });
         }];
-        //get the state of the yum button for this user
+        [self updateNumYums];
     } else {
         _yumButton.hidden = YES;
         _numYums.hidden = YES;
@@ -339,6 +339,8 @@
     [super prepareForReuse];
     [_backgroundImage.layer removeAllAnimations];
     [_backgroundImage cancelImageRequestOperation];
+    
+    _userButton.hidden = _caption.hidden = _numYums.hidden = _yumButton.hidden = YES;
     
     [_roGetImage cancel];
     _roGetImage = nil;
