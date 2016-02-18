@@ -30,7 +30,7 @@
 
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, MWPhotoBrowserDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate,
     OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
-    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate, OOUserViewDelegate,
+    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate,
     OOTextEntryVCDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;

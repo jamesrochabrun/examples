@@ -892,17 +892,23 @@
 // Name:    handlePhotoDeleted
 // Purpose: If one of our media objects was deleted then update our UI.
 //------------------------------------------------------------------------------
-- (void)handlePhotoDeleted:(NSNotification*)not
+- (void)handlePhotoDeleted:(NSNotification *)not
 {
     BOOL foundIt = NO;
 
-    NSNumber *mediaObjectIDNumber = not.object;
-    NSUInteger mediaObjectID = [mediaObjectIDNumber isKindOfClass: [NSNumber class ]] ?mediaObjectIDNumber.unsignedIntegerValue:0;
+    id object = not.object;
+    MediaItemObject *mio = nil;
+    
+    if ([object isKindOfClass:[MediaItemObject class]]) {
+        mio = (MediaItemObject *)object;
+    }
 
-    for (MediaItemObject* item in _arrayPhotos) {
-        if (item.mediaItemId == mediaObjectID) {
-            foundIt = YES;
-            break;
+    if (mio) {
+        for (MediaItemObject* item in _arrayPhotos) {
+            if (item.mediaItemId == mio.mediaItemId) {
+                foundIt = YES;
+                break;
+            }
         }
     }
 
@@ -1042,7 +1048,7 @@
 //------------------------------------------------------------------------------
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    UIImage *image=  info[@"UIImagePickerControllerEditedImage"];
+    UIImage *image =  info[@"UIImagePickerControllerEditedImage"];
     if (!image) {
         image = info[@"UIImagePickerControllerOriginalImage"];
     }
@@ -1051,8 +1057,11 @@
     
     __weak ProfileVC *weakSelf = self;
     
-    if  (_pickerIsForRestaurants ) {
-        
+    if (_pickerIsForRestaurants) {
+        if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+        }
+
         CGSize s = image.size;
         if (s.width) {
             _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
@@ -1388,7 +1397,7 @@
     return  CGSizeMake([UIScreen mainScreen].bounds.size.width , kGeomProfileFilterViewHeight);
 }
 
-- (UICollectionReusableView*) collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     ProfileHeaderView *view = nil;
     
@@ -1405,7 +1414,7 @@
 
         view.vc = self;
         view.delegate = self;
-
+        _headerView = view;
         return view;
     }
     

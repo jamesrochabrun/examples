@@ -306,7 +306,6 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 
 - (void)pickerCanceled {
     [_searchBar resignFirstResponder];
-    UIImageWriteToSavedPhotosAlbum(_imageToUpload, nil, nil, nil);
     [_delegate restaurantPickerVCCanceled:self];
 }
 

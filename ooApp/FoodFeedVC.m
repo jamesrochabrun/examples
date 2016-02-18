@@ -271,7 +271,16 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
+    UIImage *image =  info[@"UIImagePickerControllerEditedImage"];
+    if (!image) {
+        image = info[@"UIImagePickerControllerOriginalImage"];
+    }
+    if (!image || ![image isKindOfClass:[UIImage class]])
+        return;
+    
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+    }
 
     CGSize s = image.size;
     _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
@@ -297,24 +306,26 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                 if (longitude && latitude) {
                     CLLocationCoordinate2D photoLocation = CLLocationCoordinate2DMake([latitude doubleValue],
                                                        [longitude doubleValue]);
-//                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
                     [weakSelf showRestaurantPickerAtCoordinate:photoLocation];
                 } else {
+                    [self dismissViewControllerAnimated:YES completion:nil];
                     [weakSelf showMissinGPSMessage];
                 }
             } else {
+                [self dismissViewControllerAnimated:YES completion:nil];
                 [weakSelf showMissinGPSMessage];
             }
         } failureBlock:^(NSError *error) {
             //User denied access
             NSLog(@"Unable to access image: %@", error);
+            [self dismissViewControllerAnimated:YES completion:nil];
             [weakSelf showMissinGPSMessage];
         }];
     } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
         [weakSelf showMissinGPSMessage];
     }
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)showMissinGPSMessage {
