@@ -727,7 +727,6 @@
 @property (nonatomic, strong) UIAlertController *optionsAC;
 @property (nonatomic, strong) ProfileHeaderView *headerView;
 @property (nonatomic, assign) BOOL didFetchUserObject;
-@property (nonatomic, assign) BOOL didFetchStats;
 @property (nonatomic, assign) NSUInteger lastShownUser;
 @property (nonatomic, assign) MediaItemObject *mediaItemBeingEdited;
 @property (nonatomic, strong) RestaurantPickerVC *restaurantPicker;
@@ -735,6 +734,7 @@
 @property (nonatomic, strong) RestaurantObject *selectedRestaurant;
 @property (nonatomic, assign) BOOL viewingLists; // false => viewing photos
 @property (nonatomic, assign) BOOL pickerIsForRestaurants;
+@property (nonatomic) BOOL needRefresh;
 @end
 
 @implementation ProfileVC
@@ -748,51 +748,24 @@
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
-    
-    [self checkThatStatsAreUpToDate];
-//    if (_lastShownUser && _lastShownUser != _userInfo.userID) {
-//        _didFetchStats = NO;
-//        _lastShownUser = _userInfo.userID;
-//    }
-    
-//    __weak  ProfileVC *weakSelf = self;
-//    if ( !_didFetchUserObject) {
-//        [_profileOwner refreshWithSuccess:^(BOOL changed){
-//            weakSelf.didFetchUserObject= YES;
-//            
-//            [weakSelf.cv reloadData ];
-//            [weakSelf checkThatStatsAreUpToDate];
-//        } failure:^{
-//            NSLog  (@"NETWORK ERROR");
-//        }];
-//    } else {
-//        [self checkThatStatsAreUpToDate];
-//        
-//        // NOTE: There's no explicit requirement to re-fetch the UserObject, but
-//        // if we find that it has changed e.g. from a different device updating
-//        // the backend, then tell the supplementary view.
-//        [_profileOwner refreshWithSuccess:^(BOOL changed){
-//            if (changed) {
-//                NOTIFY(kNotificationOwnProfileNeedsUpdate);
-//            }
-//        } failure:^{
-//            NSLog  (@"NETWORK ERROR");
-//        }];
-//    }
+
+    [self refreshIfNeeded];
 }
 
-- (void)checkThatStatsAreUpToDate
-{
-//    if (!_didFetchStats) {
-//        _didFetchStats=YES;
-        [self  refetchListsPhotosAndStats ];
-//    }
-    
+- (void)refreshIfNeeded {
+    if (_needRefresh) {
+        [self refetchListsPhotosAndStats];
+        _needRefresh = NO;
+    }
+}
+
+- (void)setNeedsRefresh {
+    _needRefresh = YES;
 }
 
 - (void)done:(id)sender
 {
-    if  (!self.uploading) {
+    if (!self.uploading) {
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -812,10 +785,10 @@
     [super viewDidLoad];
     
     _userID = 0;
-    _viewingLists= YES;
-    
+    _viewingLists = YES;
+    _needRefresh = YES;
     _arrayLists = @[];
-    _arrayPhotos= @[];
+    _arrayPhotos = @[];
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
@@ -1345,8 +1318,6 @@
     }
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;
-//    [_listsAndPhotosLayout invalidateLayout];
-//    [self.cv reloadData];
     [self getLists];
     
 }
@@ -1362,8 +1333,6 @@
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayPhotos.count==0;
     [self getPhotos];
-//    [_listsAndPhotosLayout invalidateLayout];
-//    [self.cv reloadData];
 }
 
 #pragma mark - Collection View stuff
