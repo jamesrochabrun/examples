@@ -2877,7 +2877,7 @@ NSString *const kKeyDeviceToken = @"device_token";
                                     success:(void (^)(UserStatsObject *))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    return [OOAPI getStatsForUser: userID
+    return [OOAPI getStatsForUser:userID
                           success:^(NSDictionary *dictionary) {
                               UserStatsObject *stats= [UserStatsObject statsFromDictionary:dictionary];
                               success(stats);
@@ -2896,16 +2896,16 @@ NSString *const kKeyDeviceToken = @"device_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
-//    APP.usingStagingServer=NO;
+#ifdef ADHOC
+    APP.usingStagingServer=NO;
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end

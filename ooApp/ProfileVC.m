@@ -116,14 +116,14 @@
                            [weakSelf.buttonFollowersCount setTitle:stringFromUnsigned(stats.totalFollowers) forState:UIControlStateNormal] ;
                            [weakSelf.buttonFolloweesCount setTitle:stringFromUnsigned(stats.totalFollowees) forState:UIControlStateNormal] ;
                            
-                           weakSelf.buttonFollowees.alpha= 1;
-                           weakSelf.buttonFollowers.alpha= 1;
-                           weakSelf.buttonFolloweesCount.alpha= 1;
-                           weakSelf.buttonFollowersCount.alpha= 1;
+                           weakSelf.buttonFollowees.alpha = 1;
+                           weakSelf.buttonFollowers.alpha = 1;
+                           weakSelf.buttonFolloweesCount.alpha = 1;
+                           weakSelf.buttonFollowersCount.alpha = 1;
                            
-                           weakSelf.labelPhotoCount.text= stringFromUnsigned(stats.totalPhotos);
-                           weakSelf.labelLikesCount.text= stringFromUnsigned(stats.totalLikes);
-                           weakSelf.labelVenuesCount.text= stringFromUnsigned(stats.totalVenues);
+                           weakSelf.labelPhotoCount.text = stringFromUnsigned(stats.totalPhotos);
+                           weakSelf.labelLikesCount.text = stringFromUnsigned(stats.totalLikes);
+                           weakSelf.labelVenuesCount.text = stringFromUnsigned(stats.totalVenues);
                            
                            [weakSelf setNeedsLayout];
                        });
@@ -535,8 +535,11 @@
                     success:^(id responseObject) {
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [weakSelf indicateNotFollowing];
-                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
                         });
+                        NOTIFY(kNotificationConnectNeedsUpdate);
+                        NOTIFY(kNotificationUserFollowingChanged);
+                        NOTIFY(kNotificationOwnProfileNeedsUpdate);
+                        NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO UNFOLLOW USER");
                     }];
@@ -581,10 +584,13 @@
     [OOAPI setFollowingUser:_userInfo
                          to: YES
                     success:^(id responseObject) {
-                        [weakSelf indicateFollowing];
-                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [weakSelf indicateFollowing];
+                        });
+                        NOTIFY(kNotificationConnectNeedsUpdate);
+                        NOTIFY(kNotificationUserFollowingChanged);
+                        NOTIFY(kNotificationOwnProfileNeedsUpdate);
                         NSLog (@"SUCCESSFULLY FOLLOWED USER");
-                        
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                         NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
                     }];
