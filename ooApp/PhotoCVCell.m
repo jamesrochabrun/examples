@@ -223,7 +223,8 @@
         return;
     }
     _mediaItemObject = mediaItemObject;
-    
+ 
+    _userButton.hidden = _caption.hidden = _numYums.hidden = _yumButton.hidden = YES;
     _backgroundImage.image = nil;
     
     OOAPI *api = [[OOAPI alloc] init];
@@ -339,8 +340,6 @@
     [super prepareForReuse];
     [_backgroundImage.layer removeAllAnimations];
     [_backgroundImage cancelImageRequestOperation];
-    
-    _userButton.hidden = _caption.hidden = _numYums.hidden = _yumButton.hidden = YES;
     
     [_roGetImage cancel];
     _roGetImage = nil;
