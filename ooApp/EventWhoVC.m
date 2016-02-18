@@ -388,7 +388,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
         UserObject* user= [Settings sharedInstance].userObject;
         
         // RULE: Identify follower users we could potentially attach this event.
-        [OOAPI getFollowersOf: user.userID
+        [OOAPI getFollowersForUser:user.userID
                       success:^(NSArray *users) {
                           NSLog  (@"USER IS FOLLOWED BY %lu USERS.", ( unsigned long)users.count);
                           @synchronized(weakSelf.setOfPotentialParticipants) {

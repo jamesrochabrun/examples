@@ -75,7 +75,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @interface ConnectVC ()
 @property (nonatomic,strong) UITableView *tableAccordion;
 
-@property (nonatomic,strong) NSMutableArray *suggestedUsersArray; // section 0
+@property (nonatomic,strong) NSArray *suggestedUsersArray; // section 0
 @property (nonatomic,strong) NSMutableArray *foodiesArray; // section 1
 @property (nonatomic,strong) NSMutableArray *followeesArray; // section 2
 
@@ -85,6 +85,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 @property (nonatomic,strong) NSArray *arraySectionHeaderViews;
 @property (nonatomic,assign) BOOL canSeeSection1Items,canSeeSection2Items;
+@property (nonatomic) BOOL needRefresh;
 
 @end
 
@@ -92,7 +93,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)dealloc
 {
-    [_suggestedUsersArray removeAllObjects];
+ //   [_suggestedUsersArray removeAllObjects];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationConnectNeedsUpdate object:nil];
     [_foodiesArray removeAllObjects];
     [_followeesArray removeAllObjects];
     self.suggestedUsersArray = nil;
@@ -111,6 +113,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     self.canSeeSection1Items = YES;
     self.canSeeSection2Items = YES;
+    
+    _needRefresh = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -147,6 +151,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _tableAccordion.showsVerticalScrollIndicator= NO;
     
     [self setLeftNavWithIcon:@"" target:nil action:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setNeedsRefresh)
+                                                 name:kNotificationConnectNeedsUpdate object:nil];
 }
 
 - (void)fetchFoodies
@@ -198,21 +205,31 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     }
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
-    [ self reload];
+    [self refreshIfNeeded];
+}
+
+- (void)refreshIfNeeded {
+    if (_needRefresh) {
+        [self reload];
+        _needRefresh = NO;
+    }
+}
+
+- (void)setNeedsRefresh {
+    _needRefresh = YES;
 }
 
 - (void)reload
 {
     // NOTE: Need to make the call to find out who we are following before anything else is displayed.
-    
     __weak  ConnectVC *weakSelf = self;
     
     UserObject* currentUser= [Settings sharedInstance].userObject;
-    [OOAPI getFollowingOf:currentUser.userID success:^(NSArray *users) {
+    [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
         @synchronized(weakSelf.followeesArray)  {
             weakSelf.followeesArray= users.mutableCopy;
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
-                    ( unsigned long)weakSelf.followeesArray.count);
+                    (unsigned long)weakSelf.followeesArray.count);
         }
         [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -222,16 +239,17 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void) reloadAfterDeterminingWhoWeAreFollowing
 {
-    [self.fetchOperationSection1 cancel];
-    [self.fetchOperationSection2 cancel];
+//    [self.fetchOperationSection1 cancel];
+//    [self.fetchOperationSection2 cancel];
 //    [self.fetchOperationSection3 cancel];
-    self.fetchOperationSection1= nil;
-    self.fetchOperationSection2= nil;
-    self.fetchOperationSection3= nil;
+//    self.fetchOperationSection1= nil;
+//    self.fetchOperationSection2= nil;
+//    self.fetchOperationSection3= nil;
     
     [self fetchUserFriendListFromFacebook];
     [self fetchFoodies];
-//    [self fetchFollowers];
+
+    //    [self fetchFollowers];
 }
 
 - (BOOL) weAreFollowingUser: (NSUInteger) identifier
@@ -250,7 +268,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //------------------------------------------------------------------------------
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
 }
 
@@ -508,10 +525,12 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         if (!friends) {
             return;
         }
-        if (!friends.count) {
-            [weakSelf refreshSuggestedUsersSection];
-        }
-        [weakSelf determineWhichFriendsAreNotOOUsers:friends];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!friends.count) {
+                [weakSelf refreshSuggestedUsersSection];
+            }
+            [weakSelf determineWhichFriendsAreNotOOUsers:friends];
+        });
     }];
 }
 
@@ -529,7 +548,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                   forUser:[Settings sharedInstance].userObject.userID
                                   success:^(NSArray *users) {
                                       @synchronized(weakSelf.suggestedUsersArray)  {
-                                          weakSelf.suggestedUsersArray = users.mutableCopy;
+                                          weakSelf.suggestedUsersArray = users;//.mutableCopy;
                                       }
                                       dispatch_async(dispatch_get_main_queue(), ^{
                                           [weakSelf refreshSuggestedUsersSection];

@@ -20,9 +20,15 @@
         blue:(255&rgbValue)/255.0f \
         alpha:(rgbValue >> 24)/255.0f ]
 
+#define DARK_SCHEME
+
 // App colors
-static NSUInteger kColorBlack = 0xFF000000;
+#ifdef DARK_SCHEME
 static NSUInteger kColorBackgroundTheme = 0xFF171717;
+#else
+static NSUInteger kColorBackgroundTheme = 0xFFEEEEEE;
+#endif
+static NSUInteger kColorBlack = 0xFF000000;
 static NSUInteger kColorButtonSelected = 0xFF0000FF;
 static NSUInteger kColorCellSelected =  0xFF323232;//0xFFF9FF00;
 static NSUInteger kColorClear = 0x00000000;
@@ -234,6 +240,7 @@ extern NSString *const kFontIconLogoFull;
 extern NSString *const kFontIconCaption;
 extern NSString *const kFontIconCaptionFilled;
 
+extern NSString *const kNotificationConnectNeedsUpdate;
 extern NSString *const kNotificationFoodFeedNeedsUpdate;
 extern NSString *const kNotificationRestaurantListsNeedsUpdate;
 extern NSString *const kNotificationEventAltered;

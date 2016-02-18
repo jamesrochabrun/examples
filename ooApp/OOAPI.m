@@ -2482,10 +2482,10 @@ NSString *const kKeyDeviceToken = @"device_token";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getFollowers…
+// Name:    getFollowersForUser
 // Purpose: Fetch an array of users that are following the current user.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getFollowersOf: (NSUInteger)userid
++ (AFHTTPRequestOperation *)getFollowersForUser: (NSUInteger)userid
                                    success:(void (^)(NSArray *users))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
@@ -2546,7 +2546,7 @@ NSString *const kKeyDeviceToken = @"device_token";
 // Name:    getFollowingOf
 // Purpose: Fetch an array of users that a user is following.
 //------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)getFollowingOf: (NSUInteger)userid
++ (AFHTTPRequestOperation *)getFollowingForUser:(NSUInteger)userid
                                    success:(void (^)(NSArray *users))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {

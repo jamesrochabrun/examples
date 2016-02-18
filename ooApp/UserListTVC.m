@@ -115,18 +115,18 @@
     [OOAPI setFollowingUser:_userInfo
                          to: NO
                     success:^(id responseObject) {
-                        ON_MAIN_THREAD(^{
-                            
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationConnectNeedsUpdate object:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationOwnProfileNeedsUpdate object:nil];
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             weakSelf.buttonFollow.selected= NO;
                             weakSelf.buttonFollow.backgroundColor= UIColorRGB(kColorYellow);
                             [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo
                                                                    following: NO];
-                            NOTIFY( kNotificationOwnProfileNeedsUpdate);
                             
-                            NSLog (@"SUCCESSFULLY UNFOLLOWED USER");
+                            NSLog (@"Unfollowed user: %@", weakSelf.userInfo.username);
                         });
                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                        NSLog (@"FAILED TO UNFOLLOW USER");
+                        NSLog (@"Failed to unfollow user: %@", weakSelf.userInfo.username);
                     }];
 }
 
@@ -145,12 +145,13 @@
     [OOAPI setFollowingUser:_userInfo
                          to: YES
                     success:^(id responseObject) {
-                        ON_MAIN_THREAD(^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             weakSelf.buttonFollow.selected= YES;
                             weakSelf.buttonFollow.backgroundColor= UIColorRGBA(kColorBlack);
                             
                             NSLog(@"SUCCESSFULLY FOLLOWED USER");
                             NOTIFY(kNotificationOwnProfileNeedsUpdate);
+                            NOTIFY(kNotificationUserFollowingChanged);
                             [weakSelf.delegate userTappedFollowButtonForUser:weakSelf.userInfo
                                                                    following:YES];
                         });
@@ -191,8 +192,11 @@
 
 - (void)provideUser:(UserObject *)user;
 {
-    if (!user) return;
     
+    NSLog(@"_userInfo: %@ user: %@ same? %d", _userInfo, user, (_userInfo==user));
+
+    if (!user) return;
+
     self.userInfo = user;
     
     [_userView setUser:user];

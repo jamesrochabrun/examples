@@ -55,8 +55,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     _filterView = [[OOFilterView alloc] init];
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_filterView addFilter:@"Around Me" target:self selector:@selector(selectAroundMe)];
     [_filterView addFilter:@"Newest" target:self selector:@selector(selectAll)];
+    [_filterView addFilter:@"Around Me" target:self selector:@selector(selectAroundMe)];
     [_filterView addFilter:@"Following" target:self selector:@selector(selectFriends)];
     [_filterView setCurrent:0];
     [self.view addSubview:_filterView];

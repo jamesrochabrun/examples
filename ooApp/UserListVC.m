@@ -64,6 +64,7 @@
 @property (nonatomic,strong) UITableView *tableUsers;
 @property (nonatomic,strong) NSMutableArray *followeesArray; 
 @property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationFollowees;
+@property (nonatomic) BOOL needRefresh;
 @end
 
 @implementation UserListVC
@@ -86,6 +87,8 @@
 {
     [super viewDidLoad];
     
+    _needRefresh = YES;
+    
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -106,10 +109,18 @@
     _tableUsers.separatorColor= UIColorRGBA(kColorBlack);
     _tableUsers.showsVerticalScrollIndicator= NO;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setNeedsRefresh)
+                                                 name:kNotificationUserFollowingChanged object:nil];
+
+    
+    
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     [self setRightNavWithIcon:@"" target:nil action:nil];
-    
-    [self fetchFollowees];
+}
+
+- (void)setNeedsRefresh {
+    _needRefresh = YES;
 }
 
 - (void)done:(id)sender {
@@ -135,7 +146,15 @@
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
-    
+ 
+    [self refreshIfNeeded];
+}
+
+- (void)refreshIfNeeded {
+    if (_needRefresh) {
+        [self fetchFollowees];
+        _needRefresh = NO;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +163,6 @@
 //------------------------------------------------------------------------------
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
 }
 
@@ -189,7 +207,7 @@
     
     UserObject *currentUser = [Settings sharedInstance].userObject;
     
-    [OOAPI getFollowingOf:currentUser.userID success:^(NSArray *users) {
+    [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
         @synchronized(weakSelf.followeesArray)  {
             weakSelf.followeesArray= users.mutableCopy;
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",

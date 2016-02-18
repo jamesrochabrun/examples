@@ -66,6 +66,7 @@ NSString *const kFontIconCaptionFilled = @"9";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
 
+NSString *const kNotificationConnectNeedsUpdate = @"notificationConnectNeedsUpdate";
 NSString *const kNotificationFoodFeedNeedsUpdate = @"notificationFoodFeedNeedsUpdate";
 NSString *const kNotificationRestaurantListsNeedsUpdate = @"notificationRestaurantListsNeedsUpdate";
 NSString *const kNotificationOwnProfileNeedsUpdate = @"notificationOwnProfileNeedsUpdate";

@@ -175,7 +175,7 @@
         [self refreshUserStats];
     }
     else  {
-        [OOAPI getFollowersOf:_userInfo.userID
+        [OOAPI getFollowersForUser:_userInfo.userID
                       success:^(NSArray *users) {
                           BOOL foundSelf = NO;
                           for (UserObject *user in users) {
@@ -366,7 +366,7 @@
     [self.delegate userPressedSettings];
 }
 
-- (void)updateOwnProfile: (NSNotification*)not
+- (void)updateOwnProfile:(NSNotification*)not
 {
     if ( !_viewingOwnProfile) {
         return;
@@ -379,7 +379,7 @@
 {
     __weak ProfileHeaderView *weakSelf = self;
     
-    [OOAPI getFollowersOf:_userInfo.userID
+    [OOAPI getFollowersForUser:_userInfo.userID
                   success:^(NSArray *users) {
                       dispatch_async(dispatch_get_main_queue(), ^{
                           if  (!users.count) {
@@ -416,7 +416,7 @@
 {
     __weak  ProfileHeaderView *weakSelf = self;
     
-    [OOAPI getFollowingOf:_userInfo.userID
+    [OOAPI getFollowingForUser:_userInfo.userID
                   success:^(NSArray *users) {
                       dispatch_async(dispatch_get_main_queue(), ^{
                           if  (!users.count) {
