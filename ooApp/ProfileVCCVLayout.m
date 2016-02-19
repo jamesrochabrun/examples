@@ -82,7 +82,7 @@
     
     float allowableHorizontalSpace= round ((width(self.collectionView)));
     
-    int hdrHeight = [self heightOfHeader];
+    CGFloat hdrHeight = [_delegate collectionView:self.collectionView layout:self heightForheader:0];
 
     NSUInteger section = 0;
     
@@ -181,18 +181,6 @@
     NSLog (@"CV SIZE %@",NSStringFromCGSize(_contentSize));
 }
 
-- (float)heightOfHeader
-{
-    float hdrHeight = PROFILE_HEADERVIEW_BASE_HEIGHT;
-    if (! _userIsSelf)
-        hdrHeight += PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
-    if (_userIsFoodie &&  _foodieHasURL)
-        hdrHeight += PROFILE_HEADERVIEW_URL_HEIGHT;
-    if (_userHasSpecialties)
-        hdrHeight += PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT;
-    return hdrHeight;
-}
-
 - (void)preparePhotosLayout
 {
     NSUInteger column = 0;    // Current column inside row
@@ -209,12 +197,12 @@
     NSMutableArray *itemAttributes;
     CGSize itemSize;
     
-    float allowableHorizontalSpace=round( (width(self.collectionView)-2*kGeomSpaceEdge)/kProfileNumColumnsForMediaItemsPhone);
+    float allowableHorizontalSpace = round((width(self.collectionView)-2*kGeomSpaceEdge)/kProfileNumColumnsForMediaItemsPhone);
     if (kProfileNumColumnsForMediaItemsPhone>=2 ) {
         allowableHorizontalSpace -= kGeomInterImageGap;
     }
     
-    int hdrHeight = [self heightOfHeader];
+    CGFloat hdrHeight = [_delegate collectionView:self.collectionView layout:self heightForheader:0];
 
     NSUInteger section=0;
     NSLog(@"section:%ld items:%lu yOffset=%f", (long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);

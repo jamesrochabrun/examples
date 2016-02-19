@@ -31,6 +31,7 @@
 #import "UIButton+AFNetworking.h"
 #import "ShowMediaItemAnimator.h"
 #import "SpecialtyObject.h"
+#import "DebugUtilities.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 
 @interface ProfileHeaderView ()
@@ -504,7 +505,7 @@
      ];
 }
 
-- (void) verifyUnfollow
+- (void)verifyUnfollow
 {
     __weak ProfileHeaderView *weakSelf = self;
 
@@ -606,7 +607,8 @@
     
     CGFloat w = width(self);
     CGFloat h = height(self);
-    CGFloat spacing=  kGeomSpaceInter;
+    CGFloat spacing = kGeomSpaceInter;
+    CGSize s;
     
     _backgroundImageView.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
     _backgroundImageFade.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
@@ -671,42 +673,43 @@
 
     y +=kGeomProfileStatsItemHeight;
     
-    if ( !_viewingOwnProfile) {
+    if (!_viewingOwnProfile) {
         _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,
                                          y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
-                                         kGeomButtonWidth,  kGeomFollowButtonHeight );
-        y += PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
+                                         kGeomButtonWidth,  kGeomFollowButtonHeight);
+        y += CGRectGetHeight(_buttonFollow.frame) + 2*kGeomSpaceEdge;
     }
     
     if ( _userInfo.isFoodie && _userInfo.website.length) {
-        _buttonURL.frame = CGRectMake(0, y, w,kGeomProfileHeaderViewHeightOfBloggerButton);
-        y += PROFILE_HEADERVIEW_URL_HEIGHT;
+        _buttonURL.frame = CGRectMake(0, y, w, kGeomProfileHeaderViewHeightOfBloggerButton);
+        y += CGRectGetHeight(_buttonURL.frame) + kGeomSpaceEdge;
     }
     
-    _buttonDescription.frame = CGRectMake(0, y, w,kGeomProfileTextviewHeight);
-    y += kGeomProfileTextviewHeight;
+    s = [_buttonDescription.titleLabel sizeThatFits:CGSizeMake(w, 200)];
+    _buttonDescription.frame = CGRectMake(0, y, w, s.height+2*kGeomSpaceEdge);
+    y += CGRectGetHeight(_buttonDescription.frame);
     
     if (_userInfo.hasSpecialties ) {
-        _viewSpecialties.frame= CGRectMake(0,y,w, PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT);
         [_labelSpecialtyHeader sizeToFit];
         [_labelSpecialties sizeToFit];
-        float requiredHeaderHeight=_labelSpecialtyHeader.frame.size.height;
-        float requiredSpecialtiesHeight=_labelSpecialtyHeader.frame.size.height;
-        float yHeader= 0;
-        _labelSpecialtyHeader.frame= CGRectMake(0,yHeader,w, requiredHeaderHeight);
+        _viewSpecialties.frame= CGRectMake(0, y, w, CGRectGetHeight(_labelSpecialtyHeader.frame) + CGRectGetHeight(_labelSpecialtyHeader.frame) + 2*kGeomSpaceEdge);
+        CGFloat requiredHeaderHeight = CGRectGetHeight(_labelSpecialtyHeader.frame);
+        CGFloat requiredSpecialtiesHeight = CGRectGetHeight(_labelSpecialtyHeader.frame);
+        CGFloat yHeader = 0;
+        _labelSpecialtyHeader.frame = CGRectMake(0, yHeader, w, requiredHeaderHeight);
         yHeader +=requiredHeaderHeight;
         _labelSpecialties.frame= CGRectMake(0,yHeader,w, requiredSpecialtiesHeight);
-        y += PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT;
+        y += CGRectGetHeight(_viewSpecialties.frame);
         
     } else {
-        _labelSpecialtyHeader.frame= CGRectMake(0,y,w, 0);
-        _labelSpecialties.frame= CGRectMake(0,y,w, 0);
+        _labelSpecialtyHeader.frame= CGRectMake(0, y, w, 0);
+        _labelSpecialties.frame= CGRectMake(0, y, w, 0);
     }
     
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     [self bringSubviewToFront:_filterView];
     _filterView.userInteractionEnabled=YES;
-    y+=kGeomHeightFilters;
+    y += kGeomHeightFilters;
     
     self.frame= CGRectMake(0,0,w,y);
 }
@@ -736,6 +739,11 @@
 @property (nonatomic, assign) BOOL pickerIsForRestaurants;
 @property (nonatomic) BOOL needRefresh;
 @end
+
+static NSString *const kProfilePhotoCellIdentifier = @"profilePhotoCell";
+static NSString *const kProfileListCellIdentifier = @"profileListCell";
+static NSString *const kProfileHeaderCellIdentifier = @"profileHeaderCell";
+static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 
 @implementation ProfileVC
 
@@ -842,23 +850,19 @@
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
     _listsAndPhotosLayout.delegate= self;
     _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
-    _listsAndPhotosLayout.userIsFoodie=_userInfo.isFoodie;
-    _listsAndPhotosLayout.foodieHasURL = _userInfo.website.length > 0;
-    _listsAndPhotosLayout.userHasSpecialties = _userInfo.hasSpecialties;
+//    _listsAndPhotosLayout.userIsFoodie=_userInfo.isFoodie;
+//    _listsAndPhotosLayout.foodieHasURL = _userInfo.website.length > 0;
+//    _listsAndPhotosLayout.userHasSpecialties = _userInfo.hasSpecialties;
     [_listsAndPhotosLayout setShowingLists: YES];
     
     _cv = makeCollectionView(self.view, self, _listsAndPhotosLayout);
-#define PROFILE_CV_PHOTO_CELL  @"profilephotocell"
-#define PROFILE_CV_LIST_CELL  @"profilelistCell"
-#define PROFILE_CV_HEADER_CELL  @"profileHeaderCell"
-#define PROFILE_CV_EMPTY_CELL  @"profileEmptyCell"    
     
     // NOTE: When _viewingLists==YES, use ProfileCVListRow else use PhotoCVCell.
-    [_cv registerClass:[PhotoCVCell class] forCellWithReuseIdentifier: PROFILE_CV_PHOTO_CELL];
-    [_cv registerClass:[ListStripCVCell class] forCellWithReuseIdentifier: PROFILE_CV_LIST_CELL];
-    [_cv registerClass:[ProfileEmptyCell class] forCellWithReuseIdentifier: PROFILE_CV_EMPTY_CELL];
-    [_cv registerClass:[ProfileHeaderView class ] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-   withReuseIdentifier:PROFILE_CV_HEADER_CELL];
+    [_cv registerClass:[PhotoCVCell class] forCellWithReuseIdentifier:kProfilePhotoCellIdentifier];
+    [_cv registerClass:[ListStripCVCell class] forCellWithReuseIdentifier:kProfileListCellIdentifier];
+    [_cv registerClass:[ProfileEmptyCell class] forCellWithReuseIdentifier:kProfileEmptyCellIdentifier];
+    [_cv registerClass:[ProfileHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+   withReuseIdentifier:kProfileHeaderCellIdentifier];
     
     NSString *string= _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username) :  @"Missing username";
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:string
@@ -955,7 +959,7 @@
     [_profileOwner refreshSpecialtiesWithSuccess:^(BOOL changed) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf updateSpecialtiesLabel];
-            weakSelf.listsAndPhotosLayout.userHasSpecialties = weakSelf.profileOwner.hasSpecialties;
+//            weakSelf.listsAndPhotosLayout.userHasSpecialties = weakSelf.profileOwner.hasSpecialties;
             [weakSelf.headerView setNeedsLayout];
             [weakSelf.cv setNeedsLayout];
             [weakSelf.cv reloadData];
@@ -1346,6 +1350,10 @@
 
 #pragma mark - Collection View stuff
 
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(ProfileVCCVLayout *)collectionViewLayout heightForheader:(NSUInteger)section {
+    return CGRectGetHeight(_headerView.frame);
+}
+
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:( ProfileVCCVLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if  (_viewingLists ) {
@@ -1403,11 +1411,11 @@
     
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         _listsAndPhotosLayout.userIsSelf = _viewingOwnProfile;
-        _listsAndPhotosLayout.userIsFoodie = _profileOwner.isFoodie;
-        _listsAndPhotosLayout.foodieHasURL = _profileOwner.website.length > 0;
+//        _listsAndPhotosLayout.userIsFoodie = _profileOwner.isFoodie;
+//        _listsAndPhotosLayout.foodieHasURL = _profileOwner.website.length > 0;
 
         view = [collectionView dequeueReusableSupplementaryViewOfKind:kind
-                                                 withReuseIdentifier:PROFILE_CV_HEADER_CELL
+                                                 withReuseIdentifier:kProfileHeaderCellIdentifier
                                                         forIndexPath:indexPath];
         
         [view setUserInfo:_profileOwner];
@@ -1415,6 +1423,7 @@
         view.vc = self;
         view.delegate = self;
         _headerView = view;
+//        [DebugUtilities addBorderToViews:@[_headerView, _cv]];
         return view;
     }
     
@@ -1429,8 +1438,8 @@
         
         NSUInteger total= self.arrayLists.count;
         if (!total) {
-            ProfileEmptyCell *cell= [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_EMPTY_CELL
-                                                                             forIndexPath:indexPath];
+            ProfileEmptyCell *cell= [collectionView dequeueReusableCellWithReuseIdentifier:kProfileEmptyCellIdentifier
+                                                                              forIndexPath:indexPath];
             if (_viewingOwnProfile) {
                 [cell setListMode];
                 cell.message = @"Make your first list!";
@@ -1444,7 +1453,7 @@
             return nil;
         }
         
-        ListStripCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_LIST_CELL
+        ListStripCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kProfileListCellIdentifier
                                                                           forIndexPath:indexPath];
         
         NSArray *a = self.arrayLists;
@@ -1459,7 +1468,7 @@
     else {
         NSUInteger total= self.arrayPhotos.count;
         if (!total) {
-            ProfileEmptyCell*cell= [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_EMPTY_CELL
+            ProfileEmptyCell*cell= [collectionView dequeueReusableCellWithReuseIdentifier:kProfileEmptyCellIdentifier
                                                                              forIndexPath:indexPath];
 
             if (_viewingOwnProfile) {
@@ -1476,7 +1485,7 @@
             return nil;
         }
         
-        PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:PROFILE_CV_PHOTO_CELL
+        PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kProfilePhotoCellIdentifier
                                                                       forIndexPath:indexPath];
         NSArray *a = self.arrayPhotos;
         MediaItemObject *object = a[row];

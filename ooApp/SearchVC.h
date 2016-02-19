@@ -10,7 +10,6 @@
 #import "BaseVC.h"
 #import "EventObject.h"
 #import "UserTVCell.h"
-//#import "OOTextEntryModalVC.h"
 #import "ChangeLocationVC.h"
 
 @interface SearchVC : BaseVC <UISearchBarDelegate, UserTVCellDelegate, ChangeLocationVCDelegate>

@@ -16,12 +16,15 @@
                    layout:(ProfileVCCVLayout *)collectionViewLayout
  heightForItemAtIndexPath:(NSIndexPath *)indexPath;
 
+- (CGFloat)collectionView:(UICollectionView *)collectionView
+                   layout:(ProfileVCCVLayout *)collectionViewLayout
+          heightForheader:(NSUInteger)section;
 @end
 
 @interface ProfileVCCVLayout : UICollectionViewLayout
 @property (nonatomic, assign) BOOL userIsSelf;
-@property (nonatomic, assign) BOOL userIsFoodie;
-@property (nonatomic, assign) BOOL foodieHasURL, userHasSpecialties;
+//@property (nonatomic, assign) BOOL userIsFoodie;
+//@property (nonatomic, assign) BOOL foodieHasURL, userHasSpecialties;
 @property (nonatomic, assign) BOOL thereAreNoItems;
 @property (nonatomic, weak) id<ProfileVCCollectionViewDelegate> delegate;
 - (void) setShowingLists:(BOOL)showing;
