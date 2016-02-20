@@ -509,7 +509,7 @@
 {
     __weak ProfileHeaderView *weakSelf = self;
 
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:LOCAL(@"Really Unfollow?")
                                                                message:nil
                                                         preferredStyle:UIAlertControllerStyleActionSheet];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"

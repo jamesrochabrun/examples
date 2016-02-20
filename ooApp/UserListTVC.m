@@ -89,7 +89,7 @@
 {
     __weak  UserListTVC *weakSelf = self;
     
-    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Un-follow?")
+    UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Unfollow?")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleActionSheet];
     

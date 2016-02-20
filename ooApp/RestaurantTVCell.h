@@ -15,7 +15,7 @@
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *listToAddTo;
-@property (nonatomic,assign) BOOL useModalForListedVenues;
+@property (nonatomic, assign) BOOL useModalForListedVenues;
 @property (nonatomic, weak) UINavigationController *nc;
 @property (nonatomic, strong) EventObject* eventBeingEdited;
 @property (nonatomic, assign) NSUInteger index;

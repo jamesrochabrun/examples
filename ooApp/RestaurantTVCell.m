@@ -315,10 +315,13 @@ enum  {
         }
     }
     
-    //    UIAlertAction *addToNewEvent = [UIAlertAction actionWithTitle:@"New Event at..."
-    //                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-    //                                                                NSLog(@"Add to New Event");
-    //                                                            }];
+    if (!addToList) {
+        addToList = [UIAlertAction actionWithTitle:@"Add to Existing List..."
+                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                               NSLog(@"Add/Remove from Existing List");
+                                                               [weakSelf  addToList];
+                                                           }];
+    }
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                NSLog(@"Add to New List");
@@ -332,10 +335,11 @@ enum  {
                                                      }];
     
     [_restaurantOptionsAC addAction:shareRestaurant];
-    if ( addToList) {
+
+    if (addToList) {
         [_restaurantOptionsAC addAction:addToList];
     }
-    if (  removeFromList) {
+    if (removeFromList) {
         [_restaurantOptionsAC addAction:removeFromList];
     }
 
@@ -482,14 +486,41 @@ enum  {
 
 - (void)addRestaurantToList:(ListObject *)list
 {
-    __weak  RestaurantTVCell *weakSelf = self;
-    __weak ListObject *weakList =  list;
-    [list addVenue:_restaurant completionBlock:^(BOOL success) {
-        ON_MAIN_THREAD(^{
-            [weakSelf expressMode];
-            NOTIFY_WITH(kNotificationListAltered, weakList);
-        });
-    }];
+    __weak RestaurantTVCell *weakSelf = self;
+    __weak ListObject *weakList = list;
+    
+    OOAPI *api= [[OOAPI alloc] init];
+    [api addRestaurants:@[_restaurant] toList:list.listID
+                success:^(id response) {
+                    NSLog (@"SUCCESS IN ADDING LIST.");
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf expressMode];
+                        NOTIFY_WITH(kNotificationListAltered, weakList);
+                        
+                        UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Created '%@' list", list.name]
+                                                                                  message:[NSString stringWithFormat:@"Added '%@' to it.", weakSelf.restaurant.name]
+                                                                           preferredStyle:UIAlertControllerStyleAlert];
+                        
+                        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
+                                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+
+                                                                     }];
+                        
+                        [a addAction:ok];
+                        //seem like a hack...use delegates instead
+                        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
+
+                    });
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
+                }];
+}
+
+- (void)addToList:(RestaurantObject *)restaurant {
+    ListsVC *vc = [[ListsVC alloc] init];
+    vc.restaurantToAdd = restaurant;
+    [vc getLists];
+    [_nc pushViewController:vc animated:YES];
 }
 
 @end
