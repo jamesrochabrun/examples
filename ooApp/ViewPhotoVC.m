@@ -26,9 +26,9 @@
 @property (nonatomic, strong) OOUserView *userViewButton;
 @property (nonatomic, strong) UIButton *restaurantName;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
-@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, strong) UITapGestureRecognizer *showRestaurantTapGesture;
+@property (nonatomic, strong) UITapGestureRecognizer *yumPhotoTapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
-@property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 @property (nonatomic, strong) UserObject *user;
 @property (nonatomic, strong) UINavigationController *aNC;
 @property (nonatomic) CGPoint originPoint;
@@ -65,14 +65,10 @@
         [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
         
-        _tapGesture = [[UITapGestureRecognizer alloc] init];
-        [_tapGesture setDelaysTouchesBegan:YES];
-        
+        _showRestaurantTapGesture = [[UITapGestureRecognizer alloc] init];
+        _yumPhotoTapGesture = [[UITapGestureRecognizer alloc] init];
         _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
 
-        _doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(yumPhotoTapped)];
-        [_doubleTapGesture setDelaysTouchesBegan:YES];
-        [_doubleTapGesture setNumberOfTapsRequired:2];
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_yumButton withIcon:kFontIconYumOutline fontSize:40 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
@@ -203,6 +199,19 @@
     }];
 }
 
+- (void)tapGestureRecognized:(UIGestureRecognizer *)gesture {
+    if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
+        UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
+        if (tapGesture.state == UIGestureRecognizerStateEnded) {
+            if (tapGesture == _showRestaurantTapGesture) {
+                [self showRestaurant];
+            } else if (tapGesture == _yumPhotoTapGesture) {
+                [self yumPhotoTapped];
+            }
+        }
+    }
+}
+
 - (void)showRestaurant {
     if ([_delegate respondsToSelector:@selector(viewPhotoVC:showRestaurant:)]) {
         [_delegate viewPhotoVC:self showRestaurant:_restaurant];
@@ -258,9 +267,15 @@
     [self.view addSubview:_backgroundView];
     [self.view sendSubviewToBack:_backgroundView];
 
-    [_tapGesture addTarget:self action:@selector(showRestaurant)];
+    [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
+    [_showRestaurantTapGesture setNumberOfTapsRequired:1];
+    [_yumPhotoTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
+    [_yumPhotoTapGesture setNumberOfTapsRequired:2];
+    
+    [_showRestaurantTapGesture requireGestureRecognizerToFail:_yumPhotoTapGesture];
+    [_backgroundView addGestureRecognizer:_showRestaurantTapGesture];
+    [_backgroundView addGestureRecognizer:_yumPhotoTapGesture];
     [self.view addGestureRecognizer:_panGesture];
-    [_backgroundView addGestureRecognizer:_doubleTapGesture];
 }
 
 - (void)pan:(UIGestureRecognizer *)gestureRecognizer {
@@ -390,8 +405,6 @@
     }
 
     OOAPI *api = [[OOAPI alloc] init];
-
-    [_backgroundView addGestureRecognizer:_tapGesture];
     
     __weak UIImageView *weakIV = _iv;
     __weak ViewPhotoVC *weakSelf = self;

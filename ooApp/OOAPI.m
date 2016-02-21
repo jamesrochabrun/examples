@@ -2842,7 +2842,7 @@ NSString *const kKeyDeviceToken = @"device_token";
                                   success:(void (^)(NSArray *names))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *requestString =[NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
     
     requestString = [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
     

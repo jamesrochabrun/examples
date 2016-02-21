@@ -850,9 +850,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
     _listsAndPhotosLayout.delegate= self;
     _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
-//    _listsAndPhotosLayout.userIsFoodie=_userInfo.isFoodie;
-//    _listsAndPhotosLayout.foodieHasURL = _userInfo.website.length > 0;
-//    _listsAndPhotosLayout.userHasSpecialties = _userInfo.hasSpecialties;
     [_listsAndPhotosLayout setShowingLists: YES];
     
     _cv = makeCollectionView(self.view, self, _listsAndPhotosLayout);
@@ -1411,8 +1408,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         _listsAndPhotosLayout.userIsSelf = _viewingOwnProfile;
-//        _listsAndPhotosLayout.userIsFoodie = _profileOwner.isFoodie;
-//        _listsAndPhotosLayout.foodieHasURL = _profileOwner.website.length > 0;
 
         view = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                  withReuseIdentifier:kProfileHeaderCellIdentifier
@@ -1528,7 +1523,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     vc.mio = mio;
-    [vc overrideIsFoodWith:NO];
+    [vc overrideIsFoodWith:YES];
 
     [nc addChildViewController:vc];
     

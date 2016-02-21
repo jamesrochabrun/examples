@@ -786,8 +786,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     vc.delegate = self;
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     vc.mio = mio;
+    
+    //when uploading a photo force the is food feed value, don't force if the user is just editing the caption
     if (overrideFoodFeed) {
-        [vc overrideIsFoodWith:NO];
+        [vc overrideIsFoodWith:YES];
     }
     
     [_aNC addChildViewController:vc];
