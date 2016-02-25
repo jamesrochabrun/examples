@@ -501,7 +501,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 - (void)getListsForRestaurant {
     OOAPI *api =[[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
-    [api getListsOfUser:_userInfo.userID  withRestaurant:_restaurant.restaurantID
+    [api getListsOfUser:_userInfo.userID
+         withRestaurant:_restaurant.restaurantID
+             includeAll:YES
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
                     _lists = foundLists;

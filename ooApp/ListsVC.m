@@ -113,7 +113,10 @@ typedef enum {
     __weak ListsVC *weakSelf = self;
     UserObject *userInfo = [Settings sharedInstance].userObject;
     
-    self.requestOperation = [api getListsOfUser:userInfo.userID withRestaurant:0 success:^(NSArray *lists) {
+    self.requestOperation = [api getListsOfUser:userInfo.userID
+                                 withRestaurant:0
+                                     includeAll:NO
+                                        success:^(NSArray *lists) {
         weakSelf.lists = lists;
         ON_MAIN_THREAD( ^{
             [weakSelf.aiv stopAnimating];
@@ -407,7 +410,9 @@ typedef enum {
     
     UserObject *userInfo = [Settings sharedInstance].userObject;
     
-    [api getListsOfUser:userInfo.userID withRestaurant:_restaurantToAdd.restaurantID
+    [api getListsOfUser:userInfo.userID
+         withRestaurant:_restaurantToAdd.restaurantID
+             includeAll:YES
                 success:^(NSArray *foundLists) {
                     NSLog (@"number of lists with this restaurant: %ld", ( long) foundLists.count);
                     _listsWithRestaurant = foundLists;

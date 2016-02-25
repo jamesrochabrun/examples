@@ -27,6 +27,7 @@ NSString *const kKeySearchMaxPrice = @"maxprice";
 NSString *const kKeySearchLatitude = @"latitude";
 NSString *const kKeySearchLongitude = @"longitude";
 NSString *const kKeySearchLimit = @"limit";
+NSString *const kKeySearchIncludeAll = @"include_all";
 
 NSString *const kKeyRestaurantIDs = @"restaurant_ids";
 NSString *const kKeyUserIDs = @"user_ids";
@@ -770,6 +771,7 @@ NSString *const kKeyDeviceToken = @"device_token";
 //------------------------------------------------------------------------------
 - (AFHTTPRequestOperation*)getListsOfUser:(NSUInteger)userID
                            withRestaurant:(NSUInteger)restaurantID
+                               includeAll:(BOOL)includeAll
                                   success:(void (^)(NSArray *lists))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
@@ -787,7 +789,13 @@ NSString *const kKeyDeviceToken = @"device_token";
     
     OONetworkManager *rm = [[OONetworkManager alloc] init] ;
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (includeAll) {
+        [parameters setObject:[NSString stringWithFormat:@"%d", 1] forKey:kKeySearchIncludeAll];
+    }
+    
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         NSMutableArray *lists = [NSMutableArray array];
         for (id dict in responseObject) {
             [lists addObject:[ListObject listFromDict:dict]];
