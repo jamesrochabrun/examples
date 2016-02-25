@@ -222,6 +222,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     __weak RestaurantListVC *weakSelf = self;
     if (_listItem.type == kListTypeToTry ||
         _listItem.type == kListTypeFavorites ||
+        _listItem.type == kListTypeYumList ||
+        _listItem.type == kListTypePlaceIveBeen ||
         _listItem.type == kListTypeUser) {
         self.requestOperation = [api getRestaurantsWithListID:_listItem.listID
                                                   andLocation:[LocationManager sharedInstance].currentUserLocation

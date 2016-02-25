@@ -111,7 +111,9 @@
     
     UserObject *userInfo = [Settings sharedInstance].userObject;
 
-    [api getListsOfUser:userInfo.userID withRestaurant:_restaurantToAdd.restaurantID
+    [api getListsOfUser:userInfo.userID
+         withRestaurant:_restaurantToAdd.restaurantID
+             includeAll:YES
                 success:^(NSArray *foundLists) {
                     NSLog (@" number of lists for this user: %ld", (long) foundLists.count);
                     ON_MAIN_THREAD( ^{

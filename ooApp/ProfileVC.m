@@ -977,9 +977,11 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         [self.aiv startAnimating];
         self.aiv.message = @"loading";
     }
-    
+
     OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID) withRestaurant:0
+    [api getListsOfUser:((_userID) ? _userID : _profileOwner.userID)
+         withRestaurant:0
+             includeAll:YES
                 success:^(NSArray *foundLists) {
                     NSLog (@"NUMBER OF LISTS FOR USER:  %ld", (long)foundLists.count);
                     weakSelf.arrayLists = foundLists;

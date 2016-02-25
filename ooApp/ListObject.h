@@ -20,6 +20,8 @@ typedef enum {
     kListTypeFavorites = 3,
     kListTypeToTry = 4,
     kListTypeNotNow = 5,
+    kListTypePlaceIveBeen = 6,
+    kListTypeYumList = 7,
     kListTypeTrending = 2000,
     kListTypePopular = 2001,
     kListTypeJustForYou = 2002

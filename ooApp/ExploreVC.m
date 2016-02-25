@@ -231,7 +231,10 @@ static NSString * const ListRowID = @"HLRCell";
     
     self.dropDownList.delegate = self;
     OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:[Settings sharedInstance].userObject.userID withRestaurant:0 success:^(NSArray *lists) {
+    [api getListsOfUser:[Settings sharedInstance].userObject.userID
+         withRestaurant:0
+             includeAll:YES
+                success:^(NSArray *lists) {
         if ([lists count]) {
             _defaultListObject = [[ListObject alloc] init];
             _defaultListObject.listID = 0;

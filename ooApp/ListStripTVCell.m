@@ -159,6 +159,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     __weak ListStripTVCell *weakSelf=self;
     if (_listItem.type == kListTypeToTry ||
         _listItem.type == kListTypeFavorites ||
+        _listItem.type == kListTypeYumList ||
+        _listItem.type == kListTypePlaceIveBeen ||
         _listItem.type == kListTypeUser) {
         
         self.requestOperation = [api getRestaurantsWithListID:_listItem.listID
