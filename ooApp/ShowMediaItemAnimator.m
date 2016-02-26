@@ -129,7 +129,8 @@
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-    return (_duration) ? _duration : 2;
+    return (self.duration) ? self.duration : 2;
 }
+
 
 @end

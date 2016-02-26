@@ -332,7 +332,8 @@
                 [self.navigationController pushViewController:_nextPhoto animated:YES];
             }
         }
-//            [self.interactiveController updateInteractiveTransition:delta.x/width(self.view)];
+        
+        [self.interactiveController updateInteractiveTransition:delta.x/width(self.view)];
 //            [_nextPhoto.interactiveController updateInteractiveTransition:delta.x/width(self.view)];
         
     } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
@@ -370,14 +371,16 @@
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-        animator.duration = 0.8;
+//        animator.duration = 0.8;
+        vc.interactiveController = animator;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
         animator.presenting = NO;
         animator.originRect = vc.originRect;
-        animator.duration = 0.6;
+        vc.interactiveController = animator;
+//       animator.duration = 0.6;
         animationController = animator;
     } else {
         NSLog(@"*** operation=%lu, fromVC=%@ , toVC=%@", operation, [fromVC class], [toVC class]);
@@ -409,6 +412,7 @@
     vc.originRect = _originRect;
     vc.mio = mio;
     vc.restaurant = r;
+    vc.direction = direction;
 //    vc.delegate = _delegate;
     vc.restaurants = _restaurants;
     vc.currentIndex = nextIndex;

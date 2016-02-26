@@ -13,12 +13,12 @@ typedef enum {
     TransitionTypeNext
 } TransitionType;
 
-@interface ShowMediaItemAnimator : NSObject <UIViewControllerAnimatedTransitioning>
+@interface ShowMediaItemAnimator : UIPercentDrivenInteractiveTransition <UIViewControllerAnimatedTransitioning>
 
 @property (nonatomic) BOOL presenting;
 @property (nonatomic) TransitionType transitionType;
 
-@property (nonatomic) CGFloat duration;
+//@property (nonatomic) CGFloat duration;
 @property (nonatomic) CGRect originRect;
 
 
