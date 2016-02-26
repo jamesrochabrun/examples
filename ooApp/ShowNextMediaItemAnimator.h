@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ShowNextMediaItemAnimator : UIPercentDrivenInteractiveTransition <UIViewControllerAnimatedTransitioning>
+@interface ShowNextMediaItemAnimator : UIPercentDrivenInteractiveTransition
+                <UIViewControllerAnimatedTransitioning>
 
 @property (nonatomic) BOOL presenting;
 //@property (nonatomic) CGFloat duration;

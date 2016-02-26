@@ -25,13 +25,22 @@ static CGFloat kAlphaBackground = 0.9;
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC;
 @end
 
-@interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate, OOTextEntryVCDelegate, UINavigationControllerDelegate>
+@interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate,
+                                    OOTextEntryVCDelegate,
+                                    UINavigationControllerDelegate,
+                                    UIViewControllerTransitioningDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic) CGRect originRect;
 @property (nonatomic, strong) UIView *backgroundView;
+
+@property (nonatomic, strong) NSArray *restaurants;
+@property (nonatomic) NSInteger currentIndex;
+@property (nonatomic) NSInteger direction;
+
+@property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactiveController;
 
 - (void)showComponents:(BOOL)show;
 @end

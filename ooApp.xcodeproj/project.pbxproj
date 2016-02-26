@@ -97,6 +97,7 @@
 		3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490B1BE04B73003BF98B /* UIImageEffects.m */; };
 		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
+		3691C0781C7E920C00E156BD /* ShowNextMediaItemAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3691C0771C7E920C00E156BD /* ShowNextMediaItemAnimator.m */; };
 		3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3697D9F61C02A95C0022944F /* DropDownListTVC.m */; };
 		36AF0CCA1C6A9ABF0063A58E /* UserListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */; };
 		36BA03301C50CE1D00802EF8 /* ooLoading60.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03121C50CE1D00802EF8 /* ooLoading60.png */; };
@@ -416,6 +417,8 @@
 		3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOActivityItemProvider.m; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
+		3691C0761C7E920C00E156BD /* ShowNextMediaItemAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowNextMediaItemAnimator.h; sourceTree = "<group>"; };
+		3691C0771C7E920C00E156BD /* ShowNextMediaItemAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowNextMediaItemAnimator.m; sourceTree = "<group>"; };
 		3697D9F51C02A95C0022944F /* DropDownListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropDownListTVC.h; sourceTree = "<group>"; };
 		3697D9F61C02A95C0022944F /* DropDownListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropDownListTVC.m; sourceTree = "<group>"; };
 		36AF0CC81C6A9ABF0063A58E /* UserListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListTVC.h; sourceTree = "<group>"; };
@@ -813,6 +816,8 @@
 		367704021B88078400B594E5 /* Common Tools */ = {
 			isa = PBXGroup;
 			children = (
+				3691C0761C7E920C00E156BD /* ShowNextMediaItemAnimator.h */,
+				3691C0771C7E920C00E156BD /* ShowNextMediaItemAnimator.m */,
 				3697D9F51C02A95C0022944F /* DropDownListTVC.h */,
 				3697D9F61C02A95C0022944F /* DropDownListTVC.m */,
 				3677043C1B8BCB9100B594E5 /* ooApp.pch */,
@@ -1566,6 +1571,7 @@
 				36E592971C2A62BD00A56367 /* NotificationObject.m in Sources */,
 				96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */,
 				96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */,
+				3691C0781C7E920C00E156BD /* ShowNextMediaItemAnimator.m in Sources */,
 				960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */,
 				96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */,
 				964BC8211B97A4E700760C83 /* LocationManager.m in Sources */,

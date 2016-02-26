@@ -530,7 +530,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     CGRect frame = [self.view convertRect:cell.frame fromView:_collectionView];
     frame.origin.y += kGeomHeightNavBarStatusBar;
     
-    [self showExpandedPhoto:mio forRestaurant:r fromRect:frame];
+    [self showExpandedPhoto:mio forRestaurant:r fromRect:frame fromIndexPath:indexPath];
 }
 
 - (void)addCaption:(MediaItemObject *)mio {
@@ -562,37 +562,14 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     }];
 }
 
-//- (void)showExpandedPhoto:(MediaItemObject *)mio {
-//    if (!(mio.restaurantID)) return;
-//
-//    __weak FoodFeedVC *weakSelf = self;
-//    OOAPI *api = [[OOAPI alloc] init];
-//    CGRect originRect = CGRectMake(self.view.center.x, self.view.center.y, 20, 20);
-//
-//    
-//    [api getRestaurantWithID:stringFromUnsigned(mio.restaurantID)
-//                      source:kRestaurantSourceTypeOomami
-//                     success:^(RestaurantObject *restaurant) {
-//                             if (restaurant) {
-//                                 dispatch_async(dispatch_get_main_queue(), ^{
-//                                     [weakSelf showExpandedPhoto:mio forRestaurant:restaurant fromRect:originRect];
-//                                 });
-//                             } else {
-//                                 NSLog(@"Did not get a restaurant.");
-//                             }
-//                     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                         dispatch_async(dispatch_get_main_queue(), ^{
-//                             NSLog(@"Could not find the restaurant.");
-//                         });
-//                     }];
-//}
-
-- (void)showExpandedPhoto:(MediaItemObject *)mio forRestaurant:(RestaurantObject *)restaurant fromRect:(CGRect)originRect {
+- (void)showExpandedPhoto:(MediaItemObject *)mio forRestaurant:(RestaurantObject *)restaurant fromRect:(CGRect)originRect fromIndexPath:(NSIndexPath *)indexPath {
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
     vc.originRect = originRect;
     vc.mio = mio;
     vc.restaurant = restaurant;
     vc.delegate = self;
+    vc.restaurants = _restaurants;
+    vc.currentIndex = indexPath.row;
     
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;

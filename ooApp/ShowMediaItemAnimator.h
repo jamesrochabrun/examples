@@ -8,9 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    TransitionTypeDismiss,
+    TransitionTypeNext
+} TransitionType;
+
 @interface ShowMediaItemAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 
 @property (nonatomic) BOOL presenting;
+@property (nonatomic) TransitionType transitionType;
+
 @property (nonatomic) CGFloat duration;
 @property (nonatomic) CGRect originRect;
 

@@ -30,6 +30,7 @@
     if (_presenting) {
         // Position the view offscreen
         
+        
         ViewPhotoVC *vpvc;
         if ([toVC isKindOfClass:[ViewPhotoVC class]]) {
             vpvc = (ViewPhotoVC *)toVC;
@@ -39,32 +40,53 @@
             return;
         }
         
-        UIView *snapshotView = [fromVC.view snapshotViewAfterScreenUpdates:NO];
-        snapshotView.frame = imageViewFrame;
-        [toVC.view addSubview:snapshotView];
-        [toVC.view sendSubviewToBack:snapshotView];
+        if (vpvc.direction) {
+            NSLog(@"toVC direction:%ld", (long)vpvc.direction);
+            CGRect frame = containerView.frame;
+            frame.origin.x = -1*vpvc.direction*CGRectGetWidth(containerView.frame);
+            vpvc.view.frame = frame;
+            
+            frame.origin.x = 0;
+            
+            NSLog(@"toVC old=%@ new=%@", NSStringFromCGRect(vpvc.view.frame), NSStringFromCGRect(frame));
+            
+            [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
+                vpvc.view.frame = frame;
+            } completion:^(BOOL finished) {
+                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;
+                [vpvc showComponents:YES];
+            }];
+        } else {
         
-        toView.frame = _originRect;
-        toView.alpha = 0;
-        [containerView addSubview:toVC.view];
-        
-        vcViewFrame.size.height += (kGeomHeightNavBarStatusBar + kGeomHeightTabBar);
-        vcViewFrame.origin.y = 0;
-        vpvc.backgroundView.alpha = 0;
-        
-        [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            toView.frame = imageViewFrame;
-            toView.center = vpvc.view.center;
-            toView.alpha = 1;
+            UIView *snapshotView = [fromVC.view snapshotViewAfterScreenUpdates:NO];
+            snapshotView.frame = imageViewFrame;
+            [toVC.view addSubview:snapshotView];
+            [toVC.view sendSubviewToBack:snapshotView];
+            
+            toView.frame = _originRect;
+            toView.alpha = 0;
+            [containerView addSubview:toVC.view];
+            
+            vcViewFrame.size.height += (kGeomHeightNavBarStatusBar + kGeomHeightTabBar);
+            vcViewFrame.origin.y = 0;
+            vpvc.backgroundView.alpha = 0;
+            
+            [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
+                toView.frame = imageViewFrame;
+                toView.center = vpvc.view.center;
+                toView.alpha = 1;
 
-            vpvc.backgroundView.alpha = kAlphaBackground;
-            toVC.tabBarController.tabBar.hidden = YES;
-            toVC.navigationController.navigationBarHidden = YES;
-        } completion:^(BOOL finished) {
-            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;
-            vpvc.view.frame = vcViewFrame;
-            [vpvc showComponents:YES];
-        }];
+                vpvc.backgroundView.alpha = kAlphaBackground;
+                toVC.tabBarController.tabBar.hidden = YES;
+                toVC.navigationController.navigationBarHidden = YES;
+            } completion:^(BOOL finished) {
+                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;
+                vpvc.view.frame = vcViewFrame;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [vpvc showComponents:YES];
+                });
+            }];
+        }
     } else {
         [containerView addSubview:toView];
         [containerView sendSubviewToBack:toView];
@@ -75,17 +97,34 @@
             fromView = vpvc.iv;
             [vpvc showComponents:NO];
         }
-        // Animate the view onscreen
-        [UIView animateKeyframesWithDuration:duration delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
-            fromView.frame = _originRect;
-            fromView.alpha = 0;
-            vpvc.backgroundView.alpha = 0;
-            toVC.tabBarController.tabBar.hidden = NO;
-            toVC.navigationController.navigationBarHidden = NO;
-        } completion:^(BOOL finished) {
-            [fromView removeFromSuperview];
-            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+        
+        if (vpvc.direction) {
+            NSLog(@"fromVC direction:%ld", (long)vpvc.direction);
+            CGRect frame = containerView.frame;
+            frame.origin.x = vpvc.direction*CGRectGetWidth(containerView.frame);
+            
+            NSLog(@"fromVC old=%@ new=%@", NSStringFromCGRect(vpvc.view.frame), NSStringFromCGRect(frame));
+            
+            [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
+                vpvc.view.frame = frame;
+            } completion:^(BOOL finished) {
+                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [vpvc showComponents:YES];
+                });
+            }];
+        } else {
+            [UIView animateKeyframesWithDuration:duration delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
+                fromView.frame = _originRect;
+                fromView.alpha = 0;
+                vpvc.backgroundView.alpha = 0;
+                toVC.tabBarController.tabBar.hidden = NO;
+                toVC.navigationController.navigationBarHidden = NO;
+            } completion:^(BOOL finished) {
+                [fromView removeFromSuperview];
+                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+            }];
+        }
     }
 }
 

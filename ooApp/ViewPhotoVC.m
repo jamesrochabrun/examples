@@ -15,6 +15,7 @@
 #import "UserListVC.h"
 #import "AppDelegate.h"
 #import "ListsVC.h"
+#import "ShowMediaItemAnimator.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -32,6 +33,9 @@
 @property (nonatomic, strong) UserObject *user;
 @property (nonatomic, strong) UINavigationController *aNC;
 @property (nonatomic) CGPoint originPoint;
+@property (nonatomic, strong) ViewPhotoVC *nextPhoto;
+@property (nonatomic, strong) id<UIViewControllerTransitioningDelegate> dismissTransitionDelegate;
+@property (nonatomic, strong) id<UINavigationControllerDelegate> dismissNCDelegate;
 @end
 
 @implementation ViewPhotoVC
@@ -276,26 +280,70 @@
     [_backgroundView addGestureRecognizer:_showRestaurantTapGesture];
     [_backgroundView addGestureRecognizer:_yumPhotoTapGesture];
     [self.view addGestureRecognizer:_panGesture];
+    
+    _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
+    _dismissNCDelegate = self.navigationController.delegate;
+    _dismissTransitionDelegate = self.transitioningDelegate;
+    
+    [DebugUtilities addBorderToViews:@[self.view]];
 }
 
 - (void)pan:(UIGestureRecognizer *)gestureRecognizer {
     if (_panGesture != gestureRecognizer) return;
-    
-    CGPoint newPoint;
 
     if (_panGesture.state == UIGestureRecognizerStateBegan) {
+        CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
+        NSLog(@"began: %@", NSStringFromCGPoint(delta));
         _originPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
+        
     } else if (_panGesture.state == UIGestureRecognizerStateChanged) {
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
+ 
+        NSLog(@"changed: %@", NSStringFromCGPoint(delta));
         _iv.transform = CGAffineTransformMakeTranslation(delta.x, delta.y);
-        NSLog(@"%@", NSStringFromCGPoint(delta));
+
         _iv.alpha = 1-fabs(delta.x)/CGRectGetWidth(_iv.frame);
         _backgroundView.alpha = kAlphaBackground-fabs(delta.x)/CGRectGetWidth(_iv.frame);
+        
+        if (delta.x > 0) {
+            if (!_nextPhoto && _nextPhoto.direction != 1) {
+                [self.interactiveController cancelInteractiveTransition];
+                if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
+                _direction = 1;
+                _nextPhoto = [self getNextVC:_direction];
+                
+                self.transitioningDelegate = self;
+                self.navigationController.delegate = self;
+
+                [self.navigationController popViewControllerAnimated:YES];
+                [self.navigationController pushViewController:_nextPhoto animated:YES];
+            }
+        } else if (delta.x < 0) {
+            if (!_nextPhoto && _nextPhoto.direction != -1) {
+                if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
+                [self.interactiveController cancelInteractiveTransition];
+                _direction = -1;
+                _nextPhoto = [self getNextVC:_direction];
+                
+                self.transitioningDelegate = self;
+                self.navigationController.delegate = self;
+
+                [self.navigationController popViewControllerAnimated:YES];
+                [self.navigationController pushViewController:_nextPhoto animated:YES];
+            }
+        }
+//            [self.interactiveController updateInteractiveTransition:delta.x/width(self.view)];
+//            [_nextPhoto.interactiveController updateInteractiveTransition:delta.x/width(self.view)];
+        
     } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
-        newPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
-        CGFloat distance = distanceBetweenPoints(newPoint, _originPoint);
-//        NSLog(@"distance moved: %f", distance);
-        if (distance > 40) {
+        CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
+
+        //        NSLog(@"distance moved: %f", distance);
+         if (fabs(delta.y) > 20) {
+             self.direction = 0;
+             self.transitioningDelegate = _dismissTransitionDelegate;
+             self.navigationController.delegate = _dismissNCDelegate;
+             
             [self close];
             [UIView animateWithDuration:0.2 animations:^{
                 _iv.transform = CGAffineTransformIdentity;
@@ -308,6 +356,71 @@
             }];
         }
     }
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
+{
+    id<UIViewControllerAnimatedTransitioning> animationController;
+    
+    if ([toVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPush) {
+        ViewPhotoVC *vc = (ViewPhotoVC *)toVC;
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        animator.presenting = YES;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.8;
+        animationController = animator;
+    } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
+        ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
+        ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
+        animator.presenting = NO;
+        animator.originRect = vc.originRect;
+        animator.duration = 0.6;
+        animationController = animator;
+    } else {
+        NSLog(@"*** operation=%lu, fromVC=%@ , toVC=%@", operation, [fromVC class], [toVC class]);
+    }
+    
+    return animationController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id<UIViewControllerAnimatedTransitioning>)animator {
+    return _nextPhoto.interactiveController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id<UIViewControllerAnimatedTransitioning>)animator {
+    return self.interactiveController;
+}
+
+- (ViewPhotoVC *)getNextVC:(NSUInteger)direction {
+    NSInteger nextIndex = _currentIndex + (-direction);
+    NSLog(@"currentIndex=%lu nextIndex=%lu", _currentIndex, nextIndex);
+    
+    if (nextIndex < 0 || nextIndex >= [_restaurants count]) return nil;
+    
+    self.direction = direction;
+    
+    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+    RestaurantObject *r = [_restaurants objectAtIndex:nextIndex];
+    MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
+    
+    vc.originRect = _originRect;
+    vc.mio = mio;
+    vc.restaurant = r;
+//    vc.delegate = _delegate;
+    vc.restaurants = _restaurants;
+    vc.currentIndex = nextIndex;
+
+    vc.modalPresentationStyle = UIModalPresentationCustom;
+    vc.transitioningDelegate = self;
+    vc.navigationController.delegate = self;
+    
+    vc.dismissNCDelegate = _dismissNCDelegate;
+    vc.dismissTransitionDelegate = _dismissTransitionDelegate;
+
+    return vc;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -412,8 +525,7 @@
     _requestOperation = [api getRestaurantImageWithMediaItem:_mio
                                                     maxWidth:self.view.frame.size.width
                                                    maxHeight:0 success:^(NSString *link) {
-        
-        [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                            [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                 placeholderImage:nil
                                          success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                                              dispatch_async(dispatch_get_main_queue(), ^{
