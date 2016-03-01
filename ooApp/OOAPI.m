@@ -2899,9 +2899,9 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 }
 
 //------------------------------------------------------------------------------
-// Name:    addEvent
-// Purpose: Create a new event and receive in return the new event's ID.
-// Note:    The event does not need to be completely described in the EventObject.
+// Name:    authWithFacebookToken
+// Purpose: use the facebook token from FB to autorize the user and get user information OOToken
+// Note:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)authWithFacebookToken:(NSString *)facebookToken
                              success:(void (^)(UserObject *user, NSString *token))success
