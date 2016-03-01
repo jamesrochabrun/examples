@@ -35,6 +35,7 @@ NSString *const kKeyEventIDs = @"event_ids";
 NSString *const kKeyTagIDs = @"tag_ids";
 
 NSString *const kKeyDeviceToken = @"device_token";
+NSString *const kKeyFacebookAccessToken = @"access_token";
 
 @interface OOAPI()
 - (NSString *)ooURL;
@@ -2897,6 +2898,42 @@ NSString *const kKeyDeviceToken = @"device_token";
             ];
 }
 
+//------------------------------------------------------------------------------
+// Name:    addEvent
+// Purpose: Create a new event and receive in return the new event's ID.
+// Note:    The event does not need to be completely described in the EventObject.
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)authWithFacebookToken:(NSString *)facebookToken
+                             success:(void (^)(UserObject *user))success
+                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!facebookToken) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/auth/facebook", kHTTPProtocol, [OOAPI URL]];
+    
+    NSDictionary *parameters = @{kKeyFacebookAccessToken:facebookToken};
+    
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                                          UserObject *user = [UserObject userFromDict:responseObject];
+                                          success(user);
+                                          return;
+                                      } else {
+                                          failure(nil,nil);
+                                          return;
+                                      }
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    
+    return op;
+}
+
 + (NSString *)URL
 {
 // To alleviate the need for commenting this out
@@ -2904,16 +2941,16 @@ NSString *const kKeyDeviceToken = @"device_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
-//    APP.usingStagingServer=NO;
+#ifdef ADHOC
+    APP.usingStagingServer=NO;
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end

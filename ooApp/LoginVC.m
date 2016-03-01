@@ -290,8 +290,8 @@
         NSLog  (@"THERE IS NO FACEBOOK TOKEN");
     }
     else {
-        NSSet * permissions= [ facebookToken permissions ];
-        NSLog  (@"USER PERMISSIONS=  %@", permissions );
+        NSSet *permissions= [facebookToken permissions];
+        NSLog(@"USER PERMISSIONS = %@", permissions);
     }
     
     //---------------------------------------------------
@@ -300,10 +300,10 @@
     // so we must update the backend to add the FB
     // user ID.
     //
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString *email= userInfo.email;
-    if  (email.length > 1 && !userInfo.userID) {
-        NSLog ( @"user has OO account already but this is their first Facebook login.");
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSString *email = userInfo.email;
+    if (email.length > 1 && !userInfo.userID) {
+        NSLog(@"user has OO account already but this is their first Facebook login.");
     }
 
     //---------------------------------------------------
@@ -312,13 +312,13 @@
     //  certainly not the authorization token. In this case
     //  we need to ask FB for the email address.
     //
-    NSString *token= userInfo.backendAuthorizationToken;
-    NSString*  identifier = facebookToken.userID;
-    if (facebookToken && identifier && (!token  || !token.length) && (! email ||  !email.length)) {
-        NSLog  (@"HAVE FACEBOOK TOKEN BUT NO EMAIL AND NO AUTHORIZATION TOKEN");
+    NSString *token = userInfo.backendAuthorizationToken;
+    NSString *identifier = facebookToken.userID;
+    if (facebookToken && identifier && (!token || !token.length) && (! email || !email.length)) {
+        NSLog(@"HAVE FACEBOOK TOKEN BUT NO EMAIL AND NO AUTHORIZATION TOKEN");
         [self fetchEmailFromFacebookFor:identifier];
     } else {
-        [self showMainUIForUserWithEmail:  email];
+        [self showMainUIForUserWithEmail:email];
     }
 }
 
@@ -327,7 +327,7 @@
 // Purpose: Find out whether back end knows this user already.
 //------------------------------------------------------------------------------
 
-- (void)showMainUIForUserWithEmail:  (NSString*) email
+- (void)showMainUIForUserWithEmail:(NSString *)email
 {
     ENTRY;
 
@@ -337,12 +337,13 @@
     }
     
     if (!is_reachable()) {
-        static BOOL toldThem= NO;
-        if  (!toldThem) {
-            toldThem= YES;
+        static BOOL toldThem = NO;
+        if (!toldThem) {
+            toldThem = YES;
             message(@"The Internet is not reachable.");
         }
-        [self performSelector:@selector(showMainUIForUserWithEmail:)  withObject:email afterDelay:1];
+        
+        [self performSelector:@selector(showMainUIForUserWithEmail:) withObject:email afterDelay:1];
         return;
     }
     
@@ -358,13 +359,13 @@
     BOOL newDay = NO;
     NSString *dateString= getDateString();
     NSString *lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
-    if (!lastKnownDateString  ||  ![lastKnownDateString isEqualToString:dateString]) {
-        newDay= YES;
-        [[Settings sharedInstance] saveDateString: dateString];
+    if (!lastKnownDateString || ![lastKnownDateString isEqualToString:dateString]) {
+        newDay = YES;
+        [[Settings sharedInstance] saveDateString:dateString];
     }
 
-    BOOL seekingToken= NO;
-    NSString* requestString = nil;
+    BOOL seekingToken = NO;
+    NSString *requestString = nil;
  
     //---------------------------------------------------
     // RULE: Always request the backend token, just in case
@@ -372,10 +373,10 @@
     // forgot to delete the app after we instituted
     // the new rule that all devices get the same token.
     
-    NSString *saltedString = [NSString stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
-    NSString* md5= [ saltedString MD5String];
+    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
+    NSString *md5 = [saltedString MD5String];
     md5 = [md5 lowercaseString];
-    seekingToken= YES;
+    seekingToken = YES;
     
     requestString = [NSString stringWithFormat:@"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol,
                      [OOAPI URL], md5, [Settings sharedInstance].uniqueDeviceKey];
@@ -384,7 +385,7 @@
     //  why the new authorization token is being requested.
     //
     requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString,/*newDay ? 1 : */ 0];
-    isFirstRun= NO;
+    isFirstRun = NO;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     NSString *facebookID = facebookToken.userID;
@@ -567,7 +568,7 @@
 // Name:    conveyUserInformationToBackend
 // Purpose:
 //------------------------------------------------------------------------------
-- (void) conveyUserInformationToBackend: (id)alreadyKnown_
+- (void)conveyUserInformationToBackend:(id)alreadyKnown_
 {
     ENTRY;
 
@@ -706,7 +707,13 @@
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (facebookToken) {
         // Transition if the user recently logged in.
-        [self showMainUI];
+        [OOAPI authWithFacebookToken: facebookToken.tokenString success:^(UserObject *user) {
+            
+            [[Settings sharedInstance] setUserObject:user];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"auth failure %@", error);
+        }];
+//        [self showMainUI];
     }
 }
 
