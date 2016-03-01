@@ -17,7 +17,7 @@
 NSString *const kNotificationLocationBecameAvailable = @"notificationLocationAvailable";
 NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationUnavailable";
 
-NSString *const kOOURLStage = @"stage.oomamiapp.com/api/v1";
+NSString *const kOOURLStage = @"stage.oomamiapp.com/v1";
 NSString *const kOOURLProduction = @"api.oomamiapp.com/v1";
 
 //NSString *const kOOURL = @"localhost:3000/api/v1";

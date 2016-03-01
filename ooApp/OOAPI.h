@@ -18,6 +18,7 @@
 #import "UserObject.h"
 #import "UserStatsObject.h"
 #import "LocationManager.h"
+#import "AFURLRequestSerialization.h"
 
 //extern NSString *const kKeyName;
 
@@ -406,6 +407,9 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                  success:(void (^)())success
                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)authWithFacebookToken:(NSString *)facebookToken
+                                          success:(void (^)(UserObject *user, NSString *token))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 
 // Auto complete

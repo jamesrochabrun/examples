@@ -90,6 +90,8 @@
     
     self.imageForNoProfileSilhouette= [UIImage  imageNamed: @"No-Profile_Image.png"];
     
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+    
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
 }

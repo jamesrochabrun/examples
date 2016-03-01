@@ -161,116 +161,116 @@
 //------------------------------------------------------------------------------
 - (void)updateUsername:(id)value // NOTE:  the value should be an NSString.
 {
-    if (!value || ![ value isKindOfClass:[NSString class]] ) {
+    if (!value || ![value isKindOfClass:[NSString class]] ) {
         return;
     }
-    LOGS2(@"USERNAME",value);
+    LOGS2(@"username: ", value);
     UserObject *userInfo = [Settings sharedInstance].userObject;
     userInfo.username = value;
     [[Settings sharedInstance] save];
 }
 
-//------------------------------------------------------------------------------
-// Name:    updateUserID
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)updateUserID:(id)value // NOTE:  the value should be an NSNumber.
-{
-    if (!value) {
-        return;
-    }
-    
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    userInfo.userID = parseIntegerOrNullFromServer(value);
-    [[Settings sharedInstance] save];
-}
+////------------------------------------------------------------------------------
+//// Name:    updateUserID
+//// Purpose:
+////------------------------------------------------------------------------------
+//- (void)updateUserID:(id)value // NOTE:  the value should be an NSNumber.
+//{
+//    if (!value) {
+//        return;
+//    }
+//    
+//    UserObject *userInfo = [Settings sharedInstance].userObject;
+//    userInfo.userID = parseIntegerOrNullFromServer(value);
+//    [[Settings sharedInstance] save];
+//}
 
-//------------------------------------------------------------------------------
-// Name:    updateEmail
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)updateEmail:(NSString *)value
-{
-    if (!value) {
-        return;
-    }
-    LOGS2(@"EMAIL",value);
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    if (!userInfo.email || !userInfo.email.length) {
-        userInfo.email = value;
-    }
-}
+////------------------------------------------------------------------------------
+//// Name:    updateEmail
+//// Purpose:
+////------------------------------------------------------------------------------
+//- (void)updateEmail:(NSString *)value
+//{
+//    if (!value) {
+//        return;
+//    }
+//    LOGS2(@"EMAIL",value);
+//    UserObject *userInfo = [Settings sharedInstance].userObject;
+//    if (!userInfo.email || !userInfo.email.length) {
+//        userInfo.email = value;
+//    }
+//}
 
-//------------------------------------------------------------------------------
-// Name:    updateAuthorizationToken
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)updateAuthorizationToken:(NSString *)value
-{
-    ENTRY;
-
-    if (!value) {
-        return;
-    }
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    if (!userInfo.backendAuthorizationToken || ![userInfo.backendAuthorizationToken isEqualToString: value]) {
-        userInfo.backendAuthorizationToken= value;
-    }
-    LOGS2(@"TOKEN", value);
-}
+////------------------------------------------------------------------------------
+//// Name:    updateAuthorizationToken
+//// Purpose:
+////------------------------------------------------------------------------------
+//- (void)updateAuthorizationToken:(NSString *)value
+//{
+//    ENTRY;
+//
+//    if (!value) {
+//        return;
+//    }
+//    UserObject *userInfo = [Settings sharedInstance].userObject;
+//    if (!userInfo.backendAuthorizationToken || ![userInfo.backendAuthorizationToken isEqualToString: value]) {
+//        userInfo.backendAuthorizationToken= value;
+//    }
+//    LOGS2(@"TOKEN", value);
+//}
 
 //------------------------------------------------------------------------------
 // Name:    fetchEmailFromFacebookFor
 // Purpose:
 //------------------------------------------------------------------------------
-- (void) fetchEmailFromFacebookFor: (NSString*)identifier
-{
-    ENTRY;
-
-    __weak LoginVC *weakSelf= self;
-    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=email,gender",
-                                                     identifier]
-                                  parameters:nil
-                                  HTTPMethod:@"GET"];
-    [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
-                                           id result,
-                                           NSError *error)
-     {
-         if (!error) {
-             NSString* gender=nil;
-             NSString* email=nil;
-             
-             if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                 NSDictionary*d= (NSDictionary*)result;
-                 gender= d [ @"gender"];
-                 email= d [ @"email"];
-             }
-             NSLog(@"OBTAINED EMAIL FROM FACEBOOK IN ORDER TO GET AUTHORIZATION TOKEN: %@",email);
-             LOGS2(@"EMAIL FROM FACEBOOK", email);
-             
-             UserObject* userInfo= [Settings sharedInstance].userObject;
-             userInfo.email= email;
-             
-             // NOTE  if the Facebook server gave us the username then use it.
-             [weakSelf performSelectorOnMainThread: @selector(showMainUIForUserWithEmail:) withObject:email waitUntilDone:NO   ];
-             
-         }
-         else {
-             NSInteger code= connection.URLResponse.statusCode;
-            NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@, Code= %lu", error, ( unsigned long)code);
-             LOGS2(@"ERROR FROM FACEBOOK", error);
-
-             // NOTE: If we reach this point, the backend knows about the user but
-             //  the Facebook server may be down.
-             // QUESTION: What to do in that case?
-             
-//             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
-//             message( string);
-         }
-     }
-     ];
-}
+//- (void) fetchEmailFromFacebookFor: (NSString*)identifier
+//{
+//    ENTRY;
+//
+//    __weak LoginVC *weakSelf= self;
+//    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+//                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=email,gender",
+//                                                     identifier]
+//                                  parameters:nil
+//                                  HTTPMethod:@"GET"];
+//    [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
+//                                           id result,
+//                                           NSError *error)
+//     {
+//         if (!error) {
+//             NSString* gender=nil;
+//             NSString* email=nil;
+//             
+//             if ([result isKindOfClass: [NSDictionary  class] ] ) {
+//                 NSDictionary*d= (NSDictionary*)result;
+//                 gender= d [ @"gender"];
+//                 email= d [ @"email"];
+//             }
+//             NSLog(@"OBTAINED EMAIL FROM FACEBOOK IN ORDER TO GET AUTHORIZATION TOKEN: %@",email);
+//             LOGS2(@"EMAIL FROM FACEBOOK", email);
+//             
+//             UserObject* userInfo= [Settings sharedInstance].userObject;
+//             userInfo.email= email;
+//             
+//             // NOTE  if the Facebook server gave us the username then use it.
+//             [weakSelf performSelectorOnMainThread: @selector(showMainUIForUserWithEmail:) withObject:email waitUntilDone:NO   ];
+//             
+//         }
+//         else {
+//             NSInteger code= connection.URLResponse.statusCode;
+//            NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@, Code= %lu", error, ( unsigned long)code);
+//             LOGS2(@"ERROR FROM FACEBOOK", error);
+//
+//             // NOTE: If we reach this point, the backend knows about the user but
+//             //  the Facebook server may be down.
+//             // QUESTION: What to do in that case?
+//             
+////             NSString *string= [NSString  stringWithFormat: @"Facebook server gave error code  %ld",  ( long)code];
+////             message( string);
+//         }
+//     }
+//     ];
+//}
 
 //------------------------------------------------------------------------------
 // Name:    showMainUI
@@ -290,8 +290,8 @@
         NSLog  (@"THERE IS NO FACEBOOK TOKEN");
     }
     else {
-        NSSet * permissions= [ facebookToken permissions ];
-        NSLog  (@"USER PERMISSIONS=  %@", permissions );
+        NSSet *permissions = [facebookToken permissions];
+        NSLog(@"USER PERMISSIONS = %@", permissions);
     }
     
     //---------------------------------------------------
@@ -300,10 +300,10 @@
     // so we must update the backend to add the FB
     // user ID.
     //
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString *email= userInfo.email;
-    if  (email.length > 1 && !userInfo.userID) {
-        NSLog ( @"user has OO account already but this is their first Facebook login.");
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSString *email = userInfo.email;
+    if (email.length > 1 && !userInfo.userID) {
+        NSLog(@"user has OO account already but this is their first Facebook login.");
     }
 
     //---------------------------------------------------
@@ -312,386 +312,523 @@
     //  certainly not the authorization token. In this case
     //  we need to ask FB for the email address.
     //
-    NSString *token= userInfo.backendAuthorizationToken;
-    NSString*  identifier = facebookToken.userID;
-    if (facebookToken && identifier && (!token  || !token.length) && (! email ||  !email.length)) {
-        NSLog  (@"HAVE FACEBOOK TOKEN BUT NO EMAIL AND NO AUTHORIZATION TOKEN");
-        [self fetchEmailFromFacebookFor:identifier];
+    NSString *token = userInfo.backendAuthorizationToken;
+    
+    NSString *identifier = facebookToken.userID;
+    if (facebookToken && identifier && (!token || !token.length) && (! email || !email.length)) {
+        NSLog(@"HAVE FACEBOOK TOKEN BUT NO EMAIL AND NO AUTHORIZATION TOKEN");
+//        [self fetchEmailFromFacebookFor:identifier];
     } else {
-        [self showMainUIForUserWithEmail:  email];
+        [self showMainUIWithUserEmail:email];
     }
 }
 
-//------------------------------------------------------------------------------
-// Name:    showMainUIForUserWithEmail
-// Purpose: Find out whether back end knows this user already.
-//------------------------------------------------------------------------------
-
-- (void)showMainUIForUserWithEmail:  (NSString*) email
+- (void)showMainUIWithUserEmail:(NSString *)email
 {
     ENTRY;
-
+    
     if  (!email || !email.length) {
         LOGS(@"NO EMAIL.");
         return;
     }
     
     if (!is_reachable()) {
-        static BOOL toldThem= NO;
-        if  (!toldThem) {
-            toldThem= YES;
+        static BOOL toldThem = NO;
+        if (!toldThem) {
+            toldThem = YES;
             message(@"The Internet is not reachable.");
         }
-        [self performSelector:@selector(showMainUIForUserWithEmail:)  withObject:email afterDelay:1];
+        
+        [self performSelector:@selector(showMainUIWithUserEmail:) withObject:email afterDelay:1];
         return;
     }
     
     [SocialMedia fetchProfilePhotoWithCompletionBlock:NULL];
     
-    __block UserObject* userInfo = [Settings sharedInstance].userObject;
+    UserObject* userInfo = [Settings sharedInstance].userObject;
     
     //---------------------------------------------------
     // RULE: If the day has changed, we will need to request
     // a new authorization key.
     //
-    static BOOL isFirstRun= YES;
-    BOOL newDay = NO;
-    NSString *dateString= getDateString();
-    NSString *lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
-    if (!lastKnownDateString  ||  ![lastKnownDateString isEqualToString:dateString]) {
-        newDay= YES;
-        [[Settings sharedInstance] saveDateString: dateString];
-    }
-
-    BOOL seekingToken= NO;
-    NSString* requestString = nil;
- 
+//    static BOOL isFirstRun= YES;
+//    BOOL newDay = NO;
+//    NSString *dateString= getDateString();
+//    NSString *lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
+//    if (!lastKnownDateString || ![lastKnownDateString isEqualToString:dateString]) {
+//        newDay = YES;
+//        [[Settings sharedInstance] saveDateString:dateString];
+//    }
+//    
+//    BOOL seekingToken = NO;
+//    NSString *requestString = nil;
+    
     //---------------------------------------------------
     // RULE: Always request the backend token, just in case
     // it changed on a different device  i.e. the user
     // forgot to delete the app after we instituted
     // the new rule that all devices get the same token.
     
-    NSString *saltedString = [NSString stringWithFormat:  @"%@.%@", email, SECRET_BACKEND_SALT];
-    NSString* md5= [ saltedString MD5String];
-    md5 = [md5 lowercaseString];
-    seekingToken= YES;
+//    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
+//    NSString *md5 = [saltedString MD5String];
+//    md5 = [md5 lowercaseString];
+//    seekingToken = YES;
+//    
+//    requestString = [NSString stringWithFormat:@"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol,
+//                     [OOAPI URL], md5, [Settings sharedInstance].uniqueDeviceKey];
+//    
+//    // NOTE:  this may be helpful if we need to identify the reason
+//    //  why the new authorization token is being requested.
+//    //
+//    requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString,/*newDay ? 1 : */ 0];
+//    isFirstRun = NO;
     
-    requestString = [NSString stringWithFormat:@"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol,
-                     [OOAPI URL], md5, [Settings sharedInstance].uniqueDeviceKey];
+//    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
+//    NSString *facebookID = facebookToken.userID;
+//    __weak LoginVC *weakSelf = self;
     
-    // NOTE:  this may be helpful if we need to identify the reason
-    //  why the new authorization token is being requested.
-    //
-    requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString,/*newDay ? 1 : */ 0];
-    isFirstRun= NO;
+//    [[OONetworkManager sharedRequestManager] GET:requestString
+//                                      parameters:nil
+//                                         success:^void(id result) {
+//                                             NSLog(@"PRE-EXISTING OO USER %@, %@", facebookID, result);
+//                                             [APP.diagnosticLogString appendFormat:@"PRE-EXISTING OO USER %@, %@\r", facebookID, result];
+//                                             
+//                                             if ([result isKindOfClass:[NSDictionary class]]) {
+//                                                 NSDictionary *d = (NSDictionary *)result;
+//                                                 
+//                                                 NSString* token= d[ @"token"];
+//                                                 [weakSelf updateAuthorizationToken: token];
+//                                                 
+//                                                 NSDictionary *subdictionary = d[ @"user"];
+//                                                 if (subdictionary) {
+//                                                     UserObject* latestData= [UserObject userFromDict:subdictionary ];
+//                                                     
+//                                                     // RULE: Data is complete therefore use it in its entirety.
+//                                                     [Settings sharedInstance].userObject = latestData;
+//                                                     userInfo = latestData;
+//                                                     latestData.backendAuthorizationToken = token;
+//                                                     [[Settings sharedInstance] save];
+//                                                 }
+//                                             }
+//                                             else  {
+//                                                 NSLog  (@"result was not parsed into a dictionary.");
+//                                             }
     
-    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
-    NSString *facebookID = facebookToken.userID;
-    __weak LoginVC *weakSelf = self;
-    
-    [[OONetworkManager sharedRequestManager] GET:requestString
-                                      parameters:nil
-                                         success:^void(id result) {
-                                             NSLog(@"PRE-EXISTING OO USER %@, %@", facebookID, result);
-                                             [APP.diagnosticLogString appendFormat:@"PRE-EXISTING OO USER %@, %@\r", facebookID, result];
-                                             
-                                             if ([result isKindOfClass:[NSDictionary class]]) {
-                                                 NSDictionary *d = (NSDictionary *)result;
-                                                 
-                                                 NSString* token= d[ @"token"];
-                                                 [weakSelf updateAuthorizationToken: token];
-                                                 
-                                                 NSDictionary *subdictionary = d[ @"user"];
-                                                 if (subdictionary) {
-                                                     UserObject* latestData= [UserObject userFromDict:subdictionary ];
-                                                     
-                                                     // RULE: Data is complete therefore use it in its entirety.
-                                                     [Settings sharedInstance].userObject = latestData;
-                                                     userInfo = latestData;
-                                                     latestData.backendAuthorizationToken = token;
-                                                     [[Settings sharedInstance] save];
-                                                 }
-                                             }
-                                             else  {
-                                                 NSLog  (@"result was not parsed into a dictionary.");
-                                             }
-                                             
-                                             if  (facebookID ) {
-                                                 [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @YES] ];
-                                             } else {
-                                                 // XX:  this is the OO log in flow
-                                             }
+                                             //                                             if  (facebookID ) {
+                                             //                                                 [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @YES] ];
+                                             //                                             } else {
+                                             //                                                 // XX:  this is the OO log in flow
+                                             //                                             }
                                              
                                              // RULE: While the above is happening take the user to the
                                              //     Explore page regardless of whether the backend was reached.
                                              NSLog (@"USERNAME %@",userInfo.username);
-                                             dispatch_async(dispatch_get_main_queue() ,^{
+//                                             dispatch_async(dispatch_get_main_queue() ,^{
                                                  if (userInfo.username.length) {
                                                      [self performSegueWithIdentifier:@"mainUISegue" sender:self];
                                                  } else {
                                                      [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
                                                  }
-                                             });
-                                         }
-                                         failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
-                                             NSInteger statusCode= operation.response.statusCode;
-                                             if  ( statusCode== 404) {
-                                                 
-                                                 [APP.diagnosticLogString appendFormat: @"AS YET UNKNOWN OO USER  %@, %@,  %@\r",  facebookID, error.description,requestString];
-                                                 
-                                                 NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.description,requestString);
-                                                 
-                                                 if (facebookID ) {
-                                                     [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @NO] ];
-                                                 } else {
-                                                     // XX:  this is the OO log in flow
-                                                 }
-                                                 
-                                             
-                                                 dispatch_async(dispatch_get_main_queue() ,^{
-                                                     [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
-                                                 });
-                                             } else {
-                                                 message ( @"Oomami is temporarily down, but we are working on it! Try again in a few minutes.");
-                                                 NSLog  (@"OTHER NETWORK ERROR: %ld", (long)statusCode);
-                                                 LOGSN(@"BACKEND ERROR",statusCode);
-                                             }
-                                         }];
+//                                             });
+//                                         }
+//                                         failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
+//                                             NSInteger statusCode= operation.response.statusCode;
+//                                             if  ( statusCode== 404) {
+//                                                 
+//                                                 [APP.diagnosticLogString appendFormat: @"AS YET UNKNOWN OO USER  %@, %@,  %@\r",  facebookID, error.description,requestString];
+//                                                 
+//                                                 NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.description,requestString);
+//                                                 
+//                                                 //                                                 if (facebookID ) {
+//                                                 //                                                     [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @NO] ];
+//                                                 //                                                 } else {
+//                                                 //                                                     // XX:  this is the OO log in flow
+//                                                 //                                                 }
+//                                                 
+//                                                 
+//                                                 dispatch_async(dispatch_get_main_queue() ,^{
+//                                                     [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+//                                                 });
+//                                             } else {
+//                                                 message ( @"Oomami is temporarily down, but we are working on it! Try again in a few minutes.");
+//                                                 NSLog  (@"OTHER NETWORK ERROR: %ld", (long)statusCode);
+//                                                 LOGSN(@"BACKEND ERROR",statusCode);
+//                                             }
+//                                         }];
     
 }
 
-//------------------------------------------------------------------------------
-// Name:    fetchDetailsAboutUserFromFacebook
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)fetchDetailsAboutUserFromFacebook: (NSArray*)parameters
-{
-    ENTRY;
-    
-    if  (! parameters) {
-        return;
-    }
-    
-    NSString* identifier =  parameters[0];
-    BOOL alreadyKnown=   ((NSNumber *)parameters[1]).boolValue;
+////------------------------------------------------------------------------------
+//// Name:    showMainUIForUserWithEmail
+//// Purpose: Find out whether back end knows this user already.
+////------------------------------------------------------------------------------
+//
+//- (void)showMainUIForUserWithEmail:(NSString *)email
+//{
+//    ENTRY;
+//
+//    if  (!email || !email.length) {
+//        LOGS(@"NO EMAIL.");
+//        return;
+//    }
+//    
+//    if (!is_reachable()) {
+//        static BOOL toldThem = NO;
+//        if (!toldThem) {
+//            toldThem = YES;
+//            message(@"The Internet is not reachable.");
+//        }
+//        
+//        [self performSelector:@selector(showMainUIForUserWithEmail:) withObject:email afterDelay:1];
+//        return;
+//    }
+//    
+//    [SocialMedia fetchProfilePhotoWithCompletionBlock:NULL];
+//    
+//    __block UserObject* userInfo = [Settings sharedInstance].userObject;
+//    
+//    //---------------------------------------------------
+//    // RULE: If the day has changed, we will need to request
+//    // a new authorization key.
+//    //
+//    static BOOL isFirstRun= YES;
+//    BOOL newDay = NO;
+//    NSString *dateString= getDateString();
+//    NSString *lastKnownDateString= [[Settings sharedInstance] lastKnownDateString];
+//    if (!lastKnownDateString || ![lastKnownDateString isEqualToString:dateString]) {
+//        newDay = YES;
+//        [[Settings sharedInstance] saveDateString:dateString];
+//    }
+//
+//    BOOL seekingToken = NO;
+//    NSString *requestString = nil;
+// 
+//    //---------------------------------------------------
+//    // RULE: Always request the backend token, just in case
+//    // it changed on a different device  i.e. the user
+//    // forgot to delete the app after we instituted
+//    // the new rule that all devices get the same token.
+//    
+//    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
+//    NSString *md5 = [saltedString MD5String];
+//    md5 = [md5 lowercaseString];
+//    seekingToken = YES;
+//    
+//    requestString = [NSString stringWithFormat:@"%@://%@/users?needtoken=%@&device=%@", kHTTPProtocol,
+//                     [OOAPI URL], md5, [Settings sharedInstance].uniqueDeviceKey];
+//    
+//    // NOTE:  this may be helpful if we need to identify the reason
+//    //  why the new authorization token is being requested.
+//    //
+//    requestString = [NSString stringWithFormat: @"%@&reason=%d", requestString,/*newDay ? 1 : */ 0];
+//    isFirstRun = NO;
+//    
+//    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
+//    NSString *facebookID = facebookToken.userID;
+//    __weak LoginVC *weakSelf = self;
+//    
+//    [[OONetworkManager sharedRequestManager] GET:requestString
+//                                      parameters:nil
+//                                         success:^void(id result) {
+//                                             NSLog(@"PRE-EXISTING OO USER %@, %@", facebookID, result);
+//                                             [APP.diagnosticLogString appendFormat:@"PRE-EXISTING OO USER %@, %@\r", facebookID, result];
+//                                             
+//                                             if ([result isKindOfClass:[NSDictionary class]]) {
+//                                                 NSDictionary *d = (NSDictionary *)result;
+//                                                 
+//                                                 NSString* token= d[ @"token"];
+//                                                 [weakSelf updateAuthorizationToken: token];
+//                                                 
+//                                                 NSDictionary *subdictionary = d[ @"user"];
+//                                                 if (subdictionary) {
+//                                                     UserObject* latestData= [UserObject userFromDict:subdictionary ];
+//                                                     
+//                                                     // RULE: Data is complete therefore use it in its entirety.
+//                                                     [Settings sharedInstance].userObject = latestData;
+//                                                     userInfo = latestData;
+//                                                     latestData.backendAuthorizationToken = token;
+//                                                     [[Settings sharedInstance] save];
+//                                                 }
+//                                             }
+//                                             else  {
+//                                                 NSLog  (@"result was not parsed into a dictionary.");
+//                                             }
+//                                             
+////                                             if  (facebookID ) {
+////                                                 [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @YES] ];
+////                                             } else {
+////                                                 // XX:  this is the OO log in flow
+////                                             }
+//                                             
+//                                             // RULE: While the above is happening take the user to the
+//                                             //     Explore page regardless of whether the backend was reached.
+//                                             NSLog (@"USERNAME %@",userInfo.username);
+//                                             dispatch_async(dispatch_get_main_queue() ,^{
+//                                                 if (userInfo.username.length) {
+//                                                     [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+//                                                 } else {
+//                                                     [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+//                                                 }
+//                                             });
+//                                         }
+//                                         failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
+//                                             NSInteger statusCode= operation.response.statusCode;
+//                                             if  ( statusCode== 404) {
+//                                                 
+//                                                 [APP.diagnosticLogString appendFormat: @"AS YET UNKNOWN OO USER  %@, %@,  %@\r",  facebookID, error.description,requestString];
+//                                                 
+//                                                 NSLog  (@"AS YET UNKNOWN OO USER  %@, %@,  %@",  facebookID, error.description,requestString);
+//                                                 
+////                                                 if (facebookID ) {
+////                                                     [weakSelf fetchDetailsAboutUserFromFacebook: @[facebookID , @NO] ];
+////                                                 } else {
+////                                                     // XX:  this is the OO log in flow
+////                                                 }
+//                                                 
+//                                             
+//                                                 dispatch_async(dispatch_get_main_queue() ,^{
+//                                                     [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+//                                                 });
+//                                             } else {
+//                                                 message ( @"Oomami is temporarily down, but we are working on it! Try again in a few minutes.");
+//                                                 NSLog  (@"OTHER NETWORK ERROR: %ld", (long)statusCode);
+//                                                 LOGSN(@"BACKEND ERROR",statusCode);
+//                                             }
+//                                         }];
+//    
+//}
 
-    //---------------------------------------------
-    //  Make a formal request for user information.
-    //
-    __weak LoginVC *weakSelf= self;
-
-    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,gender", identifier]
-                                  parameters:nil
-                                  HTTPMethod:@"GET"];
-
-     [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
-                                           id result,
-                                           NSError *error)
-     {
-         if (!error) {
-             NSString* firstName=nil;
-             NSString* lastName=nil;
-             NSString* middleName=nil;
-             NSString* gender=nil;
-             NSString* email=nil;
-             NSString* birthday=nil;
-             NSString* location=nil;
-             NSString* about=nil;
-             
-             if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                 NSDictionary*d= (NSDictionary*)result;
-                 
-                 firstName= d[ @"first_name"];
-                 lastName= d [ @"last_name"];
-                 middleName= d [ @"middle_name"];
-                 gender= d [ @"gender"];
-                 email= d [ @"email"];
-                 birthday= d [ @"birthday"];
-                 location= d [ @"location"];
-                 about= d [ @"about"];
-             }
-             
-             // Validation.
-             //
-             if  ([birthday hasPrefix: @"0000"]) {
-                 birthday= nil;
-             }
-             
-             NSLog(@"FACEBOOK RESPONSE: %@",result);
-             
-             UserObject* userInfo= [Settings sharedInstance].userObject;
-             if  (lastName ) {
-                 userInfo.lastName=lastName;
-             }
-             if  (middleName ) {
-                 userInfo.middleName =middleName;
-             }
-             if  (firstName ) {
-                 userInfo.firstName=firstName;
-             }
-             if  ( gender) {
-                 userInfo.gender=  gender;
-             }
-             if  (email ) {
-                 userInfo.email=  email;
-             }
-             if (birthday ) {
-                 userInfo.birthday=  birthday;
-             }
-             if (location ) {
-                 userInfo.location=  location;
-             }
-             if (about ) {
-                 userInfo.about=  about;
-             }
-             if (identifier ) {
-                 userInfo.facebookIdentifier=  identifier;
-             }
-             
-             // NOTE  if the Facebook server gave us the username then use it.
-             [weakSelf performSelectorOnMainThread:@selector(conveyUserInformationToBackend:) withObject:alreadyKnown?@"":nil waitUntilDone:NO ];
-             
-         } else {
-             NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
-             
-             // NOTE: If we reach this point,  the backend does not yet know about this user.
-         }
-     }
-     ];     // startWithCompletionHandler
-    
-}
-
-//------------------------------------------------------------------------------
-// Name:    conveyUserInformationToBackend
-// Purpose:
-//------------------------------------------------------------------------------
-- (void) conveyUserInformationToBackend: (id)alreadyKnown_
-{
-    ENTRY;
-
-    BOOL alreadyKnown=  alreadyKnown_? YES: NO;
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-
-    if  (!userInfo.email) {
-        return;
-    }
-    
-    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
-    NSString* requestString= nil;
-    
-    if ( userInfo.middleName && userInfo.middleName.length) {
-        userInfo.middleName= [userInfo.middleName substringToIndex: 1];
-    }
-    
-    NSMutableDictionary* parametersDictionary=  [NSMutableDictionary new];
-    if  (userInfo.email.length ) {
-        parametersDictionary [ kKeyUserEmail]= userInfo.email;
-    }
-    if  (facebookToken.tokenString  && facebookToken.tokenString.length ) {
-        parametersDictionary [ @"token"]= facebookToken.tokenString;
-    }
-    if  (userInfo.facebookIdentifier.length ) {
-        parametersDictionary [ @"facebook_id"]= userInfo.facebookIdentifier;
-    }
-    if  (userInfo.firstName.length ) {
-        parametersDictionary [kKeyUserFirstName]= userInfo.firstName;
-    }
-    if  (userInfo.lastName.length ) {
-        parametersDictionary [kKeyUserLastName]= userInfo.lastName;
-    }
-    if  (userInfo.middleName.length ) {
-        parametersDictionary [ @"middle_initial"]= userInfo.middleName;
-    }
-    if  (userInfo.gender.length ) {
-        parametersDictionary [ kKeyUserGender]= userInfo.gender;
-    }
-    if  (userInfo.about.length ) {
-        parametersDictionary [ @"about"]= userInfo.about;
-    }
-    if  (userInfo.location.length ) {
-        parametersDictionary [ @"zip_code_local"]= userInfo.location;
-    }
-    if  (userInfo.birthday.length ) {
-        parametersDictionary [ @"date_of_birth"]= userInfo.birthday;
-    }
-    
-    __weak LoginVC *weakSelf= self;
- 
-    if  (alreadyKnown ) {
-        UserObject* userInfo= [Settings sharedInstance].userObject;
-        NSUInteger userid= userInfo.userID;
-        
-        requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
-                       [OOAPI URL],( unsigned long) userid];
-        
-        requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
-
-        [[OONetworkManager sharedRequestManager] PUT: requestString
-                                          parameters: parametersDictionary
-                                             success:^void(id   result) {
-                                                 NSLog  (@"PUT SUCCESS");
-                                                 
-                                                 if (!result) {
-                                                     NSLog  (@"RESULT WAS NULL.");
-                                                 }
-                                                 else if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                                                     NSDictionary* d=  (NSDictionary*)result;
-                                                     
-                                                     NSString* token= d[ @"token"];
-                                                     [weakSelf updateAuthorizationToken: token];
-                                                     
-                                                     NSDictionary *subdictionary=d[ @"user"];
-                                                     if (subdictionary) {
-                                                         UserObject*user= [UserObject  userFromDict: subdictionary];
-                                                         user.backendAuthorizationToken = token;
-
-                                                         // RULE: Data is complete therefore use it in its entirety.
-                                                         [Settings sharedInstance].userObject= user;
-                                                         [[Settings sharedInstance] save];
-                                                     }
-                                                 } else {
-                                                     NSLog (@"PROBLEMATIC RETURN RESULT");
-                                                 }
-                                             }
-                                             failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
-                                                 NSLog (@"PUT FAILED %@",error);
-                                             }     ];
-
-    } else {
-        NSString *requestString = [NSString stringWithFormat:@"%@://%@/users", kHTTPProtocol, [OOAPI URL]];
-        NSLog(@"requestString  %@",requestString);
-
-        [[OONetworkManager sharedRequestManager] POST:requestString
-                                           parameters:parametersDictionary
-                                              success:^void(id result) {
-                                                  NSLog(@"POST SUCCESS");
-                                                
-                                                  if (!result) {
-                                                      NSLog(@"RESULT WAS NULL.");
-                                                  } else if ([result isKindOfClass: [NSDictionary  class] ] ) {
-                                                      NSDictionary *d = (NSDictionary *)result;
-                                                      
-                                                      NSString *token = d[@"token"];
-                                                      [weakSelf updateAuthorizationToken:token];
-                                                      
-                                                      NSDictionary *subdictionary = d[@"user"];
-                                                      if (subdictionary) {
-                                                          NSString *userid = subdictionary[@"user_id"];
-                                                          [weakSelf updateUserID:userid];
-                                                          UserObject *userInfo = [Settings sharedInstance].userObject;
-                                                          if (!userInfo.mediaItem) {
-                                                              [weakSelf uploadFacebookPhoto];
-                                                          }
-                                                      }
-                                                  }
-                                              } failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
-                                                  NSLog(@"POST FAILED %@", error);
-                                              }
-         ];
-    }
-}
+////------------------------------------------------------------------------------
+//// Name:    fetchDetailsAboutUserFromFacebook
+//// Purpose:
+////------------------------------------------------------------------------------
+//- (void)fetchDetailsAboutUserFromFacebook: (NSArray*)parameters
+//{
+//    ENTRY;
+//    
+//    if  (! parameters) {
+//        return;
+//    }
+//    
+//    NSString* identifier =  parameters[0];
+//    BOOL alreadyKnown=   ((NSNumber *)parameters[1]).boolValue;
+//
+//    //---------------------------------------------
+//    //  Make a formal request for user information.
+//    //
+//    __weak LoginVC *weakSelf= self;
+//
+//    FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+//                                  initWithGraphPath:[NSString stringWithFormat:@"/v2.4/%@?fields=first_name,last_name,middle_name,about,birthday,location,email,gender", identifier]
+//                                  parameters:nil
+//                                  HTTPMethod:@"GET"];
+//
+//     [request startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
+//                                           id result,
+//                                           NSError *error)
+//     {
+//         if (!error) {
+//             NSString* firstName=nil;
+//             NSString* lastName=nil;
+//             NSString* middleName=nil;
+//             NSString* gender=nil;
+//             NSString* email=nil;
+//             NSString* birthday=nil;
+//             NSString* location=nil;
+//             NSString* about=nil;
+//             
+//             if ([result isKindOfClass: [NSDictionary  class] ] ) {
+//                 NSDictionary*d= (NSDictionary*)result;
+//                 
+//                 firstName= d[ @"first_name"];
+//                 lastName= d [ @"last_name"];
+//                 middleName= d [ @"middle_name"];
+//                 gender= d [ @"gender"];
+//                 email= d [ @"email"];
+//                 birthday= d [ @"birthday"];
+//                 location= d [ @"location"];
+//                 about= d [ @"about"];
+//             }
+//             
+//             // Validation.
+//             //
+//             if  ([birthday hasPrefix: @"0000"]) {
+//                 birthday= nil;
+//             }
+//             
+//             NSLog(@"FACEBOOK RESPONSE: %@",result);
+//             
+//             UserObject* userInfo= [Settings sharedInstance].userObject;
+//             if  (lastName ) {
+//                 userInfo.lastName=lastName;
+//             }
+//             if  (middleName ) {
+//                 userInfo.middleName =middleName;
+//             }
+//             if  (firstName ) {
+//                 userInfo.firstName=firstName;
+//             }
+//             if  ( gender) {
+//                 userInfo.gender=  gender;
+//             }
+//             if  (email ) {
+//                 userInfo.email=  email;
+//             }
+//             if (birthday ) {
+//                 userInfo.birthday=  birthday;
+//             }
+//             if (location ) {
+//                 userInfo.location=  location;
+//             }
+//             if (about ) {
+//                 userInfo.about=  about;
+//             }
+//             if (identifier ) {
+//                 userInfo.facebookIdentifier=  identifier;
+//             }
+//             
+//             // NOTE  if the Facebook server gave us the username then use it.
+//             [weakSelf performSelectorOnMainThread:@selector(conveyUserInformationToBackend:) withObject:alreadyKnown?@"":nil waitUntilDone:NO ];
+//             
+//         } else {
+//             NSLog (@"ERROR DOING FACEBOOK REQUEST:  %@", error);
+//             
+//             // NOTE: If we reach this point,  the backend does not yet know about this user.
+//         }
+//     }
+//     ];     // startWithCompletionHandler
+//    
+//}
+//
+////------------------------------------------------------------------------------
+//// Name:    conveyUserInformationToBackend
+//// Purpose:
+////------------------------------------------------------------------------------
+//- (void)conveyUserInformationToBackend:(id)alreadyKnown_
+//{
+//    ENTRY;
+//
+//    BOOL alreadyKnown=  alreadyKnown_? YES: NO;
+//    UserObject* userInfo= [Settings sharedInstance].userObject;
+//
+//    if  (!userInfo.email) {
+//        return;
+//    }
+//    
+//    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
+//    NSString* requestString= nil;
+//    
+//    if ( userInfo.middleName && userInfo.middleName.length) {
+//        userInfo.middleName= [userInfo.middleName substringToIndex: 1];
+//    }
+//    
+//    NSMutableDictionary* parametersDictionary=  [NSMutableDictionary new];
+//    if  (userInfo.email.length ) {
+//        parametersDictionary [ kKeyUserEmail]= userInfo.email;
+//    }
+//    if  (facebookToken.tokenString  && facebookToken.tokenString.length ) {
+//        parametersDictionary [ @"token"]= facebookToken.tokenString;
+//    }
+//    if  (userInfo.facebookIdentifier.length ) {
+//        parametersDictionary [ @"facebook_id"]= userInfo.facebookIdentifier;
+//    }
+//    if  (userInfo.firstName.length ) {
+//        parametersDictionary [kKeyUserFirstName]= userInfo.firstName;
+//    }
+//    if  (userInfo.lastName.length ) {
+//        parametersDictionary [kKeyUserLastName]= userInfo.lastName;
+//    }
+//    if  (userInfo.middleName.length ) {
+//        parametersDictionary [ @"middle_initial"]= userInfo.middleName;
+//    }
+//    if  (userInfo.gender.length ) {
+//        parametersDictionary [ kKeyUserGender]= userInfo.gender;
+//    }
+//    if  (userInfo.about.length ) {
+//        parametersDictionary [ @"about"]= userInfo.about;
+//    }
+//    if  (userInfo.location.length ) {
+//        parametersDictionary [ @"zip_code_local"]= userInfo.location;
+//    }
+//    if  (userInfo.birthday.length ) {
+//        parametersDictionary [ @"date_of_birth"]= userInfo.birthday;
+//    }
+//    
+//    __weak LoginVC *weakSelf= self;
+// 
+//    if  (alreadyKnown ) {
+//        UserObject* userInfo= [Settings sharedInstance].userObject;
+//        NSUInteger userid= userInfo.userID;
+//        
+//        requestString=[NSString stringWithFormat: @"%@://%@/users/%lu", kHTTPProtocol,
+//                       [OOAPI URL],( unsigned long) userid];
+//        
+//        requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
+//
+//        [[OONetworkManager sharedRequestManager] PUT: requestString
+//                                          parameters: parametersDictionary
+//                                             success:^void(id   result) {
+//                                                 NSLog  (@"PUT SUCCESS");
+//                                                 
+//                                                 if (!result) {
+//                                                     NSLog  (@"RESULT WAS NULL.");
+//                                                 }
+//                                                 else if ([result isKindOfClass: [NSDictionary  class] ] ) {
+//                                                     NSDictionary* d=  (NSDictionary*)result;
+//                                                     
+//                                                     NSString* token= d[ @"token"];
+//                                                     [weakSelf updateAuthorizationToken: token];
+//                                                     
+//                                                     NSDictionary *subdictionary=d[ @"user"];
+//                                                     if (subdictionary) {
+//                                                         UserObject*user= [UserObject  userFromDict: subdictionary];
+//                                                         user.backendAuthorizationToken = token;
+//
+//                                                         // RULE: Data is complete therefore use it in its entirety.
+//                                                         [Settings sharedInstance].userObject= user;
+//                                                         [[Settings sharedInstance] save];
+//                                                     }
+//                                                 } else {
+//                                                     NSLog (@"PROBLEMATIC RETURN RESULT");
+//                                                 }
+//                                             }
+//                                             failure:^  void(AFHTTPRequestOperation *operation, NSError *error) {
+//                                                 NSLog (@"PUT FAILED %@",error);
+//                                             }     ];
+//
+//    } else {
+//        NSString *requestString = [NSString stringWithFormat:@"%@://%@/users", kHTTPProtocol, [OOAPI URL]];
+//        NSLog(@"requestString  %@",requestString);
+//
+//        [[OONetworkManager sharedRequestManager] POST:requestString
+//                                           parameters:parametersDictionary
+//                                              success:^void(id result) {
+//                                                  NSLog(@"POST SUCCESS");
+//                                                
+//                                                  if (!result) {
+//                                                      NSLog(@"RESULT WAS NULL.");
+//                                                  } else if ([result isKindOfClass: [NSDictionary  class] ] ) {
+//                                                      NSDictionary *d = (NSDictionary *)result;
+//                                                      
+//                                                      NSString *token = d[@"token"];
+//                                                      [weakSelf updateAuthorizationToken:token];
+//                                                      
+//                                                      NSDictionary *subdictionary = d[@"user"];
+//                                                      if (subdictionary) {
+//                                                          NSString *userid = subdictionary[@"user_id"];
+//                                                          [weakSelf updateUserID:userid];
+//                                                          UserObject *userInfo = [Settings sharedInstance].userObject;
+//                                                          if (!userInfo.mediaItem) {
+//                                                              [weakSelf uploadFacebookPhoto];
+//                                                          }
+//                                                      }
+//                                                  }
+//                                              } failure:^void(AFHTTPRequestOperation *operation, NSError *error) {
+//                                                  NSLog(@"POST FAILED %@", error);
+//                                              }
+//         ];
+//    }
+//}
 
 //------------------------------------------------------------------------------
 // Name:    viewDidAppear
@@ -706,27 +843,35 @@
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (facebookToken) {
         // Transition if the user recently logged in.
-        [self showMainUI];
-    }
-}
-
-- (void)uploadFacebookPhoto {
-    UserObject *uo = [Settings sharedInstance].userObject;
-
-    if (!uo.facebookProfileImageURLString || !uo.userID) return; //can't upload a photo for a user if we do not have these two things...
-        
-    NSURL *url= [NSURL URLWithString:uo.facebookProfileImageURLString];
-    if (url) {
-        NSData *data = [NSData dataWithContentsOfURL:url];
-        if (data) {
-            UIImage *image = [UIImage imageWithData:data];
-            if (image) {
-                [uo setUserProfilePhoto:image andUpload:YES];
-                NSLog (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@", NSStringFromCGSize(image.size));
+        [OOAPI authWithFacebookToken:facebookToken.tokenString success:^(UserObject *user, NSString *token) {
+            if (token && user) {
+                user.backendAuthorizationToken = token;
+                [[Settings sharedInstance] setUserObject:user];
+                [self showMainUI];
             }
-        }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"auth failure %@", error);
+        }];
     }
 }
+
+//- (void)uploadFacebookPhoto {
+//    UserObject *uo = [Settings sharedInstance].userObject;
+//
+//    if (!uo.facebookProfileImageURLString || !uo.userID) return; //can't upload a photo for a user if we do not have these two things...
+//        
+//    NSURL *url= [NSURL URLWithString:uo.facebookProfileImageURLString];
+//    if (url) {
+//        NSData *data = [NSData dataWithContentsOfURL:url];
+//        if (data) {
+//            UIImage *image = [UIImage imageWithData:data];
+//            if (image) {
+//                [uo setUserProfilePhoto:image andUpload:YES];
+//                NSLog (@"IMAGE OBTAINED FROM FACEBOOK HAS DIMENSIONS %@", NSStringFromCGSize(image.size));
+//            }
+//        }
+//    }
+//}
 
 - (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
@@ -749,10 +894,9 @@
          if (!error) {
              NSLog(@"fetched user:%@", result);
          } else {
-             
              NSLog (@"Facebook server gave error %@", error);
-             NSString*string=  @"We encountered a problem logging you in via Facebook.";
-             message( string);
+             NSString *string = @"We had a problem logging you in via Facebook.";
+             message(string);
          }
      }];
 }

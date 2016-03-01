@@ -76,6 +76,7 @@
     [self.view addSubview:_scrollView];
     
     _imageViewIcon = [[UIImageView alloc] init];
+    _imageViewIcon.contentMode = UIViewContentModeScaleAspectFill;
     _imageViewIcon.clipsToBounds = YES;
     [_scrollView addSubview:_imageViewIcon];
     
