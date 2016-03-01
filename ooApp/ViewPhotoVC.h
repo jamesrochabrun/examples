@@ -39,8 +39,12 @@ static CGFloat kAlphaBackground = 0.9;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSInteger direction;
+@property (nonatomic, strong) id<UIViewControllerTransitioningDelegate> dismissTransitionDelegate;
+@property (nonatomic, strong) id<UINavigationControllerDelegate> dismissNCDelegate;
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactiveController;
 
 - (void)showComponents:(BOOL)show;
+- (void)setComponentsAlpha:(CGFloat)alpha;
+
 @end

@@ -574,6 +574,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
     self.navigationController.delegate = self;
+    vc.dismissTransitionDelegate = self;
+    vc.dismissNCDelegate = self;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -589,14 +591,14 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-//        animator.duration = 0.8;
+        animator.duration = 0.8;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
         animator.presenting = NO;
         animator.originRect = vc.originRect;
-//        animator.duration = 0.6;
+        animator.duration = 0.6;
         animationController = animator;
     } else {
         
@@ -612,12 +614,16 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showRestaurant:(RestaurantObject *)restaurant {
     RestaurantVC *vc = [[RestaurantVC alloc] init];
     vc.restaurant = restaurant;
+    self.transitioningDelegate = nil;
+    self.navigationController.delegate = nil;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)viewPhotoVC:(ViewPhotoVC *)viewPhotoVC showProfile:(UserObject *)user {
     ProfileVC *vc = [[ProfileVC alloc] init];
     vc.userInfo = user;
+    self.transitioningDelegate = nil;
+    self.navigationController.delegate = nil;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -628,6 +634,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject {
     ProfileVC *vc = [[ProfileVC alloc] init];
     vc.userInfo = userObject;
+    self.transitioningDelegate = nil;
+    self.navigationController.delegate = nil;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

@@ -41,7 +41,20 @@
         }
         
         if (vpvc.direction) {
+            
+            ViewPhotoVC *fromVPVC;
+            if ([fromVC isKindOfClass:[ViewPhotoVC class]]) {
+                fromVPVC = (ViewPhotoVC *)fromVC;
+                [fromVPVC showComponents:YES];
+                [fromVPVC setComponentsAlpha:0.7];
+            } else {
+                return;
+            }
+            
             NSLog(@"toVC direction:%ld", (long)vpvc.direction);
+            toVC.tabBarController.tabBar.hidden = YES;
+            toVC.navigationController.navigationBarHidden = YES;
+            [containerView addSubview:toVC.view];
             CGRect frame = containerView.frame;
             frame.origin.x = -1*vpvc.direction*CGRectGetWidth(containerView.frame);
             vpvc.view.frame = frame;
@@ -52,12 +65,17 @@
             
             [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
                 vpvc.view.frame = frame;
+                [fromVPVC setComponentsAlpha:0];
             } completion:^(BOOL finished) {
-                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;
-                [vpvc showComponents:YES];
+                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+                if (![transitionContext transitionWasCancelled]) {
+                    [fromVC removeFromParentViewController];
+                    [vpvc showComponents:YES];
+                } else {
+                    [fromVPVC setComponentsAlpha:1.0];
+                }
             }];
         } else {
-        
             UIView *snapshotView = [fromVC.view snapshotViewAfterScreenUpdates:NO];
             snapshotView.frame = imageViewFrame;
             [toVC.view addSubview:snapshotView];
@@ -100,6 +118,8 @@
         
         if (vpvc.direction) {
             NSLog(@"fromVC direction:%ld", (long)vpvc.direction);
+            fromVC.tabBarController.tabBar.hidden = YES;
+            fromVC.navigationController.navigationBarHidden = YES;
             CGRect frame = containerView.frame;
             frame.origin.x = vpvc.direction*CGRectGetWidth(containerView.frame);
             
@@ -129,7 +149,7 @@
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-    return (self.duration) ? self.duration : 2;
+    return (self.duration) ? self.duration : 1;
 }
 
 
