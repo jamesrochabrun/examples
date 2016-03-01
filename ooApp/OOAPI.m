@@ -2904,7 +2904,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // Note:    The event does not need to be completely described in the EventObject.
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)authWithFacebookToken:(NSString *)facebookToken
-                             success:(void (^)(UserObject *user))success
+                             success:(void (^)(UserObject *user, NSString *token))success
                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     if (!facebookToken) {
@@ -2920,8 +2920,13 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
                                       if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                                          UserObject *user = [UserObject userFromDict:responseObject];
-                                          success(user);
+                                          NSDictionary *u = [responseObject objectForKey:@"user"];
+                                          UserObject *uo = nil;
+                                          if (u && [u isKindOfClass:[NSDictionary class]]) {
+                                              uo = [UserObject userFromDict:u];
+                                          }
+                                          NSString *t = [responseObject objectForKey:@"token"];
+                                          success(uo, t);
                                           return;
                                       } else {
                                           failure(nil,nil);
