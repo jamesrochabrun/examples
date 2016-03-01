@@ -388,6 +388,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.collectionView reloadData];
             [weakSelf.aiv stopAnimating];
+//            weakSelf.restaurants = @[]; //Uncomment to test no results
             if ([weakSelf.restaurants count]) {
                 [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
                 [self hideNoPhotosMessage];
