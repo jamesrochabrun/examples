@@ -15,6 +15,12 @@
 
 static CGFloat kAlphaBackground = 0.9;
 
+typedef enum {
+    kSwipeTypeNone,
+    kSwipeTypeDismiss,
+    kSwipeTypeNextPhoto
+} SwipeType;
+
 @class ViewPhotoVC;
 
 @protocol ViewPhotoVCDelegate <NSObject>

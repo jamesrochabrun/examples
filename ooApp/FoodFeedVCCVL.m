@@ -64,9 +64,11 @@
         column = 0;
         
         NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
-    numberOfColumnsInRow = [_delegate collectionView:self.collectionView layout:self numberOfColumnsInSection:section];// kFoodFeedNumColumnsForMediaItems;
+    
+        numberOfColumnsInRow = [_delegate collectionView:self.collectionView layout:self numberOfColumnsInSection:section];// kFoodFeedNumColumnsForMediaItems;
+        
         itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
-        xOffset = kGeomSpaceEdge;
+        xOffset = kGeomSpaceEdge;//(width(self.collectionView) - numberOfColumnsInRow*itemSize.width - kGeomInterImageGap)/2;
         yOffset += kGeomSpaceEdge;
         
         NSUInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];

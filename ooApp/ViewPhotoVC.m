@@ -34,6 +34,7 @@
 @property (nonatomic, strong) UINavigationController *aNC;
 @property (nonatomic) CGPoint originPoint;
 @property (nonatomic, strong) ViewPhotoVC *nextPhoto;
+@property (nonatomic) SwipeType swipeType;
 @end
 
 static CGFloat kDismissTolerance = 20;
@@ -295,6 +296,7 @@ static CGFloat kNextPhotoTolerance = 40;
     if (_panGesture != gestureRecognizer) return;
 
     if (_panGesture.state == UIGestureRecognizerStateBegan) {
+        _swipeType = kSwipeTypeNone;
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
         
         _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
@@ -307,13 +309,19 @@ static CGFloat kNextPhotoTolerance = 40;
  
 //        NSLog(@"changed: %@", NSStringFromCGPoint(delta));
 
-        
-        if (fabs(delta.y) > kDismissTolerance) {
+        if (_swipeType == kSwipeTypeDismiss) {
+            _iv.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, delta.y);
+        }
+        if (_swipeType == kSwipeTypeNone &&
+            fabs(delta.y) > kDismissTolerance) {
+            _swipeType = kSwipeTypeDismiss;
             [self.interactiveController cancelInteractiveTransition];
             self.interactiveController = nil;
-        } else if (delta.x > 0) {
+        } else if (_swipeType != kSwipeTypeDismiss && delta.x > 0) {
+
             NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != 1) {
+                _swipeType = kSwipeTypeNextPhoto;
                 NSLog(@"get next photo in direction 1");
                 [self.interactiveController cancelInteractiveTransition];
                 if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
@@ -325,9 +333,10 @@ static CGFloat kNextPhotoTolerance = 40;
                 
                 [self.navigationController pushViewController:_nextPhoto animated:YES];
             }
-        } else if (delta.x < 0) {
+        } else if (_swipeType != kSwipeTypeDismiss && delta.x < 0) {
             NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != -1) {
+                _swipeType = kSwipeTypeNextPhoto;
                 NSLog(@"get next photo in direction -1");
                 if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
                 [self.interactiveController cancelInteractiveTransition];
@@ -348,12 +357,14 @@ static CGFloat kNextPhotoTolerance = 40;
 
         NSLog(@"changed: %@ %f %f %f", NSStringFromCGPoint(delta), width(self.view), fabs(delta.x)/width(self.view), self.interactiveController.percentComplete);
         
-        if (fabs(delta.y) > kDismissTolerance) {
+        if (_swipeType == kSwipeTypeDismiss &&
+            fabs(delta.y) > kDismissTolerance) {
             NSLog(@"dismiss photo");
 //            [self.interactiveController cancelInteractiveTransition];
 //            self.interactiveController = nil;
             [self close];
-        } else if (fabs(delta.x) > kNextPhotoTolerance) {
+        } else if (_swipeType == kSwipeTypeNextPhoto &&
+                   fabs(delta.x) > kNextPhotoTolerance) {
             NSLog(@"show next photo confirmed");
             [self.interactiveController finishInteractiveTransition];
         } else {
@@ -381,7 +392,7 @@ static CGFloat kNextPhotoTolerance = 40;
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-        animator.duration = 0.6;
+        animator.duration = 0.9;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
@@ -700,6 +711,8 @@ static CGFloat kNextPhotoTolerance = 40;
         ((CGRectGetMaxY(_userButton.frame) - (imageMaxY + kGeomSpaceCellPadding)) - (frame.size.height))/2;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;
+    
+    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }
 
 - (void)yumPhotoTapped {
