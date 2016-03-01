@@ -392,14 +392,14 @@ static CGFloat kNextPhotoTolerance = 40;
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-        animator.duration = 0.9;
+        animator.duration = 0.65;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
         animator.presenting = NO;
         animator.originRect = vc.originRect;
-        animator.duration = 0.6;
+        animator.duration = 0.65;
         animationController = animator;
     } else {
         NSLog(@"*** operation=%lu, fromVC=%@ , toVC=%@", operation, [fromVC class], [toVC class]);
