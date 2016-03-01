@@ -129,11 +129,7 @@ static NSString * const ListRowID = @"HLRCell";
     
     
     ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
-//    vc.title =  @"CHANGE LOCATION";
-//    vc.subtitle=  @"Enter a ZIP Code or City, State";
     vc.delegate = self;
-//    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
-//    vc.view.frame = CGRectMake(0, 0, 40, 44);
     [nc addChildViewController:vc];
     
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
@@ -161,30 +157,6 @@ static NSString * const ListRowID = @"HLRCell";
         ;
     }];
 }
-//
-//- (void)textEntryFinished:(NSString *)text;
-//{
-//    if (!text.length) {
-//        return;
-//    }
-//    
-//    __weak  ExploreVC *weakSelf = self;
-//    CLGeocoder* geocoder = [[CLGeocoder alloc] init];
-//    [geocoder geocodeAddressString: text
-//                 completionHandler:^(NSArray* placemarks, NSError* error) {
-//                     NSLog  (@"TOTAL PLACE MARKS %lu", (unsigned long)placemarks.count);
-//                     if  ( placemarks.count) {
-//                         CLPlacemark* aPlacemark= [placemarks  firstObject];
-//                         CLLocation *location= aPlacemark.location;
-//                         weakSelf.currentLocation = location.coordinate;
-//                         [weakSelf moveToCurrentLocation];
-//
-//                     } else {
-//                         message( @"I can't find that location.");
-//                     }
-//                 }];
-//    
-//}
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
     NSLog(@"The map became idle at %f,%f", position.target.latitude, position.target.longitude);
@@ -505,6 +477,10 @@ static NSString * const ListRowID = @"HLRCell";
     OOAPI *api = [[OOAPI alloc] init];
     
     __weak ExploreVC *weakSelf=self;
+    
+    [self.view bringSubviewToFront:self.aiv];
+    [self.aiv startAnimating];
+    self.aiv.message = @"loading";
 
     if (_listToDisplay && _listToDisplay.listID) {
         [api getRestaurantsWithListID:_listToDisplay.listID
@@ -512,10 +488,11 @@ static NSString * const ListRowID = @"HLRCell";
                               success:^(NSArray *restaurants) {
             _restaurants = restaurants;
             ON_MAIN_THREAD(^ {
+                [weakSelf.aiv stopAnimating];
                 [weakSelf gotRestaurants];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+            [weakSelf.aiv stopAnimating];
         }];
     } else {
         NSMutableArray *searchTerms;
@@ -548,9 +525,10 @@ static NSString * const ListRowID = @"HLRCell";
             _restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
+                [weakSelf.aiv stopAnimating];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-            ;
+            [weakSelf.aiv stopAnimating];
         }];
     }
 }
