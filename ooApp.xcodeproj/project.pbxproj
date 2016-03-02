@@ -50,6 +50,7 @@
 		364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */ = {isa = PBXBuildFile; fileRef = 364F9BA51BFEDE2600DBD012 /* OOUserView.m */; };
 		36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B741B93C7AD00D01EB5 /* ListCVFL.m */; };
 		36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B7A1B9423D700D01EB5 /* TileCVCell.m */; };
+		365D117D1C86FBF000156204 /* oomami-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3679D2041BAC8887004BF4DC /* oomami-icons.ttf */; };
 		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
 		365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListStripTVCell.m */; };
 		365FB7861C59198000826629 /* ShowMediaItemAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 365FB7851C59198000826629 /* ShowMediaItemAnimator.m */; };
@@ -88,7 +89,6 @@
 		367704631B8BF05100B594E5 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3677044F1B8BF05100B594E5 /* OFL.txt */; };
 		367704641B8BF05100B594E5 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 367704501B8BF05100B594E5 /* README.txt */; };
 		36780EA81C3A24AF00B2DE4B /* AddCaptionToMIOVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36780EA71C3A24AF00B2DE4B /* AddCaptionToMIOVC.m */; };
-		3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3679D2041BAC8887004BF4DC /* oomami-icons.ttf */; };
 		367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45361BCCA9B100E96B69 /* RestaurantVCCVL.m */; };
 		367B453A1BCE3A7200E96B69 /* PhotoCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B45391BCE3A7200E96B69 /* PhotoCVCell.m */; };
 		367B453D1BCE62BC00E96B69 /* RestaurantMainCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367B453C1BCE62BC00E96B69 /* RestaurantMainCVCell.m */; };
@@ -1282,6 +1282,7 @@
 				367704551B8BF05100B594E5 /* Lato-Hairline.ttf in Resources */,
 				367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */,
 				36BA03391C50CE1D00802EF8 /* ooLoading69.png in Resources */,
+				365D117D1C86FBF000156204 /* oomami-icons.ttf in Resources */,
 				36FC99BD1C478C8200768FF0 /* ooLoading48.png in Resources */,
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
 				36FC99DC1C478C8200768FF0 /* ooLoading20.png in Resources */,
@@ -1295,7 +1296,6 @@
 				36FC99E41C478C8200768FF0 /* ooLoading03.png in Resources */,
 				367704591B8BF05100B594E5 /* Lato-Italic.ttf in Resources */,
 				36FDA7021B585F650029D29D /* Main.storyboard in Resources */,
-				3679D2051BAC8887004BF4DC /* oomami-icons.ttf in Resources */,
 				36FC99E51C478C8200768FF0 /* ooLoading04.png in Resources */,
 				36FC99D51C478C8200768FF0 /* ooLoading13.png in Resources */,
 				36FC99B91C478C8200768FF0 /* ooLoading44.png in Resources */,
