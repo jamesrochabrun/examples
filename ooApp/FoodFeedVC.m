@@ -19,6 +19,7 @@
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <AVFoundation/AVFoundation.h>
 
 static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 

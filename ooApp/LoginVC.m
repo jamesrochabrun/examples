@@ -32,6 +32,7 @@
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
 @property (nonatomic, strong) UILabel *logoLabel;
+@property (nonatomic, strong) UILabel *betaLabel;
 @property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
 //@property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
@@ -69,6 +70,10 @@
     _logoLabel.text = kFontIconLogoFull;
     _logoLabel.frame = CGRectMake(0, 0, width(self.view)*0.75, 100);
     
+    _betaLabel = [[UILabel alloc] init];
+    [_betaLabel withFont:[UIFont fontWithName:kFontIcons size:40] textColor:kColorWhite backgroundColor:kColorClear];
+    _betaLabel.text = kFontIconBeta;
+    
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
     _facebookLoginButton.delegate = self;
     _facebookLoginButton.layer.cornerRadius = kGeomCornerRadius;
@@ -77,11 +82,12 @@
 
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_logoLabel];
+    [self.view addSubview:_betaLabel];
     [self.view addSubview:_facebookLoginButton];
     
     self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
     _labelMessage.textColor= UIColorRGBA(kColorWhite);
-    
+//    [DebugUtilities addBorderToViews:@[_betaLabel, _logoLabel]];
 //#ifdef DEBUG
 //    self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
 //    [self.view addGestureRecognizer:_pinch];
@@ -118,7 +124,11 @@
     _logoLabel.frame = CGRectMake((width(self.view) - width(_logoLabel))/2, y, width(_logoLabel), height(_logoLabel));
     
     y += height(_logoLabel);
-    y -= 10; // as per Jay
+    
+    [_betaLabel sizeToFit];
+    _betaLabel.frame = CGRectMake((CGRectGetMaxX(_logoLabel.frame) - width(_betaLabel)) + 8, CGRectGetMaxY(_logoLabel.frame)-45, width(_betaLabel), height(_betaLabel));
+    
+    y -= 5; // as per Jay
     [_labelMessage sizeToFit];
     _labelMessage.frame = CGRectMake(0, y, w, _labelMessage.frame.size.height);
     
@@ -128,7 +138,7 @@
     }
     
     y = actualBackgroundImageHeight + (h - actualBackgroundImageHeight - facebookButtonHeight)/2 ;
-    const float buttonWidth =  275;
+    const float buttonWidth = 275;
     CGFloat x = (w  -buttonWidth)/2;
     
     _facebookLoginButton.frame =  CGRectMake(x, y, buttonWidth, kGeomHeightButton);

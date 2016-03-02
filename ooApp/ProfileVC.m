@@ -33,6 +33,7 @@
 #import "SpecialtyObject.h"
 #import "DebugUtilities.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -1681,25 +1682,25 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser
-{
-    return _arrayPhotos.count;
-}
-
-- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index
-{
-    if (index  < _arrayPhotos.count) {
-        MediaItemObject *mediaObject= _arrayPhotos[index];
-        MWPhoto *photo;
-        if (mediaObject.url) {
-            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mediaObject.url]];
-            [photo performLoadUnderlyingImageAndNotify];
-            photo.caption = mediaObject.caption;
-            return photo;
-        }
-    }
-    return nil;
-}
+//- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser
+//{
+//    return _arrayPhotos.count;
+//}
+//
+//- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index
+//{
+//    if (index  < _arrayPhotos.count) {
+//        MediaItemObject *mediaObject= _arrayPhotos[index];
+//        MWPhoto *photo;
+//        if (mediaObject.url) {
+//            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mediaObject.url]];
+//            [photo performLoadUnderlyingImageAndNotify];
+//            photo.caption = mediaObject.caption;
+//            return photo;
+//        }
+//    }
+//    return nil;
+//}
 
 //------------------------------------------------------------------------------
 // Name:    getNumberOfLists

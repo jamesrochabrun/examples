@@ -20,7 +20,7 @@
 #import "RestaurantListVC.h"
 #import "HoursOpen.h"
 #import "OOActivityItemProvider.h"
-#import "MWPhotoBrowser.h"
+//#import "MWPhotoBrowser.h"
 #import "MediaItemObject.h"
 #import "OOUserView.h"
 #import "ProfileVC.h"
@@ -28,6 +28,7 @@
 #import <MapKit/MapKit.h>
 #import "ShowMediaItemAnimator.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <AVFoundation/AVFoundation.h>
 
 #import "DebugUtilities.h"
 
@@ -957,46 +958,46 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     return animationController;
 }
 
-#pragma MWPhotoBrowser delegates
-
-- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
-    return [_mediaItems count];
-}
-
-- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
-    if (index < _mediaItems.count) {
-        MediaItemObject *mio = [_mediaItems objectAtIndex:index];
-        MWPhoto *photo;
-        if (mio.url) {
-            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mio.url]];
-            [photo performLoadUnderlyingImageAndNotify];
-            photo.caption = mio.caption;
-            return photo;
-        } else if (mio.source == kMediaItemTypeGoogle && mio.reference) {
-            OOAPI *api = [[OOAPI alloc] init];
-            NSLog(@"mio reference= %@", mio.reference);
-            
-            __weak MWPhotoBrowser *weakPhotoBrowser = photoBrowser;
-            
-            [api getRestaurantImageWithMediaItem:mio
-                                        maxWidth:width(self.view)
-                                       maxHeight:0
-                                         success:^(NSString *link) {
-                                             mio.url = link;
-                                             ON_MAIN_THREAD(^ {
-                                                 if (link) {
-                                                     [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser photoAtIndex:index];
-                                                 }
-                                             });
-                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                             ;
-                                         }];
-            return nil;
-        }
-        
-    }
-    return nil;
-}
+//#pragma MWPhotoBrowser delegates
+//
+//- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
+//    return [_mediaItems count];
+//}
+//
+//- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
+//    if (index < _mediaItems.count) {
+//        MediaItemObject *mio = [_mediaItems objectAtIndex:index];
+//        MWPhoto *photo;
+//        if (mio.url) {
+//            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mio.url]];
+//            [photo performLoadUnderlyingImageAndNotify];
+//            photo.caption = mio.caption;
+//            return photo;
+//        } else if (mio.source == kMediaItemTypeGoogle && mio.reference) {
+//            OOAPI *api = [[OOAPI alloc] init];
+//            NSLog(@"mio reference= %@", mio.reference);
+//            
+//            __weak MWPhotoBrowser *weakPhotoBrowser = photoBrowser;
+//            
+//            [api getRestaurantImageWithMediaItem:mio
+//                                        maxWidth:width(self.view)
+//                                       maxHeight:0
+//                                         success:^(NSString *link) {
+//                                             mio.url = link;
+//                                             ON_MAIN_THREAD(^ {
+//                                                 if (link) {
+//                                                     [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser photoAtIndex:index];
+//                                                 }
+//                                             });
+//                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                             ;
+//                                         }];
+//            return nil;
+//        }
+//        
+//    }
+//    return nil;
+//}
 
 /*
  #pragma mark - Navigation

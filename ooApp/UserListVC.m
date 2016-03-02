@@ -181,7 +181,7 @@
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    _tableUsers.frame = self.view.bounds; // Replaces 4 constraints.
+    _tableUsers.frame = self.view.bounds;
 }
 
 - (BOOL)user:(UserObject *)user isFollowingUser:(NSUInteger)userID

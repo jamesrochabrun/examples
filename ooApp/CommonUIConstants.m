@@ -63,6 +63,10 @@ NSString *const kFontIconYumOutline = @"i";
 NSString *const kFontIconLogoFull = @"7";
 NSString *const kFontIconCaption = @"8";
 NSString *const kFontIconCaptionFilled = @"9";
+NSString *const kFontIconBeta = @"E";
+NSString *const kFontIconPinDot = @"C";
+NSString *const kFontIconPinDotFilled = @"D";
+NSString *const kFontIconArrow = @"B";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
 

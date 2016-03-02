@@ -286,7 +286,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    _tableAccordion.frame = self.view.bounds; // Replaces 4 constraints.
+    _tableAccordion.frame = self.view.bounds;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
