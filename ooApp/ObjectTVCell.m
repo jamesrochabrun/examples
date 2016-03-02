@@ -143,7 +143,7 @@
                          toItem:_icon
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
-                         constant:-5]];
+                         constant:-7]];
     
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_subHeader1

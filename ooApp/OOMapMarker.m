@@ -29,7 +29,7 @@
         
         _indexLabel = [[UILabel alloc] init];
         [_indexLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorBlack backgroundColor:kColorClear];
-        _indexLabel.frame = CGRectMake(0, 2, 0, 0);
+        _indexLabel.frame = CGRectMake(0, 1, 0, 0);
         [_markerIcon addSubview:_indexLabel];
     }
     return self;
