@@ -95,7 +95,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
-        
+//        [DebugUtilities addBorderToViews:@[_iv]];
 //        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton]];
     }
     return self;
@@ -627,9 +627,9 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
-    if (!_iv.image.size.width) {
-        return; // Fix for NaN crash.
-    }
+//    if (!_iv.image.size.width) {
+//        return; // Fix for NaN crash.
+//    }
     
     self.view.frame = APP.window.bounds;
     CGRect frame;
@@ -642,8 +642,10 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
 
     
-    CGFloat imageWidth = width(self.view);// _iv.image.size.width/_iv.image.size.height * height(_iv);
-    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/(_iv.image.size.width) * width(self.view);
+    CGFloat imageWidth = width(self.view);
+//    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/((_iv.image.size.width)?(_iv.image.size.width):1) * width(self.view);
+    
+    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _mio.height/_mio.width * width(self.view);
     
     frame.size.width = imageWidth;
     frame.size.height = imageHeight;

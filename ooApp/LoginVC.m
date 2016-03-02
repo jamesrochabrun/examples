@@ -34,7 +34,7 @@
 @property (nonatomic, strong) UILabel *logoLabel;
 @property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
-@property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
+//@property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
 
 @implementation LoginVC
@@ -82,21 +82,21 @@
     self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
     _labelMessage.textColor= UIColorRGBA(kColorWhite);
     
-#ifdef DEBUG
-    self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
-    [self.view addGestureRecognizer:_pinch];
-#endif
+//#ifdef DEBUG
+//    self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
+//    [self.view addGestureRecognizer:_pinch];
+//#endif
 }
 
-- (void)loginBypass: (id) sender
-{
-    ENTRY;
-    static NSInteger  counter= 0;
-    counter ++;
-    if  (counter == 8) {
-        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
-    }
-}
+//- (void)loginBypass: (id) sender
+//{
+//    ENTRY;
+//    static NSInteger  counter= 0;
+//    counter ++;
+//    if  (counter == 8) {
+//        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+//    }
+//}
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
