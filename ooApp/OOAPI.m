@@ -33,6 +33,7 @@ NSString *const kKeyRestaurantIDs = @"restaurant_ids";
 NSString *const kKeyUserIDs = @"user_ids";
 NSString *const kKeyEventIDs = @"event_ids";
 NSString *const kKeyTagIDs = @"tag_ids";
+NSString *const kKeyDays = @"days";
 
 NSString *const kKeyDeviceToken = @"device_token";
 NSString *const kKeyFacebookAccessToken = @"access_token";
@@ -1864,6 +1865,39 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     AFHTTPRequestOperation *op;
     
     op = [rm GET:urlString parameters:nil
+         success:^(id responseObject) {
+             NSArray *array = responseObject;
+             NSMutableArray *users= [NSMutableArray new];
+             for (NSDictionary *d in array) {
+                 UserObject *user = [UserObject userFromDict:d];
+                 if (user) {
+                     [users addObject:user];
+                 }
+             }
+             success(users);
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+             failure(operation, error);
+         }];
+    
+    return op;
+}
+
++ (AFHTTPRequestOperation *)getRecentUsersSuccess:(void (^)(NSArray *users))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    //eg. /users/recent?days=30
+    
+    NSString *urlString;
+    urlString= [NSString stringWithFormat:@"%@://%@/users/recent",
+                kHTTPProtocol, [OOAPI URL]];
+    
+    AFHTTPRequestOperation *op;
+    
+    NSDictionary *parameters = @{kKeyDays:@(7)};
+    
+    op = [rm GET:urlString parameters:parameters
          success:^(id responseObject) {
              NSArray *array = responseObject;
              NSMutableArray *users= [NSMutableArray new];
