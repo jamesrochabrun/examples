@@ -295,7 +295,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
 }
 
-- (void)sharePressed {
+- (void)sharePressed:(id)sender {
     MediaItemObject *mio;
     if ([_mediaItems count]) {
         mio = [_mediaItems objectAtIndex:0];
@@ -304,19 +304,19 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         
         if (mio) {
             _requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-                [self showShare:link];
+                [self showShare:link fromView:sender];
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [self showShare:nil];;
+                [self showShare:nil fromView:sender];
             }];
         } else {
-            [self showShare:nil];;
+            [self showShare:nil fromView:sender];
         }
     } else {
-        [self showShare:nil];
+        [self showShare:nil fromView:sender];
     }
 }
 
-- (void)showShare:(NSString *)url {
+- (void)showShare:(NSString *)url fromView:(id)sender {
     NSURL *nsURL = [NSURL URLWithString:url];
     NSData *data = [NSData dataWithContentsOfURL:nsURL];
     UIImage *img = [UIImage imageWithData:data];
@@ -327,6 +327,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    avc.popoverPresentationController.sourceView = sender;
+    avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
     
     [avc setValue:[NSString stringWithFormat:@"Take a look at %@", _restaurant.name] forKey:@"subject"];
     [avc setExcludedActivityTypes:
@@ -1023,8 +1026,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [self moreButtonPressed:sender];
 }
 
-- (void)restaurantMainCVCellSharePressed {
-    [self sharePressed];
+- (void)restaurantMainCVCellSharePressed:(id)sender {
+    [self sharePressed:sender];
 }
 
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell gotoURL:(NSURL *)url {

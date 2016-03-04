@@ -102,7 +102,7 @@
         _favoriteButton.layer.cornerRadius = 0;
         
         _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_shareButton withIcon:kFontIconShare fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed)];
+        [_shareButton withIcon:kFontIconShare fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed:)];
         _shareButton.layer.cornerRadius = 0;
         [_shareButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
         
@@ -191,8 +191,8 @@
     [_delegate restaurantMainCVCell:self gotoURL:url];
 }
 
-- (void)sharePressed {
-    [_delegate restaurantMainCVCellSharePressed];
+- (void)sharePressed:(id)sender {
+    [_delegate restaurantMainCVCellSharePressed:sender];
 }
 
 - (void)morePressed:(id)sender {

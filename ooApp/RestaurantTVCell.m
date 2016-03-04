@@ -276,7 +276,7 @@ enum  {
     
     UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
                                                               style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                  [weakSelf  sharePressed];
+                                                                  [weakSelf  sharePressed:weakSelf];
                                                               }];
     
     UIAlertAction *addToList = nil;
@@ -393,7 +393,7 @@ enum  {
     }
 }
 
-- (void)sharePressed {
+- (void)sharePressed:(id)sender {
     MediaItemObject *mio;
     NSArray *mediaItems = _restaurant.mediaItems;
     if (mediaItems && [mediaItems count]) {
@@ -403,19 +403,19 @@ enum  {
         
         if (mio) {
             self.requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-                [self showShare:link];
+                [self showShare:link fromView:sender];
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [self showShare:nil];;
+                [self showShare:nil fromView:sender];
             }];
         } else {
-            [self showShare:nil];;
+            [self showShare:nil fromView:sender];
         }
     } else {
-        [self showShare:nil];
+        [self showShare:nil fromView:sender];
     }
 }
 
-- (void)showShare:(NSString *)url {
+- (void)showShare:(NSString *)url fromView:(id)sender {
     NSURL *nsURL = [NSURL URLWithString:url];
     NSData *data = [NSData dataWithContentsOfURL:nsURL];
     UIImage *img = [UIImage imageWithData:data];
@@ -426,6 +426,9 @@ enum  {
     NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    avc.popoverPresentationController.sourceView = sender;
+    avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
     
     [avc setValue:[NSString stringWithFormat:@"Take a look at %@", _restaurant.name] forKey:@"subject"];
     [avc setExcludedActivityTypes:
