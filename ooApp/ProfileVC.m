@@ -283,7 +283,7 @@
         _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
         _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
         _labelLikesCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
-        _labelVenues= makeIconLabel(self, kFontIconPin, kGeomFontSizeStatsIcons);
+        _labelVenues= makeIconLabel(self, kFontIconPinDot, kGeomFontSizeStatsIcons);
         _labelPhoto= makeIconLabel(self, kFontIconPhoto, kGeomFontSizeStatsIcons);
         _labelLikes= makeIconLabel(self, kFontIconYum, kGeomFontSizeStatsIcons);
         
