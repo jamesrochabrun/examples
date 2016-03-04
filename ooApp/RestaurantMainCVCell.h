@@ -25,7 +25,7 @@
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
                showListSearchingKeywords:(NSArray *)keywords;
 - (void)restaurantMainCVCellSharePressed;
-- (void)restaurantMainCVCellMorePressed;
+- (void)restaurantMainCVCellMorePressed:(id)sender;
 @end
 
 @interface RestaurantMainCVCell : UICollectionViewCell <TTTAttributedLabelDelegate>

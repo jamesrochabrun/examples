@@ -447,8 +447,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)moreButtonPressed
+- (void)moreButtonPressed:(id)sender
 {
+    _styleSheetAC.popoverPresentationController.sourceView = sender;
+    _styleSheetAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
     [self presentViewController:_styleSheetAC animated:YES completion:nil];
 }
 
@@ -1017,8 +1019,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)restaurantMainCVCellMorePressed {
-    [self moreButtonPressed];
+- (void)restaurantMainCVCellMorePressed:(id)sender {
+    [self moreButtonPressed:sender];
 }
 
 - (void)restaurantMainCVCellSharePressed {

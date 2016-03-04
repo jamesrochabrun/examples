@@ -25,7 +25,7 @@
 @protocol ProfileHeaderViewDelegate
 - (void)userTappedOnLists;
 - (void)userTappedOnPhotos;
-- (void)userPressedSettings;
+- (void)userPressedSettings:(id)sender;
 @end
 
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, /*MWPhotoBrowserDelegate,*/ ProfileHeaderViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate,

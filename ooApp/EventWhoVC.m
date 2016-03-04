@@ -503,6 +503,10 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleAlert];
     
+    a.popoverPresentationController.sourceView = sender;
+    a.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+
+    
     [a addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         [textField setKeyboardType:UIKeyboardTypeEmailAddress];
         [textField becomeFirstResponder];

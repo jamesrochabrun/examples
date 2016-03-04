@@ -137,6 +137,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
 }
 
 - (void)moreButtonPressed:(id)sender {
+    
+    _alertController.popoverPresentationController.sourceView = sender;
+    _alertController.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+
     [self presentViewController:_alertController animated:YES completion:nil]; // 6
 }
 

@@ -1002,7 +1002,7 @@
     self.transitioning = NO;
 }
 
-- (void) userPressedMenuButton: (id) sender
+- (void) userPressedMenuButton:(id)sender
 {
     UserObject*user= [Settings sharedInstance].userObject;
 
@@ -1010,6 +1010,9 @@
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    a.popoverPresentationController.sourceView = sender;
+    a.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
     
     UIAlertAction *actionMore= nil;
     if  ([self.eventBeingEdited userIsAdministrator: user.userID] ) {

@@ -85,13 +85,17 @@
     return self;
 }
 
-- (void) verifyUnfollow
+- (void)verifyUnfollow:(id)sender
 {
     __weak  UserListTVC *weakSelf = self;
     
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Unfollow?")
                                                               message:nil
                                                        preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    a.popoverPresentationController.sourceView = sender;
+    a.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+
     
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style: UIAlertActionStyleCancel
@@ -137,7 +141,7 @@
 - (void)userPressedFollow:(id)sender
 {
     if ( self.buttonFollow.selected) {
-        [self verifyUnfollow];
+        [self verifyUnfollow:sender];
         return;
     }
     

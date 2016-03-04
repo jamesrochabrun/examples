@@ -107,7 +107,7 @@
         [_shareButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
         
         _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_addButton withIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(morePressed)];
+        [_addButton withIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(morePressed:)];
         _addButton.layer.cornerRadius = 0;
         [_addButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
 
@@ -195,8 +195,8 @@
     [_delegate restaurantMainCVCellSharePressed];
 }
 
-- (void)morePressed {
-    [_delegate restaurantMainCVCellMorePressed];
+- (void)morePressed:(id)sender {
+    [_delegate restaurantMainCVCellMorePressed:sender];
 }
 
 - (void)showOnMap {

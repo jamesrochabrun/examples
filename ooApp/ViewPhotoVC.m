@@ -64,7 +64,7 @@ static CGFloat kNextPhotoTolerance = 40;
         [_closeButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions)];
+        [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
 
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -105,11 +105,12 @@ static CGFloat kNextPhotoTolerance = 40;
     return YES;
 }
 
--(void)showOptions {
+-(void)showOptions:(id)sender {
     UIAlertController *photoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do?" preferredStyle:UIAlertControllerStyleActionSheet];
-
-
-
+    
+    photoOptions.popoverPresentationController.sourceView = sender;
+    photoOptions.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+    
     UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete Photo"
                                                           style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
                                                               __weak ViewPhotoVC *weakSelf = self;
@@ -649,7 +650,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     frame.size.width = imageWidth;
     frame.size.height = imageHeight;
-    _iv.frame = frame;
+    _iv.frame = CGRectIntegral(frame);
     _iv.center = self.view.center;
     
     frame = _restaurantName.frame;

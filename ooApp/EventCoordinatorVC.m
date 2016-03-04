@@ -1184,7 +1184,7 @@
                   }];
 }
 
-- (void) verifyDeletion
+- (void)verifyDeletion:(id)sender
 {
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really delete?")
                                                               message:nil
@@ -1227,7 +1227,7 @@
     [self.navigationController pushViewController:vc animated:YES ];
 }
 
-- (void) userPressedMenuButton: (id) sender
+- (void)userPressedMenuButton:(id)sender
 {
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Options")
                                                               message:nil
@@ -1237,7 +1237,7 @@
         deleteOrLeaveAction = [UIAlertAction actionWithTitle:@"Delete event"
                                    style:UIAlertActionStyleDestructive
                                  handler:^(UIAlertAction * action) {
-                                     [self verifyDeletion];
+                                     [self verifyDeletion:sender];
                                  }];
     } else {
         deleteOrLeaveAction = [UIAlertAction actionWithTitle:@"Leave event"

@@ -325,7 +325,7 @@
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user;
 {
-    [self.delegate userPressedSettings];
+    [self.delegate userPressedSettings:userView];
 }
 
 - (void)updateSpecialtiesLabel
@@ -363,9 +363,9 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString: urlString]];
 }
 
-- (void)userPressedSettings: (id) sender
+- (void)userPressedSettings:(id)sender
 {
-    [self.delegate userPressedSettings];
+    [self.delegate userPressedSettings:sender];
 }
 
 - (void)updateOwnProfile:(NSNotification*)not
@@ -506,13 +506,18 @@
      ];
 }
 
-- (void)verifyUnfollow
+- (void)verifyUnfollow:(id)sender
 {
     __weak ProfileHeaderView *weakSelf = self;
 
     UIAlertController *a = [UIAlertController alertControllerWithTitle:LOCAL(@"Really Unfollow?")
                                                                message:nil
                                                         preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    a.popoverPresentationController.sourceView = sender;
+    a.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
                                                      style:UIAlertActionStyleCancel
                                                    handler:^(UIAlertAction * action) {
@@ -579,7 +584,7 @@
     __weak ProfileHeaderView *weakSelf = self;
     
     if (_followingThisUser) {
-        [self verifyUnfollow];
+        [self verifyUnfollow:sender];
         return;
     }
     
@@ -1724,7 +1729,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     return [a objectAtIndex:which];
 }
 
-- (void) userPressedSettings;
+- (void)userPressedSettings:(id)sender;
 {
     if  (self.uploading || !_viewingOwnProfile) {
         return;
@@ -1732,6 +1737,10 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     __weak  ProfileVC *weakSelf = self;
     
     _optionsAC = [UIAlertController alertControllerWithTitle:@"" message:[NSString stringWithFormat:@"What would you like to do?\n%@", [Common versionString]] preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    _optionsAC.popoverPresentationController.sourceView = sender;
+    _optionsAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+
     
     UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];

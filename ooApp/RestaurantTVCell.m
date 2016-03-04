@@ -181,7 +181,7 @@ enum  {
 - (void)setupActionButton
 {
     [self expressMode];
-    [self.actionButton addTarget:self action:@selector(userPressedActionButton) forControlEvents:UIControlEventTouchUpInside];
+    [self.actionButton addTarget:self action:@selector(userPressedActionButton:) forControlEvents:UIControlEventTouchUpInside];
     self.actionButton.hidden = NO;
 }
 
@@ -215,7 +215,7 @@ enum  {
     [self.nc pushViewController:vc animated:YES];
 }
 
-- (void)userPressedActionButton
+- (void)userPressedActionButton:(id)sender
 {
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
@@ -250,6 +250,8 @@ enum  {
                 case MODE_MODAL:
                     ON_MAIN_THREAD(^{
                         [weakSelf setupRestaurantOptionsAC];
+                        _restaurantOptionsAC.popoverPresentationController.sourceView = sender;
+                        _restaurantOptionsAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
                         [weakSelf.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
                     });
             }
@@ -260,7 +262,7 @@ enum  {
 }
 
 - (void)setIndex:(NSUInteger)index {
-    self.iconLabel.text = [NSString stringWithFormat:@"%lu", index];
+    self.iconLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)index];
 }
 
 - (void)setupRestaurantOptionsAC {
