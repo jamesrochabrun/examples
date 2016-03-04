@@ -56,7 +56,7 @@ extern NSString *const kKeyListNumRestaurants;
 - (void)removeVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock;
 - (BOOL)alreadyHasVenue:(RestaurantObject *)venue;
 - (void)addVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock;
-
+- (NSString *)listName;
 @end
 
 extern BOOL isListObject (id  object);

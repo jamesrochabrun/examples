@@ -670,9 +670,9 @@ static CGFloat kNextPhotoTolerance = 40;
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
 
     frame = _userButton.frame;
-    frame.origin.y = height(self.view) - kGeomDimensionsIconButton/2;
+    frame.origin.y = height(self.view) - 3*kGeomDimensionsIconButton/4;
     frame.origin.x = kGeomSpaceEdge;
-    frame.size.height = kGeomDimensionsIconButton/2;
+    frame.size.height = 3*kGeomDimensionsIconButton/4;
     _userButton.frame = frame;
     
     if (_mio.source == kMediaItemTypeOomami) {
@@ -690,8 +690,8 @@ static CGFloat kNextPhotoTolerance = 40;
     if (_mio.source == kMediaItemTypeOomami) {
         [_numYums sizeToFit];
         frame = _numYums.frame;
-        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, height(self.view)-kGeomDimensionsIconButton/2);
-        frame.size.height = kGeomDimensionsIconButton/2;
+        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, height(self.view)-3*kGeomDimensionsIconButton/4);
+        frame.size.height = 3*kGeomDimensionsIconButton/4;
         _numYums.frame = frame;
         _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
         

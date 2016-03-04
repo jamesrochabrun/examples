@@ -137,6 +137,15 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _searchRestaurants = nil;
         _restaurants = _searchRestaurants;
         [_tableView reloadData];
+        
+        if (_locations && [_locations count] == 1) {
+            CLPlacemark *placemark = (CLPlacemark *)[_locations objectAtIndex:0];
+            _locationSearchBar.text = [Common locationString:placemark];
+            _selectedLocation = placemark.location.coordinate;
+            if ([searchBar.text length] > 3) {
+                [self searchForRestaurants];
+            }
+        }
     } else if (searchBar == _locationSearchBar) {
         _locations = nil;
         [self searchLocations];
@@ -299,7 +308,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         [_delegate restaurantPickerVC:self restaurantSelected:restaurant];
     } else if (_currentSearchBar == _locationSearchBar) {
         CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
-        _locationSearchBar.text = [placemark.addressDictionary objectForKey:@"City"];
+        _locationSearchBar.text = [Common locationString:placemark];
         _selectedLocation = placemark.location.coordinate;
     }
 }

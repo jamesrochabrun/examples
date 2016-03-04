@@ -529,7 +529,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                                 break;
                         }
 
-                        b.name = [lo.name uppercaseString];
+                        b.name = [lo.listName uppercaseString];
                         b.theId = lo.listID;
                         [_listButtons addObject:b];
                     }];

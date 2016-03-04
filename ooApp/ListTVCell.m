@@ -152,7 +152,7 @@
     [self updateAddButton];
     
     self.thumbnail.image = nil;
-    self.header.text = _list.name;
+    self.header.text = [_list listName];
     if (_list.numRestaurants == 1) {
         self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurant", (unsigned long)_list.numRestaurants];
     } else if (_list.numRestaurants) {

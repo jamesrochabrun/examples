@@ -124,7 +124,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     if (_listItem == listItem) return;
     
     _listItem = listItem;
-    _nameHeader.name = _listItem.name;
+    _nameHeader.name = [_listItem listName];
     
     if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
         [_collectionView removeFromSuperview];

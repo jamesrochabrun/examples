@@ -147,4 +147,17 @@ BOOL isListObject (id  object)
     }
 }
 
+- (NSString *)listName {
+    if (_type == kListTypePlaceIveBeen) {
+        UserObject *user = [Settings sharedInstance].userObject;
+        if (_userIDs && [_userIDs count]) {
+            if (user.userID == [[_userIDs objectAtIndex:0] unsignedIntegerValue]) {
+                return @"Places I've Been";
+            } else {
+                return @"Places They Went";
+            }
+        }
+    } return _name;
+}
+
 @end

@@ -205,7 +205,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     if (_listItem == listItem) return;
     _listItem = listItem;
 
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listItem.name subHeader:nil];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listItem.listName subHeader:nil];
     self.navTitle = nto;
     
     [self.view bringSubviewToFront:self.aiv];

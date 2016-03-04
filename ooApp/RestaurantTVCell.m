@@ -497,7 +497,7 @@ enum  {
                         [weakSelf expressMode];
                         NOTIFY_WITH(kNotificationListAltered, weakList);
                         
-                        UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Created '%@' list", list.name]
+                        UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Created '%@' list", list.listName]
                                                                                   message:[NSString stringWithFormat:@"Added '%@' to it.", weakSelf.restaurant.name]
                                                                            preferredStyle:UIAlertControllerStyleAlert];
                         
