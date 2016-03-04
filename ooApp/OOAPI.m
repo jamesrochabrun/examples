@@ -1887,7 +1887,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    //eg. /users/recent?days=30
+    //eg. /users/recent?days=30&limit=5
     
     NSString *urlString;
     urlString= [NSString stringWithFormat:@"%@://%@/users/recent",
@@ -1895,7 +1895,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     AFHTTPRequestOperation *op;
     
-    NSDictionary *parameters = @{kKeyDays:@(7)};
+    NSDictionary *parameters = @{kKeyDays:@(7), kKeySearchLimit:@(5)};
     
     op = [rm GET:urlString parameters:parameters
          success:^(id responseObject) {

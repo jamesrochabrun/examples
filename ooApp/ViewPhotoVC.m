@@ -96,7 +96,7 @@ static CGFloat kNextPhotoTolerance = 40;
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
 //        [DebugUtilities addBorderToViews:@[_iv]];
-//        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton]];
+//        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
     return self;
 }
@@ -669,48 +669,45 @@ static CGFloat kNextPhotoTolerance = 40;
 
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
 
-    if (_mio.source == kMediaItemTypeOomami) {
-        frame = _userViewButton.frame;
-        frame.origin.y = imageMaxY + kGeomSpaceCellPadding;
-        frame.origin.x = kGeomSpaceEdge;
-        frame.size.height = kGeomDimensionsIconButton;
-        frame.size.width = kGeomDimensionsIconButton;
-        _userViewButton.frame = frame;
-    } else {
-        _userViewButton.frame = CGRectZero;
-    }
-
     frame = _userButton.frame;
-    frame.origin.y = CGRectGetMaxY(_userViewButton.frame);
+    frame.origin.y = height(self.view) - kGeomDimensionsIconButton/2;
     frame.origin.x = kGeomSpaceEdge;
     frame.size.height = kGeomDimensionsIconButton/2;
     _userButton.frame = frame;
     
     if (_mio.source == kMediaItemTypeOomami) {
-        frame = _yumButton.frame;
-        frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, imageMaxY + kGeomSpaceCellPadding);
-        _yumButton.frame = frame;
-
+        frame = _userViewButton.frame;
+        //      frame.origin.y = imageMaxY + kGeomSpaceCellPadding;
+        frame.origin.x = kGeomSpaceEdge;
+        frame.size.height = kGeomDimensionsIconButton;
+        frame.size.width = kGeomDimensionsIconButton;
+        frame.origin.y = CGRectGetMinY(_userButton.frame) - kGeomDimensionsIconButton;
+        _userViewButton.frame = frame;
+    } else {
+        _userViewButton.frame = CGRectZero;
+    }
+    
+    if (_mio.source == kMediaItemTypeOomami) {
         [_numYums sizeToFit];
         frame = _numYums.frame;
-        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
+        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, height(self.view)-kGeomDimensionsIconButton/2);
         frame.size.height = kGeomDimensionsIconButton/2;
         _numYums.frame = frame;
         _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
+        
+        frame = _yumButton.frame;
+        frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMinY(_numYums.frame)-CGRectGetHeight(frame));
+        _yumButton.frame = frame;
     } else {
         _yumButton.frame = CGRectZero;
         _numYums.frame = CGRectZero;
     }
-
-    CGFloat distanceFromEdge = (CGRectGetMaxX(_userButton.frame) > (width(self.view) - CGRectGetMinX(_numYums.frame))) ? CGRectGetMaxX(_userButton.frame) + kGeomSpaceCellPadding : (width(self.view) - CGRectGetMinX(_numYums.frame) - kGeomSpaceCellPadding);
     
     frame = _captionButton.frame;
-    frame.size = _captionButton.intrinsicContentSize;
-    frame.size.width = (frame.size.width > (width(self.view) - 2*distanceFromEdge)) ? width(self.view) - 2*distanceFromEdge : frame.size.width;
-    frame.size.height = imageMaxY + kGeomSpaceCellPadding - CGRectGetMaxY(_userButton.frame);
-    frame.origin.y = imageMaxY + kGeomSpaceCellPadding +
-        ((CGRectGetMaxY(_userButton.frame) - (imageMaxY + kGeomSpaceCellPadding)) - (frame.size.height))/2;
+    frame.size.width = CGRectGetMinX(_yumButton.frame) - CGRectGetMaxX(_userViewButton.frame);
+    frame.size.height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
+    frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;
     

@@ -33,7 +33,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     self=[super init];
     if (self) {
-        _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeStripHeader);
+        _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH2);
         _labelTitle.textColor = UIColorRGBA(kColorWhite);
         _labelExpander = makeIconLabel(self, kFontIconBack, kGeomIconSize);
         _labelExpander.textColor = UIColorRGBA(kColorYellow);
@@ -58,7 +58,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
     CGFloat w = width(self);
     CGFloat h = height(self);
-    const CGFloat kGeomConnectHeaderLeftMargin = 29;
+    const CGFloat kGeomConnectHeaderLeftMargin = 10;
     const CGFloat kGeomConnectHeaderRightMargin = 24;
     self.labelTitle.frame = CGRectMake(kGeomConnectHeaderLeftMargin, 0, w/2, h);
     [self.labelExpander sizeToFit];
@@ -115,7 +115,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     _canSeeSection1Items = YES;
     _canSeeSection2Items = YES;
-    _canSeeSection3Items = NO;
+    _canSeeSection3Items = YES;
     
     _needRefresh = YES;
     
@@ -377,10 +377,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     cell.delegate = self;
     [cell provideUser:u];
     
-//    if ( section != 3) {
-//        BOOL following = [self weAreFollowingUser:u.userID];
-//        [cell showFollowButton:following];
-//    }
+
+    BOOL following = [self weAreFollowingUser:u.userID];
+    [cell showFollowButton:following];
     
     [cell fetchStats];
     
