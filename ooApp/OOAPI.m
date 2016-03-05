@@ -1895,7 +1895,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     AFHTTPRequestOperation *op;
     
-    NSDictionary *parameters = @{kKeyDays:@(7), kKeySearchLimit:@(5)};
+    NSDictionary *parameters = @{kKeyDays:@(15), kKeySearchLimit:@(5)};
     
     op = [rm GET:urlString parameters:parameters
          success:^(id responseObject) {
@@ -2980,16 +2980,16 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-#ifdef ADHOC
-    APP.usingStagingServer=NO;
+//#ifdef ADHOC
+//    APP.usingStagingServer=NO;
     return kOOURLProduction;
-#else
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#endif
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 @end

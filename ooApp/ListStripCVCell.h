@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) ListObject *listItem;
 @property (nonatomic, weak) UINavigationController *navigationController;
+@property (nonatomic, strong) UserObject *userContext;
 
 - (void)getRestaurants;
 

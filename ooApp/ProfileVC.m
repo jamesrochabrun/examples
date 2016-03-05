@@ -1465,6 +1465,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         
         cell.navigationController = self.navigationController;
         cell.listItem = listItem;
+        cell.userContext = _userInfo;
         
         return cell;
     }

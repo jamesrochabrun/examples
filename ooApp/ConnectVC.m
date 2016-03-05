@@ -236,9 +236,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                      [self.tableAccordion reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
                                  });
                              }
+                             [self fetchRecentUsers];
                          }
                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                              NSLog(@"UNABLE TO FETCH FOODIES");
+                             [self fetchRecentUsers];
                          }
      ];
 }
@@ -276,8 +278,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //    self.fetchOperationSection3= nil;
     
     [self fetchUserFriendListFromFacebook];
-    [self fetchFoodies];
-    [self fetchRecentUsers];
+//    [self fetchFoodies];
+//    [self fetchRecentUsers];
 
     //    [self fetchFollowers];
 }
@@ -580,6 +582,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     __weak ConnectVC *weakSelf= self;
     [SocialMedia fetchUserFriendListFromFacebook:^(NSArray *friends) {
         if (!friends) {
+            [weakSelf fetchFoodies];
             return;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -588,6 +591,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
             }
             [weakSelf determineWhichFriendsAreNotOOUsers:friends];
         });
+        [weakSelf fetchFoodies];
     }];
 }
 

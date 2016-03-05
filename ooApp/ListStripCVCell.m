@@ -30,6 +30,8 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) NSArray *constraintsToRemember;
 
+@property (nonatomic, strong) UILabel *noRestautantsMessage;
+
 @end
 
 static NSString * const RestaurantCellIdentifier = @"RestaurantCell";
@@ -61,6 +63,13 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         self.layoutMargins = UIEdgeInsetsZero;
         
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        _noRestautantsMessage = [[UILabel alloc] init];
+        [_noRestautantsMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorLightGray backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [self addSubview:_noRestautantsMessage];
+        _noRestautantsMessage.translatesAutoresizingMaskIntoConstraints = NO;
+        _noRestautantsMessage.hidden = YES;
+
 
 //        [DebugUtilities addBorderToViews:@[_nameHeader]];
     }
@@ -89,7 +98,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"labelY":@((kGeomHeightStripListRow-kGeomHeightStripListCell)-27), @"spaceEdge":@(kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"leftSpacing":@((width(self)-width(_nameHeader))/2)};
     
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameHeader);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _nameHeader, _noRestautantsMessage);
     
     if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_nameHeader(27)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -108,10 +117,22 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
                              multiplier:1
                              constant:0]];
     } else {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-labelY-[_nameHeader(27)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-labelY-[_nameHeader(27)]-(>=0)-[_noRestautantsMessage]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_nameHeader]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        
+        [self addConstraint:[NSLayoutConstraint
+                             constraintWithItem:_noRestautantsMessage
+                             attribute:NSLayoutAttributeCenterY
+                             relatedBy:NSLayoutRelationEqual
+                             toItem:self
+                             attribute:NSLayoutAttributeCenterY
+                             multiplier:1
+                             constant:27/2]];
     }
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_noRestautantsMessage(200)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
 }
 
 - (void)layoutSubviews {
@@ -156,6 +177,8 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 - (void)getRestaurants
 {
     OOAPI *api = [[OOAPI alloc] init];
+    
+    _noRestautantsMessage.hidden = YES;
     
     __weak ListStripCVCell *weakSelf=self;
     if (_listItem.type == kListTypeToTry ||
@@ -211,7 +234,25 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
     NSLog(@"%@: %lu", _listItem.name, (unsigned long)[_restaurants count]);
     
     if (![_restaurants count]) {
-        NSLog (@"LIST CALLED %@ HAS ZERO RESTAURANTS",_listItem.name);
+        if (_userContext.userID == [Settings sharedInstance].userObject.userID) {
+            if (_listItem.type == kListTypePlaceIveBeen) {
+                _noRestautantsMessage.text = [NSString stringWithFormat:@"When you upload a restaurant photo, we'll add the restaurant to the \'%@\' list.", _listItem.listName];
+            } else if (_listItem.type == kListTypeYumList) {
+                _noRestautantsMessage.text = [NSString stringWithFormat:@"When you Yum a photo in the food feed the restaurant will be added to your Yum list."];
+            } else {
+                _noRestautantsMessage.text = [NSString stringWithFormat:@"You have not yet added restaurants to this list."];
+            }
+        } else {
+            if (_listItem.type == kListTypePlaceIveBeen) {
+                _noRestautantsMessage.text = [NSString stringWithFormat:@"@%@ hasn't been uploading any photos of food at restaurants.", _userContext.username];
+            } else if (_listItem.type == kListTypeYumList) {
+                _noRestautantsMessage.text = [NSString stringWithFormat:@"@%@ hasn't yummed any photos yet. Upload a yummy photo so that @%@ can get into the game.", _userContext.username, _userContext.username];
+            } else {
+                _noRestautantsMessage.text = [NSString stringWithFormat:@"@%@ has not yet added restaurants to %@", _userContext.username,  _listItem.name];
+            }
+        }
+
+        _noRestautantsMessage.hidden = NO;
     }
     
     if (_listItem.listDisplayType == kListDisplayTypeFeatured) {
