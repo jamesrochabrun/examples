@@ -76,9 +76,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, strong) UITableView *tableAccordion;
 
 @property (nonatomic, strong) NSArray *suggestedUsersArray; // section 0
-@property (nonatomic, strong) NSMutableArray *foodiesArray; // section 1
-@property (nonatomic, strong) NSMutableArray *followeesArray; // section 2
-@property (nonatomic, strong) NSMutableArray *recentUsersArray; // section 3
+@property (nonatomic, strong) NSArray *foodiesArray; // section 1
+@property (nonatomic, strong) NSArray *followeesArray; // section 2
+@property (nonatomic, strong) NSArray *recentUsersArray; // section 3
 
 @property (nonatomic, strong) AFHTTPRequestOperation *fetchOperationSection1; // fb
 @property (nonatomic, strong) AFHTTPRequestOperation *fetchOperationSection2; // foodies
@@ -96,8 +96,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
  //   [_suggestedUsersArray removeAllObjects];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationConnectNeedsUpdate object:nil];
-    [_foodiesArray removeAllObjects];
-    [_followeesArray removeAllObjects];
     self.suggestedUsersArray = nil;
     self.foodiesArray = nil;
     self.followeesArray = nil;
@@ -123,10 +121,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    _suggestedUsersArray = [NSMutableArray new];
-    _foodiesArray = [NSMutableArray new];
-    _followeesArray = [NSMutableArray new];
-    _recentUsersArray = [NSMutableArray new];
+    _suggestedUsersArray = [NSArray new];
+    _foodiesArray = [NSArray new];
+    _followeesArray = [NSArray new];
+    _recentUsersArray = [NSArray new];
     
     ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection1Items];
     ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
@@ -208,10 +206,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     UserObject *currentUser = [Settings sharedInstance].userObject;
     [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
-        @synchronized(weakSelf.followeesArray)  {
-            weakSelf.followeesArray= users.mutableCopy;
-            NSLog(@"SUCCESS IN FETCHING %lu FOLLOWEES", (unsigned long)weakSelf.followeesArray.count);
-        }
+        weakSelf.followeesArray = users;
         [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
@@ -226,10 +221,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     self.fetchOperationSection2 =
     [OOAPI getFoodieUsersForUser:user
                          success:^(NSArray *users) {
-                             @synchronized(_foodiesArray)  {
-                                 weakSelf.foodiesArray= users.mutableCopy;
-                                 NSLog(@"SUCCESS IN FETCHING %lu FOODIES", (unsigned long)weakSelf.foodiesArray.count);
-                             }
+//                             @synchronized(_foodiesArray)  {
+                             weakSelf.foodiesArray = users;
+//                             }
                              if (weakSelf.canSeeSection2Items) {
                                  // RULE: Don't reload the section unless the foodies are visible.
                                  dispatch_async(dispatch_get_main_queue(), ^ {
@@ -251,10 +245,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     self.roRecentUsers =
     [OOAPI getRecentUsersSuccess:^(NSArray *users) {
-                             @synchronized(_recentUsersArray)  {
-                                 weakSelf.recentUsersArray = users.mutableCopy;
-                                 NSLog(@"SUCCESS IN FETCHING %lu recent users", (unsigned long)weakSelf.recentUsersArray.count);
-                             }
+//                             @synchronized(_recentUsersArray)  {
+                                 weakSelf.recentUsersArray = users;//.mutableCopy;
+//                             }
                              if (weakSelf.canSeeSection3Items) {
                                  // RULE: Don't reload the section unless the recent are visible.
                                  dispatch_async(dispatch_get_main_queue(), ^ {
@@ -284,10 +277,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     //    [self fetchFollowers];
 }
 
-- (BOOL) weAreFollowingUser: (NSUInteger) identifier
+- (BOOL)weAreFollowingUser:(NSUInteger)userID
 {
-    for (UserObject* user  in  _followeesArray) {
-        if ( user.userID == identifier) {
+    for (UserObject *user in _followeesArray) {
+        if ( user.userID == userID) {
             return YES;
         }
     }
@@ -330,11 +323,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     switch (section) {
         case 0:
-            @synchronized(self.suggestedUsersArray)  {
+//            @synchronized(self.suggestedUsersArray)  {
                 if (row < _suggestedUsersArray.count) {
                     u = _suggestedUsersArray[row];
                 }
-            }
+//            }
             noUsersMessage = @"Invite Facebook friends to use Oomami. When they join you'll be able to find out what the like to eat.";
             break;
         case 1:
@@ -347,11 +340,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
             break;
 
         case 2:
-            @synchronized(self.recentUsersArray)  {
+//            @synchronized(self.recentUsersArray)  {
                 if (row < _recentUsersArray.count) {
                     u = _recentUsersArray[row];
                 }
-            }
+//            }
             noUsersMessage = @"Recently added users will appear here.";
             break;
         default:
@@ -420,25 +413,25 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
     switch (section) {
         case 0:
-            @synchronized(self.suggestedUsersArray)  {
+//            @synchronized(self.suggestedUsersArray)  {
                 if (row < _suggestedUsersArray.count) {
                     haveData = YES;
                 }
-            }
+//            }
             break;
         case 1:
-            @synchronized(self.foodiesArray)  {
+//            @synchronized(self.foodiesArray)  {
                 if (row < _foodiesArray.count) {
                     haveData = YES;
                 }
-            }
+//            }
             break;
         case 2:
-            @synchronized(self.recentUsersArray)  {
+//            @synchronized(self.recentUsersArray)  {
                 if (row < _recentUsersArray.count) {
                     haveData = YES;
                 }
-            }
+//            }
             break;
         default:
             break;
@@ -476,25 +469,25 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     switch (section) {
         case 0:
-            @synchronized(self.suggestedUsersArray) {
+//            @synchronized(self.suggestedUsersArray) {
                 if (row<_suggestedUsersArray.count) {
                     u = _suggestedUsersArray[row];
                 }
-            }
+//            }
             break;
         case 1:
-            @synchronized(self.foodiesArray) {
+//            @synchronized(self.foodiesArray) {
                 if (row < _foodiesArray.count) {
                     u = _foodiesArray[row];
                 }
-            }
+//            }
             break;
         case 2:
-            @synchronized(self.recentUsersArray) {
+//            @synchronized(self.recentUsersArray) {
                 if (row < _recentUsersArray.count) {
                     u = _recentUsersArray[row];
                 }
-            }
+//            }
             break;
         default:
             break;
@@ -521,19 +514,19 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     switch (section) {
         case 0:
-            @synchronized(self.suggestedUsersArray)  {
+//            @synchronized(self.suggestedUsersArray)  {
                 return _canSeeSection1Items? MAX(1, _suggestedUsersArray.count):0;
-            }
+//            }
             break;
         case 1:
-            @synchronized(self.foodiesArray)  {
+//            @synchronized(self.foodiesArray)  {
                 return _canSeeSection2Items? MAX(1, _foodiesArray.count):0;
-            }
+//            }
             break;
         case 2:
-            @synchronized(self.recentUsersArray)  {
+//            @synchronized(self.recentUsersArray)  {
                 return _canSeeSection3Items? MAX(1, _recentUsersArray.count):0;
-            }
+  //          }
             break;
         default:
             break;
