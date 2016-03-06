@@ -610,7 +610,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                         success:(void (^)(NSArray *users))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/likes/users", kHTTPProtocol, [OOAPI URL], mediaItem.mediaItemId];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/likes/users", kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItem.mediaItemId];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -1045,7 +1045,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 {    
     UserObject *uo = [Settings sharedInstance].userObject;
 
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, kFoodFeedPageSize];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants?limit=%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID, (unsigned long)kFoodFeedPageSize];
     
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     

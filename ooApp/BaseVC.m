@@ -120,6 +120,8 @@
     
     self.navigationController.interactivePopGestureRecognizer.delegate = self;
     
+    _refreshControl = [[UIRefreshControl alloc] init];
+    _refreshControl.tintColor = [UIColor grayColor];
 //    [DebugUtilities addBorderToViews:@[_leftBarButtonView, _rightBarButtonView, _navTitleView]];
 }
 

@@ -82,7 +82,7 @@
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
         } else if (section == kRestaurantSectionTypeFollowees && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, (long)[self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = width(self.collectionView)/(50+kGeomSpaceEdge);
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow -  2*kGeomSpaceEdge, 0);
             UICollectionViewLayoutAttributes *suppattributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:@"header" withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
@@ -91,7 +91,7 @@
             yOffset += 27;
             [itemAttributes addObject:suppattributes];
         } else {// if (section == kRestaurantSectionTypeMain && [self.collectionView numberOfItemsInSection:section]) {
-            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+            NSLog(@"section:%ld items:%ld yOffset=%f", (unsigned long)section, (long)[self.collectionView numberOfItemsInSection:section], yOffset);
             numberOfColumnsInRow = 1;
             itemSize = CGSizeMake(width(self.collectionView)/numberOfColumnsInRow, 0);
             xOffset = 0;

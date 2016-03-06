@@ -319,8 +319,7 @@ static CGFloat kNextPhotoTolerance = 40;
             [self.interactiveController cancelInteractiveTransition];
             self.interactiveController = nil;
         } else if (_swipeType != kSwipeTypeDismiss && delta.x > 0) {
-
-            NSLog(@"show next photo? %f", delta.x);
+//            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != 1) {
                 _swipeType = kSwipeTypeNextPhoto;
                 NSLog(@"get next photo in direction 1");
@@ -335,12 +334,12 @@ static CGFloat kNextPhotoTolerance = 40;
                 [self.navigationController pushViewController:_nextPhoto animated:YES];
             }
         } else if (_swipeType != kSwipeTypeDismiss && delta.x < 0) {
-            NSLog(@"show next photo? %f", delta.x);
+//            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != -1) {
                 _swipeType = kSwipeTypeNextPhoto;
                 NSLog(@"get next photo in direction -1");
-                if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
                 [self.interactiveController cancelInteractiveTransition];
+                if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
                 _direction = -1;
                 _nextPhoto = [self getNextVC:_direction];
                 
@@ -361,8 +360,6 @@ static CGFloat kNextPhotoTolerance = 40;
         if (_swipeType == kSwipeTypeDismiss &&
             fabs(delta.y) > kDismissTolerance) {
             NSLog(@"dismiss photo");
-//            [self.interactiveController cancelInteractiveTransition];
-//            self.interactiveController = nil;
             [self close];
         } else if (_swipeType == kSwipeTypeNextPhoto &&
                    fabs(delta.x) > kNextPhotoTolerance) {
@@ -371,12 +368,8 @@ static CGFloat kNextPhotoTolerance = 40;
         } else {
             NSLog(@"cancel transition");
             [self.interactiveController cancelInteractiveTransition];
-            self.interactiveController = nil;
             _direction = 0;
             _nextPhoto = nil;
-            [UIView animateWithDuration:0.1 animations:^{
-                _iv.transform = CGAffineTransformIdentity;
-            }];
         }
     }
 }
@@ -403,7 +396,7 @@ static CGFloat kNextPhotoTolerance = 40;
         animator.duration = 0.65;
         animationController = animator;
     } else {
-        NSLog(@"*** operation=%lu, fromVC=%@ , toVC=%@", operation, [fromVC class], [toVC class]);
+        NSLog(@"*** operation=%ld, fromVC=%@ , toVC=%@", (long)operation, [fromVC class], [toVC class]);
     }
     
     return animationController;
@@ -494,7 +487,8 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
-    _backgroundView.alpha = 0;
+//    _backgroundView.alpha = 0;
+//    if (self.transitioningDelegate) return;
     [UIView animateWithDuration:0.3 animations:^{
         self.tabBarController.tabBar.hidden = YES;
         self.navigationController.navigationBarHidden = YES;
@@ -510,6 +504,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+//    if (self.transitioningDelegate) return;
     [UIView animateWithDuration:0.3 animations:^{
         self.tabBarController.tabBar.hidden = NO;
         self.navigationController.navigationBarHidden = NO;
@@ -712,7 +707,7 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;
     
-    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
+//    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }
 
 - (void)yumPhotoTapped {

@@ -77,7 +77,7 @@ static NSString * const cellIdentifier = @"locationCell";
 }
 
 - (void)searchLocations {
-    __weak  ChangeLocationVC *weakSelf = self;
+//    __weak  ChangeLocationVC *weakSelf = self;
     CLGeocoder * geocoder = [[CLGeocoder alloc] init];
     CLRegion *region = [[CLRegion alloc] init];
     

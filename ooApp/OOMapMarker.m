@@ -51,7 +51,7 @@
 
 - (void)setIndex:(NSUInteger)index {
     _index = index;
-    _indexLabel.text = [NSString stringWithFormat:@"%lu", _index+1];
+    _indexLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)_index+1];
     [_indexLabel sizeToFit];
     _indexLabel.center = CGPointMake(_markerIcon.center.x, _indexLabel.center.y);
 }

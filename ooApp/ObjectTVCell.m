@@ -50,7 +50,7 @@
         
         _icon = [[UILabel alloc] init];
         [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorYellow backgroundColor:kColorClear];
-        _icon.text = kFontIconPin;
+        _icon.text = kFontIconPinDot;
         _icon.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_icon];
         

@@ -12,7 +12,6 @@
 #import "UserObject.h"
 #import "OOTextEntryModalVC.h"
 #import "ProfileVCCVLayout.h"
-//#import "MWPhotoBrowser.h"
 #import "PhotoCVCell.h"
 #import "RestaurantPickerVC.h"
 #import "ViewPhotoVC.h"
@@ -28,7 +27,7 @@
 - (void)userPressedSettings:(id)sender;
 @end
 
-@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, /*MWPhotoBrowserDelegate,*/ ProfileHeaderViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate,
+@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate,
     OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
     ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate,
     OOTextEntryVCDelegate>

@@ -48,6 +48,8 @@
     [selectedImage sizeToFit];
 
     UINavigationController *ffNC = [[self childViewControllers] objectAtIndex:0];
+//    SWRevealViewController *swc = [[self childViewControllers] objectAtIndex:0];
+//    UIViewController *vc = swc.frontViewController;
     [ffNC.tabBarItem setImage:[UIImage imageFromView:image]];
     [ffNC.tabBarItem setSelectedImage:[UIImage imageFromView:selectedImage]];
     ffNC.tabBarItem.title = @"Food Feed";

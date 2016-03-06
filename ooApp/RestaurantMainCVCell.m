@@ -174,6 +174,7 @@
         _hoursScroll.hidden = YES;
         [self addSubview:_hoursScroll]; //should appear above everything
         
+        
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 //        [DebugUtilities addBorderToViews:@[_phoneNumber, _website, _verticalLine2]];
     }
@@ -569,6 +570,8 @@
     
 //    _rating.text = @"JJJ";// (![_rating.text length]) ? [_restaurant ratingText] : _rating.text; //Not a fan of this, but the repsonse by getting the rest through place_id does not seem to be returning the rating
 //    NSLog(@"rating=%@", _rating.text);
+    
+    
     _address.text = _restaurant.address;
     _phoneNumber.text = _restaurant.phone;
     

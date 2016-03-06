@@ -63,7 +63,7 @@
         [_sectionAttributes addObject:itemAttributes];
         column = 0;
         
-        NSLog(@"section:%ld items:%lu yOffset=%f", (unsigned long)section, [self.collectionView numberOfItemsInSection:section], yOffset);
+        NSLog(@"section:%lu items:%lu yOffset=%f", (unsigned long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
     
         numberOfColumnsInRow = [_delegate collectionView:self.collectionView layout:self numberOfColumnsInSection:section];// kFoodFeedNumColumnsForMediaItems;
         

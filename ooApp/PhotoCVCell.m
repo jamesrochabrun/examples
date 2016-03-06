@@ -317,7 +317,7 @@
     __weak PhotoCVCell *weakSelf = self;
     _roGetNumLikes = [OOAPI getNumMediaItemLikes:_mediaItemObject.mediaItemId success:^(NSUInteger count) {
         if (count) {
-            _numYums.text = [NSString stringWithFormat:@"%lu", count];
+            _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)count];
             ON_MAIN_THREAD(^ {
                 weakSelf.numYums.hidden = NO;
                 [weakSelf setNeedsUpdateConstraints];

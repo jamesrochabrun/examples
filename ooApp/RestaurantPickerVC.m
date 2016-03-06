@@ -103,7 +103,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 }
 
 - (void)searchLocations {
-    __weak  RestaurantPickerVC *weakSelf = self;
+//    __weak  RestaurantPickerVC *weakSelf = self;
     CLGeocoder * geocoder = [[CLGeocoder alloc] init];
     CLRegion *region = [[CLRegion alloc] init];
 

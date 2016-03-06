@@ -26,11 +26,10 @@
     
     imageViewFrame.origin.y = kGeomHeightNavBarStatusBar;
     
+    NSLog(@"*** toVC:%@ fromVC:%@", NSStringFromClass([toVC class]), NSStringFromClass([fromVC class]));
     // Presenting
-    if (_presenting) {
+    if (_presenting) { //pushing
         // Position the view offscreen
-        
-        
         ViewPhotoVC *vpvc;
         if ([toVC isKindOfClass:[ViewPhotoVC class]]) {
             vpvc = (ViewPhotoVC *)toVC;
@@ -52,14 +51,16 @@
             }
             
             NSLog(@"toVC direction:%ld", (long)vpvc.direction);
-            toVC.tabBarController.tabBar.hidden = YES;
-            toVC.navigationController.navigationBarHidden = YES;
+//            toVC.tabBarController.tabBar.hidden = YES;
+//            toVC.navigationController.navigationBarHidden = YES;
             [containerView addSubview:toVC.view];
             CGRect frame = containerView.frame;
             frame.origin.x = -1*vpvc.direction*CGRectGetWidth(containerView.frame);
             vpvc.view.frame = frame;
             
             frame.origin.x = 0;
+            [vpvc setComponentsAlpha:0];
+            [vpvc showComponents:YES];
             
             NSLog(@"toVC old=%@ new=%@", NSStringFromCGRect(vpvc.view.frame), NSStringFromCGRect(frame));
             
@@ -69,15 +70,16 @@
                              animations:^{
 
                 vpvc.view.frame = frame;
+                [vpvc setComponentsAlpha:1.0];
                 [fromVPVC setComponentsAlpha:0];
             } completion:^(BOOL finished) {
-                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
                 if (![transitionContext transitionWasCancelled]) {
                     [fromVC removeFromParentViewController];
-                    [vpvc showComponents:YES];
                 } else {
+                    [vpvc removeFromParentViewController];
                     [fromVPVC setComponentsAlpha:1.0];
                 }
+                [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
             }];
         } else {
             UIView *snapshotView = [fromVC.view snapshotViewAfterScreenUpdates:NO];
@@ -109,7 +111,7 @@
                 });
             }];
         }
-    } else {
+    } else { //popping
         [containerView addSubview:toView];
         [containerView sendSubviewToBack:toView];
         
@@ -118,6 +120,8 @@
             vpvc = (ViewPhotoVC *)fromVC;
             fromView = vpvc.iv;
             [vpvc showComponents:NO];
+        } else {
+            return;
         }
         
         if (vpvc.direction) {
@@ -142,10 +146,11 @@
                 fromView.frame = _originRect;
                 fromView.alpha = 0;
                 vpvc.backgroundView.alpha = 0;
-                toVC.tabBarController.tabBar.hidden = NO;
-                toVC.navigationController.navigationBarHidden = NO;
+//                toVC.tabBarController.tabBar.hidden = NO;
+//                toVC.navigationController.navigationBarHidden = NO;
             } completion:^(BOOL finished) {
                 [fromView removeFromSuperview];
+                [fromVC removeFromParentViewController];
                 [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
             }];
         }

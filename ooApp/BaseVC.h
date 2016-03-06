@@ -20,7 +20,7 @@
 @property (nonatomic, strong) OOAIV *aiv;
 @property (nonatomic, strong) UIProgressView *uploadProgressBar;
 @property (nonatomic, assign) BOOL uploading;
-
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
 - (void)setLeftNavWithIcon:(NSString *)icon target:(id)targer action:(SEL)sector;

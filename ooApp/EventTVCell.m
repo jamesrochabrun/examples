@@ -224,7 +224,7 @@
                                                             success:^(NSString *link) {
                                                                 NSURLRequest* request= [NSURLRequest requestWithURL:[NSURL URLWithString:link]];
                                                                 
-                                                                NSLog (@"EVENT %lu IMAGE LINK  %@",_eventInfo.eventID, link);
+                                                                NSLog (@"EVENT %lu IMAGE LINK  %@",(unsigned long)_eventInfo.eventID, link);
                                                                 [weakSelf.thumbnail setImageWithURLRequest:request
                                                                                           placeholderImage:placeholder
                                                                                                    success:^(NSURLRequest *  request, NSHTTPURLResponse *  response, UIImage *  image) {

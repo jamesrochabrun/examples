@@ -174,7 +174,7 @@ static const CGFloat kLabelsFontSize = 12.0f;
         return;
     }
 
-    NSNumberFormatter *formatter = (self.numberFormatterOverride != nil) ? self.numberFormatterOverride : self.decimalNumberFormatter;
+//    NSNumberFormatter *formatter = (self.numberFormatterOverride != nil) ? self.numberFormatterOverride : self.decimalNumberFormatter;
     
     if (_selectedMaximum > [_prices count]-1 || _selectedMinimum > [_prices count]-1) return;
     

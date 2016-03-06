@@ -131,7 +131,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
                              constant:27/2]];
     }
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_noRestautantsMessage(200)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_noRestautantsMessage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
 }
 

@@ -744,6 +744,7 @@
 @property (nonatomic, assign) BOOL viewingLists; // false => viewing photos
 @property (nonatomic, assign) BOOL pickerIsForRestaurants;
 @property (nonatomic) BOOL needRefresh;
+@property (nonatomic, strong) NavTitleObject *nto;
 @end
 
 static NSString *const kProfilePhotoCellIdentifier = @"profilePhotoCell";
@@ -763,6 +764,17 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
+    [self.navigationController setNavigationBarHidden:NO];
+    
+    [self refreshIfNeeded];
+    
+    [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
+    [_cv addSubview:self.refreshControl];
+    _cv.alwaysBounceVertical = YES;
+}
+
+- (void)forceRefresh:(id)sender {
+    [self setNeedsRefresh];
     [self refreshIfNeeded];
 }
 
@@ -867,10 +879,10 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [_cv registerClass:[ProfileHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
    withReuseIdentifier:kProfileHeaderCellIdentifier];
     
-    NSString *string= _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username) :  @"Missing username";
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:string
-                                                       subHeader:[NSString stringWithFormat:@"%@ %@", _profileOwner.firstName, _profileOwner.lastName]];
-    [self setNavTitle:nto];
+    NSString *string = _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username) :  @"Missing username";
+    _nto = [[NavTitleObject alloc] initWithHeader:string
+                                        subHeader:[NSString stringWithFormat:@"%@ %@", _profileOwner.firstName, _profileOwner.lastName]];
+    [self setNavTitle:_nto];
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
 }
@@ -1033,6 +1045,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 - (void)refetchListsPhotosAndStats
 {
     [self getSpecialties];
+    [self.refreshControl endRefreshing];
     if (_viewingLists) {
         [self getLists];
     } else {
@@ -1437,7 +1450,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 {
     NSInteger row = indexPath.row;
     if (_viewingLists) {
-        NSLog(@"section:%lu row:%lu", indexPath.section, indexPath.row);
+        NSLog(@"section:%ld row:%lu", indexPath.section, indexPath.row);
         
         NSUInteger total= self.arrayLists.count;
         if (!total) {
@@ -1583,14 +1596,14 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         originRect.origin.y = originRect.origin.y + kGeomHeightNavBarStatusBar;
     }
     
-    NSInteger row= indexPath.row;
+    NSInteger row = indexPath.row;
     if  (_viewingLists) {
         if (!_arrayLists.count) {
             [self userPressedEmptyCell];
             return;
         }
-        ListObject*object = _arrayLists[row];
-        RestaurantListVC *vc = [[RestaurantListVC  alloc] init];
+        ListObject *object = _arrayLists[row];
+        RestaurantListVC *vc = [[RestaurantListVC alloc] init];
         vc.listItem = object;
         [self.navigationController pushViewController:vc animated:YES];
     } else {
@@ -1605,7 +1618,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
             [self launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
         } else {
             __weak ProfileVC *weakSelf = self;
-            OOAPI *api=[[OOAPI alloc]init];
+            OOAPI *api= [[OOAPI alloc] init];
             [api getRestaurantWithID:stringFromUnsigned(restaurantID)
                               source:kRestaurantSourceTypeOomami
                              success:^(RestaurantObject *restaurant) {
@@ -1632,6 +1645,8 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     vc.mio = mio;
     vc.restaurant = restaurant;
     vc.delegate = self;
+    vc.dismissNCDelegate = self;
+    vc.dismissTransitionDelegate = self;
     
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
@@ -1651,14 +1666,14 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-//        animator.duration = 0.6;
+        animator.duration = 0.8;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
         animator.presenting = NO;
         animator.originRect = vc.originRect;
-//        animator.duration = 0.6;
+        animator.duration = 0.6;
         animationController = animator;
     }
     

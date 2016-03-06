@@ -38,17 +38,14 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 @property (nonatomic, strong) FoodFeedVCCVL *cvl;
 @property (nonatomic) FoodFeedType feedType;
 @property (nonatomic, strong) UIButton *noPhotosMessage;
-@property (nonatomic, strong) UIRefreshControl *refreshControl;
 @end
 
 @implementation FoodFeedVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
-	ANALYTICS_SCREEN( @( object_getClassName(self)));
-
+    // Do any additional setup after loading the view.
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Food Feed" subHeader:nil];
@@ -126,6 +123,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     }
 }
 
+- (void)forceRefresh:(id)sender {
+    [self setUpdateNeeded];
+    [self updateIfNeeded];
+}
+
 - (void)setUpdateNeeded {
     _needsUpdate = YES;
 }
@@ -139,7 +141,18 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+
+    [self.navigationController setNavigationBarHidden:NO];
+    
     [self updateIfNeeded];
+    
+    [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
+    [_collectionView addSubview:self.refreshControl];
+    _collectionView.alwaysBounceVertical = YES;
+    
+    self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorNavyBlue);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -378,11 +391,12 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)getFoodFeed:(FoodFeedType)type {
     __weak FoodFeedVC *weakSelf = self;
+
+    [self.refreshControl endRefreshing];
     
     [self.view bringSubviewToFront:self.aiv];
     [self.aiv startAnimating];
     self.aiv.message = @"loading";
-
     
     [OOAPI getFoodFeedType:type success:^(NSArray *restaurants) {
         weakSelf.restaurants = restaurants;
@@ -499,7 +513,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     PhotoCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kPhotoCellIdentifier forIndexPath:indexPath];
     NSUInteger row = indexPath.row;
 
-    RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
+    RestaurantObject *r = [_restaurants objectAtIndex:row];
 
     cvc.delegate = self;
     cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -638,6 +652,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.userInfo = userObject;
     self.transitioningDelegate = nil;
     self.navigationController.delegate = nil;
+    
+//    UIViewController *c = [UIViewController new];
+//    [self.navigationController pushViewController:c animated:YES];
+
     [self.navigationController pushViewController:vc animated:YES];
 }
 

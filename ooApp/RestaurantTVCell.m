@@ -262,6 +262,7 @@ enum  {
 }
 
 - (void)setIndex:(NSUInteger)index {
+    self.icon.text = kFontIconPin;
     self.iconLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)index];
 }
 

@@ -321,6 +321,14 @@ static NSString * const ListRowID = @"HLRCell";
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateLocationIfRequired)
                                                  name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
+    [_tableView addSubview:self.refreshControl];
+    _tableView.alwaysBounceVertical = YES;
+}
+
+- (void)forceRefresh:(id)sender {
+    [self updateLocation];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -481,6 +489,7 @@ static NSString * const ListRowID = @"HLRCell";
     [self.view bringSubviewToFront:self.aiv];
     [self.aiv startAnimating];
     self.aiv.message = @"loading";
+    [self.refreshControl endRefreshing];
 
     if (_listToDisplay && _listToDisplay.listID) {
         [api getRestaurantsWithListID:_listToDisplay.listID
