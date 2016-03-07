@@ -20,22 +20,31 @@
         blue:(255&rgbValue)/255.0f \
         alpha:(rgbValue >> 24)/255.0f ]
 
-#define DARK_SCHEME
+#define DARK_SCHEME2
 
 // App colors
 #ifdef DARK_SCHEME
 static NSUInteger kColorBackgroundTheme = 0xFF171717;
+static NSUInteger kColorTextActive = 0xFFF9FF00;
+static NSUInteger kColorText = 0xFFFFFFFF;
+static NSUInteger kColorNavBar = 0xFF000000;
+static NSUInteger kColorFilterBackground = 0xFF272727;
+static NSUInteger kColorConnectHeaderBackground = 0xFF272727;
 #else
 static NSUInteger kColorBackgroundTheme = 0xFFEEEEEE;
+static NSUInteger kColorTextActive = 0xFFF9FF00;
+static NSUInteger kColorText = 0xFF000000;
+static NSUInteger kColorNavBar = 0xFFFFFFFF;
+static NSUInteger kColorFilterBackground = 0xFFCDCDCD;
+static NSUInteger kColorConnectHeaderBackground = 0xFFCDCDCD;
 #endif
+
 static NSUInteger kColorBlack = 0xFF000000;
-static NSUInteger kColorButtonSelected = 0xFF0000FF;
 static NSUInteger kColorCellSelected =  0xFF323232;//0xFFF9FF00;
 static NSUInteger kColorClear = 0x00000000;
 static NSUInteger kColorLightGray = 0xFF808080;
 static NSUInteger kColorGray = 0xFFE5E5E5;
 static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
-static NSUInteger kColorNavBar = 0xFF000000;
 static NSUInteger kColorNavyBlue = 0xFF000080;
 static NSUInteger kColorMarker = 0xFFF9FF00;//0xFF1874CD;//0xDD0000A0;
 static NSUInteger kColorMarkerFaded = 0x701874CD;//0x700000A0;
@@ -48,15 +57,12 @@ static NSUInteger kColorOverlay30 = 0xB3000000;
 static NSUInteger kColorOverlay35 = 0xA6000000;
 static NSUInteger kColorOverlay40 = 0x99000000;
 static NSUInteger kColorOverlay50 = 0x7F000000;
-static NSUInteger kColorLightOverlay50 = 0x7F555555;
 static NSUInteger kColorWhite = 0xFFFFFFFF;
 static NSUInteger kColorRed = 0xFFFF0000;
 static NSUInteger kColorGreen = 0xFF00FF00;
 static NSUInteger kColorBlue = 0xFF0000FF;
 static NSUInteger kColorYellow = 0xFFF9FF00;
 static NSUInteger kColorYellowFaded = 0x99F9FF00;
-static NSUInteger kColorYellowReallyFaded = 0x45F9FF00;
-static NSUInteger kColorStripHeaderShadow = 0x88898989;
 static NSUInteger kColorIconSelected = 0xFFFFFFFF;
 static NSUInteger kColorCoordinatorBoxBackground = 0xFF2b2b2b;
 static CGFloat kColorEventOverlayAlpha = 0.3;

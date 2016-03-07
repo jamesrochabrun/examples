@@ -48,7 +48,7 @@
     _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
     _rightBarButtonView.frame = CGRectMake(0, 0, 40, 40);
     [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     _rightBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
 
     _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];

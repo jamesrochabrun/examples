@@ -34,9 +34,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     self=[super init];
     if (self) {
         _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH2);
-        _labelTitle.textColor = UIColorRGBA(kColorWhite);
+        _labelTitle.textColor = UIColorRGBA(kColorText);
         _labelExpander = makeIconLabel(self, kFontIconBack, kGeomIconSize);
-        _labelExpander.textColor = UIColorRGBA(kColorYellow);
+        _labelExpander.textColor = UIColorRGBA(kColorTextActive);
         self.backgroundColor = UIColorRGB(kColorGray);
         _isExpanded = expanded_;
     }
@@ -130,13 +130,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
     ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
     
-    headerView1.backgroundColor = UIColorRGB(kColorOffBlack);
+    headerView1.backgroundColor = UIColorRGB(kColorConnectHeaderBackground);
     headerView1.labelTitle.text = @"Friends you can follow";
     
-    headerView2.backgroundColor = UIColorRGB(kColorOffBlack);
+    headerView2.backgroundColor = UIColorRGB(kColorConnectHeaderBackground);
     headerView2.labelTitle.text = @"Foodies";
     
-    headerView3.backgroundColor = UIColorRGB(kColorOffBlack);
+    headerView3.backgroundColor = UIColorRGB(kColorConnectHeaderBackground);
     headerView3.labelTitle.text = @"New Users";
     
     _arraySectionHeaderViews= @[headerView1, headerView2, headerView3];

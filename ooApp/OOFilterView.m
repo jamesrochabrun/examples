@@ -30,7 +30,7 @@
         _currentLine = [[UIView alloc] init];
         _currentLine.backgroundColor = UIColorRGBA(kColorYellow);
         [self addSubview:_currentLine];
-        self.backgroundColor = UIColorRGBA(kColorOffBlack);
+        self.backgroundColor = UIColorRGBA(kColorFilterBackground);
     }
     return  self;
 }
@@ -60,7 +60,7 @@
     
     UIButton *filterControl = [UIButton buttonWithType:UIButtonTypeCustom];
     [filterControl withText:name fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(filterPressed:)];
-    [filterControl setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    [filterControl setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
     filterControl.tag = [_filterControls count];
     [_filterControls addObject:filterControl];
     

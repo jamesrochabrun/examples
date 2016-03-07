@@ -25,7 +25,7 @@
     if (self) {
         // Initialization code
         _backView = [[UIView alloc] initWithFrame:self.frame];
-        _backView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);//(kColorLightOverlay50);
+        _backView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _backView.layer.cornerRadius = kGeomCornerRadius;
         [self addSubview:_backView];
         
