@@ -35,8 +35,8 @@
         _labelTitle=makeLabelLeft (self, nil, kGeomFontSizeStripHeader);
         _labelTitle.textColor=UIColorRGBA(kColorWhite);
         _labelExpander=makeIconLabel(self, kFontIconBack, kGeomIconSize);
-        _labelExpander.textColor= UIColorRGBA(kColorYellow);
-        self.backgroundColor=UIColorRGB(kColorGray);
+        _labelExpander.textColor= UIColorRGBA(kColorTextActive);
+        self.backgroundColor=UIColorRGBA(kColorOffWhite);
         _isExpanded=expanded_;
     }
     return self;

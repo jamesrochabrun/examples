@@ -108,10 +108,10 @@
     }
     
     self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
-                                  UIColorRGB(kColorYellow), UIColorRGBA(kColorClear), self,
+                                  UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self,
                                   @selector(userPressedSignUpButton:),
                                   .6);
-    _buttonSignUp.layer.borderColor = UIColorRGB(kColorYellow).CGColor;
+    _buttonSignUp.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
@@ -130,7 +130,7 @@
     
     
     self.labelUsernameTaken= makeLabel(_scrollView, LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
-    self.labelUsernameTaken.textColor = UIColorRGB(kColorYellow);
+    self.labelUsernameTaken.textColor = UIColorRGBA(kColorTextActive);
     _labelUsernameTaken.hidden = YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];

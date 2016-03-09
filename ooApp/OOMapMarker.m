@@ -23,7 +23,7 @@
         
         _markerIcon = [[UILabel alloc] init];
         [_markerIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorBlack backgroundColor:kColorClear];
-        _markerIcon.text = kFontIconPinFilled;
+        _markerIcon.text = kFontIconPin;
         //_markerIcon.frame = CGRectMake(0, 0, 30, 30);
         [_markerIcon sizeToFit];
         
@@ -41,8 +41,6 @@
     _indexLabel.hidden = (highlight) ? NO:YES;
     
     self.icon = [UIImage imageFromView:_markerIcon];
-    
-//    [GMSMarker markerImageWithColor:((highlight) ? UIColorRGBA(kColorNavyBlue) : UIColorRGBA(kColorRed))];
 }
 
 - (BOOL)isEqual:(OOMapMarker *)object {

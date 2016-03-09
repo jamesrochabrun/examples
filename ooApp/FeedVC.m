@@ -334,7 +334,7 @@ static NSString * const FeedCellID = @"FeedCell";
     self.tableViewNotifications = makeTable( self.view,  self);
 //    _tableViewNotifications.translatesAutoresizingMaskIntoConstraints = NO;
         _tableViewNotifications.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableViewNotifications.backgroundColor = UIColorRGB(kColorGray);
+    _tableViewNotifications.backgroundColor = UIColorRGBA(kColorOffWhite);
     [_tableViewNotifications registerClass:[FeedCell class] forCellReuseIdentifier:FeedCellID];
     
 //    _tableViewUpdates.opaque= YES;

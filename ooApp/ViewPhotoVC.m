@@ -46,7 +46,7 @@ static CGFloat kNextPhotoTolerance = 40;
     self = [super init];
     if (self) {
         _backgroundView = [[UIView alloc] init];
-        _backgroundView.backgroundColor = UIColorRGBA(kColorBlack);
+        _backgroundView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _backgroundView.alpha = kAlphaBackground;
         
         _iv = [[UIImageView alloc] init];
@@ -54,47 +54,54 @@ static CGFloat kNextPhotoTolerance = 40;
         _iv.backgroundColor = UIColorRGBA(kColorClear);
         
         _captionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_captionButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:nil selector:nil];
+        [_captionButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear textColor:kColorText borderColor:kColorClear target:nil selector:nil];
         _captionButton.titleLabel.numberOfLines = 0;
         _captionButton.titleLabel.textAlignment = NSTextAlignmentCenter;
         _captionButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        [_captionButton setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
+        [_captionButton.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
         
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
-        [_closeButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_closeButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
-        [_optionsButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(showRestaurant)];
+        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorText borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
+        [_restaurantName setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
+        [_restaurantName.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
         
         _showRestaurantTapGesture = [[UITapGestureRecognizer alloc] init];
         _yumPhotoTapGesture = [[UITapGestureRecognizer alloc] init];
         _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
 
-        
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_yumButton withIcon:kFontIconYumOutline fontSize:40 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
-        [_yumButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_yumButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
         _yumButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+        _yumButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
     
         _numYums = [UIButton buttonWithType:UIButtonTypeCustom];
         [_numYums withText:@"" fontSize:kGeomFontSizeH4 width:30 height:30 backgroundColor:kColorClear target:self selector:@selector(showYums)];
-        [_numYums setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_numYums setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         _numYums.contentMode = UIViewContentModeBottom;
+        _numYums.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
         
         _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        [_userButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        _userButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
+        [Common addShadowTo:_userViewButton withColor:kColorBackgroundTheme];
 //        [DebugUtilities addBorderToViews:@[_iv]];
 //        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
@@ -418,7 +425,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (ViewPhotoVC *)getNextVC:(NSUInteger)direction {
     NSInteger nextIndex = _currentIndex + (-direction);
-    NSLog(@"currentIndex=%lu nextIndex=%lu", _currentIndex, nextIndex);
+    NSLog(@"currentIndex=%ld nextIndex=%ld", (long)_currentIndex, (long)nextIndex);
     
     if (nextIndex < 0 || nextIndex >= [_restaurants count]) return nil;
     
@@ -504,8 +511,10 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+
 //    if (self.transitioningDelegate) return;
     [UIView animateWithDuration:0.3 animations:^{
+        [[UIApplication sharedApplication] setStatusBarHidden:NO];
         self.tabBarController.tabBar.hidden = NO;
         self.navigationController.navigationBarHidden = NO;
         } completion:^(BOOL finished) {
@@ -630,6 +639,7 @@ static CGFloat kNextPhotoTolerance = 40;
     self.view.frame = APP.window.bounds;
     CGRect frame;
     CGFloat imageMaxY;
+    CGFloat y;
         
     _backgroundView.frame = self.view.frame;
     
@@ -648,17 +658,20 @@ static CGFloat kNextPhotoTolerance = 40;
     _iv.frame = CGRectIntegral(frame);
     _iv.center = self.view.center;
     
-    frame = _restaurantName.frame;
-    frame.size.width = width(self.view)-2*kGeomSpaceEdge;
-    frame.origin.y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
-    frame.origin.x = (width(self.view) - width(_restaurantName))/2;
-    frame.size.height = kGeomDimensionsIconButton;
-    _restaurantName.frame = frame;
+    y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
     
     frame = _closeButton.frame;
     frame.origin = CGPointMake(0, 0);
     _closeButton.frame = frame;
     
+    y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
+    frame = _restaurantName.frame;
+    frame.size.width = width(self.view)-2*kGeomSpaceEdge;
+    frame.origin.y = y;
+    frame.origin.x = (width(self.view) - width(_restaurantName))/2;
+    frame.size.height = kGeomDimensionsIconButton;
+    _restaurantName.frame = frame;
+
     frame = _optionsButton.frame;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
     _optionsButton.frame = frame;

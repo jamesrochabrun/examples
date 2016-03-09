@@ -42,29 +42,29 @@
         
         _takeAction = [UIButton buttonWithType:UIButtonTypeCustom];
         _takeAction.translatesAutoresizingMaskIntoConstraints = NO;
-        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:25 width:25 height:0 backgroundColor:kColorBlack target:self selector:@selector(showOptions)];
+        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:25 width:25 height:0 backgroundColor:kColorBackgroundTheme target:self selector:@selector(showOptions)];
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _yumButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_yumButton withIcon:kFontIconYumOutline fontSize:20 width:25 height:0 backgroundColor:kColorClear target:self selector:@selector(yumPhotoTapped)];
-        [_yumButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_yumButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
-        _yumButton.contentEdgeInsets = UIEdgeInsetsMake(20, 0, 0, 0);
+        _yumButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         
         _yumIndicator = [[UILabel alloc] init];
         _yumIndicator.translatesAutoresizingMaskIntoConstraints = NO;
-        [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:60] textColor:kColorYellow backgroundColor:kColorClear];
+        [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:60] textColor:kColorTextActive backgroundColor:kColorClear];
         _yumIndicator.text = kFontIconYum;
         [_yumIndicator sizeToFit];
         _yumIndicator.alpha = 0;
 
         _caption = [[UILabel alloc] init];
-        [_caption withFont:[UIFont fontWithName:kFontIcons size:15] textColor:kColorYellow backgroundColor:kColorClear];
+        [_caption withFont:[UIFont fontWithName:kFontIcons size:15] textColor:kColorTextActive backgroundColor:kColorClear];
         _caption.text = kFontIconCaptionFilled;
         _caption.translatesAutoresizingMaskIntoConstraints = NO;
         
         _numYums = [[UILabel alloc] init];
-        [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH4] textColor:kColorWhite backgroundColor:kColorClear];
+        [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH4] textColor:kColorText backgroundColor:kColorClear];
         _numYums.translatesAutoresizingMaskIntoConstraints = NO;
         
         _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -72,21 +72,21 @@
         _userButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        [_userButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
-        _userButton.contentEdgeInsets = UIEdgeInsetsMake(20, 0, 0, 0);
+        [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        _userButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         
         [self addSubview:_backgroundImage];
         [self addSubview:_takeAction];
         
-        _gradient = [CAGradientLayer layer];
-        NSMutableDictionary *newActions = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                           [NSNull null], @"bounds",
-                                           [NSNull null], @"position",
-                                           nil];
-        _gradient.actions = newActions;
-        
-        [self.layer addSublayer:_gradient];
-        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA(0x02000000) CGColor], (id)[UIColorRGBA((0xBB000000)) CGColor], nil];
+//        _gradient = [CAGradientLayer layer];
+//        NSMutableDictionary *newActions = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+//                                           [NSNull null], @"bounds",
+//                                           [NSNull null], @"position",
+//                                           nil];
+//        _gradient.actions = newActions;
+//        
+//        [self.layer addSublayer:_gradient];
+//        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA(0x02000000) CGColor], (id)[UIColorRGBA((0xBB000000)) CGColor], nil];
         [self addSubview:_userButton];
         [self addSubview:_yumButton];
         [self addSubview:_numYums];
@@ -100,7 +100,11 @@
         
         [self registerForNotification:kNotificationMediaItemAltered
                               calling:@selector(handleMediaItemAltered:)];
-//        [DebugUtilities addBorderToViews:@[_yumButton, _numYums, _userButton]];
+        self.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
+        self.layer.borderWidth = 1;
+        self.layer.cornerRadius = kGeomCornerRadius;
+        self.clipsToBounds = YES;
+        //        [DebugUtilities addBorderToViews:@[_yumButton, _caption, _numYums, _userButton]];
     }
     return self;
 }
@@ -191,13 +195,13 @@
 
 - (void)updateConstraints {
     [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall), @"userNameLength" : @([_userButton sizeThatFits:CGSizeMake(200, 10)].width + 2)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall), @"userNameLength" : @([_userButton sizeThatFits:CGSizeMake(200, 10)].width + 2), @"infoHeight":@((_mediaItemObject.source == kMediaItemTypeOomami)? 30:0)};
 
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage,_numYums, _takeAction, _userButton, _yumButton, _caption, _yumIndicator);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]-infoHeight-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     if (_userButton.titleLabel.text) {
         if (_captionConstraint) {
@@ -209,10 +213,10 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_userButton][_numYums][_yumButton(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_takeAction(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_takeAction(25)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton(35)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_yumButton(35)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_caption]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_yumButton(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_caption(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];

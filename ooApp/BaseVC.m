@@ -48,7 +48,7 @@
     _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
     _rightBarButtonView.frame = CGRectMake(0, 0, 40, 40);
     [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorTextActiveFaded) forState:UIControlStateNormal];
     _rightBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
 
     _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
@@ -62,7 +62,7 @@
         _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
         _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
         [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-        [_leftBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
 //        [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
         _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
@@ -74,7 +74,7 @@
         _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
         _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
         [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-        [_leftBarButtonView setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
         [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
         _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
@@ -103,12 +103,12 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [self.navigationController.navigationBar setTranslucent:YES];
     self.navigationController.view.backgroundColor = [UIColor clearColor];
     
     _dropDownList = [[DropDownListTVC alloc] init];
-    _dropDownList.view.backgroundColor = UIColorRGBA(kColorOffWhite);
+    _dropDownList.view.backgroundColor = UIColorRGBA(kColorCellBackground);
     _dropDownList.view.hidden = YES;
     
     self.uploadProgressBar = [UIProgressView new];
@@ -248,6 +248,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    
     CGRect frame = self.navigationController.navigationBar.frame;
     frame.origin.y = kGeomHeightStatusBar;
     self.navigationController.navigationBar.frame = frame;

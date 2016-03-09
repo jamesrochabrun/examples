@@ -59,7 +59,7 @@
             vpvc.view.frame = frame;
             
             frame.origin.x = 0;
-            [vpvc setComponentsAlpha:0];
+            [vpvc setComponentsAlpha:1];
             [vpvc showComponents:YES];
             
             NSLog(@"toVC old=%@ new=%@", NSStringFromCGRect(vpvc.view.frame), NSStringFromCGRect(frame));

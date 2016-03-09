@@ -53,7 +53,6 @@
 @property (nonatomic, strong) UIView *backgroundImageFade;
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic, assign) BOOL followingThisUser;
-@property (nonatomic, strong) UIButton *buttonSettings,*buttonSettingsInner;
 @property (nonatomic, assign) BOOL usingURLButton;
 @property (nonatomic, strong) UIButton *buttonURL;
 @property (nonatomic, strong) UILabel *labelSpecialtyHeader;
@@ -241,7 +240,7 @@
         self.clipsToBounds = YES;
 
         _backgroundImageView = makeImageView(self, @"background-image.jpg");
-        _backgroundImageFade = makeView( self, UIColorRGBA(0x80000000));
+        _backgroundImageFade = makeView(self, UIColorRGBA(kColorLightImageOverlay));
 
         _filterView= [[OOFilterView alloc] init];
         [self addSubview:_filterView];
@@ -256,25 +255,25 @@
         self.labelSpecialtyHeader=  makeLabel( _viewSpecialties,  @"Specialties:", kGeomFontSizeSubheader);
         _labelSpecialtyHeader.font= [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader];
         self.labelSpecialties=  makeLabel( _viewSpecialties,  @"", kGeomFontSizeSubheader);
-        _labelSpecialtyHeader.textColor=UIColorRGBA(kColorWhite);
-        _labelSpecialties.textColor=UIColorRGBA(kColorWhite);
-        _labelSpecialtyHeader.backgroundColor=UIColorRGBA(kColorBlack);
-        _labelSpecialties.backgroundColor=UIColorRGBA(kColorBlack);
+        _labelSpecialtyHeader.textColor=UIColorRGBA(kColorText);
+        _labelSpecialties.textColor=UIColorRGBA(kColorText);
+        _labelSpecialtyHeader.backgroundColor = UIColorRGBA(kColorClear);
+        _labelSpecialties.backgroundColor = UIColorRGBA(kColorClear);
         
-        self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear),  self, @selector(userPressedURLButton:), 0);
+        self.buttonURL=makeButton(self, @"URL", kGeomFontSizeSubheader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear),  self, @selector(userPressedURLButton:), 0);
         _buttonURL.hidden= YES;
         
-        _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowees:), 0);
-        _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowers:), 0);
+        _buttonFollowees= makeButton(self, @"FOLLOWING", kGeomFontSizeSubheader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowers= makeButton(self, @"FOLLOWERS", kGeomFontSizeSubheader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowers:), 0);
         
-        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowees:), 0);
-        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowers:), 0);
+        _buttonFolloweesCount= makeButton(self, @"", kGeomFontSizeHeader, UIColorRGBA(kColorText), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowees:), 0);
+        _buttonFollowersCount= makeButton(self, @"", kGeomFontSizeHeader, UIColorRGBA(kColorText), UIColorRGBA(kColorClear),  self, @selector(userPressedFollowers:), 0);
         
         _buttonFollowersCount.titleLabel.font = [ UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader];
         _buttonFolloweesCount.titleLabel.font = _buttonFollowersCount.titleLabel.font;
         
-        _buttonDescription = makeButton(self,  @"", 1, UIColorRGBA(kColorWhite),
-                                        UIColorRGBA(kColorBlack),  self,
+        _buttonDescription = makeButton(self,  @"", 1, UIColorRGBA(kColorText),
+                                        UIColorRGBA(kColorBackgroundTheme),  self,
                                         @selector(userTappedDescription:) , 0);
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
@@ -287,12 +286,12 @@
         _labelPhoto= makeIconLabel(self, kFontIconPhoto, kGeomFontSizeStatsIcons);
         _labelLikes= makeIconLabel(self, kFontIconYum, kGeomFontSizeStatsIcons);
         
-        _labelVenuesCount.textColor= UIColorRGBA(kColorWhite);
-        _labelPhotoCount.textColor= UIColorRGBA(kColorWhite);
-        _labelLikesCount.textColor= UIColorRGBA(kColorWhite);
-        _labelVenues.textColor= UIColorRGBA(kColorWhite);
-        _labelPhoto.textColor= UIColorRGBA(kColorWhite);
-        _labelLikes.textColor= UIColorRGBA(kColorWhite);
+        _labelVenuesCount.textColor= UIColorRGBA(kColorText);
+        _labelPhotoCount.textColor= UIColorRGBA(kColorText);
+        _labelLikesCount.textColor= UIColorRGBA(kColorText);
+        _labelVenues.textColor= UIColorRGBA(kColorText);
+        _labelPhoto.textColor= UIColorRGBA(kColorText);
+        _labelLikes.textColor= UIColorRGBA(kColorText);
 
         _labelVenuesCount.textAlignment= NSTextAlignmentLeft;
         _labelPhotoCount.textAlignment= NSTextAlignmentLeft;
@@ -301,12 +300,12 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow= makeButton(self, @"FOLLOW",
-                                       kGeomFontSizeSubheader, UIColorRGBA(kColorBlack), UIColorRGB(kColorYellow),
+                                       kGeomFontSizeSubheader, UIColorRGBA(kColorBlack), UIColorRGBA(kColorTextActive),
                                        self,
                                        @selector(userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        [_buttonFollow setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateSelected];
-        _buttonFollow.layer.borderColor=UIColorRGB(kColorYellow).CGColor;
+        [_buttonFollow setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateSelected];
+        _buttonFollow.layer.borderColor=UIColorRGBA(kColorTextActive).CGColor;
         _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
         _buttonFollow.layer.borderWidth= 1;
         _buttonFollow.hidden= YES;
@@ -465,8 +464,8 @@
     vc.view.frame = CGRectMake(0, 0, 40, 44);
     [nc addChildViewController:vc];
     
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -565,7 +564,7 @@
 {
     _followingThisUser=NO;
     _buttonFollow.selected= NO;
-    _buttonFollow.backgroundColor= UIColorRGB(kColorYellow);
+    _buttonFollow.backgroundColor= UIColorRGBA(kColorTextActive);
     _buttonFollow.layer.borderWidth= 0;
     _buttonFollow.hidden= NO;
 
@@ -618,28 +617,23 @@
     
     _backgroundImageView.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
     _backgroundImageFade.frame = CGRectMake(0, 0, w, h-kGeomHeightFilters);
-    _backgroundImageView.backgroundColor = UIColorRGB(kColorYellow);
+    _backgroundImageView.backgroundColor = UIColorRGBA(kColorTextActive);
     NSUInteger y = kGeomSpaceEdge;
     _userView.frame = CGRectMake((w-kGeomProfileImageSize)/2, y, kGeomProfileImageSize, kGeomProfileImageSize);
     
-    const  float buttonSettingsSize= _viewingOwnProfile? 30:0;
-    _buttonSettings.frame = CGRectMake(_userView.frame.origin.x+kGeomProfileImageSize-buttonSettingsSize,
-                                       y + kGeomProfileImageSize-buttonSettingsSize,
-                                       buttonSettingsSize,buttonSettingsSize);
-    _buttonSettingsInner.frame= _buttonSettings.frame;
     y += kGeomProfileImageSize + spacing;
 
     [_buttonFollowers sizeToFit];
     [_buttonFollowees sizeToFit];
     [_buttonFollowersCount sizeToFit];
     [_buttonFolloweesCount sizeToFit];
-    float upperLabelHeight=  20;
-    float lowerLabelHeight= 18;
-    float horizontalSpaceForText=  (320-kGeomProfileImageSize)/2;
-    float yFollowers = (kGeomProfileImageSize +2*kGeomSpaceEdge -upperLabelHeight-lowerLabelHeight)/2;
+    CGFloat upperLabelHeight = 20;
+    CGFloat lowerLabelHeight = 18;
+    CGFloat horizontalSpaceForText = (320-kGeomProfileImageSize)/2;
+    CGFloat yFollowers = (kGeomProfileImageSize + 2*kGeomSpaceEdge - upperLabelHeight-lowerLabelHeight)/2;
     
-    float leftX= w/2 - kGeomProfileImageSize/2  - horizontalSpaceForText;
-    float rightX= w/2 + kGeomProfileImageSize/2;
+    CGFloat leftX = w/2 - kGeomProfileImageSize/2 - horizontalSpaceForText;
+    CGFloat rightX = w/2 + kGeomProfileImageSize/2;
     _buttonFollowersCount.frame = CGRectMake(leftX, yFollowers, horizontalSpaceForText, upperLabelHeight);
     _buttonFolloweesCount.frame = CGRectMake(rightX, yFollowers, horizontalSpaceForText, upperLabelHeight);
     yFollowers +=upperLabelHeight;
@@ -677,7 +671,7 @@
     
     _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
 
-    y +=kGeomProfileStatsItemHeight;
+    y += kGeomProfileStatsItemHeight;
     
     if (!_viewingOwnProfile) {
         _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,
@@ -686,7 +680,7 @@
         y += CGRectGetHeight(_buttonFollow.frame) + 2*kGeomSpaceEdge;
     }
     
-    if ( _userInfo.isFoodie && _userInfo.website.length) {
+    if (_userInfo.isFoodie && _userInfo.website.length) {
         _buttonURL.frame = CGRectMake(0, y, w, kGeomProfileHeaderViewHeightOfBloggerButton);
         y += CGRectGetHeight(_buttonURL.frame) + kGeomSpaceEdge;
     }
@@ -706,7 +700,6 @@
         yHeader +=requiredHeaderHeight;
         _labelSpecialties.frame= CGRectMake(0,yHeader,w, requiredSpecialtiesHeight);
         y += CGRectGetHeight(_viewSpecialties.frame);
-        
     } else {
         _labelSpecialtyHeader.frame= CGRectMake(0, y, w, 0);
         _labelSpecialties.frame= CGRectMake(0, y, w, 0);
@@ -1148,8 +1141,8 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     UINavigationController *nc = [[UINavigationController alloc] init];
     
     [nc addChildViewController:_restaurantPicker];
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -1380,15 +1373,15 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         if (!_arrayPhotos.count) {
             return kGeomHeightStripListRow;
         }
-        NSInteger row= indexPath.row;
-        MediaItemObject* object=  row <_arrayPhotos.count ? _arrayPhotos[row] :nil;
-        if  (object ) {
-            float w=  object.width;
-            float  h=  object.height;
-            float  aspect= h>0? w/h: .05;
-            float availableWidth= [ UIScreen mainScreen ].bounds.size.width / 2;
-            float height= availableWidth/aspect;
-            return height;
+        NSInteger row = indexPath.row;
+        MediaItemObject *mio = row <_arrayPhotos.count ? _arrayPhotos[row] :nil;
+        if  (mio) {
+            CGFloat w = mio.width;
+            CGFloat h = mio.height;
+            CGFloat aspect = (h > 0)? w/h:0.05;
+            CGFloat availableWidth = [UIScreen mainScreen ].bounds.size.width/2;
+            CGFloat height = availableWidth/aspect;
+            return height + ((mio.source == kMediaItemTypeOomami)? 30:0) ;
         } else {
             return 0;
         }
@@ -1450,7 +1443,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 {
     NSInteger row = indexPath.row;
     if (_viewingLists) {
-        NSLog(@"section:%ld row:%lu", indexPath.section, indexPath.row);
+        NSLog(@"section:%ld row:%ld", (long)indexPath.section, (long)indexPath.row);
         
         NSUInteger total= self.arrayLists.count;
         if (!total) {
@@ -1549,8 +1542,8 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 
     [nc addChildViewController:vc];
     
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -1970,10 +1963,10 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     if (self) {
         self.autoresizesSubviews= NO;
         _labelIcon= makeIconLabel( self,  @"",kGeomIconSize);
-        _labelIcon.textColor= UIColorRGB(kColorYellow);
+        _labelIcon.textColor= UIColorRGBA(kColorTextActive);
 
         _labelMessage= makeLabel(self,  @"?", kGeomFontSizeHeader);
-        _labelMessage.textColor = UIColorRGB(kColorLightGray);
+        _labelMessage.textColor = UIColorRGBA(kColorGrayMiddle);
         _labelMessage.textAlignment = NSTextAlignmentLeft;
     }
     return self;
@@ -2007,8 +2000,9 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 {
     [super  layoutSubviews];
     
-    float w = self.bounds.size.width;
-    CGSize messageSize= [_labelMessage sizeThatFits:CGSizeMake(w,200)];
+    CGFloat w = width(self);
+
+    CGSize messageSize = [_labelMessage sizeThatFits:CGSizeMake(w,200)];
 
     switch (_mode) {
         case PROFILE_EMPTYCELL_LIST:

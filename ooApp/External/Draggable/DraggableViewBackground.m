@@ -110,16 +110,16 @@ static const int MAX_BUFFER_SIZE = 2; //%%% max number of cards loaded at any gi
     _xButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_xButton withIcon:kFontIconRemove fontSize:kGeomPlayIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
                target:self selector:@selector(swipeLeft)];
-    [_xButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [_xButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
     _tryButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_tryButton withIcon:kFontIconToTry fontSize:kGeomPlayIconSize width:kGeomPlayButtonSize height:kGeomPlayButtonSize backgroundColor:kColorClear
                target:self selector:@selector(swipeRight)];
-    [_tryButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [_tryButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     
     _xButton.translatesAutoresizingMaskIntoConstraints = _tryButton.translatesAutoresizingMaskIntoConstraints = NO;
     
-    _tryButton.layer.borderColor = _xButton.layer.borderColor = UIColorRGBA(kColorYellow).CGColor;
+    _tryButton.layer.borderColor = _xButton.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
     _tryButton.layer.borderWidth = _xButton.layer.borderWidth = 1;
     
     [self addSubview:_xButton];

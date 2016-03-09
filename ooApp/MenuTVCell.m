@@ -27,7 +27,7 @@
     if (self) {
         _menuItem = [[MenuObject alloc] init];
         _icon = [[UILabel alloc] init];
-        [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorYellow backgroundColor:kColorClear];
+        [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextActive backgroundColor:kColorClear];
         _name = [[UILabel alloc] init];
         [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
     
@@ -39,7 +39,7 @@
         
         //set the selected color for the cell
         UIView *bgColorView = [[UIView alloc] init];
-        bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
+        bgColorView.backgroundColor = UIColorRGBA(kColorCellBackground);
         [self setSelectedBackgroundView:bgColorView];
         
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);

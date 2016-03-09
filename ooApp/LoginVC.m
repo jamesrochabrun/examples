@@ -35,6 +35,8 @@
 @property (nonatomic, strong) UILabel *betaLabel;
 @property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
+@property (nonatomic, strong) UIActivityIndicatorView *aiv;
+@property (nonatomic, strong) UILabel *info;
 //@property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
 
@@ -51,19 +53,24 @@
     [super viewDidLoad];
     
     self.view.autoresizesSubviews= NO;
-    self.view.backgroundColor= UIColorRGBA(kColorWhite);
     
     _wentToExplore = NO;
     
-    UIImage *backgroundImage= [UIImage imageNamed:@"background_image.png"];
+    _aiv = [[UIActivityIndicatorView alloc] init];
+    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    
+    _info = [[UILabel alloc] init];
+    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    
+    UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
 
-    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    self.view.backgroundColor = UIColorRGBA(kColorElements2);
 
     _backgroundImageView = makeImageView(self.view, backgroundImage);
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
     _backgroundImageView.clipsToBounds = YES;
     _backgroundImageView.opaque = NO;
-    addShadowTo(_backgroundImageView);
+    [Common addShadowTo:_backgroundImageView withColor:kColorBlack];
     
     _logoLabel = [[UILabel alloc] init];
     [_logoLabel withFont:[UIFont fontWithName:kFontIcons size:width(self.view)*0.75] textColor:kColorWhite backgroundColor:kColorClear];
@@ -78,12 +85,14 @@
     _facebookLoginButton.delegate = self;
     _facebookLoginButton.layer.cornerRadius = kGeomCornerRadius;
     _facebookLoginButton.readPermissions = @[@"public_profile", @"email", @"user_friends"];
-    addShadowTo(_facebookLoginButton);
+//    [Common addShadowTo:_facebookLoginButton withColor:kColorBlack];
 
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_logoLabel];
     [self.view addSubview:_betaLabel];
     [self.view addSubview:_facebookLoginButton];
+    [self.view addSubview:_aiv];
+    [self.view addSubview:_info];
     
     self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
     _labelMessage.textColor= UIColorRGBA(kColorWhite);
@@ -142,6 +151,9 @@
     CGFloat x = (w  -buttonWidth)/2;
     
     _facebookLoginButton.frame =  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
+    _aiv.center = _facebookLoginButton.center;
+    
+    _info.frame = CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_facebookLoginButton.frame) + kGeomSpaceEdge, width(self.view) - 2*kGeomSpaceEdge, 20);
 }
 
 - (void)viewWillLayoutSubviews
@@ -849,20 +861,49 @@
     ENTRY;
 
     [super viewDidAppear:animated];
+    
+    _facebookLoginButton.hidden = YES;
 
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
+    [_aiv startAnimating];
+    
     if (facebookToken) {
+        _facebookLoginButton.hidden = YES;
+        _info.hidden = NO;
+        _info.text = @"Logging you in to Oomami";
         // Transition if the user recently logged in.
         [OOAPI authWithFacebookToken:facebookToken.tokenString success:^(UserObject *user, NSString *token) {
             if (token && user) {
+                [_aiv stopAnimating];
+                _info.hidden = YES;
                 user.backendAuthorizationToken = token;
                 [[Settings sharedInstance] setUserObject:user];
                 [self showMainUI];
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"auth failure %@", error);
+            [_aiv stopAnimating];
+            
+            [self logout];
+            
+            _facebookLoginButton.hidden = NO;
+            _info.text = @"There was a problem logging you in. Try again.";
         }];
+    } else {
+        [self logout];
+        [_aiv stopAnimating];
+        _facebookLoginButton.hidden = NO;
     }
+}
+
+- (void)logout {
+    FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+    [loginManager logOut];
+    [[Settings sharedInstance] removeUser];
+    [[Settings sharedInstance] removeMostRecentLocation];
+    [[Settings sharedInstance] removeDateString];
+    [[Settings sharedInstance] removeSearchRadius];
+    [APP clearCache];
 }
 
 //- (void)uploadFacebookPhoto {

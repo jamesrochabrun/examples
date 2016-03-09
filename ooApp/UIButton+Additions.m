@@ -72,13 +72,13 @@
     [self addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
     [self setTitle:icon forState:UIControlStateNormal];
     self.titleLabel.font = [UIFont fontWithName:kFontIcons size:fontSize];
-    [self setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [self setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor)] forState:UIControlStateNormal];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor & 0xFFEEEEEE)] forState:UIControlStateHighlighted];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorGrayMiddle)] forState:UIControlStateDisabled];
     self.clipsToBounds = YES;
     self.layer.cornerRadius = width/2;
-    self.layer.borderColor = UIColorRGBA(kColorYellowFaded).CGColor;
+    self.layer.borderColor = UIColorRGBA(kColorTextActiveFaded).CGColor;
     self.layer.borderWidth = 1;
     
     //    NSArray *views = [NSArray arrayWithObjects:self.titleLabel, nil];

@@ -75,7 +75,7 @@ static int votingEndingValues[3]= {
     
     self.pickerEventDate= [[UIDatePicker  alloc] init];
     [self.view addSubview: _pickerEventDate ];
-    _pickerEventDate.backgroundColor= UIColorRGB(kColorOffBlack);
+    _pickerEventDate.backgroundColor= UIColorRGBA(kColorOffBlack);
     _pickerEventDate.tintColor= UIColorRGBA(kColorWhite);
     _pickerEventDate.tintAdjustmentMode= UIViewTintAdjustmentModeAutomatic;
     [_pickerEventDate addTarget:self action:@selector(userAlteredPicker:) forControlEvents:UIControlEventValueChanged];
@@ -105,7 +105,7 @@ static int votingEndingValues[3]= {
                                         ];
     
     self.viewOver1 = [[UIView alloc] init];
-    _viewOver1.backgroundColor = UIColorRGB(kColorYellow);
+    _viewOver1.backgroundColor = UIColorRGBA(kColorTextActive);
     _viewOver1.alpha = 0.5f;
     [_pickerEventDate addSubview: _viewOver1];
     
@@ -154,8 +154,8 @@ static int votingEndingValues[3]= {
 
     self.headerWhen= makeLabelLeft(self.view, @" WHEN IS THIS?", kGeomFontSizeStripHeader);
     self.headerEndOfVoting= makeLabelLeft(self.view, @" WHEN IS VOTING CLOSED?", kGeomFontSizeStripHeader);
-    _headerWhen.textColor=UIColorRGB(kColorGray);
-    _headerEndOfVoting.textColor=UIColorRGB(kColorGray);
+    _headerWhen.textColor=UIColorRGBA(kColorOffWhite);
+    _headerEndOfVoting.textColor=UIColorRGBA(kColorOffWhite);
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 }
@@ -195,7 +195,7 @@ static int votingEndingValues[3]= {
 {
     int i= 0;
     for (UIButton* button  in  _arrayOfVotingOptionButtons) {
-        button.backgroundColor=  _lowerSelection==i? UIColorRGB(kColorRed):UIColorRGBA(kColorClear);
+        button.backgroundColor=  _lowerSelection==i? UIColorRGBA(kColorRed):UIColorRGBA(kColorClear);
         i ++;
     }
     

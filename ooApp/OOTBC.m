@@ -27,9 +27,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    self.tabBar.backgroundColor = UIColorRGBA(kColorBlack);
-    self.tabBar.backgroundImage = [UIImage imageWithColor:UIColorRGBA(kColorBlack)];
-    self.tabBar.tintColor = UIColorRGBA(kColorYellow);
+    self.tabBar.backgroundColor = UIColorRGBA(kColorTabBar);
+    self.tabBar.backgroundImage = [UIImage imageWithColor:UIColorRGBA(kColorTabBar)];
+    self.tabBar.tintColor = UIColorRGBA(kColorTextActive);
     
     UINavigationController *nc;
     
@@ -40,16 +40,14 @@
 //    NSMutableArray *childViewControllers = [NSMutableArray array];
     
     
-    [image withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorYellow backgroundColor:kColorClear];
-    [selectedImage withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorBlue backgroundColor:kColorClear];
+    [image withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorTextActive backgroundColor:kColorClear];
+    [selectedImage withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorText backgroundColor:kColorClear];
 
     image.text = selectedImage.text = kFontIconFoodFeed;
     [image sizeToFit];
     [selectedImage sizeToFit];
 
     UINavigationController *ffNC = [[self childViewControllers] objectAtIndex:0];
-//    SWRevealViewController *swc = [[self childViewControllers] objectAtIndex:0];
-//    UIViewController *vc = swc.frontViewController;
     [ffNC.tabBarItem setImage:[UIImage imageFromView:image]];
     [ffNC.tabBarItem setSelectedImage:[UIImage imageFromView:selectedImage]];
     ffNC.tabBarItem.title = @"Food Feed";

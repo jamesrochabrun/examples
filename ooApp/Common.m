@@ -453,16 +453,6 @@ UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, flo
     return b;
 }
 
-void addShadowTo (UIView*v)
-{
-    v.opaque= YES;
-    v.layer.shadowOffset= CGSizeMake ( 2, 2);
-    v.layer.shadowColor= UIColorRGBA(kColorBlack).CGColor;
-    v.layer.shadowOpacity= .5;
-    v.layer.shadowRadius= 4;
-    v.clipsToBounds= NO;
-}
-
 NSAttributedString* attributedStringOf(NSString* string,double fontSize)
 {
     NSAttributedString* a= [[NSAttributedString alloc]
@@ -845,5 +835,14 @@ void ANALYTICS_EVENT_UI (NSString* name)
     }
 }
 
++ (void)addShadowTo:(UIView *)view withColor:(NSUInteger)color
+{
+    view.opaque = YES;
+    view.layer.shadowOffset = CGSizeMake ( 2, 2);
+    view.layer.shadowColor = UIColorRGBA(color).CGColor;
+    view.layer.shadowOpacity = .5;
+    view.layer.shadowRadius = 4;
+    view.clipsToBounds = NO;
+}
 
 @end

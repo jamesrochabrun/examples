@@ -29,15 +29,15 @@
     
     [_isFoodButton withIcon:@"" fontSize:25 width:40 height:40 backgroundColor:kColorOffBlack target:self selector:@selector(toggleIsFoodItem)];
     [_isFoodButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
-    [_isFoodButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [_isFoodButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     [_isFoodButton setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forState:UIControlStateSelected];
     [_isFoodButton setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)] forState:UIControlStateNormal];
-    _isFoodButton.layer.borderColor = UIColorRGBA(kColorYellow).CGColor;
+    _isFoodButton.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
     _isFoodButton.layer.borderWidth = 1;
     _isFoodButton.layer.cornerRadius = kGeomCornerRadius;
     
     _isFoodLabel = [[UILabel alloc] init];
-    [_isFoodLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorWhite backgroundColor:kColorClear];
+    [_isFoodLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
     _isFoodLabel.text = @"photo of food or drink";
     [_isFoodLabel sizeToFit];
     

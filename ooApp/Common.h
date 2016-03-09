@@ -81,7 +81,6 @@ extern UICollectionView *makeHorizontalCollectionView(UIView *parent,id  delegat
 extern UICollectionView *makeVerticalCollectionView(UIView *parent,id  delegate, CGSize itemSize);
 extern UIButton *makeAttributedButton(UIView *parent, NSString *title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth);
 extern UIView *makeView(UIView *parent, UIColor *backgroundColor);
-extern void addShadowTo(UIView *v);
 
 extern void addBorder(UIView *, float width, UIColor *color);
 
@@ -127,5 +126,6 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 + (NSString *)versionString;
 + (NSString *)locationString:(CLPlacemark *)placemark;
 + (void)goToSettings:(kAppSettings)settings;
++ (void)addShadowTo:(UIView *)view withColor:(NSUInteger)color;
 
 @end

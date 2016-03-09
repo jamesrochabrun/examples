@@ -279,7 +279,6 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [_tableView reloadData];
     [self.aiv stopAnimating];
 
-//    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

@@ -37,7 +37,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         _labelTitle.textColor = UIColorRGBA(kColorText);
         _labelExpander = makeIconLabel(self, kFontIconBack, kGeomIconSize);
         _labelExpander.textColor = UIColorRGBA(kColorTextActive);
-        self.backgroundColor = UIColorRGB(kColorGray);
+        self.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
         _isExpanded = expanded_;
     }
     return self;
@@ -126,20 +126,24 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _followeesArray = [NSArray new];
     _recentUsersArray = [NSArray new];
     
-    ConnectTableSectionHeader *headerView1 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection1Items];
-    ConnectTableSectionHeader *headerView2 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
-    ConnectTableSectionHeader *headerView3 = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
+    ConnectTableSectionHeader *hvNewestUsers = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection1Items];
+    ConnectTableSectionHeader *hvFriendsToFollow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
+    ConnectTableSectionHeader *hvTopFoodies = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
+    ConnectTableSectionHeader *hvInTheKnow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
     
-    headerView1.backgroundColor = UIColorRGB(kColorConnectHeaderBackground);
-    headerView1.labelTitle.text = @"Friends you can follow";
+    hvFriendsToFollow.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+    hvFriendsToFollow.labelTitle.text = @"Friends you can follow";
     
-    headerView2.backgroundColor = UIColorRGB(kColorConnectHeaderBackground);
-    headerView2.labelTitle.text = @"Foodies";
+    hvTopFoodies.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+    hvTopFoodies.labelTitle.text = @"Top Foodies";
     
-    headerView3.backgroundColor = UIColorRGB(kColorConnectHeaderBackground);
-    headerView3.labelTitle.text = @"New Users";
+    hvInTheKnow.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+    hvInTheKnow.labelTitle.text = @"In the Know Around Here";
     
-    _arraySectionHeaderViews= @[headerView1, headerView2, headerView3];
+    hvNewestUsers.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+    hvNewestUsers.labelTitle.text = @"Newest Users";
+    
+    _arraySectionHeaderViews= @[hvFriendsToFollow, hvTopFoodies, hvInTheKnow, hvNewestUsers];
     
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc] initWithHeader:LOCAL(@"Connect")
@@ -153,7 +157,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [_tableAccordion registerClass:[UITableViewCell class] forCellReuseIdentifier:kConnectEmptyCellIdentifier];
     [_tableAccordion setLayoutMargins:UIEdgeInsetsZero];
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    _tableAccordion.separatorColor = UIColorRGBA(kColorBlack);
+    _tableAccordion.separatorColor = UIColorRGBA(kColorBordersAndLines);
     _tableAccordion.showsVerticalScrollIndicator= NO;
     
     [self setLeftNavWithIcon:@"" target:nil action:nil];
@@ -248,14 +252,22 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     __weak ConnectVC *weakSelf = self;
     
-    self.roRecentUsers = [OOAPI getRecentUsersSuccess:^(NSArray *users) {
-                                weakSelf.recentUsersArray = users;
-                                [self reloadTableData];
-                        }
-                        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                            NSLog(@"unable to fetch recent users");
-                            [self reloadTableData];
-                        }];
+//    self.roRecentUsers = [OOAPI getRecentUsersSuccess:^(NSArray *users) {
+//                                weakSelf.recentUsersArray = users;
+//                                [self reloadTableData];
+//                        }
+//                        failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                            NSLog(@"unable to fetch recent users");
+//                            [self reloadTableData];
+//                        }];
+
+    self.roRecentUsers = [OOAPI getUsersAroundLocation:[LocationManager sharedInstance].currentUserLocation success:^(NSArray *users) {
+        weakSelf.recentUsersArray = users;
+        [self reloadTableData];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"unable to fetch recent users");
+        [self reloadTableData];
+    }];
 }
 
 - (void)reloadTableData {
@@ -352,7 +364,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         cell.textLabel.text = noUsersMessage;
         cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3];
         cell.textLabel.numberOfLines = 0;
-        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+        cell.textLabel.textColor = UIColorRGBA(kColorText);
         cell.selectionStyle = UITableViewCellSeparatorStyleNone;
         return cell;
     }

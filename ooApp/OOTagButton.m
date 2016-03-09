@@ -21,15 +21,15 @@
     
     if (self) {
         _xLabel = [[UILabel alloc] init];
-        [_xLabel withFont:[UIFont fontWithName:kFontIcons size:18] textColor:kColorBlack backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_xLabel withFont:[UIFont fontWithName:kFontIcons size:18] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
 
         _nameLabel = [[UILabel alloc] init];
-        [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeListButton] textColor:kColorBlack backgroundColor:kColorClear];
+        [_nameLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeListButton] textColor:kColorTextReverse backgroundColor:kColorClear];
         
         [self addSubview:_nameLabel];
         [self addSubview:_xLabel];
         
-        self.backgroundColor = UIColorRGBA(kColorOffWhite);
+        self.backgroundColor = UIColorRGBA(kColorReverseBackground);
         self.layer.cornerRadius = kGeomCornerRadius;
                 
 //        [DebugUtilities addBorderToViews:@[_nameLabel, _xLabel]];

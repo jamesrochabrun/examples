@@ -33,6 +33,10 @@
     self.tableView.rowHeight =  kGeomHeightDropDownListRow;
     _tableView.scrollEnabled = YES;
     _tableView.scrollsToTop = NO;
+    _tableView.separatorColor = UIColorRGBA(kColorBordersAndLines);
+    _tableView.separatorInset =
+    _tableView.separatorInset = UIEdgeInsetsZero;
+    _tableView.layoutMargins = UIEdgeInsetsZero;
     [self.view addSubview:_tableView];
     
     _tableView.backgroundColor = UIColorRGBA(kColorBlack);
@@ -93,12 +97,12 @@
 
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+        cell.textLabel.textColor = UIColorRGBA(kColorText);
         cell.textLabel.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
         cell.textLabel.numberOfLines = 0;
 
-        cell.detailTextLabel.highlightedTextColor = UIColorRGBA(kColorYellow);
+        cell.detailTextLabel.highlightedTextColor = UIColorRGBA(kColorTextActive);
     }
     
     // Configure the cell...
@@ -117,7 +121,7 @@
 
     if (_currentOptionID == theID) {
         cell.detailTextLabel.highlighted = YES;
-        cell.contentView.backgroundColor = UIColorRGBA(kColorOffBlack);
+        cell.contentView.backgroundColor = UIColorRGBA(kColorCellSelected);
     } else {
         cell.detailTextLabel.highlighted = NO;
         cell.contentView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);

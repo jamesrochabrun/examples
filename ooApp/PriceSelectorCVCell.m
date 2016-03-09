@@ -31,7 +31,7 @@
         [_controlsContainer addSubview:_priceSlider];
         _priceSlider.translatesAutoresizingMaskIntoConstraints = NO;
         
-        [_priceSlider setTintColor:UIColorRGBA(kColorYellow)];
+        [_priceSlider setTintColor:UIColorRGBA(kColorTextActive)];
         [_priceSlider setMinValue:0];
         [_priceSlider setMaxValue:3];
         [_priceSlider setSelectedMinimum:0];

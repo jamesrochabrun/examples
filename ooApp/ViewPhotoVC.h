@@ -13,7 +13,7 @@
 #import "AddCaptionToMIOVC.h"
 #import "OOUserView.h"
 
-static CGFloat kAlphaBackground = 0.9;
+static CGFloat kAlphaBackground = 1;
 
 typedef enum {
     kSwipeTypeNone,

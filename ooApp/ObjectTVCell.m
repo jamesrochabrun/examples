@@ -31,7 +31,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
 
     if (self) {
-        self.backgroundColor = UIColorRGB(kColorBackgroundTheme);
+        self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _thumbnail = [[UIImageView alloc] init];
         _thumbnail.contentMode = UIViewContentModeScaleAspectFill;
         _thumbnail.backgroundColor = UIColorRGBA(kColorOffWhite);
@@ -46,30 +46,30 @@
         _gradient.actions = newActions;
         
         [self.layer addSublayer:_gradient];
-        _gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor blackColor] CGColor], (id)[[UIColor clearColor] CGColor], nil];
+        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA(kColorTextReverse & 0xDDFFFFFF) CGColor], (id)[UIColorRGBA(kColorTextReverse & 0x00FFFFFF) CGColor], nil];
         
         _icon = [[UILabel alloc] init];
-        [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorYellow backgroundColor:kColorClear];
+        [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextActive backgroundColor:kColorClear];
         _icon.text = kFontIconPinDot;
         _icon.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_icon];
         
         _header = [[UILabel alloc] init];
-        [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
+        [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
         
         _subHeader1 = [[UILabel alloc] init];
-        [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
         
         _iconLabel = [[UILabel alloc] init];
-        [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorYellow backgroundColor:kColorClear];
+        [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorTextActive backgroundColor:kColorClear];
         _iconLabel.text = @"";
         
         _subHeader2 = [[UILabel alloc] init];
-        [_subHeader2 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorWhite backgroundColor:kColorClear];
+        [_subHeader2 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
         
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_actionButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButtonSmall height:0 backgroundColor:kColorBlack target:nil selector:nil];
-        //[_actionButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_actionButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButtonSmall height:0 backgroundColor:kColorBackgroundTheme target:nil selector:nil];
+        //[_actionButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [self addSubview:_actionButton];
         _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
         _actionButton.hidden = YES;
@@ -78,7 +78,7 @@
         [self addSubview:_viewShadow];
         _viewShadow.backgroundColor = UIColorRGBA(kColorWhite);
         _viewShadow.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addShadowToView:_viewShadow];
+//        [self addShadowToView:_viewShadow];
         [self sendSubviewToBack:_viewShadow];
         
         [self addSubview:_header];

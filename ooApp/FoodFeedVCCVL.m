@@ -125,7 +125,7 @@
             yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
         }
 
-        NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld", section, [self.collectionView numberOfItemsInSection:section], yOffset, numberOfColumnsInRow);
+        NSLog(@"after section:%lu items:%ld yOffset=%f numColumns=%lu", (unsigned long)section, (long)[self.collectionView numberOfItemsInSection:section], yOffset, (unsigned long)numberOfColumnsInRow);
     }
     
     // Get the last item to calculate the total height of the content

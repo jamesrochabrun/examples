@@ -801,8 +801,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     }
     
     [_aNC addChildViewController:vc];
-    [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [_aNC.navigationBar setTranslucent:YES];
     _aNC.view.backgroundColor = [UIColor clearColor];
 
@@ -841,7 +841,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/kRestaurantNumColumnsForMediaItems; //NOTE: this should not happen
             CGFloat height = floorf(((width(self.collectionView) - (kRestaurantNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kRestaurantNumColumnsForMediaItems)*mio.height/mio.width);
-            return height;
+            return height + ((mio.source == kMediaItemTypeOomami)? 30:0);
             break;
         }
         default:

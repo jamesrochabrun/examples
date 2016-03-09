@@ -54,7 +54,7 @@
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         
         _imageOverlay = [[UIView alloc] init];
-        _imageOverlay.backgroundColor = UIColorRGBA(kColorOverlay50);
+        _imageOverlay.backgroundColor = UIColorRGBA(kColorLightImageOverlay);
 //        _imageOverlay.alpha = 1;
         [_backgroundImage addSubview:_imageOverlay];
         _imageOverlay.translatesAutoresizingMaskIntoConstraints = NO;
@@ -64,13 +64,13 @@
         [self addSubview:_verticalLine1];
         [self addSubview:_verticalLine2];
         
-        _verticalLine1.backgroundColor = _verticalLine2.backgroundColor = UIColorRGBA(kColorWhite);
+        _verticalLine1.backgroundColor = _verticalLine2.backgroundColor = UIColorRGBA(kColorText);
         _verticalLine1.translatesAutoresizingMaskIntoConstraints =
         _verticalLine2.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_hoursButton withText:@"" fontSize:kGeomFontSizeH2 width:100 height:30 backgroundColor:kColorClear target:self selector:@selector(viewHours)];
-        [_hoursButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+        [_hoursButton setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
         _hoursButton.titleLabel.textAlignment = NSTextAlignmentLeft;
         [_hoursButton setContentEdgeInsets:UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge)];
         _hoursButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -80,7 +80,7 @@
         [_locationButton withIcon:kFontIconPinDot fontSize:kGeomIconSizeSmall width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showOnMap)];
         _locationButton.layer.cornerRadius = 0;
         [self addSubview:_locationButton];
-        [_locationButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_locationButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         _locationButton.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursScroll = [[UIScrollView alloc] init];
@@ -89,8 +89,8 @@
         
         _hoursView = [[UILabel alloc] init];
         _hoursView.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
-        _hoursView.textColor = UIColorRGBA(kColorWhite);
-        _hoursView.backgroundColor = UIColorRGBA(kColorBlack);
+        _hoursView.textColor = UIColorRGBA(kColorText);
+        _hoursView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _hoursView.numberOfLines = 0;
         _hoursView.lineBreakMode = NSLineBreakByWordWrapping;
         _hoursView.textAlignment = NSTextAlignmentCenter;
@@ -104,14 +104,14 @@
         _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_shareButton withIcon:kFontIconShare fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(sharePressed:)];
         _shareButton.layer.cornerRadius = 0;
-        [_shareButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        [_shareButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         
         _addButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_addButton withIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorClear target:self selector:@selector(morePressed:)];
         _addButton.layer.cornerRadius = 0;
-        [_addButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        [_addButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
-        [_favoriteButton setTitleColor:UIColorRGB(kColorYellow) forState:UIControlStateNormal];
+        [_favoriteButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [_favoriteButton setTitle:kFontIconFavoriteFilled forState:UIControlStateSelected];
         
         _addButton.translatesAutoresizingMaskIntoConstraints = _favoriteButton.translatesAutoresizingMaskIntoConstraints = _shareButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -120,7 +120,7 @@
         [self addSubview:_addButton];
         
         _addButton.layer.borderWidth = _locationButton.layer.borderWidth = _favoriteButton.layer.borderWidth = _shareButton.layer.borderWidth = 1;
-        _addButton.layer.borderColor = _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _shareButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+        _addButton.layer.borderColor = _locationButton.layer.borderColor = _favoriteButton.layer.borderColor = _shareButton.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
         
 //        _rating = [[UILabel alloc] init];
 //        _rating.translatesAutoresizingMaskIntoConstraints = NO;
@@ -129,7 +129,7 @@
         
         _priceRange = [[UILabel alloc] init];
         _priceRange.translatesAutoresizingMaskIntoConstraints = NO;
-        [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear];
+        [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear];
         [self addSubview:_priceRange];
 
         _cuisine = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -141,35 +141,35 @@
         [self addSubview:_menuButton];
         
         _menuButton.layer.borderWidth = _cuisine.layer.borderWidth = 1;
-        _menuButton.layer.borderColor = _cuisine.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+        _menuButton.layer.borderColor = _cuisine.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
         _menuButton.layer.cornerRadius = _cuisine.layer.cornerRadius = 0;
         
         _distance = [[UILabel alloc] init];
         _distance.translatesAutoresizingMaskIntoConstraints = NO;
-        [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear];
+        [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear];
         _distance.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_distance];
         
         _phoneNumber = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
         _phoneNumber.delegate = self;
         _phoneNumber.enabledTextCheckingTypes = NSTextCheckingTypePhoneNumber;
-        [_phoneNumber withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorYellow backgroundColor:kColorClear];
+        [_phoneNumber withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorTextActive backgroundColor:kColorClear];
         _phoneNumber.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_phoneNumber];
 
         _website = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
-        [_website withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorYellow backgroundColor:kColorClear];
+        [_website withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorTextActive backgroundColor:kColorClear];
         _website.translatesAutoresizingMaskIntoConstraints = NO;
         _website.delegate = self;
         [self addSubview:_website];
         
         _address = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
-        [_address withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorWhite backgroundColor:kColorClear];
+        [_address withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear];
         _address.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_address];
         self.backgroundColor = UIColorRGBA(kColorWhite);
         
-        _hoursScroll.layer.borderColor = _hoursButton.layer.borderColor = UIColorRGBA(kColorGray).CGColor;
+        _hoursScroll.layer.borderColor = _hoursButton.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
         _hoursScroll.layer.borderWidth = _hoursButton.layer.borderWidth = 1;
         _hoursScroll.hidden = YES;
         [self addSubview:_hoursScroll]; //should appear above everything
@@ -582,12 +582,12 @@
         [_cuisine setTitle:@"" forState:UIControlStateNormal];
         _cuisine.hidden = YES;
     }
-    [_cuisine setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+    [_cuisine setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     [_cuisine sizeToFit];
 
     if (_restaurant.mobileMenuURL) {
         [_menuButton withText:@"Menu" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(goToMenuURL)];
-        [_menuButton setTitleColor:UIColorRGBA(kColorYellow) forState:UIControlStateNormal];
+        [_menuButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [_menuButton sizeToFit];
         _menuButton.hidden = NO;
     } else {
@@ -609,7 +609,7 @@
     
     NSRange range;
     range = [_restaurant.phone rangeOfString:_restaurant.phone];
-    _phoneNumber.linkAttributes = @{NSFontAttributeName : [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2], NSForegroundColorAttributeName : UIColorRGBA(kColorYellow)};
+    _phoneNumber.linkAttributes = @{NSFontAttributeName : [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2], NSForegroundColorAttributeName : UIColorRGBA(kColorTextActive)};
     [_phoneNumber addLinkToPhoneNumber:_restaurant.phone withRange:range];
 
     if (_restaurant.website) {
@@ -617,7 +617,7 @@
         range = [_website.text rangeOfString:_website.text];
         [_website setLinkAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                          [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2], NSFontAttributeName,
-                                         UIColorRGBA(kColorYellow), NSForegroundColorAttributeName,
+                                         UIColorRGBA(kColorTextActive), NSForegroundColorAttributeName,
                                          nil]];
         [_website addLinkToURL:[NSURL URLWithString:_restaurant.website] withRange:range];
 //        _verticalLine2.hidden = _website.hidden = NO;

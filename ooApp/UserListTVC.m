@@ -39,27 +39,27 @@
         self.autoresizesSubviews = NO;
         [self setSeparatorInset:UIEdgeInsetsZero];
         
-        self.backgroundColor = UIColorRGB(kColorOffBlack);
+        self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
         _labelFollowers = makeLabel(self,nil, kGeomFontSizeDetail);
         _labelFollowing = makeLabel(self, nil, kGeomFontSizeDetail);
         _labelPhotos = makeIconLabel(self, kFontIconPhoto, kGeomIconSizeSmall);
         _labelPlaces = makeLabel(self, nil, kGeomFontSizeDetail);
         
-        _labelFollowers.textColor = UIColorRGB(kColorGrayMiddle);
-        _labelFollowing.textColor = UIColorRGB(kColorGrayMiddle);
-        _labelPhotos.textColor = UIColorRGB(kColorGrayMiddle);
-        _labelPlaces.textColor = UIColorRGB(kColorGrayMiddle);
+        _labelFollowers.textColor = UIColorRGBA(kColorGrayMiddle);
+        _labelFollowing.textColor = UIColorRGBA(kColorGrayMiddle);
+        _labelPhotos.textColor = UIColorRGBA(kColorGrayMiddle);
+        _labelPlaces.textColor = UIColorRGBA(kColorGrayMiddle);
         
         _labelFollowersNumber = makeLabel(self, @"", kGeomFontSizeSubheader);
         _labelFollowingNumber = makeLabel(self,  @"", kGeomFontSizeSubheader);
         _labelPhotosNumber = makeLabelLeft(self,  @"", kGeomFontSizeSubheader);
         _labelPlacesNumber = makeLabel(self,  @"", kGeomFontSizeSubheader);
         
-        _labelFollowersNumber.textColor= UIColorRGBA(kColorWhite);
-        _labelFollowingNumber.textColor= UIColorRGBA(kColorWhite);
-        _labelPhotosNumber.textColor= UIColorRGBA(kColorWhite);
-        _labelPlacesNumber.textColor= UIColorRGBA(kColorWhite);
+        _labelFollowersNumber.textColor= UIColorRGBA(kColorText);
+        _labelFollowingNumber.textColor= UIColorRGBA(kColorText);
+        _labelPhotosNumber.textColor= UIColorRGBA(kColorText);
+        _labelPlacesNumber.textColor= UIColorRGBA(kColorText);
         
         _labelUserName= makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
         _labelName= makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
@@ -71,15 +71,15 @@
         _labelUserName.lineBreakMode = NSLineBreakByTruncatingTail;
         _labelName.lineBreakMode = NSLineBreakByTruncatingTail;
         
-        _labelUserName.textColor=UIColorRGBA(kColorWhite);
-        _labelName.textColor=UIColorRGBA(kColorWhite);
+        _labelUserName.textColor=UIColorRGBA(kColorText);
+        _labelName.textColor=UIColorRGBA(kColorText);
         
         _buttonFollow = makeButton(self, @"FOLLOW", kGeomFontSizeSubheader,
-                                   UIColorRGBA(kColorBlack),UIColorRGB(kColorYellow), self, @selector(userPressedFollow:), .5);
+                                   UIColorRGBA(kColorTextReverse),UIColorRGBA(kColorTextActive), self, @selector(userPressedFollow:), .5);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        [_buttonFollow setTitleColor: UIColorRGBA(kColorWhite) forState:UIControlStateSelected];
+        [_buttonFollow setTitleColor: UIColorRGBA(kColorTextActive) forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
-        _buttonFollow.layer.borderColor= UIColorRGB(kColorYellow).CGColor;
+        _buttonFollow.layer.borderColor= UIColorRGBA(kColorTextActive).CGColor;
         
     }
     return self;
@@ -123,7 +123,7 @@
                         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationOwnProfileNeedsUpdate object:nil];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             weakSelf.buttonFollow.selected= NO;
-                            weakSelf.buttonFollow.backgroundColor= UIColorRGB(kColorYellow);
+                            weakSelf.buttonFollow.backgroundColor= UIColorRGBA(kColorTextActive);
                             [weakSelf.delegate userTappedFollowButtonForUser: weakSelf.userInfo
                                                                    following: NO];
                             
@@ -150,8 +150,8 @@
                          to: YES
                     success:^(id responseObject) {
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            weakSelf.buttonFollow.selected= YES;
-                            weakSelf.buttonFollow.backgroundColor= UIColorRGBA(kColorBlack);
+                            weakSelf.buttonFollow.selected = YES;
+                            weakSelf.buttonFollow.backgroundColor = UIColorRGBA(kColorBlack);
                             
                             NSLog(@"SUCCESSFULLY FOLLOWED USER");
                             NOTIFY(kNotificationOwnProfileNeedsUpdate);
@@ -169,7 +169,7 @@
 {
     _buttonFollow.hidden = NO;
     _buttonFollow.selected = following;
-    _buttonFollow.backgroundColor = following ? UIColorRGBA(kColorBlack):UIColorRGB(kColorYellow);
+    _buttonFollow.backgroundColor = following ? UIColorRGBA(kColorBlack):UIColorRGBA(kColorTextActive);
     _buttonFollow.layer.borderWidth = following ? 1:0;
     [self bringSubviewToFront:_buttonFollow];
 }
@@ -229,7 +229,7 @@
     [_labelFollowersNumber setText:@""];
     [_labelFollowingNumber setText:@""];
     
-    _buttonFollow.backgroundColor = UIColorRGB(kColorYellow);
+    _buttonFollow.backgroundColor = UIColorRGBA(kColorTextActive);
     _buttonFollow.selected = NO;
     _buttonFollow.hidden = YES;
 }

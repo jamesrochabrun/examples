@@ -34,14 +34,14 @@ static NSString * const cellIdentifier = @"locationCell";
         
         _tableView = [[UITableView alloc] init];
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
-        _tableView.backgroundColor = UIColorRGBA(kColorOverlay20);
+        _tableView.backgroundColor = UIColorRGBA(kColorDarkImageOverlay);
         _tableView.rowHeight = 44;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-        _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
-        _tableView.layer.borderWidth = 1;
+//        _tableView.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
+//        _tableView.layer.borderWidth = 1;
         
         _nto = [[NavTitleObject alloc] initWithHeader:@"Change Location" subHeader:@"Enter a ZIP Code, City or Address"];
         
@@ -49,7 +49,7 @@ static NSString * const cellIdentifier = @"locationCell";
         _locationSearchBar.searchBarStyle = UISearchBarStyleMinimal;
         _locationSearchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _locationSearchBar.placeholder = LOCAL( @"Current Location");
-        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
+        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
         _locationSearchBar.barTintColor = UIColorRGBA(kColorBlack);
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         _locationSearchBar.delegate = self;
@@ -147,8 +147,8 @@ static NSString * const cellIdentifier = @"locationCell";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
-    [cell.detailTextLabel setTextColor:UIColorRGBA(kColorWhite)];
+    [cell.textLabel setTextColor:UIColorRGBA(kColorText)];
+    [cell.detailTextLabel setTextColor:UIColorRGBA(kColorText)];
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
     [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];

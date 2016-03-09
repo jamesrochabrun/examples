@@ -20,7 +20,7 @@
     self = [super init];
     if (self) {
         _icon = [[UILabel alloc] init];
-        [_icon withFont:[UIFont fontWithName:kFontIcons size:35] textColor:kColorOffWhite backgroundColor:kColorOffBlack numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_icon withFont:[UIFont fontWithName:kFontIcons size:35] textColor:kColorText backgroundColor:kColorEmptyTileBackground numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         _icon.text = kFontIconDiscover;
         [self addSubview:_icon];
         _icon.translatesAutoresizingMaskIntoConstraints = NO;

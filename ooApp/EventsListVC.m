@@ -90,7 +90,7 @@
     _table.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _createEventButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_createEventButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBlack target:self selector:@selector(userPressedAdd:)];
+    [_createEventButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButton height:0 backgroundColor:kColorBackgroundTheme target:self selector:@selector(userPressedAdd:)];
     [self.view addSubview:_createEventButton];
 }
 
@@ -461,7 +461,7 @@
                                                  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
                                                      [weakSelf verifyDeletionOfEvent: event];
                                                  }];
-                deleteAction.backgroundColor = UIColorRGB(kColorRed);
+                deleteAction.backgroundColor = UIColorRGBA(kColorRed);
                 return @[deleteAction];
             }
                 break;
@@ -474,7 +474,7 @@
                                                  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
                                                      [weakSelf leaveEvent: event];
                                                  }];
-                leaveAction.backgroundColor = UIColorRGB(kColorBlue);
+                leaveAction.backgroundColor = UIColorRGBA(kColorNavyBlue);
                 return @[leaveAction];
             }
                 break;

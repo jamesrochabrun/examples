@@ -131,7 +131,6 @@ typedef enum {
 {
     NSLog(@"Got %lu lists.", (unsigned long)[_lists count]);
     [_tableView reloadData];
-//    [DebugUtilities addBorderToViews:@[self.collectionView] withColors:kColorNavyBlue];
 }
 
 - (void)setupCreateListAC {

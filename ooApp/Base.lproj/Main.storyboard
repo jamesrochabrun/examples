@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="First" image="40A148FE-99C9-4D48-A746-3D15E7C683A9" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="First" image="189A6A17-899B-4DD4-AF44-D60D9815BB2B" id="acW-dT-cKf"/>
                     <navigationItem key="navigationItem" id="mD4-Ex-NhB"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -218,7 +218,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="40A148FE-99C9-4D48-A746-3D15E7C683A9" width="30" height="30">
+        <image name="189A6A17-899B-4DD4-AF44-D60D9815BB2B" width="30" height="30">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGQkNYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ERYbHCUmJygwMzY8P1UkbnVsbNQJCgsMDQ4PEFYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVwc1dOU0Nv

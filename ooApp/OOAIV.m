@@ -49,7 +49,7 @@
         
         _messageLabel = [[UILabel alloc] initWithFrame:
                          CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_ooaiv.frame) + kGeomSpaceInter, width(self)-2*kGeomSpaceEdge, CGRectGetMaxY(_ooaiv.frame) + kGeomSpaceInter)];
-        [_messageLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH5] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_messageLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH5] textColor:kColorText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         [self addSubview:_ooaiv];
         [self addSubview:_messageLabel];
      

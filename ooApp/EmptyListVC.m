@@ -63,21 +63,21 @@
     }
     
     self.buttonLists= makeButton( self.view, LOCAL(@"LISTS") , kGeomFontSizeSubheader,
-                                 UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self,
+                                 UIColorRGBA(kColorTextActive), UIColorRGBA(kColorBlack), self,
                                  @selector(userPressedListsButton:),
                                  borderWidth);
     
     self.buttonExplore = makeButton( self.view, LOCAL(@"EXPLORE") , kGeomFontSizeSubheader,
-                                    UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self,
+                                    UIColorRGBA(kColorTextActive), UIColorRGBA(kColorBlack), self,
                                     @selector(userPressedExploreButton:),
                                     borderWidth);
     if ( borderWidth>0) {
-        UIColor*gray= UIColorRGB(0x777777);
+        UIColor*gray= UIColorRGBA(0x777777);
         _buttonExplore.layer.borderColor= gray.CGColor;
         _buttonLists.layer.borderColor= gray.CGColor;
     }
-    addShadowTo(self.buttonLists);
-    addShadowTo(self.buttonExplore);
+    [Common addShadowTo:self.buttonLists withColor:kColorBlack];
+    [Common addShadowTo:self.buttonExplore withColor:kColorBlack];
    
     self.labelUpper= makeLabel ( self.view,  @"This list is hungry\rfor some restaurants.", kGeomFontSizeHeader);
     self.labelPacMan= makeIconLabel ( self.view,  kFontIconPerson, kGeomForkImageSize);
@@ -93,7 +93,7 @@
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     
     UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
-    [b roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:30 height:30 backgroundColor:kColorBlack target:nil selector:nil];
+    [b roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:30 height:30 backgroundColor:kColorBackgroundTheme target:nil selector:nil];
     
     textAttachment.image = [UIImage imageFromView:b];
     textAttachment.bounds=  CGRectMake(0,-3,18,18);

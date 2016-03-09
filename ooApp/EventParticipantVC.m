@@ -34,7 +34,7 @@
     if (self) {
         _labelCentered= makeLabel(self, @"This event has no restaurants.", kGeomFontSizeHeader);
         _labelCentered.textColor= UIColorRGBA(kColorWhite);
-        self.backgroundColor= UIColorRGB(kColorOffBlack);
+        self.backgroundColor= UIColorRGBA(kColorOffBlack);
     }
     return self;
 }
@@ -79,7 +79,7 @@
     self = [super  initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.viewShadow= makeView( self, UIColorRGBA(kColorWhite));
-        addShadowTo (_viewShadow);
+        [Common addShadowTo:_viewShadow withColor:kColorBlack];
         
         self.clipsToBounds= NO;
         self.backgroundColor= UIColorRGBA(kColorClear);
@@ -102,7 +102,7 @@
         
         self.labelTimeLeft= makeLabel( self, nil, kGeomFontSizeSubheader);
         _labelTimeLeft.textColor= UIColorRGBA(kColorBlack);
-        _labelTimeLeft.backgroundColor= UIColorRGB(kColorYellow);
+        _labelTimeLeft.backgroundColor= UIColorRGBA(kColorTextActive);
         
         self.participantsView= [[ParticipantsView alloc] init];
         [self  addSubview: _participantsView];
@@ -436,7 +436,7 @@
 - (void)applyThinBorder
 {
     _thumbnail.layer.borderWidth= 0.5;
-    _thumbnail.layer.borderColor= UIColorRGB(kColorGray).CGColor;
+    _thumbnail.layer.borderColor= UIColorRGBA(kColorOffWhite).CGColor;
 }
 
 - (void)userPressedVoteUp: (id) sender
@@ -465,11 +465,11 @@
             break;
         case VOTE_STATE_YES:
             [button setTitle: kFontIconCheckmarkCircle forState:UIControlStateNormal];
-            self.viewOverlay.backgroundColor= UIColorRGB(kColorGreen);
+            self.viewOverlay.backgroundColor= UIColorRGBA(kColorGreen);
             break;
         case VOTE_STATE_NO:
             [button setTitle: kFontIconRemove forState:UIControlStateNormal];
-            self.viewOverlay.backgroundColor= UIColorRGB(kColorRed);
+            self.viewOverlay.backgroundColor= UIColorRGBA(kColorRed);
             break;
     }
     _radioButtonState= state;
@@ -631,7 +631,7 @@
         EventParticipantVotingSubCell *view=  _subcells[1];
         
         view.layer.borderWidth= 5;
-        view.layer.borderColor=  UIColorRGB(0xffff30).CGColor;
+        view.layer.borderColor=  UIColorRGBA(0xffff30).CGColor;
         view.clipsToBounds=NO;
         [view removeThinBorder];
     }

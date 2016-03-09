@@ -20,51 +20,98 @@
         blue:(255&rgbValue)/255.0f \
         alpha:(rgbValue >> 24)/255.0f ]
 
-#define DARK_SCHEME2
+static const NSUInteger kColorElements1 = 0xFF272727;
+static const NSUInteger kColorElements2 = 0xFFe0e0e0;
+static const NSUInteger kColorElements3 = 0xff8D99AE;
+
+static const NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
+static const NSUInteger kColorWhite = 0xFFFFFFFF;
+static const NSUInteger kColorBlack = 0xFF000000;
+static const NSUInteger kColorClear = 0x00000000;
+static const NSUInteger kColorNavyBlue = 0xFF000080;
+static const NSUInteger kColorYellow = 0xFFF9FF00;
+static const NSUInteger kColorMarkerFaded = 0x701874CD;
+
+static NSUInteger kColorOffBlack = 0xFF272727;
+static NSUInteger kColorOffWhite = 0xFFE5E5E5;
+
+static const NSUInteger kColorOverlay10 = 0xE6000000;
+static const NSUInteger kColorOverlay20 = 0xCC000000;
+static const NSUInteger kColorOverlay25 = 0xC0000000;
+static const NSUInteger kColorOverlay30 = 0xB3000000;
+static const NSUInteger kColorOverlay35 = 0xA6000000;
+static const NSUInteger kColorOverlay40 = 0x99000000;
+static const NSUInteger kColorOverlay50 = 0x7F000000;
+
+#define LIGHT_SCHEME 1
 
 // App colors
 #ifdef DARK_SCHEME
 static NSUInteger kColorBackgroundTheme = 0xFF171717;
-static NSUInteger kColorTextActive = 0xFFF9FF00;
-static NSUInteger kColorText = 0xFFFFFFFF;
-static NSUInteger kColorNavBar = 0xFF000000;
-static NSUInteger kColorFilterBackground = 0xFF272727;
-static NSUInteger kColorConnectHeaderBackground = 0xFF272727;
-#else
-static NSUInteger kColorBackgroundTheme = 0xFFEEEEEE;
-static NSUInteger kColorTextActive = 0xFFF9FF00;
-static NSUInteger kColorText = 0xFF000000;
-static NSUInteger kColorNavBar = 0xFFFFFFFF;
-static NSUInteger kColorFilterBackground = 0xFFCDCDCD;
-static NSUInteger kColorConnectHeaderBackground = 0xFFCDCDCD;
+static const NSUInteger kColorTextActive = kColorYellow;
+static NSUInteger kColorTextActiveFaded = (kColorTextActive & 0x99FFFFFF);
+static NSUInteger kColorLightImageOverlay = (kColorOverlay50 | 0x00000000);
+static NSUInteger kColorDarkImageOverlay = (kColorOverlay20 | 0x00000000);
+static NSUInteger kColorText = kColorWhite;
+static NSUInteger kColorTextReverse = kColorBlack;
+static const NSUInteger kColorNavBarText = kColorWhite;
+static const NSUInteger kColorNavBar = kColorBlack;
+static const NSUInteger kColorReverseBackground = kColorElements2;
+static const NSUInteger kColorStripHeader = kColorElements1;
+static NSUInteger kColorFilterBackground = kColorStripHeader;
+static NSUInteger kColorEmptyTileBackground = kColorStripHeader;
+static NSUInteger kColorConnectHeaderBackground = kColorStripHeader;
+static NSUInteger kColorCellBackground = kColorStripHeader;
+static NSUInteger kColorCellSelected = kColorStripHeader;
+static NSUInteger kColorTabBar = kColorNavBar;
+static NSUInteger kColorBordersAndLines = kColorStripHeader;
+static NSUInteger kColorMarker = kColorTextActive;
+#elif LIGHT_SCHEME
+static NSUInteger kColorBackgroundTheme = 0xFFefefef;
+static const NSUInteger kColorTextActive = 0xFFd95030;//orange;0xff69a583;//green;//0xff9f38cf;purple
+static NSUInteger kColorTextActiveFaded = 0xFFd95030;//orange;0xff69a583;//green;0xFFd95030;//orange; 0xFF9782cf; //(kColorTextActive & 0x99FFFFFF);
+static NSUInteger kColorLightImageOverlay = (kColorOverlay50 | 0x00777777);
+static NSUInteger kColorDarkImageOverlay = (kColorOverlay20 | 0x00777777);
+static NSUInteger kColorText = 0xFF111111;
+static NSUInteger kColorTextReverse = kColorWhite;
+static const NSUInteger kColorNavBarText = kColorWhite;
+static const NSUInteger kColorNavBar = 0xff121212;//gray 0xFF626064;//
+static const NSUInteger kColorReverseBackground = kColorElements1;
+static const NSUInteger kColorStripHeader = kColorElements2;
+static NSUInteger kColorFilterBackground = kColorStripHeader;
+static NSUInteger kColorEmptyTileBackground = kColorStripHeader;
+static NSUInteger kColorConnectHeaderBackground = kColorStripHeader;
+static NSUInteger kColorCellBackground = kColorStripHeader;
+static NSUInteger kColorCellSelected = kColorStripHeader;
+static NSUInteger kColorTabBar = kColorWhite;
+static NSUInteger kColorBordersAndLines = kColorStripHeader;
+static NSUInteger kColorMarker = kColorTextActive;
+#elif A_SCHEME
+static NSUInteger kColorBackgroundTheme = 0xffEDF2F4;
+static const NSUInteger kColorTextActive = 0xffD90429;
+static NSUInteger kColorTextActiveFaded = (kColorTextActive & 0x99FFFFFF);
+static NSUInteger kColorLightImageOverlay = (kColorOverlay50 | 0x00FFFFFF);
+static NSUInteger kColorDarkImageOverlay = (kColorOverlay20 | 0x00FFFFFF);
+static NSUInteger kColorText = kColorBlack;
+static NSUInteger kColorTextReverse = kColorWhite;
+static const NSUInteger kColorNavBarText = kColorWhite;
+static const NSUInteger kColorNavBar = 0xff2B2D42;
+static const NSUInteger kColorReverseBackground = 0xffebd4c8;
+static NSUInteger kColorStripHeader = kColorElements3;
+static NSUInteger kColorFilterBackground = kColorElements3;
+static NSUInteger kColorEmptyTileBackground = kColorElements3;
+static NSUInteger kColorConnectHeaderBackground = kColorElements3;
+static NSUInteger kColorCellBackground = kColorElements3;
+static NSUInteger kColorCellSelected = kColorElements3;
+static NSUInteger kColorTabBar = kColorWhite;
+static NSUInteger kColorBordersAndLines = kColorElements3;
+static NSUInteger kColorMarker = kColorTextActive;
 #endif
 
-static NSUInteger kColorBlack = 0xFF000000;
-static NSUInteger kColorCellSelected =  0xFF323232;//0xFFF9FF00;
-static NSUInteger kColorClear = 0x00000000;
-static NSUInteger kColorLightGray = 0xFF808080;
-static NSUInteger kColorGray = 0xFFE5E5E5;
-static NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
-static NSUInteger kColorNavyBlue = 0xFF000080;
-static NSUInteger kColorMarker = 0xFFF9FF00;//0xFF1874CD;//0xDD0000A0;
-static NSUInteger kColorMarkerFaded = 0x701874CD;//0x700000A0;
-static NSUInteger kColorOffBlack = 0xFF272727;
-static NSUInteger kColorOffWhite = 0xFFE5E5E5;
-static NSUInteger kColorOverlay10 = 0xE6000000;
-static NSUInteger kColorOverlay20 = 0xCC000000;
-static NSUInteger kColorOverlay25 = 0xC0000000;
-static NSUInteger kColorOverlay30 = 0xB3000000;
-static NSUInteger kColorOverlay35 = 0xA6000000;
-static NSUInteger kColorOverlay40 = 0x99000000;
-static NSUInteger kColorOverlay50 = 0x7F000000;
-static NSUInteger kColorWhite = 0xFFFFFFFF;
 static NSUInteger kColorRed = 0xFFFF0000;
 static NSUInteger kColorGreen = 0xFF00FF00;
-static NSUInteger kColorBlue = 0xFF0000FF;
-static NSUInteger kColorYellow = 0xFFF9FF00;
-static NSUInteger kColorYellowFaded = 0x99F9FF00;
-static NSUInteger kColorIconSelected = 0xFFFFFFFF;
 static NSUInteger kColorCoordinatorBoxBackground = 0xFF2b2b2b;
+
 static CGFloat kColorEventOverlayAlpha = 0.3;
 
 // Geometry and metrics
@@ -106,7 +153,6 @@ static NSUInteger kGeomPlayIconSize = 35;
 static NSUInteger kGeomPlayButtonSize = 65;
 static CGFloat kGeomSpaceCellPadding = 3;
 static CGFloat kGeomSpaceEdge = 6;
-static CGFloat kGeomSpaceIcon = 5.0;
 static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
 static CGFloat kGeomInterImageGap = 2;
@@ -119,21 +165,10 @@ static CGFloat kGeomProfileFilterViewHeight = 27;
 //static CGFloat kGeomProfileTextviewHeight= 36;
 static CGFloat kGeomProfileStatsItemHeight= 30;
 
-//#define PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT 24
-static CGFloat kGeomFollowButtonHeight = 24;// PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT; // Connect screen, profile screen
-//#define PROFILE_HEADERVIEW_FOLLOW_HEIGHT (PROFILE_HEADERVIEW_FOLLOW_BUTTON_HEIGHT+11) // includes spacer
-//#define PROFILE_HEADERVIEW_BASE_HEIGHT 213
-//#define PROFILE_HEADERVIEW_SPECIALTIES_HEIGHT 38
-//#define PROFILE_HEADERVIEW_URL_BUTTON_HEIGHT 25
-static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = 25;//PROFILE_HEADERVIEW_URL_BUTTON_HEIGHT;
-//#define PROFILE_HEADERVIEW_URL_HEIGHT (PROFILE_HEADERVIEW_URL_BUTTON_HEIGHT+4)
-//static CGFloat kGeomProfileHeaderViewHeightSelf = PROFILE_HEADERVIEW_BASE_HEIGHT;
-//static CGFloat kGeomProfileHeaderViewHeightNormal = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT;
-//static CGFloat kGeomProfileHeaderViewHeightBlogger = PROFILE_HEADERVIEW_BASE_HEIGHT+PROFILE_HEADERVIEW_FOLLOW_HEIGHT+PROFILE_HEADERVIEW_URL_HEIGHT;
+static CGFloat kGeomFollowButtonHeight = 24;
+static CGFloat kGeomProfileHeaderViewHeightOfBloggerButton = 25;
 static NSUInteger kProfileNumColumnsForMediaItemsPhone = 2;
-//static CGFloat kGeomProfileStatsOverallWidth= 171;
 static CGFloat kGeomProfileSettingsBadgeSize=  30;
-//static CGFloat kGeomProfileEmptyPlusSize= 40;
 static NSUInteger kGeomFontSizeStatsText = 14;
 static NSUInteger kGeomFontSizeStatsIcons = 22;
 

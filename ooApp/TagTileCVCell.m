@@ -50,7 +50,7 @@
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     self.backgroundColor = (selected) ? UIColorRGBA(kColorBlack) : UIColorRGBA(kColorOffBlack);
-    _termLabel.textColor = (selected) ? UIColorRGBA(kColorYellow) : UIColorRGBA(kColorWhite);
+    _termLabel.textColor = (selected) ? UIColorRGBA(kColorTextActive) : UIColorRGBA(kColorWhite);
 }
 
 @end

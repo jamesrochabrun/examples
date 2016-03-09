@@ -95,7 +95,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     _noPhotosMessage = [UIButton buttonWithType:UIButtonTypeCustom];
     _noPhotosMessage.translatesAutoresizingMaskIntoConstraints = NO;
-    [_noPhotosMessage withText:@"" fontSize:kGeomFontSizeH2 width:40 height:40 backgroundColor:kColorClear textColor:kColorLightGray borderColor:kColorClear target:self selector:@selector(goToConnect)];
+    [_noPhotosMessage withText:@"" fontSize:kGeomFontSizeH2 width:40 height:40 backgroundColor:kColorClear textColor:kColorGrayMiddle borderColor:kColorClear target:self selector:@selector(goToConnect)];
     _noPhotosMessage.titleLabel.numberOfLines = 0;
     _noPhotosMessage.titleLabel.textAlignment = NSTextAlignmentCenter;
     [_collectionView addSubview:_noPhotosMessage];
@@ -150,9 +150,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
     [_collectionView addSubview:self.refreshControl];
-    _collectionView.alwaysBounceVertical = YES;
-    
-    self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorNavyBlue);
+    _collectionView.alwaysBounceVertical = YES;    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -356,8 +354,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     UINavigationController *nc = [[UINavigationController alloc] init];
     
     [nc addChildViewController:restaurantPicker];
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -468,7 +466,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : [[MediaItemObject alloc] init];
     if (!mio.width || !mio.height) return width(collectionView)/_numColumns; //NOTE: this should not happen
     CGFloat height = floorf(((width(self.collectionView) - (_numColumns-1) - 2*kGeomSpaceEdge)/_numColumns)*mio.height/mio.width);
-    return height;
+    return height + ((mio.source == kMediaItemTypeOomami)? 30:0);
 }
 
 - (void)updateViewConstraints {
@@ -516,7 +514,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     RestaurantObject *r = [_restaurants objectAtIndex:row];
 
     cvc.delegate = self;
-    cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    cvc.backgroundColor = UIColorRGBA(0xFFe6e6e6);
     cvc.mediaItemObject = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
 //    [cvc showActionButton:(cvc.mediaItemObject.source == kMediaItemTypeOomami) ? YES : NO];
     [cvc showActionButton:NO];
@@ -560,7 +558,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     
     [nc addChildViewController:vc];
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
     [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];

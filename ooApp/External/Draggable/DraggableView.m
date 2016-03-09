@@ -71,7 +71,7 @@
         _thumbnail.translatesAutoresizingMaskIntoConstraints = NO;
         
         _infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-        [_infoButton setTintColor:UIColorRGBA(kColorYellow)];
+        [_infoButton setTintColor:UIColorRGBA(kColorTextActive)];
         [_infoButton addTarget:self action:@selector(cardTapped) forControlEvents:UIControlEventTouchUpInside];
         
         self.backgroundColor = UIColorRGBA(kColorOffBlack);

@@ -44,14 +44,14 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         
         _tableView = [[UITableView alloc] init];
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
-        _tableView.backgroundColor = UIColorRGBA(kColorOverlay20);
+        _tableView.backgroundColor = UIColorRGBA(kColorLightImageOverlay);
         _tableView.rowHeight = 44;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-        _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
-        _tableView.layer.borderWidth = 1;
+//        _tableView.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+//        _tableView.layer.borderWidth = 1;
         
         _nto = [[NavTitleObject alloc] initWithHeader:@"Place" subHeader:@"Where did you take the photo?"];
         
@@ -59,8 +59,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _searchBar.searchBarStyle = UISearchBarStyleMinimal;
         _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _searchBar.placeholder = LOCAL( @"Search for the restaurant, bar, etc");
-        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
-        _searchBar.barTintColor = UIColorRGBA(kColorBlack);
+        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
+        _searchBar.barTintColor = UIColorRGBA(kColorText);
         _searchBar.keyboardType = UIKeyboardTypeAlphabet;
         _searchBar.delegate = self;
         _searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
@@ -279,8 +279,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
-    [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
-    [cell.detailTextLabel setTextColor:UIColorRGBA(kColorWhite)];
+    [cell.textLabel setTextColor:UIColorRGBA(kColorText)];
+    [cell.detailTextLabel setTextColor:UIColorRGBA(kColorText)];
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
     [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];

@@ -1882,6 +1882,46 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     return op;
 }
 
++ (AFHTTPRequestOperation *)getUsersAroundLocation:(CLLocationCoordinate2D)location
+                                           success:(void (^)(NSArray *users))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    //eg. /users/aroundyou?latitude=33.8088231&longitude=-117.8515011
+    
+    NSString *urlString;
+    urlString= [NSString stringWithFormat:@"%@://%@/users/aroundyou",
+                kHTTPProtocol, [OOAPI URL]];
+    if (!CLLocationCoordinate2DIsValid(location)) {
+        failure(nil, nil);
+        return nil;
+    }
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:
+                                    @{kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
+                                      kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude]}];
+                                                                                      
+    AFHTTPRequestOperation *op;
+    
+    op = [rm GET:urlString parameters:parameters
+         success:^(id responseObject) {
+             NSArray *array = responseObject;
+             NSMutableArray *users= [NSMutableArray new];
+             for (NSDictionary *d in array) {
+                 UserObject *user = [UserObject userFromDict:d];
+                 if (user) {
+                     [users addObject:user];
+                 }
+             }
+             success(users);
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+             failure(operation, error);
+         }];
+    
+    return op;
+}
+
 + (AFHTTPRequestOperation *)getRecentUsersSuccess:(void (^)(NSArray *users))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {

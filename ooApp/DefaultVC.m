@@ -36,7 +36,7 @@
         [self.view addSubview:l];
     }
     
-    l = [[UILabel alloc] initWithFrame:CGRectMake(kGeomSpaceIcon, 40+9*20, width(self.view), 45)];
+    l = [[UILabel alloc] initWithFrame:CGRectMake(kGeomSpaceEdge, 40+9*20, width(self.view), 45)];
     l.font = [UIFont fontWithName:kFontIcons size:45];
     l.backgroundColor = UIColorRGBA(kColorBlack);
     l.textColor = UIColorRGBA(kColorWhite);

@@ -43,12 +43,12 @@
         _ivFoodie.clipsToBounds=NO;
         
         _viewHalo= makeView(self, UIColorRGBA(kColorClear));
-        addBorder(_viewHalo, 1.5, UIColorRGB(kColorYellow));
+        addBorder(_viewHalo, 1.5, UIColorRGBA(kColorTextActive));
         _viewHalo.userInteractionEnabled=NO;
         
-        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, UIColorRGBA(kColorBlack), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
+        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, UIColorRGBA(kColorTextReverse), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
         
-        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
         _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
         
     }

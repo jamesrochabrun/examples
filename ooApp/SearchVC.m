@@ -90,7 +90,7 @@ typedef enum: char {
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
     _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _searchBar.placeholder = LOCAL(@"Type your search here");
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
     _searchBar.barTintColor = UIColorRGBA(kColorBlack);
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.delegate = self;
@@ -99,7 +99,7 @@ typedef enum: char {
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
     _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), UIColorRGBA(kColorClear), self, @selector(userPressedCancel:), .5);
-    [_buttonCancel setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    [_buttonCancel setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
     
     self.filterView = [[OOFilterView alloc] init];
     [ self.view addSubview:_filterView];
@@ -130,13 +130,13 @@ typedef enum: char {
     _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     self.labelPreSearchInstructiveMessage1 = makeLabel( self.view, @"Find Your Foodies (Search for Users by Name)", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage1.textColor = UIColorRGB(kColorLightGray);
+    self.labelPreSearchInstructiveMessage1.textColor = UIColorRGBA(kColorGrayMiddle);
     
     self.labelPreSearchInstructiveMessage2 = makeLabel( self.view, @"Search for places on your lists", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage2.textColor = UIColorRGB(kColorLightGray);
+    self.labelPreSearchInstructiveMessage2.textColor = UIColorRGBA(kColorGrayMiddle);
     
     self.labelPreSearchInstructiveMessage3 = makeLabel( self.view, @"Search for places to eat\rPowered by Google™", kGeomFontSizeHeader);
-    self.labelPreSearchInstructiveMessage3.textColor = UIColorRGB(kColorLightGray);
+    self.labelPreSearchInstructiveMessage3.textColor = UIColorRGBA(kColorGrayMiddle);
     
     [self changeFilter:FILTER_PLACES];
 
@@ -411,8 +411,8 @@ typedef enum: char {
     vc.delegate = self;
     [nc addChildViewController:vc];
     
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = UIColorRGBA(kColorClear);
     
@@ -738,9 +738,9 @@ typedef enum: char {
     
     _searchBar.frame = CGRectMake(0, y, w-kGeomButtonWidth, kGeomHeightSearchBar);
     _buttonCancel.frame = CGRectMake(w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
-                                     y+kGeomCancelButtonInteriorPadding,
+                                     (kGeomHeightSearchBar - kGeomHeightButton)/2,
                                      kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
-                                     kGeomHeightSearchBar+-2*kGeomCancelButtonInteriorPadding);
+                                     kGeomHeightButton);
     y += kGeomHeightSearchBar;
     
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
@@ -780,7 +780,7 @@ typedef enum: char {
                     cell.textLabel.text = @"";
                 }
             }
-            cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+            cell.textLabel.textColor = UIColorRGBA(kColorText);
             cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
             return cell;
         }

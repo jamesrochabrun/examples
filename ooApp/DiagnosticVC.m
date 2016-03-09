@@ -71,7 +71,7 @@
     self.view.backgroundColor= [UIColor lightGrayColor];
     
     _textviewDiagnosticLog= makeTextView(self.view, UIColorRGBA(kColorWhite), NO);
-    _textviewDiagnosticLog.layer.borderColor= UIColorRGB(kColorGray).CGColor;
+    _textviewDiagnosticLog.layer.borderColor= UIColorRGBA(kColorOffWhite).CGColor;
     _textviewDiagnosticLog.layer.borderWidth= 0.5;
     _textviewDiagnosticLog.layer.cornerRadius= 5;
     _textviewDiagnosticLog.textAlignment= NSTextAlignmentLeft;

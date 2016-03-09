@@ -65,12 +65,10 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
         _noRestautantsMessage = [[UILabel alloc] init];
-        [_noRestautantsMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorLightGray backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_noRestautantsMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         [self addSubview:_noRestautantsMessage];
         _noRestautantsMessage.translatesAutoresizingMaskIntoConstraints = NO;
         _noRestautantsMessage.hidden = YES;
-
-
 //        [DebugUtilities addBorderToViews:@[_nameHeader]];
     }
     
@@ -155,15 +153,13 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _nameHeader.backgroundColor = UIColorRGBA(kColorClear);
         _nameHeader.icon = @"";
         [_nameHeader setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader]];
-//        [DebugUtilities addBorderToViews:@[self] withColors:kColorRed];
     } else {
         [_featuredCollectionView removeFromSuperview];
         _featuredCollectionView = nil;
         [self.collectionView reloadData];
-        _nameHeader.backgroundColor = UIColorRGBA(kColorOffBlack);
+        _nameHeader.backgroundColor = UIColorRGBA(kColorStripHeader);
         _nameHeader.icon = kFontIconList;
         [_nameHeader setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader]];
-//        [DebugUtilities addBorderToViews:@[_collectionView] withColors:kColorBlue];
     }
 
     NSLog(@"nameHeader after setting %@ rect=%@", _nameHeader.name, NSStringFromCGRect(_nameHeader.frame));
@@ -339,7 +335,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 //        _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_collectionView];
         [self bringSubviewToFront:_nameHeader];
-//        [DebugUtilities addBorderToViews:@[_collectionView] withColors:kColorRed];
     }
     return _collectionView;
 }
@@ -354,7 +349,6 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _featuredCollectionView.pagingEnabled = YES;
         [self addSubview:_featuredCollectionView];
         [self bringSubviewToFront:_nameHeader];
-//        [DebugUtilities addBorderToViews:@[_featuredCollectionView] withColors:kColorRed];
     }
     return _featuredCollectionView;
 }

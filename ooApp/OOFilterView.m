@@ -28,7 +28,7 @@
         _filterControls = [NSMutableArray array];
         _filters = [NSMutableArray array];
         _currentLine = [[UIView alloc] init];
-        _currentLine.backgroundColor = UIColorRGBA(kColorYellow);
+        _currentLine.backgroundColor = UIColorRGBA(kColorTextActive);
         [self addSubview:_currentLine];
         self.backgroundColor = UIColorRGBA(kColorFilterBackground);
     }

@@ -19,7 +19,7 @@
 
 + (void)addBorderToViews:(NSArray *)views withColors:(NSUInteger)color {
     for (UIView *v in views) {
-        v.layer.borderColor =  UIColorRGB(color).CGColor;
+        v.layer.borderColor =  UIColorRGBA(color).CGColor;
         v.layer.borderWidth = 1;
     }
 }

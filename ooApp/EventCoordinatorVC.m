@@ -44,7 +44,7 @@
     if (self) {
         self.autoresizesSubviews= NO;
         self.buttonAddRestaurant=makeRoundIconButton(self.contentView, kFontIconAdd,
-                                                     30, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack),
+                                                     30, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorBlack),
                                                      self, @selector(newRestaurant:),
                                                      0, kGeomHeightButton/2);
         
@@ -82,7 +82,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.buttonAdd=  makeRoundIconButton(self.contentView, kFontIconAdd, 20,
-                                             UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack),
+                                             UIColorRGBA(kColorTextActive), UIColorRGBA(kColorBlack),
                                              self, @selector(userPressedAdd:), 0,
                                              kGeomHeightButton/2);
         _buttonAdd.enabled= NO;
@@ -156,8 +156,8 @@
         self.contentView.clipsToBounds= NO;
         
         if  (_inE3LMode ) {
-            _buttonAccept= makeButton(self.contentView,  @"Accept",kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self, @selector(doAccept:), 0);
-            _buttonDecline= makeButton(self.contentView,  @"Decline",kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self, @selector(doDecline:), 0);
+            _buttonAccept= makeButton(self.contentView,  @"Accept",kGeomFontSizeHeader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorBlack), self, @selector(doAccept:), 0);
+            _buttonDecline= makeButton(self.contentView,  @"Decline",kGeomFontSizeHeader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorBlack), self, @selector(doDecline:), 0);
         } else {
             NSString* submitButtonMessage;
             if  (self.eventBeingEdited.isComplete) {
@@ -167,7 +167,7 @@
             }
             
             _buttonSubmit= makeButton(self.contentView, submitButtonMessage,
-                                      kGeomFontSizeHeader, UIColorRGB(kColorYellow), UIColorRGBA(kColorBlack), self, @selector(doSubmit:), 0);
+                                      kGeomFontSizeHeader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorBlack), self, @selector(doSubmit:), 0);
             _buttonSubmit.titleLabel.numberOfLines= 0;
             _buttonSubmit.titleLabel.textAlignment= NSTextAlignmentCenter;
         }
@@ -651,7 +651,7 @@
     
     TileCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:CV_CELL_REUSE_IDENTIFER
                                                                 forIndexPath:indexPath];
-    cvc.backgroundColor = UIColorRGB(kColorGray);
+    cvc.backgroundColor = UIColorRGBA(kColorOffWhite);
     RestaurantObject *venue = [self.eventBeingEdited getNthVenue:row];
     cvc.restaurant = venue;
     cvc.displayType = KListDisplayTypeStrip;
@@ -720,13 +720,13 @@
         self.labelDay4 = makeLabel(self, @"R", kGeomFontSizeHeader);
         self.labelDay5 = makeLabel(self, @"F", kGeomFontSizeHeader);
         self.labelDay6 = makeLabel(self, @"S", kGeomFontSizeHeader);
-        _labelDay0.textColor = UIColorRGB(kColorGray);
-        _labelDay1.textColor = UIColorRGB(kColorGray);
-        _labelDay2.textColor = UIColorRGB(kColorGray);
-        _labelDay3.textColor = UIColorRGB(kColorGray);
-        _labelDay4.textColor = UIColorRGB(kColorGray);
-        _labelDay5.textColor = UIColorRGB(kColorGray);
-        _labelDay6.textColor = UIColorRGB(kColorGray);
+        _labelDay0.textColor = UIColorRGBA(kColorOffWhite);
+        _labelDay1.textColor = UIColorRGBA(kColorOffWhite);
+        _labelDay2.textColor = UIColorRGBA(kColorOffWhite);
+        _labelDay3.textColor = UIColorRGBA(kColorOffWhite);
+        _labelDay4.textColor = UIColorRGBA(kColorOffWhite);
+        _labelDay5.textColor = UIColorRGBA(kColorOffWhite);
+        _labelDay6.textColor = UIColorRGBA(kColorOffWhite);
         
         self.labelDate0= makeLabel(self,  @"", kGeomFontSizeHeader);
         self.labelDate1= makeLabel(self,  @"", kGeomFontSizeHeader);
@@ -741,8 +741,8 @@
         _labelMonth.font= [UIFont  fontWithName: kFontLatoBold  size:kGeomFontSizeHeader];
         _labelMonth.textColor= UIColorRGBA(kColorWhite);
         
-        self.viewhorizontalLine=makeView(self, UIColorRGB(kColorGray));
-        _viewhorizontalLine.backgroundColor= UIColorRGB(kColorGray);
+        self.viewhorizontalLine=makeView(self, UIColorRGBA(kColorOffWhite));
+        _viewhorizontalLine.backgroundColor= UIColorRGBA(kColorOffWhite);
         
     }
     
@@ -830,8 +830,8 @@
         u-= ONE_DAY*dayNumber;
     }
     
-    UIColor *inactiveColor= UIColorRGB(kColorGray);
-    UIColor *activeColor= UIColorRGB(kColorYellow);
+    UIColor *inactiveColor= UIColorRGBA(kColorOffWhite);
+    UIColor *activeColor= UIColorRGBA(kColorTextActive);
     
     for (int i=0; i < 7; i++) {
         NSDate *date= [NSDate dateWithTimeIntervalSince1970:u];
