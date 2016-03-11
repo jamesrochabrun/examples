@@ -83,7 +83,7 @@
         _locationButton.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursScroll = [[UIScrollView alloc] init];
-        _hoursScroll.backgroundColor = UIColorRGBA(kColorBlack);
+        _hoursScroll.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _hoursScroll.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursView = [[UILabel alloc] init];

@@ -28,6 +28,7 @@ typedef enum {
 @interface ConnectTableSectionHeader : UIView
 @property (nonatomic, weak) id<ConnectTableSectionHeaderDelegate> delegate;
 @property (nonatomic, strong) UILabel *labelTitle;
+@property (nonatomic, strong) NSString *noUsersMessage;
 @property (nonatomic, assign) BOOL isExpanded;
 @end
 

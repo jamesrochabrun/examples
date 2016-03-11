@@ -121,22 +121,11 @@
     CGRect frame = _buttonSettings.frame;
     frame.origin.y -=1;
     _circle.frame = frame;
-
-    //_circle.center = CGPointMake(_circle.center.y, _circle.center.x-1);
-    //[self bringSubviewToFront:_circle];
 }
 
 - (void)setUser:(UserObject *)user
 {
     if (_user == user) return;
-//    if (!user) {
-//        self.imageView.image = nil;
-//        _user=nil;
-//        return;
-//    }
-//    if  (user==_user && [_user isEqualToDeeply: user] ) {
-//        return;
-//    }
     _user = user;
     
     NSString *first = _user.firstName.length? [_user.firstName substringToIndex:1] : @"";

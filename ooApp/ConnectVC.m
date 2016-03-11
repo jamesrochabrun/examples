@@ -17,6 +17,7 @@
 #import "Settings.h"
 #import "ProfileVC.h"
 #import "SocialMedia.h"
+#import "DebugUtilities.h"
 
 static NSString *const kConnectUserCellIdentifier = @"userTableCell";
 static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
@@ -24,7 +25,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //==============================================================================
 
 @interface ConnectTableSectionHeader ()
-@property (nonatomic,strong) UILabel *labelExpander;
+@property (nonatomic, strong) UILabel *labelExpander;
+@property (nonatomic, strong) UILabel *noUsersMsgLabel;
+@property (nonatomic) NSInteger numberUsers;
+@property (nonatomic, strong) UIView *banner;
 @end
 
 @implementation ConnectTableSectionHeader
@@ -33,21 +37,47 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     self=[super init];
     if (self) {
+        _banner = [[UIView alloc] init];
+        _banner.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+        [self addSubview:_banner];
+        
+        _noUsersMsgLabel = [[UILabel alloc] init];
+        [_noUsersMsgLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [self addSubview:_noUsersMsgLabel];
+        
         _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH2);
         _labelTitle.textColor = UIColorRGBA(kColorText);
         _labelExpander = makeIconLabel(self, kFontIconBack, kGeomIconSize);
+        _labelExpander.textAlignment = NSTextAlignmentCenter;
         _labelExpander.textColor = UIColorRGBA(kColorTextActive);
-        self.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+        self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _isExpanded = expanded_;
+        
+        _noUsersMsgLabel.hidden = YES;
+//        [DebugUtilities addBorderToViews:@[_labelTitle, _labelExpander, _noUsersMsgLabel]];
     }
     return self;
+}
+
+- (void)setNoUsersMessage:(NSString *)noUsersMessage {
+    _noUsersMessage = noUsersMessage;
+    _noUsersMsgLabel.text = _noUsersMessage;
+    [_noUsersMsgLabel setNeedsLayout];
+}
+
+- (void)setNumberUsers:(NSInteger)numberUsers {
+    _numberUsers = numberUsers;
+    if (!_numberUsers) {
+        _labelExpander.hidden = YES;
+        _noUsersMsgLabel.hidden = NO;
+    }
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [self.delegate userTappedSectionHeader:(int)self.tag];
     
-    _isExpanded=!_isExpanded;
+    _isExpanded = !_isExpanded;
     
     [self layoutSubviews];
 }
@@ -60,13 +90,25 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     CGFloat h = height(self);
     const CGFloat kGeomConnectHeaderLeftMargin = 10;
     const CGFloat kGeomConnectHeaderRightMargin = 24;
-    self.labelTitle.frame = CGRectMake(kGeomConnectHeaderLeftMargin, 0, w/2, h);
+    
+    _banner.frame = CGRectMake(0, 0, w, kGeomConnectScreenHeaderHeight);
+    _labelTitle.frame = CGRectMake(kGeomConnectHeaderLeftMargin, 0, w/2, kGeomConnectScreenHeaderHeight);
+
     [_labelExpander sizeToFit];
-//    CGFloat labelWidth = h;
-    self.labelExpander.frame = CGRectMake(w-kGeomConnectHeaderRightMargin-CGRectGetWidth(_labelExpander.frame), 0
-                                          , CGRectGetWidth(_labelExpander.frame), h);
+    _labelExpander.frame = CGRectMake(w-kGeomConnectHeaderRightMargin-CGRectGetWidth(_labelExpander.frame),
+                                      (kGeomConnectScreenHeaderHeight-CGRectGetHeight(_labelExpander.frame))/2,
+                                      CGRectGetWidth(_labelExpander.frame),
+                                      CGRectGetHeight(_labelExpander.frame));
     CGFloat angle = _isExpanded ? 3*M_PI/2 : M_PI/2;
-    _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
+    _labelExpander.layer.transform = CATransform3DMakeRotation(angle, 0, 0, 1);
+    
+    CGRect frame;
+    frame = _noUsersMsgLabel.frame;
+    frame.size = [_noUsersMsgLabel sizeThatFits:CGSizeMake(width(self) - 2*kGeomSpaceEdge, 100)];
+    frame.size.width = width(self) - 2*kGeomSpaceEdge;
+    frame.origin.x = kGeomSpaceEdge;
+    frame.origin.y = kGeomConnectScreenHeaderHeight + (h-kGeomConnectScreenHeaderHeight-frame.size.height)/2;
+    _noUsersMsgLabel.frame = frame;
 }
 
 @end
@@ -81,13 +123,14 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, strong) NSArray *recentUsersArray; // section 3
 @property (nonatomic, strong) NSArray *inTheKnowUsersArray; // section
 
-@property (nonatomic, strong) AFHTTPRequestOperation *fetchOperationSection1; // fb
-@property (nonatomic, strong) AFHTTPRequestOperation *fetchOperationSection2; // foodies
+@property (nonatomic, strong) AFHTTPRequestOperation *roSuggestedUsers; // fb
+@property (nonatomic, strong) AFHTTPRequestOperation *roFoodies; // foodies
 @property (nonatomic, strong) AFHTTPRequestOperation *roRecentUsers; // users new to Oomami
 @property (nonatomic, strong) AFHTTPRequestOperation *roInTheKnow; // users in the know around you
 
 @property (nonatomic, strong) NSArray *arraySectionHeaderViews;
 @property (nonatomic, assign) BOOL canSeeFriends, canSeeFoodies, canSeeRecentUsers, canSeeInTheKnow;
+@property (nonatomic, assign) BOOL gotFriendsResult, gotFoodiesResult, gotRecentUsersResult, gotInTheKnowResult;
 @property (nonatomic) BOOL needRefresh;
 
 @end
@@ -128,21 +171,20 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _inTheKnowUsersArray = [NSArray new];
     
     ConnectTableSectionHeader *hvNewestUsers = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeRecentUsers];
-    ConnectTableSectionHeader *hvFriendsToFollow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFriends];
-    ConnectTableSectionHeader *hvTopFoodies = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFoodies];
-    ConnectTableSectionHeader *hvInTheKnow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeInTheKnow];
+    hvNewestUsers.noUsersMessage = @"Recently added users will appear here.";
+    hvNewestUsers.labelTitle.text = @"Newest Users";
     
-    hvFriendsToFollow.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+    ConnectTableSectionHeader *hvFriendsToFollow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFriends];
+    hvFriendsToFollow.noUsersMessage = @"Invite Facebook friends to use Oomami. When they join you'll be able to find out what they like to eat.";
     hvFriendsToFollow.labelTitle.text = @"Friends you can follow";
     
-    hvTopFoodies.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+    ConnectTableSectionHeader *hvTopFoodies = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFoodies];
+    hvTopFoodies.noUsersMessage = @"We'll keep an eye out for foodies you can follow. When you upload a lot of food photos or add to lists you too will become a foodie.";
     hvTopFoodies.labelTitle.text = @"Top Foodies";
     
-    hvInTheKnow.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
+    ConnectTableSectionHeader *hvInTheKnow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeInTheKnow];
+    hvInTheKnow.noUsersMessage = @"User that know this area will appear here.";
     hvInTheKnow.labelTitle.text = @"In the Know Around You";
-    
-    hvNewestUsers.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
-    hvNewestUsers.labelTitle.text = @"Newest Users";
     
     _arraySectionHeaderViews= @[hvFriendsToFollow, hvTopFoodies, hvInTheKnow, hvNewestUsers];
     
@@ -216,6 +258,12 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (void)reload
 {
     // NOTE: Need to make the call to find out who we are following before anything else is displayed.
+    
+    _gotFriendsResult =
+    _gotFoodiesResult =
+    _gotRecentUsersResult =
+    _gotInTheKnowResult = NO;
+    
     __weak  ConnectVC *weakSelf = self;
     
     UserObject *currentUser = [Settings sharedInstance].userObject;
@@ -232,17 +280,15 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     UserObject*user= [Settings sharedInstance].userObject;
     __weak ConnectVC *weakSelf = self;
     
-    self.fetchOperationSection2 =
+    self.roFoodies =
     [OOAPI getFoodieUsersForUser:user
                          success:^(NSArray *users) {
                              weakSelf.foodiesArray = users;
-                             if (weakSelf.canSeeFoodies) {
-                                 [self reloadSection:kConnectSectionFoodies];
-                             }
-//                             [self fetchRecentUsers];
+                             _gotFoodiesResult = YES;
+                             [self reloadSection:kConnectSectionFoodies];
                          }
                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                             [self fetchRecentUsers];
+                             _gotFoodiesResult = YES;
                          }
      ];
 }
@@ -252,12 +298,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     __weak ConnectVC *weakSelf = self;
     
     self.roRecentUsers = [OOAPI getRecentUsersSuccess:^(NSArray *users) {
-                                weakSelf.recentUsersArray = users;
-                                [self reloadSection:kConnectSectionRecentUsers];
+                            weakSelf.recentUsersArray = users;
+                            _gotRecentUsersResult = YES;
+                            [self reloadSection:kConnectSectionRecentUsers];
                         }
                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             NSLog(@"unable to fetch recent users");
-//                            [self reloadSection:2];
+                            _gotRecentUsersResult = YES;
                         }];
 
 }
@@ -268,16 +315,18 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                              forUser:[Settings sharedInstance].userObject.userID
                                              success:^(NSArray *users) {
                                                  weakSelf.inTheKnowUsersArray = users;
+                                                 _gotInTheKnowResult = YES;
                                                  [self reloadSection:kConnectSectionInTheKnow];
                                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                 _gotInTheKnowResult = YES;
                                                  NSLog(@"unable to fetch in the know users");
                                              }];
 }
 
 - (void)reloadSection:(NSUInteger)section {
     dispatch_async(dispatch_get_main_queue(), ^ {
-        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
-//        [_tableAccordion reloadData];
+//        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [_tableAccordion reloadData];
         [self.refreshControl endRefreshing];
     });
 }
@@ -291,12 +340,12 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)reloadAfterDeterminingWhoWeAreFollowing
 {
-    [self.fetchOperationSection1 cancel];
-    [self.fetchOperationSection2 cancel];
+    [self.roSuggestedUsers cancel];
+    [self.roFoodies cancel];
     [self.roRecentUsers cancel];
     [self.roInTheKnow cancel];
-    self.fetchOperationSection1 = nil;
-    self.fetchOperationSection2 = nil;
+    self.roSuggestedUsers = nil;
+    self.roFoodies = nil;
     self.roRecentUsers = nil;
     self.roInTheKnow = nil;
     
@@ -309,7 +358,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (BOOL)weAreFollowingUser:(NSUInteger)userID
 {
     for (UserObject *user in _followeesArray) {
-        if ( user.userID == userID) {
+        if (user.userID == userID) {
             return YES;
         }
     }
@@ -348,48 +397,30 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     NSInteger row = indexPath.row;
     NSInteger section = indexPath.section;
     UserObject *u = nil;
-    NSString *noUsersMessage;
     
     switch (section) {
         case kConnectSectionFriends:
             if (row < _suggestedUsersArray.count) {
                     u = _suggestedUsersArray[row];
             }
-            noUsersMessage = @"Invite Facebook friends to use Oomami. When they join you'll be able to find out what the like to eat.";
             break;
         case kConnectSectionFoodies:
             if (row < _foodiesArray.count) {
                 u = _foodiesArray[row];
             }
-            noUsersMessage = @"We'll keep an eye out for foodies you can follow. When you upload a lot of food photos or add to lists you too will become a foodie.";
             break;
         case kConnectSectionInTheKnow:
             if (row < _inTheKnowUsersArray.count) {
                 u = _inTheKnowUsersArray[row];
             }
-            noUsersMessage = @"User that know this area will appear here.";
             break;
         case kConnectSectionRecentUsers:
             if (row < _recentUsersArray.count) {
                 u = _recentUsersArray[row];
             }
-            noUsersMessage = @"Recently added users will appear here.";
             break;
         default:
             break;
-    }
-    
-    if (!u) {
-        UITableViewCell *cell;
-        cell = [tableView dequeueReusableCellWithIdentifier:kConnectEmptyCellIdentifier forIndexPath:indexPath];
-        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        cell.textLabel.text = noUsersMessage;
-        cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3];
-        cell.textLabel.numberOfLines = 0;
-        cell.textLabel.textColor = UIColorRGBA(kColorText);
-        cell.selectionStyle = UITableViewCellSeparatorStyleNone;
-        return cell;
     }
     
     UserListTVC *cell;
@@ -480,18 +511,37 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
+    NSInteger count;
+    ConnectTableSectionHeader *hv = [_arraySectionHeaderViews objectAtIndex:section];
+    
     switch (section) {
         case kConnectSectionRecentUsers:
-            return [_recentUsersArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            if (!_gotRecentUsersResult) return kGeomConnectScreenHeaderHeight;
+            count = [_recentUsersArray count];
+            hv.numberUsers = count;
+            if (count) return kGeomConnectScreenHeaderHeight;
+            return 100;
             break;
         case kConnectSectionInTheKnow:
-            return [_inTheKnowUsersArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            if (!_gotInTheKnowResult) return kGeomConnectScreenHeaderHeight;
+            count = [_inTheKnowUsersArray count];
+            hv.numberUsers = count;
+            if (count) return kGeomConnectScreenHeaderHeight;
+            return 100;
             break;
         case kConnectSectionFoodies:
-            return [_foodiesArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            if (!_gotFoodiesResult) return kGeomConnectScreenHeaderHeight;
+            count = [_foodiesArray count];
+            hv.numberUsers = count;
+            if (count) return kGeomConnectScreenHeaderHeight;
+            return 100;
             break;
         case kConnectSectionFriends:
-            return [_suggestedUsersArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            if (!_gotFriendsResult) return kGeomConnectScreenHeaderHeight;
+            count = [_suggestedUsersArray count];
+            hv.numberUsers = count;
+            if (count) return kGeomConnectScreenHeaderHeight;
+            return 100;
             break;
             
         default:
@@ -648,9 +698,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                   success:^(NSArray *users) {
                                       weakSelf.suggestedUsersArray = users;
                                       [weakSelf refreshSuggestedUsersSection];
+                                      _gotFriendsResult = YES;
                                       [self reloadSection:kConnectSectionFriends];
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                       NSLog (@"FETCH OF NON-FOLLOWEES USING FB IDs FAILED");
+                                      _gotFriendsResult = YES;
                                       [weakSelf refreshSuggestedUsersSection];
                                   }];
     }
