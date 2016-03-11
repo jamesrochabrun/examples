@@ -12,8 +12,8 @@
 @interface OOTextEntryModalVC ()
 @property (nonatomic, strong) UIButton *postButton;
 @property (nonatomic, strong) UITextView *textView;
-@property (nonatomic,strong) UINavigationBar *bar;
-@property (nonatomic,assign)  float spaceRequiredForButton;
+@property (nonatomic, strong) UINavigationBar *bar;
+@property (nonatomic, assign) CGFloat spaceRequiredForButton;
 @end
 
 @implementation OOTextEntryModalVC
@@ -25,7 +25,7 @@
     _bar = [UINavigationBar new];
     [ self.view addSubview: _bar];
     
-    self.nto = [[NavTitleObject alloc] initWithHeader: self.title ?: @"CAPTION"
+    self.nto = [[NavTitleObject alloc] initWithHeader: self.title ?: @"About you"
                                             subHeader: self.subtitle ?: @""];
     self.navTitle = self.nto;
     
@@ -35,26 +35,29 @@
     _textView.text = self.defaultText;
     _textView.keyboardType = UIKeyboardTypeTwitter;
     _textView.textColor = UIColorRGBA(kColorText);
-    _textView.backgroundColor = UIColorRGBA(kColorBlack);
+    _textView.backgroundColor = UIColorRGBA(kColorCellBackground);
     _textView.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
     _textView.layer.cornerRadius = kGeomCornerRadius;
     [_textView setScrollEnabled:NO];
     [self.view addSubview:_textView];
 
-    NSString *textToDisplayInTheButton= self.buttonText ?:  @"Post";
-    UIFont *font= [UIFont  fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
-    CGSize labelSize = [textToDisplayInTheButton sizeWithAttributes:@{NSFontAttributeName: font}];
-    self.spaceRequiredForButton=  labelSize.width +2*kGeomSpaceInter;
+    NSString *textToDisplayInTheButton = self.buttonText ?: @"Post";
+//    UIFont *font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
+//    CGSize labelSize = [textToDisplayInTheButton sizeWithAttributes:@{NSFontAttributeName: font}];
+//    self.spaceRequiredForButton = labelSize.width + 2*kGeomSpaceInter;
     
     _postButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_postButton withText:textToDisplayInTheButton
-                 fontSize:kGeomFontSizeH2
+                 fontSize:kGeomFontSizeH3
                     width:66
                    height:40
-          backgroundColor:kColorOffBlack
+          backgroundColor:kColorButtonBackground
                    target:self
                   selector:@selector(post:)];
     [_postButton setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
+    [_postButton.titleLabel sizeToFit];
+    _spaceRequiredForButton = width(_postButton);
+    
     _postButton.translatesAutoresizingMaskIntoConstraints = NO;
     _postButton.titleLabel.numberOfLines= 0;
     _postButton.titleLabel.textAlignment= NSTextAlignmentCenter;

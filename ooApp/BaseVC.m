@@ -162,39 +162,6 @@
     [self displayDropDown:NO];
 }
 
-//- (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
-//{
-//    if (revealController.frontViewPosition == FrontViewPositionRight) {
-//        
-//        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationMenuWillOpen object:self];
-//        
-//        UIView *lockingView = [UIView new];
-//        lockingView.translatesAutoresizingMaskIntoConstraints = NO;
-//        
-//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:revealController action:@selector(revealToggle:)];
-//        [lockingView addGestureRecognizer:tap];
-//        [lockingView addGestureRecognizer:revealController.panGestureRecognizer];
-//        [lockingView setTag:1000];
-//        [revealController.frontViewController.view addSubview:lockingView];
-//        
-//        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(lockingView);
-//        
-//        [revealController.frontViewController.view addConstraints:
-//         [NSLayoutConstraint constraintsWithVisualFormat:@"|[lockingView]|"
-//                                                 options:0
-//                                                 metrics:nil
-//                                                   views:viewsDictionary]];
-//        [revealController.frontViewController.view addConstraints:
-//         [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[lockingView]|"
-//                                                 options:0
-//                                                 metrics:nil
-//                                                   views:viewsDictionary]];
-//        [lockingView sizeToFit];
-//    } else {
-//        [[revealController.frontViewController.view viewWithTag:1000] removeFromSuperview];
-//    }
-//}
-
 - (void)setNavTitle:(NavTitleObject *)navTitle
 {
     _navTitle = navTitle;

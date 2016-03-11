@@ -28,7 +28,7 @@
         [_markerIcon sizeToFit];
         
         _indexLabel = [[UILabel alloc] init];
-        [_indexLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH6] textColor:kColorBlack backgroundColor:kColorClear];
+        [_indexLabel withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH6] textColor:kColorTextReverse backgroundColor:kColorClear];
         _indexLabel.frame = CGRectMake(0, 1, 0, 0);
         [_markerIcon addSubview:_indexLabel];
     }
