@@ -415,6 +415,7 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getUsersAroundLocation:(CLLocationCoordinate2D)location
+                                           forUser:(NSUInteger)userID
                                            success:(void (^)(NSArray *users))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 

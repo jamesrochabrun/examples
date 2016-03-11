@@ -8,6 +8,7 @@
 
 #import "OOUserView.h"
 #import "OOAPI.h"
+#import "DebugUtilities.h"
 
 @interface OOUserView ()
 
@@ -15,10 +16,10 @@
 @property (nonatomic, strong) UIView *viewHalo;
 @property (nonatomic, strong) UIImageView *ivFoodie;
 @property (nonatomic, strong) UILabel *emptyUserView;
-@property (nonatomic, strong) UILabel  *circle;
+@property (nonatomic, strong) UILabel *circle;
 @property (nonatomic, strong) UIButton *buttonSettings, *buttonSettingsInner;
-@property (nonatomic,assign) BOOL isFoodie;
-@property (nonatomic,assign) BOOL showCog;
+@property (nonatomic, assign) BOOL isFoodie;
+@property (nonatomic, assign) BOOL showCog;
 @end
 
 @implementation OOUserView
@@ -39,21 +40,25 @@
         [self addSubview:_emptyUserView];
         _emptyUserView.clipsToBounds= YES;
         
-        _ivFoodie= makeImageView(self,  nil);
+        _ivFoodie = makeImageView(self,  nil);
         _ivFoodie.contentMode = UIViewContentModeScaleAspectFit;
-        _ivFoodie.clipsToBounds=NO;
+        _ivFoodie.clipsToBounds = NO;
         
         _viewHalo= makeView(self, UIColorRGBA(kColorClear));
         addBorder(_viewHalo, 1.5, UIColorRGBA(kColorTextActive));
         _viewHalo.userInteractionEnabled=NO;
         
-        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeH1, UIColorRGBA(kColorTextReverse), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
-        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeH1, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
-        _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
+        _buttonSettings = makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeH1, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner = makeIconButton(self, kFontIconSettings, kGeomFontSizeH1, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner.frame = CGRectMake(0,0,100,100);
+        _buttonSettingsInner.hidden = YES;
         
         _circle = [[UILabel alloc] init];
-        [_circle withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH6] textColor:kColorText backgroundColor:kColorClear];
+        [_circle withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
+        _circle.text = kFontIconFilledCircle;
+        _circle.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_circle];
+//        [DebugUtilities addBorderToViews:@[_buttonSettings, _circle]];
     }
     return self;
 }
@@ -100,18 +105,25 @@
     _emptyUserView.frame = self.bounds;
     _imageView.frame = self.bounds;
     _viewHalo.frame = self.bounds;
-    _ivFoodie.frame= self.bounds;
+    _ivFoodie.frame = self.bounds;
 
     _viewHalo.layer.cornerRadius = w/2;
     _emptyUserView.layer.cornerRadius = w/2;
-    _imageView.layer.cornerRadius= w/2;
+    _imageView.layer.cornerRadius = w/2;
 
-    const  float buttonSettingsSize= _showCog? kGeomProfileSettingsBadgeSize : 0;
-    _buttonSettings.frame = CGRectMake(w- buttonSettingsSize,h-buttonSettingsSize,
-                                       buttonSettingsSize,buttonSettingsSize);
+    const float buttonSettingsSize = _showCog ? kGeomProfileSettingsBadgeSize:0;
+    
+    _buttonSettings.frame = CGRectMake(w-buttonSettingsSize,
+                                       6+h-buttonSettingsSize,
+                                       buttonSettingsSize,
+                                       buttonSettingsSize);
     _buttonSettingsInner.frame = _buttonSettings.frame;
-    _circle.frame = _buttonSettingsInner.frame;
-    NSLog(@"cog frame = %@ %@", NSStringFromCGRect(_buttonSettingsInner.frame), NSStringFromCGRect(_circle.frame));
+    CGRect frame = _buttonSettings.frame;
+    frame.origin.y -=1;
+    _circle.frame = frame;
+
+    //_circle.center = CGPointMake(_circle.center.y, _circle.center.x-1);
+    //[self bringSubviewToFront:_circle];
 }
 
 - (void)setUser:(UserObject *)user

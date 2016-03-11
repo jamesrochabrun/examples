@@ -1883,6 +1883,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 }
 
 + (AFHTTPRequestOperation *)getUsersAroundLocation:(CLLocationCoordinate2D)location
+                                           forUser:(NSUInteger)userID
                                            success:(void (^)(NSArray *users))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
@@ -1891,16 +1892,20 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     //eg. /users/aroundyou?latitude=33.8088231&longitude=-117.8515011
     
     NSString *urlString;
-    urlString= [NSString stringWithFormat:@"%@://%@/users/aroundyou",
-                kHTTPProtocol, [OOAPI URL]];
+    urlString= [NSString stringWithFormat:@"%@://%@/users/%lu/aroundyou",
+                kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
     if (!CLLocationCoordinate2DIsValid(location)) {
         failure(nil, nil);
         return nil;
     }
     
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:
-                                    @{kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
-                                      kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude]}];
+                                    @{
+                                      kKeyRestaurantLatitude:[NSNumber numberWithFloat:location.latitude],
+                                      kKeyRestaurantLongitude:[NSNumber numberWithFloat:location.longitude],
+                                      kKeySearchRadius:[NSNumber numberWithFloat:30000]
+                                      }
+                                       ];
                                                                                       
     AFHTTPRequestOperation *op;
     

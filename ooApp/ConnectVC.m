@@ -87,7 +87,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, strong) AFHTTPRequestOperation *roInTheKnow; // users in the know around you
 
 @property (nonatomic, strong) NSArray *arraySectionHeaderViews;
-@property (nonatomic, assign) BOOL canSeeSection1Items, canSeeSection2Items, canSeeSection3Items, canSeeSection4Items;
+@property (nonatomic, assign) BOOL canSeeFriends, canSeeFoodies, canSeeRecentUsers, canSeeInTheKnow;
 @property (nonatomic) BOOL needRefresh;
 
 @end
@@ -113,10 +113,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     [super viewDidLoad];
     
-    _canSeeSection1Items = YES;
-    _canSeeSection2Items = YES;
-    _canSeeSection3Items = YES;
-    _canSeeSection4Items = YES;
+    _canSeeFoodies = _canSeeFriends = _canSeeInTheKnow = _canSeeRecentUsers = YES;
     
     _needRefresh = YES;
     
@@ -130,10 +127,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _recentUsersArray = [NSArray new];
     _inTheKnowUsersArray = [NSArray new];
     
-    ConnectTableSectionHeader *hvNewestUsers = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection1Items];
-    ConnectTableSectionHeader *hvFriendsToFollow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection2Items];
-    ConnectTableSectionHeader *hvTopFoodies = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection4Items];
-    ConnectTableSectionHeader *hvInTheKnow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeSection3Items];
+    ConnectTableSectionHeader *hvNewestUsers = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeRecentUsers];
+    ConnectTableSectionHeader *hvFriendsToFollow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFriends];
+    ConnectTableSectionHeader *hvTopFoodies = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFoodies];
+    ConnectTableSectionHeader *hvInTheKnow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeInTheKnow];
     
     hvFriendsToFollow.backgroundColor = UIColorRGBA(kColorConnectHeaderBackground);
     hvFriendsToFollow.labelTitle.text = @"Friends you can follow";
@@ -239,7 +236,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [OOAPI getFoodieUsersForUser:user
                          success:^(NSArray *users) {
                              weakSelf.foodiesArray = users;
-                             if (weakSelf.canSeeSection2Items) {
+                             if (weakSelf.canSeeFoodies) {
                                  [self reloadSection:kConnectSectionFoodies];
                              }
 //                             [self fetchRecentUsers];
@@ -267,18 +264,20 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)fetchInTheKnow {
     __weak ConnectVC *weakSelf = self;
-    self.roInTheKnow = [OOAPI getUsersAroundLocation:[LocationManager sharedInstance].currentUserLocation success:^(NSArray *users) {
-        weakSelf.inTheKnowUsersArray = users;
-        [self reloadSection:kConnectSectionInTheKnow];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"unable to fetch in the know users");
-    }];
+    self.roInTheKnow = [OOAPI getUsersAroundLocation:[LocationManager sharedInstance].currentUserLocation
+                                             forUser:[Settings sharedInstance].userObject.userID
+                                             success:^(NSArray *users) {
+                                                 weakSelf.inTheKnowUsersArray = users;
+                                                 [self reloadSection:kConnectSectionInTheKnow];
+                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                 NSLog(@"unable to fetch in the know users");
+                                             }];
 }
 
 - (void)reloadSection:(NSUInteger)section {
     dispatch_async(dispatch_get_main_queue(), ^ {
-//        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
-        [_tableAccordion reloadData];
+        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+//        [_tableAccordion reloadData];
         [self.refreshControl endRefreshing];
     });
 }
@@ -429,7 +428,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     return view;
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
 // Purpose:
@@ -482,6 +480,23 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
+    switch (section) {
+        case kConnectSectionRecentUsers:
+            return [_recentUsersArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            break;
+        case kConnectSectionInTheKnow:
+            return [_inTheKnowUsersArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            break;
+        case kConnectSectionFoodies:
+            return [_foodiesArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            break;
+        case kConnectSectionFriends:
+            return [_suggestedUsersArray count] ? kGeomConnectScreenHeaderHeight : 100;
+            break;
+            
+        default:
+            break;
+    }
     return kGeomConnectScreenHeaderHeight;
 }
 
@@ -541,16 +556,20 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     switch (section) {
         case kConnectSectionFriends:
-            return _suggestedUsersArray.count;// _canSeeSection1Items? MAX(0, _suggestedUsersArray.count):0;
+//            return _suggestedUsersArray.count;
+            return _canSeeFriends? _suggestedUsersArray.count:0;
             break;
         case kConnectSectionFoodies:
-            return _foodiesArray.count;// _canSeeSection2Items? MAX(0, _foodiesArray.count):0;
+//            return _foodiesArray.count;
+            return _canSeeFoodies? _foodiesArray.count:0;
             break;
         case kConnectSectionRecentUsers:
-            return _recentUsersArray.count;//_canSeeSection3Items? MAX(1, _recentUsersArray.count):0;
+//            return _recentUsersArray.count;
+            return _canSeeRecentUsers? _recentUsersArray.count:0;
             break;
         case kConnectSectionInTheKnow:
-            return _inTheKnowUsersArray.count;//_canSeeSection3Items? MAX(1, _recentUsersArray.count):0;
+//            return _inTheKnowUsersArray.count;
+            return _canSeeInTheKnow? _inTheKnowUsersArray.count:0;
             break;
         default:
             break;
@@ -566,16 +585,20 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (void)userTappedSectionHeader:(int)which
 {
     switch (which) {
-        case 0:
-            _canSeeSection1Items = !_canSeeSection1Items;
+        case kConnectSectionFriends:
+            _canSeeFriends = !_canSeeFriends;
             break;
             
-        case 1:
-            _canSeeSection2Items = !_canSeeSection2Items;
+        case kConnectSectionFoodies:
+            _canSeeFoodies = !_canSeeFoodies;
             break;
             
-        case 2:
-            _canSeeSection3Items = !_canSeeSection3Items;
+        case kConnectSectionInTheKnow:
+            _canSeeInTheKnow = !_canSeeInTheKnow;
+            break;
+            
+        case kConnectSectionRecentUsers:
+            _canSeeRecentUsers = !_canSeeRecentUsers;
             break;
     }
     
@@ -636,7 +659,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (void)refreshSuggestedUsersSection
 {
     // RULE: Don't reload the section unless the foodies are visible.
-    if (self.canSeeSection1Items) {
+    if (_canSeeFriends) {
     }
     dispatch_async(dispatch_get_main_queue(), ^{
     });
