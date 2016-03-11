@@ -147,6 +147,8 @@
     NSUInteger ownUserIdentifier = [currentUser userID];
     _viewingOwnProfile = _userInfo.userID == ownUserIdentifier;
 
+    _buttonDescription.enabled = _viewingOwnProfile;
+
     __weak ProfileHeaderView *weakSelf = self;
     
     [_userView setUser:_userInfo];
@@ -278,6 +280,9 @@
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines= 0;
         _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeAbout];
+
+        [_buttonDescription setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        [_buttonDescription setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateDisabled];
         
         _labelVenuesCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
         _labelPhotoCount= makeLabel(self,  @"", kGeomFontSizeStatsText);
@@ -465,7 +470,6 @@
     [nc addChildViewController:vc];
     
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -1142,7 +1146,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     [nc addChildViewController:_restaurantPicker];
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -1544,7 +1547,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [nc addChildViewController:vc];
     
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -1696,26 +1698,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     vc.userInfo = user;
     [self.navigationController pushViewController:vc animated:YES];
 }
-
-//- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser
-//{
-//    return _arrayPhotos.count;
-//}
-//
-//- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index
-//{
-//    if (index  < _arrayPhotos.count) {
-//        MediaItemObject *mediaObject= _arrayPhotos[index];
-//        MWPhoto *photo;
-//        if (mediaObject.url) {
-//            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mediaObject.url]];
-//            [photo performLoadUnderlyingImageAndNotify];
-//            photo.caption = mediaObject.caption;
-//            return photo;
-//        }
-//    }
-//    return nil;
-//}
 
 //------------------------------------------------------------------------------
 // Name:    getNumberOfLists
@@ -2009,20 +1991,20 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         case PROFILE_EMPTYCELL_LIST:
         case PROFILE_EMPTYCELL_PHOTO:{
             [_labelIcon sizeToFit];
-            float w1= _labelIcon.frame.size.width;
-            float w2= messageSize.width;
-            float requiredWidth= w1+w2 +kGeomSpaceInter;
-            float x=  (w-requiredWidth)/2;
+            CGFloat w1 = _labelIcon.frame.size.width;
+            CGFloat w2 = messageSize.width;
+            CGFloat requiredWidth = w1+w2+kGeomSpaceInter;
+            CGFloat x = (w-requiredWidth)/2;
 
-            _labelIcon.frame= CGRectMake(x,0, w1,kGeomHeightButton);
-            x+= w1 +kGeomSpaceInter;
-            _labelMessage.frame= CGRectMake(x,0,w2,kGeomHeightButton);
+            _labelIcon.frame = CGRectMake(x, height(self)/2, w1, kGeomHeightButton);
+            x+= w1 + kGeomSpaceInter;
+            _labelMessage.frame = CGRectMake(x, height(self)/2, w2, kGeomHeightButton);
         } break;
             
         default:{
-            float w1= messageSize.width;
-            float x=  (w-w1)/2;
-            _labelMessage.frame= CGRectMake(x,0,w1,kGeomHeightButton);
+            CGFloat w1 = messageSize.width;
+            CGFloat x =  (w-w1)/2;
+            _labelMessage.frame = CGRectMake(x,height(self)/2,w1,kGeomHeightButton);
         } break;
     }
 }

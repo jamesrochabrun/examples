@@ -77,7 +77,7 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
+//    [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [self.navigationController.navigationBar setTranslucent:YES];
     self.navigationController.view.backgroundColor = [UIColor clearColor];
     

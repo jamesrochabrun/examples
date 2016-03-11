@@ -231,7 +231,7 @@
 - (void)updateConstraints {
     [super updateConstraints];
     
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@((width(self)- 2*kGeomSpaceInter)/4)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"imageWidth":@(120), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter":@(kGeomSpaceInter), @"spaceInterX2":@(2*kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"iconButtonDimensions":@(kGeomDimensionsIconButton), @"actionButtonWidth":@(width(self)/4)};
     
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _verticalLine1, _verticalLine2, _priceRange, /*_rating,*/ _address, _website, _phoneNumber, _distance, _cuisine, _shareButton, _favoriteButton, _backgroundImage, _locationButton, _hoursButton, _hoursView, _hoursScroll, _imageOverlay, _menuButton, _addButton);
@@ -239,7 +239,7 @@
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_backgroundImage]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageOverlay]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     UIView *centerView, *lastLineView, *currentLine;
@@ -454,7 +454,7 @@
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_hoursView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_locationButton(actionButtonWidth)][_shareButton(>=actionButtonWidth)][_favoriteButton(actionButtonWidth)][_addButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationButton(actionButtonWidth)][_shareButton(>=actionButtonWidth)][_favoriteButton(actionButtonWidth)][_addButton]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     lastLineView = currentLine;
     
@@ -463,18 +463,18 @@
         
     } else if (_restaurant.cuisine && !_restaurant.mobileMenuURL) {
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:kGeomDimensionsIconButton]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_cuisine]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_cuisine]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_locationButton attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
         currentLine = _cuisine;
         centerView = _cuisine;
     } else if (!_restaurant.cuisine && _restaurant.mobileMenuURL) {
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_menuButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:kGeomDimensionsIconButton]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_menuButton]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_menuButton]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_menuButton attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_locationButton attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
         currentLine = _menuButton;
         centerView = _menuButton;
     } else {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(spaceEdge)-[_cuisine][_menuButton]-(spaceEdge)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_cuisine][_menuButton]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_menuButton attribute:NSLayoutAttributeWidth multiplier:1 constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_cuisine attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_menuButton attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_menuButton attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:0 multiplier:1 constant:kGeomDimensionsIconButton]];

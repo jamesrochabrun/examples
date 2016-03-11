@@ -110,7 +110,6 @@ static CGFloat kNextPhotoTolerance = 40;
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
-        [Common addShadowTo:_userViewButton withColor:kColorBackgroundTheme];
         
         [self.view addSubview:_yumIndicator];
 //        [DebugUtilities addBorderToViews:@[_yumIndicator]];
@@ -206,7 +205,6 @@ static CGFloat kNextPhotoTolerance = 40;
 
     [_aNC addChildViewController:vc];
     [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forBarMetrics:UIBarMetricsDefault];
-    [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
     [_aNC.navigationBar setTranslucent:YES];
     _aNC.view.backgroundColor = [UIColor clearColor];
     

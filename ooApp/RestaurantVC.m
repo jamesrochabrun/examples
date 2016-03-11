@@ -20,7 +20,6 @@
 #import "RestaurantListVC.h"
 #import "HoursOpen.h"
 #import "OOActivityItemProvider.h"
-//#import "MWPhotoBrowser.h"
 #import "MediaItemObject.h"
 #import "OOUserView.h"
 #import "ProfileVC.h"
@@ -719,7 +718,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             cvc.delegate = self;
             [cvc setFavorite:(_favoriteID) ? YES: NO];
             cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
-            //[DebugUtilities addBorderToViews:@[cvc]];
+//            [DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
         }
@@ -803,7 +802,6 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     [_aNC addChildViewController:vc];
     [_aNC.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [_aNC.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [_aNC.navigationBar setTranslucent:YES];
     _aNC.view.backgroundColor = [UIColor clearColor];
 
@@ -910,22 +908,6 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         vc.transitioningDelegate = self;
         self.navigationController.delegate = self;
         [self.navigationController pushViewController:vc animated:YES];
-
-//        NSUInteger row = indexPath.row;
-//        __weak RestaurantVC *weakSelf = self;
-//        MWPhotoBrowser *photoBrowser = [[MWPhotoBrowser alloc] initWithDelegate:weakSelf];
-//        [photoBrowser setCurrentPhotoIndex:row];
-//        __weak MediaItemObject *mio = [_mediaItems objectAtIndex:row];
-//        
-//        OOAPI *api = [[OOAPI alloc] init];
-//        [api getRestaurantImageWithMediaItem:[_mediaItems objectAtIndex:row] maxWidth:width(self.view) maxHeight:0 success:^(NSString *link) {
-//            mio.url = link;
-//            ON_MAIN_THREAD(^ {
-//                [self.navigationController pushViewController:photoBrowser animated:YES];
-//            });
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            ;
-//        }];
     }
 }
 
@@ -963,57 +945,6 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     return animationController;
 }
-
-//#pragma MWPhotoBrowser delegates
-//
-//- (NSUInteger)numberOfPhotosInPhotoBrowser:(MWPhotoBrowser *)photoBrowser {
-//    return [_mediaItems count];
-//}
-//
-//- (id <MWPhoto>)photoBrowser:(MWPhotoBrowser *)photoBrowser photoAtIndex:(NSUInteger)index {
-//    if (index < _mediaItems.count) {
-//        MediaItemObject *mio = [_mediaItems objectAtIndex:index];
-//        MWPhoto *photo;
-//        if (mio.url) {
-//            photo = [[MWPhoto alloc] initWithURL:[NSURL URLWithString:mio.url]];
-//            [photo performLoadUnderlyingImageAndNotify];
-//            photo.caption = mio.caption;
-//            return photo;
-//        } else if (mio.source == kMediaItemTypeGoogle && mio.reference) {
-//            OOAPI *api = [[OOAPI alloc] init];
-//            NSLog(@"mio reference= %@", mio.reference);
-//            
-//            __weak MWPhotoBrowser *weakPhotoBrowser = photoBrowser;
-//            
-//            [api getRestaurantImageWithMediaItem:mio
-//                                        maxWidth:width(self.view)
-//                                       maxHeight:0
-//                                         success:^(NSString *link) {
-//                                             mio.url = link;
-//                                             ON_MAIN_THREAD(^ {
-//                                                 if (link) {
-//                                                     [weakPhotoBrowser.delegate photoBrowser:weakPhotoBrowser photoAtIndex:index];
-//                                                 }
-//                                             });
-//                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                             ;
-//                                         }];
-//            return nil;
-//        }
-//        
-//    }
-//    return nil;
-//}
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 #pragma mark -
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {

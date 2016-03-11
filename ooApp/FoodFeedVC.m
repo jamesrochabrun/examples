@@ -355,7 +355,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     [nc addChildViewController:restaurantPicker];
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     
@@ -559,7 +558,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     [nc addChildViewController:vc];
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = [UIColor clearColor];
     

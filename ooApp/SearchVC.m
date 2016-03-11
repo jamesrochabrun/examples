@@ -414,7 +414,6 @@ typedef enum: char {
     [nc addChildViewController:vc];
     
     [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorBordersAndLines)]];
     [nc.navigationBar setTranslucent:YES];
     nc.view.backgroundColor = UIColorRGBA(kColorClear);
     

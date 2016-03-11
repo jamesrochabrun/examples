@@ -38,7 +38,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     if (self) {
         _iv = [[UIImageView alloc] init];
         _iv.translatesAutoresizingMaskIntoConstraints = NO;
-        _iv.backgroundColor = UIColorRGBA(kColorClear);
+        _iv.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _iv.contentMode = UIViewContentModeScaleAspectFill;
         _iv.alpha = 1;
         
@@ -75,6 +75,11 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
         _locationSearchBar.barTintColor = UIColorRGBA(kColorText);
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
+        UILabel *l = [UILabel new];
+        [l withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorText backgroundColor:kColorClear];
+        l.text = kFontIconLocation;
+        [l sizeToFit];
+        [_locationSearchBar setImage:[UIImage imageFromView:l] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
         _locationSearchBar.delegate = self;
         _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
@@ -102,7 +107,6 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     [self.view sendSubviewToBack:_iv];
-    
     self.navTitle = _nto;
 }
 
@@ -190,12 +194,12 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     views = NSDictionaryOfVariableBindings(_tableView, _iv, _searchBar, _cancelButton, _locationSearchBar);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_searchBar][_cancelButton(buttonWidth)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_searchBar][_cancelButton(buttonWidth)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_cancelButton(buttonHeight)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_searchBar(buttonHeight)][_locationSearchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_cancelButton(buttonHeight)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_searchBar(buttonHeight)][_locationSearchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     }
