@@ -169,7 +169,7 @@
 {
     _buttonFollow.hidden = NO;
     _buttonFollow.selected = following;
-    _buttonFollow.backgroundColor = following ? UIColorRGBA(kColorBlack):UIColorRGBA(kColorTextActive);
+    _buttonFollow.backgroundColor = following ? UIColorRGBA(kColorBackgroundTheme):UIColorRGBA(kColorTextActive);
     _buttonFollow.layer.borderWidth = following ? 1:0;
     [self bringSubviewToFront:_buttonFollow];
 }
@@ -283,7 +283,7 @@
     _labelUserName.frame=CGRectMake(x, y, w-margin-x, labelHeight);
     
     y +=  labelHeight;
-    _buttonFollow.frame = CGRectMake(w-margin-kGeomButtonWidth, y+3,kGeomButtonWidth, kGeomFollowButtonHeight);
+    _buttonFollow.frame = CGRectMake(w-margin-kGeomWidthButton, y+3,kGeomWidthButton, kGeomFollowButtonHeight);
     
     y += spacing;
     labelHeight=_labelName.intrinsicContentSize.height;
@@ -294,7 +294,7 @@
     if  (_buttonFollow.hidden ) {
         _labelName.frame=CGRectMake(x, y, w-margin-x, labelHeight);
     } else {
-        _labelName.frame=CGRectMake(x, y, w-kGeomButtonWidth-margin-spacing-x, labelHeight);
+        _labelName.frame=CGRectMake(x, y, w-kGeomWidthButton-margin-spacing-x, labelHeight);
     }
     
     y += labelHeight+ spacing;

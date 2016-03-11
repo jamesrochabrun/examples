@@ -19,6 +19,7 @@
 #import "ProfileVC.h"
 #import "RestaurantVC.h"
 #import <GoogleMaps/GoogleMaps.h>
+#import <Instabug/Instabug.h>
 #import "NotificationObject.h"
 #import "RestaurantListVC.h"
 #import "ViewPhotoVC.h"
@@ -48,7 +49,6 @@
     NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
     [_diagnosticLogString appendFormat: @"PLATFORM %@\r",platformString()];
     [_diagnosticLogString appendFormat:  @"APPLICATION %@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
-
 #else
     #define INTERNAL_RELEASE
 
@@ -76,6 +76,7 @@
     
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
+    [Instabug startWithToken:kAPIKeyInstabug invocationEvent:IBGInvocationEventShake];
     
     //TODO: If we asked the user for remote notifications already then register for remote notifications. This needs to be done every lauch to get a new token
     if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {

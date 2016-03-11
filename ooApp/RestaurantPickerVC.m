@@ -40,11 +40,11 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _iv.translatesAutoresizingMaskIntoConstraints = NO;
         _iv.backgroundColor = UIColorRGBA(kColorClear);
         _iv.contentMode = UIViewContentModeScaleAspectFill;
-        _iv.alpha = 0.20;
+        _iv.alpha = 1;
         
         _tableView = [[UITableView alloc] init];
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
-        _tableView.backgroundColor = UIColorRGBA(kColorLightImageOverlay);
+        _tableView.backgroundColor = UIColorRGBA(kColorDarkImageOverlay);
         _tableView.rowHeight = 44;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.dataSource = self;
@@ -72,8 +72,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _locationSearchBar.searchBarStyle = UISearchBarStyleMinimal;
         _locationSearchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _locationSearchBar.placeholder = LOCAL( @"Current Location");
-        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
-        _locationSearchBar.barTintColor = UIColorRGBA(kColorBlack);
+        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
+        _locationSearchBar.barTintColor = UIColorRGBA(kColorText);
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         _locationSearchBar.delegate = self;
         _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
@@ -82,7 +82,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
         
         _cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_cancelButton withText:@"Cancel" fontSize:kGeomFontSizeH2 width:75 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorOffBlack target:self selector:@selector(cancelSearch)];
+        [_cancelButton withText:@"Cancel" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorBordersAndLines target:self selector:@selector(cancelSearch)];
+
         _cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
         _currentSearchBar = _searchBar;
     }
@@ -92,12 +93,15 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(pickerCanceled)];
-    
-    [self.view addSubview:_tableView];
+
     [self.view addSubview:_iv];
+    [self.view addSubview:_tableView];
     [self.view addSubview:_searchBar];
     [self.view addSubview:_cancelButton];
     [self.view addSubview:_locationSearchBar];
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    [self.view sendSubviewToBack:_iv];
     
     self.navTitle = _nto;
 }
@@ -179,19 +183,19 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
+    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view)), @"buttonWidth" : @(kGeomWidthButton), @"buttonHeight" : @(kGeomHeightButton)};
     
     NSDictionary *views;
 
     views = NSDictionaryOfVariableBindings(_tableView, _iv, _searchBar, _cancelButton, _locationSearchBar);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_searchBar][_cancelButton(75)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_searchBar][_cancelButton(buttonWidth)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_cancelButton(40)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_searchBar(40)][_locationSearchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_cancelButton(buttonHeight)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_searchBar(buttonHeight)][_locationSearchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     }

@@ -53,15 +53,15 @@
 {
     [super layoutSubviews];
 
-    float h = height(self)*0.8;
-    float w = width(self);
-    float x = kGeomSpaceInter;
+    CGFloat h = height(self)*0.8;
+    CGFloat w = width(self);
+    CGFloat x = kGeomSpaceInter;
     _userView.frame = CGRectMake(x, (self.bounds.size.height-h)/2, h, h);
     [self bringSubviewToFront:_userView];
     x += h+kGeomSpaceInter;
     
-    float requiredHeightForText = self.header.intrinsicContentSize.height+self.subHeader1.intrinsicContentSize.height + kGeomSpaceInter;
-    float y = (h-requiredHeightForText)/2;
+    CGFloat requiredHeightForText = self.header.intrinsicContentSize.height+self.subHeader1.intrinsicContentSize.height + kGeomSpaceInter;
+    CGFloat y = (h-requiredHeightForText)/2;
     self.header.frame = CGRectMake(x,y,w-x,self.header.intrinsicContentSize.height);
     y += self.header.frame.size.height;
     self.subHeader1.frame = CGRectMake(x, y, w-x, self.subHeader1.intrinsicContentSize.height);

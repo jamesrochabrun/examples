@@ -157,11 +157,11 @@
     y= h/5;
     [_labelName sizeToFit];
     [_labelUserName sizeToFit];
-    _labelUserName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelUserName.frame.size.height);
+    _labelUserName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomWidthButton,_labelUserName.frame.size.height);
     y += _labelUserName.frame.size.height +kGeomSpaceInter;
-    _labelName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomButtonWidth,_labelName.frame.size.height);
+    _labelName.frame = CGRectMake( x,y,w-kGeomSpaceEdge-kGeomWidthButton,_labelName.frame.size.height);
     
-    _radioButton.frame = CGRectMake(w-kGeomButtonWidth, margin,kGeomButtonWidth,availableHeight);
+    _radioButton.frame = CGRectMake(w-kGeomWidthButton, margin,kGeomWidthButton,availableHeight);
 }
 
 - (void) setRadioButtonState: (BOOL)isSet

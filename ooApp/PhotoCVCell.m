@@ -171,7 +171,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 weakSelf.yumIndicator.alpha = 1;
                 weakSelf.yumIndicator.center = weakSelf.center;
-                [UIView animateKeyframesWithDuration:0.7 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
+                [UIView animateKeyframesWithDuration:1 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
                     weakSelf.yumIndicator.alpha = 0;
                 } completion:^(BOOL finished) {
                     [_yumButton setSelected:YES];

@@ -514,7 +514,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     RestaurantObject *r = [_restaurants objectAtIndex:row];
 
     cvc.delegate = self;
-    cvc.backgroundColor = UIColorRGBA(0xFFe6e6e6);
+    cvc.backgroundColor = UIColorRGBA(kColorTileBackground);
     cvc.mediaItemObject = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
 //    [cvc showActionButton:(cvc.mediaItemObject.source == kMediaItemTypeOomami) ? YES : NO];
     [cvc showActionButton:NO];

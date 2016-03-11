@@ -18,8 +18,10 @@
     self = [super initWithFrame:frame];
     if (self) {
         _termLabel = [[UILabel alloc] init];
-        [_termLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_termLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         _termLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        self.layer.cornerRadius = kGeomCornerRadius;
+        self.clipsToBounds = YES;
         [self addSubview:_termLabel];
     }
     return self;
@@ -49,8 +51,8 @@
 
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
-    self.backgroundColor = (selected) ? UIColorRGBA(kColorBlack) : UIColorRGBA(kColorOffBlack);
-    _termLabel.textColor = (selected) ? UIColorRGBA(kColorTextActive) : UIColorRGBA(kColorWhite);
+    self.backgroundColor = (selected) ? UIColorRGBA(kColorTextReverse) : UIColorRGBA(kColorButtonBackground);
+    _termLabel.textColor = (selected) ? UIColorRGBA(kColorTextActive) : UIColorRGBA(kColorText);
 }
 
 @end

@@ -184,10 +184,10 @@
     _textView.frame=CGRectMake((w-kGeomEmptyTextViewWidth)/2, y, kGeomEmptyTextViewWidth, heightForText);
     y+= heightForText+ vspace;
     
-    float x=  (w-2*kGeomButtonWidth-spacer)/2;
-    _buttonExplore.frame=CGRectMake (x,y,kGeomButtonWidth,kGeomHeightCreateListButton);
-    x +=kGeomButtonWidth+spacer;
-    _buttonLists.frame=CGRectMake (x,y,kGeomButtonWidth,kGeomHeightCreateListButton);
+    float x=  (w-2*kGeomWidthButton-spacer)/2;
+    _buttonExplore.frame=CGRectMake (x,y,kGeomWidthButton,kGeomHeightCreateListButton);
+    x +=kGeomWidthButton+spacer;
+    _buttonLists.frame=CGRectMake (x,y,kGeomWidthButton,kGeomHeightCreateListButton);
 }
 
 - (void) viewWillLayoutSubviews

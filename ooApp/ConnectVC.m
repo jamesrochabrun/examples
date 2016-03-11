@@ -270,6 +270,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     }];
 }
 
+- (void)fetchTop {
+    
+}
+
 - (void)reloadTableData {
     dispatch_async(dispatch_get_main_queue(), ^ {
         [_tableAccordion reloadData];

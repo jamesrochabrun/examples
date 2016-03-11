@@ -98,7 +98,7 @@
     }
     
     _welcomeMessageLabel = [UILabel new];
-    [_welcomeMessageLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeBig] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    [_welcomeMessageLabel withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeBig] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     [_scrollView addSubview:_welcomeMessageLabel];
     
     if (uo.firstName && [uo.firstName length]) {
@@ -107,17 +107,20 @@
         _welcomeMessageLabel.text = [NSString stringWithFormat:@"Welcome to Oomami"];
     }
     
-    self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
-                                  UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self,
-                                  @selector(userPressedSignUpButton:),
-                                  .6);
-    _buttonSignUp.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
+    _buttonSignUp = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_scrollView addSubview:_buttonSignUp];
+    [_buttonSignUp withText:@"Create" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:0 target:self selector:@selector(userPressedSignUpButton:)];
+//    self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
+//                                  UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self,
+//                                  @selector(userPressedSignUpButton:),
+//                                  .6);
+    _buttonSignUp.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
     self.fieldUsername = [UITextField new];
     _fieldUsername.delegate = self;
-    _fieldUsername.backgroundColor = UIColorRGBA(kColorBlack);
+    _fieldUsername.backgroundColor = UIColorRGBA(kColorText);
 //    _fieldUsername.placeholder = LOCAL(@"Enter username");
     _fieldUsername.borderStyle = UITextBorderStyleLine;
     _fieldUsername.textAlignment = NSTextAlignmentCenter;
@@ -126,7 +129,7 @@
     NSAttributedString *str = [[NSAttributedString alloc] initWithString:LOCAL(@"Enter Username") attributes:@{ NSForegroundColorAttributeName : UIColorRGBA(kColorGrayMiddle)}];
     _fieldUsername.attributedPlaceholder = str;
     _fieldUsername.layer.cornerRadius = kGeomCornerRadius;
-    _fieldUsername.textColor= UIColorRGBA(kColorWhite);
+    _fieldUsername.textColor= UIColorRGBA(kColorText);
     
     
     self.labelUsernameTaken= makeLabel(_scrollView, LOCAL(@"Sorry that name is already taken"), kGeomFontSizeDetail);
@@ -139,7 +142,7 @@
     self.labelMessage = makeLabel(_scrollView,
                                    LOCAL(@"What should we call you?"),
                                    kGeomFontSizeHeader);
-    _labelMessage.textColor = UIColorRGBA(kColorWhite);
+    _labelMessage.textColor = UIColorRGBA(kColorText);
     
     NavTitleObject *nto = [[NavTitleObject alloc]
                            initWithHeader:LOCAL(@"Create Username")
@@ -445,7 +448,7 @@
         y +=kGeomHeightButton; // NOTE: There is no room for the extra gap on the iPhone 4.
     }
     
-    _buttonSignUp.frame=CGRectMake ((w-kGeomButtonWidth)/2,y,kGeomButtonWidth,kGeomHeightButton);
+    _buttonSignUp.frame=CGRectMake ((w-kGeomWidthButton)/2,y,kGeomWidthButton,kGeomHeightButton);
     y +=kGeomHeightButton+ spacer;
     
     _scrollView.contentSize= CGSizeMake(w-1, y);

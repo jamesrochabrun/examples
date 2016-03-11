@@ -11,6 +11,12 @@
 
 NSString *const kAPIKeyGoogleMaps = @"AIzaSyDXafe9HUhTGZ_aWBfSo340uLYlJOpA95Q";
 
+#if 1 //beta key
+NSString *const kAPIKeyInstabug = @"bea287aa56f2d9ee7b66d8899f801938";
+#else
+NSString *const kAPIKeyInstabug = @"b98174251aa663e9f299ea17bd8ab1b4";
+#endif
+
 NSString *const kUserDefaultsUsingStagingServer = @"usingStaging";
 NSString *const kNotificationMenuWillOpen = @"notificationMenuWillOpen";
 

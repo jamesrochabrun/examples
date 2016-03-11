@@ -45,8 +45,9 @@
                                            nil];
         _gradient.actions = newActions;
         
-        [self.layer addSublayer:_gradient];
-        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA(kColorTextReverse & 0xDDFFFFFF) CGColor], (id)[UIColorRGBA(kColorTextReverse & 0x00FFFFFF) CGColor], nil];
+        [_thumbnail.layer addSublayer:_gradient];
+        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA(kColorButtonBackground) CGColor], (id)[UIColorRGBA(kColorButtonBackground & 0xF5FFFFFF) CGColor], (id)[UIColorRGBA((kColorButtonBackground & 0x00FFFFFF)) CGColor], nil];
+        _gradient.locations = @[@(0),@(0.3),@(1)];
         
         _icon = [[UILabel alloc] init];
         [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextActive backgroundColor:kColorClear];
@@ -61,7 +62,7 @@
         [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
         
         _iconLabel = [[UILabel alloc] init];
-        [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorTextActive backgroundColor:kColorClear];
+        [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH6] textColor:kColorTextActive backgroundColor:kColorClear];
         _iconLabel.text = @"";
         
         _subHeader2 = [[UILabel alloc] init];
@@ -143,7 +144,7 @@
                          toItem:_icon
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
-                         constant:-7]];
+                         constant:-6]];
     
     [self addConstraint:[NSLayoutConstraint
                          constraintWithItem:_subHeader1
@@ -197,7 +198,8 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _gradient.frame = CGRectMake(kGeomSpaceEdge, kGeomSpaceCellPadding, 280, height(_viewShadow));
+    _gradient.frame = _thumbnail.bounds;
+//    _gradient.frame = CGRectMake(kGeomSpaceEdge, kGeomSpaceCellPadding, width(self)*5/5, height(_viewShadow));
     [_gradient setStartPoint:CGPointMake(0, 0)];
     [_gradient setEndPoint:CGPointMake(1, 0)];
 }

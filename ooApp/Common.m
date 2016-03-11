@@ -838,10 +838,10 @@ void ANALYTICS_EVENT_UI (NSString* name)
 + (void)addShadowTo:(UIView *)view withColor:(NSUInteger)color
 {
     view.opaque = YES;
-    view.layer.shadowOffset = CGSizeMake ( 2, 2);
+    view.layer.shadowOffset = CGSizeMake (1, 1);
     view.layer.shadowColor = UIColorRGBA(color).CGColor;
     view.layer.shadowOpacity = .5;
-    view.layer.shadowRadius = 4;
+    view.layer.shadowRadius = 2;
     view.clipsToBounds = NO;
 }
 

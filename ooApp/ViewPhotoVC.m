@@ -35,6 +35,7 @@
 @property (nonatomic) CGPoint originPoint;
 @property (nonatomic, strong) ViewPhotoVC *nextPhoto;
 @property (nonatomic) SwipeType swipeType;
+@property (nonatomic, strong) UILabel *yumIndicator;
 @end
 
 static CGFloat kDismissTolerance = 20;
@@ -61,6 +62,14 @@ static CGFloat kNextPhotoTolerance = 40;
         [_captionButton setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
         [_captionButton.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
         
+        _yumIndicator = [[UILabel alloc] init];
+        _yumIndicator.translatesAutoresizingMaskIntoConstraints = NO;
+        [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:90] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
+        _yumIndicator.text = kFontIconYum;
+        [_yumIndicator sizeToFit];
+        _yumIndicator.alpha = 0;
+        [Common addShadowTo:_yumIndicator withColor:kColorWhite];
+        
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
         [_closeButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -85,7 +94,7 @@ static CGFloat kNextPhotoTolerance = 40;
         [_yumButton setTitle:kFontIconYum forState:UIControlStateSelected];
         _yumButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         _yumButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
-    
+        
         _numYums = [UIButton buttonWithType:UIButtonTypeCustom];
         [_numYums withText:@"" fontSize:kGeomFontSizeH4 width:30 height:30 backgroundColor:kColorClear target:self selector:@selector(showYums)];
         [_numYums setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -102,7 +111,9 @@ static CGFloat kNextPhotoTolerance = 40;
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
         [Common addShadowTo:_userViewButton withColor:kColorBackgroundTheme];
-//        [DebugUtilities addBorderToViews:@[_iv]];
+        
+        [self.view addSubview:_yumIndicator];
+//        [DebugUtilities addBorderToViews:@[_yumIndicator]];
 //        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
     return self;
@@ -632,10 +643,6 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
-//    if (!_iv.image.size.width) {
-//        return; // Fix for NaN crash.
-//    }
-    
     self.view.frame = APP.window.bounds;
     CGRect frame;
     CGFloat imageMaxY;
@@ -643,10 +650,8 @@ static CGFloat kNextPhotoTolerance = 40;
         
     _backgroundView.frame = self.view.frame;
     
-//    _iv.center = self.view.center;
     frame = _iv.frame;
     frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
-
     
     CGFloat imageWidth = width(self.view);
 //    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/((_iv.image.size.width)?(_iv.image.size.width):1) * width(self.view);
@@ -657,6 +662,8 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = imageHeight;
     _iv.frame = CGRectIntegral(frame);
     _iv.center = self.view.center;
+    
+    _yumIndicator.center = self.view.center;
     
     y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
     
@@ -743,8 +750,14 @@ static CGFloat kNextPhotoTolerance = 40;
         NSUInteger userID = [Settings sharedInstance].userObject.userID;
         [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.yumButton setSelected:YES];
-                [weakSelf updateNumYums];
+                weakSelf.yumIndicator.alpha = 1;
+                [UIView animateKeyframesWithDuration:1 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
+                    weakSelf.yumIndicator.alpha = 0;
+                } completion:^(BOOL finished) {
+                    [weakSelf.yumButton setSelected:YES];
+                    [weakSelf updateNumYums];
+                }];
+                
                 NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
                 NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
             });

@@ -19,6 +19,8 @@ static inline CGFloat distanceBetweenPoints(CGPoint p1, CGPoint p2) { return sqr
 static inline BOOL isRetinaDisplay() {return ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] && ([UIScreen mainScreen].scale >= 2.0)) ;}
 
 extern NSString *const kAPIKeyGoogleMaps;
+extern NSString *const kAPIKeyInstabug;
+extern NSString *const kSupportEmail;
 
 //#define SECRET_BACKEND_SALT @"48723492NaCl"
 #define GOOGLE_ANALYTICS_ID  @"UA-70502958-1"

@@ -54,8 +54,7 @@
         _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         
         _imageOverlay = [[UIView alloc] init];
-        _imageOverlay.backgroundColor = UIColorRGBA(kColorLightImageOverlay);
-//        _imageOverlay.alpha = 1;
+        _imageOverlay.backgroundColor = UIColorRGBA(kColorDarkImageOverlay);
         [_backgroundImage addSubview:_imageOverlay];
         _imageOverlay.translatesAutoresizingMaskIntoConstraints = NO;
         

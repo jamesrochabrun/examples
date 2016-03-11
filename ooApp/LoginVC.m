@@ -27,10 +27,12 @@
 #import "CreateUsernameVC.h"
 #import "OOAPI.h"
 #import "SocialMedia.h"
+#import <Instabug/Instabug.h>
 
 @interface LoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
+@property (nonatomic, strong) UIButton *tryAgain;
 @property (nonatomic, strong) UILabel *logoLabel;
 @property (nonatomic, strong) UILabel *betaLabel;
 @property (nonatomic, strong) UILabel *labelMessage;
@@ -52,8 +54,6 @@
 
     [super viewDidLoad];
     
-    self.view.autoresizesSubviews= NO;
-    
     _wentToExplore = NO;
     
     _aiv = [[UIActivityIndicatorView alloc] init];
@@ -64,10 +64,10 @@
     
     UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
 
-    self.view.backgroundColor = UIColorRGBA(kColorElements2);
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
     _backgroundImageView = makeImageView(self.view, backgroundImage);
-    _backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
+    _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
     _backgroundImageView.clipsToBounds = YES;
     _backgroundImageView.opaque = NO;
     [Common addShadowTo:_backgroundImageView withColor:kColorBlack];
@@ -85,7 +85,11 @@
     _facebookLoginButton.delegate = self;
     _facebookLoginButton.layer.cornerRadius = kGeomCornerRadius;
     _facebookLoginButton.readPermissions = @[@"public_profile", @"email", @"user_friends"];
-//    [Common addShadowTo:_facebookLoginButton withColor:kColorBlack];
+    
+    _tryAgain = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_tryAgain withText:@"Try Again" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(initiateLoginFlow)];
+    _tryAgain.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
+    _tryAgain.layer.cornerRadius = kGeomCornerRadius;
 
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_logoLabel];
@@ -93,25 +97,14 @@
     [self.view addSubview:_facebookLoginButton];
     [self.view addSubview:_aiv];
     [self.view addSubview:_info];
+    [self.view addSubview:_tryAgain];
     
     self.labelMessage= makeLabel( self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
     _labelMessage.textColor= UIColorRGBA(kColorWhite);
+    
+    _tryAgain.hidden = YES;
 //    [DebugUtilities addBorderToViews:@[_betaLabel, _logoLabel]];
-//#ifdef DEBUG
-//    self.pinch= [[UIPinchGestureRecognizer  alloc] initWithTarget: self action:@selector(loginBypass:)];
-//    [self.view addGestureRecognizer:_pinch];
-//#endif
 }
-
-//- (void)loginBypass: (id) sender
-//{
-//    ENTRY;
-//    static NSInteger  counter= 0;
-//    counter ++;
-//    if  (counter == 8) {
-//        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
-//    }
-//}
 
 //------------------------------------------------------------------------------
 // Name:    doLayout
@@ -125,7 +118,11 @@
     CGFloat backgroundImageWidth = _backgroundImageView.image.size.width;
     CGFloat backgroundImageHeight = _backgroundImageView.image.size.height;
     CGFloat backgroundAspect = backgroundImageHeight > 0 ? backgroundImageWidth/backgroundImageHeight : 1000000;
-    CGFloat actualBackgroundImageHeight=w/backgroundAspect;
+    CGFloat actualBackgroundImageHeight = w/backgroundAspect;
+    
+    if (actualBackgroundImageHeight > 0.8*h) {
+        actualBackgroundImageHeight = 0.8*h;
+    }
     _backgroundImageView.frame= CGRectMake(0, 0, w, actualBackgroundImageHeight);
     _backgroundImageView.clipsToBounds = YES;
 
@@ -152,13 +149,20 @@
     
     _facebookLoginButton.frame =  CGRectMake(x, y, buttonWidth, kGeomHeightButton);
     _aiv.center = _facebookLoginButton.center;
+    _tryAgain.center = _facebookLoginButton.center;
     
-    _info.frame = CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_facebookLoginButton.frame) + kGeomSpaceEdge, width(self.view) - 2*kGeomSpaceEdge, 20);
+    CGRect frame = _info.frame;
+    frame.size = [_info sizeThatFits:CGSizeMake(width(self.view) - 2*kGeomSpaceEdge, 100)];
+    frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
+    frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_facebookLoginButton.frame) + kGeomSpaceEdge);
+    _info.frame = frame;
 }
 
 - (void)viewWillLayoutSubviews
 {
-//    [super viewWillLayoutSubviews];
+    [super viewWillLayoutSubviews];
+    
+    NSLog(@"LoginVC bounds= %@", NSStringFromCGRect(self.view.bounds));
     [self doLayout];
 }
 
@@ -173,7 +177,7 @@
     ANALYTICS_SCREEN(@( object_getClassName(self)));
 
     _wentToExplore = NO;
-
+    
     [self.navigationController setNavigationBarHidden:YES];
 }
 
@@ -205,40 +209,6 @@
 //    UserObject *userInfo = [Settings sharedInstance].userObject;
 //    userInfo.userID = parseIntegerOrNullFromServer(value);
 //    [[Settings sharedInstance] save];
-//}
-
-////------------------------------------------------------------------------------
-//// Name:    updateEmail
-//// Purpose:
-////------------------------------------------------------------------------------
-//- (void)updateEmail:(NSString *)value
-//{
-//    if (!value) {
-//        return;
-//    }
-//    LOGS2(@"EMAIL",value);
-//    UserObject *userInfo = [Settings sharedInstance].userObject;
-//    if (!userInfo.email || !userInfo.email.length) {
-//        userInfo.email = value;
-//    }
-//}
-
-////------------------------------------------------------------------------------
-//// Name:    updateAuthorizationToken
-//// Purpose:
-////------------------------------------------------------------------------------
-//- (void)updateAuthorizationToken:(NSString *)value
-//{
-//    ENTRY;
-//
-//    if (!value) {
-//        return;
-//    }
-//    UserObject *userInfo = [Settings sharedInstance].userObject;
-//    if (!userInfo.backendAuthorizationToken || ![userInfo.backendAuthorizationToken isEqualToString: value]) {
-//        userInfo.backendAuthorizationToken= value;
-//    }
-//    LOGS2(@"TOKEN", value);
 //}
 
 //------------------------------------------------------------------------------
@@ -326,6 +296,10 @@
     NSString *email = userInfo.email;
     if (email.length > 1 && !userInfo.userID) {
         NSLog(@"user has OO account already but this is their first Facebook login.");
+    }
+    
+    if (email.length) {
+        [Instabug setUserEmail:email];
     }
 
     //---------------------------------------------------
@@ -859,11 +833,14 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     ENTRY;
-
     [super viewDidAppear:animated];
-    
-    _facebookLoginButton.hidden = YES;
+    [self initiateLoginFlow];
+}
 
+- (void)initiateLoginFlow {
+    _facebookLoginButton.hidden = YES;
+    _tryAgain.hidden = YES;
+    
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     [_aiv startAnimating];
     
@@ -871,6 +848,7 @@
         _facebookLoginButton.hidden = YES;
         _info.hidden = NO;
         _info.text = @"Logging you in to Oomami";
+        [self.view setNeedsLayout];
         // Transition if the user recently logged in.
         [OOAPI authWithFacebookToken:facebookToken.tokenString success:^(UserObject *user, NSString *token) {
             if (token && user) {
@@ -878,16 +856,28 @@
                 _info.hidden = YES;
                 user.backendAuthorizationToken = token;
                 [[Settings sharedInstance] setUserObject:user];
-                [self showMainUI];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showMainUI];
+                });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"auth failure %@", error);
             [_aiv stopAnimating];
             
-            [self logout];
-            
-            _facebookLoginButton.hidden = NO;
-            _info.text = @"There was a problem logging you in. Try again.";
+            if (error.code == kCFURLErrorNotConnectedToInternet) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _tryAgain.hidden = NO;
+                    _info.text = @"You don't appear to be connected to the internet. Make sure you have a good connection and try again.";
+                    [self.view setNeedsLayout];
+                });
+            } else {
+                [self logout];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _facebookLoginButton.hidden = NO;
+                    _info.text = @"There was a problem logging you in. Try again.";
+                    [self.view setNeedsLayout];
+                });
+            }
         }];
     } else {
         [self logout];

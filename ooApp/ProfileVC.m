@@ -240,7 +240,7 @@
         self.clipsToBounds = YES;
 
         _backgroundImageView = makeImageView(self, @"background-image.jpg");
-        _backgroundImageFade = makeView(self, UIColorRGBA(kColorLightImageOverlay));
+        _backgroundImageFade = makeView(self, UIColorRGBA(kColorDarkImageOverlay));
 
         _filterView= [[OOFilterView alloc] init];
         [self addSubview:_filterView];
@@ -300,15 +300,15 @@
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         
         self.buttonFollow= makeButton(self, @"FOLLOW",
-                                       kGeomFontSizeSubheader, UIColorRGBA(kColorBlack), UIColorRGBA(kColorTextActive),
+                                       kGeomFontSizeSubheader, UIColorRGBA(kColorTextReverse), UIColorRGBA(kColorTextActive),
                                        self,
                                        @selector(userPressedFollow:), 0);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
-        [_buttonFollow setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateSelected];
-        _buttonFollow.layer.borderColor=UIColorRGBA(kColorTextActive).CGColor;
-        _buttonFollow.layer.cornerRadius= kGeomCornerRadius;
-        _buttonFollow.layer.borderWidth= 1;
-        _buttonFollow.hidden= YES;
+        [_buttonFollow setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateSelected];
+        _buttonFollow.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
+        _buttonFollow.layer.cornerRadius = kGeomCornerRadius;
+        _buttonFollow.layer.borderWidth = 1;
+        _buttonFollow.hidden = YES;
         
         [self registerForNotification:kNotificationUserStatsChanged
                               calling:@selector(updateUserStats:)
@@ -555,18 +555,18 @@
 {
     _buttonFollow.selected= YES;
     _followingThisUser=YES;
-    _buttonFollow.backgroundColor = UIColorRGBA(kColorBlack);
+    _buttonFollow.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _buttonFollow.layer.borderWidth= 1;
     _buttonFollow.hidden= NO;
 }
 
 - (void)indicateNotFollowing
 {
-    _followingThisUser=NO;
-    _buttonFollow.selected= NO;
-    _buttonFollow.backgroundColor= UIColorRGBA(kColorTextActive);
-    _buttonFollow.layer.borderWidth= 0;
-    _buttonFollow.hidden= NO;
+    _followingThisUser = NO;
+    _buttonFollow.selected = NO;
+    _buttonFollow.backgroundColor = UIColorRGBA(kColorTextActive);
+    _buttonFollow.layer.borderWidth = 0;
+    _buttonFollow.hidden = NO;
 
 }
 
@@ -674,9 +674,9 @@
     y += kGeomProfileStatsItemHeight;
     
     if (!_viewingOwnProfile) {
-        _buttonFollow.frame = CGRectMake(w/2-kGeomButtonWidth/2,
+        _buttonFollow.frame = CGRectMake(w/2-kGeomWidthButton/2,
                                          y+(kGeomProfileStatsItemHeight-kGeomFollowButtonHeight)/2,
-                                         kGeomButtonWidth,  kGeomFollowButtonHeight);
+                                         kGeomWidthButton,  kGeomFollowButtonHeight);
         y += CGRectGetHeight(_buttonFollow.frame) + 2*kGeomSpaceEdge;
     }
     
@@ -1500,6 +1500,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         NSArray *a = self.arrayPhotos;
         MediaItemObject *object = a[row];
         cell.mediaItemObject = object;
+        cell.backgroundColor = UIColorRGBA(kColorTileBackground);
         cell.delegate = self;
         [cell showActionButton:NO];
         return cell;

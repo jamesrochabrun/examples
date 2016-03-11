@@ -106,7 +106,8 @@
     [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
     [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
     _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    _tableUsers.separatorColor= UIColorRGBA(kColorBlack);
+    _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
+    _tableUsers.separatorInset = UIEdgeInsetsZero;
     _tableUsers.showsVerticalScrollIndicator= NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:self

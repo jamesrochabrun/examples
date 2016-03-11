@@ -41,6 +41,7 @@ static NSString * const cellIdentifier = @"tagCell";
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.dataSource = self;
     _tableView.delegate = self;
+    _tableView.separatorColor = UIColorRGBA(kColorBordersAndLines);
     [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
     [self.view addSubview:_tableView];
     
@@ -116,7 +117,7 @@ static NSString * const cellIdentifier = @"tagCell";
     TagObject *tag = [_tags objectAtIndex:indexPath.row];
 
     cell.textLabel.text = tag.term;
-    [cell.textLabel setTextColor:UIColorRGBA(kColorWhite)];
+    [cell.textLabel setTextColor:UIColorRGBA(kColorText)];
     cell.accessoryType = [self isUserTag:tag] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     

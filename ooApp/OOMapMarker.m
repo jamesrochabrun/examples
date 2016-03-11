@@ -23,7 +23,7 @@
         
         _markerIcon = [[UILabel alloc] init];
         [_markerIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorBlack backgroundColor:kColorClear];
-        _markerIcon.text = kFontIconPin;
+        _markerIcon.text = kFontIconPinFilled;
         //_markerIcon.frame = CGRectMake(0, 0, 30, 30);
         [_markerIcon sizeToFit];
         

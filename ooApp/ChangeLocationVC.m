@@ -12,7 +12,6 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) NSArray *locations;
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, strong) UISearchBar *locationSearchBar;
 @property (nonatomic, strong) NavTitleObject *nto;
@@ -26,12 +25,6 @@ static NSString * const cellIdentifier = @"locationCell";
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _iv = [[UIImageView alloc] init];
-        _iv.translatesAutoresizingMaskIntoConstraints = NO;
-        _iv.backgroundColor = UIColorRGBA(kColorClear);
-        _iv.contentMode = UIViewContentModeScaleAspectFill;
-        _iv.alpha = 0.20;
-        
         _tableView = [[UITableView alloc] init];
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
         _tableView.backgroundColor = UIColorRGBA(kColorDarkImageOverlay);
@@ -126,7 +119,7 @@ static NSString * const cellIdentifier = @"locationCell";
     
     NSDictionary *views;
     
-    views = NSDictionaryOfVariableBindings(_tableView, _iv, _locationSearchBar);
+    views = NSDictionaryOfVariableBindings(_tableView, _locationSearchBar);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];

@@ -77,6 +77,7 @@
     _isFoodie = YES;
     _ivFoodie.image = [UIImage imageNamed:@"FoodieBubble.png"];
     _viewHalo.hidden = YES;
+//    [self sendSubviewToBack:_ivFoodie];
     [self setNeedsLayout];
 }
 

@@ -91,15 +91,17 @@ typedef enum: char {
     _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _searchBar.placeholder = LOCAL(@"Type your search here");
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
-    _searchBar.barTintColor = UIColorRGBA(kColorBlack);
+    _searchBar.barTintColor = UIColorRGBA(kColorText);
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.delegate = self;
     _searchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
     
-    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeHeader, UIColorRGBA(kColorOffBlack), UIColorRGBA(kColorClear), self, @selector(userPressedCancel:), .5);
-    [_buttonCancel setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
+//    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeH2, UIColorRGBA(kColorBordersAndLines), UIColorRGBA(kColorClear), self, @selector(userPressedCancel:), .5);
+    _buttonCancel = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_buttonCancel withText:@"Cancel" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorBordersAndLines target:self selector:@selector(userPressedCancel:)];
+    [self.view addSubview:_buttonCancel];
     
     self.filterView = [[OOFilterView alloc] init];
     [ self.view addSubview:_filterView];
@@ -731,25 +733,25 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)doLayout
 {
-    float h = height(self.view);
-    float w = width(self.view);
+    CGFloat h = height(self.view);
+    CGFloat w = width(self.view);
     
-    float y = 0;
+    CGFloat y = 0;
     
-    _searchBar.frame = CGRectMake(0, y, w-kGeomButtonWidth, kGeomHeightSearchBar);
-    _buttonCancel.frame = CGRectMake(w-kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
-                                     (kGeomHeightSearchBar - kGeomHeightButton)/2,
-                                     kGeomButtonWidth-kGeomCancelButtonInteriorPadding,
+    _searchBar.frame = CGRectMake(0, y, w-kGeomWidthButton, kGeomHeightSearchBar);
+    _buttonCancel.frame = CGRectMake(w-kGeomWidthButton-kGeomCancelButtonInteriorPadding,
+                                     (kGeomHeightSearchBar-kGeomHeightButton)/2,
+                                     kGeomWidthButton-kGeomCancelButtonInteriorPadding,
                                      kGeomHeightButton);
     y += kGeomHeightSearchBar;
     
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     y += kGeomHeightFilters;
     
-    float psih= 100;
-    _labelPreSearchInstructiveMessage1.frame = CGRectMake((w-200)/2,y+(h-y-psih)/3,200,psih);
-    _labelPreSearchInstructiveMessage2.frame = CGRectMake((w-200)/2,y+(h-y-psih)/3,200,psih);
-    _labelPreSearchInstructiveMessage3.frame = CGRectMake((w-200)/2,y+(h-y-psih)/3,200,psih);
+    CGFloat psih = 100;
+    _labelPreSearchInstructiveMessage1.frame = CGRectMake((w-200)/2, y+(h-y-psih)/3, 200, psih);
+    _labelPreSearchInstructiveMessage2.frame = CGRectMake((w-200)/2, y+(h-y-psih)/3, 200, psih);
+    _labelPreSearchInstructiveMessage3.frame = CGRectMake((w-200)/2, y+(h-y-psih)/3, 200, psih);
     _tableRestaurants.frame = CGRectMake(0, y, w, h-y);
     _tablePeople.frame = CGRectMake(0, y, w, h-y);
 }
@@ -762,7 +764,6 @@ typedef enum: char {
 {
     if (tableView ==_tableRestaurants) {
         if ( !_restaurantsArray.count) {
-            
             UITableViewCell *cell;
             cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
             cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -770,7 +771,7 @@ typedef enum: char {
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             
             if (_doingSearchNow) {
-                cell.textLabel.text =  @"Searching...";
+                cell.textLabel.text = @"Searching...";
             } else {
                 if (_searchBar.text.length > 2) {
                     cell.textLabel.text = @"No restaurants found for that search term.";
