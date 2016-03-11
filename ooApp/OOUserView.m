@@ -15,7 +15,8 @@
 @property (nonatomic, strong) UIView *viewHalo;
 @property (nonatomic, strong) UIImageView *ivFoodie;
 @property (nonatomic, strong) UILabel *emptyUserView;
-@property (nonatomic, strong) UIButton* buttonSettings,*buttonSettingsInner;
+@property (nonatomic, strong) UILabel  *circle;
+@property (nonatomic, strong) UIButton *buttonSettings, *buttonSettingsInner;
 @property (nonatomic,assign) BOOL isFoodie;
 @property (nonatomic,assign) BOOL showCog;
 @end
@@ -46,11 +47,13 @@
         addBorder(_viewHalo, 1.5, UIColorRGBA(kColorTextActive));
         _viewHalo.userInteractionEnabled=NO;
         
-        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeHeader, UIColorRGBA(kColorTextReverse), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
-        
-        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeHeader, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
+        _buttonSettings= makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeH1, UIColorRGBA(kColorTextReverse), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner= makeIconButton(self, kFontIconSettings, kGeomFontSizeH1, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
         _buttonSettingsInner.frame= CGRectMake(0,0,100,100);
         
+        _circle = [[UILabel alloc] init];
+        [_circle withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH6] textColor:kColorText backgroundColor:kColorClear];
+        [self addSubview:_circle];
     }
     return self;
 }
@@ -91,8 +94,8 @@
 {
     [super layoutSubviews];
     
-    float w = width(self);
-    float h = height(self);
+    CGFloat w = width(self);
+    CGFloat h = height(self);
     
     _emptyUserView.frame = self.bounds;
     _imageView.frame = self.bounds;
@@ -106,7 +109,9 @@
     const  float buttonSettingsSize= _showCog? kGeomProfileSettingsBadgeSize : 0;
     _buttonSettings.frame = CGRectMake(w- buttonSettingsSize,h-buttonSettingsSize,
                                        buttonSettingsSize,buttonSettingsSize);
-    _buttonSettingsInner.frame= _buttonSettings.frame;
+    _buttonSettingsInner.frame = _buttonSettings.frame;
+    _circle.frame = _buttonSettingsInner.frame;
+    NSLog(@"cog frame = %@ %@", NSStringFromCGRect(_buttonSettingsInner.frame), NSStringFromCGRect(_circle.frame));
 }
 
 - (void)setUser:(UserObject *)user

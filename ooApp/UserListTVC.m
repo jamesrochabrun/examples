@@ -169,7 +169,7 @@
 {
     _buttonFollow.hidden = NO;
     _buttonFollow.selected = following;
-    _buttonFollow.backgroundColor = following ? UIColorRGBA(kColorBackgroundTheme):UIColorRGBA(kColorTextActive);
+    _buttonFollow.backgroundColor = following ? UIColorRGBA(kColorClear):UIColorRGBA(kColorTextActive);
     _buttonFollow.layer.borderWidth = following ? 1:0;
     [self bringSubviewToFront:_buttonFollow];
 }

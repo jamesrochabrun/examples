@@ -559,7 +559,7 @@
 {
     _buttonFollow.selected= YES;
     _followingThisUser=YES;
-    _buttonFollow.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _buttonFollow.backgroundColor = UIColorRGBA(kColorClear);
     _buttonFollow.layer.borderWidth= 1;
     _buttonFollow.hidden= NO;
 }

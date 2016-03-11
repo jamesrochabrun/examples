@@ -14,10 +14,12 @@
 #import "UserObject.h"
 #import "UserListTVC.h"
 
-enum : int {
+typedef enum {
     kConnectSectionFriends = 0,
     kConnectSectionFoodies = 1,
-};
+    kConnectSectionInTheKnow = 2,
+    kConnectSectionRecentUsers = 3,
+} kConnectSection;
 
 @protocol ConnectTableSectionHeaderDelegate
 - (void) userTappedSectionHeader:(int)which;

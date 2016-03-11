@@ -79,7 +79,7 @@
 //        [_overlay.layer addSublayer:_gradient];
 //        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA(0x02000000) CGColor], (id)[UIColorRGBA((0xBB000000)) CGColor], nil];
     
-//        [DebugUtilities addBorderToViews:@[self]];
+//        [DebugUtilities addBorderToViews:@[_overlay]];
     }
     return self;
 }
@@ -116,7 +116,7 @@
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(featuredNameY)-[_name]-spaceCellPadding-[_distance]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:_rating attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     } else {
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_overlay(50)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=10)-[_overlay(35)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_priceRange][_rating(0)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_distance]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_name]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -136,7 +136,9 @@
         [_name setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeDetail]];
     } else {
         [_overlay.layer addSublayer:_gradient];
-        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA((kColorTextReverse & 0x00FFFFFF)) CGColor], (id)[UIColorRGBA(kColorTextReverse & 0xDDFFFFFF) CGColor], nil];
+        
+        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA((kColorButtonBackground & 0x11FFFFFF)) CGColor], (id)[UIColorRGBA(kColorButtonBackground) CGColor], nil];
+        
         _overlay.backgroundColor = UIColorRGBA(kColorClear);
         [_name setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeDetail]];
     }
