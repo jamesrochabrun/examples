@@ -13,13 +13,6 @@
 #import "DebugUtilities.h"
 #import "AppDelegate.h"
 
-//revealViewController.rearViewRevealWidth = 200;
-//revealViewController.rearViewRevealOverdraw = 0;// Cannot drag and see beyond width 200
-//revealViewController.toggleAnimationDuration = 0.2;// Faster slide animation
-//revealViewController.toggleAnimationType = SWRevealToggleAnimationTypeEaseOut;// Simply ease out. No Spring animation.
-//revealViewController.frontViewShadowRadius = 5; // More shadow
-
-
 @interface BaseVC ()
 @property (nonatomic, strong) UIButton *displayDropDownButton;
 @property (nonatomic, strong) UIView *mainCoverView;
@@ -54,32 +47,13 @@
     _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
     self.navigationItem.rightBarButtonItem = _rightNavButton;
     
-    SWRevealViewController *revealViewController = self.revealViewController;
-    revealViewController.delegate = self;
-
-    if (revealViewController) {
-        revealViewController.rearViewRevealWidth = kGeomSideBarRevealWidth;
-        _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
-        _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
-        [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-        [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-        _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-//        [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
-        _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
-        self.navigationItem.leftBarButtonItem = _leftNavButton;
-#ifdef DEBUG
-        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-#endif
-    } else {
-        _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
-        _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
-        [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-        [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-        _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-        [self setLeftNavWithIcon:kFontIconMenu target:self.revealViewController action:@selector(revealToggle:)];
-        _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
-        self.navigationItem.leftBarButtonItem = _leftNavButton;
-    }
+    _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+    _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
+    [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
+    [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+    _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
+    self.navigationItem.leftBarButtonItem = _leftNavButton;
     
     _navTitleView = [[NavTitleView alloc] init];
     _navTitleView.frame = CGRectMake(0, 0,
@@ -188,38 +162,38 @@
     [self displayDropDown:NO];
 }
 
-- (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
-{
-    if (revealController.frontViewPosition == FrontViewPositionRight) {
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationMenuWillOpen object:self];
-        
-        UIView *lockingView = [UIView new];
-        lockingView.translatesAutoresizingMaskIntoConstraints = NO;
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:revealController action:@selector(revealToggle:)];
-        [lockingView addGestureRecognizer:tap];
-        [lockingView addGestureRecognizer:revealController.panGestureRecognizer];
-        [lockingView setTag:1000];
-        [revealController.frontViewController.view addSubview:lockingView];
-        
-        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(lockingView);
-        
-        [revealController.frontViewController.view addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:@"|[lockingView]|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:viewsDictionary]];
-        [revealController.frontViewController.view addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[lockingView]|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:viewsDictionary]];
-        [lockingView sizeToFit];
-    } else {
-        [[revealController.frontViewController.view viewWithTag:1000] removeFromSuperview];
-    }
-}
+//- (void)revealController:(SWRevealViewController *)revealController didMoveToPosition:(FrontViewPosition)position
+//{
+//    if (revealController.frontViewPosition == FrontViewPositionRight) {
+//        
+//        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationMenuWillOpen object:self];
+//        
+//        UIView *lockingView = [UIView new];
+//        lockingView.translatesAutoresizingMaskIntoConstraints = NO;
+//        
+//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:revealController action:@selector(revealToggle:)];
+//        [lockingView addGestureRecognizer:tap];
+//        [lockingView addGestureRecognizer:revealController.panGestureRecognizer];
+//        [lockingView setTag:1000];
+//        [revealController.frontViewController.view addSubview:lockingView];
+//        
+//        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(lockingView);
+//        
+//        [revealController.frontViewController.view addConstraints:
+//         [NSLayoutConstraint constraintsWithVisualFormat:@"|[lockingView]|"
+//                                                 options:0
+//                                                 metrics:nil
+//                                                   views:viewsDictionary]];
+//        [revealController.frontViewController.view addConstraints:
+//         [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[lockingView]|"
+//                                                 options:0
+//                                                 metrics:nil
+//                                                   views:viewsDictionary]];
+//        [lockingView sizeToFit];
+//    } else {
+//        [[revealController.frontViewController.view viewWithTag:1000] removeFromSuperview];
+//    }
+//}
 
 - (void)setNavTitle:(NavTitleObject *)navTitle
 {

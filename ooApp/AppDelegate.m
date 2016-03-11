@@ -13,8 +13,6 @@
 #import "LoginVC.h"
 #import "Settings.h"
 #import "NSData+Conversion.h"
-#import "SWRevealViewController.h"
-#import "MenuTVC.h"
 #import "Common.h"
 #import "ProfileVC.h"
 #import "RestaurantVC.h"

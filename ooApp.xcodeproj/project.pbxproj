@@ -27,7 +27,6 @@
 		36175CDA1C22940700E6FE3D /* FoodFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36175CD91C22940700E6FE3D /* FoodFeedVC.m */; };
 		36175CDD1C22AE9C00E6FE3D /* FoodFeedVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36175CDC1C22AE9C00E6FE3D /* FoodFeedVCCVL.m */; };
 		36215DA91C37CA11000A293C /* OOTextEntryVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36215DA81C37CA10000A293C /* OOTextEntryVC.m */; };
-		3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11A1B8E6A06004537B6 /* MenuTVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
 		3621F1291B9014DD004537B6 /* ProfileVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1281B9014DD004537B6 /* ProfileVC.m */; };
@@ -54,7 +53,6 @@
 		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
 		365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListStripTVCell.m */; };
 		365FB7861C59198000826629 /* ShowMediaItemAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 365FB7851C59198000826629 /* ShowMediaItemAnimator.m */; };
-		366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */; };
 		366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8A1BA8B70100292F80 /* NavTitleView.m */; };
 		366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */; };
 		366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8F1BA8DEB400292F80 /* SettingsVC.m */; };
@@ -299,8 +297,6 @@
 		36175CDC1C22AE9C00E6FE3D /* FoodFeedVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoodFeedVCCVL.m; sourceTree = "<group>"; };
 		36215DA71C37CA10000A293C /* OOTextEntryVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOTextEntryVC.h; sourceTree = "<group>"; };
 		36215DA81C37CA10000A293C /* OOTextEntryVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOTextEntryVC.m; sourceTree = "<group>"; };
-		3621F1191B8E6A06004537B6 /* MenuTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVC.h; sourceTree = "<group>"; };
-		3621F11A1B8E6A06004537B6 /* MenuTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
 		3621F11E1B8F6E32004537B6 /* MenuTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuTVCell.m; sourceTree = "<group>"; };
 		3621F1201B8F7E7A004537B6 /* MenuObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuObject.h; sourceTree = "<group>"; };
@@ -349,8 +345,6 @@
 		365F17601B9105B500015D5D /* ListStripTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListStripTVCell.m; sourceTree = "<group>"; };
 		365FB7841C59198000826629 /* ShowMediaItemAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowMediaItemAnimator.h; sourceTree = "<group>"; };
 		365FB7851C59198000826629 /* ShowMediaItemAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowMediaItemAnimator.m; sourceTree = "<group>"; };
-		366B623D1B8D3ED700B9F1C5 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SWRevealViewController.h; path = External/SWRevealViewController/SWRevealViewController.h; sourceTree = "<group>"; };
-		366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SWRevealViewController.m; path = External/SWRevealViewController/SWRevealViewController.m; sourceTree = "<group>"; };
 		366BBC891BA8B70100292F80 /* NavTitleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavTitleView.h; sourceTree = "<group>"; };
 		366BBC8A1BA8B70100292F80 /* NavTitleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavTitleView.m; sourceTree = "<group>"; };
 		366BBC8C1BA8B74A00292F80 /* NavTitleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavTitleObject.h; sourceTree = "<group>"; };
@@ -745,15 +739,6 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		366B623C1B8D14A200B9F1C5 /* SMRevealViewController */ = {
-			isa = PBXGroup;
-			children = (
-				366B623D1B8D3ED700B9F1C5 /* SWRevealViewController.h */,
-				366B623E1B8D3ED700B9F1C5 /* SWRevealViewController.m */,
-			);
-			name = SMRevealViewController;
-			sourceTree = "<group>";
-		};
 		367703FC1B87E3A500B594E5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -880,7 +865,6 @@
 				36D887E01C1B480C0002A412 /* TTRangeSlider */,
 				3629F0BF1BFCF42500E2D912 /* Draggable */,
 				368649091BE04B0C003BF98B /* UIImageEffects */,
-				366B623C1B8D14A200B9F1C5 /* SMRevealViewController */,
 			);
 			name = External;
 			sourceTree = "<group>";
@@ -1097,8 +1081,6 @@
 				36FDA6FE1B585F650029D29D /* PlayVC.m */,
 				36FAB82C1BEC2DBA00B20EA1 /* FeedVC.m */,
 				36FAB82D1BEC2DBA00B20EA1 /* FeedVC.h */,
-				3621F1191B8E6A06004537B6 /* MenuTVC.h */,
-				3621F11A1B8E6A06004537B6 /* MenuTVC.m */,
 				3632F7761C44BEDF007901D9 /* OOTBC.h */,
 				3632F7771C44BEDF007901D9 /* OOTBC.m */,
 				36175CD81C22940700E6FE3D /* FoodFeedVC.h */,
@@ -1516,7 +1498,6 @@
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,
 				367E91D31C4050BD001B1795 /* ViewPhotoVC.m in Sources */,
-				366B623F1B8D3ED700B9F1C5 /* SWRevealViewController.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */,
 				96E954E21BDFF99100F5197A /* Reachability.m in Sources */,
@@ -1549,7 +1530,6 @@
 				96F7C1351C4704BB0002C01E /* OOTextEntryModalVC.m in Sources */,
 				96D35F7D1B9F879200A18A23 /* Common.m in Sources */,
 				3637E93D1BB5B6D10074A01C /* CommonConstants.m in Sources */,
-				3621F11B1B8E6A06004537B6 /* MenuTVC.m in Sources */,
 				367112D41BA14071006FDCE7 /* RestaurantListVC.m in Sources */,
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
