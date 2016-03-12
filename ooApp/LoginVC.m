@@ -75,7 +75,7 @@
     _logoLabel = [[UILabel alloc] init];
     [_logoLabel withFont:[UIFont fontWithName:kFontIcons size:width(self.view)*0.75] textColor:kColorWhite backgroundColor:kColorClear];
     _logoLabel.text = kFontIconLogoFull;
-    _logoLabel.frame = CGRectMake(0, 0, width(self.view)*0.75, 100);
+    _logoLabel.frame = CGRectMake(0, 0, width(self.view)*0.75, IS_IPAD ? 175:100);
     
     _betaLabel = [[UILabel alloc] init];
     [_betaLabel withFont:[UIFont fontWithName:kFontIcons size:40] textColor:kColorWhite backgroundColor:kColorClear];

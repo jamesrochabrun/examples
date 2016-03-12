@@ -70,6 +70,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     if (!_numberUsers) {
         _labelExpander.hidden = YES;
         _noUsersMsgLabel.hidden = NO;
+    } else {
+        _labelExpander.hidden = NO;
+        _noUsersMsgLabel.hidden = YES;
     }
 }
 
