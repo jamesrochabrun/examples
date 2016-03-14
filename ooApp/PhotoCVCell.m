@@ -23,10 +23,11 @@
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UILabel *numYums;
 @property (nonatomic, strong) UILabel *caption;
-@property (nonatomic, strong) CAGradientLayer *gradient;
+//@property (nonatomic, strong) CAGradientLayer *gradient;
 @property (nonatomic, strong) UserObject *userObject;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
 @property (nonatomic, strong) NSArray *captionConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *imageContraint;
 @property (nonatomic, strong) UILabel *yumIndicator;
 @end
 
@@ -128,7 +129,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _gradient.frame = CGRectMake(0, height(self)-40, width(self), 40);
+//    _gradient.frame = CGRectMake(0, height(self)-40, width(self), 40);
 }
 
 - (void)showActionButton:(BOOL)show {
@@ -195,13 +196,13 @@
 
 - (void)updateConstraints {
     [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall), @"userNameLength" : @([_userButton sizeThatFits:CGSizeMake(200, 10)].width + 2), @"infoHeight":@((_mediaItemObject.source == kMediaItemTypeOomami)? 30:0)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall), @"userNameLength" : @([_userButton sizeThatFits:CGSizeMake(200, 10)].width + 2)};
 
     UIView *superview = self;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage,_numYums, _takeAction, _userButton, _yumButton, _caption, _yumIndicator);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]-infoHeight-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]-infoHeight-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     if (_userButton.titleLabel.text) {
         if (_captionConstraint) {
@@ -213,21 +214,65 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_userButton][_numYums][_yumButton(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_takeAction(25)]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceCellPadding-[_takeAction(25)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_yumButton(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_caption(30)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_yumButton]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_caption]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    
+    CGFloat infoHeight = (_mediaItemObject.source == kMediaItemTypeOomami)? 30:0;
+    
+    [self removeConstraint:_imageContraint];
+    _imageContraint = [NSLayoutConstraint constraintWithItem:_backgroundImage
+                                                   attribute:NSLayoutAttributeHeight
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:nil
+                                                   attribute:0
+                                                  multiplier:1
+                                                    constant:height(self)-infoHeight];
+    
+    [self addConstraint:_imageContraint];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_userButton
+                                                     attribute:NSLayoutAttributeHeight
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:nil
+                                                     attribute:0
+                                                    multiplier:1
+                                                      constant:30]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_caption
+                                                     attribute:NSLayoutAttributeHeight
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:_userButton
+                                                     attribute:NSLayoutAttributeHeight
+                                                    multiplier:1
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_numYums
+                                                     attribute:NSLayoutAttributeHeight
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:_userButton
+                                                     attribute:NSLayoutAttributeHeight
+                                                    multiplier:1
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumButton
+                                                     attribute:NSLayoutAttributeHeight
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:_userButton
+                                                     attribute:NSLayoutAttributeHeight
+                                                    multiplier:1
+                                                      constant:0]];
 }
 
 - (void)setMediaItemObject:(MediaItemObject *)mediaItemObject {
     if (mediaItemObject == _mediaItemObject) {
         return;
     }
+
     _mediaItemObject = mediaItemObject;
- 
+    
     _userButton.hidden = _caption.hidden = _numYums.hidden = _yumButton.hidden = YES;
     _backgroundImage.image = nil;
     
@@ -269,17 +314,17 @@
                 [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
                 [weakSelf setNeedsUpdateConstraints];
                 weakSelf.userButton.hidden = NO;
-                weakSelf.gradient.hidden = NO;
+//                weakSelf.gradient.hidden = NO;
                 weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             weakSelf.userButton.hidden = YES;
-            weakSelf.gradient.hidden = YES;
+//            weakSelf.gradient.hidden = YES;
             weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
         }];
         
     } else {
-        _gradient.hidden = YES;
+//        _gradient.hidden = YES;
         _userButton.hidden = YES;
         _caption.hidden = YES;
     }

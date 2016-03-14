@@ -54,7 +54,7 @@
         _buttonSettingsInner.hidden = YES;
         
         _circle = [[UILabel alloc] init];
-        [_circle withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
+        [_circle withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH3] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
         _circle.text = kFontIconFilledCircle;
         _circle.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_circle];

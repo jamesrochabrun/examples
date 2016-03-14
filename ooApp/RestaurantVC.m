@@ -53,6 +53,7 @@
 
 static NSString *const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
 static NSString *const kRestaurantListsCellIdentifier = @"RestaurantListsCell";
+static NSString *const kRestaurantFolloweesCellIdentifier = @"RestaurantFolloweesCell";
 static NSString *const kRestaurantPhotoCellIdentifier = @"RestaurantPhotoCell";
 static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHeader";
 
@@ -97,6 +98,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     [_collectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantListsCellIdentifier];
+    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantFolloweesCellIdentifier];
     [_collectionView registerClass:[PhotoCVCell class] forCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier];
     [_collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:@"header" withReuseIdentifier:kRestaurantPhotosHeaderIdentifier];
     
@@ -723,7 +725,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             break;
         }
         case kRestaurantSectionTypeFollowees: {
-            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantListsCellIdentifier forIndexPath:indexPath];
+            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantFolloweesCellIdentifier forIndexPath:indexPath];
             cvc.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
             OOUserView *uv = [[OOUserView alloc] init];
             uv.delegate = self;
