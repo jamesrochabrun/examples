@@ -90,13 +90,16 @@ typedef enum: char {
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
     _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _searchBar.placeholder = LOCAL(@"Type your search here");
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
     _searchBar.barTintColor = UIColorRGBA(kColorText);
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.delegate = self;
     _searchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
+
+    UITextField *searchTextField = [_searchBar valueForKey:@"_searchField"];
+    searchTextField.textAlignment = NSTextAlignmentCenter;
+    searchTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     
 //    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeH2, UIColorRGBA(kColorBordersAndLines), UIColorRGBA(kColorClear), self, @selector(userPressedCancel:), .5);
     _buttonCancel = [UIButton buttonWithType:UIButtonTypeCustom];

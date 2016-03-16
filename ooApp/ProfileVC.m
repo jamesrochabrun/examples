@@ -322,7 +322,9 @@
                               calling:@selector(updateOwnProfile:)
          ];
         
-        self.backgroundColor=UIColorRGBA(kColorBlack);
+        self.backgroundColor = UIColorRGBA(kColorBlack);
+        
+        [DebugUtilities addBorderToViews:@[_buttonDescription, self]];
     }
     return self;
 }

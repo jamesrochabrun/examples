@@ -42,7 +42,6 @@ static NSString * const cellIdentifier = @"locationCell";
         _locationSearchBar.searchBarStyle = UISearchBarStyleMinimal;
         _locationSearchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _locationSearchBar.placeholder = LOCAL( @"Current Location");
-        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText)}];
         _locationSearchBar.barTintColor = UIColorRGBA(kColorBlack);
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         _locationSearchBar.delegate = self;

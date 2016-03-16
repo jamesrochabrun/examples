@@ -39,7 +39,6 @@
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic, strong) UILabel *info;
-//@property (nonatomic, strong) UIPinchGestureRecognizer *pinch;
 @end
 
 @implementation LoginVC

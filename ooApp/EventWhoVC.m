@@ -260,7 +260,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     _searchBar.searchBarStyle = UISearchBarStyleMinimal;
     _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _searchBar.placeholder = LOCAL( @"Type your search here");
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorWhite)}];
     _searchBar.barTintColor = UIColorRGBA(kColorBlack);
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.delegate = self;

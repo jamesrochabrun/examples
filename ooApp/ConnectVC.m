@@ -179,11 +179,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     ConnectTableSectionHeader *hvFriendsToFollow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFriends];
     hvFriendsToFollow.noUsersMessage = @"Invite Facebook friends to use Oomami. When they join you'll be able to find out what they like to eat.";
-    hvFriendsToFollow.labelTitle.text = @"Friends you can follow";
+    hvFriendsToFollow.labelTitle.text = @"Friends you can Follow";
     
     ConnectTableSectionHeader *hvTopFoodies = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFoodies];
     hvTopFoodies.noUsersMessage = @"We'll keep an eye out for foodies you can follow. When you upload a lot of food photos or add to lists you too will become a foodie.";
-    hvTopFoodies.labelTitle.text = @"Top Foodies";
+    hvTopFoodies.labelTitle.text = @"Top Foodies to Follow";
     
     ConnectTableSectionHeader *hvInTheKnow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeInTheKnow];
     hvInTheKnow.noUsersMessage = @"User that know this area will appear here.";

@@ -632,7 +632,7 @@
 
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    [gregorian setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [gregorian setTimeZone:[NSTimeZone localTimeZone]];
     NSDateComponents *comps = [gregorian components:NSCalendarUnitWeekday fromDate:[NSDate date]];
     NSInteger weekday = [comps weekday] - 1; //because google maps 0-6 and NSDateComponents uses 1-7 grrr
     

@@ -49,9 +49,9 @@
         _viewHalo.userInteractionEnabled=NO;
         
         _buttonSettings = makeIconButton(self, kFontIconSettingsFilled, kGeomFontSizeH1, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
-        _buttonSettingsInner = makeIconButton(self, kFontIconSettings, kGeomFontSizeH1, UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
+        _buttonSettingsInner = makeIconButton(self, kFontIconSettings, kGeomFontSizeH1, UIColorRGBA(kColorTextReverse), UIColorRGBA(kColorClear), self, @selector(userPressedSettings:) , 0);
         _buttonSettingsInner.frame = CGRectMake(0,0,100,100);
-        _buttonSettingsInner.hidden = YES;
+        _buttonSettingsInner.hidden = NO;
         
         _circle = [[UILabel alloc] init];
         [_circle withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH3] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
