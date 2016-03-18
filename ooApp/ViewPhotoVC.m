@@ -16,6 +16,7 @@
 #import "AppDelegate.h"
 #import "ListsVC.h"
 #import "ShowMediaItemAnimator.h"
+#import "NavTitleObject.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -63,7 +64,6 @@ static CGFloat kNextPhotoTolerance = 40;
         [_captionButton.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
         
         _yumIndicator = [[UILabel alloc] init];
-        _yumIndicator.translatesAutoresizingMaskIntoConstraints = NO;
         [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:90] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
         _yumIndicator.text = kFontIconYum;
         [_yumIndicator sizeToFit];
@@ -78,8 +78,10 @@ static CGFloat kNextPhotoTolerance = 40;
         [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
+        _optionsButton.hidden = _closeButton.hidden = YES;
+        
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorText borderColor:kColorClear target:self selector:@selector(showRestaurant)];
+        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorTextActive borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
         [_restaurantName setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
         [_restaurantName.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
@@ -112,7 +114,7 @@ static CGFloat kNextPhotoTolerance = 40;
         _userViewButton.delegate = self;
         
         [self.view addSubview:_yumIndicator];
-//        [DebugUtilities addBorderToViews:@[_yumIndicator]];
+//        [DebugUtilities addBorderToViews:@[self.view]];
 //        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
     return self;
@@ -265,7 +267,7 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)showYummers:(NSArray *)users {
     UserListVC *vc = [[UserListVC alloc] init];
     vc.desiredTitle = @"Yummers";
-    vc.user= _user;
+    vc.user = _user;
     vc.usersArray = [NSMutableArray arrayWithArray:users];
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -296,6 +298,8 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.view addSubview:_backgroundView];
     [self.view sendSubviewToBack:_backgroundView];
 
+    [self.view setAutoresizesSubviews:NO];
+    
     [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
     [_showRestaurantTapGesture setNumberOfTapsRequired:1];
     [_yumPhotoTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
@@ -316,7 +320,7 @@ static CGFloat kNextPhotoTolerance = 40;
         _swipeType = kSwipeTypeNone;
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
         
-        _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
+//        _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
         
         NSLog(@"began: %@", NSStringFromCGPoint(delta));
         _originPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
@@ -376,6 +380,8 @@ static CGFloat kNextPhotoTolerance = 40;
         if (_swipeType == kSwipeTypeDismiss &&
             fabs(delta.y) > kDismissTolerance) {
             NSLog(@"dismiss photo");
+//            [self.interactiveController finishInteractiveTransition];
+//            _iv.transform = CGAffineTransformIdentity;
             [self close];
         } else if (_swipeType == kSwipeTypeNextPhoto &&
                    fabs(delta.x) > kNextPhotoTolerance) {
@@ -387,6 +393,7 @@ static CGFloat kNextPhotoTolerance = 40;
             _direction = 0;
             _nextPhoto = nil;
         }
+        self.interactiveController = nil;
     }
 }
 
@@ -402,14 +409,14 @@ static CGFloat kNextPhotoTolerance = 40;
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         animator.presenting = YES;
         animator.originRect = vc.originRect;
-        animator.duration = 0.65;
+        animator.duration = 0.35;
         animationController = animator;
     } else if ([fromVC isKindOfClass:[ViewPhotoVC class]] && operation == UINavigationControllerOperationPop) {
         ShowMediaItemAnimator *animator = [[ShowMediaItemAnimator alloc] init];
         ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
         animator.presenting = NO;
         animator.originRect = vc.originRect;
-        animator.duration = 0.65;
+        animator.duration = 0.35;
         animationController = animator;
     } else {
         NSLog(@"*** operation=%ld, fromVC=%@ , toVC=%@", (long)operation, [fromVC class], [toVC class]);
@@ -424,14 +431,6 @@ static CGFloat kNextPhotoTolerance = 40;
     return self.interactiveController;
 }
 
-//- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id<UIViewControllerAnimatedTransitioning>)animator {
-//    return _nextPhoto.interactiveController;
-//}
-//
-//- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id<UIViewControllerAnimatedTransitioning>)animator {
-//    return self.interactiveController;
-//}
-
 - (ViewPhotoVC *)getNextVC:(NSUInteger)direction {
     NSInteger nextIndex = _currentIndex + (-direction);
     NSLog(@"currentIndex=%ld nextIndex=%ld", (long)_currentIndex, (long)nextIndex);
@@ -444,14 +443,15 @@ static CGFloat kNextPhotoTolerance = 40;
     RestaurantObject *r = [_restaurants objectAtIndex:nextIndex];
     MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
     
-    vc.originRect = _originRect;
+    vc.originRect = CGRectMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame), 20, 20);
     vc.mio = mio;
     vc.restaurant = r;
     vc.direction = direction;
     vc.delegate = _delegate;
     vc.restaurants = _restaurants;
     vc.currentIndex = nextIndex;
-
+    
+    vc.rootViewController = _rootViewController;
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
     vc.navigationController.delegate = self;
@@ -502,33 +502,29 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES];
-//    _backgroundView.alpha = 0;
-//    if (self.transitioningDelegate) return;
-    [UIView animateWithDuration:0.3 animations:^{
-        self.tabBarController.tabBar.hidden = YES;
-        self.navigationController.navigationBarHidden = YES;
-        _backgroundView.alpha = kAlphaBackground;
-    } completion:^(BOOL finished) {
-        ;
-    }];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:animated];
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorClear)] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorClear)]];
+    [self setLeftNavWithIcon:kFontIconRemove target:self action:@selector(close)];
+    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions:)];
+    
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    
+    self.tabBarController.tabBar.hidden = YES;
+    _backgroundView.alpha = kAlphaBackground;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:_restaurant.name subHeader:[NSString stringWithFormat:@"%ld", _currentIndex]];
+    self.navTitle = nto;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:animated];
+    self.tabBarController.tabBar.hidden = NO;
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
     [super viewWillDisappear:animated];
-
-//    if (self.transitioningDelegate) return;
-    [UIView animateWithDuration:0.3 animations:^{
-        [[UIApplication sharedApplication] setStatusBarHidden:NO];
-        self.tabBarController.tabBar.hidden = NO;
-        self.navigationController.navigationBarHidden = NO;
-        } completion:^(BOOL finished) {
-        ;
-    }];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -537,6 +533,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)setRestaurant:(RestaurantObject *)restaurant {
     if (restaurant == _restaurant) return;
+
     _restaurant = restaurant;
     if ( _restaurant) {
         [_restaurantName setTitle:_restaurant.name forState:UIControlStateNormal];
@@ -725,7 +722,7 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;
     
-//    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
+    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }
 
 - (void)yumPhotoTapped {

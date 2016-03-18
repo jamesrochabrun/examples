@@ -23,19 +23,19 @@
     _textView.delegate = self;
     _textView.text = self.defaultText;
     _textView.keyboardType = UIKeyboardTypeTwitter;
-    _textView.textColor = UIColorRGBA(kColorWhite);
-    _textView.backgroundColor = UIColorRGBA(kColorBlack);
+    _textView.textColor = UIColorRGBA(kColorText);
+    _textView.backgroundColor = UIColorRGBA(kColorButtonBackground);
     _textView.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
     _textView.layer.cornerRadius = kGeomCornerRadius;
     [_textView setScrollEnabled:NO];
     [self.view addSubview:_textView];
     
     _postButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_postButton withText:@"Post" fontSize:kGeomFontSizeH2 width:50 height:40 backgroundColor:kColorOffBlack target:self selector:@selector(post:)];
-    [_postButton setTitleColor:UIColorRGBA(kColorWhite) forState:UIControlStateNormal];
+    [_postButton withText:@"Post" fontSize:kGeomFontSizeH2 width:50 height:40 backgroundColor:kColorButtonBackground target:self selector:@selector(post:)];
+    [_postButton setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
     _postButton.translatesAutoresizingMaskIntoConstraints = NO;
     _postButton.layer.borderWidth = 0.5;
-    _postButton.layer.borderColor = UIColorRGBA(kColorOffBlack).CGColor;
+    _postButton.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
     _postButton.layer.cornerRadius = kGeomCornerRadius;
     _postButton.contentEdgeInsets = UIEdgeInsetsMake(kGeomSpaceInter, kGeomSpaceInter, kGeomSpaceInter, kGeomSpaceInter);
     

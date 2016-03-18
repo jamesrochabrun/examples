@@ -31,13 +31,12 @@ typedef enum {
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC;
 @end
 
-@interface ViewPhotoVC : SubBaseVC <OOUserViewDelegate,
+@interface ViewPhotoVC : BaseVC <OOUserViewDelegate,
                                     OOTextEntryVCDelegate,
                                     UINavigationControllerDelegate,
                                     UIViewControllerTransitioningDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
-@property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic) CGRect originRect;
 @property (nonatomic, strong) UIView *backgroundView;
@@ -45,8 +44,10 @@ typedef enum {
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSInteger direction;
-@property (nonatomic, strong) id<UIViewControllerTransitioningDelegate> dismissTransitionDelegate;
-@property (nonatomic, strong) id<UINavigationControllerDelegate> dismissNCDelegate;
+@property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;
+@property (nonatomic, weak) UIViewController *rootViewController;;
+@property (nonatomic, weak) id<UIViewControllerTransitioningDelegate> dismissTransitionDelegate;
+@property (nonatomic, weak) id<UINavigationControllerDelegate> dismissNCDelegate;
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactiveController;
 

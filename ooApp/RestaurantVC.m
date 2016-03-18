@@ -66,9 +66,15 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     [self updateIfNeeded];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 }
 
 - (void)viewDidLoad

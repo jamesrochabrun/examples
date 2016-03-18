@@ -18,6 +18,7 @@
 #import "LocationManager.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
+#import "DebugUtilities.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -49,7 +50,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Food Feed" subHeader:nil];
-    self.navTitle = _nto;
     
     _filterView = [[OOFilterView alloc] init];
     _filterView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -78,8 +78,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [_toggleNumColumnsButton withIcon:kFontIconFoodFeed fontSize:40 width:40 height:40 backgroundColor:kColorClear target:self selector:@selector(toggleNumColumns)];
 //    [self.view addSubview:_toggleNumColumnsButton];
     _toggleNumColumnsButton.hidden = YES;
-
-    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setUpdateNeeded)
@@ -99,6 +97,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     _noPhotosMessage.titleLabel.numberOfLines = 0;
     _noPhotosMessage.titleLabel.textAlignment = NSTextAlignmentCenter;
     [_collectionView addSubview:_noPhotosMessage];
+    
+//    [DebugUtilities addBorderToViews:@[self.view]];
 }
 
 - (void)goToConnect {
@@ -144,13 +144,21 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
-    [self.navigationController setNavigationBarHidden:NO];
+    self.navTitle = _nto;
+    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
+    [self setLeftNavWithIcon:@"" target:nil action:nil];
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
     
     [self updateIfNeeded];
     
     [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
     [_collectionView addSubview:self.refreshControl];
     _collectionView.alwaysBounceVertical = YES;    
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+//    [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -582,6 +590,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.delegate = self;
     vc.restaurants = _restaurants;
     vc.currentIndex = indexPath.row;
+    vc.rootViewController = self;
     
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
@@ -610,7 +619,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         ViewPhotoVC *vc = (ViewPhotoVC *)fromVC;
         animator.presenting = NO;
         animator.originRect = vc.originRect;
-        animator.duration = 0.6;
+        animator.duration = 0.8;
         animationController = animator;
     } else {
         
@@ -646,12 +655,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject {
     ProfileVC *vc = [[ProfileVC alloc] init];
     vc.userInfo = userObject;
+    
     self.transitioningDelegate = nil;
     self.navigationController.delegate = nil;
     
-//    UIViewController *c = [UIViewController new];
-//    [self.navigationController pushViewController:c animated:YES];
-
     [self.navigationController pushViewController:vc animated:YES];
 }
 

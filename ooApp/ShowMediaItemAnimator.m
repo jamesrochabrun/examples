@@ -16,32 +16,30 @@
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
     UIViewController *fromVC = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toVC = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    UIView *fromView = fromVC.view;
-    UIView *toView = toVC.view;
+    ViewPhotoVC *fromVPVC, *toVPVC;
+    UIView *fromIV, *toIV;
     UIView *containerView = [transitionContext containerView];
     NSTimeInterval duration = [self transitionDuration:transitionContext];
     
-    CGRect imageViewFrame = [transitionContext initialFrameForViewController:fromVC];
     CGRect vcViewFrame = [transitionContext initialFrameForViewController:fromVC];
     
-    imageViewFrame.origin.y = kGeomHeightNavBarStatusBar;
+//    vcViewFrame.origin.y = kGeomHeightNavBarStatusBar;
     
-    NSLog(@"*** toVC:%@ fromVC:%@", NSStringFromClass([toVC class]), NSStringFromClass([fromVC class]));
+    NSLog(@"*** fromVC:%@ %@ toVC:%@ %@", NSStringFromClass([fromVC class]), fromVC, NSStringFromClass([toVC class]), toVC);
+    NSLog(@"*** fromVC frame:%@ toVC frame:%@", NSStringFromCGRect(fromVC.view.frame), NSStringFromCGRect(toVC.view.frame));
+    
     // Presenting
     if (_presenting) { //pushing
         // Position the view offscreen
-        ViewPhotoVC *vpvc;
         if ([toVC isKindOfClass:[ViewPhotoVC class]]) {
-            vpvc = (ViewPhotoVC *)toVC;
-            toView = vpvc.iv;
-            [vpvc showComponents:NO];
+            toVPVC = (ViewPhotoVC *)toVC;
+            toIV = toVPVC.iv;
+            [toVPVC showComponents:NO];
         } else {
             return;
         }
         
-        if (vpvc.direction) {
-            
-            ViewPhotoVC *fromVPVC;
+        if (toVPVC.direction) { //when panning to new photo
             if ([fromVC isKindOfClass:[ViewPhotoVC class]]) {
                 fromVPVC = (ViewPhotoVC *)fromVC;
                 [fromVPVC showComponents:YES];
@@ -50,107 +48,108 @@
                 return;
             }
             
-            NSLog(@"toVC direction:%ld", (long)vpvc.direction);
-//            toVC.tabBarController.tabBar.hidden = YES;
-//            toVC.navigationController.navigationBarHidden = YES;
+            NSLog(@"toVC direction:%ld", (long)toVPVC.direction);
             [containerView addSubview:toVC.view];
             CGRect frame = containerView.frame;
-            frame.origin.x = -1*vpvc.direction*CGRectGetWidth(containerView.frame);
-            vpvc.view.frame = frame;
+            frame.origin.x = -1*toVPVC.direction*CGRectGetWidth(containerView.frame);
+            toVPVC.view.frame = frame;
             
             frame.origin.x = 0;
-            [vpvc setComponentsAlpha:1];
-            [vpvc showComponents:YES];
+            [toVPVC setComponentsAlpha:1];
+            [toVPVC showComponents:YES];
             
-            NSLog(@"toVC old=%@ new=%@", NSStringFromCGRect(vpvc.view.frame), NSStringFromCGRect(frame));
+            NSLog(@"toVC old=%@ new=%@", NSStringFromCGRect(toVPVC.view.frame), NSStringFromCGRect(frame));
             
             [UIView animateWithDuration:duration
                                   delay:0
                                 options:UIViewAnimationOptionCurveEaseOut
                              animations:^{
 
-                vpvc.view.frame = frame;
-                [vpvc setComponentsAlpha:1.0];
+                toVPVC.view.frame = frame;
+                [toVPVC setComponentsAlpha:1.0];
                 [fromVPVC setComponentsAlpha:0];
+                [fromVPVC.backgroundView setAlpha:0];
             } completion:^(BOOL finished) {
-                if (![transitionContext transitionWasCancelled]) {
-                    [fromVC removeFromParentViewController];
-                } else {
-                    [vpvc removeFromParentViewController];
+                if (![transitionContext transitionWasCancelled]) { //transition not canceled
+                    [self logVCs:[fromVPVC.navigationController viewControllers]];
+                    NSLog(@"removing %@", fromVPVC);
+                    [fromVPVC removeFromParentViewController];
+                    [self logVCs:[toVC.navigationController viewControllers]];
+                } else { //transition canceled
                     [fromVPVC setComponentsAlpha:1.0];
                 }
                 [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
             }];
-        } else {
+        } else { //when first showing photo
             UIView *snapshotView = [fromVC.view snapshotViewAfterScreenUpdates:NO];
-            snapshotView.frame = imageViewFrame;
+            snapshotView.frame = vcViewFrame;
             [toVC.view addSubview:snapshotView];
             [toVC.view sendSubviewToBack:snapshotView];
             
-            toView.frame = _originRect;
-            toView.alpha = 0;
+            toIV.frame = _originRect;
+            toIV.alpha = 0;
             [containerView addSubview:toVC.view];
             
             vcViewFrame.size.height += (kGeomHeightNavBarStatusBar + kGeomHeightTabBar);
             vcViewFrame.origin.y = 0;
-            vpvc.backgroundView.alpha = 0;
+            toVPVC.backgroundView.alpha = 0;
             
             [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
-                toView.frame = imageViewFrame;
-                toView.center = vpvc.view.center;
-                toView.alpha = 1;
+                toIV.frame = vcViewFrame;
+                toIV.center = toVPVC.view.center;
+                toIV.alpha = 1;
 
-                vpvc.backgroundView.alpha = kAlphaBackground;
-                toVC.tabBarController.tabBar.hidden = YES;
-                toVC.navigationController.navigationBarHidden = YES;
+                toVPVC.backgroundView.alpha = kAlphaBackground;
+                toVPVC.tabBarController.tabBar.hidden = YES;
+//
             } completion:^(BOOL finished) {
                 [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;
-                vpvc.view.frame = vcViewFrame;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [vpvc showComponents:YES];
-                });
+                toVPVC.view.frame = vcViewFrame;
+                [toVPVC showComponents:YES];
             }];
         }
     } else { //popping
-        [containerView addSubview:toView];
-        [containerView sendSubviewToBack:toView];
+        [containerView addSubview:toVC.view];
+        [containerView sendSubviewToBack:toVC.view];
         
-        ViewPhotoVC *vpvc;
         if ([fromVC isKindOfClass:[ViewPhotoVC class]]) {
-            vpvc = (ViewPhotoVC *)fromVC;
-            fromView = vpvc.iv;
-            [vpvc showComponents:NO];
+            fromVPVC = (ViewPhotoVC *)fromVC;
+            fromIV = fromVPVC.iv;
+            [fromVPVC showComponents:NO];
         } else {
             return;
         }
         
-        if (vpvc.direction) {
-            NSLog(@"fromVC direction:%ld", (long)vpvc.direction);
-            fromVC.tabBarController.tabBar.hidden = YES;
-            fromVC.navigationController.navigationBarHidden = YES;
-            CGRect frame = containerView.frame;
-            frame.origin.x = vpvc.direction*CGRectGetWidth(containerView.frame);
+        if (fromVPVC.direction) { // interactive panning (popping)
+            NSLog(@"*** fromIV frame:%@", NSStringFromCGRect(fromIV.frame));
+            NSLog(@"fromVC direction:%ld", (long)fromVPVC.direction);
+//            fromVC.tabBarController.tabBar.hidden = YES;
+            CGRect frame = fromVPVC.view.frame;
+            frame.origin.x = fromVPVC.direction*CGRectGetWidth(containerView.frame);
             
-            NSLog(@"fromVC old=%@ new=%@", NSStringFromCGRect(vpvc.view.frame), NSStringFromCGRect(frame));
+            NSLog(@"fromVC old=%@ new=%@", NSStringFromCGRect(fromVPVC.view.frame), NSStringFromCGRect(frame));
             
             [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
-                vpvc.view.frame = frame;
+                fromVPVC.view.frame = frame;
             } completion:^(BOOL finished) {
                 [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [vpvc showComponents:YES];
+                    [fromVPVC showComponents:YES];
                 });
             }];
-        } else {
+        } else { //dismissing a photo
+            [self logVCs:[fromVPVC.navigationController viewControllers]];
+            NSLog(@"*** fromIV frame:%@ containerView frame:%@", NSStringFromCGRect(fromIV.frame), NSStringFromCGRect(containerView.frame));
+            _originRect = fromVPVC.originRect;
+            
             [UIView animateKeyframesWithDuration:duration delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
-                fromView.frame = _originRect;
-                fromView.alpha = 0;
-                vpvc.backgroundView.alpha = 0;
-//                toVC.tabBarController.tabBar.hidden = NO;
-//                toVC.navigationController.navigationBarHidden = NO;
+                NSLog(@"*** fromIV frame:%@ containerView frame:%@", NSStringFromCGRect(fromIV.frame), NSStringFromCGRect(containerView.frame));
+//                fromIV.frame = _originRect;
+                fromIV.alpha = 0;
+                fromVPVC.view.alpha = 0;
+                toVC.view.alpha = 1;
             } completion:^(BOOL finished) {
-                [fromView removeFromSuperview];
-                [fromVC removeFromParentViewController];
+                [self logVCs:[toVC.navigationController viewControllers]];
                 [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
             }];
         }
@@ -161,5 +160,16 @@
     return (self.duration) ? self.duration : 1;
 }
 
+- (void)animationEnded:(BOOL)transitionCompleted {
+    NSLog(@"transition completed");
+}
+
+- (void)logVCs:(NSArray *)viewControllers {
+
+    
+    for (UIViewController *tempVC in viewControllers) {
+        NSLog(@"*** VC:%@ %@", NSStringFromClass([tempVC class]), tempVC);
+    }
+}
 
 @end

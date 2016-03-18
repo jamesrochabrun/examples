@@ -65,7 +65,7 @@
         _caption.translatesAutoresizingMaskIntoConstraints = NO;
         
         _numYums = [[UILabel alloc] init];
-        [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH4] textColor:kColorText backgroundColor:kColorClear];
+        [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH4] textColor:kColorTextActive backgroundColor:kColorClear];
         _numYums.translatesAutoresizingMaskIntoConstraints = NO;
         
         _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -74,20 +74,12 @@
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateDisabled];
         _userButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         
         [self addSubview:_backgroundImage];
         [self addSubview:_takeAction];
         
-//        _gradient = [CAGradientLayer layer];
-//        NSMutableDictionary *newActions = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-//                                           [NSNull null], @"bounds",
-//                                           [NSNull null], @"position",
-//                                           nil];
-//        _gradient.actions = newActions;
-//        
-//        [self.layer addSublayer:_gradient];
-//        _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA(0x02000000) CGColor], (id)[UIColorRGBA((0xBB000000)) CGColor], nil];
         [self addSubview:_userButton];
         [self addSubview:_yumButton];
         [self addSubview:_numYums];
@@ -129,7 +121,6 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-//    _gradient.frame = CGRectMake(0, height(self)-40, width(self), 40);
 }
 
 - (void)showActionButton:(BOOL)show {
@@ -328,6 +319,15 @@
         _userButton.hidden = YES;
         _caption.hidden = YES;
     }
+    
+    if (_mediaItemObject.sourceUserID == [Settings sharedInstance].userObject.userID) {
+        _userButton.enabled = NO;
+    } else {
+        _userButton.enabled = YES;
+    }
+    
+    //Disable for now to solve the phantom nav bar issue
+//    _userButton.enabled = NO;
 }
 
 - (void)handleMediaItemAltered:(NSNotification*)not

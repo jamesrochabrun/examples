@@ -30,9 +30,9 @@
     [_isFoodButton withIcon:@"" fontSize:25 width:40 height:40 backgroundColor:kColorOffBlack target:self selector:@selector(toggleIsFoodItem)];
     [_isFoodButton setTitle:kFontIconCheckmark forState:UIControlStateSelected];
     [_isFoodButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-    [_isFoodButton setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorBlack)] forState:UIControlStateSelected];
-    [_isFoodButton setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorOffBlack)] forState:UIControlStateNormal];
-    _isFoodButton.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
+    [_isFoodButton setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorButtonBackground)] forState:UIControlStateSelected];
+    [_isFoodButton setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorButtonBackground)] forState:UIControlStateNormal];
+    _isFoodButton.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
     _isFoodButton.layer.borderWidth = 1;
     _isFoodButton.layer.cornerRadius = kGeomCornerRadius;
     

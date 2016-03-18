@@ -8,10 +8,9 @@
 
 #import "BaseVC.h"
 #import "WhatsNewVC.h"
-#import "DebugUtilities.h"
 #import "DropDownListTVC.h"
-#import "DebugUtilities.h"
 #import "AppDelegate.h"
+#import "DebugUtilities.h"
 
 @interface BaseVC ()
 @property (nonatomic, strong) UIButton *displayDropDownButton;
@@ -82,7 +81,7 @@
     
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil]
      setDefaultTextAttributes:@{NSForegroundColorAttributeName:UIColorRGBA(kColorText),
-                                NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3]}];
+                                NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2]}];
 
     _dropDownList = [[DropDownListTVC alloc] init];
     _dropDownList.view.backgroundColor = UIColorRGBA(kColorCellBackground);
@@ -117,6 +116,7 @@
 }
 
 - (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+    [self.rightBarButtonView removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
     [self.rightBarButtonView setTitle:icon forState:UIControlStateNormal];
     [self.rightBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
@@ -192,14 +192,12 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
+
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
     
     CGRect frame = self.navigationController.navigationBar.frame;
     frame.origin.y = kGeomHeightStatusBar;
     self.navigationController.navigationBar.frame = frame;
-}
-
-- (BOOL)prefersStatusBarHidden {
-    return NO;
 }
 
 - (void)didReceiveMemoryWarning {

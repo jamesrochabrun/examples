@@ -15,7 +15,6 @@
 #import "ExploreVC.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
-#import "DebugUtilities.h"
 #import "OOUserView.h"
 #import "ManageTagsVC.h"
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
@@ -278,7 +277,7 @@
                                         UIColorRGBA(kColorBackgroundTheme),  self,
                                         @selector(userTappedDescription:) , 0);
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
-        _buttonDescription.titleLabel.numberOfLines= 0;
+        _buttonDescription.titleLabel.numberOfLines = 0;
         _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeAbout];
 
         [_buttonDescription setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -324,7 +323,7 @@
         
         self.backgroundColor = UIColorRGBA(kColorBlack);
         
-        [DebugUtilities addBorderToViews:@[_buttonDescription, self]];
+//        [DebugUtilities addBorderToViews:@[_buttonDescription, self]];
     }
     return self;
 }
@@ -690,8 +689,8 @@
         _buttonURL.frame = CGRectMake(0, y, w, kGeomProfileHeaderViewHeightOfBloggerButton);
         y += CGRectGetHeight(_buttonURL.frame) + kGeomSpaceEdge;
     }
-    
-    s = [_buttonDescription.titleLabel sizeThatFits:CGSizeMake(w, 200)];
+
+    s = [_buttonDescription.titleLabel sizeThatFits:CGSizeMake(w-2*kGeomSpaceEdge, 200)];
     _buttonDescription.frame = CGRectMake(0, y, w, s.height+2*kGeomSpaceEdge);
     y += CGRectGetHeight(_buttonDescription.frame);
     
@@ -763,7 +762,8 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
-    [self.navigationController setNavigationBarHidden:NO];
+    [self setNavTitle:_nto];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
     
     [self refreshIfNeeded];
     
@@ -881,7 +881,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     NSString *string = _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username) :  @"Missing username";
     _nto = [[NavTitleObject alloc] initWithHeader:string
                                         subHeader:[NSString stringWithFormat:@"%@ %@", _profileOwner.firstName, _profileOwner.lastName]];
-    [self setNavTitle:_nto];
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
 }

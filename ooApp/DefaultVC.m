@@ -54,7 +54,7 @@
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
-    [self.navigationController setNavigationBarHidden:NO];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)didReceiveMemoryWarning {

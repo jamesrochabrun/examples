@@ -123,8 +123,6 @@
     [[Settings sharedInstance] removeDateString];
     [[Settings sharedInstance] removeSearchRadius];
     [APP clearCache];
-    
-//    [self.revealViewController performSegueWithIdentifier:@"loginUISegue" sender:self];
 }
 
 @end

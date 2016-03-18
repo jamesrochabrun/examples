@@ -177,7 +177,7 @@
 
     _wentToExplore = NO;
     
-    [self.navigationController setNavigationBarHidden:YES];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
 }
 
 //------------------------------------------------------------------------------
@@ -873,6 +873,7 @@
                 [self logout];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     _facebookLoginButton.hidden = NO;
+                    [_facebookLoginButton setNeedsLayout];
                     _info.text = @"There was a problem logging you in. Try again.";
                     [self.view setNeedsLayout];
                 });

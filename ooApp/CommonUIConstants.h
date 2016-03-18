@@ -213,7 +213,6 @@ static CGFloat kGeomFaceBubbleDiameter = 26;
 static CGFloat kGeomFaceBubbleSpacing = 5;
 
 static CGFloat kGeomStripHeaderHeight = 27;
-static CGFloat kGeomSideBarRevealWidth = 235;
 static CGFloat kGeomHeightCreateListButton = 23;
 static CGFloat kGeomVerticalSpaceCreateList = 31;
 static CGFloat kGeomHeightDropDownListRow = 40;

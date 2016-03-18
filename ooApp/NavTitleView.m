@@ -89,12 +89,14 @@
 - (void)setNavTitle:(NavTitleObject *)navTitle
 {
     _navTitle = navTitle;
+    NSLog(@"nav title header:%@", navTitle.header);
     
     _headerLabel.text = [_navTitle.header uppercaseString];
     _subHeaderLabel.text = _navTitle.subheader;
     [_headerLabel sizeToFit];
     [_subHeaderLabel sizeToFit];
     [self setNeedsUpdateConstraints];
+    [self setNeedsLayout];
 }
 
 @end

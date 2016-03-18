@@ -309,7 +309,7 @@ static NSString * const ListRowID = @"HLRCell";
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
-    [self.navigationController setNavigationBarHidden:NO];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(locationBecameAvailable:)
                                                  name:kNotificationLocationBecameAvailable object:nil];
@@ -330,10 +330,11 @@ static NSString * const ListRowID = @"HLRCell";
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIApplicationDidBecomeActiveNotification
                                                   object:nil];
+    [super viewWillDisappear:animated];
 }
 
 - (void)updateLocationIfRequired {

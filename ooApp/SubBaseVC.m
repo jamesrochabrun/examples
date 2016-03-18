@@ -69,6 +69,8 @@
     [self.view addSubview:self.uploadProgressBar];
     self.uploadProgressBar.hidden = YES;
     
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
         self.edgesForExtendedLayout = UIRectEdgeNone;
 }

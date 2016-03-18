@@ -279,14 +279,14 @@ typedef enum {
     } else {
         UITableViewCell *cell = (UITableViewCell *)[_tableView dequeueReusableCellWithIdentifier:buttonsCellIdentifier];
         _addToFavoritesButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_addToFavoritesButton withText:@"Add to Favorites" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToFavorites)];
+        [_addToFavoritesButton withText:@"Add to Favorites" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(addToFavorites)];
         
         _addToWishlistButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_addToWishlistButton withText:@"Add to Wishlist" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(addToWishlist)];
+        [_addToWishlistButton withText:@"Add to Wishlist" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(addToWishlist)];
 
         _createListButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self setupCreateListAC];
-        [_createListButton withText:@"Add to New List" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorOffBlack textColor:kColorWhite borderColor:kColorClear target:self selector:@selector(createList)];
+        [_createListButton withText:@"Add to New List" fontSize:kGeomFontSizeH3 width:0 height:40 backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(createList)];
         
         NSMutableArray *buttons = [NSMutableArray array];
         [buttons addObjectsFromArray:@[_addToFavoritesButton, _addToWishlistButton, _createListButton]];

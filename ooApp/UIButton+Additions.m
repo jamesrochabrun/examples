@@ -32,7 +32,7 @@
     self.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:fontSize];
     [self setTitleColor:UIColorRGBA(kColorBlack) forState:UIControlStateNormal];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor & 0xFFEEEE)] forState:UIControlStateHighlighted];
-    [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorGrayMiddle)] forState:UIControlStateDisabled];
+    [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorClear)] forState:UIControlStateDisabled];
     [self setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(backColor)] forState:UIControlStateNormal];
     self.clipsToBounds = YES;
     self.layer.cornerRadius = kGeomCornerRadius;
