@@ -75,7 +75,7 @@
         _labelName.textColor=UIColorRGBA(kColorText);
         
         _buttonFollow = makeButton(self, @"FOLLOW", kGeomFontSizeSubheader,
-                                   UIColorRGBA(kColorTextReverse),UIColorRGBA(kColorTextActive), self, @selector(userPressedFollow:), .5);
+                                   UIColorRGBA(kColorTextReverse),UIColorRGBA(kColorClear), self, @selector(userPressedFollow:), .5);
         [_buttonFollow setTitle:@"FOLLOWING" forState:UIControlStateSelected];
         [_buttonFollow setTitleColor: UIColorRGBA(kColorTextActive) forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
@@ -151,7 +151,7 @@
                     success:^(id responseObject) {
                         dispatch_async(dispatch_get_main_queue(), ^{
                             weakSelf.buttonFollow.selected = YES;
-                            weakSelf.buttonFollow.backgroundColor = UIColorRGBA(kColorBlack);
+                            [weakSelf showFollowButton:YES];
                             
                             NSLog(@"SUCCESSFULLY FOLLOWED USER");
                             NOTIFY(kNotificationOwnProfileNeedsUpdate);
