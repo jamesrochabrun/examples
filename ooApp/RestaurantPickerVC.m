@@ -11,6 +11,7 @@
 #import "LocationManager.h"
 #import "DebugUtilities.h"
 #import "NavTitleObject.h"
+#import "iRate.h"
 
 @interface RestaurantPickerVC ()
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
@@ -312,6 +313,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     if (_currentSearchBar == _searchBar) {
         RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
         [_delegate restaurantPickerVC:self restaurantSelected:restaurant];
+        [[iRate sharedInstance] logEvent:YES];
     } else if (_currentSearchBar == _locationSearchBar) {
         CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
         _locationSearchBar.text = [Common locationString:placemark];

@@ -21,12 +21,23 @@
 #import "NotificationObject.h"
 #import "RestaurantListVC.h"
 #import "ViewPhotoVC.h"
+#import "iRate.h"
 
 @interface AppDelegate ()
 @property (nonatomic, strong) NSMutableArray *notifications;
 @end
 
 @implementation AppDelegate
+
++ (void)initialize {
+    [iRate sharedInstance].daysUntilPrompt = 5;
+    [iRate sharedInstance].usesUntilPrompt = 15;
+    [iRate sharedInstance].appStoreID = 1053373398;
+    [iRate sharedInstance].eventsUntilPrompt = 5;
+    [iRate sharedInstance].messageTitle = @"Enjoying Oomami?";
+    [iRate sharedInstance].message = @"Take a moment to let everyone know by rating us in the app store. The more friends of yours that use the app the more useful it becomes!";
+//    [iRate sharedInstance].previewMode = YES;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

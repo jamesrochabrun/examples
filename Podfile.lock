@@ -41,6 +41,7 @@ PODS:
     - HockeySDK/AllFeaturesLib (= 3.8.2)
   - HockeySDK/AllFeaturesLib (3.8.2)
   - Instabug (5.1.2)
+  - iRate (1.11.4)
   - TTTAttributedLabel (1.13.4)
 
 DEPENDENCIES:
@@ -49,6 +50,7 @@ DEPENDENCIES:
   - GoogleMaps
   - HockeySDK (~> 3.8.2)
   - Instabug
+  - iRate
   - TTTAttributedLabel
 
 SPEC CHECKSUMS:
@@ -62,6 +64,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
   HockeySDK: 9f4ac41263acf9d8a4d59491a7f17af16529b935
   Instabug: c315abe1a1c4cbd3ea1cc6ec8f9954d6c5371c39
+  iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
   TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
 
 COCOAPODS: 0.39.0
