@@ -322,18 +322,14 @@
     _labelUsernameTaken.hidden= YES;
 }
 
-//------------------------------------------------------------------------------
-// Name:    goToLoginScreen
-// Purpose: Perform segue to login screen.
-//------------------------------------------------------------------------------
-- (void)goToLoginScreen
+- (void)goToWelcomeScreen
 {
-    [self performSegueWithIdentifier:@"returnToLogin" sender:self];
+    [self performSegueWithIdentifier:@"returnToWelcome" sender:self];
 }
 
 - (void)wentIntoBackground:(NSNotification *)not
 {
-    [self goToLoginScreen];
+    [self goToWelcomeScreen];
 }
 
 //------------------------------------------------------------------------------

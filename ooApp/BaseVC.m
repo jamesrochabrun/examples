@@ -121,6 +121,12 @@
     [self.rightBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
 
+- (CGRect)getRightButtonFrame {
+    CGRect frame;
+    frame = [self.view convertRect:_rightBarButtonView.frame toView:nil];
+    return frame;
+}
+
 -(void)displayDropDown:(BOOL)showIt {
     if (![_dropDownList.options count]) return;
     CGRect ddlFrame = _dropDownList.view.frame;

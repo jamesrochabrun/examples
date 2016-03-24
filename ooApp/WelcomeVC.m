@@ -1,14 +1,14 @@
 //------------------------------------------------------------------------------
 //
-//  LoginVC.m
+//  Welcome.VC
 //  ooApp
 //
-//  Created by Anuj Gujar on 8/17/15.
+//  Created by Anuj Gujar on 3/23/16.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import "LoginVC.h"
+#import "WelcomeVC.h"
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
 #import "LocationManager.h"
@@ -19,22 +19,22 @@
 #import "SocialMedia.h"
 #import <Instabug/Instabug.h>
 
-@interface LoginVC ()
+@interface WelcomeVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIView *overlay;
-@property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
-@property (nonatomic, strong) UIButton *backButton;
-@property (nonatomic, strong) UIButton *emailButton;
+@property (nonatomic, strong) UIButton *loginButton;
+@property (nonatomic, strong) UIButton *signupButton;
 @property (nonatomic, strong) UIButton *tryAgain;
-@property (nonatomic, strong) UILabel *quickMessage;
-@property (nonatomic, strong) UILabel *emailMessage;
+@property (nonatomic, strong) UILabel *logoLabel;
+@property (nonatomic, strong) UILabel *betaLabel;
+@property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic, strong) UILabel *info;
 @property (nonatomic, strong) UIView *verticalLine;
 @end
 
-@implementation LoginVC
+@implementation WelcomeVC
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -43,7 +43,7 @@
 - (void) viewDidLoad
 {
     ENTRY;
-
+    
     [super viewDidLoad];
     
     _wentToExplore = NO;
@@ -55,12 +55,12 @@
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
     
     _info = [[UILabel alloc] init];
-    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     
     UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
-
+    
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-
+    
     _verticalLine = [[UIView alloc] init];
     _verticalLine.backgroundColor = UIColorRGBA(kColorWhite);
     
@@ -69,49 +69,44 @@
     _backgroundImageView.clipsToBounds = YES;
     _backgroundImageView.opaque = NO;
     
-    _facebookLoginButton = [[FBSDKLoginButton alloc] init];
-    [_facebookLoginButton setAttributedTitle:[[NSAttributedString alloc] initWithString:@"Facebook"] forState:UIControlStateNormal];
-    _facebookLoginButton.delegate = self;
-    _facebookLoginButton.layer.cornerRadius = 0;
-    _facebookLoginButton.readPermissions = @[@"public_profile", @"email", @"user_friends"];
+    _logoLabel = [[UILabel alloc] init];
+    [_logoLabel withFont:[UIFont fontWithName:kFontIcons size:width(self.view)*0.75] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
+    _logoLabel.text = kFontIconLogoFull;
+    _logoLabel.frame = CGRectMake(0, 0, width(self.view)*0.75, IS_IPAD ? 175:100);
+    
+    _betaLabel = [[UILabel alloc] init];
+    [_betaLabel withFont:[UIFont fontWithName:kFontIcons size:40] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
+    _betaLabel.text = kFontIconBeta;
     
     _tryAgain = [UIButton buttonWithType:UIButtonTypeCustom];
     [_tryAgain withText:@"Try Again" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(initiateLoginFlow)];
     _tryAgain.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
     _tryAgain.layer.cornerRadius = kGeomCornerRadius;
-
-    _emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_emailButton withText:@"Email" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorBackgroundTheme textColor:kColorGrayMiddle borderColor:kColorClear target:self selector:@selector(showEmailLogin)];
-    _emailButton.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
-    _emailButton.layer.cornerRadius = kGeomCornerRadius;
-
-    _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_backButton withIcon:kFontIconBack fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:kGeomDimensionsIconButton backgroundColor:kColorClear target:self selector:@selector(goBack)];
-    [_backButton setTitleColor:UIColorRGBA(kColorNavBarText) forState:UIControlStateNormal];
-
-    _quickMessage = [[UILabel alloc] init];
-    [_quickMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
-    _quickMessage.text = @"Log in quickly:";
-
-    _emailMessage = [[UILabel alloc] init];
-    [_emailMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
-    _emailMessage.text = @"or use your email:";
+    
+    _loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_loginButton withText:@"Log In" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(showLogin)];
+    _loginButton.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
+    
+    _signupButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_signupButton withText:@"Sign Up" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(showSignup)];
+    _signupButton.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
     
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_overlay];
-    [self.view addSubview:_quickMessage];
-    [self.view addSubview:_emailMessage];
-    [self.view addSubview:_facebookLoginButton];
-    [self.view addSubview:_emailButton];
+    [self.view addSubview:_logoLabel];
+    [self.view addSubview:_betaLabel];
     [self.view addSubview:_aiv];
     [self.view addSubview:_info];
     [self.view addSubview:_tryAgain];
-    [self.view addSubview:_backButton];
-    [self.view addSubview:_verticalLine];
+    [self.view addSubview:_signupButton];
+    [self.view addSubview:_loginButton];
+    [_signupButton addSubview:_verticalLine];
+    
+    self.labelMessage= makeLabel(self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
+    _labelMessage.textColor= UIColorRGBA(kColorWhite);
     
     _tryAgain.hidden = YES;
-    
-    //[DebugUtilities addBorderToViews:@[_backButton]];
+    //    [DebugUtilities addBorderToViews:@[_betaLabel, _logoLabel]];
 }
 
 - (void)doLayout
@@ -123,28 +118,31 @@
     _backgroundImageView.clipsToBounds = YES;
     
     _overlay.frame = _backgroundImageView.bounds;
-
-    CGFloat y = kGeomHeightNavBarStatusBar;
     
-    y += kGeomSpaceEdge;
+    CGFloat y = height(self.view)*0.25;
+    _logoLabel.frame = CGRectMake((width(self.view) - width(_logoLabel))/2, y, width(_logoLabel), height(_logoLabel));
     
-    [_quickMessage sizeToFit];
-    [_emailMessage sizeToFit];
+    y += height(_logoLabel);
     
-    _quickMessage.frame = CGRectMake(kGeomSpaceEdge, y, CGRectGetWidth(_quickMessage.frame), CGRectGetHeight(_quickMessage.frame));
+    [_betaLabel sizeToFit];
+    _betaLabel.frame = CGRectMake((CGRectGetMaxX(_logoLabel.frame) - width(_betaLabel)) + 8, CGRectGetMaxY(_logoLabel.frame)-45, width(_betaLabel), height(_betaLabel));
     
-    _facebookLoginButton.frame =  CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_quickMessage.frame) + kGeomSpaceEdge, w-2*kGeomSpaceEdge, kGeomHeightButton);
+    y -= 5; // as per Jay
+    [_labelMessage sizeToFit];
+    _labelMessage.frame = CGRectMake(0, y, w, _labelMessage.frame.size.height);
     
-    _emailMessage.frame = CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_facebookLoginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_emailMessage.frame), CGRectGetHeight(_emailMessage.frame));
-
-    _emailButton.frame =  CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_emailMessage.frame) + kGeomSpaceEdge, w-2*kGeomSpaceEdge, kGeomHeightButton);
-
     CGFloat facebookButtonHeight = facebookButtonHeight = kGeomHeightButton;
     
-    _backButton.frame = CGRectMake(kGeomSpaceEdge, kGeomHeightStatusBar, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+    _signupButton.frame = CGRectMake(0, h-kGeomHeightButton, w/2, kGeomHeightButton);
+    _loginButton.frame = CGRectMake(w-w/2, h-kGeomHeightButton, w/2, kGeomHeightButton);
     
-    _aiv.center = self.view.center;
-    _tryAgain.center = self.view.center;
+    _loginButton.layer.cornerRadius =
+    _signupButton.layer.cornerRadius = 0;
+    
+    _tryAgain.frame =  CGRectMake(0, h-2*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
+    _aiv.center = _tryAgain.center;
+    
+    _verticalLine.frame = CGRectMake(CGRectGetWidth(_signupButton.frame)-1, kGeomSpaceLineEdgeBuffer, 1, CGRectGetHeight(_signupButton.frame)-2*kGeomSpaceLineEdgeBuffer);
     
     CGRect frame = _info.frame;
     frame.size = [_info sizeThatFits:CGSizeMake(width(self.view) - 2*kGeomSpaceEdge, 100)];
@@ -161,6 +159,14 @@
     [self doLayout];
 }
 
+- (void)showLogin {
+    [self performSegueWithIdentifier:@"gotoLogin" sender:self];
+}
+
+- (void)showSignup {
+    [self performSegueWithIdentifier:@"gotoSignup" sender:self];
+}
+
 //------------------------------------------------------------------------------
 // Name:    viewWillAppear
 // Purpose:
@@ -170,12 +176,10 @@
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN(@( object_getClassName(self)));
-
+    
     _wentToExplore = NO;
-}
-
-- (void)goBack {
-    [self.navigationController popViewControllerAnimated:YES];
+    
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
 }
 
 //------------------------------------------------------------------------------
@@ -201,7 +205,7 @@
 - (void)showMainUI
 {
     ENTRY;
-
+    
     if (_wentToExplore) { // Prevent duplicate simultaneous calls.
         return;
     }
@@ -231,7 +235,7 @@
     if (email.length) {
         [Instabug setUserEmail:email];
     }
-
+    
     //---------------------------------------------------
     // RULE: If the application was deleted, we may have
     //  the Facebook ID but not the email address and
@@ -243,7 +247,7 @@
     NSString *identifier = facebookToken.userID;
     if (facebookToken && identifier && (!token || !token.length) && (! email || !email.length)) {
         NSLog(@"HAVE FACEBOOK TOKEN BUT NO EMAIL AND NO AUTHORIZATION TOKEN");
-//        [self fetchEmailFromFacebookFor:identifier];
+        //        [self fetchEmailFromFacebookFor:identifier];
     } else {
         [self showMainUIWithUserEmail:email];
     }
@@ -272,20 +276,20 @@
     [SocialMedia fetchProfilePhotoWithCompletionBlock:NULL];
     
     UserObject* userInfo = [Settings sharedInstance].userObject;
-
-//    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
-//    NSString *md5 = [saltedString MD5String];
-//    md5 = [md5 lowercaseString];
-//    seekingToken = YES;
-//    
-
-     NSLog (@"USERNAME %@",userInfo.username);
-
-         if (userInfo.username.length) {
-             [self performSegueWithIdentifier:@"mainUISegue" sender:self];
-         } else {
-             [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
-         }
+    
+    //    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
+    //    NSString *md5 = [saltedString MD5String];
+    //    md5 = [md5 lowercaseString];
+    //    seekingToken = YES;
+    //
+    
+    NSLog (@"USERNAME %@",userInfo.username);
+    
+    if (userInfo.username.length) {
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+    }
     
 }
 
@@ -297,21 +301,19 @@
 {
     ENTRY;
     [super viewDidAppear:animated];
+    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
+    if (facebookToken) {
+        [self initiateLoginFlow:facebookToken];
+    }
 }
 
-- (void)showEmailLogin {
-    [self performSegueWithIdentifier:@"gotoEmailLogin" sender:self];
-}
-
-- (void)initiateLoginFlow {
-    _facebookLoginButton.hidden = YES;
+- (void)initiateLoginFlow:(FBSDKAccessToken *)facebookToken {
     _tryAgain.hidden = YES;
     
-    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
+    
     [_aiv startAnimating];
     
     if (facebookToken) {
-        _facebookLoginButton.hidden = YES;
         _info.hidden = NO;
         _info.text = @"Logging you in to Oomami";
         [self.view setNeedsLayout];
@@ -339,8 +341,6 @@
             } else {
                 [self logout];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    _facebookLoginButton.hidden = NO;
-                    [_facebookLoginButton setNeedsLayout];
                     _info.text = @"There was a problem logging you in. Try again.";
                     [self.view setNeedsLayout];
                 });
@@ -349,7 +349,6 @@
     } else {
         [self logout];
         [_aiv stopAnimating];
-        _facebookLoginButton.hidden = NO;
     }
 }
 
@@ -366,7 +365,7 @@
 - (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
     ENTRY;
-
+    
     NSLog (@"loginButtonDidimageViewLogout: USER LOGGED OUT");
 }
 
@@ -383,7 +382,6 @@
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
              NSLog(@"fetched user:%@", result);
-             [self initiateLoginFlow];
          } else {
              NSLog (@"Facebook server gave error %@", error);
              NSString *string = @"We had a problem logging you in via Facebook.";

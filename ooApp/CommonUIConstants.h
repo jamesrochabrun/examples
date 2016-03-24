@@ -15,10 +15,16 @@
 #define UIColorRGB(rgbValue) [UIColor colorWithRed:(255&(rgbValue>> 16))/255.0f \
         green:(255&(rgbValue >> 8))/255.0 \
         blue:(255&rgbValue)/255.0 alpha:1.0]
+
 #define UIColorRGBA(rgbValue) [UIColor colorWithRed:(255&(rgbValue>> 16))/255.0f \
         green:(255&(rgbValue >> 8))/255.0f \
         blue:(255&rgbValue)/255.0f \
-        alpha:(rgbValue >> 24)/255.0f ]
+        alpha:(rgbValue >> 24)/255.0f]
+
+#define UIColorRGBOverlay(rgbValue, alphaValue) [UIColor colorWithRed:(255&(rgbValue>> 16))/255.0f \
+        green:(255&(rgbValue >> 8))/255.0f \
+        blue:(255&rgbValue)/255.0f \
+        alpha:alphaValue]
 
 static const NSUInteger kColorElements1 = 0xFF272727;
 static const NSUInteger kColorElements2 = 0xFFe0e0e0;
@@ -42,6 +48,7 @@ static const NSUInteger kColorOverlay30 = 0xB3000000;
 static const NSUInteger kColorOverlay35 = 0xA6000000;
 static const NSUInteger kColorOverlay40 = 0x99000000;
 static const NSUInteger kColorOverlay50 = 0x7F000000;
+static const NSUInteger kColorOverlay80 = ((NSUInteger)(0.2*255.0f) << 24) ;
 
 #define LIGHT_SCHEME 1
 
@@ -148,6 +155,7 @@ static CGFloat kGeomHeightStatusBar = 20.0;
 static CGFloat kGeomHeightTabBar = 49;
 static CGFloat kGeomHeightFilters = 40.0;
 static CGFloat kGeomWidthButton = 100;
+static CGFloat kGeomWidthButtoniPadMax = 300;
 static CGFloat kGeomHeightSampleUsernameRow = 180.0;
 static CGFloat kGeomHeightFeaturedRow = 180.0;
 static CGFloat kGeomHeightFeaturedCellWidth = 320.0;
@@ -162,6 +170,7 @@ static CGFloat kGeomSpaceEdge = 6;
 static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
 static CGFloat kGeomInterImageGap = 2;
+static CGFloat kGeomSpaceLineEdgeBuffer = 4;
 
 static CGFloat kGeomUploadWidth = 750;
 

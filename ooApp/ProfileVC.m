@@ -1743,7 +1743,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         [[Settings sharedInstance] removeDateString];
         [[Settings sharedInstance] removeSearchRadius];
         [APP clearCache];
-        [APP.tabBar performSegueWithIdentifier:@"loginUISegue" sender:self];
+        [APP.tabBar performSegueWithIdentifier:@"welcomeUISegue" sender:self];
     }];
     
     UIAlertAction *actionProfilePicture = [UIAlertAction actionWithTitle:@"Change Profile Picture" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

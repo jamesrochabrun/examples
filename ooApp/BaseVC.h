@@ -26,5 +26,6 @@
 - (void)displayDropDown:(BOOL)showIt;
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector;
 - (void)unregisterFromNotifications;
+- (CGRect)getRightButtonFrame;
 
 @end

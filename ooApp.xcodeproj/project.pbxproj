@@ -97,6 +97,10 @@
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3697D9F61C02A95C0022944F /* DropDownListTVC.m */; };
 		36AF0CCA1C6A9ABF0063A58E /* UserListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */; };
+		36B1CC8E1CA2EF0A007D0263 /* WelcomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC8D1CA2EF0A007D0263 /* WelcomeVC.m */; };
+		36B1CC911CA2EF23007D0263 /* SignupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC901CA2EF23007D0263 /* SignupVC.m */; };
+		36B1CC941CA3A1C9007D0263 /* EmailSignupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC931CA3A1C9007D0263 /* EmailSignupVC.m */; };
+		36B1CC971CA3A1DA007D0263 /* EmailLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC961CA3A1DA007D0263 /* EmailLoginVC.m */; };
 		36BA03301C50CE1D00802EF8 /* ooLoading60.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03121C50CE1D00802EF8 /* ooLoading60.png */; };
 		36BA03311C50CE1D00802EF8 /* ooLoading61.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03131C50CE1D00802EF8 /* ooLoading61.png */; };
 		36BA03321C50CE1D00802EF8 /* ooLoading62.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03141C50CE1D00802EF8 /* ooLoading62.png */; };
@@ -414,6 +418,14 @@
 		3697D9F61C02A95C0022944F /* DropDownListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropDownListTVC.m; sourceTree = "<group>"; };
 		36AF0CC81C6A9ABF0063A58E /* UserListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListTVC.h; sourceTree = "<group>"; };
 		36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserListTVC.m; sourceTree = "<group>"; };
+		36B1CC8C1CA2EF0A007D0263 /* WelcomeVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WelcomeVC.h; sourceTree = "<group>"; };
+		36B1CC8D1CA2EF0A007D0263 /* WelcomeVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WelcomeVC.m; sourceTree = "<group>"; };
+		36B1CC8F1CA2EF23007D0263 /* SignupVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignupVC.h; sourceTree = "<group>"; };
+		36B1CC901CA2EF23007D0263 /* SignupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignupVC.m; sourceTree = "<group>"; };
+		36B1CC921CA3A1C9007D0263 /* EmailSignupVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmailSignupVC.h; sourceTree = "<group>"; };
+		36B1CC931CA3A1C9007D0263 /* EmailSignupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailSignupVC.m; sourceTree = "<group>"; };
+		36B1CC951CA3A1DA007D0263 /* EmailLoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmailLoginVC.h; sourceTree = "<group>"; };
+		36B1CC961CA3A1DA007D0263 /* EmailLoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailLoginVC.m; sourceTree = "<group>"; };
 		36BA03121C50CE1D00802EF8 /* ooLoading60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading60.png; path = "Graphic Assets/ooLoading/ooLoading60.png"; sourceTree = "<group>"; };
 		36BA03131C50CE1D00802EF8 /* ooLoading61.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading61.png; path = "Graphic Assets/ooLoading/ooLoading61.png"; sourceTree = "<group>"; };
 		36BA03141C50CE1D00802EF8 /* ooLoading62.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading62.png; path = "Graphic Assets/ooLoading/ooLoading62.png"; sourceTree = "<group>"; };
@@ -1101,6 +1113,14 @@
 				36D5D2191B69DA48009EE877 /* OONetworkManager.m */,
 				3690BFD21B745A9200BC7528 /* OOAPI.h */,
 				3690BFD31B745A9200BC7528 /* OOAPI.m */,
+				36B1CC8C1CA2EF0A007D0263 /* WelcomeVC.h */,
+				36B1CC8D1CA2EF0A007D0263 /* WelcomeVC.m */,
+				36B1CC8F1CA2EF23007D0263 /* SignupVC.h */,
+				36B1CC901CA2EF23007D0263 /* SignupVC.m */,
+				36B1CC921CA3A1C9007D0263 /* EmailSignupVC.h */,
+				36B1CC931CA3A1C9007D0263 /* EmailSignupVC.m */,
+				36B1CC951CA3A1DA007D0263 /* EmailLoginVC.h */,
+				36B1CC961CA3A1DA007D0263 /* EmailLoginVC.m */,
 			);
 			path = ooApp;
 			sourceTree = "<group>";
@@ -1446,6 +1466,7 @@
 				36FDA6FF1B585F650029D29D /* PlayVC.m in Sources */,
 				96C5330D1C655018009C84BB /* SpecialtyObject.m in Sources */,
 				36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */,
+				36B1CC971CA3A1DA007D0263 /* EmailLoginVC.m in Sources */,
 				366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */,
 				36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */,
 				36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */,
@@ -1455,6 +1476,7 @@
 				363B60C11B6AC15400987A1B /* RestaurantObject.m in Sources */,
 				96D2C4791BEC21020060EDB8 /* ParticipantsView.m in Sources */,
 				96ACD78A1BC3487E00E37DC1 /* EventCoordinatorVC.m in Sources */,
+				36B1CC911CA2EF23007D0263 /* SignupVC.m in Sources */,
 				363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */,
 				3629F0C71BFCF42500E2D912 /* DraggableViewBackground.m in Sources */,
 				964BC81E1B97935F00760C83 /* Settings.m in Sources */,
@@ -1536,6 +1558,7 @@
 				965A1A971BBA05B500727773 /* SearchVC.m in Sources */,
 				3629F0C81BFCF42500E2D912 /* OverlayView.m in Sources */,
 				962B00C31BD95D22008790FD /* VoteObject.m in Sources */,
+				36B1CC941CA3A1C9007D0263 /* EmailSignupVC.m in Sources */,
 				3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
 				362559901C102ECD002553B4 /* TagTileCVCell.m in Sources */,
@@ -1546,6 +1569,7 @@
 				36E592971C2A62BD00A56367 /* NotificationObject.m in Sources */,
 				96E49E741BC5E14B008B70AF /* EventWhenVC.m in Sources */,
 				96AC04631C0D22E2002B1264 /* AutoCompleteObject.m in Sources */,
+				36B1CC8E1CA2EF0A007D0263 /* WelcomeVC.m in Sources */,
 				960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */,
 				96C3A3F41BC5F335009689E3 /* EventParticipantVC.m in Sources */,
 				964BC8211B97A4E700760C83 /* LocationManager.m in Sources */,

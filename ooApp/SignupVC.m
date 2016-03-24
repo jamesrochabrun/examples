@@ -1,14 +1,13 @@
 //------------------------------------------------------------------------------
 //
-//  LoginVC.m
+//  SignupVC.m
 //  ooApp
 //
 //  Created by Anuj Gujar on 8/17/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import "LoginVC.h"
+#import "SignupVC.h"
 #import "AppDelegate.h"
 #import "DebugUtilities.h"
 #import "LocationManager.h"
@@ -19,7 +18,7 @@
 #import "SocialMedia.h"
 #import <Instabug/Instabug.h>
 
-@interface LoginVC ()
+@interface SignupVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIView *overlay;
 @property (nonatomic, strong) FBSDKLoginButton *facebookLoginButton;
@@ -34,7 +33,7 @@
 @property (nonatomic, strong) UIView *verticalLine;
 @end
 
-@implementation LoginVC
+@implementation SignupVC
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -43,7 +42,7 @@
 - (void) viewDidLoad
 {
     ENTRY;
-
+    
     [super viewDidLoad];
     
     _wentToExplore = NO;
@@ -58,9 +57,9 @@
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     
     UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
-
+    
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-
+    
     _verticalLine = [[UIView alloc] init];
     _verticalLine.backgroundColor = UIColorRGBA(kColorWhite);
     
@@ -70,29 +69,29 @@
     _backgroundImageView.opaque = NO;
     
     _facebookLoginButton = [[FBSDKLoginButton alloc] init];
-    [_facebookLoginButton setAttributedTitle:[[NSAttributedString alloc] initWithString:@"Facebook"] forState:UIControlStateNormal];
     _facebookLoginButton.delegate = self;
     _facebookLoginButton.layer.cornerRadius = 0;
+    [_facebookLoginButton setAttributedTitle:[[NSAttributedString alloc] initWithString:@"Facebook"] forState:UIControlStateNormal];
     _facebookLoginButton.readPermissions = @[@"public_profile", @"email", @"user_friends"];
     
     _tryAgain = [UIButton buttonWithType:UIButtonTypeCustom];
     [_tryAgain withText:@"Try Again" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(initiateLoginFlow)];
     _tryAgain.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
     _tryAgain.layer.cornerRadius = kGeomCornerRadius;
-
+    
     _emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_emailButton withText:@"Email" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorBackgroundTheme textColor:kColorGrayMiddle borderColor:kColorClear target:self selector:@selector(showEmailLogin)];
+    [_emailButton withText:@"Email" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorBackgroundTheme textColor:kColorGrayMiddle borderColor:kColorClear target:self selector:@selector(showEmailSignup)];
     _emailButton.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
     _emailButton.layer.cornerRadius = kGeomCornerRadius;
-
+    
     _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_backButton withIcon:kFontIconBack fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:kGeomDimensionsIconButton backgroundColor:kColorClear target:self selector:@selector(goBack)];
     [_backButton setTitleColor:UIColorRGBA(kColorNavBarText) forState:UIControlStateNormal];
-
+    
     _quickMessage = [[UILabel alloc] init];
     [_quickMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
-    _quickMessage.text = @"Log in quickly:";
-
+    _quickMessage.text = @"Sign up quickly:";
+    
     _emailMessage = [[UILabel alloc] init];
     [_emailMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
     _emailMessage.text = @"or use your email:";
@@ -123,7 +122,7 @@
     _backgroundImageView.clipsToBounds = YES;
     
     _overlay.frame = _backgroundImageView.bounds;
-
+    
     CGFloat y = kGeomHeightNavBarStatusBar;
     
     y += kGeomSpaceEdge;
@@ -136,9 +135,9 @@
     _facebookLoginButton.frame =  CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_quickMessage.frame) + kGeomSpaceEdge, w-2*kGeomSpaceEdge, kGeomHeightButton);
     
     _emailMessage.frame = CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_facebookLoginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_emailMessage.frame), CGRectGetHeight(_emailMessage.frame));
-
+    
     _emailButton.frame =  CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_emailMessage.frame) + kGeomSpaceEdge, w-2*kGeomSpaceEdge, kGeomHeightButton);
-
+    
     CGFloat facebookButtonHeight = facebookButtonHeight = kGeomHeightButton;
     
     _backButton.frame = CGRectMake(kGeomSpaceEdge, kGeomHeightStatusBar, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
@@ -170,7 +169,7 @@
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN(@( object_getClassName(self)));
-
+    
     _wentToExplore = NO;
 }
 
@@ -201,7 +200,7 @@
 - (void)showMainUI
 {
     ENTRY;
-
+    
     if (_wentToExplore) { // Prevent duplicate simultaneous calls.
         return;
     }
@@ -231,7 +230,7 @@
     if (email.length) {
         [Instabug setUserEmail:email];
     }
-
+    
     //---------------------------------------------------
     // RULE: If the application was deleted, we may have
     //  the Facebook ID but not the email address and
@@ -243,7 +242,7 @@
     NSString *identifier = facebookToken.userID;
     if (facebookToken && identifier && (!token || !token.length) && (! email || !email.length)) {
         NSLog(@"HAVE FACEBOOK TOKEN BUT NO EMAIL AND NO AUTHORIZATION TOKEN");
-//        [self fetchEmailFromFacebookFor:identifier];
+        //        [self fetchEmailFromFacebookFor:identifier];
     } else {
         [self showMainUIWithUserEmail:email];
     }
@@ -272,20 +271,20 @@
     [SocialMedia fetchProfilePhotoWithCompletionBlock:NULL];
     
     UserObject* userInfo = [Settings sharedInstance].userObject;
-
-//    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
-//    NSString *md5 = [saltedString MD5String];
-//    md5 = [md5 lowercaseString];
-//    seekingToken = YES;
-//    
-
-     NSLog (@"USERNAME %@",userInfo.username);
-
-         if (userInfo.username.length) {
-             [self performSegueWithIdentifier:@"mainUISegue" sender:self];
-         } else {
-             [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
-         }
+    
+    //    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
+    //    NSString *md5 = [saltedString MD5String];
+    //    md5 = [md5 lowercaseString];
+    //    seekingToken = YES;
+    //
+    
+    NSLog (@"USERNAME %@",userInfo.username);
+    
+    if (userInfo.username.length) {
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+    }
     
 }
 
@@ -299,8 +298,8 @@
     [super viewDidAppear:animated];
 }
 
-- (void)showEmailLogin {
-    [self performSegueWithIdentifier:@"gotoEmailLogin" sender:self];
+- (void)showEmailSignup {
+    [self performSegueWithIdentifier:@"gotoEmailSignup" sender:self];
 }
 
 - (void)initiateLoginFlow {
@@ -366,7 +365,7 @@
 - (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
     ENTRY;
-
+    
     NSLog (@"loginButtonDidimageViewLogout: USER LOGGED OUT");
 }
 
