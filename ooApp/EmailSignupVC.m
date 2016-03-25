@@ -178,8 +178,7 @@
     [super viewDidLayoutSubviews];
     
     CGFloat w = width(self.view);
-    CGFloat h = height(self.view);
-    CGFloat buttonWidth = (IS_IPAD) ? kGeomWidthButtoniPadMax : w - 2*kGeomSpaceEdge;
+    CGFloat buttonWidth = (IS_IPAD) ? kGeomWidthButtoniPadMax : w - 4*kGeomSpaceEdge;
     
     _backButton.frame = CGRectMake(kGeomSpaceEdge, kGeomHeightStatusBar, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
     

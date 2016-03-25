@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="First" image="5976AC83-0EA3-4686-A60F-E225C4A311CA" id="acW-dT-cKf"/>
+                    <tabBarItem key="tabBarItem" title="First" image="C65CCFB1-D065-4267-939E-B38CF16626BD" id="acW-dT-cKf"/>
                     <navigationItem key="navigationItem" id="mD4-Ex-NhB"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5J-7L-Pyd" sceneMemberID="firstResponder"/>
@@ -57,7 +57,6 @@
                     </view>
                     <navigationItem key="navigationItem" id="fTt-c6-Xfh"/>
                     <connections>
-                        <segue destination="MbO-b8-NsW" kind="show" identifier="returnToLogin" id="eJl-xG-h6Y"/>
                         <segue destination="Un1-Gt-hYH" kind="show" identifier="mainUISegue" id="SUo-AR-XDR"/>
                         <segue destination="PeF-oU-09w" kind="show" identifier="returnToWelcome" id="7Gx-tP-lT7"/>
                     </connections>
@@ -224,7 +223,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="5976AC83-0EA3-4686-A60F-E225C4A311CA" width="30" height="30">
+        <image name="C65CCFB1-D065-4267-939E-B38CF16626BD" width="30" height="30">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGQkNYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK8QDwcI
 ERYbHCUmJygwMzY8P1UkbnVsbNQJCgsMDQ4PEFYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVwc1dOU0Nv
@@ -283,9 +282,8 @@ RgAAAAAAAAAAAAAAAAAAC5U
         </image>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="26j-Gr-Eft"/>
-        <segue reference="qeG-wa-7rS"/>
-        <segue reference="eJl-xG-h6Y"/>
+        <segue reference="SUo-AR-XDR"/>
         <segue reference="9a2-dw-2g1"/>
+        <segue reference="7Gx-tP-lT7"/>
     </inferredMetricsTieBreakers>
 </document>

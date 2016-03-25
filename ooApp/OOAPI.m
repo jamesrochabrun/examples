@@ -952,28 +952,6 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 }
 
 //------------------------------------------------------------------------------
-// Name:    clearUsernameOf
-// Purpose: For testing.
-//------------------------------------------------------------------------------
-+ (AFHTTPRequestOperation *)clearUsernameWithSuccess:(void (^)(NSArray *names))success
-                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
-{
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSUInteger userID = userInfo.userID;
-    
-    NSString *requestString =[NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)userID];
-    
-    requestString = [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
-    
-    return [[OONetworkManager sharedRequestManager] PUT:requestString
-                                             parameters:@{
-                                                          @"username":@""
-                                                          }
-                                                success:success
-                                                failure:failure];
-}
-
-//------------------------------------------------------------------------------
 // Name:    fetchSampleUsernames
 // Purpose: Ascertain whether a username is already in use.
 //------------------------------------------------------------------------------
@@ -2955,6 +2933,38 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                                     success ();
                                                 }
                                                 failure:failure];
+}
+
++ (AFHTTPRequestOperation *)updateUser:(UserObject *)user
+                               success:(void (^)(void))success
+                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    UserObject *currentUser = [Settings sharedInstance].userObject;
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)currentUser.userID];
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (user.lastName && [trimString(user.lastName) length]) {
+        [parameters setObject:user.lastName forKey:kKeyUserLastName];
+    }
+    if (user.firstName && [trimString(user.firstName) length]) {
+        [parameters setObject:user.firstName forKey:kKeyUserFirstName];
+    }
+    if (user.username && [trimString(user.username) length]) {
+        [parameters setObject:user.username forKey:kKeyUserUsername];
+    }
+    if (user.about && [trimString(user.about) length]) {
+        [parameters setObject:user.about forKey:kKeyUserAbout];
+    }
+    
+    return [[OONetworkManager sharedRequestManager] PUT:requestString
+                                             parameters:parameters
+                                                success:^(id response)  {
+                                                    success ();
+                                                }
+                                                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                    failure(operation, error);
+                                                }];
 }
 
 //------------------------------------------------------------------------------

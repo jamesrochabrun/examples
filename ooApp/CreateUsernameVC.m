@@ -110,10 +110,7 @@
     _buttonSignUp = [UIButton buttonWithType:UIButtonTypeCustom];
     [_scrollView addSubview:_buttonSignUp];
     [_buttonSignUp withText:@"Create" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:0 target:self selector:@selector(userPressedSignUpButton:)];
-//    self.buttonSignUp = makeButton(_scrollView, LOCAL(@"Create") ,kGeomFontSizeHeader ,
-//                                  UIColorRGBA(kColorTextActive), UIColorRGBA(kColorClear), self,
-//                                  @selector(userPressedSignUpButton:),
-//                                  .6);
+
     _buttonSignUp.layer.borderColor = UIColorRGBA(kColorBordersAndLines).CGColor;
     
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
@@ -121,7 +118,8 @@
     self.fieldUsername = [UITextField new];
     _fieldUsername.delegate = self;
     _fieldUsername.backgroundColor = UIColorRGBA(kColorText);
-//    _fieldUsername.placeholder = LOCAL(@"Enter username");
+    _fieldUsername.autocorrectionType = UITextAutocorrectionTypeNo;
+    _fieldUsername.autocapitalizationType = UITextAutocapitalizationTypeNone;
     _fieldUsername.borderStyle = UITextBorderStyleLine;
     _fieldUsername.textAlignment = NSTextAlignmentCenter;
     [_scrollView addSubview:_fieldUsername];
@@ -192,7 +190,7 @@
     UITableViewCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     if (!cell) {
-        cell=  [[UITableViewCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER ];
+        cell=  [[UITableViewCell  alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier:SUGGESTED_TABLE_REUSE_IDENTIFIER];
     }
     NSString *name = nil;
     NSInteger row = indexPath.row;
@@ -249,67 +247,33 @@
         return NO;
     }
     [textField resignFirstResponder];
-    [self checkWhetherUserNameIsInUse : enteredUsername];
+    [self updateUsername:enteredUsername];
     return YES;
 }
 
-//------------------------------------------------------------------------------
-// Name:    checkWhetherUserNameIsInUse
-// Purpose: Submit the username to the backend for approval or not.
-//------------------------------------------------------------------------------
-- (void)checkWhetherUserNameIsInUse:(NSString*)enteredUsername
+- (void)updateUsername:(NSString*)username
 {
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSUInteger userid = userInfo.userID;
+    UserObject *userUpdates = [[UserObject alloc] init];
+    userUpdates.username = username;
     
-    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol,
-                   [OOAPI URL], (unsigned long)userid];
+    __weak CreateUsernameVC *weakSelf = self;
     
-    requestString= [requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding ];
-
-    NSDictionary* parametersDictionary=  @{
-                                            @"username": enteredUsername
-                                           };
-    
-    __weak  CreateUsernameVC *weakSelf = self;
-    [[OONetworkManager sharedRequestManager] PUT:requestString
-                                      parameters:parametersDictionary
-                                         success:^void(id result) {
-                                             NSLog(@"PUT OF USERNAME SUCCEEDED.");
-                                             
-                                             if ([result isKindOfClass:[NSDictionary class]]) {
-                                                 NSDictionary *subdictionary= ((NSDictionary *)result) [@"user"];
-                                                 if (subdictionary) {
-                                                     NSString* usernameForConfirmation= subdictionary[@"username"];
-                                                     if (usernameForConfirmation && [usernameForConfirmation isEqualToString:enteredUsername] ) {
-                                                         NSLog (@"SAVE OF USERNAME TO BACKEND CONFIRMED.");
-                                                         
-                                                         [weakSelf performSelectorOnMainThread:@selector(indicateNotTaken) withObject:nil waitUntilDone:YES];
-                                                         
-                                                         UserObject *userInfo = [Settings sharedInstance].userObject;
-                                                         userInfo.username = enteredUsername;
-                                                         [[Settings sharedInstance] save];
-                                                         
-                                                         [weakSelf performSelectorOnMainThread:@selector(goToExplore) withObject:nil waitUntilDone:NO];
-                                                         return;
-                                                     }
-                                                 }
-                                             }
-                                             
-                                             // XX:  might want to check reachability here.
-                                             
-                                             // NOTE:  If we reach this point something went wrong.
-                                             [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
-
-                                         }
-                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                             NSInteger statusCode= operation.response.statusCode;
-                                             NSLog (@"PUT OF USERNAME FAILED %@ w/%ld", error, (long)statusCode);
-                                             if (statusCode == 403)
-                                                 [weakSelf performSelectorOnMainThread:@selector(indicateAlreadyTaken) withObject:nil waitUntilDone:NO];
-                                             
-
-                                         }     ];
+    [OOAPI updateUser:userUpdates success:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [Settings sharedInstance].userObject.username = username;
+            [[Settings sharedInstance] save];
+            [weakSelf indicateNotTaken];
+            [weakSelf goToExplore];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSInteger statusCode= operation.response.statusCode;
+        NSLog (@"PUT OF USERNAME FAILED %@ w/%ld", error, (long)statusCode);
+        if (statusCode == 403) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf indicateAlreadyTaken];
+            });
+        }
+    }];
 }
 
 - (void)indicateAlreadyTaken
@@ -344,7 +308,7 @@
     [APP.diagnosticLogString appendFormat:@"Username set to %@", userInfo.username];
 
     @try {
-        [self performSegueWithIdentifier:@"gotoExploreFromCreateUsername" sender:self];
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     }
     @catch (NSException *exception) {
         [self.navigationController  popViewControllerAnimated:YES ];
@@ -387,7 +351,7 @@
         message(@"No username was entered.");
         return;
     }
-    [self checkWhetherUserNameIsInUse:enteredUsername];
+    [self updateUsername:enteredUsername];
 }
 
 //------------------------------------------------------------------------------

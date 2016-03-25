@@ -303,22 +303,7 @@
 //------------------------------------------------------------------------------
 - (void)doClearUsername: (id) sender
 {
-    UserObject* userInfo= [Settings sharedInstance].userObject;
-    NSString* username= userInfo.username;
-    if  (!username || ! username.length) {
-        message( @"Username is not yet set.");
-        return;
-    }
-    
-    [OOAPI clearUsernameWithSuccess:^(NSArray *names) {
-        message( @"success");
-    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-        NSString *s = [NSString stringWithFormat: @"error %@",e.localizedDescription];
-        message(s);
-    } ];
-    
-    userInfo.username= nil;
-    [[Settings sharedInstance ]save ];
+
 }
 
 //------------------------------------------------------------------------------

@@ -116,8 +116,8 @@
 
 - (void)doLayout
 {
-    CGFloat h = height(self.view);
     CGFloat w = width(self.view);
+    CGFloat buttonWidth = (IS_IPAD) ? kGeomWidthButtoniPadMax : w - 4*kGeomSpaceEdge;
     
     _backgroundImageView.frame = self.view.bounds;
     _backgroundImageView.clipsToBounds = YES;
@@ -131,13 +131,13 @@
     [_quickMessage sizeToFit];
     [_emailMessage sizeToFit];
     
-    _quickMessage.frame = CGRectMake(kGeomSpaceEdge, y, CGRectGetWidth(_quickMessage.frame), CGRectGetHeight(_quickMessage.frame));
+    _quickMessage.frame = CGRectMake((w-buttonWidth)/2, y, buttonWidth, CGRectGetHeight(_quickMessage.frame));
     
-    _facebookLoginButton.frame =  CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_quickMessage.frame) + kGeomSpaceEdge, w-2*kGeomSpaceEdge, kGeomHeightButton);
+    _facebookLoginButton.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_quickMessage.frame) + kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
     
-    _emailMessage.frame = CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_facebookLoginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_emailMessage.frame), CGRectGetHeight(_emailMessage.frame));
+    _emailMessage.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_facebookLoginButton.frame) + 2*kGeomSpaceEdge, buttonWidth, CGRectGetHeight(_emailMessage.frame));
     
-    _emailButton.frame =  CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_emailMessage.frame) + kGeomSpaceEdge, w-2*kGeomSpaceEdge, kGeomHeightButton);
+    _emailButton.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_emailMessage.frame) + kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
     
     CGFloat facebookButtonHeight = facebookButtonHeight = kGeomHeightButton;
     

@@ -101,6 +101,7 @@
 		36B1CC911CA2EF23007D0263 /* SignupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC901CA2EF23007D0263 /* SignupVC.m */; };
 		36B1CC941CA3A1C9007D0263 /* EmailSignupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC931CA3A1C9007D0263 /* EmailSignupVC.m */; };
 		36B1CC971CA3A1DA007D0263 /* EmailLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC961CA3A1DA007D0263 /* EmailLoginVC.m */; };
+		36B1CC9A1CA5ECF8007D0263 /* ShowAuthScreenAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC991CA5ECF8007D0263 /* ShowAuthScreenAnimator.m */; };
 		36BA03301C50CE1D00802EF8 /* ooLoading60.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03121C50CE1D00802EF8 /* ooLoading60.png */; };
 		36BA03311C50CE1D00802EF8 /* ooLoading61.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03131C50CE1D00802EF8 /* ooLoading61.png */; };
 		36BA03321C50CE1D00802EF8 /* ooLoading62.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03141C50CE1D00802EF8 /* ooLoading62.png */; };
@@ -426,6 +427,8 @@
 		36B1CC931CA3A1C9007D0263 /* EmailSignupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailSignupVC.m; sourceTree = "<group>"; };
 		36B1CC951CA3A1DA007D0263 /* EmailLoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmailLoginVC.h; sourceTree = "<group>"; };
 		36B1CC961CA3A1DA007D0263 /* EmailLoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailLoginVC.m; sourceTree = "<group>"; };
+		36B1CC981CA5ECF8007D0263 /* ShowAuthScreenAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowAuthScreenAnimator.h; sourceTree = "<group>"; };
+		36B1CC991CA5ECF8007D0263 /* ShowAuthScreenAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowAuthScreenAnimator.m; sourceTree = "<group>"; };
 		36BA03121C50CE1D00802EF8 /* ooLoading60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading60.png; path = "Graphic Assets/ooLoading/ooLoading60.png"; sourceTree = "<group>"; };
 		36BA03131C50CE1D00802EF8 /* ooLoading61.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading61.png; path = "Graphic Assets/ooLoading/ooLoading61.png"; sourceTree = "<group>"; };
 		36BA03141C50CE1D00802EF8 /* ooLoading62.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading62.png; path = "Graphic Assets/ooLoading/ooLoading62.png"; sourceTree = "<group>"; };
@@ -863,6 +866,8 @@
 				36FC99ED1C478D4F00768FF0 /* OOAIV.m */,
 				365FB7841C59198000826629 /* ShowMediaItemAnimator.h */,
 				365FB7851C59198000826629 /* ShowMediaItemAnimator.m */,
+				36B1CC981CA5ECF8007D0263 /* ShowAuthScreenAnimator.h */,
+				36B1CC991CA5ECF8007D0263 /* ShowAuthScreenAnimator.m */,
 				9643BD311C56B38F00059002 /* SocialMedia.h */,
 				9643BD321C56B38F00059002 /* SocialMedia.m */,
 				360CB9B71C6541D10017E21F /* ChangeLocationVC.h */,
@@ -1531,6 +1536,7 @@
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
 				9695C1001C1618D100911E84 /* ConnectVC.m in Sources */,
 				365FB7861C59198000826629 /* ShowMediaItemAnimator.m in Sources */,
+				36B1CC9A1CA5ECF8007D0263 /* ShowAuthScreenAnimator.m in Sources */,
 				3613BE581BBE278400F1AF67 /* ListTVCell.m in Sources */,
 				3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,

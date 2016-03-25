@@ -18,6 +18,7 @@
 #import "OOAPI.h"
 #import "SocialMedia.h"
 #import <Instabug/Instabug.h>
+#import "ShowAuthScreenAnimator.h"
 
 @interface WelcomeVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -171,6 +172,8 @@
     _wentToExplore = NO;
     
     [self.navigationController setNavigationBarHidden:YES animated:animated];
+    self.navigationController.delegate = self;
+    self.transitioningDelegate = self;
 }
 
 //------------------------------------------------------------------------------
@@ -295,6 +298,31 @@
             [self initiateLoginFlow:facebookToken];
         }
     }
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
+{
+    id<UIViewControllerAnimatedTransitioning> animationController;
+    
+    if (operation == UINavigationControllerOperationPush) {
+
+        ShowAuthScreenAnimator *animator = [[ShowAuthScreenAnimator alloc] init];
+        animator.presenting = YES;
+        animator.duration = 0.35;
+        animationController = animator;
+    } else if (operation == UINavigationControllerOperationPop) {
+        ShowAuthScreenAnimator *animator = [[ShowAuthScreenAnimator alloc] init];
+        animator.presenting = NO;
+        animator.duration = 0.35;
+        animationController = animator;
+    } else {
+        NSLog(@"*** operation=%ld, fromVC=%@ , toVC=%@", (long)operation, [fromVC class], [toVC class]);
+    }
+    
+    return animationController;
 }
 
 - (void)initiateLoginFlow:(FBSDKAccessToken *)facebookToken {

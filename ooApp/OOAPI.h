@@ -233,9 +233,6 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                             success:(void (^)(NSArray *names))success
                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation*)clearUsernameWithSuccess:(void (^)(NSArray *names))success
-                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
-
 + (AFHTTPRequestOperation *)getAllUsersWithSuccess:(void (^)(NSArray *users))success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
@@ -422,6 +419,10 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                     andLastName:(NSString *)lastName
                                         success:(void (^)(UserObject *user, NSString *token))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)updateUser:(UserObject *)user
+                               success:(void (^)(void))success
+                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 + (AFHTTPRequestOperation *)getRecentUsersSuccess:(void (^)(NSArray *users))success
                                      failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
