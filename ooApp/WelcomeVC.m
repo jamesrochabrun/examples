@@ -26,7 +26,6 @@
 @property (nonatomic, strong) UIButton *signupButton;
 @property (nonatomic, strong) UIButton *tryAgain;
 @property (nonatomic, strong) UILabel *logoLabel;
-@property (nonatomic, strong) UILabel *betaLabel;
 @property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
@@ -52,7 +51,7 @@
     _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
     
     _overlay = [[UIView alloc] init];
-    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
+    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     
     _info = [[UILabel alloc] init];
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
@@ -74,10 +73,6 @@
     _logoLabel.text = kFontIconLogoFull;
     _logoLabel.frame = CGRectMake(0, 0, width(self.view)*0.75, IS_IPAD ? 175:100);
     
-    _betaLabel = [[UILabel alloc] init];
-    [_betaLabel withFont:[UIFont fontWithName:kFontIcons size:40] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
-    _betaLabel.text = kFontIconBeta;
-    
     _tryAgain = [UIButton buttonWithType:UIButtonTypeCustom];
     [_tryAgain withText:@"Try Again" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(initiateLoginFlow)];
     _tryAgain.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
@@ -94,7 +89,6 @@
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_overlay];
     [self.view addSubview:_logoLabel];
-    [self.view addSubview:_betaLabel];
     [self.view addSubview:_aiv];
     [self.view addSubview:_info];
     [self.view addSubview:_tryAgain];
@@ -106,7 +100,7 @@
     _labelMessage.textColor= UIColorRGBA(kColorWhite);
     
     _tryAgain.hidden = YES;
-    //    [DebugUtilities addBorderToViews:@[_betaLabel, _logoLabel]];
+    //    [DebugUtilities addBorderToViews:@[_logoLabel]];
 }
 
 - (void)doLayout
@@ -123,10 +117,7 @@
     _logoLabel.frame = CGRectMake((width(self.view) - width(_logoLabel))/2, y, width(_logoLabel), height(_logoLabel));
     
     y += height(_logoLabel);
-    
-    [_betaLabel sizeToFit];
-    _betaLabel.frame = CGRectMake((CGRectGetMaxX(_logoLabel.frame) - width(_betaLabel)) + 8, CGRectGetMaxY(_logoLabel.frame)-45, width(_betaLabel), height(_betaLabel));
-    
+        
     y -= 5; // as per Jay
     [_labelMessage sizeToFit];
     _labelMessage.frame = CGRectMake(0, y, w, _labelMessage.frame.size.height);
@@ -181,22 +172,6 @@
     
     [self.navigationController setNavigationBarHidden:YES animated:animated];
 }
-
-//------------------------------------------------------------------------------
-// Name:    updateUsername
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)updateUsername:(id)value // NOTE:  the value should be an NSString.
-{
-    if (!value || ![value isKindOfClass:[NSString class]] ) {
-        return;
-    }
-    LOGS2(@"username: ", value);
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    userInfo.username = value;
-    [[Settings sharedInstance] save];
-}
-
 
 //------------------------------------------------------------------------------
 // Name:    showMainUI
@@ -301,9 +276,24 @@
 {
     ENTRY;
     [super viewDidAppear:animated];
-    FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
-    if (facebookToken) {
-        [self initiateLoginFlow:facebookToken];
+    
+    UserObject *user = [Settings sharedInstance].userObject;
+    if (user.backendAuthorizationToken && user.userID) {
+        NSString *token = user.backendAuthorizationToken;
+        [OOAPI getUserWithID:user.userID success:^(UserObject *user) {
+            user.backendAuthorizationToken = token;
+            [[Settings sharedInstance] setUserObject:user];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self showMainUI];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    } else {
+        FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
+        if (facebookToken) {
+            [self initiateLoginFlow:facebookToken];
+        }
     }
 }
 

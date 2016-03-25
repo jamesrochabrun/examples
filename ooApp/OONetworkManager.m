@@ -41,10 +41,10 @@
     nm.requestManager.responseSerializer = [AFJSONResponseSerializer serializer];
     nm.requestManager.responseSerializer.acceptableContentTypes = [NSMutableSet setWithObjects:@"application/json", @"text/html", nil];
     
-    UserObject *userInfo= [Settings sharedInstance].userObject;
+    UserObject *userInfo = [Settings sharedInstance].userObject;
     NSString *token= userInfo.backendAuthorizationToken;
     if  (token && token.lowercaseString.length ) {
-        [nm.requestManager.requestSerializer setValue:  token.lowercaseString forHTTPHeaderField:@"authorization"];
+        [nm.requestManager.requestSerializer setValue:token.lowercaseString forHTTPHeaderField:@"authorization"];
     }
     
     [nm.requestManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];

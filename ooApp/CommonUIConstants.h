@@ -294,7 +294,6 @@ extern NSString *const kFontIconYumOutline;
 extern NSString *const kFontIconLogoFull;
 extern NSString *const kFontIconCaption;
 extern NSString *const kFontIconCaptionFilled;
-extern NSString *const kFontIconBeta;
 extern NSString *const kFontIconPinDot;
 extern NSString *const kFontIconPinDotFilled;
 extern NSString *const kFontIconArrow;

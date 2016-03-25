@@ -127,5 +127,7 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 + (NSString *)locationString:(CLPlacemark *)placemark;
 + (void)goToSettings:(kAppSettings)settings;
 + (void)addShadowTo:(UIView *)view withColor:(NSUInteger)color;
++ (BOOL)validateEmailWithString:(NSString*)checkString;
++ (BOOL)validatePasswordWithString:(NSString*)checkString;
 
 @end

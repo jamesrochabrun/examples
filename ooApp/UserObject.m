@@ -30,6 +30,7 @@ NSString *const kKeyUserAbout = @"about";
 NSString *const kKeyUserIsFoodie = @"is_blogger";
 NSString *const kKeyUserWebsite = @"website";
 NSString *const kKeyUserType = @"user_type";
+NSString *const kKeyUserPassword = @"password";
 
 @interface UserObject()
 

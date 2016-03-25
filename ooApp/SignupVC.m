@@ -15,6 +15,7 @@
 #import "NSString+MD5.h"
 #import "CreateUsernameVC.h"
 #import "OOAPI.h"
+#import "UIImageEffects.h"
 #import "SocialMedia.h"
 #import <Instabug/Instabug.h>
 
@@ -56,7 +57,7 @@
     _info = [[UILabel alloc] init];
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     
-    UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
+    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
@@ -176,22 +177,6 @@
 - (void)goBack {
     [self.navigationController popViewControllerAnimated:YES];
 }
-
-//------------------------------------------------------------------------------
-// Name:    updateUsername
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)updateUsername:(id)value // NOTE:  the value should be an NSString.
-{
-    if (!value || ![value isKindOfClass:[NSString class]] ) {
-        return;
-    }
-    LOGS2(@"username: ", value);
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    userInfo.username = value;
-    [[Settings sharedInstance] save];
-}
-
 
 //------------------------------------------------------------------------------
 // Name:    showMainUI

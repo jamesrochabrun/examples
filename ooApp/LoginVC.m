@@ -17,6 +17,7 @@
 #import "CreateUsernameVC.h"
 #import "OOAPI.h"
 #import "SocialMedia.h"
+#import "UIImageEffects.h"
 #import <Instabug/Instabug.h>
 
 @interface LoginVC ()
@@ -28,6 +29,7 @@
 @property (nonatomic, strong) UIButton *tryAgain;
 @property (nonatomic, strong) UILabel *quickMessage;
 @property (nonatomic, strong) UILabel *emailMessage;
+@property (nonatomic, strong) UILabel *labelMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic, strong) UILabel *info;
@@ -52,12 +54,12 @@
     _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
     
     _overlay = [[UIView alloc] init];
-    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
+    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     
     _info = [[UILabel alloc] init];
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     
-    UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
+    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
 
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
@@ -132,6 +134,10 @@
     [_emailMessage sizeToFit];
     
     _quickMessage.frame = CGRectMake(kGeomSpaceEdge, y, CGRectGetWidth(_quickMessage.frame), CGRectGetHeight(_quickMessage.frame));
+
+    y -= 5; // as per Jay
+    [_labelMessage sizeToFit];
+    _labelMessage.frame = CGRectMake(0, y, w, _labelMessage.frame.size.height);
     
     _facebookLoginButton.frame =  CGRectMake(kGeomSpaceEdge, CGRectGetMaxY(_quickMessage.frame) + kGeomSpaceEdge, w-2*kGeomSpaceEdge, kGeomHeightButton);
     
@@ -177,22 +183,6 @@
 - (void)goBack {
     [self.navigationController popViewControllerAnimated:YES];
 }
-
-//------------------------------------------------------------------------------
-// Name:    updateUsername
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)updateUsername:(id)value // NOTE:  the value should be an NSString.
-{
-    if (!value || ![value isKindOfClass:[NSString class]] ) {
-        return;
-    }
-    LOGS2(@"username: ", value);
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    userInfo.username = value;
-    [[Settings sharedInstance] save];
-}
-
 
 //------------------------------------------------------------------------------
 // Name:    showMainUI
@@ -279,14 +269,13 @@
 //    seekingToken = YES;
 //    
 
-     NSLog (@"USERNAME %@",userInfo.username);
+    NSLog (@"USERNAME %@",userInfo.username);
 
-         if (userInfo.username.length) {
-             [self performSegueWithIdentifier:@"mainUISegue" sender:self];
-         } else {
-             [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
-         }
-    
+    if (userInfo.username.length) {
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+    }
 }
 
 //------------------------------------------------------------------------------

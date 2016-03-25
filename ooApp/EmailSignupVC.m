@@ -7,6 +7,8 @@
 //
 
 #import "EmailSignupVC.h"
+#import "UIImageEffects.h"
+#import "OOAPI.h"
 
 @interface EmailSignupVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -17,6 +19,7 @@
 @property (nonatomic, strong) UITextField *lastnameTextField;
 @property (nonatomic, strong) UIButton *signupButton;
 @property (nonatomic, strong) UIButton *backButton;
+@property (nonatomic, strong) UILabel *errorMessage;
 @property (nonatomic, strong) UIView *hLine1, *hLine2, *hLine3;
 @end
 
@@ -28,7 +31,8 @@
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
     
-    UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
+    
+    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
@@ -91,6 +95,10 @@
     _signupButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_signupButton withText:@"Sign Up" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorButtonBackground target:self selector:@selector(signUp)];
     
+    _errorMessage = [[UILabel alloc] init];
+    [_errorMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _errorMessage.textAlignment = NSTextAlignmentCenter;
+    
     _firstnameTextField.delegate =
     _lastnameTextField.delegate =
     _passwordTextField.delegate =
@@ -104,13 +112,66 @@
     [self.view addSubview:_lastnameTextField];
     [self.view addSubview:_backButton];
     [self.view addSubview:_signupButton];
+    [self.view addSubview:_errorMessage];
     [_emailTextField addSubview:_hLine1];
     [_passwordTextField addSubview:_hLine2];
     [_firstnameTextField addSubview:_hLine3];
 }
 
 - (void)signUp {
+    if (![self validateForm]) return;
+    [OOAPI createUserWithEmail:_emailTextField.text
+                   andPassword:_passwordTextField.text
+                  andFirstName:_firstnameTextField.text
+                   andLastName:_lastnameTextField.text
+                       success:^(UserObject *user, NSString *token) {
+                           user.backendAuthorizationToken = token;
+                           [Settings sharedInstance].userObject = user;
+                           [[Settings sharedInstance] save];
+                           dispatch_async(dispatch_get_main_queue(), ^{
+                               [self showMainUI];
+                           });
+                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                           if (error.code == kCFURLErrorNotConnectedToInternet) {
+                               _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
+                           } else {
+                               _errorMessage.text = @"Could not create the account.";
+                           }
+                           [self.view setNeedsLayout];
+                   }];
+}
+
+- (BOOL)validateForm {
+    BOOL result = YES;
+    _errorMessage.text = @"";
     
+    if (![Common validateEmailWithString:trimString(_emailTextField.text)]) {
+        _errorMessage.text = @"The email address does not appear to be valid.";
+        result = NO;
+    } else if (![Common validatePasswordWithString:trimString(_passwordTextField.text)]) {
+        _errorMessage.text = @"The password must be at least 6 characters.";
+        result = NO;
+    } else if (![trimString(_firstnameTextField.text) length]) {
+        _errorMessage.text = @"Please tell us your first name.";
+        result = NO;
+    } else if (![trimString(_lastnameTextField.text) length]) {
+        _errorMessage.text = @"Please tell us your last name.";
+        result = NO;
+    }
+
+    [_errorMessage setNeedsLayout];
+    [_errorMessage setNeedsDisplay];
+    
+    return result;
+}
+
+- (void)showMainUI {
+    UserObject *user = [Settings sharedInstance].userObject;
+    if (user.username.length) {
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+    }
 }
 
 - (void)viewDidLayoutSubviews {
@@ -136,6 +197,11 @@
     _hLine3.frame = CGRectMake(kGeomSpaceLineEdgeBuffer, CGRectGetHeight(_firstnameTextField.frame)-1, CGRectGetWidth(_firstnameTextField.frame)-2*kGeomSpaceLineEdgeBuffer, 1);
     
     _signupButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_lastnameTextField.frame) + 2*kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
+    
+    CGRect frame;
+    frame.size = [_errorMessage sizeThatFits:CGSizeMake(buttonWidth, 200)];
+    frame.origin = CGPointMake((w-frame.size.width)/2, CGRectGetMaxY(_signupButton.frame) + 2*kGeomSpaceEdge);
+    _errorMessage.frame = frame;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -147,9 +213,15 @@
     [textField becomeFirstResponder];
 }
 
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self validateForm];
+}
+
 - (void)goBack {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+
 /*
  #pragma mark - Navigation
  

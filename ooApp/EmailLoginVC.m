@@ -7,6 +7,8 @@
 //
 
 #import "EmailLoginVC.h"
+#import "UIImageEffects.h"
+#import "OOAPI.h"
 
 @interface EmailLoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -16,6 +18,7 @@
 @property (nonatomic, strong) UIButton *loginButton;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *forgotPasswordButton;
+@property (nonatomic, strong) UILabel *errorMessage;
 @property (nonatomic, strong) UIView *hLine1;
 @end
 
@@ -27,7 +30,7 @@
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
     
-    UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
+    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
@@ -64,6 +67,10 @@
     _passwordTextField.delegate = self;
     _passwordTextField.returnKeyType = UIReturnKeyGo;
     
+    _errorMessage = [[UILabel alloc] init];
+    [_errorMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _errorMessage.textAlignment = NSTextAlignmentCenter;
+    
     _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_backButton withIcon:kFontIconBack fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:kGeomDimensionsIconButton backgroundColor:kColorClear target:self selector:@selector(goBack)];
     [_backButton setTitleColor:UIColorRGBA(kColorNavBarText) forState:UIControlStateNormal];
@@ -96,6 +103,7 @@
     [self.view addSubview:_backButton];
     [self.view addSubview:_loginButton];
     [self.view addSubview:_forgotPasswordButton];
+    [self.view addSubview:_errorMessage];
     [_emailTextField addSubview:_hLine1];
 }
 
@@ -120,10 +128,40 @@
     _loginButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_passwordTextField.frame) + 2*kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
     
     _forgotPasswordButton.frame = CGRectMake((w-CGRectGetWidth(_forgotPasswordButton.frame))/2, CGRectGetMaxY(_loginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_forgotPasswordButton.frame), kGeomHeightButton);
+    
+    CGRect frame;
+    frame.size = [_errorMessage sizeThatFits:CGSizeMake(buttonWidth, 200)];
+    frame.origin = CGPointMake((w-frame.size.width)/2, CGRectGetMaxY(_forgotPasswordButton.frame) + 2*kGeomSpaceEdge);
+    _errorMessage.frame = frame;
 }
 
 - (void)logIn {
+    if (![self validateForm]) return;
     
+    [OOAPI authWithEmail:_emailTextField.text password:_passwordTextField.text success:^(UserObject *user, NSString *token) {
+        user.backendAuthorizationToken = token;
+        [[Settings sharedInstance] setUserObject:user];
+        [[Settings sharedInstance] save];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self showMainUI];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
+        } else {
+            _errorMessage.text = @"The username and password combination is not valid.";
+        }
+        [self.view setNeedsLayout];
+    }];
+}
+
+- (void)showMainUI {
+    UserObject *user = [Settings sharedInstance].userObject;
+    if (user.username.length) {
+        [self performSegueWithIdentifier:@"mainUISegue" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
+    }
 }
 
 - (void)forgotPassword {
@@ -140,6 +178,7 @@
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self validateForm];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -152,9 +191,20 @@
 }
 
 - (BOOL)validateForm {
+    BOOL result = YES;
+    _errorMessage.text = @"";
     
+    if (![Common validateEmailWithString:trimString(_emailTextField.text)]) {
+        _errorMessage.text = @"The email address does not appear to be valid.";
+        result = NO;
+    } else if (![Common validatePasswordWithString:trimString(_passwordTextField.text)]) {
+        _errorMessage.text = @"The password must be at least 6 characters.";
+        result = NO;
+    }
     
-    return YES;
+    [self.view setNeedsLayout];
+    
+    return result;
 }
 
 - (void)goBack {

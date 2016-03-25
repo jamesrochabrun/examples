@@ -629,18 +629,18 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     }];
 }
 
-+ (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)identifier
++ (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)userID
                                   success:(void (^)(UserObject *user))success
                                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)identifier];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)userID];
     
-    NSLog (@" URL = %@",urlString);
+    NSLog (@"URL = %@",urlString);
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
-        UserObject*object= [UserObject  userFromDict:responseObject];
+        UserObject *object= [UserObject userFromDict:responseObject];
         success(object);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
         failure(operation, error);
@@ -2979,7 +2979,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 
 //------------------------------------------------------------------------------
 // Name:    authWithFacebookToken
-// Purpose: use the facebook token from FB to autorize the user and get user information OOToken
+// Purpose: use the facebook token from FB to authorize the user and get user information OOToken
 // Note:
 //------------------------------------------------------------------------------
 + (AFHTTPRequestOperation *)authWithFacebookToken:(NSString *)facebookToken
@@ -3018,6 +3018,83 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     return op;
 }
 
+//------------------------------------------------------------------------------
+// Name:    authWithEmail
+// Purpose: use email to authorize the user and get user information OOToken
+// Note:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)authWithEmail:(NSString *)email
+                                 password:(NSString *)password
+                                  success:(void (^)(UserObject *user, NSString *token))success
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!email || !password || ![email length] || ![password length]) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/auth/local", kHTTPProtocol, [OOAPI URL]];
+    
+    NSDictionary *parameters = @{kKeyUserEmail:email,
+                                 kKeyUserPassword:password};
+    
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                                          NSDictionary *u = [responseObject objectForKey:@"user"];
+                                          UserObject *uo = nil;
+                                          if (u && [u isKindOfClass:[NSDictionary class]]) {
+                                              uo = [UserObject userFromDict:u];
+                                          }
+                                          NSString *t = [responseObject objectForKey:@"token"];
+                                          success(uo, t);
+                                          return;
+                                      } else {
+                                          failure(nil,nil);
+                                          return;
+                                      }
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    
+    return op;
+}
+
+//------------------------------------------------------------------------------
+// Name:    createUserWithEmail
+// Purpose: create a user with an email address
+// Note:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)createUserWithEmail:(NSString *)email
+                                    andPassword:(NSString *)password
+                                   andFirstName:(NSString *)firstName
+                                    andLastName:(NSString *)lastName
+                                    success:(void (^)(UserObject *user, NSString *token))success
+                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users?no_email=1", kHTTPProtocol, [OOAPI URL]];
+    
+    NSDictionary *parameters = @{kKeyUserEmail:email,
+                                 kKeyUserPassword:password,
+                                 kKeyUserFirstName:firstName,
+                                 kKeyUserLastName:lastName};
+    
+    return [[OONetworkManager sharedRequestManager] POST:requestString
+                                              parameters:parameters
+                                                 success:^(id responseObject)  {
+                                                     NSDictionary *u = [responseObject objectForKey:@"user"];
+                                                     UserObject *uo = nil;
+                                                     if (u && [u isKindOfClass:[NSDictionary class]]) {
+                                                         uo = [UserObject userFromDict:u];
+                                                     }
+                                                     NSString *t = [responseObject objectForKey:@"token"];
+                                                     success(uo, t);
+
+                                                }
+                                                failure:failure];
+}
+
 + (NSString *)URL
 {
 // To alleviate the need for commenting this out
@@ -3025,16 +3102,16 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
-//    APP.usingStagingServer=NO;
+#ifdef ADHOC
+    APP.usingStagingServer=NO;
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end
