@@ -245,8 +245,9 @@
 
         _filterView= [[OOFilterView alloc] init];
         [self addSubview:_filterView];
-        [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];//  index 0
-        [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];//  index 1
+        
+        [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];
+        [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];
         
         _userView= [[OOUserView alloc] init];
         _userView.delegate= self;
@@ -810,7 +811,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [super viewDidLoad];
     
     _userID = 0;
-    _viewingLists = YES;
+    _viewingLists = NO;
     _needRefresh = YES;
     _arrayLists = @[];
     _arrayPhotos = @[];
@@ -867,7 +868,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
     _listsAndPhotosLayout.delegate= self;
     _listsAndPhotosLayout.userIsSelf=_viewingOwnProfile;
-    [_listsAndPhotosLayout setShowingLists: YES];
+    [_listsAndPhotosLayout setShowingLists:NO];
     
     _cv = makeCollectionView(self.view, self, _listsAndPhotosLayout);
     
