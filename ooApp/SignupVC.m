@@ -17,6 +17,7 @@
 #import "OOAPI.h"
 #import "UIImageEffects.h"
 #import "SocialMedia.h"
+#import "OOErrorObject.h"
 #import <Instabug/Instabug.h>
 
 @interface SignupVC ()
@@ -265,6 +266,10 @@
     
     NSLog (@"USERNAME %@",userInfo.username);
     
+    self.navigationController.delegate = nil;
+    self.transitioningDelegate = nil;
+
+    
     if (userInfo.username.length) {
         [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     } else {
@@ -321,11 +326,16 @@
                     [self.view setNeedsLayout];
                 });
             } else {
+                OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
                 [self logout];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     _facebookLoginButton.hidden = NO;
                     [_facebookLoginButton setNeedsLayout];
-                    _info.text = @"There was a problem logging you in. Try again.";
+                    if (ooError) {
+                        _info.text = ooError.errorDescription;
+                    } else {
+                        _info.text = @"There was a problem logging you in. Try again.";
+                    }
                     [self.view setNeedsLayout];
                 });
             }

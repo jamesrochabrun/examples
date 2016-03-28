@@ -9,6 +9,7 @@
 #import "EmailLoginVC.h"
 #import "UIImageEffects.h"
 #import "OOAPI.h"
+#import "OOErrorObject.h"
 
 @interface EmailLoginVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -79,7 +80,7 @@
     [_loginButton withText:@"Log In" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorButtonBackground target:self selector:@selector(logIn)];
     
     _forgotPasswordButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_forgotPasswordButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(forgotPassword)];
+    [_forgotPasswordButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(resetPassword)];
     
     NSAttributedString *as = [[NSAttributedString alloc] initWithString:@"Forgot your password?"
                                                             attributes: @{
@@ -148,14 +149,23 @@
         if (error.code == kCFURLErrorNotConnectedToInternet) {
             _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
         } else {
-            _errorMessage.text = @"The username and password combination is not valid.";
+            OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
+            if (ooError) {
+                _errorMessage.text = ooError.errorDescription;
+            } else {
+                _errorMessage.text = @"The username and password combination is not valid.";
+            }
         }
-        [self.view setNeedsLayout];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.view setNeedsLayout];
+        });
     }];
 }
 
 - (void)showMainUI {
     UserObject *user = [Settings sharedInstance].userObject;
+    self.navigationController.delegate = nil;
+    self.transitioningDelegate = nil;
     if (user.username.length) {
         [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     } else {
@@ -163,8 +173,16 @@
     }
 }
 
-- (void)forgotPassword {
-    
+- (void)resetPassword {
+    NSString *email = _emailTextField.text;
+    [self validateForm];
+    if ([Common validateEmailWithString:email]) {
+        [OOAPI resetPasswordWithEmail:_emailTextField.text success:^{
+            ;
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            _errorMessage.text = @"Could not send a reset password email";
+        }];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

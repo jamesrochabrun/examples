@@ -111,7 +111,7 @@
         //        NSLog(@"JSON: %@", responseObject);;
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        failure(operation,error);
+        failure(operation, error);
 
     }];
 }
@@ -169,7 +169,6 @@
         success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure(operation,error);
-
     }];
 }
 

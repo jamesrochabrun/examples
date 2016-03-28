@@ -263,6 +263,9 @@
     
     NSLog (@"USERNAME %@",userInfo.username);
     
+    self.navigationController.delegate = nil;
+    self.transitioningDelegate = nil;
+    
     if (userInfo.username.length) {
         [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     } else {

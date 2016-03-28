@@ -8,6 +8,7 @@
 
 #import "EmailSignupVC.h"
 #import "UIImageEffects.h"
+#import "OOErrorObject.h"
 #import "OOAPI.h"
 
 @interface EmailSignupVC ()
@@ -135,7 +136,12 @@
                            if (error.code == kCFURLErrorNotConnectedToInternet) {
                                _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
                            } else {
-                               _errorMessage.text = @"Could not create the account.";
+                               OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
+                               if (ooError) {
+                                   _errorMessage.text = ooError.errorDescription;
+                               } else {
+                                   _errorMessage.text = @"Could not create the account.";
+                               }
                            }
                            [self.view setNeedsLayout];
                    }];
@@ -167,6 +173,10 @@
 
 - (void)showMainUI {
     UserObject *user = [Settings sharedInstance].userObject;
+    
+    self.navigationController.delegate = nil;
+    self.transitioningDelegate = nil;
+
     if (user.username.length) {
         [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     } else {

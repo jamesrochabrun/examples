@@ -3105,6 +3105,30 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                                 failure:failure];
 }
 
++ (AFHTTPRequestOperation *)resetPasswordWithEmail:(NSString *)email
+                                           success:(void (^)())success
+                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if ([email length]) {
+        failure(nil, nil);
+        return nil;
+    }
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSDictionary *parameters = @{kKeyUserEmail:email};
+    
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users/verify/reset", kHTTPProtocol, [OOAPI URL]];
+    
+    return [rm GET:requestString parameters:parameters
+           success:^(id responseObject) {
+               success();
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure(operation, error);
+           }];
+}
+
+
 + (NSString *)URL
 {
 // To alleviate the need for commenting this out

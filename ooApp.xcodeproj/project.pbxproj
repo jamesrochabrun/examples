@@ -102,6 +102,7 @@
 		36B1CC941CA3A1C9007D0263 /* EmailSignupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC931CA3A1C9007D0263 /* EmailSignupVC.m */; };
 		36B1CC971CA3A1DA007D0263 /* EmailLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC961CA3A1DA007D0263 /* EmailLoginVC.m */; };
 		36B1CC9A1CA5ECF8007D0263 /* ShowAuthScreenAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC991CA5ECF8007D0263 /* ShowAuthScreenAnimator.m */; };
+		36B1CC9D1CA9CFD9007D0263 /* OOErrorObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC9C1CA9CFD9007D0263 /* OOErrorObject.m */; };
 		36BA03301C50CE1D00802EF8 /* ooLoading60.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03121C50CE1D00802EF8 /* ooLoading60.png */; };
 		36BA03311C50CE1D00802EF8 /* ooLoading61.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03131C50CE1D00802EF8 /* ooLoading61.png */; };
 		36BA03321C50CE1D00802EF8 /* ooLoading62.png in Resources */ = {isa = PBXBuildFile; fileRef = 36BA03141C50CE1D00802EF8 /* ooLoading62.png */; };
@@ -429,6 +430,8 @@
 		36B1CC961CA3A1DA007D0263 /* EmailLoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailLoginVC.m; sourceTree = "<group>"; };
 		36B1CC981CA5ECF8007D0263 /* ShowAuthScreenAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowAuthScreenAnimator.h; sourceTree = "<group>"; };
 		36B1CC991CA5ECF8007D0263 /* ShowAuthScreenAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowAuthScreenAnimator.m; sourceTree = "<group>"; };
+		36B1CC9B1CA9CFD9007D0263 /* OOErrorObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOErrorObject.h; sourceTree = "<group>"; };
+		36B1CC9C1CA9CFD9007D0263 /* OOErrorObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOErrorObject.m; sourceTree = "<group>"; };
 		36BA03121C50CE1D00802EF8 /* ooLoading60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading60.png; path = "Graphic Assets/ooLoading/ooLoading60.png"; sourceTree = "<group>"; };
 		36BA03131C50CE1D00802EF8 /* ooLoading61.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading61.png; path = "Graphic Assets/ooLoading/ooLoading61.png"; sourceTree = "<group>"; };
 		36BA03141C50CE1D00802EF8 /* ooLoading62.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading62.png; path = "Graphic Assets/ooLoading/ooLoading62.png"; sourceTree = "<group>"; };
@@ -716,6 +719,8 @@
 		363B60BE1B6AC13900987A1B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				36B1CC9B1CA9CFD9007D0263 /* OOErrorObject.h */,
+				36B1CC9C1CA9CFD9007D0263 /* OOErrorObject.m */,
 				363B60BF1B6AC15400987A1B /* RestaurantObject.h */,
 				363B60C01B6AC15400987A1B /* RestaurantObject.m */,
 				363B60C21B6AE49F00987A1B /* UserObject.h */,
@@ -1528,6 +1533,7 @@
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */,
 				96E954E21BDFF99100F5197A /* Reachability.m in Sources */,
+				36B1CC9D1CA9CFD9007D0263 /* OOErrorObject.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
 				3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */,
 				3632F7781C44BEDF007901D9 /* OOTBC.m in Sources */,

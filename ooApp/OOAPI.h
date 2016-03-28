@@ -408,6 +408,10 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                           success:(void (^)(UserObject *user, NSString *token))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
++ (AFHTTPRequestOperation *)getRecentUsersSuccess:(void (^)(NSArray *users))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
+// Authentication and user modification
 + (AFHTTPRequestOperation *)authWithEmail:(NSString *)email
                                  password:(NSString *)password
                                   success:(void (^)(UserObject *user, NSString *token))success
@@ -424,12 +428,13 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
                                success:(void (^)(void))success
                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)getRecentUsersSuccess:(void (^)(NSArray *users))success
-                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
-
 + (AFHTTPRequestOperation *)getUsersAroundLocation:(CLLocationCoordinate2D)location
                                            forUser:(NSUInteger)userID
                                            success:(void (^)(NSArray *users))success
+                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
++ (AFHTTPRequestOperation *)resetPasswordWithEmail:(NSString *)email
+                                           success:(void (^)())success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 // Auto complete
