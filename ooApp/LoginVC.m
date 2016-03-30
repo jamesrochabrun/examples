@@ -99,7 +99,7 @@
     _facebookMessage = [[UILabel alloc] init];
     [_facebookMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorTextReverse backgroundColor:kColorClear];
     _facebookMessage.textAlignment = NSTextAlignmentCenter;
-    _facebookMessage.text = @"Oomami will never post anything without your permission";
+    _facebookMessage.text = @"Oomami will never post to Facebook without your permission";
 
     _emailMessage = [[UILabel alloc] init];
     [_emailMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
@@ -308,7 +308,7 @@
 }
 
 - (void)initiateLoginFlow {
-    _facebookLoginButton.hidden = YES;
+    _facebookLoginButton.enabled = NO;
     _tryAgain.hidden = YES;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];

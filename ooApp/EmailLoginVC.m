@@ -126,14 +126,14 @@
     _passwordTextField.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_emailTextField.frame), buttonWidth, kGeomHeightTextField);
     _hLine1.frame = CGRectMake(kGeomSpaceLineEdgeBuffer, CGRectGetHeight(_emailTextField.frame)-1, CGRectGetWidth(_emailTextField.frame)-2*kGeomSpaceLineEdgeBuffer, 1);
     
-    _loginButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_passwordTextField.frame) + 2*kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
-    
-    _forgotPasswordButton.frame = CGRectMake((w-CGRectGetWidth(_forgotPasswordButton.frame))/2, CGRectGetMaxY(_loginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_forgotPasswordButton.frame), kGeomHeightButton);
-    
     CGRect frame;
     frame.size = [_backendResultMessage sizeThatFits:CGSizeMake(buttonWidth, 200)];
-    frame.origin = CGPointMake((w-frame.size.width)/2, CGRectGetMaxY(_forgotPasswordButton.frame) + 2*kGeomSpaceEdge);
+    frame.origin = CGPointMake((w-frame.size.width)/2, CGRectGetMaxY(_passwordTextField.frame) + 2*kGeomSpaceEdge);
     _backendResultMessage.frame = frame;
+
+    _loginButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_backendResultMessage.frame) + 2*kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
+    
+    _forgotPasswordButton.frame = CGRectMake((w-CGRectGetWidth(_forgotPasswordButton.frame))/2, CGRectGetMaxY(_loginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_forgotPasswordButton.frame), kGeomHeightButton);
 }
 
 - (void)logIn {

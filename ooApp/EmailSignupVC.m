@@ -211,13 +211,13 @@
     _hLine1.frame = CGRectMake(kGeomSpaceLineEdgeBuffer, CGRectGetHeight(_emailTextField.frame)-1, CGRectGetWidth(_emailTextField.frame)-2*kGeomSpaceLineEdgeBuffer, 1);
     _hLine2.frame = CGRectMake(kGeomSpaceLineEdgeBuffer, CGRectGetHeight(_passwordTextField.frame)-1, CGRectGetWidth(_passwordTextField.frame)-2*kGeomSpaceLineEdgeBuffer, 1);
     _hLine3.frame = CGRectMake(kGeomSpaceLineEdgeBuffer, CGRectGetHeight(_firstnameTextField.frame)-1, CGRectGetWidth(_firstnameTextField.frame)-2*kGeomSpaceLineEdgeBuffer, 1);
-    
-    _signupButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_lastnameTextField.frame) + 2*kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
-    
+
     CGRect frame;
     frame.size = [_errorMessage sizeThatFits:CGSizeMake(buttonWidth, 200)];
-    frame.origin = CGPointMake((w-frame.size.width)/2, CGRectGetMaxY(_signupButton.frame) + 2*kGeomSpaceEdge);
+    frame.origin = CGPointMake((w-frame.size.width)/2, CGRectGetMaxY(_lastnameTextField.frame) + kGeomSpaceInter);
     _errorMessage.frame = frame;
+
+    _signupButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_errorMessage.frame) + kGeomSpaceInter, buttonWidth, kGeomHeightButton);
 }
 
 - (void)didReceiveMemoryWarning {

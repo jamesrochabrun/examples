@@ -69,6 +69,8 @@
     _backgroundImageView.clipsToBounds = YES;
     _backgroundImageView.opaque = NO;
     
+    [Common addMotionEffectToView:_backgroundImageView];
+    
     _logoLabel = [[UILabel alloc] init];
     [_logoLabel withFont:[UIFont fontWithName:kFontIcons size:width(self.view)*0.75] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
     _logoLabel.text = kFontIconLogoFull;
@@ -109,7 +111,10 @@
     CGFloat h = height(self.view);
     CGFloat w = width(self.view);
     
-    _backgroundImageView.frame = self.view.bounds;
+    CGRect frame = self.view.bounds;
+    frame.origin = CGPointMake(-kGeomMotionEffectDelta, -kGeomMotionEffectDelta);
+    frame.size = CGSizeMake(frame.size.width+2*kGeomMotionEffectDelta, frame.size.height+2*kGeomMotionEffectDelta);
+    _backgroundImageView.frame = frame;
     _backgroundImageView.clipsToBounds = YES;
     
     _overlay.frame = _backgroundImageView.bounds;
@@ -137,7 +142,7 @@
     
     _verticalLine.frame = CGRectMake(CGRectGetWidth(_signupButton.frame)-1, kGeomSpaceLineEdgeBuffer, 1, CGRectGetHeight(_signupButton.frame)-2*kGeomSpaceLineEdgeBuffer);
     
-    CGRect frame = _info.frame;
+    frame = _info.frame;
     frame.size = [_info sizeThatFits:CGSizeMake(width(self.view) - 2*kGeomSpaceEdge, 100)];
     frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
     frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
@@ -173,6 +178,7 @@
     _wentToExplore = NO;
     
     [self.navigationController setNavigationBarHidden:YES animated:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
     self.navigationController.delegate = self;
     self.transitioningDelegate = self;
 }

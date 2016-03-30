@@ -129,7 +129,7 @@
     [_scrollView addSubview:_buttonSignUp];
     [_buttonSignUp withText:@"Let's go, I'm hungry!" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(userPressedSignUpButton:)];
     
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    //[self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
 
     _username = [UITextField new];
     _username.delegate = self;
@@ -149,7 +149,6 @@
     _usernameResultMessage = [UILabel new];
     [_usernameResultMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorTextReverse backgroundColor:kColorClear];
     [_scrollView addSubview:_usernameResultMessage];
-    _usernameResultMessage.hidden = YES;
     
     NSMutableParagraphStyle *paragraphStyle= [[NSMutableParagraphStyle  alloc] init];
     paragraphStyle.alignment= NSTextAlignmentCenter;
@@ -175,10 +174,10 @@
     _about.textColor = UIColorRGBA(kColorText);
     _about.text = uo.about;
     
-    NavTitleObject *nto = [[NavTitleObject alloc]
-                           initWithHeader:LOCAL(@"Create Username")
-                           subHeader:nil];
-    [self setNavTitle:nto];
+//    NavTitleObject *nto = [[NavTitleObject alloc]
+//                           initWithHeader:LOCAL(@"Create Username")
+//                           subHeader:nil];
+//    [self setNavTitle:nto];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wentIntoBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
@@ -282,7 +281,9 @@
 {
     NSString *enteredUsername = textField.text;
     if (!enteredUsername.length) {
-        message( LOCAL(@"You did not enter a username."));
+        _usernameResultMessage.text = LOCAL(@"You did not enter a username.");
+        [self.view setNeedsLayout];
+        //message( LOCAL(@"You did not enter a username."));
         return NO;
     }
     [_about becomeFirstResponder];
@@ -312,7 +313,8 @@
             [Settings sharedInstance].userObject.username = username;
             [Settings sharedInstance].userObject.about = trimString(_about.text);
             [[Settings sharedInstance] save];
-            [weakSelf indicateNotTaken];
+            _usernameResultMessage.text = @"";
+            [self.view setNeedsLayout];
             [weakSelf goToExplore];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -327,19 +329,8 @@
             }
 
             [weakSelf.view setNeedsLayout];
-            [weakSelf indicateAlreadyTaken];
         });
     }];
-}
-
-- (void)indicateAlreadyTaken
-{
-    _usernameResultMessage.hidden = NO;
-}
-
-- (void)indicateNotTaken
-{
-    _usernameResultMessage.hidden = YES;
 }
 
 - (void)goToWelcomeScreen

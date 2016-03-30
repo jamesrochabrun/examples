@@ -129,5 +129,6 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 + (void)addShadowTo:(UIView *)view withColor:(NSUInteger)color;
 + (BOOL)validateEmailWithString:(NSString*)checkString;
 + (BOOL)validatePasswordWithString:(NSString*)checkString;
++ (void)addMotionEffectToView:(UIView *)view;
 
 @end

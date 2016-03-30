@@ -173,6 +173,7 @@ static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
 static CGFloat kGeomInterImageGap = 2;
 static CGFloat kGeomSpaceLineEdgeBuffer = 4;
+static CGFloat kGeomMotionEffectDelta = 10;
 
 static CGFloat kGeomUploadWidth = 750;
 

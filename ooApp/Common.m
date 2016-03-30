@@ -861,4 +861,26 @@ void ANALYTICS_EVENT_UI (NSString* name)
     return YES;
 }
 
++ (void)addMotionEffectToView:(UIView *)view {
+    UIInterpolatingMotionEffect *verticalMotionEffect = [[UIInterpolatingMotionEffect alloc]
+                                                         initWithKeyPath:@"center.y"
+                                                         type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+    verticalMotionEffect.minimumRelativeValue = @(-kGeomMotionEffectDelta);
+    verticalMotionEffect.maximumRelativeValue = @(kGeomMotionEffectDelta);
+    
+    // Set horizontal effect
+    UIInterpolatingMotionEffect *horizontalMotionEffect = [[UIInterpolatingMotionEffect alloc]
+                                                           initWithKeyPath:@"center.x"
+                                                           type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    horizontalMotionEffect.minimumRelativeValue = @(-kGeomMotionEffectDelta);
+    horizontalMotionEffect.maximumRelativeValue = @(kGeomMotionEffectDelta);
+    
+    // Create group to combine both
+    UIMotionEffectGroup *group = [UIMotionEffectGroup new];
+    group.motionEffects = @[horizontalMotionEffect, verticalMotionEffect];
+    
+    // Add both effects to your view
+    [view addMotionEffect:group];
+}
+
 @end
