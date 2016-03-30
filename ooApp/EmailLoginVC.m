@@ -19,7 +19,7 @@
 @property (nonatomic, strong) UIButton *loginButton;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *forgotPasswordButton;
-@property (nonatomic, strong) UILabel *errorMessage;
+@property (nonatomic, strong) UILabel *backendResultMessage;
 @property (nonatomic, strong) UIView *hLine1;
 @end
 
@@ -68,16 +68,17 @@
     _passwordTextField.delegate = self;
     _passwordTextField.returnKeyType = UIReturnKeyGo;
     
-    _errorMessage = [[UILabel alloc] init];
-    [_errorMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
-    _errorMessage.textAlignment = NSTextAlignmentCenter;
+    _backendResultMessage = [[UILabel alloc] init];
+    [_backendResultMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _backendResultMessage.textAlignment = NSTextAlignmentCenter;
     
     _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_backButton withIcon:kFontIconBack fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:kGeomDimensionsIconButton backgroundColor:kColorClear target:self selector:@selector(goBack)];
     [_backButton setTitleColor:UIColorRGBA(kColorNavBarText) forState:UIControlStateNormal];
 
     _loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_loginButton withText:@"Log In" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorButtonBackground target:self selector:@selector(logIn)];
+    [_loginButton withText:@"Log In" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorTextActive target:self selector:@selector(logIn)];
+    [_loginButton setTitleColor:UIColorRGBA(kColorTextReverse) forState:UIControlStateNormal];
     
     _forgotPasswordButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_forgotPasswordButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(resetPassword)];
@@ -104,7 +105,7 @@
     [self.view addSubview:_backButton];
     [self.view addSubview:_loginButton];
     [self.view addSubview:_forgotPasswordButton];
-    [self.view addSubview:_errorMessage];
+    [self.view addSubview:_backendResultMessage];
     [_emailTextField addSubview:_hLine1];
 }
 
@@ -130,9 +131,9 @@
     _forgotPasswordButton.frame = CGRectMake((w-CGRectGetWidth(_forgotPasswordButton.frame))/2, CGRectGetMaxY(_loginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_forgotPasswordButton.frame), kGeomHeightButton);
     
     CGRect frame;
-    frame.size = [_errorMessage sizeThatFits:CGSizeMake(buttonWidth, 200)];
+    frame.size = [_backendResultMessage sizeThatFits:CGSizeMake(buttonWidth, 200)];
     frame.origin = CGPointMake((w-frame.size.width)/2, CGRectGetMaxY(_forgotPasswordButton.frame) + 2*kGeomSpaceEdge);
-    _errorMessage.frame = frame;
+    _backendResultMessage.frame = frame;
 }
 
 - (void)logIn {
@@ -147,13 +148,13 @@
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if (error.code == kCFURLErrorNotConnectedToInternet) {
-            _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
+            _backendResultMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
         } else {
             OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
             if (ooError.type == kOOErrorCodeTypeAuthorizationFailed) {
-                _errorMessage.text = @"The username and password combination is not valid.";
+                _backendResultMessage.text = @"The username and password combination is not valid.";
             } else {
-                _errorMessage.text = @"The username and password combination is not valid.";
+                _backendResultMessage.text = @"The username and password combination is not valid.";
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -178,9 +179,15 @@
     [self validateForm];
     if ([Common validateEmailWithString:email]) {
         [OOAPI resetPasswordWithEmail:_emailTextField.text success:^{
-            ;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _backendResultMessage.text = @"A password reset link was sent to your email.";
+                [self.view setNeedsLayout];
+            });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            _errorMessage.text = @"Could not send a reset password email";
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _backendResultMessage.text = @"Could not send a reset password email.";
+                [self.view setNeedsLayout];
+            });
         }];
     }
 }
@@ -209,13 +216,13 @@
 
 - (BOOL)validateForm {
     BOOL result = YES;
-    _errorMessage.text = @"";
+    _backendResultMessage.text = @"";
     
     if (![Common validateEmailWithString:trimString(_emailTextField.text)]) {
-        _errorMessage.text = @"The email address does not appear to be valid.";
+        _backendResultMessage.text = @"The email address does not appear to be valid.";
         result = NO;
     } else if (![Common validatePasswordWithString:trimString(_passwordTextField.text)]) {
-        _errorMessage.text = @"The password must be at least 6 characters.";
+        _backendResultMessage.text = @"The password must be at least 6 characters.";
         result = NO;
     }
     

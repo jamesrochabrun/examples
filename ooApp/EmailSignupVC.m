@@ -94,7 +94,8 @@
     [_backButton setTitleColor:UIColorRGBA(kColorNavBarText) forState:UIControlStateNormal];
     
     _signupButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_signupButton withText:@"Sign Up" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorButtonBackground target:self selector:@selector(signUp)];
+    [_signupButton withText:@"Sign Up" fontSize:kGeomFontSizeH2 width:0 height:0 backgroundColor:kColorTextActive target:self selector:@selector(signUp)];
+    [_signupButton setTitleColor:UIColorRGBA(kColorTextReverse) forState:UIControlStateNormal];
     
     _errorMessage = [[UILabel alloc] init];
     [_errorMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
@@ -137,8 +138,14 @@
                                _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
                            } else {
                                OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
-                               if (ooError) {
-                                   _errorMessage.text = ooError.errorDescription;
+                               if (ooError.type == kOOErrorCodeTypeUniqueConstraint) {
+                                   _errorMessage.text = @"That email is already associated with an account.";
+                               } else if (ooError.type == kOOErrorCodeTypeInvalidPassword) {
+                                   _errorMessage.text = @"The password must be at least 6 characters.";
+                               } else if (ooError.type == kOOErrorCodeTypeInvalidEmail) {
+                                   _errorMessage.text = @"The email address does not appear to be valid.";
+                               } else if (ooError.type == kOOErrorCodeTypeMissingInformation) {
+                                   _errorMessage.text = @"All of the fields are required.";
                                } else {
                                    _errorMessage.text = @"Could not create the account.";
                                }

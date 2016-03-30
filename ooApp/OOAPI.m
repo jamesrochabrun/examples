@@ -3083,7 +3083,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                     success:(void (^)(UserObject *user, NSString *token))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users?no_email=1", kHTTPProtocol, [OOAPI URL]];
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users", kHTTPProtocol, [OOAPI URL]];
     
     NSDictionary *parameters = @{kKeyUserEmail:email,
                                  kKeyUserPassword:password,
@@ -3109,7 +3109,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                            success:(void (^)())success
                                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
-    if ([email length]) {
+    if (!email || ![email length]) {
         failure(nil, nil);
         return nil;
     }

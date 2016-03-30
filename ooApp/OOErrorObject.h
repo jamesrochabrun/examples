@@ -25,7 +25,7 @@ extern NSString *const kKeyErrorType;
  700 - User Not Found
  */
 
-typedef enum {
+typedef enum : NSUInteger {
     //user not found
     kOOErrorCodeTypeUserNotFound = 700,
     

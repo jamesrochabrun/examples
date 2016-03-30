@@ -82,7 +82,7 @@
     _tryAgain.layer.cornerRadius = kGeomCornerRadius;
     
     _emailButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_emailButton withText:@"Email" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorBackgroundTheme textColor:kColorGrayMiddle borderColor:kColorClear target:self selector:@selector(showEmailSignup)];
+    [_emailButton withText:@"Email" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorBackgroundTheme textColor:kColorTextActive borderColor:kColorClear target:self selector:@selector(showEmailSignup)];
     _emailButton.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
     _emailButton.layer.cornerRadius = kGeomCornerRadius;
     
