@@ -28,11 +28,12 @@
 @property (nonatomic, strong) UIButton *emailButton;
 @property (nonatomic, strong) UIButton *tryAgain;
 @property (nonatomic, strong) UILabel *quickMessage;
+@property (nonatomic, strong) UILabel *facebookMessage;
 @property (nonatomic, strong) UILabel *emailMessage;
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic, strong) UILabel *info;
-@property (nonatomic, strong) UIView *verticalLine;
+@property (nonatomic, strong) UIView *horizontalLine;
 @end
 
 @implementation SignupVC
@@ -62,8 +63,8 @@
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    _verticalLine = [[UIView alloc] init];
-    _verticalLine.backgroundColor = UIColorRGBA(kColorWhite);
+    _horizontalLine = [[UIView alloc] init];
+    _horizontalLine.backgroundColor = UIColorRGBA(kColorBordersAndLines);
     
     _backgroundImageView = makeImageView(self.view, backgroundImage);
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -94,12 +95,18 @@
     [_quickMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
     _quickMessage.text = @"Sign up quickly:";
     
+    _facebookMessage = [[UILabel alloc] init];
+    [_facebookMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorTextReverse backgroundColor:kColorClear];
+    _facebookMessage.textAlignment = NSTextAlignmentCenter;
+    _facebookMessage.text = @"Oomami will never post anything without your permission";
+    
     _emailMessage = [[UILabel alloc] init];
     [_emailMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
     _emailMessage.text = @"or use your email:";
     
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_overlay];
+    [self.view addSubview:_facebookMessage];
     [self.view addSubview:_quickMessage];
     [self.view addSubview:_emailMessage];
     [self.view addSubview:_facebookLoginButton];
@@ -108,15 +115,18 @@
     [self.view addSubview:_info];
     [self.view addSubview:_tryAgain];
     [self.view addSubview:_backButton];
-    [self.view addSubview:_verticalLine];
+    [self.view addSubview:_horizontalLine];
     
     _tryAgain.hidden = YES;
     
-    //[DebugUtilities addBorderToViews:@[_backButton]];
+    //[DebugUtilities addBorderToViews:@[_quickMessage, _emailMessage]];
 }
 
-- (void)doLayout
+- (void)viewWillLayoutSubviews
 {
+    [super viewWillLayoutSubviews];
+    
+    NSLog(@"LoginVC bounds= %@", NSStringFromCGRect(self.view.bounds));
     CGFloat w = width(self.view);
     CGFloat buttonWidth = (IS_IPAD) ? kGeomWidthButtoniPadMax : w - 4*kGeomSpaceEdge;
     
@@ -135,8 +145,13 @@
     _quickMessage.frame = CGRectMake((w-buttonWidth)/2, y, buttonWidth, CGRectGetHeight(_quickMessage.frame));
     
     _facebookLoginButton.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_quickMessage.frame) + kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
+
+    [_facebookMessage sizeToFit];
+    _facebookMessage.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_facebookLoginButton.frame) + kGeomSpaceEdge, buttonWidth, CGRectGetHeight(_facebookMessage.frame));
     
-    _emailMessage.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_facebookLoginButton.frame) + 2*kGeomSpaceEdge, buttonWidth, CGRectGetHeight(_emailMessage.frame));
+    _horizontalLine.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_facebookMessage.frame) + kGeomSpaceEdge, buttonWidth, 1);
+    
+    _emailMessage.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_horizontalLine.frame) + kGeomSpaceEdge, buttonWidth, CGRectGetHeight(_emailMessage.frame));
     
     _emailButton.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_emailMessage.frame) + kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
     
@@ -152,14 +167,6 @@
     frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
     frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
     _info.frame = frame;
-}
-
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
-    
-    NSLog(@"LoginVC bounds= %@", NSStringFromCGRect(self.view.bounds));
-    [self doLayout];
 }
 
 //------------------------------------------------------------------------------

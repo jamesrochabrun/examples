@@ -391,7 +391,7 @@
     float keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
         ? kbSize.width : kbSize.height;
     _scrollView.contentInset = UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
-    [_scrollView scrollRectToVisible:_about.frame animated:YES];
+    [_scrollView scrollRectToVisible:_buttonSignUp.frame animated:YES];
 }
 
 //------------------------------------------------------------------------------
