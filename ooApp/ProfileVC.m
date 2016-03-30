@@ -1348,7 +1348,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;
     [self getLists];
-    
 }
 
 - (void)userTappedOnPhotos

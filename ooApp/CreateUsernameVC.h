@@ -10,5 +10,8 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "SubBaseVC.h"
 
-@interface CreateUsernameVC : SubBaseVC <UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface CreateUsernameVC : SubBaseVC <UITextFieldDelegate,
+                                        UITextViewDelegate,
+                                        UITableViewDataSource,
+                                        UITableViewDelegate>
 @end

@@ -148,10 +148,12 @@ static CGFloat kGeomIconSizeSmall = 27;
 
 static NSInteger kGeomPeopleIconFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;
+static CGFloat kGeomHeightTextField = 40.0;
 static CGFloat kGeomDimensionsIconButtonSmall = 35.0;
 static CGFloat kGeomDimensionsIconButton = 40.0;
 static CGFloat kGeomHeightNavBarStatusBar = 64.0;
 static CGFloat kGeomHeightStatusBar = 20.0;
+static CGFloat kGeomHeightNavBar = 44;
 static CGFloat kGeomHeightTabBar = 49;
 static CGFloat kGeomHeightFilters = 40.0;
 static CGFloat kGeomWidthButton = 100;

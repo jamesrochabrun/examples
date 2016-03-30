@@ -2927,7 +2927,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 
     return [[OONetworkManager sharedRequestManager] PUT:requestString
                                              parameters: @{
-                                                           @"about": text ?:  @""
+                                                           kKeyUserAbout: text ?:  @""
                                                           }
                                                 success:^(id  response)  {
                                                     success ();

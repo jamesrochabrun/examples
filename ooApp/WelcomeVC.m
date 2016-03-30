@@ -49,13 +49,13 @@
     _wentToExplore = NO;
     
     _aiv = [[UIActivityIndicatorView alloc] init];
-    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
     
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     
     _info = [[UILabel alloc] init];
-    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     
     UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
     
@@ -131,7 +131,8 @@
     _loginButton.layer.cornerRadius =
     _signupButton.layer.cornerRadius = 0;
     
-    _tryAgain.frame =  CGRectMake(0, h-2*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
+    _tryAgain.frame =  CGRectMake((w-CGRectGetWidth(_tryAgain.frame))/2, h-2*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
+    [_aiv sizeToFit];
     _aiv.center = _tryAgain.center;
     
     _verticalLine.frame = CGRectMake(CGRectGetWidth(_signupButton.frame)-1, kGeomSpaceLineEdgeBuffer, 1, CGRectGetHeight(_signupButton.frame)-2*kGeomSpaceLineEdgeBuffer);
@@ -282,23 +283,38 @@
 {
     ENTRY;
     [super viewDidAppear:animated];
-    
+    _signupButton.hidden =
+    _loginButton.hidden = YES;
+
     UserObject *user = [Settings sharedInstance].userObject;
     if (user.backendAuthorizationToken && user.userID) {
         NSString *token = user.backendAuthorizationToken;
+        _info.hidden = NO;
+        [_aiv startAnimating];
+        _info.text = @"Logging you in to Oomami";
+        [self.view setNeedsLayout];
         [OOAPI getUserWithID:user.userID success:^(UserObject *user) {
             user.backendAuthorizationToken = token;
             [[Settings sharedInstance] setUserObject:user];
             dispatch_async(dispatch_get_main_queue(), ^{
+                [_aiv stopAnimating];
+                _info.hidden = YES;
                 [self showMainUI];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
+            _info.hidden = YES;
+            [_aiv stopAnimating];
+            _signupButton.hidden =
+            _loginButton.hidden = NO;
         }];
     } else {
         FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
         if (facebookToken) {
             [self initiateLoginFlow:facebookToken];
+        } else {
+            _info.hidden = YES;
+            _signupButton.hidden =
+            _loginButton.hidden = NO;
         }
     }
 }

@@ -121,8 +121,8 @@
     CGFloat y = kGeomHeightNavBarStatusBar;
     y += kGeomSpaceEdge;
     
-    _emailTextField.frame =  CGRectMake((w-buttonWidth)/2, y, buttonWidth, kGeomHeightButton);
-    _passwordTextField.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_emailTextField.frame), buttonWidth, kGeomHeightButton);
+    _emailTextField.frame =  CGRectMake((w-buttonWidth)/2, y, buttonWidth, kGeomHeightTextField);
+    _passwordTextField.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_emailTextField.frame), buttonWidth, kGeomHeightTextField);
     _hLine1.frame = CGRectMake(kGeomSpaceLineEdgeBuffer, CGRectGetHeight(_emailTextField.frame)-1, CGRectGetWidth(_emailTextField.frame)-2*kGeomSpaceLineEdgeBuffer, 1);
     
     _loginButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_passwordTextField.frame) + 2*kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
