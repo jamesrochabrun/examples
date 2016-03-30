@@ -155,13 +155,13 @@
     paragraphStyle.alignment= NSTextAlignmentCenter;
     
     _usernameLabel = [[UILabel alloc] init];
-    [_usernameLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1] textColor:kColorTextReverse backgroundColor:kColorClear];
+    [_usernameLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
     _usernameLabel.text = @"What should we call you?";
     [_scrollView addSubview:_usernameLabel];
 
     _aboutLabel = [[UILabel alloc] init];
-    [_aboutLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1] textColor:kColorTextReverse backgroundColor:kColorClear];
-    _aboutLabel.text = @"Tell us about yourself:";
+    [_aboutLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
+    _aboutLabel.text = @"Tell us about yourself. Favorite dish? cuisine?";
     [_scrollView addSubview:_aboutLabel];
     
     _about = [UITextView new];
@@ -173,6 +173,7 @@
     _about.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
     [_scrollView addSubview:_about];
     _about.textColor = UIColorRGBA(kColorText);
+    _about.text = uo.about;
     
     NavTitleObject *nto = [[NavTitleObject alloc]
                            initWithHeader:LOCAL(@"Create Username")
@@ -284,8 +285,17 @@
         message( LOCAL(@"You did not enter a username."));
         return NO;
     }
-    [textField resignFirstResponder];
-    [self updateUsername:enteredUsername];
+    [_about becomeFirstResponder];
+    //[self updateUsername:enteredUsername];
+    return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+{
+    if ([text isEqualToString: @"\n" ] ) {
+        [textView resignFirstResponder];
+        return NO;
+    }
     return YES;
 }
 
@@ -300,6 +310,7 @@
     [OOAPI updateUser:userUpdates success:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [Settings sharedInstance].userObject.username = username;
+            [Settings sharedInstance].userObject.about = trimString(_about.text);
             [[Settings sharedInstance] save];
             [weakSelf indicateNotTaken];
             [weakSelf goToExplore];
@@ -417,11 +428,6 @@
     
     _backgroundImageView.frame = _overlay.frame = self.view.bounds;
     
-    CGFloat spacer = kGeomSpaceInter;
-    if (IS_IPAD) {
-        spacer = 40;
-    }
-    
     CGFloat imageSize = (IS_IPHONE4) ? 0.8*kGeomCreateUsernameCentralIconSize:kGeomCreateUsernameCentralIconSize;
     
     frame = _welcomeMessageLabel.frame;
@@ -434,16 +440,16 @@
     _imageViewIcon.layer.cornerRadius = _imageViewIcon.frame.size.width/2;
 
     [_usernameLabel sizeToFit];
-    _usernameLabel.frame = CGRectMake(2*kGeomSpaceEdge, CGRectGetMaxY(_imageViewIcon.frame) + kGeomSpaceInter, w, CGRectGetHeight(_usernameLabel.frame));
+    _usernameLabel.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_imageViewIcon.frame) + kGeomSpaceInter, w, CGRectGetHeight(_usernameLabel.frame));
     
     [_username sizeToFit];
     _username.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_usernameLabel.frame) + kGeomSpaceInter, buttonWidth, kGeomHeightTextField);
     
     [_usernameResultMessage sizeToFit];
-    _usernameResultMessage.frame = CGRectMake(w-2*kGeomSpaceEdge-CGRectGetWidth(_usernameResultMessage.frame), CGRectGetMaxY(_username.frame) + kGeomSpaceInter, CGRectGetWidth(_usernameResultMessage.frame),CGRectGetHeight(_usernameResultMessage.frame));
+    _usernameResultMessage.frame = CGRectMake(CGRectGetMaxX(_username.frame)-CGRectGetWidth(_usernameResultMessage.frame), CGRectGetMaxY(_username.frame) + kGeomSpaceInter, CGRectGetWidth(_usernameResultMessage.frame),CGRectGetHeight(_usernameResultMessage.frame));
 
     [_aboutLabel sizeToFit];
-    _aboutLabel.frame = CGRectMake(2*kGeomSpaceEdge, CGRectGetMaxY(_usernameResultMessage.frame) + kGeomSpaceInter, w, CGRectGetHeight(_aboutLabel.frame));
+    _aboutLabel.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_usernameResultMessage.frame) + kGeomSpaceInter, w, CGRectGetHeight(_aboutLabel.frame));
     
     _about.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_aboutLabel.frame) + kGeomSpaceInter, buttonWidth, 2*kGeomHeightTextField);
     

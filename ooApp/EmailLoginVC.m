@@ -150,8 +150,8 @@
             _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
         } else {
             OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
-            if (ooError) {
-                _errorMessage.text = ooError.errorDescription;
+            if (ooError.type == kOOErrorCodeTypeAuthorizationFailed) {
+                _errorMessage.text = @"The username and password combination is not valid.";
             } else {
                 _errorMessage.text = @"The username and password combination is not valid.";
             }
