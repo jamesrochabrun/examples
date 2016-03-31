@@ -44,9 +44,9 @@
         
         self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
-        _labelFollowers = makeLabel(self,nil, kGeomFontSizeDetail);
-        _labelFollowing = makeLabel(self, nil, kGeomFontSizeDetail);
-        _labelPlaces = makeLabel(self, nil, kGeomFontSizeDetail);
+        _labelFollowers = makeLabel(self,nil, kGeomFontSizeH5);
+        _labelFollowing = makeLabel(self, nil, kGeomFontSizeH5);
+        _labelPlaces = makeLabel(self, nil, kGeomFontSizeH5);
         
         _photosIcon = [UILabel new];
         [_photosIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
@@ -73,11 +73,9 @@
         _labelFollowing.textColor = UIColorRGBA(kColorGrayMiddle);
         _labelPlaces.textColor = UIColorRGBA(kColorGrayMiddle);
         
-        _labelFollowersNumber = makeLabel(self, @"", kGeomFontSizeSubheader);
-        _labelFollowingNumber = makeLabel(self,  @"", kGeomFontSizeSubheader);
-        
-        
-        _labelPlacesNumber = makeLabel(self,  @"", kGeomFontSizeSubheader);
+        _labelFollowersNumber = makeLabel(self, @"", kGeomFontSizeH4);
+        _labelFollowingNumber = makeLabel(self,  @"", kGeomFontSizeH4);
+        _labelPlacesNumber = makeLabel(self,  @"", kGeomFontSizeH4);
         
         _labelFollowersNumber.textColor= UIColorRGBA(kColorText);
         _labelFollowingNumber.textColor= UIColorRGBA(kColorText);
@@ -290,6 +288,7 @@
     
     [_yumNumber sizeToFit];
     [_photosNumber sizeToFit];
+    [self setNeedsLayout];
 }
 
 - (void)layoutSubviews
@@ -328,16 +327,15 @@
     
     y += labelHeight+ spacing;
     
-    float iconWidth = 30;
     labelHeight = 20;
     
     x = margin + imageSize + spacing;
     y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
     
-    _photosIcon.frame = CGRectMake(x, y, iconWidth, labelHeight);
+    _photosIcon.frame = CGRectMake(x, y, CGRectGetWidth(_photosIcon.frame), labelHeight);
     _photosNumber.frame = CGRectMake(CGRectGetMaxX(_photosIcon.frame), y, CGRectGetWidth(_photosNumber.frame),  labelHeight);
     
-    _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, iconWidth, labelHeight);
+    _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, CGRectGetWidth(_yumIcon.frame), labelHeight);
     _yumNumber.frame = CGRectMake(CGRectGetMaxX(_yumIcon.frame), y, CGRectGetWidth(_yumNumber.frame), labelHeight);
     
     y += labelHeight+ spacing;
