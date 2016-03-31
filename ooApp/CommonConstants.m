@@ -23,3 +23,5 @@ NSString *const kNotificationMenuWillOpen = @"notificationMenuWillOpen";
 NSString *const kSearchPlaceholderPeople = @"Find friends and foodies";
 NSString *const kSearchPlaceholderYou = @"Find places on your lists";
 NSString *const kSearchPlaceholderPlaces = @"Find restaurants, bars, etc";
+
+NSString *const kLoggingYouIn = @"Logging you in to Oomami";

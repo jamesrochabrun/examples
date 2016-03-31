@@ -297,7 +297,7 @@
         NSString *token = user.backendAuthorizationToken;
         _info.hidden = NO;
         [_aiv startAnimating];
-        _info.text = @"Logging you in to Oomami";
+        _info.text = kLoggingYouIn;
         [self.view setNeedsLayout];
         [OOAPI getUserWithID:user.userID success:^(UserObject *user) {
             user.backendAuthorizationToken = token;
@@ -358,7 +358,7 @@
     
     if (facebookToken) {
         _info.hidden = NO;
-        _info.text = @"Logging you in to Oomami";
+        _info.text = kLoggingYouIn;
         [self.view setNeedsLayout];
         // Transition if the user recently logged in.
         [OOAPI authWithFacebookToken:facebookToken.tokenString success:^(UserObject *user, NSString *token) {

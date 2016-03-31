@@ -22,6 +22,8 @@
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UILabel *errorMessage;
 @property (nonatomic, strong) UIView *hLine1, *hLine2, *hLine3;
+@property (nonatomic, strong) UIActivityIndicatorView *aiv;
+@property (nonatomic, strong) UILabel *info;
 @end
 
 @implementation EmailSignupVC
@@ -32,6 +34,12 @@
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
     
+    _aiv = [UIActivityIndicatorView new];
+    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+    
+    _info = [[UILabel alloc] init];
+    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _info.hidden = YES;
     
     UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
     
@@ -115,6 +123,8 @@
     [self.view addSubview:_backButton];
     [self.view addSubview:_signupButton];
     [self.view addSubview:_errorMessage];
+    [self.view addSubview:_aiv];
+    [self.view addSubview:_info];
     [_emailTextField addSubview:_hLine1];
     [_passwordTextField addSubview:_hLine2];
     [_firstnameTextField addSubview:_hLine3];
@@ -122,6 +132,13 @@
 
 - (void)signUp {
     if (![self validateForm]) return;
+    
+    _info.text = kLoggingYouIn;
+    _info.hidden = NO;
+    _signupButton.enabled = NO;
+    [self.view setNeedsLayout];
+    [_aiv startAnimating];
+    
     [OOAPI createUserWithEmail:_emailTextField.text
                    andPassword:_passwordTextField.text
                   andFirstName:_firstnameTextField.text
@@ -131,6 +148,9 @@
                            [Settings sharedInstance].userObject = user;
                            [[Settings sharedInstance] save];
                            dispatch_async(dispatch_get_main_queue(), ^{
+                               [_aiv stopAnimating];
+                               _info.hidden = YES;
+                               _signupButton.enabled = YES;
                                [self showMainUI];
                            });
                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -150,7 +170,12 @@
                                    _errorMessage.text = @"Could not create the account.";
                                }
                            }
-                           [self.view setNeedsLayout];
+                           dispatch_async(dispatch_get_main_queue(), ^{
+                               [_aiv stopAnimating];
+                               _info.hidden = YES;
+                               _signupButton.enabled = YES;
+                               [self.view setNeedsLayout];
+                           });
                    }];
 }
 
@@ -218,6 +243,11 @@
     _errorMessage.frame = frame;
 
     _signupButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_errorMessage.frame) + kGeomSpaceInter, buttonWidth, kGeomHeightButton);
+    
+    [_aiv sizeToFit];
+    _aiv.center = self.view.center;
+    [_info sizeToFit];
+    _info.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_aiv.frame), buttonWidth, CGRectGetHeight(_info.frame));
 }
 
 - (void)didReceiveMemoryWarning {

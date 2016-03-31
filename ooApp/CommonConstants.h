@@ -32,6 +32,8 @@ extern NSString *const kSearchPlaceholderPeople;
 extern NSString *const kSearchPlaceholderYou;
 extern NSString *const kSearchPlaceholderPlaces;
 
+extern NSString *const kLoggingYouIn;
+
 static NSUInteger kFoodFeedPageSize = 100;
 
 static NSUInteger kMaximumRestaurantsPerEvent = 5;

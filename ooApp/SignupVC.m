@@ -51,7 +51,7 @@
     _wentToExplore = NO;
     
     _aiv = [[UIActivityIndicatorView alloc] init];
-    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
     
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
@@ -159,12 +159,13 @@
     
     _backButton.frame = CGRectMake(kGeomSpaceEdge, kGeomHeightStatusBar, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
     
+    [_aiv sizeToFit];
     _aiv.center = self.view.center;
     _tryAgain.center = self.view.center;
     
     CGRect frame = _info.frame;
-    frame.size = [_info sizeThatFits:CGSizeMake(width(self.view) - 2*kGeomSpaceEdge, 100)];
-    frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
+    frame.size = [_info sizeThatFits:CGSizeMake(buttonWidth, 100)];
+    frame.size.width = buttonWidth;
     frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
     _info.frame = frame;
 }
@@ -300,17 +301,17 @@
 }
 
 - (void)initiateLoginFlow {
-    _facebookLoginButton.hidden = YES;
     _tryAgain.hidden = YES;
     
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     [_aiv startAnimating];
     
     if (facebookToken) {
-        _facebookLoginButton.hidden = YES;
+        _facebookLoginButton.enabled = _emailButton.enabled = NO;
         _info.hidden = NO;
-        _info.text = @"Logging you in to Oomami";
+        _info.text = kLoggingYouIn;
         [self.view setNeedsLayout];
+        
         // Transition if the user recently logged in.
         [OOAPI authWithFacebookToken:facebookToken.tokenString success:^(UserObject *user, NSString *token) {
             if (token && user) {
@@ -319,16 +320,18 @@
                 user.backendAuthorizationToken = token;
                 [[Settings sharedInstance] setUserObject:user];
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    _facebookLoginButton.enabled = _emailButton.enabled = YES;
                     [self showMainUI];
                 });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"auth failure %@", error);
-            [_aiv stopAnimating];
-            
+        
             if (error.code == kCFURLErrorNotConnectedToInternet) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     _tryAgain.hidden = NO;
+                    _facebookLoginButton.enabled = _emailButton.enabled = YES;
+                    [_aiv stopAnimating];
                     _info.text = @"You don't appear to be connected to the internet. Make sure you have a good connection and try again.";
                     [self.view setNeedsLayout];
                 });
@@ -336,7 +339,9 @@
                 OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
                 [self logout];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    _facebookLoginButton.hidden = NO;
+                    _facebookLoginButton.enabled = _emailButton.enabled = YES;
+                    [_aiv stopAnimating];
+                    
                     [_facebookLoginButton setNeedsLayout];
                     if (ooError) {
                         _info.text = ooError.errorDescription;
@@ -350,7 +355,7 @@
     } else {
         [self logout];
         [_aiv stopAnimating];
-        _facebookLoginButton.hidden = NO;
+        _facebookLoginButton.enabled = _emailButton.enabled = YES;
     }
 }
 

@@ -52,13 +52,15 @@
     _wentToExplore = NO;
     
     _aiv = [[UIActivityIndicatorView alloc] init];
-    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+    
+    _info = [[UILabel alloc] init];
+    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     
-    _info = [[UILabel alloc] init];
-    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+
     
     UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
 
@@ -161,12 +163,13 @@
     
     _backButton.frame = CGRectMake(kGeomSpaceEdge, kGeomHeightStatusBar, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
     
+    [_aiv sizeToFit];
     _aiv.center = self.view.center;
     _tryAgain.center = self.view.center;
     
     CGRect frame = _info.frame;
-    frame.size = [_info sizeThatFits:CGSizeMake(width(self.view) - 2*kGeomSpaceEdge, 100)];
-    frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
+    frame.size = [_info sizeThatFits:CGSizeMake(buttonWidth, 100)];
+    frame.size.width = buttonWidth;
     frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
     _info.frame = frame;
 }
@@ -275,12 +278,6 @@
     
     UserObject* userInfo = [Settings sharedInstance].userObject;
 
-//    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
-//    NSString *md5 = [saltedString MD5String];
-//    md5 = [md5 lowercaseString];
-//    seekingToken = YES;
-//    
-
     NSLog (@"USERNAME %@",userInfo.username);
 
     self.navigationController.delegate = nil;
@@ -315,10 +312,11 @@
     [_aiv startAnimating];
     
     if (facebookToken) {
-        _facebookLoginButton.hidden = YES;
+        _facebookLoginButton.enabled = _emailButton.enabled = NO;
         _info.hidden = NO;
-        _info.text = @"Logging you in to Oomami";
+        _info.text = kLoggingYouIn;
         [self.view setNeedsLayout];
+        
         // Transition if the user recently logged in.
         [OOAPI authWithFacebookToken:facebookToken.tokenString success:^(UserObject *user, NSString *token) {
             if (token && user) {
@@ -343,7 +341,7 @@
             } else {
                 [self logout];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    _facebookLoginButton.hidden = NO;
+                    _facebookLoginButton.enabled = _emailButton.enabled =YES;
                     [_facebookLoginButton setNeedsLayout];
                     _info.text = @"There was a problem logging you in. Try again.";
                     [self.view setNeedsLayout];
@@ -353,7 +351,7 @@
     } else {
         [self logout];
         [_aiv stopAnimating];
-        _facebookLoginButton.hidden = NO;
+        _facebookLoginButton.enabled = _emailButton.enabled = YES;
     }
 }
 

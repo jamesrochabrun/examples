@@ -21,6 +21,8 @@
 @property (nonatomic, strong) UIButton *forgotPasswordButton;
 @property (nonatomic, strong) UILabel *backendResultMessage;
 @property (nonatomic, strong) UIView *hLine1;
+@property (nonatomic, strong) UIActivityIndicatorView *aiv;
+@property (nonatomic, strong) UILabel *info;
 @end
 
 @implementation EmailLoginVC
@@ -30,6 +32,13 @@
     
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
+    
+    _aiv = [UIActivityIndicatorView new];
+    _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+    
+    _info = [[UILabel alloc] init];
+    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _info.hidden = YES;
     
     UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
     
@@ -106,6 +115,8 @@
     [self.view addSubview:_loginButton];
     [self.view addSubview:_forgotPasswordButton];
     [self.view addSubview:_backendResultMessage];
+    [self.view addSubview:_aiv];
+    [self.view addSubview:_info];
     [_emailTextField addSubview:_hLine1];
 }
 
@@ -134,16 +145,29 @@
     _loginButton.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_backendResultMessage.frame) + 2*kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
     
     _forgotPasswordButton.frame = CGRectMake((w-CGRectGetWidth(_forgotPasswordButton.frame))/2, CGRectGetMaxY(_loginButton.frame) + 2*kGeomSpaceEdge, CGRectGetWidth(_forgotPasswordButton.frame), kGeomHeightButton);
+    
+    [_aiv sizeToFit];
+    _aiv.center = self.view.center;
+    [_info sizeToFit];
+    _info.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_aiv.frame), buttonWidth, CGRectGetHeight(_info.frame));
 }
 
 - (void)logIn {
     if (![self validateForm]) return;
+    
+    [_aiv startAnimating];
+    _info.text = kLoggingYouIn;
+    _info.hidden = NO;
+    _loginButton.enabled = NO;
     
     [OOAPI authWithEmail:_emailTextField.text password:_passwordTextField.text success:^(UserObject *user, NSString *token) {
         user.backendAuthorizationToken = token;
         [[Settings sharedInstance] setUserObject:user];
         [[Settings sharedInstance] save];
         dispatch_async(dispatch_get_main_queue(), ^{
+            _loginButton.enabled = YES;
+            _info.hidden = YES;
+            [_aiv stopAnimating];
             [self showMainUI];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -158,6 +182,9 @@
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
+            _loginButton.enabled = YES;
+            _info.hidden = YES;
+            [_aiv stopAnimating];
             [self.view setNeedsLayout];
         });
     }];

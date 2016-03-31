@@ -435,7 +435,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [cell provideUser:u];
     
     BOOL following = [self weAreFollowingUser:u.userID];
-    [cell showFollowButton:following];
+    if ([Settings sharedInstance].userObject.userID == u.userID) {
+        cell.buttonFollow.hidden = YES;
+    } else {
+        [cell showFollowButton:following];
+    }
     
     [cell fetchStats];
     
