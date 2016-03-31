@@ -7,18 +7,21 @@
 //
 
 #import "UserListTVC.h"
+#import "DebugUtilities.h"
 
 @interface UserListTVC ()
 
 @property (nonatomic, strong) UILabel *labelFollowers;
 @property (nonatomic, strong) UILabel *labelFollowing;
 @property (nonatomic, strong) UILabel *labelPlaces;
-@property (nonatomic, strong) UILabel *labelPhotos;
+@property (nonatomic, strong) UILabel *photosIcon;
+@property (nonatomic, strong) UILabel *yumIcon;
 
+@property (nonatomic, strong) UILabel *yumNumber;
 @property (nonatomic, strong) UILabel *labelFollowersNumber;
 @property (nonatomic, strong) UILabel *labelFollowingNumber;
 @property (nonatomic, strong) UILabel *labelPlacesNumber;
-@property (nonatomic, strong) UILabel *labelPhotosNumber;
+@property (nonatomic, strong) UILabel *photosNumber;
 
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UILabel *labelUserName;
@@ -43,22 +46,41 @@
         
         _labelFollowers = makeLabel(self,nil, kGeomFontSizeDetail);
         _labelFollowing = makeLabel(self, nil, kGeomFontSizeDetail);
-        _labelPhotos = makeIconLabel(self, kFontIconPhoto, kGeomIconSizeSmall);
         _labelPlaces = makeLabel(self, nil, kGeomFontSizeDetail);
+        
+        _photosIcon = [UILabel new];
+        [_photosIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
+        _photosIcon.text = kFontIconPhoto;
+        [self addSubview:_photosIcon];
+        
+        _photosNumber = [UILabel new];
+        [_photosNumber withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
+        [self addSubview:_photosNumber];
+        
+        _yumIcon = [UILabel new];
+        [_yumIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
+        _yumIcon.text = kFontIconYum;
+        [self addSubview:_yumIcon];
+        
+        _yumNumber = [UILabel new];
+        [_yumNumber withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
+        [self addSubview:_yumNumber];
+        
+        [_photosIcon sizeToFit];
+        [_yumIcon sizeToFit];
         
         _labelFollowers.textColor = UIColorRGBA(kColorGrayMiddle);
         _labelFollowing.textColor = UIColorRGBA(kColorGrayMiddle);
-        _labelPhotos.textColor = UIColorRGBA(kColorGrayMiddle);
         _labelPlaces.textColor = UIColorRGBA(kColorGrayMiddle);
         
         _labelFollowersNumber = makeLabel(self, @"", kGeomFontSizeSubheader);
         _labelFollowingNumber = makeLabel(self,  @"", kGeomFontSizeSubheader);
-        _labelPhotosNumber = makeLabelLeft(self,  @"", kGeomFontSizeSubheader);
+        
+        
         _labelPlacesNumber = makeLabel(self,  @"", kGeomFontSizeSubheader);
         
         _labelFollowersNumber.textColor= UIColorRGBA(kColorText);
         _labelFollowingNumber.textColor= UIColorRGBA(kColorText);
-        _labelPhotosNumber.textColor= UIColorRGBA(kColorText);
         _labelPlacesNumber.textColor= UIColorRGBA(kColorText);
         
         _labelUserName= makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
@@ -80,7 +102,7 @@
         [_buttonFollow setTitleColor: UIColorRGBA(kColorTextActive) forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
         _buttonFollow.layer.borderColor= UIColorRGBA(kColorTextActive).CGColor;
-        
+        //[DebugUtilities addBorderToViews:@[_photosIcon, _photosNumber, _yumIcon, _yumNumber]];
     }
     return self;
 }
@@ -225,7 +247,8 @@
     [_labelFollowers setText:@""];
     [_labelFollowing setText:@""];
     [_labelPlacesNumber setText:@""];
-    [_labelPhotosNumber setText:@""];
+    [_photosNumber setText:@""];
+    [_yumNumber setText:@""];
     [_labelFollowersNumber setText:@""];
     [_labelFollowingNumber setText:@""];
     
@@ -240,6 +263,7 @@
     NSUInteger following = stats.totalFollowees;
     NSUInteger restaurantCount = stats.totalVenues;
     NSUInteger photosCount = stats.totalPhotos;
+    NSUInteger yums = stats.totalLikes;
     
     if (followers == 1) {
         [_labelFollowersNumber setText:@"1"];
@@ -248,6 +272,8 @@
         [_labelFollowersNumber setText:stringFromUnsigned(followers)];
         [_labelFollowers setText:@"followers"];
     }
+    
+    _yumNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)yums];
     
     [_labelFollowingNumber setText:stringFromUnsigned(following)];
     [_labelFollowing setText:@"following"];
@@ -260,7 +286,10 @@
         [_labelPlaces setText: @"places"];
     }
     
-    [_labelPhotosNumber setText:stringFromUnsigned(photosCount)];
+    _photosNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)photosCount];
+    
+    [_yumNumber sizeToFit];
+    [_photosNumber sizeToFit];
 }
 
 - (void)layoutSubviews
@@ -302,11 +331,15 @@
     float iconWidth = 30;
     labelHeight = 20;
     
-    x=  margin + imageSize + spacing;
+    x = margin + imageSize + spacing;
     y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
-    _labelPhotos.frame=CGRectMake(x, y, iconWidth, labelHeight);
-    x += iconWidth;
-    _labelPhotosNumber.frame=CGRectMake(x, y, 55,  labelHeight);
+    
+    _photosIcon.frame = CGRectMake(x, y, iconWidth, labelHeight);
+    _photosNumber.frame = CGRectMake(CGRectGetMaxX(_photosIcon.frame), y, CGRectGetWidth(_photosNumber.frame),  labelHeight);
+    
+    _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, iconWidth, labelHeight);
+    _yumNumber.frame = CGRectMake(CGRectGetMaxX(_yumIcon.frame), y, CGRectGetWidth(_yumNumber.frame), labelHeight);
+    
     y += labelHeight+ spacing;
     
     labelHeight= 17;//  from mockup
