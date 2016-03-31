@@ -8,7 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
+#import <SafariServices/SafariServices.h>
 
-@interface SignupVC : UIViewController <FBSDKLoginButtonDelegate>
+@interface SignupVC : UIViewController <FBSDKLoginButtonDelegate,
+                                        TTTAttributedLabelDelegate,
+                                        UINavigationControllerDelegate,
+                                        SFSafariViewControllerDelegate>
+
+@property (nonatomic, weak) id<UINavigationControllerDelegate> navControllerDelegate;
 
 @end

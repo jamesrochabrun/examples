@@ -44,9 +44,9 @@
         
         self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
-        _labelFollowers = makeLabel(self,nil, kGeomFontSizeH5);
-        _labelFollowing = makeLabel(self, nil, kGeomFontSizeH5);
-        _labelPlaces = makeLabel(self, nil, kGeomFontSizeH5);
+        _labelFollowers = makeLabel(self,nil, kGeomFontSizeH6);
+        _labelFollowing = makeLabel(self, nil, kGeomFontSizeH6);
+        _labelPlaces = makeLabel(self, nil, kGeomFontSizeH6);
         
         _photosIcon = [UILabel new];
         [_photosIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
@@ -343,15 +343,18 @@
     labelHeight= 17;//  from mockup
     y = _userView.frame.size.height + _userView.frame.origin.y - 2*labelHeight;
     
-    float rightAreaWidth= 150;//  from mockup
+    float rightAreaWidth = 150;//  from mockup
     int leftLabelWidth = (int) rightAreaWidth*4/14.;
     int rightLabelWidth = (int) rightAreaWidth*5/14.;
+    
     x= w-rightAreaWidth;
     _labelPlacesNumber.frame=CGRectMake(x, y, leftLabelWidth, labelHeight);
     _labelPlaces.frame=CGRectMake(x, y +labelHeight, leftLabelWidth, labelHeight);
+    
     x += leftLabelWidth;
     _labelFollowersNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
     _labelFollowers.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);
+    
     x += rightLabelWidth;
     _labelFollowingNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
     _labelFollowing.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);

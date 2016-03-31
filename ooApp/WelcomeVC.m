@@ -17,6 +17,7 @@
 #import "CreateUsernameVC.h"
 #import "OOAPI.h"
 #import "SocialMedia.h"
+#import "SignupVC.h"
 #import <Instabug/Instabug.h>
 #import "ShowAuthScreenAnimator.h"
 
@@ -163,6 +164,17 @@
 
 - (void)showSignup {
     [self performSegueWithIdentifier:@"gotoSignup" sender:self];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:@"gotoSignup"])
+    {
+        // Get reference to the destination view controller
+        SignupVC *vc = [segue destinationViewController];
+        
+        // Pass any objects to the view controller here, like...
+        vc.navControllerDelegate = self;
+    }
 }
 
 //------------------------------------------------------------------------------

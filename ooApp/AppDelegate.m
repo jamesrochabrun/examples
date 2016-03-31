@@ -7,6 +7,7 @@
 //
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <HockeySDK/HockeySDK.h>
+#import <SafariServices/SafariServices.h>
 #import "AppDelegate.h"
 #import "OOAPI.h"
 #import "DebugUtilities.h"
@@ -99,6 +100,10 @@
      authenticateInstallation];
     
     self.imageForNoProfileSilhouette= [UIImage  imageNamed: @"No-Profile_Image.png"];
+    
+    [[UINavigationBar appearance] setBackgroundColor:UIColorRGBA(kColorNavBar)];
+    [[UINavigationBar appearance] setTintColor:UIColorRGBA(kColorTextActive)];
+    [[UIBarButtonItem appearance] setTintColor:UIColorRGBA(kColorTextActive)];
     
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     

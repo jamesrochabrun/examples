@@ -34,6 +34,7 @@
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic, strong) UILabel *info;
 @property (nonatomic, strong) UIView *horizontalLine;
+@property (nonatomic, strong) TTTAttributedLabel *legal;
 @end
 
 @implementation SignupVC
@@ -99,6 +100,34 @@
     [_facebookMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorTextReverse backgroundColor:kColorClear];
     _facebookMessage.textAlignment = NSTextAlignmentCenter;
     _facebookMessage.text = @"Oomami will never post to Facebook without your permission";
+
+    _legal = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
+    [_legal withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH6] textColor:kColorTextReverse backgroundColor:kColorClear];
+    _legal.textAlignment = NSTextAlignmentCenter;
+    _legal.text = @"By signing up for Oomami you agree to Oomami's Terms of Use and Privacy Policy";
+    
+    NSArray *pKeys = [[NSArray alloc] initWithObjects:(id)kCTForegroundColorAttributeName,
+                      (id)kCTUnderlineStyleAttributeName, (id)kCTUnderlineColorAttributeName
+                      , nil];
+    
+    NSArray *pObjects = [[NSArray alloc] initWithObjects:UIColorRGBA(kColorTextReverse),[NSNumber numberWithInt:
+                                                                      kCTUnderlineStyleThick], UIColorRGBA(kColorTextActive), nil];
+    
+    NSDictionary *pLinkAttributes = [[NSDictionary alloc] initWithObjects:pObjects
+                                                                  forKeys:pKeys];
+    _legal.activeLinkAttributes = pLinkAttributes;
+    _legal.linkAttributes = pLinkAttributes;
+    
+    _legal.delegate = self;
+    _legal.enabledTextCheckingTypes = NSTextCheckingTypeLink;
+    
+    NSString *s = @"Terms of Use";
+    NSRange range = [_legal.text rangeOfString:s];
+    [_legal addLinkToURL:[NSURL URLWithString:@"http://www.oomamiapp.com/OomamiPrivacyPolicy.pdf"] withRange:range];
+
+    s = @"Privacy Policy";
+    range = [_legal.text rangeOfString:s];
+    [_legal addLinkToURL:[NSURL URLWithString:@"http://www.oomamiapp.com/OomamiPrivacyPolicy.pdf"] withRange:range];
     
     _emailMessage = [[UILabel alloc] init];
     [_emailMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorClear];
@@ -116,11 +145,13 @@
     [self.view addSubview:_tryAgain];
     [self.view addSubview:_backButton];
     [self.view addSubview:_horizontalLine];
+    [self.view addSubview:_legal];
     
     _tryAgain.hidden = YES;
     
     //[DebugUtilities addBorderToViews:@[_quickMessage, _emailMessage]];
 }
+
 
 - (void)viewWillLayoutSubviews
 {
@@ -155,7 +186,7 @@
     
     _emailButton.frame =  CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_emailMessage.frame) + kGeomSpaceEdge, buttonWidth, kGeomHeightButton);
     
-    CGFloat facebookButtonHeight = facebookButtonHeight = kGeomHeightButton;
+    _legal.frame = CGRectMake((w-buttonWidth)/2, CGRectGetMaxY(_emailButton.frame) + 2*kGeomSpaceEdge, buttonWidth, 40);
     
     _backButton.frame = CGRectMake(kGeomSpaceEdge, kGeomHeightStatusBar, kGeomDimensionsIconButton, kGeomDimensionsIconButton);
     
@@ -168,6 +199,18 @@
     frame.size.width = buttonWidth;
     frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
     _info.frame = frame;
+}
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    SFSafariViewController *svc  = [[SFSafariViewController alloc] initWithURL:url];
+    svc.delegate = self;
+    self.navigationController.delegate = nil;
+    [self.navigationController pushViewController:svc animated:YES];
+}
+
+- (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
+    [self.navigationController popViewControllerAnimated:YES];
+    self.navigationController.delegate = _navControllerDelegate;
 }
 
 //------------------------------------------------------------------------------
@@ -297,6 +340,7 @@
 }
 
 - (void)showEmailSignup {
+    self.navigationController.delegate = _navControllerDelegate;
     [self performSegueWithIdentifier:@"gotoEmailSignup" sender:self];
 }
 
