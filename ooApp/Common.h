@@ -74,7 +74,6 @@ extern UILabel *makeAttributedLabelWithColor (UIView *parent, NSString *text, fl
 extern UILabel *makeLabelLeft(UIView *parent, NSString *text, float fontSize);
 extern UITextView *makeTextView(UIView *parent, UIColor *bg, BOOL editable);
 extern UILabel *makeIconLabel(UIView *parent, NSString *text, float fontSize);
-extern UIWebView *makeWebView(UIView *parent, id delegate);
 extern UITableView *makeTable(UIView *parent, id delegate);
 extern UICollectionView *makeCollectionView(UIView *parent, id delegate, UICollectionViewLayout *layout);
 extern UICollectionView *makeHorizontalCollectionView(UIView *parent,id  delegate, CGSize itemSize);
@@ -90,6 +89,7 @@ extern double parseNumberOrNullFromServer(id object);
 extern NSInteger parseIntegerOrNullFromServer(id object);
 extern NSUInteger parseUnsignedIntegerOrNullFromServer(id object);
 extern NSArray *parseArrayOrNullFromServer(id object);
+extern BOOL parseBoolOrNullFromServer(id object);
 
 extern BOOL isValidEmailAddress(NSString *string);
 

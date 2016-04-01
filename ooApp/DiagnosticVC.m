@@ -75,7 +75,7 @@
     _textviewDiagnosticLog.layer.borderWidth= 0.5;
     _textviewDiagnosticLog.layer.cornerRadius= 5;
     _textviewDiagnosticLog.textAlignment= NSTextAlignmentLeft;
-    _textviewDiagnosticLog.font= [ UIFont systemFontOfSize:kGeomFontSizeDetail ];
+    _textviewDiagnosticLog.font= [ UIFont systemFontOfSize:kGeomFontSizeH5];
 
     _buttonClearUsername= makeButton(self.view,  @"UIColorRGBA(kColorClear) USERNAME", kGeomFontSizeHeader-2, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(doClearUsername:), 1);
     _buttonClearUsername.titleLabel.numberOfLines= 0;

@@ -312,7 +312,7 @@
     unsigned long  hours= timeRemaining/ONE_HOUR;
     unsigned long  minutes=  (timeRemaining/60)% 60;
     unsigned long  seconds=  timeRemaining% 60;
-    NSAttributedString* lowerString= attributedStringOf( @"\runtil voting closes", kGeomFontSizeDetail);
+    NSAttributedString* lowerString= attributedStringOf( @"\runtil voting closes", kGeomFontSizeH5);
 
     if ( hours < 48) {
         NSString* string= [NSString  stringWithFormat: @"%ld:%02ld:%02ld", hours, minutes, seconds];
@@ -408,7 +408,7 @@
         _buttonVoteYes.layer.shadowColor=UIColorRGBA(kColorBlack).CGColor;
         _buttonVoteNo.layer.shadowColor=UIColorRGBA(kColorBlack).CGColor;
         
-        _radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeDetail,
+        _radioButton= makeIconButton (self, kFontIconEmptyCircle, kGeomFontSizeH5,
                                       UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self, @selector(userPressedRadioButton:), 0);
         [_radioButton setTitle:kFontIconCheckmarkCircle forState:UIControlStateSelected];
 

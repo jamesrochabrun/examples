@@ -31,7 +31,7 @@
     [super viewDidLoad];
     
     _overlay = [[UIView alloc] init];
-    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
+    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     
     _aiv = [UIActivityIndicatorView new];
     _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;

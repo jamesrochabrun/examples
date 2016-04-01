@@ -55,7 +55,7 @@
     _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
     
     _overlay = [[UIView alloc] init];
-    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
+    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     
     _info = [[UILabel alloc] init];
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
@@ -102,9 +102,8 @@
     _facebookMessage.text = @"Oomami will never post to Facebook without your permission";
 
     _legal = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
-    [_legal withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH6] textColor:kColorTextReverse backgroundColor:kColorClear];
-    _legal.textAlignment = NSTextAlignmentCenter;
-    _legal.text = @"By signing up for Oomami you agree to Oomami's Terms of Use and Privacy Policy";
+    [_legal withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _legal.text = @"By signing up you agree to Oomami's Terms of Use and Privacy Policy";
     
     NSArray *pKeys = [[NSArray alloc] initWithObjects:(id)kCTForegroundColorAttributeName,
                       (id)kCTUnderlineStyleAttributeName, (id)kCTUnderlineColorAttributeName

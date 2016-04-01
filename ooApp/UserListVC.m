@@ -32,7 +32,7 @@
 {
     self=[super init];
     if (self) {
-        _labelTitle=makeLabelLeft (self, nil, kGeomFontSizeStripHeader);
+        _labelTitle=makeLabelLeft (self, nil, kGeomFontSizeH3);
         _labelTitle.textColor=UIColorRGBA(kColorWhite);
         _labelExpander=makeIconLabel(self, kFontIconBack, kGeomIconSize);
         _labelExpander.textColor= UIColorRGBA(kColorTextActive);

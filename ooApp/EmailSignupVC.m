@@ -32,7 +32,7 @@
     [super viewDidLoad];
     
     _overlay = [[UIView alloc] init];
-    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
+    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     
     _aiv = [UIActivityIndicatorView new];
     _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
@@ -158,16 +158,25 @@
                                _errorMessage.text = @"It looks like you are not connected to the internet. Make sure you've got a good connection then try again.";
                            } else {
                                OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
-                               if (ooError.type == kOOErrorCodeTypeUniqueConstraint) {
-                                   _errorMessage.text = @"That email is already associated with an account.";
-                               } else if (ooError.type == kOOErrorCodeTypeInvalidPassword) {
-                                   _errorMessage.text = @"The password must be at least 6 characters.";
-                               } else if (ooError.type == kOOErrorCodeTypeInvalidEmail) {
-                                   _errorMessage.text = @"The email address does not appear to be valid.";
-                               } else if (ooError.type == kOOErrorCodeTypeMissingInformation) {
-                                   _errorMessage.text = @"All of the fields are required.";
-                               } else {
-                                   _errorMessage.text = @"Could not create the account.";
+                               switch (ooError.type) {
+                                   case kOOErrorCodeTypeUniqueConstraint:
+                                       _errorMessage.text = @"That email is already associated with an account.";
+                                       break;
+                                   case kOOErrorCodeTypeInvalidPassword:
+                                       _errorMessage.text = @"The password must be at least 6 characters.";
+                                       break;
+                                   case kOOErrorCodeTypeInvalidEmail:
+                                       _errorMessage.text = @"The email address does not appear to be valid.";
+                                       break;
+                                   case kOOErrorCodeTypeMissingInformation:
+                                       _errorMessage.text = @"All of the fields are required.";
+                                       break;
+                                   case kOOErrorCodeTypeConnectingAccountToUnverifiedUser:
+                                       _errorMessage.text = @"The account's email address is registered, but has not been verified. Once you verify we'll be able to connect it to this social media account.";
+                                       break;
+                                   default:
+                                       _errorMessage.text = @"Could not create the account.";
+                                       break;
                                }
                            }
                            dispatch_async(dispatch_get_main_queue(), ^{

@@ -152,8 +152,8 @@ static int votingEndingValues[3]= {
         }
     }
 
-    self.headerWhen= makeLabelLeft(self.view, @" WHEN IS THIS?", kGeomFontSizeStripHeader);
-    self.headerEndOfVoting= makeLabelLeft(self.view, @" WHEN IS VOTING CLOSED?", kGeomFontSizeStripHeader);
+    self.headerWhen= makeLabelLeft(self.view, @" WHEN IS THIS?", kGeomFontSizeH3);
+    self.headerEndOfVoting= makeLabelLeft(self.view, @" WHEN IS VOTING CLOSED?", kGeomFontSizeH3);
     _headerWhen.textColor=UIColorRGBA(kColorOffWhite);
     _headerEndOfVoting.textColor=UIColorRGBA(kColorOffWhite);
     

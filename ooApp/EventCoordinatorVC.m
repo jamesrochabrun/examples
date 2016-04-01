@@ -1061,7 +1061,7 @@
     UILabel *sectionHeader = [[UILabel alloc] initWithFrame: CGRectNull];
     sectionHeader.backgroundColor = UIColorRGBA(kColorBlack);
     sectionHeader.textAlignment = NSTextAlignmentLeft;
-    sectionHeader.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader];
+    sectionHeader.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3];
     sectionHeader.textColor = UIColorRGBA(kColorWhite);
     sectionHeader.text = sectionString;
     return sectionHeader;

@@ -701,7 +701,7 @@
     view.tintColor = UIColorRGBA(kColorBlack);
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
     [header.textLabel setTextColor: UIColorRGBA(kColorWhite)];
-    [header.textLabel setFont: [UIFont fontWithName: kFontLatoBold size:kGeomFontSizeStripHeader]];
+    [header.textLabel setFont: [UIFont fontWithName: kFontLatoBold size:kGeomFontSizeH3]];
 }
 
 - (void)userDidAlterEvent

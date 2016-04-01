@@ -90,7 +90,7 @@
     [_scrollView addSubview:_backgroundImageView];
     
     _overlay = [[UIView alloc] init];
-    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.25);
+    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
     [_scrollView addSubview:_overlay];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);

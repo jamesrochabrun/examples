@@ -48,7 +48,6 @@ static const NSUInteger kColorOverlay30 = 0xB3000000;
 static const NSUInteger kColorOverlay35 = 0xA6000000;
 static const NSUInteger kColorOverlay40 = 0x99000000;
 static const NSUInteger kColorOverlay50 = 0x7F000000;
-static const NSUInteger kColorOverlay80 = ((NSUInteger)(0.2*255.0f) << 24) ;
 
 #define LIGHT_SCHEME 1
 
@@ -138,11 +137,6 @@ static NSUInteger kGeomFontSizeH5 = 11;
 static NSUInteger kGeomFontSizeH6 = 9;
 static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 13;
-static NSUInteger kGeomFontSizeListButton = 12;
-static NSUInteger kGeomFontSizeStripHeader = 13;
-static NSUInteger kGeomFontSizeBannerMain = 12;
-static NSUInteger kGeomFontSizeDetail = 11;
-static NSUInteger kGeomFontSizeAbout = 13;
 static CGFloat kGeomIconSize = 30;
 static CGFloat kGeomIconSizeSmall = 27;
 
@@ -173,7 +167,7 @@ static CGFloat kGeomSpaceInter = 8;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
 static CGFloat kGeomInterImageGap = 2;
 static CGFloat kGeomSpaceLineEdgeBuffer = 4;
-static CGFloat kGeomMotionEffectDelta = 10;
+static CGFloat kGeomMotionEffectDelta = 20;
 
 static CGFloat kGeomUploadWidth = 750;
 

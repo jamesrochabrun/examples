@@ -310,14 +310,6 @@ UILabel* makeLabelLeft (UIView *parent, NSString*  text, float fontSize)
     return l;
 }
 
-UIWebView *makeWebView(UIView *parent, id delegate)
-{
-    UIWebView *v= [UIWebView new];
-    v.delegate = delegate;
-    [parent addSubview:v];
-    return v;
-}
-
 UITextView *makeTextView(UIView *parent, UIColor *bg, BOOL editable)
 {
     UITextView *textView= [UITextView  new];
@@ -558,6 +550,17 @@ NSDate* parseUTCDateFromServer(NSString *string)
     [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     NSDate *date = [dateFormatter dateFromString:   temp];
     return date;
+}
+
+BOOL parseBoolOrNullFromServer(id object)
+{
+    if  (object && [object isKindOfClass:[NSNumber class]]) {
+        return  ((NSNumber *)object).boolValue;
+    }
+    if  (object && [object isKindOfClass:[NSString class]]) {
+        return (BOOL) ((NSString *)object).integerValue;
+    }
+    return 0;
 }
 
 NSUInteger parseUnsignedIntegerOrNullFromServer (id object)

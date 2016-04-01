@@ -51,12 +51,14 @@ extern NSString *const kKeyUserParticipantType;
 extern NSString *const kKeyUserParticipantState;
 extern NSString *const kKeyUserAbout;
 extern NSString *const kKeyUserPassword;
+extern NSString *const kKeyUserIsVerified;
 
 @interface UserObject : NSObject
 
 @property (nonatomic, assign) NSUInteger userID;
 @property (nonatomic, assign) UserType userType;
 @property (nonatomic, assign) BOOL isFoodie, hasSpecialties;
+@property (nonatomic, assign) BOOL isVerified;
 @property (nonatomic, strong) NSArray *specialties;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;

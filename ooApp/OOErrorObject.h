@@ -32,6 +32,8 @@ typedef enum : NSUInteger {
     //failed authorization - i.e. user|password incorrect
     kOOErrorCodeTypeAuthorizationFailed = 800,
     
+    kOOErrorCodeTypeConnectingAccountToUnverifiedUser = 801,
+    
     //unique constraint - e.g. username in use, email in use
     kOOErrorCodeTypeUniqueConstraint = 900,
     

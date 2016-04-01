@@ -279,7 +279,7 @@
                                         @selector(userTappedDescription:) , 0);
         _buttonDescription.contentEdgeInsets = UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge);
         _buttonDescription.titleLabel.numberOfLines = 0;
-        _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeAbout];
+        _buttonDescription.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
 
         [_buttonDescription setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [_buttonDescription setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateDisabled];

@@ -31,6 +31,7 @@ NSString *const kKeyUserIsFoodie = @"is_blogger";
 NSString *const kKeyUserWebsite = @"website";
 NSString *const kKeyUserType = @"user_type";
 NSString *const kKeyUserPassword = @"password";
+NSString *const kKeyUserIsVerified = @"is_verified";
 
 @interface UserObject()
 
@@ -109,6 +110,7 @@ BOOL isUserObject (id  object)
     user.about = parseStringOrNullFromServer(dict [kKeyUserAbout]);
     user.website = parseStringOrNullFromServer(dict [kKeyUserWebsite]);
     user.userType = parseNumberOrNullFromServer(dict [kKeyUserType]);
+    user.isVerified = parseBoolOrNullFromServer(dict [kKeyUserIsVerified]);
     user.isFoodie = user.userType == USER_TYPE_FOODIE;
     user.specialties= nil;
 

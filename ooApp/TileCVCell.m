@@ -56,10 +56,10 @@
         _backgroundImage.clipsToBounds = YES;
         _backgroundImage.image = nil;
 
-        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeBannerMain] textColor:kColorText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
-        [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorText backgroundColor:kColorClear];
-        [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeDetail] textColor:kColorTextActive backgroundColor:kColorClear];
-        [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeDetail] textColor:kColorText backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH4] textColor:kColorText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
+        [_distance withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorText backgroundColor:kColorClear];
+        [_rating withFont:[UIFont fontWithName:kFontIcons size:kGeomFontSizeH5] textColor:kColorTextActive backgroundColor:kColorClear];
+        [_priceRange withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorText backgroundColor:kColorClear];
 
         [self addSubview:_emptyTile];
         [self addSubview:_backgroundImage];
@@ -133,14 +133,14 @@
     if (_displayType == kListDisplayTypeFeatured) {
         _overlay.backgroundColor = UIColorRGBA(kColorOverlay50);
         [_gradient removeFromSuperlayer];
-        [_name setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeDetail]];
+        [_name setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH5]];
     } else {
         [_overlay.layer addSublayer:_gradient];
         
         _gradient.colors = [NSArray arrayWithObjects:(id)[UIColorRGBA((kColorButtonBackground & 0x11FFFFFF)) CGColor], (id)[UIColorRGBA(kColorButtonBackground) CGColor], nil];
         
         _overlay.backgroundColor = UIColorRGBA(kColorClear);
-        [_name setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeDetail]];
+        [_name setFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH5]];
     }
 //    [self setNeedsDisplay];
 }

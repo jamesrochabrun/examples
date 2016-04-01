@@ -159,7 +159,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         [self.collectionView reloadData];
         _nameHeader.backgroundColor = UIColorRGBA(kColorStripHeader);
         _nameHeader.icon = kFontIconList;
-        [_nameHeader setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeStripHeader]];
+        [_nameHeader setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];
     }
 
     NSLog(@"nameHeader after setting %@ rect=%@", _nameHeader.name, NSStringFromCGRect(_nameHeader.frame));
