@@ -16,6 +16,7 @@
 #import "RestaurantPickerVC.h"
 #import "ViewPhotoVC.h"
 #import "AddCaptionToMIOVC.h"
+#import "UnverifiedUserVC.h"
 
 @protocol ProfileEmptyCellDelegate
 - (void) userPressedEmptyCell;
@@ -30,13 +31,13 @@
 @interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate,
     OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
     ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate,
-    OOTextEntryVCDelegate>
+    OOTextEntryVCDelegate, UnverifiedUserVCDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
 @end
 
-@interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryModalVCDelegate, OOUserViewDelegate>
+@interface ProfileHeaderView : UICollectionReusableView  <OOTextEntryModalVCDelegate, OOUserViewDelegate, UnverifiedUserVCDelegate>
 - (void)setUserInfo:(UserObject*)userInfo;
 @property (nonatomic,weak) ProfileVC* vc;
 - (void)refreshUserImage;

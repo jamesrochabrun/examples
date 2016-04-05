@@ -715,6 +715,19 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     }
 }
 
+- (void)presentUnverifiedMessage:(NSString *)message {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+    vc.delegate = self;
+    vc.action = message;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
+    self.navigationController.delegate = vc;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController presentViewController:vc animated:YES completion:^{
+        }];
+    });
+}
+
 - (void)refreshSuggestedUsersSection
 {
     // RULE: Don't reload the section unless the foodies are visible.

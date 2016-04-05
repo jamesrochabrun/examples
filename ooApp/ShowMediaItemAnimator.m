@@ -100,7 +100,7 @@
                 toIV.alpha = 1;
 
                 toVPVC.backgroundView.alpha = kAlphaBackground;
-                toVPVC.tabBarController.tabBar.hidden = YES;
+//                toVPVC.tabBarController.tabBar.hidden = YES;
 //
             } completion:^(BOOL finished) {
                 [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;

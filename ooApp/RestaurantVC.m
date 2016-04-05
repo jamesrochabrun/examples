@@ -461,7 +461,21 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 {
     _styleSheetAC.popoverPresentationController.sourceView = sender;
     _styleSheetAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
-    [self presentViewController:_styleSheetAC animated:YES completion:nil];
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
+        } else {
+            [self presentViewController:_styleSheetAC animated:YES completion:nil];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
 }
 
 - (void)didReceiveMemoryWarning
@@ -661,11 +675,29 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
     
-    [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeFavorites success:^(id response) {
-        [weakSelf getListsForRestaurant];
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:@"To add this restaurant to your favorites list you will need to verify your email.\n\nCheck your email for a verification link."];
+        } else {
+            [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeFavorites success:^(id response) {
+                [weakSelf getListsForRestaurant];
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
     }];
+}
+
+- (void)photoCell:(PhotoCVCell *)photoCell userNotVerified:(MediaItemObject *)mio {
+    [self presentUnverifiedMessage:@"To yum this photo you will need to verify your email.\n\nCheck your email for a verification link."];
 }
 
 - (void)addToList {
@@ -1047,7 +1079,21 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     if (havePhotoLibrary) [addPhoto addAction:libraryUI];
     [addPhoto addAction:cancel];
     
-    if (havePhotoLibrary && haveCamera )[self presentViewController:addPhoto animated:YES completion:nil];
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:@"To upload a photo you will need to verify your email.\n\nCheck your email for a verification link."];
+        } else {
+            if (havePhotoLibrary && haveCamera)[self presentViewController:addPhoto animated:YES completion:nil];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
 }
 
 - (void)showCameraUI {
@@ -1082,6 +1128,25 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     } else {
         // impossible, unknown authorization status
     }
+}
+
+- (void)presentUnverifiedMessage:(NSString *)message {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+    vc.delegate = self;
+    vc.action = message;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
+    self.navigationController.delegate = vc;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController presentViewController:vc animated:YES completion:^{
+        }];
+    });
+}
+
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
 
 - (void)getAccessToCamera {

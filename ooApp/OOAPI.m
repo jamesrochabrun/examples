@@ -3128,6 +3128,58 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
            }];
 }
 
++ (AFHTTPRequestOperation *)isCurrentUserVerifiedSuccess:(void (^)(BOOL))success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    if (!user) { //should not happen
+        success(NO);
+        return nil;
+    }
+    
+    if (user.isVerified) { //check if the user is verified locally first
+        success(YES);
+        return nil;
+    }
+    
+    return [OOAPI getUserWithID:user.userID success:^(UserObject *user) {
+        if (user.isVerified) {
+            //update the user
+            [Settings sharedInstance].userObject.isVerified = YES;
+            [[Settings sharedInstance] save];
+            success(YES);
+        } else {
+            success(NO);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSInteger statusCode = operation.response.statusCode;
+        NSLog(@"Error: %@, status code %ld", error, (long)statusCode);
+        failure(operation, error);
+    }];
+}
+
++ (AFHTTPRequestOperation *)resendVerificationForCurrentUserSuccess:(void (^)(BOOL))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    if (!user) { //should not happen
+        success(NO);
+        return nil;
+    }
+    
+    NSString *requestString = [NSString stringWithFormat:@"%@://%@/users/%lu/verify/resend", kHTTPProtocol, [OOAPI URL],(unsigned long)user.userID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    return [rm GET:requestString parameters:nil
+           success:^(id responseObject) {
+               success(YES);
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+               NSLog(@"Error: %@", error);
+               failure(operation, error);
+           }];
+}
 
 + (NSString *)URL
 {

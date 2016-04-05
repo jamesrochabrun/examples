@@ -78,6 +78,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    self.tabBarController.tabBar.hidden = NO;
     CGRect frame = self.navigationController.navigationBar.frame;
     frame.origin.y = kGeomHeightStatusBar;
     self.navigationController.navigationBar.frame = frame;

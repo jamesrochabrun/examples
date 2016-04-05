@@ -161,9 +161,23 @@ static CGFloat kNextPhotoTolerance = 40;
         [photoOptions addAction:flagPhoto];
     }
     [photoOptions addAction:cancel];
-
-    [self presentViewController:photoOptions animated:YES completion:^{
-        ;
+    
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
+        } else {
+            [self presentViewController:photoOptions animated:YES completion:^{
+                ;
+            }];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
     }];
 }
 
@@ -502,28 +516,19 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:animated];
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorClear)] forBarMetrics:UIBarMetricsDefault];
-    [self.navigationController.navigationBar setShadowImage:[UIImage imageWithColor:UIColorRGBA(kColorClear)]];
-    [self setLeftNavWithIcon:kFontIconRemove target:self action:@selector(close)];
-    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(showOptions:)];
-    
     [self.navigationController setNavigationBarHidden:YES animated:animated];
-    
     self.tabBarController.tabBar.hidden = YES;
-    _backgroundView.alpha = kAlphaBackground;
+    
+//    _backgroundView.alpha = kAlphaBackground;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:_restaurant.name subHeader:[NSString stringWithFormat:@"%ld", _currentIndex]];
-    self.navTitle = nto;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:animated];
-    self.tabBarController.tabBar.hidden = NO;
-    [self.navigationController setNavigationBarHidden:NO animated:animated];
     [super viewWillDisappear:animated];
 }
 
@@ -649,7 +654,6 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
     
     CGFloat imageWidth = width(self.view);
-//    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _iv.image.size.height/((_iv.image.size.width)?(_iv.image.size.width):1) * width(self.view);
     
     CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _mio.height/_mio.width * width(self.view);
     
@@ -726,46 +730,80 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)yumPhotoTapped {
-    __weak ViewPhotoVC *weakSelf = self;
-    if (_yumButton.isSelected) {
-        NSLog(@"unlike photo");
-        NSUInteger userID = [Settings sharedInstance].userObject.userID;
-        [OOAPI unsetMediaItemLike:_mio.mediaItemId forUser:userID success:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.yumButton setSelected:NO];
-                [weakSelf updateNumYums];
-                NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
-                NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"ERROR: failed to unlike photo: %@", error);;
-        }];
-    } else {
-        NSLog(@"like photo");
-        NSUInteger userID = [Settings sharedInstance].userObject.userID;
-        [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                weakSelf.yumIndicator.alpha = 1;
-                [UIView animateKeyframesWithDuration:1 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
-                    weakSelf.yumIndicator.alpha = 0;
-                } completion:^(BOOL finished) {
-                    [weakSelf.yumButton setSelected:YES];
-                    [weakSelf updateNumYums];
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:@"To yum this photo you will need to verify your email.\n\nCheck your email for a verification link."];
+        } else {
+            __weak ViewPhotoVC *weakSelf = self;
+            if (_yumButton.isSelected) {
+                NSLog(@"unlike photo");
+                NSUInteger userID = [Settings sharedInstance].userObject.userID;
+                [OOAPI unsetMediaItemLike:_mio.mediaItemId forUser:userID success:^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.yumButton setSelected:NO];
+                        [weakSelf updateNumYums];
+                        NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
+                        NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
+                    });
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    NSLog(@"ERROR: failed to unlike photo: %@", error);;
                 }];
-                
-                NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
-                NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"ERROR: failed to like photo: %@", error);;
+            } else {
+                NSLog(@"like photo");
+                NSUInteger userID = [Settings sharedInstance].userObject.userID;
+                [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        weakSelf.yumIndicator.alpha = 1;
+                        [UIView animateKeyframesWithDuration:1 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
+                            weakSelf.yumIndicator.alpha = 0;
+                        } completion:^(BOOL finished) {
+                            [weakSelf.yumButton setSelected:YES];
+                            [weakSelf updateNumYums];
+                        }];
+                        
+                        NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
+                        NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
+                    });
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    NSLog(@"ERROR: failed to like photo: %@", error);;
+                }];
+            }
+            
+            UserObject* myself= [Settings sharedInstance].userObject;
+            if (_mio.sourceUserID == myself.userID) {
+                // RULE: If I like or unlike my own photo, I will need to update my profile screen.
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationOwnProfileNeedsUpdate object:nil];
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
+}
+
+
+- (void)presentUnverifiedMessage:(NSString *)message {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+    vc.delegate = self;
+    vc.action = message;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
+    self.navigationController.delegate = vc;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController presentViewController:vc animated:YES completion:^{
         }];
-    }
-    
-    UserObject* myself= [Settings sharedInstance].userObject;
-    if (_mio.sourceUserID == myself.userID) {
-        // RULE: If I like or unlike my own photo, I will need to update my profile screen.
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationOwnProfileNeedsUpdate object:nil];
-    }
+    });
+}
+
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
 
 - (void)updateNumYums {

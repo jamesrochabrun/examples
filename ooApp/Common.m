@@ -13,6 +13,7 @@
 #import "AppDelegate.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreImage/CoreImage.h>
+#import "Common.h"
 
 NSString *const kNotificationLocationBecameAvailable = @"notificationLocationAvailable";
 NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationUnavailable";
@@ -884,6 +885,34 @@ void ANALYTICS_EVENT_UI (NSString* name)
     
     // Add both effects to your view
     [view addMotionEffect:group];
+}
+
++ (UIAlertController *)getNotVerifiedAlert:(NSString *)message withEmail:(NSString *)email {
+    UIAlertController *notVerifiedController = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Unverified User"]
+                                                                      message:[NSString stringWithFormat:@"Take a photo with your camera or add one from your photo library."]
+                                                               preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *resendVerification = [UIAlertAction actionWithTitle:@"Resend Verification"
+                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                               [OOAPI resendVerificationForCurrentUserSuccess:^(BOOL sent) {
+                                                                   if (sent) {
+                                                                       //message(@"Verification Email Sent");
+                                                                   } else {
+                                                                       //message(@"Verification Email Not Sent");
+                                                                   }
+                                                               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                                   //message(@"Verification Email Not Sent");
+                                                               }];
+                                                       }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                            
+                                                        }];
+    
+    [notVerifiedController addAction:resendVerification];
+    [notVerifiedController addAction:cancel];
+    return notVerifiedController;
 }
 
 @end

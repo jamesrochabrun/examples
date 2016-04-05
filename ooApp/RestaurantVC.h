@@ -16,9 +16,10 @@
 #import "PhotoCVCell.h"
 #import "AddCaptionToMIOVC.h"
 #import "ViewPhotoVC.h"
+#import "UnverifiedUserVC.h"
 
 @interface RestaurantVC : SubBaseVC
-<UIActionSheetDelegate, UICollectionViewDataSource, RestaurantVCCollectionViewDelegate, RestaurantMainCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate, OOUserViewDelegate, OOTextEntryVCDelegate, UINavigationControllerDelegate, UIViewControllerTransitioningDelegate, ViewPhotoVCDelegate>
+<UIActionSheetDelegate, UICollectionViewDataSource, RestaurantVCCollectionViewDelegate, RestaurantMainCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate, OOUserViewDelegate, OOTextEntryVCDelegate, UINavigationControllerDelegate, UIViewControllerTransitioningDelegate, ViewPhotoVCDelegate, UnverifiedUserVCDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *listToAddTo;

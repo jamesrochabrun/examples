@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MediaItemObject.h"
+#import "UnverifiedUserVC.h"
 
 @class PhotoCVCell;
 
@@ -15,9 +16,10 @@
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio;
 - (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject;
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio;
+- (void)photoCell:(PhotoCVCell *)photoCell userNotVerified:(MediaItemObject *)mio;
 @end
 
-@interface PhotoCVCell : UICollectionViewCell
+@interface PhotoCVCell : UICollectionViewCell <UnverifiedUserVCDelegate>
 
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;
 @property (nonatomic, weak) id<PhotoCVCellDelegate> delegate;

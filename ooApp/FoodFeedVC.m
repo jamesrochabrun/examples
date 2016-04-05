@@ -166,40 +166,68 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     // Dispose of any resources that can be recreated.
 }
 
-- (void)showPickPhotoUI
-{
-    BOOL haveCamera = NO, havePhotoLibrary = NO;
-    haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ? YES : NO;
-    havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary] ? YES : NO;
-    UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Add Photo to the Food Feed"]
-                                                                      message:[NSString stringWithFormat:@"Take a photo with your camera or add one from your photo library."]
-                                                               preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"Camera"
-                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                           [self showCameraUI];
-                                                       }];
-    
-    UIAlertAction *libraryUI = [UIAlertAction actionWithTitle:@"Library"
-                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                            [self showPhotoLibraryUI];
-                                                        }];
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-                                                     style:UIAlertActionStyleCancel
-                                                   handler:^(UIAlertAction * action) {
-                                                       NSLog(@"Cancel");
-                                                   }];
-    
-    
-    if (haveCamera) [addPhoto addAction:cameraUI];
-    if (havePhotoLibrary) [addPhoto addAction:libraryUI];
-    [addPhoto addAction:cancel];
-    
-    if (havePhotoLibrary && haveCamera) {
-        [self presentViewController:addPhoto animated:YES completion:nil];
-    } else { // just for test purposes
-        [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
-    }
+- (void)showPickPhotoUI {
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+            vc.delegate = self;
+            vc.action = @"To upload photos you will need to verify your email.\n\nCheck your email for a verification link.";
+            vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+            vc.transitioningDelegate = vc;
+            self.navigationController.delegate = vc;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationController presentViewController:vc animated:YES completion:^{
+                }];
+            });
+        } else {
+            BOOL haveCamera = NO, havePhotoLibrary = NO;
+            haveCamera = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ? YES : NO;
+            havePhotoLibrary = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary] ? YES : NO;
+            UIAlertController *addPhoto = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Add Photo to the Food Feed"]
+                                                                              message:[NSString stringWithFormat:@"Take a photo with your camera or add one from your photo library."]
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *cameraUI = [UIAlertAction actionWithTitle:@"Camera"
+                                                               style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                   [self showCameraUI];
+                                                               }];
+            
+            UIAlertAction *libraryUI = [UIAlertAction actionWithTitle:@"Library"
+                                                                style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                    [self showPhotoLibraryUI];
+                                                                }];
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                             style:UIAlertActionStyleCancel
+                                                           handler:^(UIAlertAction * action) {
+                                                               NSLog(@"Cancel");
+                                                           }];
+            
+            
+            if (haveCamera) [addPhoto addAction:cameraUI];
+            if (havePhotoLibrary) [addPhoto addAction:libraryUI];
+            [addPhoto addAction:cancel];
+            
+            if (havePhotoLibrary && haveCamera) {
+                [self presentViewController:addPhoto animated:YES completion:nil];
+            } else { // just for test purposes
+                [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
+}
+
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
 
 - (void)showCameraUI {
@@ -647,6 +675,19 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     self.transitioningDelegate = nil;
     self.navigationController.delegate = nil;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)photoCell:(PhotoCVCell *)photoCell userNotVerified:(MediaItemObject *)mio {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+    vc.delegate = self;
+    vc.action = @"To yum the photo you will need to verify your email.\n\nCheck your email for a verification link.";
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
+    self.navigationController.delegate = vc;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController presentViewController:vc animated:YES completion:^{
+        }];
+    });
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio {

@@ -462,21 +462,60 @@
         return;
     }
     
-    UINavigationController *nc = [[UINavigationController alloc] init];
-    
-    OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:@"To edit your description you will need to verify your email.\n\nCheck your email for a verification link."];
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UINavigationController *nc = [[UINavigationController alloc] init];
+                
+                OOTextEntryModalVC *vc = [[OOTextEntryModalVC alloc] init];
+                vc.delegate = self;
+                vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
+                vc.defaultText = _userInfo.about;
+                vc.view.frame = CGRectMake(0, 0, 40, 44);
+                [nc addChildViewController:vc];
+                
+                [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+                [nc.navigationBar setTranslucent:YES];
+                nc.view.backgroundColor = [UIColor clearColor];
+                
+                [self.vc.navigationController presentViewController:nc animated:YES completion:^{
+                    nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+                }];
+            });
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
+}
+
+- (void)presentUnverifiedMessage:(NSString *)message {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
     vc.delegate = self;
-    vc.textLengthLimit= kUserObjectMaximumAboutTextLength;
-    vc.defaultText = _userInfo.about;
-    vc.view.frame = CGRectMake(0, 0, 40, 44);
-    [nc addChildViewController:vc];
+    vc.action = message;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
     
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setTranslucent:YES];
-    nc.view.backgroundColor = [UIColor clearColor];
-    
-    [self.vc.navigationController presentViewController:nc animated:YES completion:^{
-        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *nc = [UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject;
+        if ([nc isKindOfClass:[UINavigationController class]]) {
+            ((UINavigationController *)nc).delegate = vc;
+        }
+        
+        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:vc animated:YES completion:nil];
+    });
+}
+
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject  dismissViewControllerAnimated:YES completion:^{
+        ;
     }];
 }
 
@@ -582,7 +621,7 @@
 //------------------------------------------------------------------------------
 - (void)userPressedFollow:(id)sender
 {
-    if  (_viewingOwnProfile ) {
+    if  (_viewingOwnProfile) {
         return;
     }
     
@@ -593,19 +632,36 @@
         return;
     }
     
-    [OOAPI setFollowingUser:_userInfo
-                         to: YES
-                    success:^(id responseObject) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [weakSelf indicateFollowing];
-                        });
-                        NOTIFY(kNotificationConnectNeedsUpdate);
-                        NOTIFY(kNotificationUserFollowingChanged);
-                        NOTIFY(kNotificationOwnProfileNeedsUpdate);
-                        NSLog (@"SUCCESSFULLY FOLLOWED USER");
-                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                        NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
-                    }];
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:[NSString stringWithFormat:@"You will need to verify your email to follow @%@.\n\nCheck your email for a verification link.", _userInfo.username]];
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [OOAPI setFollowingUser:_userInfo
+                                     to: YES
+                                success:^(id responseObject) {
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        [weakSelf indicateFollowing];
+                                    });
+                                    NOTIFY(kNotificationConnectNeedsUpdate);
+                                    NOTIFY(kNotificationUserFollowingChanged);
+                                    NOTIFY(kNotificationOwnProfileNeedsUpdate);
+                                    NSLog (@"SUCCESSFULLY FOLLOWED USER");
+                                } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                    NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
+                                }];
+
+            });
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
 }
 
 //------------------------------------------------------------------------------
@@ -1329,12 +1385,32 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 
 - (void)handleUpperRightButton
 {
-    if (_viewingLists) {
-        [self userPressedNewList];
-    } else {
-        _pickerIsForRestaurants= YES;
-        [self showPickPhotoUI];
-    }
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            if (_viewingLists) {
+                [self presentUnverifiedMessage:@"To create a list you will need to verify your email.\n\nCheck your email for a verification link."];
+            } else {
+                [self presentUnverifiedMessage:@"To upload a photo you will need to verify your email.\n\nCheck your email for a verification link."];
+            }
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (_viewingLists) {
+                    [self userPressedNewList];
+                } else {
+                    _pickerIsForRestaurants= YES;
+                    [self showPickPhotoUI];
+                }
+            });
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
 }
 
 - (void)userTappedOnLists
@@ -1528,6 +1604,10 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         NSLog(@"Another's PROFILE");
 //        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
     }
+}
+
+- (void)photoCell:(PhotoCVCell *)photoCell userNotVerified:(MediaItemObject *)mio {
+    [self presentUnverifiedMessage:@"To yum the photo you will need to verify your email.\n\nCheck your email for a verification link."];
 }
 
 - (void)userAddingCaptionTo:(MediaItemObject*)mio
@@ -1928,6 +2008,24 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     }
 }
 
+- (void)presentUnverifiedMessage:(NSString *)message {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+    vc.delegate = self;
+    vc.action = message;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
+    self.navigationController.delegate = vc;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationController presentViewController:vc animated:YES completion:^{
+        }];
+    });
+}
+
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
+}
 
 @end
 
@@ -2015,5 +2113,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [super prepareForReuse];
     [self setMessageMode];
 }
+
 @end
 

@@ -26,7 +26,6 @@ typedef enum {
 
 @class AppDelegate;
 #define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
-#define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
 
 #define LOCAL(STR) NSLocalizedString(STR, nil)
 #define ON_MAIN_THREAD(BLK) dispatch_async(dispatch_get_main_queue(),BLK)

@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "OOUserView.h"
+#import "UnverifiedUserVC.h"
 
 
 @protocol UserListTVCDelegate <NSObject>
@@ -15,7 +16,7 @@
 - (void)userTappedFollowButtonForUser:(UserObject *)user following:(BOOL)following;
 @end
 
-@interface UserListTVC : UITableViewCell <OOUserViewDelegate>
+@interface UserListTVC : UITableViewCell <OOUserViewDelegate, UnverifiedUserVCDelegate>
 - (void)provideUser:(UserObject *)user;
 - (void)fetchStats;
 - (void)showFollowButton:(BOOL)following;

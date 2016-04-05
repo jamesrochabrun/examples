@@ -12,6 +12,7 @@
 #import "UserObject.h"
 #import "AddCaptionToMIOVC.h"
 #import "OOUserView.h"
+#import "UnverifiedUserVC.h"
 
 static CGFloat kAlphaBackground = 1;
 
@@ -31,10 +32,11 @@ typedef enum {
 - (void)viewPhotoVCClosed:(ViewPhotoVC *)viewPhotoVC;
 @end
 
-@interface ViewPhotoVC : BaseVC <OOUserViewDelegate,
+@interface ViewPhotoVC : UIViewController <OOUserViewDelegate,
                                     OOTextEntryVCDelegate,
                                     UINavigationControllerDelegate,
-                                    UIViewControllerTransitioningDelegate>
+                                    UIViewControllerTransitioningDelegate,
+                                    UnverifiedUserVCDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) UIImageView *iv;

@@ -141,48 +141,63 @@
 
 - (void)yumPhotoTapped {
     if (_mediaItemObject.source != kMediaItemTypeOomami) return;
-    __weak PhotoCVCell *weakSelf = self;
-    if (_yumButton.isSelected) {
-        NSLog(@"unlike photo");
-        NSUInteger userID = [Settings sharedInstance].userObject.userID;
-        [OOAPI unsetMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
-            ON_MAIN_THREAD(^{
-                [_yumButton setSelected:NO];
-                [weakSelf updateNumYums];
-                if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
-                    [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
-                }
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
-    } else {
-        NSLog(@"like photo");
-        NSUInteger userID = [Settings sharedInstance].userObject.userID;
-        [OOAPI setMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                weakSelf.yumIndicator.alpha = 1;
-                weakSelf.yumIndicator.center = weakSelf.center;
-                [UIView animateKeyframesWithDuration:1 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
-                    weakSelf.yumIndicator.alpha = 0;
-                } completion:^(BOOL finished) {
-                    [_yumButton setSelected:YES];
-                }];
-                [weakSelf updateNumYums];
-                if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
-                    [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
-                }
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
-    }
     
-    UserObject* myself= [Settings sharedInstance].userObject;
-    if ( _mediaItemObject.sourceUserID==myself.userID) {
-        // RULE: If I like or unlike my own photo, I will need to update my profile screen.
-        NOTIFY(kNotificationOwnProfileNeedsUpdate);
-    }
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [_delegate photoCell:self userNotVerified:_mediaItemObject];
+        } else {
+            __weak PhotoCVCell *weakSelf = self;
+            if (_yumButton.isSelected) {
+                NSLog(@"unlike photo");
+                NSUInteger userID = [Settings sharedInstance].userObject.userID;
+                [OOAPI unsetMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
+                    ON_MAIN_THREAD(^{
+                        [_yumButton setSelected:NO];
+                        [weakSelf updateNumYums];
+                        if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
+                            [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                        }
+                    });
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    ;
+                }];
+            } else {
+                NSLog(@"like photo");
+                NSUInteger userID = [Settings sharedInstance].userObject.userID;
+                [OOAPI setMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        weakSelf.yumIndicator.alpha = 1;
+                        weakSelf.yumIndicator.center = weakSelf.center;
+                        [UIView animateKeyframesWithDuration:1 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
+                            weakSelf.yumIndicator.alpha = 0;
+                        } completion:^(BOOL finished) {
+                            [_yumButton setSelected:YES];
+                        }];
+                        [weakSelf updateNumYums];
+                        if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
+                            [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
+                        }
+                    });
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    ;
+                }];
+            }
+            
+            UserObject* myself= [Settings sharedInstance].userObject;
+            if ( _mediaItemObject.sourceUserID==myself.userID) {
+                // RULE: If I like or unlike my own photo, I will need to update my profile screen.
+                NOTIFY(kNotificationOwnProfileNeedsUpdate);
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
 }
 
 - (void)updateConstraints {

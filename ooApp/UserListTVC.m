@@ -165,24 +165,61 @@
         return;
     }
     
-    __weak UserListTVC *weakSelf = self;
-    [OOAPI setFollowingUser:_userInfo
-                         to: YES
-                    success:^(id responseObject) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            weakSelf.buttonFollow.selected = YES;
-                            [weakSelf showFollowButton:YES];
-                            
-                            NSLog(@"SUCCESSFULLY FOLLOWED USER");
-                            NOTIFY(kNotificationOwnProfileNeedsUpdate);
-                            NOTIFY(kNotificationUserFollowingChanged);
-                            [weakSelf.delegate userTappedFollowButtonForUser:weakSelf.userInfo
-                                                                   following:YES];
-                        });
-                    }
-                    failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                        NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
-                    }];
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:[NSString stringWithFormat:@"You will need to verify your email to follow @%@.\n\nCheck your email for a verification link.", _userInfo.username]];
+        } else {
+            __weak UserListTVC *weakSelf = self;
+            [OOAPI setFollowingUser:_userInfo
+                                 to: YES
+                            success:^(id responseObject) {
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    weakSelf.buttonFollow.selected = YES;
+                                    [weakSelf showFollowButton:YES];
+                                    
+                                    NSLog(@"SUCCESSFULLY FOLLOWED USER");
+                                    NOTIFY(kNotificationOwnProfileNeedsUpdate);
+                                    NOTIFY(kNotificationUserFollowingChanged);
+                                    [weakSelf.delegate userTappedFollowButtonForUser:weakSelf.userInfo
+                                                                           following:YES];
+                                });
+                            }
+                            failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                NSLog (@"FAILED TO FOLLOW/UNFOLLOW USER");
+                            }];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
+}
+
+- (void)presentUnverifiedMessage:(NSString *)message {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+    vc.delegate = self;
+    vc.action = message;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *nc = [UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject;
+        if ([nc isKindOfClass:[UINavigationController class]]) {
+            ((UINavigationController *)nc).delegate = vc;
+        }
+                                
+        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:vc animated:YES completion:nil];
+    });
+}
+
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
 
 - (void)showFollowButton:(BOOL)following
