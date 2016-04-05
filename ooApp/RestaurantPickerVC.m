@@ -42,7 +42,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _iv.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _iv.contentMode = UIViewContentModeScaleAspectFill;
         _iv.alpha = 1;
-        
+                
         _tableView = [[UITableView alloc] init];
         [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:cellIdentifier];
         _tableView.backgroundColor = UIColorRGBA(kColorDarkImageOverlay);
@@ -59,7 +59,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _searchBar = [[UISearchBar alloc] init];
         _searchBar.searchBarStyle = UISearchBarStyleMinimal;
         _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        _searchBar.placeholder = LOCAL( @"Search for the restaurant, bar, etc");
+        _searchBar.placeholder = LOCAL(@"Search for the restaurant, bar, etc");
         _searchBar.barTintColor = UIColorRGBA(kColorText);
         _searchBar.keyboardType = UIKeyboardTypeAlphabet;
         _searchBar.delegate = self;
@@ -90,6 +90,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 
         _cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
         _currentSearchBar = _searchBar;
+        
+        self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     }
     return self;
 }
@@ -103,9 +105,11 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [self.view addSubview:_searchBar];
     [self.view addSubview:_cancelButton];
     [self.view addSubview:_locationSearchBar];
+    [self.view sendSubviewToBack:_iv];
+    
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    [self.view sendSubviewToBack:_iv];
+    
     self.navTitle = _nto;
 }
 
@@ -200,7 +204,8 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_cancelButton(buttonHeight)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_searchBar(buttonHeight)][_locationSearchBar(40)][_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationSearchBar][_iv]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
     }
 
 - (void)getNearbyRestaurants {
@@ -290,15 +295,18 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     [cell.detailTextLabel setTextColor:UIColorRGBA(kColorText)];
     cell.backgroundColor = UIColorRGBA(kColorClear);
     cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];
+    [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2]];
     [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
 
     if (_currentSearchBar == _searchBar) {
         RestaurantObject *r = [_restaurants objectAtIndex:indexPath.row];
         // Configure the cell...
-        cell.textLabel.text = r.name;
+        CLLocation *l1 = [[CLLocation alloc] initWithLatitude:_selectedLocation.latitude longitude:_selectedLocation.longitude];
+        CLLocation *l2 = [[CLLocation alloc] initWithLatitude:r.location.latitude longitude:r.location.longitude];
+        CLLocationDistance distanceInMeters = [l1 distanceFromLocation:l2];
+
+        cell.textLabel.text = [NSString stringWithFormat:@"%@ - %0.1f mi.", r.name, metersToMiles(distanceInMeters)];
         cell.textLabel.numberOfLines = 1;
-        cell.detailTextLabel.text = r.address;
     } else if (_currentSearchBar == _locationSearchBar) {
         CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
         cell.textLabel.numberOfLines = 2;
@@ -318,6 +326,9 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
         _locationSearchBar.text = [Common locationString:placemark];
         _selectedLocation = placemark.location.coordinate;
+        if ([_searchBar.text length] > 3) {
+            [_searchBar becomeFirstResponder];
+        }
     }
 }
 

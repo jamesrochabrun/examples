@@ -383,7 +383,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)showRestaurantPickerAtCoordinate:(CLLocationCoordinate2D)location {
     RestaurantPickerVC *restaurantPicker = [[RestaurantPickerVC alloc] init];
     restaurantPicker.location = location;
-    restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
     restaurantPicker.delegate = self;
     restaurantPicker.imageToUpload = _imageToUpload;
 

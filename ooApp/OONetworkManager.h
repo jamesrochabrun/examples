@@ -22,19 +22,19 @@
                         success:(void (^)(id responseObject))success
                         failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure;
 
-- (AFHTTPRequestOperation*) POST:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation *)POST:(NSString *)path parameters:(NSDictionary *)parameters
                          success:(void (^)(id responseObject))success
                          failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure;
 
-- (AFHTTPRequestOperation*) PUT:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation *)PUT:(NSString *)path parameters:(NSDictionary *)parameters
                         success:(void (^)(id responseObject))success
                         failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure;
 
-- (AFHTTPRequestOperation*) DELETE:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation *)DELETE:(NSString *)path parameters:(NSDictionary *)parameters
                            success:(void (^)(id responseObject))success
                            failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure;
 
-- (AFHTTPRequestOperation*) PATCH:(NSString *)path parameters:(NSDictionary *)parameters
+- (AFHTTPRequestOperation *)PATCH:(NSString *)path parameters:(NSDictionary *)parameters
                           success:(void (^)(id responseObject))success
                           failure:(void (^)(AFHTTPRequestOperation*operation, NSError *error))failure;
 

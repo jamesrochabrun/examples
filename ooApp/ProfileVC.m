@@ -1195,7 +1195,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     self.selectedRestaurant= nil;
     
     _restaurantPicker = [[RestaurantPickerVC alloc] init];
-    _restaurantPicker.view.backgroundColor = UIColorRGBA(kColorBlack);
     _restaurantPicker.delegate = self;
     _restaurantPicker.location = [LocationManager sharedInstance].currentUserLocation;
     _restaurantPicker.imageToUpload = _imageToUpload;
