@@ -97,7 +97,7 @@
     _quickMessage.text = @"Sign up quickly:";
     
     _facebookMessage = [[UILabel alloc] init];
-    [_facebookMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorTextReverse backgroundColor:kColorClear];
+    [_facebookMessage withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorTextReverse backgroundColor:kColorClear];
     _facebookMessage.textAlignment = NSTextAlignmentCenter;
     _facebookMessage.text = @"Oomami will never post to Facebook without your permission";
 
