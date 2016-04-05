@@ -1909,16 +1909,21 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
     OONetworkManager *rm = [[OONetworkManager alloc] init];
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    if (!user) {
+        failure(nil, nil);
+        return nil;
+    }
     
     //eg. /users/recent?days=30&limit=5
     
     NSString *urlString;
-    urlString= [NSString stringWithFormat:@"%@://%@/users/recent",
-                kHTTPProtocol, [OOAPI URL]];
+    urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/recent", kHTTPProtocol, [OOAPI URL], user.userID];
     
     AFHTTPRequestOperation *op;
     
-    NSDictionary *parameters = @{kKeyDays:@(15), kKeySearchLimit:@(5)};
+    NSDictionary *parameters = @{kKeyDays:@(15), kKeySearchLimit:@(10)};
     
     op = [rm GET:urlString parameters:parameters
          success:^(id responseObject) {
@@ -3188,16 +3193,16 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-#ifdef ADHOC
-    APP.usingStagingServer=NO;
+//#ifdef ADHOC
+//    APP.usingStagingServer=NO;
     return kOOURLProduction;
-#else
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#endif
+//#else
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#endif
 }
 
 @end
