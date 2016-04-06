@@ -465,7 +465,7 @@ static CGFloat kNextPhotoTolerance = 40;
     vc.restaurants = _restaurants;
     vc.currentIndex = nextIndex;
     
-    vc.rootViewController = _rootViewController;
+    //vc.rootViewController = _rootViewController;
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;
     vc.navigationController.delegate = self;

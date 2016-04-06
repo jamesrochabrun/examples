@@ -102,7 +102,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (void)goToConnect {
-    [APP.tabBar setSelectedIndex: kTabIndexConnect];
+    [APP.tabBar setSelectedIndex:kTabIndexConnect];
 }
 
 - (void)viewWillLayoutSubviews {
@@ -159,6 +159,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 //    [self.navigationController setNavigationBarHidden:NO animated:animated];
+
+    //    [APP processNotifications];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -618,7 +620,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.delegate = self;
     vc.restaurants = _restaurants;
     vc.currentIndex = indexPath.row;
-    vc.rootViewController = self;
+    //vc.rootViewController = self;
     
     vc.modalPresentationStyle = UIModalPresentationCustom;
     vc.transitioningDelegate = self;

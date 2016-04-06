@@ -33,6 +33,7 @@
 #import "DebugUtilities.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Instabug/Instabug.h>
 
 @interface ProfileHeaderView ()
 @property (nonatomic, assign) NSInteger userID;
@@ -529,7 +530,9 @@
                        [Settings sharedInstance].userObject.about = text;
                        [[Settings sharedInstance] save];
                        dispatch_async(dispatch_get_main_queue(), ^{
-                           [weakSelf.buttonDescription setTitle:text forState: UIControlStateNormal];
+                           [weakSelf.buttonDescription setTitle:weakSelf.userInfo.about forState: UIControlStateNormal];
+                           [weakSelf setNeedsLayout];
+                           [weakSelf.vc.view setNeedsLayout];
                        });
                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                        NSLog(@"FAILED TO SET ABOUT INFO FOR USER");
@@ -750,9 +753,9 @@
 
     s = [_buttonDescription.titleLabel sizeThatFits:CGSizeMake(w-2*kGeomSpaceEdge, 200)];
     _buttonDescription.frame = CGRectMake(0, y, w, s.height+2*kGeomSpaceEdge);
-    y += CGRectGetHeight(_buttonDescription.frame);
+    y = CGRectGetMaxY(_buttonDescription.frame);
     
-    if (_userInfo.hasSpecialties ) {
+    if (_userInfo.hasSpecialties) {
         [_labelSpecialtyHeader sizeToFit];
         [_labelSpecialties sizeToFit];
         _viewSpecialties.frame= CGRectMake(0, y, w, CGRectGetHeight(_labelSpecialtyHeader.frame) + CGRectGetHeight(_labelSpecialtyHeader.frame) + 2*kGeomSpaceEdge);
@@ -762,7 +765,7 @@
         _labelSpecialtyHeader.frame = CGRectMake(0, yHeader, w, requiredHeaderHeight);
         yHeader +=requiredHeaderHeight;
         _labelSpecialties.frame= CGRectMake(0,yHeader,w, requiredSpecialtiesHeight);
-        y += CGRectGetHeight(_viewSpecialties.frame);
+        y = CGRectGetMaxY(_viewSpecialties.frame);
     } else {
         _labelSpecialtyHeader.frame= CGRectMake(0, y, w, 0);
         _labelSpecialties.frame= CGRectMake(0, y, w, 0);
@@ -771,9 +774,9 @@
     _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
     [self bringSubviewToFront:_filterView];
     _filterView.userInteractionEnabled=YES;
-    y += kGeomHeightFilters;
+    y = CGRectGetMaxY(_filterView.frame);//kGeomHeightFilters;
     
-    self.frame= CGRectMake(0,0,w,y);
+    self.frame = CGRectMake(0, 0, w, y);
 }
 
 @end
@@ -1012,6 +1015,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     CGFloat w = width(self.view);
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
+    [_cv.collectionViewLayout invalidateLayout];
 }
 
 - (void)updateSpecialtiesLabel
@@ -1830,6 +1834,10 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
         [weakSelf  userPressedChangeProfilePicture];
     }];
     
+    UIAlertAction *actionSendFeedback = [UIAlertAction actionWithTitle:@"Send Feedback" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [Instabug invokeWithInvocationMode:IBGInvocationModeFeedbackSender];
+    }];
+    
     UIAlertAction *manageTags = [UIAlertAction actionWithTitle:@"Manage Tags" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         ManageTagsVC *vc = [[ManageTagsVC alloc] init];
         [weakSelf .navigationController pushViewController:vc animated:YES];
@@ -1840,6 +1848,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     [_optionsAC addAction: actionProfilePicture];
     [_optionsAC addAction:manageTags];
+    [_optionsAC addAction:actionSendFeedback];
     [_optionsAC addAction:logout];
     [_optionsAC addAction:cancel];
     [self presentViewController:_optionsAC animated:YES completion:nil];

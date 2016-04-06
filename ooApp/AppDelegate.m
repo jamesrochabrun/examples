@@ -139,7 +139,6 @@
         notif.type = (NotificationObjectType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
         notif.identifier = parseUnsignedIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationID]);
         [_notifications addObject:notif];
-        if (_nc) [self processNotifications];
     }
 }
 
@@ -149,6 +148,12 @@
 }
 
 - (void)processNotifications {
+    UIViewController *vc = [_tabBar.viewControllers objectAtIndex:0];
+    
+    if ([vc isKindOfClass:[UINavigationController class]]) {
+        _nc = (UINavigationController *)vc;
+    }
+    
     if (!_nc || ![_notifications count]) {
         NSLog(@"*** NC not set yet");
         return;
@@ -179,7 +184,7 @@
             break;
         case kNotificationTypeViewEvent:
             //show event
-            message([NSString stringWithFormat:@"Show event: %lu", (unsigned long)notif.identifier]);
+            //message([NSString stringWithFormat:@"Show event: %lu", (unsigned long)notif.identifier]);
             break;
         case kNotificationTypeViewList:
             //show list
@@ -249,37 +254,21 @@
 
 - (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject *)restaurant originFrame:(CGRect)originFrame
 {
-//    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
-//    [vc setDelegate:self];
-//    [vc setMio:mediaObject];
-//    [vc setRestaurant:restaurant];
-//    vc.originRect = originFrame;
-//    vc.modalPresentationStyle = UIModalPresentationCustom;
-//    vc.transitioningDelegate = self;
-//    self.navigationController.delegate = self;
-//    [vc.view setNeedsUpdateConstraints];
-//    [self.navigationController pushViewController:vc animated:YES];
+    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+    vc.originRect = CGRectZero;// originRect;
+    vc.mio = mediaObject;
+    vc.restaurant = restaurant;
+    vc.restaurants = nil;//_restaurants;
+    vc.currentIndex = 0;//indexPath.row;
+    [_nc pushViewController:vc animated:YES];
 }
 
 - (void)testRemoteNotification {
-//    NotificationObject *n = [[NotificationObject alloc] init];
-//    n.identifier = 32;
-//    n.type = kNotificationTypeViewList;
-//    [_notifications addObject:n];
-//    [self processNotifications];
-//    {
-//        "type":2,
-//        "event_id":363,
-//        "aps":
-//        {
-//            "sound":"chime.aiff",
-//            "alert":
-//            {
-//                "body":"Test will be starting in 30 minutes!",
-//                "action-loc-key":"VIEW"
-//            }
-//        }
-//    }
+    NotificationObject *n = [[NotificationObject alloc] init];
+    n.identifier = 117128;
+    n.type = kNotificationTypeViewMediaItem;
+    [_notifications addObject:n];
+    [self processNotifications];
 }
 
 // Delegation methods

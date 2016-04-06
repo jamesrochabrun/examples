@@ -47,7 +47,7 @@ typedef enum {
 @property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSInteger direction;
 @property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;
-@property (nonatomic, weak) UIViewController *rootViewController;;
+//@property (nonatomic, weak) UIViewController *rootViewController;;
 @property (nonatomic, weak) id<UIViewControllerTransitioningDelegate> dismissTransitionDelegate;
 @property (nonatomic, weak) id<UINavigationControllerDelegate> dismissNCDelegate;
 

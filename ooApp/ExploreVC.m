@@ -120,7 +120,6 @@ static NSString * const ListRowID = @"HLRCell";
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
-    APP.nc = self.navigationController;
 }
 
 - (void)userPressedChangeLocation: (UIButton*)sender
@@ -352,8 +351,6 @@ static NSString * const ListRowID = @"HLRCell";
     if (!APP.dateLeft || (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:0 minutes:45 second:00])) {
         [self updateLocation];
         APP.dateLeft = [NSDate date];
-    } else {
-        [APP processNotifications];
     }
 }
 
