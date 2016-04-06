@@ -716,22 +716,23 @@
     float w5 = width(_labelLikes);
     float w6 = width(_labelLikesCount);
     float x = (w-w1-w2-w3-w4-w6-w5-2*kGeomSpaceInter)/2;
-    _labelVenues.frame = CGRectMake(x,y ,w1,kGeomProfileStatsItemHeight);
-    x += w1;
-    
-    _labelVenuesCount.frame = CGRectMake(x,y,w2,kGeomProfileStatsItemHeight);
-    x += w2+kGeomSpaceInter;
-    
     _labelPhoto.frame = CGRectMake(x,y ,w3,kGeomProfileStatsItemHeight);
     x += w3;
     
     _labelPhotoCount.frame = CGRectMake(x,y,w4,kGeomProfileStatsItemHeight);
-    x += w4 +kGeomSpaceInter;
+    x += w4;// +kGeomSpaceInter;
     
     _labelLikes.frame = CGRectMake(x,y ,w5,kGeomProfileStatsItemHeight);
     x += w5;
     
     _labelLikesCount.frame = CGRectMake(x,y,w6,kGeomProfileStatsItemHeight);
+    x += w6;
+    
+    _labelVenues.frame = CGRectMake(x,y ,w1,kGeomProfileStatsItemHeight);
+    x += w1;
+    
+    _labelVenuesCount.frame = CGRectMake(x,y,w2,kGeomProfileStatsItemHeight);
+    x += w2+kGeomSpaceInter;
 
     y += kGeomProfileStatsItemHeight;
     

@@ -13,15 +13,15 @@
 
 @property (nonatomic, strong) UILabel *labelFollowers;
 @property (nonatomic, strong) UILabel *labelFollowing;
-@property (nonatomic, strong) UILabel *labelPlaces;
+@property (nonatomic, strong) UILabel *placesIcon;
 @property (nonatomic, strong) UILabel *photosIcon;
 @property (nonatomic, strong) UILabel *yumIcon;
 
 @property (nonatomic, strong) UILabel *yumNumber;
+@property (nonatomic, strong) UILabel *placesNumber;
+@property (nonatomic, strong) UILabel *photosNumber;
 @property (nonatomic, strong) UILabel *labelFollowersNumber;
 @property (nonatomic, strong) UILabel *labelFollowingNumber;
-@property (nonatomic, strong) UILabel *labelPlacesNumber;
-@property (nonatomic, strong) UILabel *photosNumber;
 
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UILabel *labelUserName;
@@ -44,48 +44,52 @@
         
         self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
-        _labelFollowers = makeLabel(self,nil, kGeomFontSizeH6);
-        _labelFollowing = makeLabel(self, nil, kGeomFontSizeH6);
-        _labelPlaces = makeLabel(self, nil, kGeomFontSizeH6);
-        
         _photosIcon = [UILabel new];
         [_photosIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
         _photosIcon.text = kFontIconPhoto;
         [self addSubview:_photosIcon];
-        
-        _photosNumber = [UILabel new];
-        [_photosNumber withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
-        [self addSubview:_photosNumber];
         
         _yumIcon = [UILabel new];
         [_yumIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
         _yumIcon.text = kFontIconYum;
         [self addSubview:_yumIcon];
         
+        _placesIcon = [UILabel new];
+        [_placesIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
+        _placesIcon.text = kFontIconPinDot;
+        [self addSubview:_placesIcon];
+
+        _photosNumber = [UILabel new];
+        [_photosNumber withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
+        [self addSubview:_photosNumber];
+        
         _yumNumber = [UILabel new];
-        [_yumNumber withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
+        [_yumNumber withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
         [self addSubview:_yumNumber];
+
+        _placesNumber = [UILabel new];
+        [_placesNumber withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
+        [self addSubview:_placesNumber];
         
         [_photosIcon sizeToFit];
         [_yumIcon sizeToFit];
+        [_placesIcon sizeToFit];
         
+        _labelFollowers = makeLabel(self,nil, kGeomFontSizeH6);
+        _labelFollowing = makeLabel(self, nil, kGeomFontSizeH6);
         _labelFollowers.textColor = UIColorRGBA(kColorGrayMiddle);
         _labelFollowing.textColor = UIColorRGBA(kColorGrayMiddle);
-        _labelPlaces.textColor = UIColorRGBA(kColorGrayMiddle);
         
-        _labelFollowersNumber = makeLabel(self, @"", kGeomFontSizeH4);
-        _labelFollowingNumber = makeLabel(self,  @"", kGeomFontSizeH4);
-        _labelPlacesNumber = makeLabel(self,  @"", kGeomFontSizeH4);
+        _labelFollowersNumber = makeLabel(self, @"", kGeomFontSizeH6);
+        _labelFollowingNumber = makeLabel(self,  @"", kGeomFontSizeH6);
         
         _labelFollowersNumber.textColor= UIColorRGBA(kColorText);
         _labelFollowingNumber.textColor= UIColorRGBA(kColorText);
-        _labelPlacesNumber.textColor= UIColorRGBA(kColorText);
-        
-        _labelUserName= makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
-        _labelName= makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
+
+        _labelUserName = makeLabelLeft (self, @"@username", kGeomFontSizeHeader);
+        _labelName = makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
         _labelName.numberOfLines=1;
         
-        //        _labelName.minimumFontSize DEPRECATED
         _labelUserName.adjustsFontSizeToFitWidth = NO;
         _labelName.adjustsFontSizeToFitWidth = NO;
         _labelUserName.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -107,7 +111,7 @@
 
 - (void)verifyUnfollow:(id)sender
 {
-    __weak  UserListTVC *weakSelf = self;
+    __weak UserListTVC *weakSelf = self;
     
     UIAlertController *a= [UIAlertController alertControllerWithTitle:LOCAL(@"Really Unfollow?")
                                                               message:nil
@@ -278,12 +282,12 @@
     
     [_userView clear];
     
-    [_labelPlaces setText:@""];
-    [_labelFollowers setText:@""];
-    [_labelFollowing setText:@""];
-    [_labelPlacesNumber setText:@""];
     [_photosNumber setText:@""];
     [_yumNumber setText:@""];
+    [_placesNumber setText:@""];
+
+    [_labelFollowers setText:@""];
+    [_labelFollowing setText:@""];
     [_labelFollowersNumber setText:@""];
     [_labelFollowingNumber setText:@""];
     
@@ -313,18 +317,19 @@
     [_labelFollowingNumber setText:stringFromUnsigned(following)];
     [_labelFollowing setText:@"following"];
     
-    if (restaurantCount == 1) {
-        [_labelPlacesNumber setText:@"1"];
-        [_labelPlaces setText:@"place"];
-    } else {
-        [_labelPlacesNumber setText:stringFromUnsigned(restaurantCount)];
-        [_labelPlaces setText: @"places"];
-    }
+//    if (restaurantCount == 1) {
+//        [_placesNumber setText:@"1"];
+//        [_labelPlaces setText:@"place"];
+//    } else {
+    [_placesNumber setText:[NSString stringWithFormat:@"%lu", (unsigned long)restaurantCount]];
+//        [_labelPlaces setText: @"places"];
+//    }
     
     _photosNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)photosCount];
     
-    [_yumNumber sizeToFit];
     [_photosNumber sizeToFit];
+    [_yumNumber sizeToFit];
+    [_placesNumber sizeToFit];
     [self setNeedsLayout];
 }
 
@@ -364,7 +369,7 @@
     
     y += labelHeight+ spacing;
     
-    labelHeight = 20;
+    labelHeight = 25;
     
     x = margin + imageSize + spacing;
     y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
@@ -375,26 +380,20 @@
     _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, CGRectGetWidth(_yumIcon.frame), labelHeight);
     _yumNumber.frame = CGRectMake(CGRectGetMaxX(_yumIcon.frame), y, CGRectGetWidth(_yumNumber.frame), labelHeight);
     
-    y += labelHeight+ spacing;
+    _placesIcon.frame = CGRectMake(CGRectGetMaxX(_yumNumber.frame) + spacing, y, CGRectGetWidth(_placesIcon.frame), labelHeight);
+    _placesNumber.frame = CGRectMake(CGRectGetMaxX(_placesIcon.frame), y, CGRectGetWidth(_placesNumber.frame), labelHeight);
     
-    labelHeight= 17;//  from mockup
-    y = _userView.frame.size.height + _userView.frame.origin.y - 2*labelHeight;
+    [_labelFollowersNumber sizeToFit];
+    labelHeight = CGRectGetHeight(_labelFollowersNumber.frame);//  from mockup
+    y = CGRectGetMaxY(_buttonFollow.frame) + kGeomSpaceCellPadding;
     
-    float rightAreaWidth = 150;//  from mockup
-    int leftLabelWidth = (int) rightAreaWidth*4/14.;
-    int rightLabelWidth = (int) rightAreaWidth*5/14.;
+    CGFloat labelWidth = CGRectGetWidth(_buttonFollow.frame)/2;
     
-    x= w-rightAreaWidth;
-    _labelPlacesNumber.frame=CGRectMake(x, y, leftLabelWidth, labelHeight);
-    _labelPlaces.frame=CGRectMake(x, y +labelHeight, leftLabelWidth, labelHeight);
+    _labelFollowersNumber.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), y, labelWidth, labelHeight);
+    _labelFollowers.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), y+labelHeight, labelWidth, labelHeight);
     
-    x += leftLabelWidth;
-    _labelFollowersNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
-    _labelFollowers.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);
-    
-    x += rightLabelWidth;
-    _labelFollowingNumber.frame=CGRectMake(x, y, rightLabelWidth, labelHeight);
-    _labelFollowing.frame=CGRectMake(x, y +labelHeight, rightLabelWidth, labelHeight);
+    _labelFollowingNumber.frame = CGRectMake(CGRectGetMaxX(_labelFollowersNumber.frame), y, labelWidth, labelHeight);
+    _labelFollowing.frame = CGRectMake(CGRectGetMaxX(_labelFollowers.frame), y + labelHeight, labelWidth, labelHeight);
     
     [_userView layoutIfNeeded];
 }
