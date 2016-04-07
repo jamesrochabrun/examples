@@ -911,7 +911,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     }
     
     if (_viewingOwnProfile) {
-        [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
+        [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton)];
     } else {
         [self setRightNavWithIcon:@"" target:nil action:nil];
     }
@@ -1273,7 +1273,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
                   }
          ];
     } else {
-        [OOAPI convertGoogleIDToRestaurant: _selectedRestaurant.googleID success:^(RestaurantObject *restaurant) {
+        [OOAPI convertGoogleIDToRestaurant:_selectedRestaurant.googleID success:^(RestaurantObject *restaurant) {
             if (restaurant && [restaurant isKindOfClass:[RestaurantObject class]]) {
                 [OOAPI uploadPhoto:_imageToUpload forObject:restaurant
                            success:^(MediaItemObject *mio){
@@ -1421,7 +1421,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [_listsAndPhotosLayout setShowingLists:YES];
     
     if (_viewingOwnProfile) {
-        [self setRightNavWithIcon:kFontIconAdd target:self action:@selector(handleUpperRightButton)];
+        [self setRightNavWithIcon:kFontIconCreateList target:self action:@selector(handleUpperRightButton)];
     }
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;

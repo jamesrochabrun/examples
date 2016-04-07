@@ -207,7 +207,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _tableAccordion.separatorColor = UIColorRGBA(kColorBordersAndLines);
     _tableAccordion.showsVerticalScrollIndicator= NO;
     
-    [self setRightNavWithIcon:kFontIconPerson target:self action:@selector(invitePerson:)];
+    [self setRightNavWithIcon:kFontIconInvite target:self action:@selector(invitePerson:)];
     [self setLeftNavWithIcon:@"" target:nil action:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setNeedsRefresh)

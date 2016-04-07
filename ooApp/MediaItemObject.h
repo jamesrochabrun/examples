@@ -23,6 +23,7 @@ extern NSString *const kKeyMediaItemURL;
 extern NSString *const kKeyMediaItemSourceUserID;
 extern NSString *const kKeyMediaItemCaption;
 extern NSString *const kKeyMediaItemIsFood;
+extern NSString *const kKeyMediaItemRestaurantID;
 
 @interface MediaItemObject : NSObject
 

@@ -353,6 +353,7 @@ static CGFloat kNextPhotoTolerance = 40;
     AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
     vc.delegate = self;
     vc.view.frame = CGRectMake(0, 0, 40, 44);
+    _mio.restaurantID = _restaurant.restaurantID; //this is a 
     vc.mio = _mio;
 
     [_aNC addChildViewController:vc];
