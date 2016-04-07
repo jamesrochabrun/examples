@@ -139,6 +139,7 @@ static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 13;
 static CGFloat kGeomIconSize = 30;
 static CGFloat kGeomIconSizeSmall = 27;
+static CGFloat kGeomIconSizeSmallest = 20;
 
 static NSInteger kGeomPeopleIconFontSize = 30;
 static CGFloat kGeomHeightButton = 44.0;

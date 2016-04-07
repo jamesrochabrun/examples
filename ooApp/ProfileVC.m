@@ -1010,9 +1010,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    
     self.cv.frame = self.view.bounds;
-    
     CGFloat w = width(self.view);
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
     [_cv.collectionViewLayout invalidateLayout];

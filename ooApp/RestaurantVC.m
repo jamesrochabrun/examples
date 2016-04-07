@@ -304,6 +304,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 
 - (void)sharePressed:(id)sender {
     MediaItemObject *mio;
+    
     if ([_mediaItems count]) {
         mio = [_mediaItems objectAtIndex:0];
         
@@ -311,9 +312,13 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         
         if (mio) {
             _requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-                [self showShare:link fromView:sender];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showShare:link fromView:sender];
+                });
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [self showShare:nil fromView:sender];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showShare:nil fromView:sender];
+                });
             }];
         } else {
             [self showShare:nil fromView:sender];
@@ -566,7 +571,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
                     ON_MAIN_THREAD(^{
-                        [self getFolloweesWithRestaurantOnList];
+                        [weakSelf getFolloweesWithRestaurantOnList];
                     });
                 }];
 }
@@ -594,6 +599,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     __block CGPoint origin = CGPointMake(0/*kGeomSpaceInter*/, 0 /*kGeomSpaceInter*/);
     NSArray *listButtonsArray = [_listButtons allObjects];
     _listButtonsContainerHeight = 0;
+    
+    __weak RestaurantVC *weakSelf = self;
+    
     [listButtonsArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         OOTagButton *b = (OOTagButton *)obj;
         [b addTarget:self action:@selector(showList:) forControlEvents:UIControlEventTouchUpInside];
@@ -611,12 +619,12 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         b.frame = frame;
         
         origin.x = CGRectGetMaxX(frame) + kGeomSpaceEdge;
-        _listButtonsContainerHeight = CGRectGetMaxY(b.frame);
+        weakSelf.listButtonsContainerHeight = CGRectGetMaxY(b.frame);
     }];
     //_listButtonsContainerHeight += (_listButtonsContainerHeight) ? kGeomSpaceInter : 0;
-    [self.view setNeedsUpdateConstraints];
-
+    
     ON_MAIN_THREAD(^{
+        [weakSelf.view setNeedsUpdateConstraints];
         [_collectionView reloadData];// Sections:is];
         [self getFolloweesWithRestaurantOnList];
     });

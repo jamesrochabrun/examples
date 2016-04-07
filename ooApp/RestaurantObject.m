@@ -29,6 +29,7 @@ NSString *const kKeyRestaurantHours = @"hours";
 NSString *const kKeyRestaurantCuisine = @"cuisine";
 NSString *const kKeyRestaurantMobileMenuURL = @"mobile_menu_url";
 NSString *const kKeyRestaurantVoteCount=  @"totalVotes";
+NSString *const kKeyRestaurantPermanentlyClosed = @"permanently_closed";
 
 BOOL isRestaurantObject (id  object)
 {
@@ -114,8 +115,7 @@ BOOL isRestaurantObject (id  object)
     
     restaurant.mobileMenuURL = [[dict objectForKey:kKeyRestaurantMobileMenuURL] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantMobileMenuURL];
     
-    //*****set the mobile menu url for testing
-//    restaurant.mobileMenuURL = @"https://foursquare.com/v/4acab395f964a520d8c220e3/device_menu";
+    restaurant.permanentlyClosed = parseBoolOrNullFromServer(dict [kKeyRestaurantPermanentlyClosed]);
     
     return restaurant;
 }

@@ -13,28 +13,45 @@
 - (id) activityViewController:(UIActivityViewController *)activityViewController
           itemForActivityType:(NSString *)activityType
 {
-    
-    NSString *title = _restaurant.name;
     NSString *itemType;
     if (_list) {
         itemType = @"list";
     } else if (_restaurant) {
-        itemType = @"restaurant";
+        if (_mio) {
+            itemType = @"mediaItem";
+        } else {
+            itemType = @"restaurant";
+        }
     } else {
         itemType = @"";
     }
     
+    NSString *message, *title;
+    
+    if (_list) {
+        message = [NSString stringWithFormat:@"I use Oomami to find great places to eat. Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];        
+    } else if (_restaurant) {
+        title = _restaurant.name;
+        if (_mio) {
+            message = [NSString stringWithFormat:@"Check out this great dish at \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        } else {
+            message = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        }
+    } else {
+        message = [NSString stringWithFormat:@"I use Oomami to find great places to eat. Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+    }
+    
     if ([activityType isEqualToString:UIActivityTypePostToTwitter]) {
-        NSString *iTunesLink = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        NSString *iTunesLink = message;
         return iTunesLink;
     } else if ( [activityType isEqualToString:UIActivityTypePostToFacebook] ) {
-        NSString *iTunesLink = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        NSString *iTunesLink = message;
         return iTunesLink;
     } else if ( [activityType isEqualToString:UIActivityTypeMessage] ) {
-        NSString *iTunesLink = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        NSString *iTunesLink = message;
         return iTunesLink;
     } else if ( [activityType isEqualToString:UIActivityTypeMail] ) {
-        NSString *iTunesLink = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        NSString *iTunesLink = message;
         return iTunesLink;
     }
     return nil;

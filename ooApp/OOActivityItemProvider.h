@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RestaurantObject.h"
+#import "MediaItemObject.h"
 #import "ListObject.h"
 
 @interface OOActivityItemProvider : UIActivityItemProvider <UIActivityItemSource>
@@ -15,6 +16,7 @@
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *list;
+@property (nonatomic, strong) MediaItemObject *mio;
 
 @end
 

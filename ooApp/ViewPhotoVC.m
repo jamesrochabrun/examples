@@ -17,9 +17,11 @@
 #import "ListsVC.h"
 #import "ShowMediaItemAnimator.h"
 #import "NavTitleObject.h"
+#import "OOActivityItemProvider.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
+@property (nonatomic, strong) UIButton *wishlistButton;
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UIButton *numYums;
 @property (nonatomic, strong) UIButton *userButton;
@@ -37,6 +39,8 @@
 @property (nonatomic, strong) ViewPhotoVC *nextPhoto;
 @property (nonatomic) SwipeType swipeType;
 @property (nonatomic, strong) UILabel *yumIndicator;
+@property (nonatomic, strong) UIActivityIndicatorView *aiv;
+@property (nonatomic) NSUInteger toTryListID;
 @end
 
 static CGFloat kDismissTolerance = 20;
@@ -54,6 +58,9 @@ static CGFloat kNextPhotoTolerance = 40;
         _iv = [[UIImageView alloc] init];
         _iv.contentMode = UIViewContentModeScaleAspectFit;
         _iv.backgroundColor = UIColorRGBA(kColorClear);
+        
+        _aiv = [UIActivityIndicatorView new];
+        _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
         
         _captionButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_captionButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorClear textColor:kColorText borderColor:kColorClear target:nil selector:nil];
@@ -74,6 +81,10 @@ static CGFloat kNextPhotoTolerance = 40;
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
         [_closeButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
+        _wishlistButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_wishlistButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(toggleWishlist:)];
+        [_wishlistButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -112,10 +123,9 @@ static CGFloat kNextPhotoTolerance = 40;
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
-        
-        [self.view addSubview:_yumIndicator];
-//        [DebugUtilities addBorderToViews:@[self.view]];
-//        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
+
+        //        [DebugUtilities addBorderToViews:@[self.view]];
+        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton, _wishlistButton]];
     }
     return self;
 }
@@ -138,6 +148,10 @@ static CGFloat kNextPhotoTolerance = 40;
                                                               });
                                                               
                                                           }];
+    UIAlertAction *shareDish = [UIAlertAction actionWithTitle:@"Share Dish"
+                                                                  style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                      [self shareDish:sender];
+                                                                  }];
     UIAlertAction *addRestaurantToList = [UIAlertAction actionWithTitle:@"Add Restaurant to a List"
                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                              [self addToList:_restaurant];
@@ -154,6 +168,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
     UserObject *uo = [Settings sharedInstance].userObject;
 
+    [photoOptions addAction:shareDish];
     [photoOptions addAction:addRestaurantToList];
     if (_mio.sourceUserID == uo.userID) {
         [photoOptions addAction:deletePhoto];
@@ -181,6 +196,72 @@ static CGFloat kNextPhotoTolerance = 40;
     }];
 }
 
+- (void)toggleWishlist:(id)sender {    
+    OOAPI *api = [[OOAPI alloc] init];
+    __weak ViewPhotoVC *weakSelf = self;
+    
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [self presentUnverifiedMessage:@"To add this restaurant to your wishlist list you will need to verify your email.\n\nCheck your email for a verification link."];
+        } else {
+            if (!weakSelf.toTryListID) {
+                [api addRestaurantsToSpecialList:@[weakSelf.restaurant] listType:kListTypeToTry success:^(id response) {
+                    [weakSelf getListsForRestaurant];
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    ;
+                }];
+            } else {
+                //__weak RestaurantVC *weakSelf = self;
+                [api deleteRestaurant:weakSelf.restaurant.restaurantID fromList:weakSelf.toTryListID success:^(NSArray *lists) {
+                    [weakSelf getListsForRestaurant];
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    ;
+                }];
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
+
+}
+
+- (void)getListsForRestaurant {
+    OOAPI *api =[[OOAPI alloc] init];
+    __weak ViewPhotoVC *weakSelf = self;
+    
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    [api getListsOfUser:user.userID
+         withRestaurant:_restaurant.restaurantID
+             includeAll:YES
+                success:^(NSArray *foundLists) {
+                    NSLog (@" number of lists for this user:  %ld", ( long) foundLists.count);
+                    weakSelf.toTryListID = 0;
+                    [foundLists enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        ListObject *lo = (ListObject *)obj;
+                        if (lo.type == kListTypeToTry) {
+                            weakSelf.toTryListID = lo.listID;
+                            *stop = YES;
+                        }
+                    }];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.wishlistButton setTitle:(weakSelf.toTryListID) ? kFontIconToTryFilled : kFontIconToTry forState:UIControlStateNormal];
+                    });
+                }
+                failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                    NSLog  (@" error while getting lists for user:  %@",e);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    });
+                }];
+}
+
 - (void)deletePhoto:(MediaItemObject *)mio {
     NSUInteger userID = [Settings sharedInstance].userObject.userID;
     __weak ViewPhotoVC *weakSelf = self;
@@ -194,6 +275,61 @@ static CGFloat kNextPhotoTolerance = 40;
             ;
         }];
     }
+}
+
+- (void)shareDish:(id)sender {
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    if (_mio) {
+        _requestOperation = [api getRestaurantImageWithMediaItem:_mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self showShare:link fromView:sender];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self showShare:nil fromView:sender];
+            });
+        }];
+    } else {
+        [self showShare:nil fromView:sender];
+    }
+}
+
+- (void)showShare:(NSString *)url fromView:(id)sender {
+    NSURL *nsURL = [NSURL URLWithString:url];
+    NSData *data = [NSData dataWithContentsOfURL:nsURL];
+    UIImage *img = [UIImage imageWithData:data];
+    
+    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aip.restaurant = _restaurant;
+    aip.mio = _mio;
+    
+    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    avc.popoverPresentationController.sourceView = sender;
+    avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+    
+    if (_mio) {
+        [avc setValue:[NSString stringWithFormat:@"Try this dish out at %@", _restaurant.name] forKey:@"subject"];
+    } else {
+        [avc setValue:[NSString stringWithFormat:@"We should go to %@", _restaurant.name] forKey:@"subject"];
+    }
+    [avc setExcludedActivityTypes:
+     @[UIActivityTypeAssignToContact,
+       UIActivityTypeCopyToPasteboard,
+       UIActivityTypePrint,
+       UIActivityTypeSaveToCameraRoll,
+       UIActivityTypePostToWeibo]];
+    [self.navigationController presentViewController:avc animated:YES completion:^{
+        ;
+    }];
+    
+    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+    };
 }
 
 - (void)flagPhoto:(MediaItemObject *)mio {
@@ -301,6 +437,10 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [_iv addSubview:_aiv];
+    [self.view addSubview:_yumIndicator];
+    [self.view addSubview:_wishlistButton];
     [self.view addSubview:_iv];
     [self.view addSubview:_restaurantName];
     [self.view addSubview:_closeButton];
@@ -482,6 +622,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showComponents:(BOOL)show {
+    _wishlistButton.hidden =
     _optionsButton.hidden =
     _closeButton.hidden =
     _captionButton.hidden =
@@ -502,6 +643,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {
+    _wishlistButton.alpha =
     _optionsButton.alpha =
     _closeButton.alpha =
     _captionButton.alpha =
@@ -526,6 +668,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [self getListsForRestaurant];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -579,6 +722,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     __weak UIImageView *weakIV = _iv;
     __weak ViewPhotoVC *weakSelf = self;
+    [_aiv startAnimating];
     
     _requestOperation = [api getRestaurantImageWithMediaItem:_mio
                                                     maxWidth:self.view.frame.size.width
@@ -587,12 +731,9 @@ static CGFloat kNextPhotoTolerance = 40;
                                 placeholderImage:nil
                                          success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                                              dispatch_async(dispatch_get_main_queue(), ^{
-//                                                 [weakIV setAlpha:0.0];
+                                                 [_aiv stopAnimating];
                                                  weakIV.image = image;
-//                                                 [UIView beginAnimations:nil context:NULL];
-//                                                 [UIView setAnimationDuration:0.1];
                                                  [weakIV setAlpha:1.0];
-//                                                 [UIView commitAnimations];
                                                  [weakSelf.view setNeedsLayout];
                                                  [weakSelf.view layoutIfNeeded];
                                                  NSLog(@"iv got image viewFrame %@", NSStringFromCGRect(weakIV.frame));
@@ -600,9 +741,15 @@ static CGFloat kNextPhotoTolerance = 40;
                                          }
                                          failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
                                              NSLog(@"ERROR: failed to get image: %@", error);
+                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                 [_aiv stopAnimating];
+                                             });
                                          }];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"ERROR: failed to get image: %@", error);;
+        NSLog(@"ERROR: failed to get image: %@", error);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_aiv stopAnimating];
+        });
     }];
     
     if (_mio.source == kMediaItemTypeOomami) {
@@ -644,6 +791,8 @@ static CGFloat kNextPhotoTolerance = 40;
     [super viewWillLayoutSubviews];
     
     self.view.frame = APP.window.bounds;
+    CGFloat w = width(self.view);
+    CGFloat h = height(self.view);
     CGRect frame;
     CGFloat imageMaxY;
     CGFloat y;
@@ -651,7 +800,7 @@ static CGFloat kNextPhotoTolerance = 40;
     _backgroundView.frame = self.view.frame;
     
     frame = _iv.frame;
-    frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
+    //frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
     
     CGFloat imageWidth = width(self.view);
     
@@ -661,6 +810,7 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = imageHeight;
     _iv.frame = CGRectIntegral(frame);
     _iv.center = self.view.center;
+    _aiv.center = CGPointMake(CGRectGetWidth(_iv.frame)/2, CGRectGetHeight(_iv.frame)/2);
     
     _yumIndicator.center = self.view.center;
     
@@ -672,11 +822,17 @@ static CGFloat kNextPhotoTolerance = 40;
     
     y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
     frame = _restaurantName.frame;
-    frame.size.width = width(self.view)-2*kGeomSpaceEdge;
+    frame.size.width = [_restaurantName sizeThatFits:CGSizeMake(w-width(_optionsButton)-width(_closeButton), 40)].width;
     frame.origin.y = y;
     frame.origin.x = (width(self.view) - width(_restaurantName))/2;
     frame.size.height = kGeomDimensionsIconButton;
     _restaurantName.frame = frame;
+    
+    [_wishlistButton sizeToFit];
+    frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+    frame.origin.y = CGRectGetMinY(_restaurantName.frame);
+    frame.origin.x = CGRectGetMinX(_restaurantName.frame) - frame.size.width;
+    _wishlistButton.frame = frame;
 
     frame = _optionsButton.frame;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
@@ -719,9 +875,12 @@ static CGFloat kNextPhotoTolerance = 40;
         _numYums.frame = CGRectZero;
     }
     
+    CGFloat height;
+    
     frame = _captionButton.frame;
     frame.size.width = CGRectGetMinX(_yumButton.frame) - CGRectGetMaxX(_userViewButton.frame);
-    frame.size.height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
+    height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
+    frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
     frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;

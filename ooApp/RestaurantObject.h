@@ -26,6 +26,7 @@ extern NSString *const kKeyRestaurantWebsite;
 extern NSString *const kKeyRestaurantHours;
 extern NSString *const kKeyRestaurantCuisine;
 extern NSString *const kKeyRestaurantMobileMenuURL;
+extern NSString *const kKeyRestaurantPermanentlyClosed;
 
 typedef enum {
     kRestaurantSourceTypeOomami = 1,
@@ -57,6 +58,7 @@ typedef enum: char {
 @property (nonatomic, strong) NSArray *hours;
 @property (nonatomic, strong) NSString *mobileMenuURL;
 @property (nonatomic, assign) NSInteger totalVotes;// tally of all vote values
+@property (nonatomic) BOOL permanentlyClosed;
 
 + (RestaurantObject *)restaurantFromDict:(NSDictionary *)dict;
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant;

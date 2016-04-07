@@ -45,17 +45,17 @@
         self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
         _photosIcon = [UILabel new];
-        [_photosIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
+        [_photosIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmallest] textColor:kColorGrayMiddle backgroundColor:kColorClear];
         _photosIcon.text = kFontIconPhoto;
         [self addSubview:_photosIcon];
         
         _yumIcon = [UILabel new];
-        [_yumIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
+        [_yumIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmallest] textColor:kColorGrayMiddle backgroundColor:kColorClear];
         _yumIcon.text = kFontIconYum;
         [self addSubview:_yumIcon];
         
         _placesIcon = [UILabel new];
-        [_placesIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorGrayMiddle backgroundColor:kColorClear];
+        [_placesIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmallest] textColor:kColorGrayMiddle backgroundColor:kColorClear];
         _placesIcon.text = kFontIconPinDot;
         [self addSubview:_placesIcon];
 
@@ -104,7 +104,7 @@
         [_buttonFollow setTitleColor: UIColorRGBA(kColorTextActive) forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
         _buttonFollow.layer.borderColor= UIColorRGBA(kColorTextActive).CGColor;
-        //[DebugUtilities addBorderToViews:@[_photosIcon, _photosNumber, _yumIcon, _yumNumber]];
+//        [DebugUtilities addBorderToViews:@[_photosIcon, _photosNumber, _yumIcon, _yumNumber, _placesIcon, _placesNumber, _labelFollowing, _labelFollowers]];
     }
     return self;
 }
@@ -338,11 +338,11 @@
     [super layoutSubviews];
     const float kGeomUserListVCCellMiddleGap= 7;
     
-    float w = self.frame.size.width;
+    CGFloat w = self.frame.size.width;
     const float margin = kGeomSpaceEdge;
-    const float spacing = kGeomSpaceInter;
+    const float spacing = kGeomSpaceCellPadding;
     float imageSize = kGeomUserListUserImageHeight;
-    _userView.frame = CGRectMake(margin, margin, imageSize, imageSize);
+    _userView.frame = CGRectMake(kGeomSpaceEdge, kGeomSpaceEdge, imageSize, imageSize);
     
     float x=margin+imageSize+kGeomUserListVCCellMiddleGap;
     float y=margin;

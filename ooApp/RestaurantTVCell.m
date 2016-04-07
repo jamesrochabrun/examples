@@ -404,9 +404,13 @@ enum  {
         
         if (mio) {
             self.requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-                [self showShare:link fromView:sender];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showShare:link fromView:sender];
+                });
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                [self showShare:nil fromView:sender];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showShare:nil fromView:sender];
+                });
             }];
         } else {
             [self showShare:nil fromView:sender];

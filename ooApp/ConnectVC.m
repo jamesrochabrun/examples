@@ -17,6 +17,7 @@
 #import "Settings.h"
 #import "ProfileVC.h"
 #import "SocialMedia.h"
+#import "OOActivityItemProvider.h"
 #import "DebugUtilities.h"
 
 static NSString *const kConnectUserCellIdentifier = @"userTableCell";
@@ -206,10 +207,40 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _tableAccordion.separatorColor = UIColorRGBA(kColorBordersAndLines);
     _tableAccordion.showsVerticalScrollIndicator= NO;
     
+    [self setRightNavWithIcon:kFontIconPerson target:self action:@selector(invitePerson:)];
     [self setLeftNavWithIcon:@"" target:nil action:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setNeedsRefresh)
                                                  name:kNotificationConnectNeedsUpdate object:nil];
+}
+
+- (void)invitePerson:(id)sender {
+    UIImage *img = [UIImage imageNamed:@"Oomami_AppStoreLogo(152x152).png"];
+    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aip.restaurant = nil;
+    
+    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    avc.popoverPresentationController.sourceView = sender;
+    avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+    
+    [avc setValue:[NSString stringWithFormat:@"Try out Oomami"] forKey:@"subject"];
+    [avc setExcludedActivityTypes:
+     @[UIActivityTypeAssignToContact,
+       UIActivityTypeCopyToPasteboard,
+       UIActivityTypePrint,
+       UIActivityTypeSaveToCameraRoll,
+       UIActivityTypePostToWeibo]];
+    [self.navigationController presentViewController:avc animated:YES completion:^{
+        ;
+    }];
+    
+    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+    };
+    
 }
 
 //------------------------------------------------------------------------------
@@ -328,18 +359,18 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)reloadSection:(NSUInteger)section {
     dispatch_async(dispatch_get_main_queue(), ^ {
-//        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
         [_tableAccordion reloadData];
+//        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
         [self.refreshControl endRefreshing];
     });
 }
 
-- (void)reloadTableData {
-    dispatch_async(dispatch_get_main_queue(), ^ {
-        [_tableAccordion reloadData];
-        [self.refreshControl endRefreshing];
-    });
-}
+//- (void)reloadTableData {
+//    dispatch_async(dispatch_get_main_queue(), ^ {
+//        [_tableAccordion reloadData];
+//        [self.refreshControl endRefreshing];
+//    });
+//}
 
 - (void)reloadAfterDeterminingWhoWeAreFollowing
 {
