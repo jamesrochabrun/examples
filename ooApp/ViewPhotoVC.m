@@ -18,6 +18,7 @@
 #import "ShowMediaItemAnimator.h"
 #import "NavTitleObject.h"
 #import "OOActivityItemProvider.h"
+#import "OOFeedbackView.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -40,6 +41,8 @@
 @property (nonatomic, strong) UILabel *yumIndicator;
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic) NSUInteger toTryListID;
+@property (nonatomic, strong) OOFeedbackView *fv;
+
 @end
 
 static CGFloat kDismissTolerance = 20;
@@ -118,6 +121,9 @@ static CGFloat kNextPhotoTolerance = 40;
 
         _userViewButton = [[OOUserView alloc] init];
         _userViewButton.delegate = self;
+        
+        _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
+        [self.view addSubview:_fv];
 
         //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton, _wishlistButton]];
@@ -207,13 +213,18 @@ static CGFloat kNextPhotoTolerance = 40;
             [weakSelf presentUnverifiedMessage:@"To add this restaurant to your wishlist list you will need to verify your email.\n\nCheck your email for a verification link."];
         } else {
             if (!weakSelf.toTryListID) {
+                _fv.icon = kFontIconCheckmark;
+                _fv.message = @"Adding to Wishlist";
+                [_fv show];
                 [api addRestaurantsToSpecialList:@[weakSelf.restaurant] listType:kListTypeToTry success:^(id response) {
                     [weakSelf getListsForRestaurant];
                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                     ;
                 }];
             } else {
-                //__weak RestaurantVC *weakSelf = self;
+                _fv.icon = kFontIconRemove;
+                _fv.message = @"Removing from Wishlist";
+                [_fv show];
                 [api deleteRestaurant:weakSelf.restaurant.restaurantID fromList:weakSelf.toTryListID success:^(NSArray *lists) {
                     [weakSelf getListsForRestaurant];
                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -441,6 +452,7 @@ static CGFloat kNextPhotoTolerance = 40;
     [super viewDidLoad];
     
     [_iv addSubview:_aiv];
+    [self.view addSubview:_fv];
     [self.view addSubview:_yumIndicator];
     [self.view addSubview:_iv];
     [self.view addSubview:_restaurantName];
@@ -877,6 +889,8 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;
+    
+    _fv.center = self.view.center;
     
     NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }

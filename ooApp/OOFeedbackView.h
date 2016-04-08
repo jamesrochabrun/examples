@@ -13,4 +13,8 @@
 @property (nonatomic, strong) NSString *message;
 @property (nonatomic, strong) NSString *icon;
 
+- (instancetype)initWithFrame:(CGRect)frame andMessage:(NSString *)message andIcon:(NSString *)icon;
+- (void)show;
+
 @end
+
