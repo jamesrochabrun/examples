@@ -9,9 +9,10 @@
 #import "ObjectTVCell.h"
 #import "RestaurantObject.h"
 #import "ListObject.h"
+#import "UnverifiedUserVC.h"
 #import <GoogleMaps/GoogleMaps.h>
 
-@interface RestaurantTVCell : ObjectTVCell
+@interface RestaurantTVCell : ObjectTVCell <UnverifiedUserVCDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *listToAddTo;

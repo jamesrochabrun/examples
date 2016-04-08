@@ -177,11 +177,13 @@ static CGFloat kNextPhotoTolerance = 40;
     }
     [photoOptions addAction:cancel];
     
+    __weak ViewPhotoVC *weakSelf = self;
+    
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
-            [self presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
+            [weakSelf presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
         } else {
-            [self presentViewController:photoOptions animated:YES completion:^{
+            [weakSelf presentViewController:photoOptions animated:YES completion:^{
                 ;
             }];
         }
@@ -202,7 +204,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
-            [self presentUnverifiedMessage:@"To add this restaurant to your wishlist list you will need to verify your email.\n\nCheck your email for a verification link."];
+            [weakSelf presentUnverifiedMessage:@"To add this restaurant to your wishlist list you will need to verify your email.\n\nCheck your email for a verification link."];
         } else {
             if (!weakSelf.toTryListID) {
                 [api addRestaurantsToSpecialList:@[weakSelf.restaurant] listType:kListTypeToTry success:^(id response) {
@@ -880,11 +882,12 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)yumPhotoTapped {
+    __weak ViewPhotoVC *weakSelf = self;
+    
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
-            [self presentUnverifiedMessage:@"To yum this photo you will need to verify your email.\n\nCheck your email for a verification link."];
+            [weakSelf presentUnverifiedMessage:@"To yum this photo you will need to verify your email.\n\nCheck your email for a verification link."];
         } else {
-            __weak ViewPhotoVC *weakSelf = self;
             if (_yumButton.isSelected) {
                 NSLog(@"unlike photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;

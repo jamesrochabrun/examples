@@ -252,12 +252,43 @@ enum  {
                         [weakSelf setupRestaurantOptionsAC];
                         _restaurantOptionsAC.popoverPresentationController.sourceView = sender;
                         _restaurantOptionsAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
-                        [weakSelf.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
+                        [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+                            if (!result) {
+                                [weakSelf presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
+                            } else {
+                                [weakSelf.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
+                            }
+                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                            ;
+                        }];
                     });
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
+    }];
+}
+
+- (void)presentUnverifiedMessage:(NSString *)message {
+    UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
+    vc.delegate = self;
+    vc.action = message;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
+    vc.transitioningDelegate = vc;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *nc = [UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject;
+        if ([nc isKindOfClass:[UINavigationController class]]) {
+            ((UINavigationController *)nc).delegate = vc;
+        }
+        
+        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:vc animated:YES completion:nil];
+    });
+}
+
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject dismissViewControllerAnimated:YES completion:^{
+        ;
     }];
 }
 

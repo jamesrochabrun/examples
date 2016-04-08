@@ -462,10 +462,11 @@
     if (! _viewingOwnProfile) {
         return;
     }
+    __weak ProfileHeaderView *weakSelf = self;
     
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
-            [self presentUnverifiedMessage:@"To edit your description you will need to verify your email.\n\nCheck your email for a verification link."];
+            [weakSelf presentUnverifiedMessage:@"To edit your description you will need to verify your email.\n\nCheck your email for a verification link."];
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 UINavigationController *nc = [[UINavigationController alloc] init];
@@ -481,7 +482,7 @@
                 [nc.navigationBar setTranslucent:YES];
                 nc.view.backgroundColor = [UIColor clearColor];
                 
-                [self.vc.navigationController presentViewController:nc animated:YES completion:^{
+                [weakSelf.vc.navigationController presentViewController:nc animated:YES completion:^{
                     nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
                 }];
             });
@@ -637,7 +638,7 @@
     
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
-            [self presentUnverifiedMessage:[NSString stringWithFormat:@"You will need to verify your email to follow @%@.\n\nCheck your email for a verification link.", _userInfo.username]];
+            [weakSelf presentUnverifiedMessage:[NSString stringWithFormat:@"You will need to verify your email to follow @%@.\n\nCheck your email for a verification link.", _userInfo.username]];
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [OOAPI setFollowingUser:_userInfo
@@ -1387,20 +1388,22 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 
 - (void)handleUpperRightButton
 {
+    __weak ProfileVC *weakSelf = self;
+    
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
             if (_viewingLists) {
-                [self presentUnverifiedMessage:@"To create a list you will need to verify your email.\n\nCheck your email for a verification link."];
+                [weakSelf presentUnverifiedMessage:@"To create a list you will need to verify your email.\n\nCheck your email for a verification link."];
             } else {
-                [self presentUnverifiedMessage:@"To upload a photo you will need to verify your email.\n\nCheck your email for a verification link."];
+                [weakSelf presentUnverifiedMessage:@"To upload a photo you will need to verify your email.\n\nCheck your email for a verification link."];
             }
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (_viewingLists) {
-                    [self userPressedNewList];
+                    [weakSelf userPressedNewList];
                 } else {
                     _pickerIsForRestaurants= YES;
-                    [self showPickPhotoUI];
+                    [weakSelf showPickPhotoUI];
                 }
             });
         }

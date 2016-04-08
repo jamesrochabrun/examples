@@ -440,7 +440,7 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
 + (AFHTTPRequestOperation *)resendVerificationForCurrentUserSuccess:(void (^)(BOOL))success
                                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-+ (AFHTTPRequestOperation *)isCurrentUserVerifiedSuccess:(void (^)(BOOL))success
++ (AFHTTPRequestOperation *)isCurrentUserVerifiedSuccess:(void (^)(BOOL result))success
                                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 // Auto complete

@@ -466,11 +466,14 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 {
     _styleSheetAC.popoverPresentationController.sourceView = sender;
     _styleSheetAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+    
+    __weak RestaurantVC *weakSelf = self;
+    
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
-            [self presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
+            [weakSelf presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
         } else {
-            [self presentViewController:_styleSheetAC animated:YES completion:nil];
+            [weakSelf presentViewController:_styleSheetAC animated:YES completion:nil];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"*** Problem verifying user");
@@ -685,7 +688,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
-            [self presentUnverifiedMessage:@"To add this restaurant to your favorites list you will need to verify your email.\n\nCheck your email for a verification link."];
+            [weakSelf presentUnverifiedMessage:@"To add this restaurant to your favorites list you will need to verify your email.\n\nCheck your email for a verification link."];
         } else {
             [api addRestaurantsToSpecialList:@[_restaurant] listType:kListTypeFavorites success:^(id response) {
                 [weakSelf getListsForRestaurant];
