@@ -229,6 +229,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [avc setValue:[NSString stringWithFormat:@"Let's try out Oomami together!"] forKey:@"subject"];
     [avc setExcludedActivityTypes:
      @[UIActivityTypeAssignToContact,
+       UIActivityTypePostToTwitter,
+       UIActivityTypePostToFacebook,
+       UIActivityTypePostToFlickr,
        UIActivityTypeCopyToPasteboard,
        UIActivityTypePrint,
        UIActivityTypeSaveToCameraRoll,

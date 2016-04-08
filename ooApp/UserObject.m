@@ -114,7 +114,7 @@ BOOL isUserObject (id  object)
     user.isFoodie = user.userType == USER_TYPE_FOODIE;
     user.specialties= nil;
 
-    if ( user.about.length > kUserObjectMaximumAboutTextLength) {
+    if (user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
     }
     

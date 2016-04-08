@@ -33,7 +33,7 @@
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {
-            message = [NSString stringWithFormat:@"Check this out at \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+            message = [NSString stringWithFormat:@"Check this out at \"%@\" on Oomami! %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
         } else {
             message = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
         }

@@ -78,7 +78,7 @@
 {
     // NOTE:  the contents of the user object may have changed, therefore set user always.
     self.userInfo = user;
-    self.header.text = [NSString stringWithFormat:@"@%@", _userInfo.username];
+    self.header.text = (_userInfo.username) ? [NSString stringWithFormat:@"@%@", user.username]:@"Oomami User";
     self.subHeader1.text = [NSString stringWithFormat: @"%@ %@", _userInfo.firstName,_userInfo.lastName];
     _userView.user = _userInfo;
 }

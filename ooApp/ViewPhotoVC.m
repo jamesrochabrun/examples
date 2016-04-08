@@ -21,7 +21,6 @@
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
-@property (nonatomic, strong) UIButton *wishlistButton;
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UIButton *numYums;
 @property (nonatomic, strong) UIButton *userButton;
@@ -81,10 +80,6 @@ static CGFloat kNextPhotoTolerance = 40;
         [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
         [_closeButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
-        _wishlistButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_wishlistButton withIcon:kFontIconToTry fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(toggleWishlist:)];
-        [_wishlistButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-        
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -152,6 +147,10 @@ static CGFloat kNextPhotoTolerance = 40;
                                                                   style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                       [self shareDish:sender];
                                                                   }];
+    UIAlertAction *toggleWishlist = [UIAlertAction actionWithTitle:(_toTryListID ? @"Remove from Wishlist": @"Add to Wishlist")
+                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                            [self toggleWishlist:sender];
+                                                        }];
     UIAlertAction *addRestaurantToList = [UIAlertAction actionWithTitle:@"Add Restaurant to a List"
                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                              [self addToList:_restaurant];
@@ -169,6 +168,7 @@ static CGFloat kNextPhotoTolerance = 40;
     UserObject *uo = [Settings sharedInstance].userObject;
 
     [photoOptions addAction:shareDish];
+    [photoOptions addAction:toggleWishlist];
     [photoOptions addAction:addRestaurantToList];
     if (_mio.sourceUserID == uo.userID) {
         [photoOptions addAction:deletePhoto];
@@ -251,7 +251,6 @@ static CGFloat kNextPhotoTolerance = 40;
                         }
                     }];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [weakSelf.wishlistButton setTitle:(weakSelf.toTryListID) ? kFontIconToTryFilled : kFontIconToTry forState:UIControlStateNormal];
                     });
                 }
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
@@ -441,7 +440,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
     [_iv addSubview:_aiv];
     [self.view addSubview:_yumIndicator];
-    [self.view addSubview:_wishlistButton];
     [self.view addSubview:_iv];
     [self.view addSubview:_restaurantName];
     [self.view addSubview:_closeButton];
@@ -623,7 +621,6 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showComponents:(BOOL)show {
-    _wishlistButton.hidden =
     _optionsButton.hidden =
     _closeButton.hidden =
     _captionButton.hidden =
@@ -644,7 +641,6 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {
-    _wishlistButton.alpha =
     _optionsButton.alpha =
     _closeButton.alpha =
     _captionButton.alpha =
@@ -829,12 +825,6 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = kGeomDimensionsIconButton;
     _restaurantName.frame = frame;
     
-    [_wishlistButton sizeToFit];
-    frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-    frame.origin.y = CGRectGetMinY(_restaurantName.frame);
-    frame.origin.x = CGRectGetMinX(_restaurantName.frame) - frame.size.width;
-    _wishlistButton.frame = frame;
-
     frame = _optionsButton.frame;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
     _optionsButton.frame = frame;

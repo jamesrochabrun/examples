@@ -939,7 +939,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [_cv registerClass:[ProfileHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
    withReuseIdentifier:kProfileHeaderCellIdentifier];
     
-    NSString *string = _profileOwner.username.length ? concatenateStrings( @"@", _profileOwner.username) :  @"Missing username";
+    NSString *string = _profileOwner.username.length ? concatenateStrings(@"@", _profileOwner.username) :  @"Oomami User";
     _nto = [[NavTitleObject alloc] initWithHeader:string
                                         subHeader:[NSString stringWithFormat:@"%@ %@", _profileOwner.firstName, _profileOwner.lastName]];
     
