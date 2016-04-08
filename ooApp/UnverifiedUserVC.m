@@ -39,7 +39,7 @@
     
     self.view.backgroundColor = UIColorRGBA(kColorClear);
     
-    _backgroundView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _backgroundView.backgroundColor = UIColorRGBA(kColorButtonBackground);
     _backgroundView.layer.cornerRadius = kGeomCornerRadius;
     
     [self.view addSubview:_backgroundView];
