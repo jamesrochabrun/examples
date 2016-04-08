@@ -22,5 +22,6 @@
 @property (nonatomic, assign) NSUInteger textLengthLimit;
 @property (nonatomic, strong) NavTitleObject *nto;
 @property (nonatomic, strong) UITextView *textView;
+@property (nonatomic, strong) UIButton *postButton;
 - (NSString*)text;
 @end

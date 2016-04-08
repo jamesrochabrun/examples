@@ -104,7 +104,7 @@
         [_buttonFollow setTitleColor: UIColorRGBA(kColorTextActive) forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
         _buttonFollow.layer.borderColor= UIColorRGBA(kColorTextActive).CGColor;
-//        [DebugUtilities addBorderToViews:@[_photosIcon, _photosNumber, _yumIcon, _yumNumber, _placesIcon, _placesNumber, _labelFollowing, _labelFollowers]];
+//        [DebugUtilities addBorderToViews:@[_photosIcon, _photosNumber, _yumIcon, _yumNumber, _placesIcon, _placesNumber, _labelFollowing, _labelFollowers, _labelFollowersNumber, _labelFollowingNumber]];
     }
     return self;
 }
@@ -304,26 +304,15 @@
     NSUInteger photosCount = stats.totalPhotos;
     NSUInteger yums = stats.totalLikes;
     
-    if (followers == 1) {
-        [_labelFollowersNumber setText:@"1"];
-        [_labelFollowers setText:@"follower"];
-    } else {
-        [_labelFollowersNumber setText:stringFromUnsigned(followers)];
-        [_labelFollowers setText:@"followers"];
-    }
+    [_labelFollowersNumber setText:stringFromUnsigned(followers)];
+    [_labelFollowers setText:(followers == 1)? @"follower":@"followers"];
     
     _yumNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)yums];
     
     [_labelFollowingNumber setText:stringFromUnsigned(following)];
     [_labelFollowing setText:@"following"];
     
-//    if (restaurantCount == 1) {
-//        [_placesNumber setText:@"1"];
-//        [_labelPlaces setText:@"place"];
-//    } else {
     [_placesNumber setText:[NSString stringWithFormat:@"%lu", (unsigned long)restaurantCount]];
-//        [_labelPlaces setText: @"places"];
-//    }
     
     _photosNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)photosCount];
     
@@ -347,7 +336,7 @@
     float x=margin+imageSize+kGeomUserListVCCellMiddleGap;
     float y=margin;
     float labelHeight=_labelUserName.intrinsicContentSize.height;
-    if  ( labelHeight<1) {
+    if  (labelHeight<1) {
         labelHeight= kGeomHeightButton;
     }
     _labelUserName.frame=CGRectMake(x, y, w-margin-x, labelHeight);
@@ -384,16 +373,25 @@
     _placesNumber.frame = CGRectMake(CGRectGetMaxX(_placesIcon.frame), y, CGRectGetWidth(_placesNumber.frame), labelHeight);
     
     [_labelFollowersNumber sizeToFit];
-    labelHeight = CGRectGetHeight(_labelFollowersNumber.frame);//  from mockup
+    labelHeight = CGRectGetHeight(_labelFollowersNumber.frame);
     y = CGRectGetMaxY(_buttonFollow.frame) + kGeomSpaceCellPadding;
     
-    CGFloat labelWidth = CGRectGetWidth(_buttonFollow.frame)/2;
-    
-    _labelFollowersNumber.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), y, labelWidth, labelHeight);
-    _labelFollowers.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), y+labelHeight, labelWidth, labelHeight);
-    
-    _labelFollowingNumber.frame = CGRectMake(CGRectGetMaxX(_labelFollowersNumber.frame), y, labelWidth, labelHeight);
-    _labelFollowing.frame = CGRectMake(CGRectGetMaxX(_labelFollowers.frame), y + labelHeight, labelWidth, labelHeight);
+    CGFloat labelWidth;
+    if (w > 320) {
+        labelWidth = width(_buttonFollow)/2;
+        _labelFollowersNumber.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), y, labelWidth, labelHeight);
+        _labelFollowers.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), y+labelHeight, labelWidth, labelHeight);
+        
+        _labelFollowingNumber.frame = CGRectMake(CGRectGetMaxX(_labelFollowersNumber.frame), y, labelWidth, labelHeight);
+        _labelFollowing.frame = CGRectMake(CGRectGetMaxX(_labelFollowers.frame), y + labelHeight, labelWidth, labelHeight);
+    } else {
+        labelWidth = width(_buttonFollow);
+        _labelFollowersNumber.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), y, labelWidth, labelHeight);
+        _labelFollowers.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), CGRectGetMaxY(_labelFollowersNumber.frame), labelWidth, labelHeight);
+        
+        _labelFollowingNumber.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), CGRectGetMaxY(_labelFollowers.frame), labelWidth, labelHeight);
+        _labelFollowing.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), CGRectGetMaxY(_labelFollowingNumber.frame), labelWidth, labelHeight);
+    }
     
     [_userView layoutIfNeeded];
 }

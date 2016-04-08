@@ -50,6 +50,8 @@ typedef enum {
     [super viewWillAppear:animated];
     [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
     
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
 

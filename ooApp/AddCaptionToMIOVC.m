@@ -51,13 +51,13 @@
     _favoritesListButton.layer.cornerRadius = kGeomCornerRadius;
     
     _isFoodLabel = [[UILabel alloc] init];
-    [_isFoodLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
+    [_isFoodLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
     _isFoodLabel.text = @"photo of food or drink";
     [_isFoodLabel sizeToFit];
 
     _favoritesListLabel = [[UILabel alloc] init];
-    [_favoritesListLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear];
-    _favoritesListLabel.text = @"favorite restaurant?";
+    [_favoritesListLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
+    _favoritesListLabel.text = @"add to favorite restaurant list";
     [_favoritesListLabel sizeToFit];
 
     _iv = [[UIImageView alloc] init];
@@ -132,23 +132,28 @@
 - (void)updateViewConstraints {
     [super updateViewConstraints];
     
-    NSDictionary *metrics = @{@"height":@(2*kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonDimensions":@(25)};
+    NSDictionary *metrics = @{@"height":@(2*kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceCellPadding), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonDimensions":@(30)};
     
     UIView *superview = self.view;
     UIView *textEntryBox = self.textView;
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _isFoodButton, _isFoodLabel, _iv, textEntryBox, _favoritesListLabel, _favoritesListButton);
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[textEntryBox]-spaceEdge-[_iv(60)]-[_favoritesListLabel]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_iv]-spaceInter-[_isFoodLabel]-spaceInter-[_isFoodButton(buttonDimensions)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_iv]-spaceInter-[_favoritesListLabel]-spaceInter-[_favoritesListButton(buttonDimensions)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[textEntryBox]-spaceEdge-[_iv]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_iv]-(>=0)-[_isFoodLabel]-spaceCellPadding-[_isFoodButton(buttonDimensions)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_iv]-(>=0)-[_favoritesListLabel]-spaceCellPadding-[_favoritesListButton(buttonDimensions)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_iv
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:nil
+                                                          attribute:0
+                                                         multiplier:1 constant:70]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_iv
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:_iv
-                                                          attribute:NSLayoutAttributeHeight
-                                                         multiplier:1 constant:0]];
-    
+                                                             toItem:nil
+                                                          attribute:0
+                                                         multiplier:1 constant:60]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodButton
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationEqual
@@ -161,22 +166,47 @@
                                                              toItem:_favoritesListButton
                                                           attribute:NSLayoutAttributeHeight
                                                          multiplier:1 constant:0]];
+    
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodLabel
                                                           attribute:NSLayoutAttributeCenterY
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:_iv
+                                                             toItem:_isFoodButton
                                                           attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodButton
-                                                          attribute:NSLayoutAttributeCenterY
+                                                          attribute:NSLayoutAttributeTop
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:_iv
-                                                          attribute:NSLayoutAttributeCenterY
+                                                          attribute:NSLayoutAttributeTop
+                                                         multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_favoritesListButton
+                                                          attribute:NSLayoutAttributeBottom
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_iv
+                                                          attribute:NSLayoutAttributeBottom
                                                          multiplier:1 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_favoritesListButton
                                                           attribute:NSLayoutAttributeCenterY
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:_favoritesListLabel
                                                           attribute:NSLayoutAttributeCenterY
+                                                         multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_isFoodButton
+                                                          attribute:NSLayoutAttributeRight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.textView
+                                                          attribute:NSLayoutAttributeRight
+                                                         multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_favoritesListButton
+                                                          attribute:NSLayoutAttributeRight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.textView
+                                                          attribute:NSLayoutAttributeRight
+                                                         multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_iv
+                                                          attribute:NSLayoutAttributeLeft
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.textView
+                                                          attribute:NSLayoutAttributeLeft
                                                          multiplier:1 constant:0]];
 }
 

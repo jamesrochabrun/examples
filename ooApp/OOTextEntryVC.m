@@ -10,7 +10,7 @@
 #import "OOAPI.h"
 
 @interface OOTextEntryVC ()
-@property (nonatomic, strong) UIButton *postButton;
+
 @end
 
 @implementation OOTextEntryVC

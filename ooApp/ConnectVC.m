@@ -215,7 +215,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 }
 
 - (void)invitePerson:(id)sender {
-    UIImage *img = [UIImage imageNamed:@"Oomami_AppStoreLogo(152x152).png"];
+    UIImage *img = [UIImage imageNamed:@"Oomami_AppStoreLogo(120x120).png"];
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = nil;
     
@@ -226,7 +226,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     avc.popoverPresentationController.sourceView = sender;
     avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
     
-    [avc setValue:[NSString stringWithFormat:@"Try out Oomami"] forKey:@"subject"];
+    [avc setValue:[NSString stringWithFormat:@"Let's try out Oomami together!"] forKey:@"subject"];
     [avc setExcludedActivityTypes:
      @[UIActivityTypeAssignToContact,
        UIActivityTypeCopyToPasteboard,

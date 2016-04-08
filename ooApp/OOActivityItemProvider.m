@@ -29,16 +29,16 @@
     NSString *message, *title;
     
     if (_list) {
-        message = [NSString stringWithFormat:@"I use Oomami to find great places to eat. Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];        
+        message = [NSString stringWithFormat:@"I use Oomami to find and share the best dishes with my friends (like you!). Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {
-            message = [NSString stringWithFormat:@"Check out this great dish at \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+            message = [NSString stringWithFormat:@"Check this out at \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
         } else {
             message = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
         }
     } else {
-        message = [NSString stringWithFormat:@"I use Oomami to find great places to eat. Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        message = [NSString stringWithFormat:@"I use Oomami to find and share the best dishes with my friends (like you!). Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
     }
     
     if ([activityType isEqualToString:UIActivityTypePostToTwitter]) {

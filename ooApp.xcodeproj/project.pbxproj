@@ -98,6 +98,7 @@
 		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3697D9F61C02A95C0022944F /* DropDownListTVC.m */; };
+		36A7A90D1CB6F0FA00B9A3F8 /* OOFeedbackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 36A7A90C1CB6F0FA00B9A3F8 /* OOFeedbackView.m */; };
 		36AF0CCA1C6A9ABF0063A58E /* UserListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */; };
 		36B1CC8E1CA2EF0A007D0263 /* WelcomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC8D1CA2EF0A007D0263 /* WelcomeVC.m */; };
 		36B1CC911CA2EF23007D0263 /* SignupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B1CC901CA2EF23007D0263 /* SignupVC.m */; };
@@ -424,6 +425,8 @@
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		3697D9F51C02A95C0022944F /* DropDownListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropDownListTVC.h; sourceTree = "<group>"; };
 		3697D9F61C02A95C0022944F /* DropDownListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropDownListTVC.m; sourceTree = "<group>"; };
+		36A7A90B1CB6F0FA00B9A3F8 /* OOFeedbackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOFeedbackView.h; sourceTree = "<group>"; };
+		36A7A90C1CB6F0FA00B9A3F8 /* OOFeedbackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOFeedbackView.m; sourceTree = "<group>"; };
 		36AF0CC81C6A9ABF0063A58E /* UserListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserListTVC.h; sourceTree = "<group>"; };
 		36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserListTVC.m; sourceTree = "<group>"; };
 		36B1CC8C1CA2EF0A007D0263 /* WelcomeVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WelcomeVC.h; sourceTree = "<group>"; };
@@ -887,6 +890,8 @@
 				360CB9B81C6541D10017E21F /* ChangeLocationVC.m */,
 				3648B86F1CAF2467002875A3 /* UnverifiedUserVC.h */,
 				3648B8701CAF2467002875A3 /* UnverifiedUserVC.m */,
+				36A7A90B1CB6F0FA00B9A3F8 /* OOFeedbackView.h */,
+				36A7A90C1CB6F0FA00B9A3F8 /* OOFeedbackView.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -1488,6 +1493,7 @@
 				36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */,
 				36B1CC971CA3A1DA007D0263 /* EmailLoginVC.m in Sources */,
 				366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */,
+				36A7A90D1CB6F0FA00B9A3F8 /* OOFeedbackView.m in Sources */,
 				36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */,
 				36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */,
 				3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */,

@@ -313,7 +313,7 @@ static CGFloat kNextPhotoTolerance = 40;
     avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
     
     if (_mio) {
-        [avc setValue:[NSString stringWithFormat:@"Try this dish out at %@", _restaurant.name] forKey:@"subject"];
+        [avc setValue:[NSString stringWithFormat:@"Saw this at %@ and thought you'd like it.", _restaurant.name] forKey:@"subject"];
     } else {
         [avc setValue:[NSString stringWithFormat:@"We should go to %@", _restaurant.name] forKey:@"subject"];
     }
