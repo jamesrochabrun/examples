@@ -18,6 +18,7 @@
 #import "OOAPI.h"
 #import "SocialMedia.h"
 #import "UIImageEffects.h"
+#import "OOErrorObject.h"
 #import <Instabug/Instabug.h>
 
 @interface LoginVC ()
@@ -55,7 +56,7 @@
     _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
     
     _info = [[UILabel alloc] init];
-    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
     
     _overlay = [[UIView alloc] init];
     _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
@@ -169,8 +170,7 @@
     
     CGRect frame = _info.frame;
     frame.size = [_info sizeThatFits:CGSizeMake(buttonWidth, 100)];
-    frame.size.width = buttonWidth;
-    frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
+    frame.origin = CGPointMake((w-CGRectGetWidth(frame))/2, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
     _info.frame = frame;
 }
 
@@ -339,13 +339,27 @@
                     [self.view setNeedsLayout];
                 });
             } else {
-                [self logout];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    _facebookLoginButton.enabled = _emailButton.enabled =YES;
-                    [_facebookLoginButton setNeedsLayout];
-                    _info.text = @"There was a problem logging you in. Try again.";
+                OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
+                if (ooError.type == kOOErrorCodeTypeConnectingAccountToUnverifiedUser) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        _tryAgain.hidden = NO;
+                        _info.text = @"The account's email address is registered, but has not been verified. Once you verify we'll be able to connect it to this social media account.";
+                        [self.view setNeedsLayout];
+                    });
+                } else if (ooError.type == kOOErrorCodeTypeFacebookNeedEmailPermission) {
+                    [self logout];
+                    _tryAgain.hidden = NO;
+                    _info.text = @"It appears you did not give Oomami access to your email address through Facebook. Your email will not be shared with anyone without your permission. If you still want to log on to Oomami using Facebook:\n\n1. Go to Facebook->Settings->Apps->All Apps->Oomami click Remove App\n2. Log in to Oomami using Facebook again, but make sure not to disable access to your email address.";
                     [self.view setNeedsLayout];
-                });
+                } else {
+                    [self logout];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        _facebookLoginButton.enabled = _emailButton.enabled =YES;
+                        [_facebookLoginButton setNeedsLayout];
+                        _info.text = @"There was a problem logging you in. Try again.";
+                        [self.view setNeedsLayout];
+                    });
+                }
             }
         }];
     } else {

@@ -137,7 +137,7 @@
     _loginButton.layer.cornerRadius =
     _signupButton.layer.cornerRadius = 0;
     
-    _tryAgain.frame =  CGRectMake((w-CGRectGetWidth(_tryAgain.frame))/2, h-2*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
+    _tryAgain.frame =  CGRectMake((w-CGRectGetWidth(_tryAgain.frame))/2, h-3*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
     [_aiv sizeToFit];
     _aiv.center = _tryAgain.center;
     
@@ -397,6 +397,9 @@
                 [self logout];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     _info.text = @"There was a problem logging you in. Try again.";
+                    _info.hidden = YES;
+                    _signupButton.hidden =
+                    _loginButton.hidden = NO;
                     [self.view setNeedsLayout];
                 });
             }

@@ -40,10 +40,10 @@
 }
 
 - (void)show {
-    [UIView animateWithDuration:0.55 animations:^{
+    [UIView animateWithDuration:0.30 animations:^{
         self.alpha = 1;
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.35 animations:^{
+        [UIView animateWithDuration:1.1 animations:^{
             self.alpha = 0;
         } completion:^(BOOL finished) {
             ;

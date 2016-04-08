@@ -34,6 +34,8 @@ typedef enum : NSUInteger {
     
     kOOErrorCodeTypeConnectingAccountToUnverifiedUser = 801,
     
+    kOOErrorCodeTypeFacebookNeedEmailPermission = 802,
+    
     //unique constraint - e.g. username in use, email in use
     kOOErrorCodeTypeUniqueConstraint = 900,
     

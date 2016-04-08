@@ -1700,7 +1700,7 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
             [self launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
         } else {
             __weak ProfileVC *weakSelf = self;
-            OOAPI *api= [[OOAPI alloc] init];
+            OOAPI *api = [[OOAPI alloc] init];
             [api getRestaurantWithID:stringFromUnsigned(restaurantID)
                               source:kRestaurantSourceTypeOomami
                              success:^(RestaurantObject *restaurant) {
@@ -1819,7 +1819,6 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     _optionsAC.popoverPresentationController.sourceView = sender;
     _optionsAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
 
-    
     UIAlertAction *logout = [UIAlertAction actionWithTitle:@"Logout" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
         [loginManager logOut];
