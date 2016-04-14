@@ -69,7 +69,7 @@
         
         _message2 = [UILabel new];
         [_message2 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorTextActive];
-        _message2.text = @"Tap here to explore nearby";
+        _message2.text = @"Tap here to explore nearby.";
         [_message2 sizeToFit];
         
         _closedTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closedTapped)];
@@ -605,9 +605,9 @@
     CGSize s = [_hoursView.text sizeWithAttributes:@{NSFontAttributeName:_hoursView.font}];
     _hoursScroll.contentSize = CGSizeMake(width(_hoursScroll), s.height);
     
-    _message1.frame = CGRectMake((w-width(_message1))/2, kGeomSpaceEdge, width(_message1), height(_message1));
+    _message1.frame = CGRectMake((w-width(_message1))/2, 2*kGeomSpaceEdge, width(_message1), height(_message1));
     _message2.frame = CGRectMake((w-width(_message2))/2, CGRectGetMaxY(_message1.frame), width(_message2), height(_message2));
-    _closedButton.frame = CGRectMake(0, 0, w, CGRectGetMaxY(_message2.frame) + kGeomSpaceEdge);
+    _closedButton.frame = CGRectMake(0, 0, w, CGRectGetMaxY(_message2.frame) + 2*kGeomSpaceEdge);
     _closedIcon1.frame = CGRectMake(kGeomSpaceEdge, (height(_closedButton)-height(_closedIcon1))/2, width(_closedIcon1), height(_closedIcon1));
     _closedIcon2.frame = CGRectMake(w - kGeomSpaceEdge - width(_closedIcon2), (height(_closedButton)-height(_closedIcon2))/2, width(_closedIcon2), height(_closedIcon2));
     
