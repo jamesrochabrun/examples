@@ -48,6 +48,11 @@
 		363B60C71B6BF0CE00987A1B /* GroupObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 363B60C61B6BF0CE00987A1B /* GroupObject.m */; };
 		3648B8711CAF2467002875A3 /* UnverifiedUserVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3648B8701CAF2467002875A3 /* UnverifiedUserVC.m */; };
 		364AD8C41C11514300F70F56 /* OptionsVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 364AD8C31C11514300F70F56 /* OptionsVCCVL.m */; };
+		364D70C01CBEB22400FADC29 /* IntroScreenView.m in Sources */ = {isa = PBXBuildFile; fileRef = 364D70BF1CBEB22400FADC29 /* IntroScreenView.m */; };
+		364D70C21CBF14D200FADC29 /* S1.png in Resources */ = {isa = PBXBuildFile; fileRef = 364D70C11CBF14D200FADC29 /* S1.png */; };
+		364D70C61CBF5A8200FADC29 /* S2.png in Resources */ = {isa = PBXBuildFile; fileRef = 364D70C31CBF5A8200FADC29 /* S2.png */; };
+		364D70C71CBF5A8200FADC29 /* S3.png in Resources */ = {isa = PBXBuildFile; fileRef = 364D70C41CBF5A8200FADC29 /* S3.png */; };
+		364D70C81CBF5A8200FADC29 /* S4.png in Resources */ = {isa = PBXBuildFile; fileRef = 364D70C51CBF5A8200FADC29 /* S4.png */; };
 		364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */ = {isa = PBXBuildFile; fileRef = 364F9BA51BFEDE2600DBD012 /* OOUserView.m */; };
 		36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B741B93C7AD00D01EB5 /* ListCVFL.m */; };
 		36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B7A1B9423D700D01EB5 /* TileCVCell.m */; };
@@ -346,6 +351,12 @@
 		3648B8701CAF2467002875A3 /* UnverifiedUserVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnverifiedUserVC.m; sourceTree = "<group>"; };
 		364AD8C21C11514300F70F56 /* OptionsVCCVL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsVCCVL.h; sourceTree = "<group>"; };
 		364AD8C31C11514300F70F56 /* OptionsVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionsVCCVL.m; sourceTree = "<group>"; };
+		364D70BE1CBEB22400FADC29 /* IntroScreenView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroScreenView.h; sourceTree = "<group>"; };
+		364D70BF1CBEB22400FADC29 /* IntroScreenView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroScreenView.m; sourceTree = "<group>"; };
+		364D70C11CBF14D200FADC29 /* S1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S1.png; path = "Graphic Assets/S1.png"; sourceTree = "<group>"; };
+		364D70C31CBF5A8200FADC29 /* S2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S2.png; path = "Graphic Assets/S2.png"; sourceTree = "<group>"; };
+		364D70C41CBF5A8200FADC29 /* S3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S3.png; path = "Graphic Assets/S3.png"; sourceTree = "<group>"; };
+		364D70C51CBF5A8200FADC29 /* S4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S4.png; path = "Graphic Assets/S4.png"; sourceTree = "<group>"; };
 		364F9BA41BFEDE2600DBD012 /* OOUserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOUserView.h; sourceTree = "<group>"; };
 		364F9BA51BFEDE2600DBD012 /* OOUserView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOUserView.m; sourceTree = "<group>"; };
 		36587B731B93C7AD00D01EB5 /* ListCVFL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCVFL.h; sourceTree = "<group>"; };
@@ -808,6 +819,10 @@
 		367703FF1B87E41F00B594E5 /* Graphic Assets */ = {
 			isa = PBXGroup;
 			children = (
+				364D70C31CBF5A8200FADC29 /* S2.png */,
+				364D70C41CBF5A8200FADC29 /* S3.png */,
+				364D70C51CBF5A8200FADC29 /* S4.png */,
+				364D70C11CBF14D200FADC29 /* S1.png */,
 				36FC99731C478C6400768FF0 /* ooLoading */,
 				3613297A1C196215009413D6 /* Oomami_AppStoreLogo(76x76).png */,
 				96567E861C59658C00DCEF1B /* FoodieBubble.png */,
@@ -1140,6 +1155,8 @@
 				3690BFD31B745A9200BC7528 /* OOAPI.m */,
 				36B1CC8C1CA2EF0A007D0263 /* WelcomeVC.h */,
 				36B1CC8D1CA2EF0A007D0263 /* WelcomeVC.m */,
+				364D70BE1CBEB22400FADC29 /* IntroScreenView.h */,
+				364D70BF1CBEB22400FADC29 /* IntroScreenView.m */,
 				36B1CC8F1CA2EF23007D0263 /* SignupVC.h */,
 				36B1CC901CA2EF23007D0263 /* SignupVC.m */,
 				36B1CC921CA3A1C9007D0263 /* EmailSignupVC.h */,
@@ -1310,6 +1327,7 @@
 				367704521B8BF05100B594E5 /* Lato-BlackItalic.ttf in Resources */,
 				36BA03391C50CE1D00802EF8 /* ooLoading69.png in Resources */,
 				365D117D1C86FBF000156204 /* oomami-icons.ttf in Resources */,
+				364D70C61CBF5A8200FADC29 /* S2.png in Resources */,
 				36FC99BD1C478C8200768FF0 /* ooLoading48.png in Resources */,
 				367704541B8BF05100B594E5 /* Lato-BoldItalic.ttf in Resources */,
 				36FC99DC1C478C8200768FF0 /* ooLoading20.png in Resources */,
@@ -1326,6 +1344,7 @@
 				36FC99E51C478C8200768FF0 /* ooLoading04.png in Resources */,
 				36FC99D51C478C8200768FF0 /* ooLoading13.png in Resources */,
 				36FC99B91C478C8200768FF0 /* ooLoading44.png in Resources */,
+				364D70C21CBF14D200FADC29 /* S1.png in Resources */,
 				36FC99C11C478C8200768FF0 /* ooLoading52.png in Resources */,
 				367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */,
 				36BA033C1C50CE1D00802EF8 /* ooLoading72.png in Resources */,
@@ -1346,6 +1365,7 @@
 				964DEA691C1F444C0045BA2C /* background_image.png in Resources */,
 				36FC99DA1C478C8200768FF0 /* ooLoading18.png in Resources */,
 				36FC99D31C478C8200768FF0 /* ooLoading11.png in Resources */,
+				364D70C71CBF5A8200FADC29 /* S3.png in Resources */,
 				36BA033F1C50CE1D00802EF8 /* ooLoading75.png in Resources */,
 				367704371B88552E00B594E5 /* background-image.jpg in Resources */,
 				36FDA7071B585F650029D29D /* LaunchScreen.xib in Resources */,
@@ -1380,6 +1400,7 @@
 				367704611B8BF05100B594E5 /* Lato-Thin.ttf in Resources */,
 				36FC99B21C478C8200768FF0 /* ooLoading56.png in Resources */,
 				36BA034D1C50CE1D00802EF8 /* ooLoading89.png in Resources */,
+				364D70C81CBF5A8200FADC29 /* S4.png in Resources */,
 				36FC99D11C478C8200768FF0 /* ooLoading39.png in Resources */,
 				36FC99E61C478C8200768FF0 /* ooLoading05.png in Resources */,
 				36FC99D81C478C8200768FF0 /* ooLoading16.png in Resources */,
@@ -1561,6 +1582,7 @@
 				9695C1001C1618D100911E84 /* ConnectVC.m in Sources */,
 				365FB7861C59198000826629 /* ShowMediaItemAnimator.m in Sources */,
 				36B1CC9A1CA5ECF8007D0263 /* ShowAuthScreenAnimator.m in Sources */,
+				364D70C01CBEB22400FADC29 /* IntroScreenView.m in Sources */,
 				3613BE581BBE278400F1AF67 /* ListTVCell.m in Sources */,
 				3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */,
 				36C39BE11B84C7CD00648879 /* DebugUtilities.m in Sources */,

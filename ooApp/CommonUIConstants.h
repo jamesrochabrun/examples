@@ -172,6 +172,8 @@ static CGFloat kGeomMotionEffectDelta = 20;
 
 static CGFloat kGeomUploadWidth = 750;
 
+static CGFloat kParalaxFactor = 0.5;
+
 // Profile screen.
 static CGFloat kGeomProfileImageSize = 94;
 static CGFloat kGeomProfileFilterViewHeight = 27;

@@ -20,6 +20,7 @@
 #import "SignupVC.h"
 #import <Instabug/Instabug.h>
 #import "ShowAuthScreenAnimator.h"
+#import "IntroScreenView.h"
 
 @interface WelcomeVC ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -28,11 +29,18 @@
 @property (nonatomic, strong) UIButton *signupButton;
 @property (nonatomic, strong) UIButton *tryAgain;
 @property (nonatomic, strong) UILabel *logoLabel;
-@property (nonatomic, strong) UILabel *labelMessage;
+@property (nonatomic, strong) UILabel *questionLabel;
+@property (nonatomic, strong) UILabel *answerLabel;
+@property (nonatomic, strong) UIButton *answerButton;
 @property (nonatomic, assign) BOOL wentToExplore;
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic, strong) UILabel *info;
 @property (nonatomic, strong) UIView *verticalLine;
+@property (nonatomic, strong) UIPageControl *pageControl;
+@property (nonatomic, strong) UIScrollView *introScreensScrollView;
+@property (nonatomic, strong) UIScrollView *activeScrollView;
+@property (nonatomic, strong) NSArray *introScreenBackgroundViews;
+@property (nonatomic, strong) NSArray *introScreenViews;
 @end
 
 @implementation WelcomeVC
@@ -49,11 +57,19 @@
     
     _wentToExplore = NO;
     
+    _activeScrollView = [UIScrollView new];
+    _activeScrollView.delegate = self;
+    
+    _introScreensScrollView = [UIScrollView new];
+    _introScreensScrollView.delegate = self;
+    
+    _introScreensScrollView.contentOffset = _activeScrollView.contentOffset;
+    
     _aiv = [[UIActivityIndicatorView alloc] init];
     _aiv.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
     
     _overlay = [[UIView alloc] init];
-    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.35);
+    _overlay.backgroundColor = UIColorRGBOverlay(kColorBlack, 0.45);
     
     _info = [[UILabel alloc] init];
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
@@ -90,27 +106,108 @@
     [_signupButton withText:@"Sign Up" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(showSignup)];
     _signupButton.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
     
+    _questionLabel = [UILabel new];
+    [_questionLabel withFont:[UIFont fontWithName: kFontLatoRegular size:kGeomFontSizeH1] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _questionLabel.text = @"What are you in the mood for?";
+
+    _answerLabel = [UILabel new];
+    [_answerLabel withFont:[UIFont fontWithName: kFontLatoRegular size:kGeomFontSizeH1] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+    _answerLabel.text = @"Oomami can help you answer that.";
+    
+    _answerButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_answerButton withText:@"Show me." fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorClear textColor:kColorTextReverse borderColor:kColorTextReverse target:self selector:@selector(showIntro)];
+    _answerButton.titleLabel.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1];
+    _answerButton.layer.cornerRadius = kGeomCornerRadius;
+
+
+    UIView *bMainView = [UIView new];
+    UIView *mainView = [UIView new];
+    [mainView addSubview:_logoLabel];
+    [mainView addSubview:_questionLabel];
+    [mainView addSubview:_answerLabel];
+    [mainView addSubview:_answerButton];
+    [mainView addSubview:_aiv];
+    [mainView addSubview:_info];
+    [mainView addSubview:_tryAgain];
+    
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_overlay];
-    [self.view addSubview:_logoLabel];
-    [self.view addSubview:_aiv];
-    [self.view addSubview:_info];
-    [self.view addSubview:_tryAgain];
     [self.view addSubview:_signupButton];
     [self.view addSubview:_loginButton];
     [_signupButton addSubview:_verticalLine];
     
-    self.labelMessage= makeLabel(self.view,  @"What are you in the mood for?", kGeomFontSizeHeader);
-    _labelMessage.textColor= UIColorRGBA(kColorWhite);
-    
     _tryAgain.hidden = YES;
-    //    [DebugUtilities addBorderToViews:@[_logoLabel]];
+    
+    CGFloat paralaxWidth = self.view.frame.size.width*kParalaxFactor;
+    
+    CGRect frame = CGRectMake(0, 0, self.view.frame.size.width+paralaxWidth, self.view.frame.size.height - kGeomHeightButton);
+
+    IntroScreenView *bIntro1 = [[IntroScreenView alloc] initWithFrame:frame];
+    IntroScreenView *bIntro2 = [[IntroScreenView alloc] initWithFrame:frame];
+    IntroScreenView *bIntro3 = [[IntroScreenView alloc] initWithFrame:frame];
+    IntroScreenView *bIntro4 = [[IntroScreenView alloc] initWithFrame:frame];
+    _introScreenBackgroundViews = [NSArray arrayWithObjects:bMainView, bIntro1, bIntro2, bIntro3, bIntro4, nil];
+    //[DebugUtilities addBorderToViews:_introScreenBackgroundViews];
+    for (UIView *v in _introScreenBackgroundViews) {
+        [_introScreensScrollView addSubview:v];
+    }
+    
+    bIntro1.introTitle = @"Food Feed.";
+    bIntro1.introDescription = @"See what people are eating. Recommend dishes to all your followers with the snap of a photo.";
+    
+    bIntro2.introTitle = @"Explore.";
+    bIntro2.introDescription = @"Find the top spots around you with the tap of a button, or move around and see what's out there.";
+    
+    bIntro3.introTitle = @"Connect.";
+    bIntro3.introDescription = @"Find friends in the know and discover new foodies to follow.";
+    
+    bIntro4.introTitle = @"Profile.";
+    bIntro4.introDescription = @"With your personal food diary, never forget your most memorable meals or favorite places.";
+    
+    frame = self.view.frame;
+    frame.size.height = frame.size.height - kGeomHeightButton;
+    
+    IntroScreenView *intro1 = [[IntroScreenView alloc] initWithFrame:frame];
+    IntroScreenView *intro2 = [[IntroScreenView alloc] initWithFrame:frame];
+    IntroScreenView *intro3 = [[IntroScreenView alloc] initWithFrame:frame];
+    IntroScreenView *intro4 = [[IntroScreenView alloc] initWithFrame:frame];
+    _introScreenViews = [NSArray arrayWithObjects:mainView, intro1, intro2, intro3, intro4, nil];
+    for (UIView *v in _introScreenViews) {
+        [_activeScrollView addSubview:v];
+    }
+    
+    intro1.phoneImageURL = IS_IPAD? @"S1.png" : @"S1.png";
+    intro2.phoneImageURL = IS_IPAD? @"S2.png" : @"S2.png";
+    intro3.phoneImageURL = IS_IPAD? @"S3.png" : @"S3.png";
+    intro4.phoneImageURL = IS_IPAD? @"S4.png" : @"S4.png";
+ 
+    [self.view addSubview:_introScreensScrollView];
+    [self.view addSubview:_activeScrollView];
+    
+    _activeScrollView.pagingEnabled = YES;
+    
+    _pageControl = [UIPageControl new];
+    _pageControl.numberOfPages = [_introScreenViews count];
+    [self.view addSubview:_pageControl];
+    _pageControl.pageIndicatorTintColor = UIColorRGBA(kColorWhite);
+    _pageControl.currentPageIndicatorTintColor = UIColorRGBA(kColorTextActive);
+    _pageControl.hidden = YES;
+ 
+    
+//    [DebugUtilities addBorderToViews:@[_activeScrollView, _introScreensScrollView]];
 }
 
-- (void)doLayout
+- (void)viewWillLayoutSubviews
 {
+    [super viewWillLayoutSubviews];
+    
+    NSLog(@"LoginVC bounds= %@", NSStringFromCGRect(self.view.bounds));
     CGFloat h = height(self.view);
     CGFloat w = width(self.view);
+    CGFloat buttonWidth = (IS_IPAD) ? kGeomWidthButtoniPadMax : w - 4*kGeomSpaceEdge;
+    
+    CGFloat cw = w;
+    CGFloat ch = h - kGeomHeightButton;
     
     CGRect frame = self.view.bounds;
     frame.origin = CGPointMake(-kGeomMotionEffectDelta, -kGeomMotionEffectDelta);
@@ -124,11 +221,16 @@
     _logoLabel.frame = CGRectMake((width(self.view) - width(_logoLabel))/2, y, width(_logoLabel), height(_logoLabel));
     
     y += height(_logoLabel);
-        
-    y -= 5; // as per Jay
-    [_labelMessage sizeToFit];
-    _labelMessage.frame = CGRectMake(0, y, w, _labelMessage.frame.size.height);
     
+    y -= 15;
+    [_questionLabel sizeToFit];
+    _questionLabel.frame = CGRectMake(0, y, w, _questionLabel.frame.size.height);
+    
+    _answerButton.frame = CGRectMake((w-buttonWidth/2)/2, ch-kGeomHeightButton - 3*kGeomSpaceEdge, buttonWidth/2, kGeomHeightButton);
+
+    [_answerLabel sizeToFit];
+    _answerLabel.frame = CGRectMake((w-width(_answerLabel))/2, CGRectGetMinY(_answerButton.frame) - kGeomSpaceEdge - height(_answerLabel), width(_answerLabel), height(_answerLabel));
+
     CGFloat facebookButtonHeight = facebookButtonHeight = kGeomHeightButton;
     
     _signupButton.frame = CGRectMake(0, h-kGeomHeightButton, w/2, kGeomHeightButton);
@@ -148,14 +250,54 @@
     frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
     frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
     _info.frame = frame;
-}
-
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
     
-    NSLog(@"LoginVC bounds= %@", NSStringFromCGRect(self.view.bounds));
-    [self doLayout];
+    frame = self.view.frame;
+    CGFloat paralaxWidth = frame.size.width*kParalaxFactor;
+    
+    frame.size.width += paralaxWidth;
+    frame.origin.x -=  paralaxWidth/2;
+    frame.size.height -= kGeomHeightButton;
+    _introScreensScrollView.frame = frame;
+    
+    _introScreensScrollView.contentSize = CGSizeMake([_introScreenViews count]*(_activeScrollView.frame.size.width+paralaxWidth),
+                                                     _activeScrollView.frame.size.height);
+
+    frame = self.view.frame;
+    frame.size.height -= kGeomHeightButton;
+    _activeScrollView.frame = frame;
+
+    _activeScrollView.contentSize = CGSizeMake([_introScreenViews count]*_activeScrollView.frame.size.width, _activeScrollView.frame.size.height);
+
+    NSUInteger i = 0;
+    frame.size.width = _activeScrollView.frame.size.width;
+    frame.size.height = _activeScrollView.frame.size.height;
+    frame.origin.y = 0;
+    
+    for (UIView *v in _introScreenViews) {
+        frame.origin.x = i*frame.size.width;
+        v.frame = frame;
+        i++;
+    }
+    
+    i = 0;
+    frame.size = _introScreensScrollView.frame.size;
+    
+    for (UIView *v in _introScreenBackgroundViews) {
+        frame.origin.x = i*frame.size.width;
+        v.frame = frame;
+        i++;
+    }
+    
+    frame = _pageControl.frame;
+    
+    frame.size = CGSizeMake(50, 26);
+    
+    if(IS_IPAD)
+        frame.origin = CGPointMake((self.view.frame.size.width-frame.size.width)/2, kGeomHeightStatusBar);
+    else
+        frame.origin = CGPointMake((self.view.frame.size.width-frame.size.width)/2, 2*kGeomSpaceEdge);
+    
+    _pageControl.frame = CGRectIntegral(frame);
 }
 
 - (void)showLogin {
@@ -274,12 +416,6 @@
     
     UserObject* userInfo = [Settings sharedInstance].userObject;
     
-    //    NSString *saltedString = [NSString stringWithFormat:@"%@.%@", email, SECRET_BACKEND_SALT];
-    //    NSString *md5 = [saltedString MD5String];
-    //    md5 = [md5 lowercaseString];
-    //    seekingToken = YES;
-    //
-    
     NSLog (@"USERNAME %@",userInfo.username);
     
     self.navigationController.delegate = nil;
@@ -290,7 +426,6 @@
     } else {
         [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
     }
-    
 }
 
 //------------------------------------------------------------------------------
@@ -336,6 +471,37 @@
         }
     }
 }
+
+- (void)showIntro {
+    [_activeScrollView scrollRectToVisible:CGRectMake(width(_activeScrollView), 0, width(_activeScrollView), height(_activeScrollView)) animated:YES];
+    NSUInteger page = 1;
+    _pageControl.currentPage = page;
+    [UIView animateWithDuration:0.3 animations:^{
+        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.75:0.35));
+        _pageControl.hidden = (page) ? NO : YES;
+    }];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGFloat percent = _introScreensScrollView.frame.size.width/_activeScrollView.frame.size.width;
+    if (scrollView == _activeScrollView) {
+        [_introScreensScrollView setContentOffset:CGPointMake(scrollView.contentOffset.x * percent, _introScreensScrollView.contentOffset.y)];
+    }
+}
+    
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    NSUInteger page = roundf(_activeScrollView.contentOffset.x/_activeScrollView.frame.size.width);
+    _pageControl.currentPage = page;
+    
+//    UIView *v = [_introScreenBackgroundViews objectAtIndex:page];
+//    v.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.75:0.35));;
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.75:0.45));
+        _pageControl.hidden = (page) ? NO : YES;
+    }];
+}
+
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
                                   animationControllerForOperation:(UINavigationControllerOperation)operation

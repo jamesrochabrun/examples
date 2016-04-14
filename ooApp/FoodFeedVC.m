@@ -707,43 +707,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio {
-//    _showPhotoOptions = [UIAlertController alertControllerWithTitle:@"" message:@"What would you like to do with this photo?" preferredStyle:UIAlertControllerStyleActionSheet];
-//    
-//    
-//    
-//    UIAlertAction *deletePhoto = [UIAlertAction actionWithTitle:@"Delete"
-//                                                          style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
-//                                                              __weak FoodFeedVC *weakSelf = self;
-//                                                              ON_MAIN_THREAD(^{
-//                                                                  [weakSelf deletePhoto:mio];
-//                                                              });
-//                                                              
-//                                                          }];
-//    UIAlertAction *tagPhoto = [UIAlertAction actionWithTitle:@"Add Caption"
-//                                                       style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-//                                                           [self tagPhoto:mio];
-//                                                       }];
-//    UIAlertAction *flagPhoto = [UIAlertAction actionWithTitle:@"Flag"
-//                                                        style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-//                                                            [self flagPhoto:mio];
-//                                                        }];
-//    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
-//                                                     style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
-//                                                         NSLog(@"Cancel");
-//                                                     }];
-//    
-//    UserObject *uo = [Settings sharedInstance].userObject;
-//    
-//    if (mio.sourceUserID == uo.userID) {
-//        [_showPhotoOptions addAction:tagPhoto];
-//        [_showPhotoOptions addAction:deletePhoto];
-//    }
-//    [_showPhotoOptions addAction:flagPhoto];
-//    [_showPhotoOptions addAction:cancel];
-//    
-//    [self presentViewController:_showPhotoOptions animated:YES completion:^{
-//        ;
-//    }];
 }
 
 - (void)tagPhoto:(MediaItemObject *)mio {

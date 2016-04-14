@@ -176,9 +176,9 @@
         } else {
             OOErrorObject *ooError = [OOErrorObject errorFromDict:[operation.responseObject objectForKey:kKeyError]];
             if (ooError.type == kOOErrorCodeTypeAuthorizationFailed) {
-                _backendResultMessage.text = @"The username and password combination is not valid.";
+                _backendResultMessage.text = @"The Email and Password combination is not valid.";
             } else {
-                _backendResultMessage.text = @"The username and password combination is not valid.";
+                _backendResultMessage.text = @"The Email and Password combination is not valid.";
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{

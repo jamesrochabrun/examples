@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface WelcomeVC : UIViewController <UINavigationControllerDelegate,
-                                         UIViewControllerTransitioningDelegate>
+                                         UIViewControllerTransitioningDelegate,
+                                         UIScrollViewDelegate>
 
 @end
