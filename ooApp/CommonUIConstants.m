@@ -66,7 +66,7 @@ NSString *const kFontIconCaptionFilled = @"9";
 NSString *const kFontIconPinDot = @"C";
 NSString *const kFontIconPinDotFilled = @"D";
 NSString *const kFontIconArrow = @"B";
-NSString *const kFontIconClose = @"I";
+NSString *const kFontIconClosed = @"I";
 NSString *const kFontIconCreateList = @"J";
 NSString *const kFontIconInvite = @"N";
 

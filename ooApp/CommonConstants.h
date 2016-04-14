@@ -50,6 +50,7 @@ static NSInteger kHashGroup= 0x30000000;
 enum {
     kTabIndexNone = -1,
     kTabIndexSearch = 1,
+    kTabIndexExplore = 2,
     kTabIndexConnect = 3,
     kTabIndexProfile = 4,
 };
