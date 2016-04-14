@@ -239,7 +239,7 @@
     _loginButton.layer.cornerRadius =
     _signupButton.layer.cornerRadius = 0;
     
-    _tryAgain.frame =  CGRectMake((w-CGRectGetWidth(_tryAgain.frame))/2, h-3*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
+    _tryAgain.frame =  CGRectMake((w-CGRectGetWidth(_tryAgain.frame))/2, CGRectGetMinY(_answerLabel.frame) - 2*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
     [_aiv sizeToFit];
     _aiv.center = _tryAgain.center;
     
