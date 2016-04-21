@@ -126,7 +126,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, strong) NSArray *followeesArray; // section 2
 @property (nonatomic, strong) NSArray *recentUsersArray; // section 3
 @property (nonatomic, strong) NSArray *inTheKnowUsersArray; // section
-@property (nonatomic, strong) NSArray *searchResultsArray;
 
 @property (nonatomic, strong) AFHTTPRequestOperation *roSuggestedUsers; // fb
 @property (nonatomic, strong) AFHTTPRequestOperation *roFoodies; // foodies
@@ -139,8 +138,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, assign) BOOL gotFriendsResult, gotFoodiesResult, gotRecentUsersResult, gotInTheKnowResult;
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) UISearchBar *searchBar;
-@property (nonatomic, strong) UITableView *tablePeople;
 @property (nonatomic, assign) BOOL searchMode;
+@property (nonatomic, strong) NSArray *searchResultsArray;
 
 @end
 
@@ -214,9 +213,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _tableAccordion.showsVerticalScrollIndicator = NO;
     
     _searchBar = [UISearchBar new];
+    _searchBar.placeholder = kSearchPlaceholderPeople;
     _searchBar.delegate = self;
     [self.view addSubview:_searchBar];
-    _searchBar.hidden = YES;
+    _searchBar.alpha =0;
     _searchMode = NO;
     
 //    [self setRightNavWithIcon:kFontIconInvite target:self action:@selector(invitePerson:)];
@@ -247,10 +247,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         [_searchBar resignFirstResponder];
     }
     
-    _searchBar.hidden = !showIt;
-
     _searchBar.showsCancelButton = YES;
     [UIView animateWithDuration:0.5 animations:^{
+        _searchBar.alpha = (showIt)? 1:0;
         _searchBar.frame = CGRectMake(0, 0, width(self.view), 40);
         _tableAccordion.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
     }];

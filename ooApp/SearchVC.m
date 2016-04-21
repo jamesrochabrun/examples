@@ -306,9 +306,6 @@ typedef enum: char {
                                                                   } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                                       NSLog  (@"ERROR FETCHING YOU'S RESTAURANTS: %@",e );
 
-//                                                                      [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
-//                                                                                                 withObject:nil
-//                                                                                              waitUntilDone:NO];
                                                                   }
                                   ];
         } break;

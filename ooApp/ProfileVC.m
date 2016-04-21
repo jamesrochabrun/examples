@@ -31,6 +31,7 @@
 #import "ShowMediaItemAnimator.h"
 #import "SpecialtyObject.h"
 #import "DebugUtilities.h"
+#import "RestaurantTVCell.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Instabug/Instabug.h>
@@ -805,12 +806,19 @@
 @property (nonatomic, assign) BOOL pickerIsForRestaurants;
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) NavTitleObject *nto;
+
+@property (nonatomic, strong) AFHTTPRequestOperation *roSearchMyPlaces;
+@property (nonatomic, strong) UISearchBar *searchBar;
+@property (nonatomic, assign) BOOL searchMode;
+@property (nonatomic, strong) NSArray *searchResultsArray;
+@property (nonatomic, strong) UITableView *searchTable;
 @end
 
 static NSString *const kProfilePhotoCellIdentifier = @"profilePhotoCell";
 static NSString *const kProfileListCellIdentifier = @"profileListCell";
 static NSString *const kProfileHeaderCellIdentifier = @"profileHeaderCell";
 static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
+static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 
 @implementation ProfileVC
 
@@ -876,6 +884,22 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     _needRefresh = YES;
     _arrayLists = @[];
     _arrayPhotos = @[];
+    _searchResultsArray=@[];
+    
+    _searchTable = [UITableView new];
+    _searchTable.alpha = 0;
+    _searchTable.delegate = self;
+    _searchTable.dataSource = self;
+    [_searchTable registerClass:[RestaurantTVCell class] forCellReuseIdentifier:kRestaurantCellIdentifier];
+    _searchTable.rowHeight = kGeomHeightHorizontalListRow;
+    [self.view addSubview:_searchTable];
+    
+    _searchMode = NO;
+    _searchBar = [UISearchBar new];
+    _searchBar.placeholder = kSearchPlaceholderYou;
+    _searchBar.alpha = 0;
+    _searchBar.delegate = self;
+    [self.view addSubview:_searchBar];
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
@@ -923,9 +947,11 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers  == 1) {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
         [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft];
     }
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
@@ -948,6 +974,97 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
 }
+
+- (void)showSearch {
+    [self showSearch:!_searchMode];
+}
+
+- (void)showSearch:(BOOL)showIt {
+    _searchMode = showIt;
+    [self.view bringSubviewToFront:_searchTable];
+    
+    if (showIt) {
+        [_searchBar becomeFirstResponder];
+    } else {
+        [_searchBar resignFirstResponder];
+        _searchTable.alpha = 0;
+    }
+    
+    _searchBar.showsCancelButton = YES;
+    [UIView animateWithDuration:0.5 animations:^{
+        _searchBar.alpha = (showIt)? 1:0;
+        _searchBar.frame = CGRectMake(0, 0, width(self.view), 40);
+        _searchTable.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
+        _cv.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
+    }];
+}
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    if ([_searchBar.text length]) {
+        [self searchUserPlaces];
+        _searchTable.alpha = 1;
+    } else {
+        _searchTable.alpha = 0;
+        [_searchTable reloadData];
+    }
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [self showSearch:NO];
+    [_searchTable reloadData];
+    _searchBar.text = @"";
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [_searchBar resignFirstResponder];
+}
+
+- (void)searchUserPlaces {
+    __weak ProfileVC *weakSelf = self;
+    _roSearchMyPlaces = [OOAPI getRestaurantsViaYouSearchForUser:_profileOwner.userID
+                                                         withTerm:_searchBar.text
+                                                          success:^(NSArray *restaurants) {
+                                                              _searchResultsArray = restaurants;
+                                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                                  [weakSelf.searchTable reloadData];
+                                                              });
+                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                              NSLog  (@"ERROR FETCHING YOU'S RESTAURANTS: %@",e );
+                                                              
+                                                          }
+                          ];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_searchResultsArray count];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:kRestaurantCellIdentifier];
+    cell.restaurant = [_searchResultsArray objectAtIndex:indexPath.row];
+    cell.nc = self.navigationController;
+    [cell updateConstraintsIfNeeded];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    RestaurantObject *ro = [_searchResultsArray objectAtIndex:indexPath.row];
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Search");
+    vc.title = trimString(ro.name);
+    vc.restaurant = ro;
+    //vc.eventBeingEdited = self.eventBeingEdited;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 
 //------------------------------------------------------------------------------
 // Name:    handleListAltered
@@ -1013,7 +1130,8 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    self.cv.frame = self.view.bounds;
+    _cv.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
+    //self.cv.frame = self.view.bounds;
     CGFloat w = width(self.view);
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
     [_cv.collectionViewLayout invalidateLayout];

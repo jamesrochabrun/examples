@@ -28,10 +28,23 @@
 - (void)userPressedSettings:(id)sender;
 @end
 
-@interface ProfileVC : BaseVC <UICollectionViewDataSource, UICollectionViewDelegate, ProfileVCCollectionViewDelegate, ProfileHeaderViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PhotoCVCellDelegate,
-    OOTextEntryModalVCDelegate, RestaurantPickerVCDelegate, ProfileEmptyCellDelegate,
-    ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate,
-    OOTextEntryVCDelegate, UnverifiedUserVCDelegate>
+@interface ProfileVC : BaseVC <UICollectionViewDataSource,
+                                UICollectionViewDelegate,
+                                ProfileVCCollectionViewDelegate,
+                                ProfileHeaderViewDelegate,
+                                UIImagePickerControllerDelegate,
+                                UINavigationControllerDelegate,
+                                PhotoCVCellDelegate,
+                                OOTextEntryModalVCDelegate,
+                                RestaurantPickerVCDelegate,
+                                ProfileEmptyCellDelegate,
+                                ViewPhotoVCDelegate,
+                                UIViewControllerTransitioningDelegate,
+                                OOTextEntryVCDelegate,
+                                UnverifiedUserVCDelegate,
+                                UISearchBarDelegate,
+                                UITableViewDelegate,
+                                UITableViewDataSource>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 
