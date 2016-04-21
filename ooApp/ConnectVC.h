@@ -32,7 +32,9 @@ typedef enum {
 @property (nonatomic, assign) BOOL isExpanded;
 @end
 
-@interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate, UserListTVCDelegate>
+@interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate,
+                                UserListTVCDelegate,
+                                UISearchBarDelegate>
 @property (nonatomic, assign) NSInteger defaultSection;
 @end
 

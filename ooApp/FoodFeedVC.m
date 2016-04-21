@@ -146,8 +146,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
     self.navTitle = _nto;
-    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
-    [self setLeftNavWithIcon:@"" target:nil action:nil];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI) forSide:kNavBarSideTypeRight];
+    
     [self.navigationController setNavigationBarHidden:NO animated:NO];
     
     [self updateIfNeeded];

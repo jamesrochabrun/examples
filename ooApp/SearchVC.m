@@ -37,11 +37,12 @@ typedef enum: char {
 #define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
 
 @interface SearchVC ()
-@property (nonatomic, strong) UISearchBar *searchBar;
+
 @property (nonatomic, strong) UILabel *labelMessageAboutGoogle;
 @property (nonatomic, strong) OOFilterView *filterView;
 @property (nonatomic, strong) UIButton *buttonCancel;
 @property (nonatomic, strong) UITableView *tableRestaurants;
+@property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, strong) UITableView *tablePeople;
 @property (nonatomic, assign) FilterType currentFilter;
 @property (nonatomic, strong) NSArray *restaurantsArray;
@@ -145,7 +146,7 @@ typedef enum: char {
     
     [self changeFilter:FILTER_PLACES];
 
-    [self setLeftNavWithIcon:@"" target:nil action:nil];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
 }
 
 //------------------------------------------------------------------------------
@@ -275,10 +276,6 @@ typedef enum: char {
                                                         
                                                     } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                         NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
-                                                        
-//                                                        [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
-//                                                                                   withObject:nil
-//                                                                                waitUntilDone:NO];
                                                     }
                                   ];
         } break;
@@ -502,7 +499,7 @@ typedef enum: char {
     switch (_currentFilter) {
         case FILTER_PEOPLE:
             _searchBar.placeholder = kSearchPlaceholderPeople;
-            [self setRightNavWithIcon:@"" target:nil action:nil];
+            [self removeNavButtonForSide:kNavBarSideTypeRight];
 
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
@@ -524,7 +521,7 @@ typedef enum: char {
             
         case FILTER_YOU:
             _searchBar.placeholder = kSearchPlaceholderYou;
-            [self setRightNavWithIcon:@"" target:nil action:nil];
+            [self removeNavButtonForSide:kNavBarSideTypeRight];
             
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;
@@ -545,7 +542,8 @@ typedef enum: char {
             
         case FILTER_PLACES:
             _searchBar.placeholder = kSearchPlaceholderPlaces;
-            [self setRightNavWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:)];
+            [self removeNavButtonForSide:kNavBarSideTypeRight];
+            [self addNavButtonWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:) forSide:kNavBarSideTypeRight];
 
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden = NO;

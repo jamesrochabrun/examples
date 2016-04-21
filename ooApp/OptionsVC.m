@@ -55,7 +55,8 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
     [self.view addSubview:_collectionView];
     _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    [self setRightNavWithIcon:kFontIconCheckmark target:self action:@selector(closeOptions)];
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconCheckmark target:self action:@selector(closeOptions) forSide:kNavBarSideTypeRight];
 }
 
 - (void)updateViewConstraints

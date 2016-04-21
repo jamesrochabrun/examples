@@ -9,14 +9,15 @@
 #import <Foundation/Foundation.h>
 
 NSString *const kFontIcons = @"oomami-icons";
-NSString *const kFontLatoThin = @"Lato-Thin";
+//NSString *const kFontLatoThin = @"Lato-Thin";
+NSString *const kFontLatoLight = @"Lato-Light";
 NSString *const kFontLatoRegular = @"Lato-Regular";
 NSString *const kFontLatoBold = @"Lato-Bold";
 NSString *const kFontLatoMedium = @"Lato-Medium";
-NSString *const kFontLatoMediumItalic = @"Lato-MediumItalic";
-NSString *const kFontLatoSemiboldItalic = @"Lato-SemiboldItalic";
-NSString *const kFontLatoBoldItalic = @"Lato-BoldItalic";
-NSString *const kFontLatoHeavyItalic = @"Lato-HeavyItalic";
+//NSString *const kFontLatoMediumItalic = @"Lato-MediumItalic";
+//NSString *const kFontLatoSemiboldItalic = @"Lato-SemiboldItalic";
+//NSString *const kFontLatoBoldItalic = @"Lato-BoldItalic";
+//NSString *const kFontLatoHeavyItalic = @"Lato-HeavyItalic";
 
 NSString *const kFontIconAdd = @"b";
 NSString *const kFontIconDiscover = @"q";
@@ -71,6 +72,7 @@ NSString *const kFontIconCreateList = @"J";
 NSString *const kFontIconInvite = @"N";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
+NSString *const kImageBackgroundImage = @"background_image.jpg";
 
 NSString *const kNotificationConnectNeedsUpdate = @"notificationConnectNeedsUpdate";
 NSString *const kNotificationFoodFeedNeedsUpdate = @"notificationFoodFeedNeedsUpdate";

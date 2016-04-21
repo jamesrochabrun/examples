@@ -14,5 +14,6 @@
 @property (nonatomic, strong) NavTitleObject *navTitle;
 
 - (void)setDDLState:(BOOL)open;
+- (CGFloat)width;
 
 @end

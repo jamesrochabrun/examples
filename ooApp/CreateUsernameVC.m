@@ -79,7 +79,7 @@
     self.scrollView = [UIScrollView new];
     [self.view addSubview:_scrollView];
 
-    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:@"background_image.png"] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
+    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:kImageBackgroundImage] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     

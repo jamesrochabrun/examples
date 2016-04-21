@@ -240,14 +240,15 @@ extern NSString *const kImageNoProfileImage;
 
 // Custom Fonts
 extern NSString *const kFontIcons;
-extern NSString *const kFontLatoThin;
+//extern NSString *const kFontLatoThin; feel to thin
+extern NSString *const kFontLatoLight;
 extern NSString *const kFontLatoRegular;
 extern NSString *const kFontLatoBold;
 extern NSString *const kFontLatoMedium;
-extern NSString *const kFontLatoMediumItalic;
-extern NSString *const kFontLatoSemiboldItalic;
-extern NSString *const kFontLatoBoldItalic;
-extern NSString *const kFontLatoHeavyItalic;
+//extern NSString *const kFontLatoMediumItalic;
+//extern NSString *const kFontLatoSemiboldItalic;
+//extern NSString *const kFontLatoBoldItalic;
+//extern NSString *const kFontLatoHeavyItalic;
 
 // Icon font mappings
 extern NSString *const kFontIconAdd;
@@ -315,5 +316,7 @@ extern NSString *const kNotificationListAltered;
 extern NSString *const kNotificationMediaItemAltered;
 extern NSString *const kNotificationUserStatsChanged;
 extern NSString *const kNotificationUserFollowingChanged;
+
+extern NSString *const kImageBackgroundImage;
 
 #endif

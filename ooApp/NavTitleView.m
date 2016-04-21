@@ -27,7 +27,7 @@
         _arrow = [[UILabel alloc] init];
         
         [_headerLabel withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
-        [_subHeaderLabel withFont:[UIFont fontWithName:kFontLatoThin size:kGeomFontSizeSubheader] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
+        [_subHeaderLabel withFont:[UIFont fontWithName:kFontLatoLight size:kGeomFontSizeSubheader] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [_arrow withFont:[UIFont fontWithName:kFontIcons size:20] textColor:kColorTextActive backgroundColor:kColorClear];
         _arrow.text = kFontIconBack;
         _arrow.hidden = YES;
@@ -39,7 +39,7 @@
         [self addSubview:_subHeaderLabel];
         [self addSubview:_arrow];
         
-//        [DebugUtilities addBorderToViews:@[_headerLabel, _subHeaderLabel, _arrow]];
+        //[DebugUtilities addBorderToViews:@[_headerLabel, _subHeaderLabel, _arrow, self]];
     }
     return self;
 }
@@ -95,8 +95,14 @@
     _subHeaderLabel.text = _navTitle.subheader;
     [_headerLabel sizeToFit];
     [_subHeaderLabel sizeToFit];
+    
     [self setNeedsUpdateConstraints];
     [self setNeedsLayout];
+}
+
+- (CGFloat)width {
+    CGFloat w = MAX(CGRectGetWidth(_headerLabel.frame), CGRectGetWidth(_subHeaderLabel.frame));
+    return w;
 }
 
 @end

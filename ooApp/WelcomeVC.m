@@ -74,7 +74,7 @@
     _info = [[UILabel alloc] init];
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     
-    UIImage *backgroundImage = [UIImage imageNamed:@"background_image.png"];
+    UIImage *backgroundImage = [UIImage imageNamed:kImageBackgroundImage];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
@@ -162,7 +162,7 @@
     bIntro3.introDescription = @"Find friends in the know and discover new foodies to follow.";
     
     bIntro4.introTitle = @"Profile.";
-    bIntro4.introDescription = @"With your personal food diary, never forget your most memorable meals or favorite places.";
+    bIntro4.introDescription = @"Never forget your most memorable meals or favorite places with the help of your personal food diary.";
     
     frame = self.view.frame;
     frame.size.height = frame.size.height - kGeomHeightButton;
@@ -176,10 +176,10 @@
         [_activeScrollView addSubview:v];
     }
     
-    intro1.phoneImageURL = IS_IPAD? @"S1.png" : @"S1.png";
-    intro2.phoneImageURL = IS_IPAD? @"S2.png" : @"S2.png";
-    intro3.phoneImageURL = IS_IPAD? @"S3.png" : @"S3.png";
-    intro4.phoneImageURL = IS_IPAD? @"S4.png" : @"S4.png";
+    intro1.phoneImageURL = IS_IPAD ? @"S1ipad.png":@"S1.png";
+    intro2.phoneImageURL = IS_IPAD ? @"S2ipad.png":@"S2.png";
+    intro3.phoneImageURL = IS_IPAD ? @"S3ipad.png":@"S3.png";
+    intro4.phoneImageURL = IS_IPAD ? @"S4ipad.png":@"S4.png";
  
     [self.view addSubview:_introScreensScrollView];
     [self.view addSubview:_activeScrollView];
@@ -189,8 +189,8 @@
     _pageControl = [UIPageControl new];
     _pageControl.numberOfPages = [_introScreenViews count];
     [self.view addSubview:_pageControl];
-    _pageControl.pageIndicatorTintColor = UIColorRGBA(kColorWhite);
-    _pageControl.currentPageIndicatorTintColor = UIColorRGBA(kColorTextActive);
+    _pageControl.pageIndicatorTintColor = UIColorRGBA(kColorTextReverse);
+    _pageControl.currentPageIndicatorTintColor = UIColorRGBA(kColorText);
     _pageControl.hidden = YES;
  
     
@@ -477,7 +477,7 @@
     NSUInteger page = 1;
     _pageControl.currentPage = page;
     [UIView animateWithDuration:0.3 animations:^{
-        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.75:0.35));
+        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.65:0.35));
         _pageControl.hidden = (page) ? NO : YES;
     }];
 }

@@ -36,7 +36,7 @@
     [iRate sharedInstance].appStoreID = 1053373398;
     [iRate sharedInstance].eventsUntilPrompt = 5;
     [iRate sharedInstance].messageTitle = @"Enjoying Oomami?";
-    [iRate sharedInstance].message = @"Take a moment to let everyone know by rating us in the app store. The more friends of yours that use the app the more useful it becomes!";
+    [iRate sharedInstance].message = @"Take a moment to let everyone know by rating us in the app store. The more friends that use the app the more useful it becomes!";
 //    [iRate sharedInstance].previewMode = YES;
 }
 

@@ -126,16 +126,21 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, strong) NSArray *followeesArray; // section 2
 @property (nonatomic, strong) NSArray *recentUsersArray; // section 3
 @property (nonatomic, strong) NSArray *inTheKnowUsersArray; // section
+@property (nonatomic, strong) NSArray *searchResultsArray;
 
 @property (nonatomic, strong) AFHTTPRequestOperation *roSuggestedUsers; // fb
 @property (nonatomic, strong) AFHTTPRequestOperation *roFoodies; // foodies
 @property (nonatomic, strong) AFHTTPRequestOperation *roRecentUsers; // users new to Oomami
 @property (nonatomic, strong) AFHTTPRequestOperation *roInTheKnow; // users in the know around you
+@property (nonatomic, strong) AFHTTPRequestOperation *roSearch;
 
 @property (nonatomic, strong) NSArray *arraySectionHeaderViews;
 @property (nonatomic, assign) BOOL canSeeFriends, canSeeFoodies, canSeeRecentUsers, canSeeInTheKnow;
 @property (nonatomic, assign) BOOL gotFriendsResult, gotFoodiesResult, gotRecentUsersResult, gotInTheKnowResult;
 @property (nonatomic) BOOL needRefresh;
+@property (nonatomic, strong) UISearchBar *searchBar;
+@property (nonatomic, strong) UITableView *tablePeople;
+@property (nonatomic, assign) BOOL searchMode;
 
 @end
 
@@ -173,6 +178,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _followeesArray = [NSArray new];
     _recentUsersArray = [NSArray new];
     _inTheKnowUsersArray = [NSArray new];
+    _searchResultsArray = [NSArray new];
     
     ConnectTableSectionHeader *hvNewestUsers = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeRecentUsers];
     hvNewestUsers.noUsersMessage = @"Recently added users will appear here.";
@@ -205,13 +211,87 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [_tableAccordion setLayoutMargins:UIEdgeInsetsZero];
     _tableAccordion.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _tableAccordion.separatorColor = UIColorRGBA(kColorBordersAndLines);
-    _tableAccordion.showsVerticalScrollIndicator= NO;
+    _tableAccordion.showsVerticalScrollIndicator = NO;
     
-    [self setRightNavWithIcon:kFontIconInvite target:self action:@selector(invitePerson:)];
-    [self setLeftNavWithIcon:@"" target:nil action:nil];
+    _searchBar = [UISearchBar new];
+    _searchBar.delegate = self;
+    [self.view addSubview:_searchBar];
+    _searchBar.hidden = YES;
+    _searchMode = NO;
+    
+//    [self setRightNavWithIcon:kFontIconInvite target:self action:@selector(invitePerson:)];
+//    
+//    [self setLeftNavWithIcon:@"" target:nil action:nil];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconInvite target:self action:@selector(invitePerson:) forSide:kNavBarSideTypeRight];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setNeedsRefresh)
                                                  name:kNotificationConnectNeedsUpdate object:nil];
+}
+
+- (void)showSearch {
+    [self showSearch:!_searchMode];
+}
+
+- (void)showSearch:(BOOL)showIt {
+    _searchMode = showIt;
+    
+    if (showIt) {
+        [_searchBar becomeFirstResponder];
+    } else {
+        [_searchBar resignFirstResponder];
+    }
+    
+    _searchBar.hidden = !showIt;
+
+    _searchBar.showsCancelButton = YES;
+    [UIView animateWithDuration:0.5 animations:^{
+        _searchBar.frame = CGRectMake(0, 0, width(self.view), 40);
+        _tableAccordion.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
+    }];
+    
+    //[self.view setNeedsLayout];
+}
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    if ([_searchBar.text length]) {
+        [self searchForPeople];
+    } else {
+        [self reloadSection:0];
+    }
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [self showSearch:NO];
+    [self reloadSection:0];
+    _searchBar.text = @"";
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [_searchBar resignFirstResponder];
+}
+
+- (void)searchForPeople {
+    __weak ConnectVC *weakSelf = self;
+    _roSearch = [OOAPI getUsersWithKeyword:_searchBar.text
+                                            success:^(NSArray *users) {
+                                                _searchResultsArray = users;
+                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                    [weakSelf reloadSection:0];
+                                                });
+                                            } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
+                                            }
+                          ];
 }
 
 - (void)invitePerson:(id)sender {
@@ -253,7 +333,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    [self doLayout];
+    _searchBar.frame = CGRectMake(0, 0, width(self.view), 40);
+    _tableAccordion.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
 }
 
 //------------------------------------------------------------------------------
@@ -420,44 +501,39 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [super viewDidAppear:animated];
 }
 
-//------------------------------------------------------------------------------
-// Name:    doLayout
-// Purpose: Programmatic equivalent of constraint equations.
-//------------------------------------------------------------------------------
-- (void)doLayout
-{
-    _tableAccordion.frame = self.view.bounds;
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger row = indexPath.row;
     NSInteger section = indexPath.section;
     UserObject *u = nil;
     
-    switch (section) {
-        case kConnectSectionFriends:
-            if (row < _suggestedUsersArray.count) {
-                    u = _suggestedUsersArray[row];
-            }
-            break;
-        case kConnectSectionFoodies:
-            if (row < _foodiesArray.count) {
-                u = _foodiesArray[row];
-            }
-            break;
-        case kConnectSectionInTheKnow:
-            if (row < _inTheKnowUsersArray.count) {
-                u = _inTheKnowUsersArray[row];
-            }
-            break;
-        case kConnectSectionRecentUsers:
-            if (row < _recentUsersArray.count) {
-                u = _recentUsersArray[row];
-            }
-            break;
-        default:
-            break;
+    if (_searchMode && [_searchBar.text length]) {
+        u = _searchResultsArray[row];
+    } else {
+        switch (section) {
+            case kConnectSectionFriends:
+                if (row < _suggestedUsersArray.count) {
+                        u = _suggestedUsersArray[row];
+                }
+                break;
+            case kConnectSectionFoodies:
+                if (row < _foodiesArray.count) {
+                    u = _foodiesArray[row];
+                }
+                break;
+            case kConnectSectionInTheKnow:
+                if (row < _inTheKnowUsersArray.count) {
+                    u = _inTheKnowUsersArray[row];
+                }
+                break;
+            case kConnectSectionRecentUsers:
+                if (row < _recentUsersArray.count) {
+                    u = _recentUsersArray[row];
+                }
+                break;
+            default:
+                break;
+        }
     }
     
     UserListTVC *cell;
@@ -482,7 +558,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
 {
-    return 4;
+    if (_searchMode && [_searchBar.text length]) {
+        return 1;
+    } else {
+        return 4;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -491,8 +571,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //------------------------------------------------------------------------------
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if (section >= _arraySectionHeaderViews.count)
+    if (_searchMode && [_searchBar.text length]) {
         return nil;
+    }
+    
+    if (section >= _arraySectionHeaderViews.count) {
+        return nil;
+    }
     
     ConnectTableSectionHeader *view = _arraySectionHeaderViews[section];
     view.delegate = self;
@@ -510,29 +595,35 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     NSInteger section = indexPath.section;
     NSInteger row = indexPath.row;
 
-    switch (section) {
-        case kConnectSectionFoodies:
-            if (row < _foodiesArray.count) {
-                haveData = YES;
-            }
-            break;
-        case kConnectSectionFriends:
-            if (row < _suggestedUsersArray.count) {
-                haveData = YES;
-            }
-            break;
-        case kConnectSectionInTheKnow:
-            if (row < _inTheKnowUsersArray.count) {
-                haveData = YES;
-            }
-            break;
-        case kConnectSectionRecentUsers:
-            if (row < _recentUsersArray.count) {
-                haveData = YES;
-            }
-            break;
-        default:
-            break;
+    if (_searchMode && [_searchBar.text length]) {
+        if (row < _foodiesArray.count) {
+            haveData = YES;
+        }
+    } else {
+        switch (section) {
+            case kConnectSectionFoodies:
+                if (row < _foodiesArray.count) {
+                    haveData = YES;
+                }
+                break;
+            case kConnectSectionFriends:
+                if (row < _suggestedUsersArray.count) {
+                    haveData = YES;
+                }
+                break;
+            case kConnectSectionInTheKnow:
+                if (row < _inTheKnowUsersArray.count) {
+                    haveData = YES;
+                }
+                break;
+            case kConnectSectionRecentUsers:
+                if (row < _recentUsersArray.count) {
+                    haveData = YES;
+                }
+                break;
+            default:
+                break;
+        }
     }
     
     if (!haveData) {
@@ -553,6 +644,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     NSInteger count;
+    
+    if (_searchMode && [_searchBar.text length]) return 0;
+    
     ConnectTableSectionHeader *hv = [_arraySectionHeaderViews objectAtIndex:section];
     
     switch (section) {
@@ -645,25 +739,29 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    switch (section) {
-        case kConnectSectionFriends:
-//            return _suggestedUsersArray.count;
-            return _canSeeFriends? _suggestedUsersArray.count:0;
-            break;
-        case kConnectSectionFoodies:
-//            return _foodiesArray.count;
-            return _canSeeFoodies? _foodiesArray.count:0;
-            break;
-        case kConnectSectionRecentUsers:
-//            return _recentUsersArray.count;
-            return _canSeeRecentUsers? _recentUsersArray.count:0;
-            break;
-        case kConnectSectionInTheKnow:
-//            return _inTheKnowUsersArray.count;
-            return _canSeeInTheKnow? _inTheKnowUsersArray.count:0;
-            break;
-        default:
-            break;
+    if (_searchMode && [_searchBar.text length]) {
+        return [_searchResultsArray count];
+    } else {
+        switch (section) {
+            case kConnectSectionFriends:
+    //            return _suggestedUsersArray.count;
+                return _canSeeFriends? _suggestedUsersArray.count:0;
+                break;
+            case kConnectSectionFoodies:
+    //            return _foodiesArray.count;
+                return _canSeeFoodies? _foodiesArray.count:0;
+                break;
+            case kConnectSectionRecentUsers:
+    //            return _recentUsersArray.count;
+                return _canSeeRecentUsers? _recentUsersArray.count:0;
+                break;
+            case kConnectSectionInTheKnow:
+    //            return _inTheKnowUsersArray.count;
+                return _canSeeInTheKnow? _inTheKnowUsersArray.count:0;
+                break;
+            default:
+                break;
+        }
     }
     return 0;
 }

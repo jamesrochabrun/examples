@@ -24,7 +24,7 @@
 @property (nonatomic,assign) BOOL isExpanded;
 @end
 
-@interface UserListVC : BaseVC <UserListTableSectionHeaderDelegate, UserListTVCDelegate>
+@interface UserListVC : SubBaseVC <UserListTableSectionHeaderDelegate, UserListTVCDelegate>
 @property (nonatomic, strong) NSMutableArray *usersArray;
 @property (nonatomic, strong) NSString* desiredTitle;
 @property (nonatomic, strong) UserObject* user;

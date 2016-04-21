@@ -60,8 +60,9 @@
         return;
     }
     
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-    
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
+
     self.incompleteEventsArray= @[];
     
     NavTitleObject *nto = [[NavTitleObject alloc]

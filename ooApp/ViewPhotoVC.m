@@ -463,6 +463,7 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.view addSubview:_numYums];
     [self.view addSubview:_yumButton];
     [self.view addSubview:_backgroundView];
+    [self.view bringSubviewToFront:_yumIndicator];
     [self.view sendSubviewToBack:_backgroundView];
 
     [self.view setAutoresizesSubviews:NO];
@@ -921,7 +922,7 @@ static CGFloat kNextPhotoTolerance = 40;
                 [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
                     dispatch_async(dispatch_get_main_queue(), ^{
                         weakSelf.yumIndicator.alpha = 1;
-                        [UIView animateKeyframesWithDuration:1 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
+                        [UIView animateKeyframesWithDuration:1.3 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{
                             weakSelf.yumIndicator.alpha = 0;
                         } completion:^(BOOL finished) {
                             [weakSelf.yumButton setSelected:YES];

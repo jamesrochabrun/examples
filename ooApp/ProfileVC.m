@@ -912,18 +912,20 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     }
     
     if (_viewingOwnProfile) {
-        [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton)];
+        [self removeNavButtonForSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight];
     } else {
-        [self setRightNavWithIcon:@"" target:nil action:nil];
+        [self removeNavButtonForSide:kNavBarSideTypeRight];
     }
     
 //    _lastShownUser = _userInfo.userID;
     
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers  == 1) {
-        [self setLeftNavWithIcon:nil target:nil action:NULL ];
+        [self removeNavButtonForSide:kNavBarSideTypeLeft];
     } else {
-        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:) ];
+        [self removeNavButtonForSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
     }
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
@@ -1422,11 +1424,12 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
 {
     _viewingLists = YES;
     [_listsAndPhotosLayout setShowingLists:YES];
-    
+
     if (_viewingOwnProfile) {
-        [self setRightNavWithIcon:kFontIconCreateList target:self action:@selector(handleUpperRightButton)];
+        [self removeNavButtonForSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:kFontIconCreateList target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight];
     }
-    
+
     _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;
     [self getLists];
 }
@@ -1437,7 +1440,8 @@ static NSString *const kProfileEmptyCellIdentifier = @"profileEmptyCell";
     [_listsAndPhotosLayout setShowingLists:NO];
     
     if (_viewingOwnProfile) {
-        [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton)];
+        [self removeNavButtonForSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight];
     }
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayPhotos.count==0;

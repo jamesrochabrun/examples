@@ -108,12 +108,14 @@ static NSString * const ListRowID = @"HLRCell";
     self.navTitle = _nto;
 
     if (_listToAddTo || _eventBeingEdited) {
-        [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+        [self removeNavButtonForSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
     } else {
-        [self setLeftNavWithIcon:@"" target:nil action:nil];
+        [self removeNavButtonForSide:kNavBarSideTypeLeft];
     }
     
-    [self setRightNavWithIcon:kFontIconDiscover target:self action:@selector(showOptions)];
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconDiscover target:self action:@selector(showOptions) forSide:kNavBarSideTypeRight];
     
     _minPrice = 0;
     _maxPrice = 3;
@@ -586,7 +588,7 @@ static NSString * const ListRowID = @"HLRCell";
     title.frame = frame;
     
     UILabel *snippet = [[UILabel alloc] init];
-    [snippet withFont:[UIFont fontWithName:kFontLatoThin size:kGeomFontSizeSubheader] textColor:kColorNavyBlue backgroundColor:kColorClear];
+    [snippet withFont:[UIFont fontWithName:kFontLatoLight size:kGeomFontSizeSubheader] textColor:kColorNavyBlue backgroundColor:kColorClear];
     snippet.text = marker.snippet;
     [snippet sizeToFit];
     

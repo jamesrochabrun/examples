@@ -66,11 +66,11 @@
 - (void)formatHeader {
     NSDictionary *titleAttributes =  @{
                         NSFontAttributeName:
-                            [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2]
+                            [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH1]
                         };
     NSDictionary *descriptionAttributes =  @{
                                        NSFontAttributeName:
-                                           [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2]
+                                           [UIFont fontWithName:kFontLatoLight size:kGeomFontSizeH1]
                                        };
     
     NSString *s = [NSString stringWithFormat:@"%@ %@", _introTitle, _introDescription];
@@ -106,7 +106,7 @@
     CGFloat h = height(self);
     CGFloat imageWidth = w*3/4;
     CGFloat imageY = h*1/3;
-    CGFloat imageHeight;
+    CGFloat imageHeight = 0;
     
     if (_phoneImage.image) {
         imageHeight = _phoneImage.image.size.height/_phoneImage.image.size.width*imageWidth;
@@ -123,22 +123,14 @@
     frame.size = s;
     _title.frame = frame;
     
-    if(IS_IPAD)
-        frame.origin = CGPointMake((self.frame.size.width - _title.frame.size.width)/2, 65); //85
-    else
-        frame.origin = CGPointMake((self.frame.size.width - _title.frame.size.width)/2, 45);
+    frame.origin = CGPointMake((self.frame.size.width - _title.frame.size.width)/2, (imageY-CGRectGetHeight(frame))/2);//45);
     
     _title.frame = frame;
     
     frame = _phoneImage.frame;
     
-    if (IS_IPAD) {
-        frame.origin = CGPointMake((self.frame.size.width - imageWidth)/2, imageY);
-        frame.size = CGSizeMake(imageWidth, imageHeight);
-    } else {
-        frame.origin = CGPointMake((self.frame.size.width - imageWidth)/2, imageY);
-        frame.size = CGSizeMake(imageWidth, imageHeight);
-    }
+    frame.origin = CGPointMake((self.frame.size.width - imageWidth)/2, imageY);
+    frame.size = CGSizeMake(imageWidth, imageHeight);
     
     _phoneImage.frame = frame;
 
