@@ -214,6 +214,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     _searchBar = [UISearchBar new];
     _searchBar.placeholder = kSearchPlaceholderPeople;
+    _searchBar.backgroundColor = UIColorRGBA(kColorNavBar);
+    _searchBar.barTintColor = UIColorRGBA(kColorNavBar);
     _searchBar.delegate = self;
     [self.view addSubview:_searchBar];
     _searchBar.alpha =0;
@@ -244,10 +246,12 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     if (showIt) {
         [_searchBar becomeFirstResponder];
     } else {
+        _searchBar.text = @"";
+        [self reloadSection:0];
         [_searchBar resignFirstResponder];
     }
     
-    _searchBar.showsCancelButton = YES;
+    //_searchBar.showsCancelButton = YES;
     [UIView animateWithDuration:0.5 animations:^{
         _searchBar.alpha = (showIt)? 1:0;
         _searchBar.frame = CGRectMake(0, 0, width(self.view), 40);
@@ -263,6 +267,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     if ([_searchBar.text length]) {
+        [_roSearch cancel];
         [self searchForPeople];
     } else {
         [self reloadSection:0];
@@ -694,29 +699,33 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     NSInteger section = indexPath.section;
     UserObject *u = nil;
     
-    switch (section) {
-        case kConnectSectionFriends:
-            if (row<_suggestedUsersArray.count) {
-                u = _suggestedUsersArray[row];
-            }
-            break;
-        case kConnectSectionFoodies:
-            if (row < _foodiesArray.count) {
-                u = _foodiesArray[row];
-            }
-            break;
-        case kConnectSectionInTheKnow:
-            if (row < _inTheKnowUsersArray.count) {
-                u = _inTheKnowUsersArray[row];
-            }
-            break;
-        case kConnectSectionRecentUsers:
-            if (row < _recentUsersArray.count) {
-                u = _recentUsersArray[row];
-            }
-            break;
-        default:
-            break;
+    if (_searchMode && [_searchBar.text length]) {
+        u = [_searchResultsArray objectAtIndex:row];
+    } else {
+        switch (section) {
+            case kConnectSectionFriends:
+                if (row<_suggestedUsersArray.count) {
+                    u = _suggestedUsersArray[row];
+                }
+                break;
+            case kConnectSectionFoodies:
+                if (row < _foodiesArray.count) {
+                    u = _foodiesArray[row];
+                }
+                break;
+            case kConnectSectionInTheKnow:
+                if (row < _inTheKnowUsersArray.count) {
+                    u = _inTheKnowUsersArray[row];
+                }
+                break;
+            case kConnectSectionRecentUsers:
+                if (row < _recentUsersArray.count) {
+                    u = _recentUsersArray[row];
+                }
+                break;
+            default:
+                break;
+        }
     }
     
     if (u) {

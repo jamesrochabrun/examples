@@ -893,6 +893,8 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     [_searchTable registerClass:[RestaurantTVCell class] forCellReuseIdentifier:kRestaurantCellIdentifier];
     _searchTable.rowHeight = kGeomHeightHorizontalListRow;
     [self.view addSubview:_searchTable];
+    _searchTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _searchTable.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _searchMode = NO;
     _searchBar = [UISearchBar new];
@@ -900,6 +902,9 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     _searchBar.alpha = 0;
     _searchBar.delegate = self;
     [self.view addSubview:_searchBar];
+    
+    _searchBar.backgroundColor = UIColorRGBA(kColorNavBar);
+    _searchBar.barTintColor = UIColorRGBA(kColorNavBar);
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
@@ -986,11 +991,12 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     if (showIt) {
         [_searchBar becomeFirstResponder];
     } else {
+        _searchBar.text = @"";
         [_searchBar resignFirstResponder];
         _searchTable.alpha = 0;
     }
     
-    _searchBar.showsCancelButton = YES;
+    //_searchBar.showsCancelButton = YES;
     [UIView animateWithDuration:0.5 animations:^{
         _searchBar.alpha = (showIt)? 1:0;
         _searchBar.frame = CGRectMake(0, 0, width(self.view), 40);
@@ -1005,6 +1011,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     if ([_searchBar.text length]) {
+        [_roSearchMyPlaces cancel];
         [self searchUserPlaces];
         _searchTable.alpha = 1;
     } else {
@@ -1058,7 +1065,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     RestaurantObject *ro = [_searchResultsArray objectAtIndex:indexPath.row];
     RestaurantVC *vc = [[RestaurantVC alloc] init];
-    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Search");
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Profile-Search");
     vc.title = trimString(ro.name);
     vc.restaurant = ro;
     //vc.eventBeingEdited = self.eventBeingEdited;

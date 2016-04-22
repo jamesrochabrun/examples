@@ -28,6 +28,7 @@ typedef enum {
 #define APP ((AppDelegate* )[UIApplication sharedApplication].delegate)
 
 #define LOCAL(STR) NSLocalizedString(STR, nil)
+//The problem with using this macro is that it is hard to step into the block with the debugger.
 #define ON_MAIN_THREAD(BLK) dispatch_async(dispatch_get_main_queue(),BLK)
 #define RUN_AFTER(MS,BLK) {dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW,MS * 1000000);dispatch_after(delayTime, dispatch_get_main_queue(), BLK); }
 #define IS_IPAD ( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad )

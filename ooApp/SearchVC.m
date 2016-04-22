@@ -223,24 +223,6 @@ typedef enum: char {
     [super viewDidAppear:animated];
 }
 
-//------------------------------------------------------------------------------
-// Name:    showSpinner
-// Purpose: Mechanism to give me diagnostic feedback.
-//------------------------------------------------------------------------------
-//- (void)showSpinner: (id)show
-//{
-//    float h =  self.view.bounds.size.height;
-//    float w =  self.view.bounds.size.width;
-//    CGRect r = CGRectMake(w/2-50,h/3,100,100);
-//    _activityView.frame = r;
-//    _activityView.hidden =  show ? NO:YES;
-//    if (show) {
-//        [_activityView startAnimating];
-//    } else {
-//        [_activityView stopAnimating];
-//    }
-//    [self.view bringSubviewToFront:_activityView];
-//}
 
 //------------------------------------------------------------------------------
 // Name:    doSearchFor
@@ -261,8 +243,6 @@ typedef enum: char {
             break;
             
         case FILTER_PEOPLE:  {
-//            [self showSpinner: @""];
-            
             NSString *searchText=_searchBar.text;
             NSLog (@"SEARCHING FOR USER:  %@",searchText);
             self.haveSearchedPeople=YES;
@@ -281,7 +261,6 @@ typedef enum: char {
         } break;
             
         case FILTER_YOU: {
-//            [self showSpinner: @""];
             _doingSearchNow=YES;
             
             self.haveSearchedYou=YES;
@@ -311,7 +290,6 @@ typedef enum: char {
         } break;
             
         case  FILTER_PLACES: {
-//            [self showSpinner: @""];
             _doingSearchNow=YES;
             
             self.haveSearchedPlaces=YES;
@@ -346,9 +324,6 @@ typedef enum: char {
                                                              
                                                          } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                              NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
-//                                                             [weakSelf performSelectorOnMainThread:@selector(showSpinner:)
-//                                                                                        withObject:nil
-//                                                                                     waitUntilDone:NO];
                                                          }
                                   ];
         } break;
@@ -587,7 +562,6 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)loadRestaurants: (NSArray*)array
 {
-//    [self showSpinner:nil];
     self.doingSearchNow = NO;
     self.fetchOperation = nil;
     
@@ -607,7 +581,6 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)loadPeople:(NSArray *)array
 {
-//    [self showSpinner:nil];
     self.doingSearchNow = NO;
     self.fetchOperation = nil;
     
@@ -626,7 +599,6 @@ typedef enum: char {
 //------------------------------------------------------------------------------
 - (void)cancelSearch
 {
-//    [self showSpinner:nil];
     [self.fetchOperation cancel];
     self.fetchOperation = nil;
     self.doingSearchNow = NO;
