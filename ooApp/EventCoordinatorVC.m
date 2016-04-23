@@ -18,13 +18,13 @@
 #import "TileCVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
-#import "SearchVC.h"
+#import "ExploreVC.h"
 #import "RestaurantVC.h"
 #import "OOStripHeader.h"
 #import "PieView.h"
 #import "EventParticipantVC.h"
 #import "ProfileVC.h"
-#import "ExploreVC.h"
+#import "SearchVC.h"
 #import "ParticipantsView.h"
 
 #define kGeomSeparatorHeight 25
@@ -1431,7 +1431,7 @@
     }
     _transitioning= YES;
     
-    ExploreVC*vc= [[ExploreVC  alloc] init];
+    SearchVC *vc= [[SearchVC  alloc] init];
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];
 }

@@ -15,7 +15,7 @@
 #import "ListObject.h"
 #import "RestaurantVC.h"
 #import "ListsVC.h"
-#import "ExploreVC.h"
+#import "SearchVC.h"
 
 @interface RestaurantListVC ()
 
@@ -174,7 +174,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 }
 
 - (void)addRestaurantsFromExplore {
-    ExploreVC *vc = [[ExploreVC alloc] init];
+    SearchVC *vc = [[SearchVC alloc] init];
     vc.listToAddTo = _listItem;
     [self.navigationController pushViewController:vc animated:YES];
 }

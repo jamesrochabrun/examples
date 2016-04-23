@@ -14,7 +14,7 @@
 #import "OOAPI.h"
 #import "ListsVC.h"
 #import "AppDelegate.h"
-#import "ExploreVC.h"
+#import "SearchVC.h"
 
 @interface EmptyListVC ()
 
@@ -145,7 +145,7 @@
 
 - (void)userPressedExploreButton:(id)sender
 {
-    ExploreVC *vc = [[ExploreVC alloc] init];
+    SearchVC *vc = [[SearchVC alloc] init];
     vc.listToAddTo = _listItem;
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];

@@ -2,18 +2,28 @@
 //  SearchVC.h
 //  ooApp
 //
-//  Created by Zack Smith on 9/28/15.
+//  Created by Anuj Gujar on 7/16/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseVC.h"
-#import "EventObject.h"
-#import "UserTVCell.h"
-#import "ChangeLocationVC.h"
 
-@interface SearchVC : BaseVC <UISearchBarDelegate, UserTVCellDelegate, ChangeLocationVCDelegate>
-@property (nonatomic,strong) EventObject *eventBeingEdited;
+#import "BaseVC.h"
+#import "ListObject.h"
+#import "EventObject.h"
+//#import "OptionsVC.h"
+//#import "ChangeLocationVC.h"
+
+@interface SearchVC : BaseVC <UITableViewDataSource,
+                                UITableViewDelegate,
+                                //OptionsVCDelegate,
+                                //ChangeLocationVCDelegate,
+                                UISearchBarDelegate>
+
+@property (nonatomic, strong) ListObject *listToAddTo;
+@property (nonatomic, strong) EventObject *eventBeingEdited;
+
+- (void)getRestaurants;
 
 @end
 

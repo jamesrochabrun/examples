@@ -2,430 +2,161 @@
 //  ExploreVC.m
 //  ooApp
 //
-//  Created by Anuj Gujar on 7/16/15.
+//  Created by Zack Smith on 9/28/15.
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
-#import "ExploreVC.h"
-#import <GoogleMaps/GoogleMaps.h>
+#import "Common.h"
+#import "AppDelegate.h"
+#import "DefaultVC.h"
 #import "OOAPI.h"
 #import "UserObject.h"
 #import "RestaurantObject.h"
-#import "RestaurantTVCell.h"
-#import "DebugUtilities.h"
-#import "Settings.h"
-#import "LocationManager.h"
-#import "RestaurantListVC.h"
-#import "Common.h"
-#import "RestaurantVC.h"
-#import "TimeUtilities.h"
-#import "OOMapMarker.h"
-#import "OOFilterView.h"
 #import "ListObject.h"
+#import "ExploreVC.h"
+#import "LocationManager.h"
+#import "Settings.h"
+#import "RestaurantTVCell.h"
+#import "RestaurantVC.h"
+#import "UserTVCell.h"
+#import "ProfileVC.h"
+#import "OOFilterView.h"
+#import "AutoCompleteObject.h"
 #import "TagObject.h"
-#import "AppDelegate.h"
 
-@interface ExploreVC () <GMSMapViewDelegate>
+typedef enum: char {
+    FILTER_NONE = -1,
+    FILTER_PLACES = 1,
+    FILTER_PEOPLE = 0,
+    FILTER_YOU = 2,
+} FilterType;
 
-@property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) NSArray *restaurants;
-@property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
-@property (nonatomic, assign) CLLocationCoordinate2D desiredLocation;
-@property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
-@property (nonatomic, strong) GMSMapView *mapView;
-@property (nonatomic, strong) GMSCameraPosition *camera;
-@property (nonatomic, strong) NSMutableArray *mapMarkers;
-//@property (nonatomic, strong) OOFilterView *filterView;
-@property (nonatomic, assign) BOOL nearby;
-@property (nonatomic, strong) ListObject *listToDisplay;
-@property (nonatomic, strong) NavTitleObject *nto;
-@property (nonatomic, strong) ListObject *defaultListObject;
-@property (nonatomic, strong) NSMutableSet *tags;
-@property (nonatomic) NSUInteger minPrice, maxPrice;
-@property (nonatomic, strong) UIButton *resetLocation;
+#define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER  @"searchRestaurantsCell"
+#define SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchRestaurantsCellEmpty"
+#define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER  @"searchPeopleCell"
+#define SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY  @"searchPeopleCellEmpty"
+
+@interface ExploreVC ()
+
+@property (nonatomic, strong) UILabel *labelMessageAboutGoogle;
+@property (nonatomic, strong) OOFilterView *filterView;
+@property (nonatomic, strong) UIButton *buttonCancel;
+@property (nonatomic, strong) UITableView *tableRestaurants;
 @property (nonatomic, strong) UISearchBar *searchBar;
-@property (nonatomic, strong) UISearchBar *locationSearchBar;
-@property (nonatomic, assign) BOOL showMap;
-@property (nonatomic, strong) NSArray *mapContraints;
-@property (nonatomic, strong) UITableView *locationsTable;
-@property (nonatomic, strong) NSArray *locations;
-
+@property (nonatomic, strong) UITableView *tablePeople;
+@property (nonatomic, assign) FilterType currentFilter;
+@property (nonatomic, strong) NSArray *restaurantsArray;
+@property (nonatomic, strong) NSArray *peopleArray;
+@property (nonatomic, strong) AFHTTPRequestOperation *fetchOperation;
+@property (atomic, assign) BOOL doingSearchNow;
+@property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage1;
+@property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage2;
+@property (nonatomic, strong) UILabel *labelPreSearchInstructiveMessage3;
+@property (nonatomic, assign) BOOL haveSearchedPeople, haveSearchedPlaces, haveSearchedYou;
+@property (nonatomic, strong) UIButton *changeLocationButton;
+@property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
 @end
-
-static NSString *const ListRowID = @"HLRCell";
-static NSString *const locationCellIdentifier = @"locationCell";
-static NSUInteger const kMinCharactersForAutoSearch = 3;
 
 @implementation ExploreVC
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-
-    }
-    return self;
+- (void)dealloc
+{
 }
 
-- (void)viewDidLoad {
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
-    _showMap = YES;
-
-    _searchBar = [UISearchBar new];
-    _searchBar.placeholder = kSearchPlaceholderPlaces;
-    _searchBar.frame = CGRectMake(0, 0, 200, 60);
-    _searchBar.delegate = self;
-    _searchBar.enablesReturnKeyAutomatically = NO;
-    
-    _locationSearchBar = [UISearchBar new];
-    _locationSearchBar.backgroundColor = UIColorRGBA(kColorNavBar);
-    _locationSearchBar.barTintColor = UIColorRGBA(kColorNavBar);
-    _locationSearchBar.placeholder = kSearchPlaceholderPlaces;
-    _locationSearchBar.delegate = self;
-    _locationSearchBar.placeholder = LOCAL(@"Current Location");
-    _locationSearchBar.enablesReturnKeyAutomatically = NO;
-
-    UILabel *l = [UILabel new];
-    [l withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorText backgroundColor:kColorClear];
-    l.text = kFontIconLocation;
-    [l sizeToFit];
-    [_locationSearchBar setImage:[UIImage imageFromView:l] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
-    _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
-    _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
-    _locationSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-
-    
-    _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_locationSearchBar];
-    
-
-    _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
-    _mapView.translatesAutoresizingMaskIntoConstraints = NO;
-    _mapView.mapType = kGMSTypeNormal;
-    _mapView.myLocationEnabled = YES;
-    _mapView.settings.myLocationButton = NO;
-    _mapView.settings.scrollGestures = YES;
-    _mapView.settings.zoomGestures = YES;
-    _mapView.settings.rotateGestures = NO;
-    _mapView.delegate = self;
-    [_mapView setMinZoom:0 maxZoom:20];
-    _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    
-    _tableView = [[UITableView alloc] init];
-    [self.view addSubview:_tableView];
-    _tableView.delegate = self;
-    _tableView.dataSource = self;
-    _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableView.rowHeight = kGeomHeightHorizontalListRow;
-    _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    
-    [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
-    
-    _locationsTable = [UITableView new];
-    _locationsTable.dataSource = self;
-    _locationsTable.delegate = self;
-    _locationsTable.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    _locationsTable.rowHeight = 44;
-    _locationsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [_locationsTable registerClass:[UITableViewCell class] forCellReuseIdentifier:locationCellIdentifier];
-    _locationsTable.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_locationsTable];
-    _locationsTable.alpha = 0;
-    
-    _resetLocation = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_resetLocation withIcon:kFontIconLocation fontSize:kGeomIconSize width:30 height:30 backgroundColor:kColorBlack target:self selector:@selector(resetLocationToHere:)];
-    [_resetLocation setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-//    _changeLocationButton.layer.borderColor = UIColorRGBA(kColorGrayMiddle).CGColor;
-    [self.view addSubview: _resetLocation];
-    _resetLocation.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:14 bearing:0 viewingAngle:1];
-    
-    _tags = [NSMutableSet set];
-    
-    [self.view addSubview:_mapView];
-
-    [self.view bringSubviewToFront:_locationsTable];
-    _nearby = YES;
-    
-    _nto = [[NavTitleObject alloc] initWithHeader:@"Explore" subHeader:nil];
-    self.navTitle = _nto;
-    self.navigationItem.titleView = _searchBar;
-
-    if (_listToAddTo || _eventBeingEdited) {
-        [self removeNavButtonForSide:kNavBarSideTypeLeft];
-        [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
-    } else {
-        [self removeNavButtonForSide:kNavBarSideTypeLeft];
-    }
-    
-    [self removeNavButtonForSide:kNavBarSideTypeRight];
-    [self addNavButtonWithIcon:kFontIconMap target:self action:@selector(toggleMap) forSide:kNavBarSideTypeRight];
-    
-    _minPrice = 0;
-    _maxPrice = 3;
-    
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [self populateOptions];
-}
-
-- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    if (searchBar == _locationSearchBar) {
-        _locationsTable.alpha = 1;
-    } else {
-        _locationsTable.alpha = 0;
-    }
-}
-
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    if (searchBar == _locationSearchBar) {
-        if ([_locations count]) {
-            _locationsTable.alpha = 0;
-            CLPlacemark *placemark = [_locations objectAtIndex:0];
-            _locationSearchBar.text = [Common locationString:placemark];
-            _currentLocation = placemark.location.coordinate;
-            [self moveToCurrentLocation];
-        }
-    } else {
-        
-    }
-}
-
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    if (searchBar == _locationSearchBar) {
-        [self searchLocations];
-    } else {
-        if ([searchText length] >= kMinCharactersForAutoSearch) {
-            [self getRestaurants];
-        }
-    }
-}
-
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [_searchBar resignFirstResponder];
-    if ([searchBar.text length] < kMinCharactersForAutoSearch) {
-        [self getRestaurants];
-    }
-}
-
-- (void)resetLocationToHere:(id)sender {
-    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
-    [self moveToCurrentLocation];
-}
-
-- (void)searchLocations {
-    __weak  ExploreVC *weakSelf = self;
-    CLGeocoder * geocoder = [[CLGeocoder alloc] init];
-    CLRegion *region = [[CLRegion alloc] init];
     
+    _currentFilter=FILTER_NONE;
     
-    [geocoder geocodeAddressString:_locationSearchBar.text inRegion:region
-                 completionHandler:^(NSArray* placemarks, NSError* error) {
-                     _locations = placemarks;
-                     if (![_locations count]) {
-                         NSLog(@"Could not find a location that matched: %@", _locationSearchBar.text);
-                     } else {
-                         NSLog(@"Found %lu locations that matched: %@", (unsigned long)[_locations count], _locationSearchBar.text);
-                         for (CLPlacemark *pm in placemarks) {
-                             NSLog(@"placemark name: %@", pm.addressDictionary);
-                         }
-                         
-                     }
-                     [weakSelf.locationsTable reloadData];
-                 }];
+    _currentLocation= CLLocationCoordinate2DMake(0, 0);
+    
+    NavTitleObject *nto;
+    nto = [[NavTitleObject alloc]
+           initWithHeader:LOCAL(@"Search")
+           subHeader:LOCAL(@"around here")];
+    
+    self.navTitle = nto;
+    
+    _searchBar = [UISearchBar new];
+    [self.view addSubview:_searchBar];
+    _searchBar.searchBarStyle = UISearchBarStyleMinimal;
+    _searchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _searchBar.placeholder = LOCAL(@"Type your search here");
+    _searchBar.barTintColor = UIColorRGBA(kColorText);
+    _searchBar.keyboardType = UIKeyboardTypeAlphabet;
+    _searchBar.delegate = self;
+    _searchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
+    _searchBar.keyboardType = UIKeyboardTypeAlphabet;
+    _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
+
+    UITextField *searchTextField = [_searchBar valueForKey:@"_searchField"];
+    searchTextField.textAlignment = NSTextAlignmentCenter;
+    searchTextField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    
+//    _buttonCancel= makeButton(self.view, LOCAL(@"Cancel"), kGeomFontSizeH2, UIColorRGBA(kColorBordersAndLines), UIColorRGBA(kColorClear), self, @selector(userPressedCancel:), .5);
+    _buttonCancel = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_buttonCancel withText:@"Cancel" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorBordersAndLines target:self selector:@selector(userPressedCancel:)];
+    [self.view addSubview:_buttonCancel];
+    
+    self.filterView = [[OOFilterView alloc] init];
+    [ self.view addSubview:_filterView];
+    [_filterView addFilter:LOCAL(@"People") target:self selector:@selector(userTappedOnPeopleFilter:)];//  index 0
+    [_filterView addFilter:LOCAL(@"Places") target:self selector:@selector(userTappedOnPlacesFilter:)];//  index 1
+    [_filterView addFilter:LOCAL(@"You") target:self selector:@selector(userTappedOnYouFilter:)];//  index 2
+    
+    self.tableRestaurants = makeTable(self.view,self);
+    _tableRestaurants.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [_tableRestaurants registerClass:[RestaurantTVCell class]
+              forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER];
+    [_tableRestaurants registerClass:[UITableViewCell class]
+              forCellReuseIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY];
+    
+    self.tablePeople = makeTable(self.view,self);
+    _tablePeople.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [_tablePeople registerClass:[UserTVCell class]
+         forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER];
+    [_tablePeople registerClass:[UITableViewCell class]
+         forCellReuseIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY];
+    
+//    self.activityView=[UIActivityIndicatorView new];
+//    [self.view addSubview:_activityView];
+//    _activityView.hidden =  YES;
+//    [_activityView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+    
+    _tablePeople.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableRestaurants.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    self.labelPreSearchInstructiveMessage1 = makeLabel( self.view, @"Find Your Foodies (Search for Users by Name)", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage1.textColor = UIColorRGBA(kColorGrayMiddle);
+    
+    self.labelPreSearchInstructiveMessage2 = makeLabel( self.view, @"Search for places on your lists", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage2.textColor = UIColorRGBA(kColorGrayMiddle);
+    
+    self.labelPreSearchInstructiveMessage3 = makeLabel( self.view, @"Search for places to eat\rPowered by Google™", kGeomFontSizeHeader);
+    self.labelPreSearchInstructiveMessage3.textColor = UIColorRGBA(kColorGrayMiddle);
+    
+    [self changeFilter:FILTER_PLACES];
+
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
 }
 
-
-//- (void)userPressedChangeLocation: (UIButton*)sender
-//{
-//    UINavigationController *nc = [[UINavigationController alloc] init];
-//    
-//    ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
-//    vc.delegate = self;
-//    [nc addChildViewController:vc];
-//    
-//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-//    [nc.navigationBar setTranslucent:YES];
-//    nc.view.backgroundColor = [UIColor clearColor];
-//    
-//    [self.navigationController presentViewController:nc animated:YES completion:^{
-//        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-//    }];
-//
-//}
-
-//- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC {
-//    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        ;
-//    }];
-//}
-
-//- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark {
-//    _currentLocation = placemark.location.coordinate;
-//    [self moveToCurrentLocation];
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        ;
-//    }];
-//}
-
-- (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
-    NSLog(@"The map became idle at %f,%f", position.target.latitude, position.target.longitude);
-    _desiredLocation = position.target;
-    [self getRestaurants];
-}
-
-//- (void)showOptions {
-//    UINavigationController *nc = [[UINavigationController alloc] init];
-//    
-//    OptionsVC *vc = [[OptionsVC alloc] init];
-//    vc.delegate = self;
-//    vc.view.frame = CGRectMake(0, 0, 40, 44);
-//    [nc addChildViewController:vc];
-//    
-//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-//    [nc.navigationBar setTranslucent:YES];
-//    nc.view.backgroundColor = [UIColor clearColor];
-//
-//    vc.userTags = _tags;
-//    [vc setMinPrice:_minPrice maxPrice:_maxPrice];
-//    
-//    [self.navigationController presentViewController:nc animated:YES completion:^{
-//        ;
-//    }];
-//}
-
-//- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags andMinPrice:(NSUInteger)minPrice andMaxPrice:(NSUInteger)maxPrice {
-//    _tags = [NSMutableSet setWithSet:tags];
-//    _minPrice = minPrice;
-//    _maxPrice = maxPrice;
-//    _listToDisplay = nil;
-//    //[_filterView setNeedsLayout];
-//    _nearby = NO;
-//    [self getRestaurants];
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        ;
-//    }];
-//}
-
-- (void)populateOptions {
-    __weak ExploreVC *weakSelf = self;
-    
-    self.dropDownList.delegate = self;
-    OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:[Settings sharedInstance].userObject.userID
-         withRestaurant:0
-             includeAll:YES
-                success:^(NSArray *lists) {
-        if ([lists count]) {
-            _defaultListObject = [[ListObject alloc] init];
-            _defaultListObject.listID = 0;
-            _defaultListObject.name = [self getFilteredListName];
-            NSMutableArray *theLists = [NSMutableArray arrayWithObject:_defaultListObject];
-            
-            [theLists addObjectsFromArray:lists];
-            weakSelf.dropDownList.options = theLists;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.navTitleView setDDLState:YES];
-            });
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
-    }];
-}
-
-- (void)dropDownList:(DropDownListTVC *)dropDownList optionTapped:(id)object {
-    if (![object isKindOfClass:[ListObject class]]) return;
-    _listToDisplay = (ListObject *)object;
-    
-    if (_listToDisplay.listID) {
-        _nto.subheader = [NSString stringWithFormat:@"your \"%@\" places", _listToDisplay.name];
-    } else {
-        _defaultListObject.name = [self getFilteredListName];;
-        _nto.subheader = _defaultListObject.name;
-    }
-    self.navTitle = _nto;
-    self.navigationItem.titleView = _searchBar;
-    
-    [self displayDropDown:NO];
-    [self getRestaurants];
-}
-
-- (void)selectNearby {
-    _nearby = YES;
-    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *mm = (OOMapMarker *)obj;
-        mm.map = nil;
-    }];
-    [_mapMarkers removeAllObjects];
-    [self getRestaurants];
-}
-
-- (void)selectTopSpots {
-    _nearby = NO;
-    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *mm = (OOMapMarker *)obj;
-        mm.map = nil;
-    }];
-    [_mapMarkers removeAllObjects];
-    [self getRestaurants];
-}
-
-- (void)toggleMap {
-    [self.view removeConstraints:_mapContraints];
-    _showMap = !_showMap;
-    [self.view setNeedsUpdateConstraints];
-    [UIView animateWithDuration:0.5 animations:^{
-        [self.view layoutIfNeeded];
-    }];
-}
-
-- (void)updateViewConstraints {
-    [super updateViewConstraints];
-    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((_showMap)?(height(self.view)-kGeomHeightNavBarStatusBar)*0.4:0), @"mapWidth" : @(width(self.view))};
-    
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _locationSearchBar, _locationsTable, _resetLocation);
-    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-    
-    _mapContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar(40)]-[_mapView(mapHeight)]-[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
-    
-    [self.view addConstraints:_mapContraints];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation(40)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationSearchBar]-[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar][_resetLocation(40)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-}
-
-- (void)setListToAddTo:(ListObject *)listToAddTo
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillLayoutSubviews
 {
-    if (_listToAddTo == listToAddTo) return;
-    _listToAddTo = listToAddTo;
-    
-    __weak  ExploreVC *weakSelf = self;
-    if (_listToAddTo && _listToAddTo.listID) {
-        OOAPI*api= [[OOAPI alloc] init];
-        [api getRestaurantsWithListID: _listToAddTo.listID
-                          andLocation:[LocationManager sharedInstance].currentUserLocation
-                              success:^(NSArray *restaurants) {
-                                  ON_MAIN_THREAD(^ {
-                                      weakSelf.listToAddTo.venues= restaurants.mutableCopy;
-                                      [weakSelf.tableView reloadData];
-                                  });
-                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                  ;
-                              }];
-    }
-    
-}
-
-- (void)done:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    [super viewWillLayoutSubviews];
+    [self doLayout];
 }
 
 //------------------------------------------------------------------------------
@@ -437,398 +168,745 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [super viewWillAppear:animated];
     
     ANALYTICS_SCREEN( @( object_getClassName(self)));
-
-    [self.navigationController setNavigationBarHidden:NO animated:animated];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(locationBecameAvailable:)
-                                                 name:kNotificationLocationBecameAvailable object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(locationBecameUnavailable:)
-                                                 name:kNotificationLocationBecameUnavailable object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateLocationIfRequired)
-                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
     
-    [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
-    [_tableView addSubview:self.refreshControl];
-    _tableView.alwaysBounceVertical = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuOpened:)
+                                                 name:kNotificationMenuWillOpen
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidden:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
 }
 
-- (void)forceRefresh:(id)sender {
-    [self updateLocation];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIApplicationDidBecomeActiveNotification
-                                                  object:nil];
+//------------------------------------------------------------------------------
+// Name:    viewWillDisappear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super viewWillDisappear:animated];
 }
 
-- (void)updateLocationIfRequired {
-    CLLocationCoordinate2D currentLocation = [LocationManager sharedInstance].currentUserLocation;
-    CLLocation *loc1 = [[CLLocation alloc] initWithLatitude:currentLocation.latitude longitude:currentLocation.longitude];
-    CLLocation *loc2 = [[CLLocation alloc] initWithLatitude:_desiredLocation.latitude longitude:_desiredLocation.longitude];
-    
-    if ([loc1 distanceFromLocation:loc2] > kMetersMovedBeforeForcedUpdate) {
-        [self updateLocation];
-        [self getRestaurants];
-        APP.dateLeft = [NSDate date];
-        return;
-    }
-    
-    if (!APP.dateLeft || (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:0 minutes:45 second:00])) {
-        [self updateLocation];
-        APP.dateLeft = [NSDate date];
-    }
-}
-
-- (void)locationBecameAvailable:(id)notification
+//------------------------------------------------------------------------------
+// Name:    keyboardHidden
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)keyboardHidden:(NSNotification *)not
 {
-    NSLog(@"LOCATION BECAME AVAILABLE FROM iOS");
-    __weak ExploreVC *weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf updateLocation];
-        [weakSelf getRestaurants];
-    });
+    _tableRestaurants.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    _tablePeople.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
-- (void)locationBecameUnavailable:(id)notification
+//------------------------------------------------------------------------------
+// Name:    keyboardShown
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)keyboardShown:(NSNotification *)not
 {
-    NSLog(@"LOCATION IS NOT AVAILABLE FROM iOS");
+    NSDictionary *info = [not userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    float keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
+    ? kbSize.width : kbSize.height;
+    _tableRestaurants.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
+    _tablePeople.contentInset= UIEdgeInsetsMake(0, 0, keyboardHeight, 0);
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewDidAppear
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self verifyTrackingIsOkay];
 }
 
-- (void)verifyTrackingIsOkay
+
+//------------------------------------------------------------------------------
+// Name:    doSearchFor
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)doSearchFor: (NSString*)expression
 {
-    if (_currentLocation.longitude == 0) {
-        TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation];
-        if (TRACKING_UNKNOWN == c) {
-            [[LocationManager sharedInstance] askUserWhetherToTrack];
+    if (self.doingSearchNow) {
+        NSLog (@"CANNOT SEARCH NOW");
+        return;
+    }
+    
+    self.doingSearchNow= YES;
+    __weak ExploreVC *weakSelf= self;
+    
+    switch (_currentFilter) {
+        case  FILTER_NONE:
+            break;
+            
+        case FILTER_PEOPLE:  {
+            NSString *searchText=_searchBar.text;
+            NSLog (@"SEARCHING FOR USER:  %@",searchText);
+            self.haveSearchedPeople=YES;
+            [self showAppropriateTableAnimated:NO];
+            
+            self.fetchOperation= [OOAPI getUsersWithKeyword:searchText
+                                                    success:^(NSArray *users) {
+                                                        [weakSelf performSelectorOnMainThread:@selector(loadPeople:)
+                                                                                   withObject:users
+                                                                                waitUntilDone:NO];
+                                                        
+                                                    } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                        NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
+                                                    }
+                                  ];
+        } break;
+            
+        case FILTER_YOU: {
+            _doingSearchNow=YES;
+            
+            self.haveSearchedYou=YES;
+            [self showAppropriateTableAnimated:NO];
+            
+            CLLocationCoordinate2D location=[LocationManager sharedInstance].currentUserLocation;
+            if (!location.latitude && !location.longitude) {
+                // XX
+                NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
+                location.latitude = 37.775;
+                location.longitude = -122.4183333;
+            }
+            
+            UserObject*user= [Settings sharedInstance].userObject;
+            self.fetchOperation= [OOAPI getRestaurantsViaYouSearchForUser: user.userID
+                                                                 withTerm: expression
+                                                                  success:^(NSArray *restaurants) {
+                                                                      [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
+                                                                                                 withObject:restaurants
+                                                                                              waitUntilDone:NO];
+                                                                      
+                                                                  } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                                      NSLog  (@"ERROR FETCHING YOU'S RESTAURANTS: %@",e );
+
+                                                                  }
+                                  ];
+        } break;
+            
+        case  FILTER_PLACES: {
+            _doingSearchNow=YES;
+            
+            self.haveSearchedPlaces=YES;
+            [self showAppropriateTableAnimated:NO];
+            
+            CLLocationCoordinate2D location=_currentLocation;
+            if (!location.latitude && !location.longitude) {
+                location=  [LocationManager sharedInstance].currentUserLocation;
+                if (!location.latitude && !location.longitude) {
+                    
+                    NSLog (@"NOTE: WE DO NOT HAVE USERS LOCATION... USING SAN FRAN.");
+                    location.latitude = 37.775;
+                    location.longitude = -122.4183333;
+                }
+            }
+            
+            OOAPI *api= [[OOAPI alloc] init];
+            
+            self.fetchOperation = [api getRestaurantsWithKeywords: @[expression]
+                                                      andLocation:location
+                                                        andFilter: @"" // Not used.
+                                                       andRadius:kMaxSearchRadius
+                                                     andOpenOnly:NO
+                                                         andSort:kSearchSortTypeDistance
+                                                        minPrice:0
+                                                        maxPrice:3
+                                                          isPlay:NO
+                                                         success:^(NSArray *restaurants) {
+                                                             [weakSelf performSelectorOnMainThread:@selector(loadRestaurants:)
+                                                                                        withObject:restaurants
+                                                                                     waitUntilDone:NO];
+                                                             
+                                                         } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
+                                                             NSLog  (@"ERROR FETCHING RESTAURANTS: %@",e );
+                                                         }
+                                  ];
+        } break;
+    }
+    
+}
+
+//------------------------------------------------------------------------------
+// Name:    changeFilter
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)changeFilter:(FilterType)which
+{
+    if  (which == _currentFilter ) {
+        return;
+    }
+    
+    if (which == FILTER_PEOPLE) {
+        _searchBar.placeholder = kSearchPlaceholderPeople;
+    } else if (which == FILTER_PLACES) {
+        _searchBar.placeholder = kSearchPlaceholderPlaces;
+    } else if (which == FILTER_YOU) {
+        _searchBar.placeholder = kSearchPlaceholderYou;
+    } else {
+        _searchBar.placeholder = @"Type your search here";
+    }
+    [_filterView setCurrent:which];
+    
+    self.currentFilter = which;
+    
+    [self showAppropriateTableAnimated:NO];
+
+    // RULE: If the user was searching for "Fred" in the people category and
+    //  then switched to the places category, then we should redo the search
+    //  in the new category.
+    //
+    if (_searchBar.text.length) {
+        [self doSearchFor:_searchBar.text];
+    }
+}
+
+//------------------------------------------------------------------------------
+// Name:    searchBarSearchButtonClicked
+// Purpose:
+//------------------------------------------------------------------------------
+- (void) searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    [_searchBar resignFirstResponder];
+    [self doSearchFor:_searchBar.text];
+}
+
+#pragma mark - LOCATION CHANGE
+
+- (void)userPressedChangeLocation: (UIButton*)sender
+{
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
+    vc.delegate = self;
+    [nc addChildViewController:vc];
+    
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = UIColorRGBA(kColorClear);
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    }];
+}
+
+- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
+    _currentLocation = placemark.location.coordinate;
+    self.navTitle.subheader = [Common locationString:placemark];
+    [self.navTitleView setNavTitle:self.navTitle];
+    if ([_searchBar.text length] && _currentFilter == FILTER_PLACES) {
+        [self doSearchFor:_searchBar.text];
+    }
+}
+
+- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC {
+    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
+    self.navTitle.subheader = @"around here";
+    [self.navTitleView setNavTitle:self.navTitle];
+    if ([_searchBar.text length] && _currentFilter == FILTER_PLACES) {
+        [self doSearchFor:_searchBar.text];
+    }
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
+}
+
+#pragma mark - SEARCH BAR
+
+//------------------------------------------------------------------------------
+// Name:    textDidChange
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    NSString* text = _searchBar.text;
+    if (!text.length) {
+        // Clear the appropriate table; no need to start a search.
+        if (_currentFilter == FILTER_PEOPLE ) {
+            [self loadPeople:@[]];
+        } else {
+            [self loadRestaurants:@[]];
         }
-        else if (TRACKING_YES == c) {
-            [self updateLocation];
-            [self getRestaurants];
+        return;
+    }
+    
+    if (self.doingSearchNow) {
+        [self cancelSearch];
+    }
+    
+    if ( _currentFilter == FILTER_PEOPLE  || _currentFilter == FILTER_YOU ) {
+        [self doSearchFor: text];
+    } else {
+        [self  doLayout];
+        
+        // RULE: In order to minimize the number of Google search lookups, we only search when the user taps on Search.
+        if ( text.length >= 3) {
+            [self doSearchFor: text];
+        } else {
+            [self clearResultsTables];
         }
     }
 }
 
-- (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
-    NSLog(@"You tapped at %f,%f", coordinate.latitude, coordinate.longitude);
-    _desiredLocation = coordinate;
-    [self getRestaurants];
-}
-
-- (void)updateLocation
+- (void)enableMessageLabel:(int)n
 {
-    self.currentLocation = [[LocationManager sharedInstance] currentUserLocation];
-    [self moveToCurrentLocation];
+    _labelPreSearchInstructiveMessage1.alpha= n==0?1:0;
+    _labelPreSearchInstructiveMessage2.alpha= n==1?1:0;
+    _labelPreSearchInstructiveMessage3.alpha= n==2?1:0;
 }
 
-- (void)moveToCurrentLocation
+- (void)showAppropriateTableAnimated:(BOOL)animated
 {
-    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:_camera.zoom bearing:_camera.bearing viewingAngle:_camera.viewingAngle];
-    [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
-    _desiredLocation = _currentLocation;
+    [self.view bringSubviewToFront:_labelPreSearchInstructiveMessage1];
+    [self.view bringSubviewToFront:_labelPreSearchInstructiveMessage2];
+    [self.view bringSubviewToFront:_labelPreSearchInstructiveMessage3];
+    __weak ExploreVC *weakSelf = self;
+    switch (_currentFilter) {
+        case FILTER_PEOPLE:
+            _searchBar.placeholder = kSearchPlaceholderPeople;
+            [self removeNavButtonForSide:kNavBarSideTypeRight];
+
+            _tablePeople.hidden = NO;
+            _tableRestaurants.hidden= YES;
+
+            if (![_peopleArray count]) {
+                if  (animated ) {
+                    [UIView animateWithDuration:.2
+                                     animations:^{
+                                         [weakSelf enableMessageLabel:0];
+                                     }];
+                } else {
+                    [self enableMessageLabel:0];
+                }
+            } else {
+                [self enableMessageLabel:-1];
+            }
+
+            break;
+            
+        case FILTER_YOU:
+            _searchBar.placeholder = kSearchPlaceholderYou;
+            [self removeNavButtonForSide:kNavBarSideTypeRight];
+            
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden= NO;
+            
+            if (![_restaurantsArray count]) {
+                if (animated) {
+                    [UIView animateWithDuration:.2
+                                     animations:^{
+                                         [weakSelf enableMessageLabel:1];
+                                     }];
+                } else {
+                    [self enableMessageLabel:1];
+                }
+            } else {
+                [self enableMessageLabel:-1];
+            }
+            break;
+            
+        case FILTER_PLACES:
+            _searchBar.placeholder = kSearchPlaceholderPlaces;
+            [self removeNavButtonForSide:kNavBarSideTypeRight];
+            [self addNavButtonWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:) forSide:kNavBarSideTypeRight];
+
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden = NO;
+            
+            if (![_restaurantsArray count]) {
+                if  (animated ) {
+                    [UIView animateWithDuration:.2
+                                     animations:^{
+                                         [weakSelf enableMessageLabel:2];
+                                     }];
+                } else {
+                    [self enableMessageLabel:2];
+                }
+            } else {
+                [self enableMessageLabel:-1];
+            }
+            break;
+            
+        case FILTER_NONE:
+            [self enableMessageLabel:-1];
+
+            _tablePeople.hidden = YES;
+            _tableRestaurants.hidden= YES;
+            break;
+
+    }
+    [self.view setNeedsDisplay];
 }
 
-- (void)didReceiveMemoryWarning
+#pragma mark - TABLES
+
+- (void)clearResultsTables
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    self.restaurantsArray = nil;
+    [self.tableRestaurants reloadData];
+    
+    self.peopleArray = nil;
+    [self.tablePeople reloadData];
 }
 
-#pragma table view delegates/datasources
+//------------------------------------------------------------------------------
+// Name:    loadRestaurants
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)loadRestaurants: (NSArray*)array
+{
+    self.doingSearchNow = NO;
+    self.fetchOperation = nil;
+    
+    self.restaurantsArray = array;
+    [self.tableRestaurants reloadData];
+    
+    self.peopleArray = nil;
+    [self.tablePeople reloadData];
+    
+    [self showAppropriateTableAnimated:NO];
+    
+}
+
+//------------------------------------------------------------------------------
+// Name:    loadPeople
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)loadPeople:(NSArray *)array
+{
+    self.doingSearchNow = NO;
+    self.fetchOperation = nil;
+    
+    self.peopleArray = array;
+    [self.tablePeople reloadData];
+    
+    self.restaurantsArray = nil;
+    [self.tableRestaurants reloadData];
+    
+    [self showAppropriateTableAnimated:NO];
+}
+
+//------------------------------------------------------------------------------
+// Name:    cancelSearch
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)cancelSearch
+{
+    [self.fetchOperation cancel];
+    self.fetchOperation = nil;
+    self.doingSearchNow = NO;
+    [self showAppropriateTableAnimated:NO];
+}
+
+//------------------------------------------------------------------------------
+// Name:    userPressedCancel
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)userPressedCancel:(id)sender
+{
+    _searchBar.text=@"";
+    [_searchBar resignFirstResponder];
+    
+    self.restaurantsArray= nil;
+    self.peopleArray= nil;
+    
+    [self cancelSearch];
+    
+    [self.tableRestaurants reloadData];
+    [self.tablePeople reloadData];
+}
+
+//------------------------------------------------------------------------------
+// Name:    userTappedOnPeopleFilter
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)userTappedOnPeopleFilter:(id)sender
+{
+    _searchBar.text=@"";
+    [self clearResultsTables];
+   [_searchBar resignFirstResponder];
+    
+    if (_currentFilter == FILTER_PEOPLE) {
+        return;
+    }
+    _currentFilter = FILTER_PEOPLE;
+    
+    if (self.doingSearchNow) {
+        [self cancelSearch];
+    }
+    
+    [self showAppropriateTableAnimated:YES];
+}
+
+//------------------------------------------------------------------------------
+// Name:    userTappedOnPlacesFilter
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)userTappedOnPlacesFilter:(id)sender
+{
+    _searchBar.text=@"";
+    [self clearResultsTables];
+    [_searchBar resignFirstResponder];
+
+    if (_currentFilter == FILTER_PLACES) {
+        return;
+    }
+    _currentFilter = FILTER_PLACES;
+
+    if (self.doingSearchNow) {
+        [self cancelSearch];
+    }
+    
+    [self showAppropriateTableAnimated:YES];
+}
+
+//------------------------------------------------------------------------------
+// Name:    userTappedOnYouFilter
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)userTappedOnYouFilter:(id)sender
+{
+    _searchBar.text=@"";
+    [self clearResultsTables];
+    [_searchBar resignFirstResponder];
+
+    if  (_currentFilter == FILTER_YOU ) {
+        return;
+    }
+    _currentFilter = FILTER_YOU;
+    
+    if (self.doingSearchNow) {
+        [self cancelSearch];
+    }
+    
+    [self showAppropriateTableAnimated:YES];
+    
+}
+
+- (void)menuOpened:(NSNotification*)not
+{
+    NSLog (@"MENU WAS OPENED.");
+    [_searchBar resignFirstResponder];
+}
+
+//------------------------------------------------------------------------------
+// Name:    doLayout
+// Purpose: Programmatic equivalent of constraint equations.
+//------------------------------------------------------------------------------
+- (void)doLayout
+{
+    CGFloat h = height(self.view);
+    CGFloat w = width(self.view);
+    
+    CGFloat y = 0;
+    
+    _searchBar.frame = CGRectMake(0, y, w-kGeomWidthButton, kGeomHeightSearchBar);
+    _buttonCancel.frame = CGRectMake(w-kGeomWidthButton-kGeomCancelButtonInteriorPadding,
+                                     (kGeomHeightSearchBar-kGeomHeightButton)/2,
+                                     kGeomWidthButton-kGeomCancelButtonInteriorPadding,
+                                     kGeomHeightButton);
+    y += kGeomHeightSearchBar;
+    
+    _filterView.frame = CGRectMake(0, y, w, kGeomHeightFilters);
+    y += kGeomHeightFilters;
+    
+    CGFloat psih = 100;
+    _labelPreSearchInstructiveMessage1.frame = CGRectMake((w-200)/2, y+(h-y-psih)/3, 200, psih);
+    _labelPreSearchInstructiveMessage2.frame = CGRectMake((w-200)/2, y+(h-y-psih)/3, 200, psih);
+    _labelPreSearchInstructiveMessage3.frame = CGRectMake((w-200)/2, y+(h-y-psih)/3, 200, psih);
+    _tableRestaurants.frame = CGRectMake(0, y, w, h-y);
+    _tablePeople.frame = CGRectMake(0, y, w, h-y);
+}
+
+//------------------------------------------------------------------------------
+// Name:    cellForRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == _locationsTable) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:locationCellIdentifier forIndexPath:indexPath];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        [cell.textLabel setTextColor:UIColorRGBA(kColorText)];
-        [cell.detailTextLabel setTextColor:UIColorRGBA(kColorText)];
-        cell.backgroundColor = UIColorRGBA(kColorClear);
-        cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
-        [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];
-        [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
-        cell.textLabel.numberOfLines = 2;
-        CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
-        cell.textLabel.text = [Common locationString:placemark];
-        return cell;
-    } else {
-        RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
-        
-        RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
-        
-        cell.eventBeingEdited= self.eventBeingEdited;
-        cell.listToAddTo = _listToAddTo;
-        cell.restaurant = ro;
-        cell.nc = self.navigationController;
-        cell.index = indexPath.row + 1;
-        [cell updateConstraintsIfNeeded];
-        
-        [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
-        return cell;
-    }
-    
-}
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
-    [marker highLight:YES];
-}
-
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if ([_mapMarkers count] > indexPath.row) {
-        OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
-        [marker highLight:NO];
-    }
-}
-
-- (void)getRestaurants
-{
-    [_requestOperation cancel];
-    CLLocationCoordinate2D bottomLeftCoord = _mapView.projection.visibleRegion.nearLeft;
-    CLLocationCoordinate2D bottomRightCoord = _mapView.projection.visibleRegion.nearRight;
-    CLLocationCoordinate2D topLeftCoord = _mapView.projection.visibleRegion.farLeft;
-//    CLLocationCoordinate2D topRightCoord = _mapView.projection.visibleRegion.farRight;
-
-    CGFloat longitudeDelta = (bottomRightCoord.longitude- bottomLeftCoord.longitude)/2;
-    CGFloat lattitudeDelta = (bottomLeftCoord.latitude - topLeftCoord.latitude)/2;
-    
-    CLLocationCoordinate2D center;
-    if (_showMap) {
-        center = CLLocationCoordinate2DMake(topLeftCoord.latitude+lattitudeDelta, topLeftCoord.longitude+longitudeDelta);
-    } else {
-        center = _currentLocation;
-    }
-    CLLocationCoordinate2D topEdge = CLLocationCoordinate2DMake(topLeftCoord.latitude, center.longitude);
-
-    UILabel *locationIcon = [[UILabel alloc] init];
-    [locationIcon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSizeSmall] textColor:kColorBlack backgroundColor:kColorClear];
-    locationIcon.text = kFontIconPerson;
-    locationIcon.frame = CGRectMake(0, 0, 30, 30);
-    
-//DEBUG math
-//    OOMapMarker *topEdgeMarker = [[OOMapMarker alloc] init];
-//    topEdgeMarker.position = topEdge;
-//    topEdgeMarker.map = _mapView;
-   
-    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:center.latitude longitude:center.longitude];
-    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:topEdge.latitude longitude:topEdge.longitude];
-    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-
-    
-    OOAPI *api = [[OOAPI alloc] init];
-    
-    __weak ExploreVC *weakSelf=self;
-    
-    [self.view bringSubviewToFront:self.aiv];
-    [self.aiv startAnimating];
-    self.aiv.message = @"loading";
-    [self.refreshControl endRefreshing];
-
-    if (_listToDisplay && _listToDisplay.listID) {
-        [api getRestaurantsWithListID:_listToDisplay.listID
-                          andLocation:[LocationManager sharedInstance].currentUserLocation
-                              success:^(NSArray *restaurants) {
-            _restaurants = restaurants;
-            ON_MAIN_THREAD(^ {
-                [weakSelf.aiv stopAnimating];
-                [weakSelf gotRestaurants];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [weakSelf.aiv stopAnimating];
-        }];
-    } else {
-        NSMutableArray *searchTerms;
-        if (_tags && [_tags count]) {
-            searchTerms = [NSMutableArray array];
-            [_tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
-                TagObject *t = (TagObject *)obj;
-                [searchTerms addObject:t.term];
-            }];
-        } else if (_nearby) {
-            searchTerms = [NSMutableArray array];
-            if (_searchBar.text) {
-                [searchTerms addObject:_searchBar.text];
+    if (tableView ==_tableRestaurants) {
+        if ( !_restaurantsArray.count) {
+            UITableViewCell *cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+            cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            cell.textLabel.textAlignment = NSTextAlignmentCenter;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            if (_doingSearchNow) {
+                cell.textLabel.text = @"Searching...";
             } else {
-                searchTerms = [NSMutableArray arrayWithArray:@[]];
+                if (_searchBar.text.length > 2) {
+                    cell.textLabel.text = @"No restaurants found for that search term.";
+                } else if (_searchBar.text.length > 0) {
+                    cell.textLabel.text = @"Type in at least three characters";
+                } else {
+                    cell.textLabel.text = @"";
+                }
             }
-        } else {
-            searchTerms = [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]];
-            NSLog(@"category: %@", searchTerms);
+            cell.textLabel.textColor = UIColorRGBA(kColorText);
+            cell.textLabel.font = [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
+            return cell;
         }
-        _defaultListObject.name = [self getFilteredListName];
-        _nto.subheader = _defaultListObject.name;
-        self.navTitle = _nto;
-        self.navigationItem.titleView = _searchBar;
         
-        _requestOperation = [api getRestaurantsWithKeywords:searchTerms
-                                               andLocation:center // _desiredLocation
-                                                 andFilter:@""
-                                                  andRadius:distanceInMeters
-                                               andOpenOnly:NO
-                                                    andSort:(_nearby) ? kSearchSortTypeDistance : kSearchSortTypeBestMatch
-                                                   minPrice:_minPrice
-                                                   maxPrice:_maxPrice
-                                                     isPlay:NO
-                                                   success:^(NSArray *r) {
-            _restaurants = r;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf gotRestaurants];
-                [weakSelf.aiv stopAnimating];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-            [weakSelf.aiv stopAnimating];
-        }];
+        RestaurantTVCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_RESTAURANTS_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+        
+        NSInteger row = indexPath.row;
+        if  (!self.doingSearchNow) {
+            cell.restaurant= _restaurantsArray[row];
+        }
+        cell.nc = self.navigationController;
+        [cell updateConstraintsIfNeeded];
+        return cell;
     }
-}
-
-- (NSString *)getFilteredListName {
-    if (_tags && [_tags count]) {
-        __block NSMutableString *terms = [NSMutableString string];
-        [_tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
-            TagObject *t = (TagObject *)obj;
-            [terms appendString:[NSString stringWithFormat:@"\"%@\" ", t.term]];
-        }];
-        return terms;
-    } else {
-        return @"places around me";
+    else if ( tableView == _tablePeople) {
+        if ( !_peopleArray.count) {
+            
+            UITableViewCell *cell;
+            cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+            cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            if ( _doingSearchNow) {
+                cell.textLabel.text=  @"Searching...";
+            } else {
+                if (_searchBar.text.length ) {
+                    cell.textLabel.text=  @"No people found for that search term.";
+                } else {
+                    cell.textLabel.text= nil;
+                }
+            }
+            cell.textLabel.textColor=  UIColorRGBA(kColorText);
+            cell.textLabel.font= [UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            return cell;
+        }
+        UserTVCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier:SEARCH_PEOPLE_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+        cell.delegate= self;
+        
+        NSInteger row = indexPath.row;
+        if  (!self.doingSearchNow) {
+            UserObject *user = _peopleArray[row];
+            [cell setUser: user];
+        }
+        [cell updateConstraintsIfNeeded];
+        return cell;
     }
+    return nil;
 }
 
-- (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(OOMapMarker *)marker {
-    [_tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:marker.index inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-    [_mapView setSelectedMarker:marker];
-    return YES;
-}
-
-- (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(OOMapMarker *)marker {
-    RestaurantObject *ro = [_restaurants objectAtIndex:marker.index];
-    RestaurantVC *vc = [[RestaurantVC alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
-    vc.title = ro.name;
-    vc.restaurant = ro;
-    vc.eventBeingEdited= self.eventBeingEdited;
-    vc.listToAddTo = _listToAddTo;
-    [vc getRestaurant];
-    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore-MarkerInfoWindow");
-}
-
--(UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {
-    UIView *infoWindow = [[UIView alloc] init];
-    infoWindow.backgroundColor = UIColorRGBA(kColorWhite);
-    infoWindow.layer.cornerRadius = kGeomCornerRadius;
-
-    CGRect frame;
-    
-    UILabel *title = [[UILabel alloc] init];
-    [title withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeSubheader] textColor:kColorNavyBlue backgroundColor:kColorClear];
-    title.text = marker.title;
-    [title sizeToFit];
-    frame = title.frame;
-    frame.origin.y = kGeomSpaceEdge;
-    frame.origin.x = kGeomSpaceEdge;
-    title.frame = frame;
-    
-    UILabel *snippet = [[UILabel alloc] init];
-    [snippet withFont:[UIFont fontWithName:kFontLatoLight size:kGeomFontSizeSubheader] textColor:kColorNavyBlue backgroundColor:kColorClear];
-    snippet.text = marker.snippet;
-    [snippet sizeToFit];
-    
-    frame = snippet.frame;
-    frame.origin.y = CGRectGetMaxY(title.frame);
-    frame.origin.x = kGeomSpaceEdge;
-    snippet.frame = frame;
-    
-    [infoWindow addSubview:title];
-    [infoWindow addSubview:snippet];
-    
-    infoWindow.frame = CGRectMake(0, 0, kGeomSpaceEdge + ((CGRectGetMaxX(title.frame) > CGRectGetMaxX(snippet.frame)) ? CGRectGetMaxX(title.frame) : CGRectGetMaxX(snippet.frame)), CGRectGetMaxY(snippet.frame) + kGeomSpaceEdge);
-    
-    return infoWindow;
-}
-
-- (void)gotRestaurants
+- (void)userImageTapped:(UserObject*)user
 {
-    NSLog(@"%lu", (unsigned long)[_restaurants count]);
-    if (![_restaurants count]) {
-        NSLog (@"Received no restaurants.");
+    if (!user) {
+        return;
     }
-
-    [_mapMarkers enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *mm = (OOMapMarker *)obj;
-        mm.map = nil;
-    }];
-    [_mapMarkers removeAllObjects];
-    _mapMarkers = [NSMutableArray arrayWithCapacity:[_restaurants count]];
-
-    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
-    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
-
-    [_restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *marker = [[OOMapMarker alloc] init];
-        RestaurantObject *ro = (RestaurantObject *)obj;
-        
-        CLLocation *locationB = [[CLLocation alloc] initWithLatitude:ro.location.latitude longitude:ro.location.longitude];
-        CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-
-        marker.objectID = ro.googleID;
-        marker.index = idx;
-        marker.position = ro.location;
-        marker.title = ro.name;
-        marker.snippet = [NSString stringWithFormat:@"%0.1f mi. | %@", metersToMiles(distanceInMeters), [ro priceRangeText]];
-        marker.map = _mapView;
-        [marker highLight:NO];
-        [_mapMarkers addObject:marker];
-    }];
-    [_tableView reloadData];
     
-    if ([_restaurants count]) {
-        [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-    }
+    ProfileVC *vc = [[ProfileVC  alloc]   init];
+    vc.userID = user.userID;
+    vc.userInfo = user;
+    
+    [self.navigationController pushViewController:vc animated:YES];
+    
 }
 
+//------------------------------------------------------------------------------
+// Name:    scrollViewWillBeginDragging
+// Purpose: On smallscreen devices like iPhones, remove the keyboard so that
+//       the user can see what they're scrolling through.
+//------------------------------------------------------------------------------
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
+{
+    if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad)
+        [_searchBar resignFirstResponder];
+}
+
+//------------------------------------------------------------------------------
+// Name:    heightForRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ( tableView==_tableRestaurants && !_restaurantsArray.count) {
+        return 44;
+    }
+    if ( tableView==_tablePeople && !_peopleArray.count) {
+        return 44;
+    }
+    return kGeomHeightHorizontalListRow;
+}
+
+//------------------------------------------------------------------------------
+// Name:    didSelectRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == _locationsTable ) {
-        CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
-        _locationSearchBar.text = [Common locationString:placemark];
-        _currentLocation = placemark.location.coordinate;
-        [self moveToCurrentLocation];
-    } else {
-        RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
+    [_searchBar resignFirstResponder];
+    
+    if  (self.doingSearchNow) {
+        return;
+    }
+    
+    NSInteger row = indexPath.row;
+    
+    if ( tableView == _tableRestaurants) {
+        if  (row >= _restaurantsArray.count ) {
+            return;
+        }
+        
+        RestaurantObject *ro = [_restaurantsArray objectAtIndex:indexPath.row];
         
         RestaurantVC *vc = [[RestaurantVC alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
-        vc.title = ro.name;
+        ANALYTICS_EVENT_UI(@"RestaurantVC-from-Search");
+        vc.title = trimString(ro.name);
         vc.restaurant = ro;
-        vc.eventBeingEdited= self.eventBeingEdited;
-        vc.listToAddTo = _listToAddTo;
-        [vc getRestaurant];
-        ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore");
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        vc.eventBeingEdited = self.eventBeingEdited;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    else if ( tableView == _tablePeople) {
+        if  (row >= _peopleArray.count ) {
+            return;
+        }
+        
+        UserObject *u = [_peopleArray objectAtIndex:indexPath.row];
+        
+        ProfileVC *vc = [[ProfileVC  alloc]   init];
+        vc.userID = u.userID;
+        vc.userInfo = u;
+        
+        [self.navigationController pushViewController:vc animated:YES];
     }
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
+//------------------------------------------------------------------------------
+// Name:    numberOfRowsInSection
+// Purpose:
+//------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (tableView == _locationsTable) {
-        return [_locations count];
-    } else {
-        return [_restaurants count];
+    if (self.doingSearchNow) {
+        return 0;
+    }
+    
+    if ( tableView ==_tableRestaurants) {
+        if ( !_restaurantsArray.count) {
+            // This is the cell that tells them there are no data.
+            return 1;
+        }
+        return self.restaurantsArray.count;
+    }
+    else {
+        if ( !_peopleArray.count) {
+            // This is the cell that tells them there are no data.
+            return 1;
+        }
+        return self.peopleArray.count;
     }
 }
 

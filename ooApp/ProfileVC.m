@@ -12,7 +12,7 @@
 #import "Common.h"
 #import "ListStripCVCell.h"
 #import "OOAPI.h"
-#import "ExploreVC.h"
+#import "SearchVC.h"
 #import "UIImage+Additions.h"
 #import "AppDelegate.h"
 #import "OOUserView.h"
@@ -1508,7 +1508,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 
 - (void)goToExploreScreen:(ListObject *)list
 {
-    ExploreVC *vc= [[ExploreVC alloc] init];
+    SearchVC *vc= [[SearchVC alloc] init];
     vc.listToAddTo= list;
     [self.navigationController pushViewController:vc animated:YES];
 }
