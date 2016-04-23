@@ -196,7 +196,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     if (searchBar == _locationSearchBar) {
         [self searchLocations];
     } else {
-        if ([searchText length]) {
+        if ([searchText length] >= kMinCharactersForAutoSearch) {
             [self getRestaurants];
         }
     }
@@ -648,17 +648,19 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
         }];
     } else {
         NSMutableArray *searchTerms;
-        if ([_searchBar.text length] >= kMinCharactersForAutoSearch) {
-            searchTerms = [NSMutableArray array];
-            [searchTerms addObject:_searchBar.text];
-        } else if (_tags && [_tags count]) {
+        if (_tags && [_tags count]) {
             searchTerms = [NSMutableArray array];
             [_tags enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
                 TagObject *t = (TagObject *)obj;
                 [searchTerms addObject:t.term];
             }];
         } else if (_nearby) {
-            searchTerms = [NSMutableArray arrayWithArray:@[]];
+            searchTerms = [NSMutableArray array];
+            if (_searchBar.text) {
+                [searchTerms addObject:_searchBar.text];
+            } else {
+                searchTerms = [NSMutableArray arrayWithArray:@[]];
+            }
         } else {
             searchTerms = [NSMutableArray arrayWithArray:[TimeUtilities categorySearchTerms:[NSDate date]]];
             NSLog(@"category: %@", searchTerms);
