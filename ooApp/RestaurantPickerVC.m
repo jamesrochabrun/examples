@@ -73,7 +73,6 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _locationSearchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _locationSearchBar.placeholder = LOCAL( @"Current Location");
         _locationSearchBar.barTintColor = UIColorRGBA(kColorText);
-        _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         UILabel *l = [UILabel new];
         [l withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorText backgroundColor:kColorClear];
         l.text = kFontIconLocation;

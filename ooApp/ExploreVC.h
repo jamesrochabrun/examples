@@ -11,13 +11,13 @@
 #import "BaseVC.h"
 #import "ListObject.h"
 #import "EventObject.h"
-#import "OptionsVC.h"
-#import "ChangeLocationVC.h"
+//#import "OptionsVC.h"
+//#import "ChangeLocationVC.h"
 
 @interface ExploreVC : BaseVC <UITableViewDataSource,
                                 UITableViewDelegate,
-                                OptionsVCDelegate,
-                                ChangeLocationVCDelegate,
+                                //OptionsVCDelegate,
+                                //ChangeLocationVCDelegate,
                                 UISearchBarDelegate>
 
 @property (nonatomic, strong) ListObject *listToAddTo;

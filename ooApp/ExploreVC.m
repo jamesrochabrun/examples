@@ -42,16 +42,19 @@
 @property (nonatomic, strong) ListObject *defaultListObject;
 @property (nonatomic, strong) NSMutableSet *tags;
 @property (nonatomic) NSUInteger minPrice, maxPrice;
-@property (nonatomic, strong) UIButton *changeLocationButton;
+@property (nonatomic, strong) UIButton *resetLocation;
 @property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, strong) UISearchBar *locationSearchBar;
 @property (nonatomic, assign) BOOL showMap;
 @property (nonatomic, strong) NSArray *mapContraints;
 @property (nonatomic, strong) UITableView *locationsTable;
+@property (nonatomic, strong) NSArray *locations;
 
 @end
 
-static NSString * const ListRowID = @"HLRCell";
+static NSString *const ListRowID = @"HLRCell";
+static NSString *const locationCellIdentifier = @"locationCell";
+static NSUInteger const kMinCharactersForAutoSearch = 3;
 
 @implementation ExploreVC
 
@@ -72,21 +75,35 @@ static NSString * const ListRowID = @"HLRCell";
     _searchBar.placeholder = kSearchPlaceholderPlaces;
     _searchBar.frame = CGRectMake(0, 0, 200, 60);
     _searchBar.delegate = self;
+    _searchBar.enablesReturnKeyAutomatically = NO;
     
     _locationSearchBar = [UISearchBar new];
     _locationSearchBar.backgroundColor = UIColorRGBA(kColorNavBar);
     _locationSearchBar.barTintColor = UIColorRGBA(kColorNavBar);
     _locationSearchBar.placeholder = kSearchPlaceholderPlaces;
     _locationSearchBar.delegate = self;
+    _locationSearchBar.placeholder = LOCAL(@"Current Location");
+    _locationSearchBar.enablesReturnKeyAutomatically = NO;
+
+    UILabel *l = [UILabel new];
+    [l withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorText backgroundColor:kColorClear];
+    l.text = kFontIconLocation;
+    [l sizeToFit];
+    [_locationSearchBar setImage:[UIImage imageFromView:l] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
+    _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
+    _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
+    _locationSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+
+    
     _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_locationSearchBar];
-    //_searchBar.showsCancelButton = YES;
+    
 
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
     _mapView.translatesAutoresizingMaskIntoConstraints = NO;
     _mapView.mapType = kGMSTypeNormal;
     _mapView.myLocationEnabled = YES;
-    _mapView.settings.myLocationButton = YES;
+    _mapView.settings.myLocationButton = NO;
     _mapView.settings.scrollGestures = YES;
     _mapView.settings.zoomGestures = YES;
     _mapView.settings.rotateGestures = NO;
@@ -105,25 +122,32 @@ static NSString * const ListRowID = @"HLRCell";
     
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
-    _changeLocationButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_changeLocationButton roundButtonWithIcon:kFontIconLocation fontSize:kGeomIconSize width:30 height:30 backgroundColor:kColorClear target:self selector:@selector(userPressedChangeLocation:)];
-    [_changeLocationButton setTitleColor:UIColorRGBA(kColorBlack) forState:UIControlStateNormal];
-    _changeLocationButton.layer.borderColor = UIColorRGBA(kColorGrayMiddle).CGColor;
-    [self.mapView addSubview: _changeLocationButton];
+    _locationsTable = [UITableView new];
+    _locationsTable.dataSource = self;
+    _locationsTable.delegate = self;
+    _locationsTable.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _locationsTable.rowHeight = 44;
+    _locationsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [_locationsTable registerClass:[UITableViewCell class] forCellReuseIdentifier:locationCellIdentifier];
+    _locationsTable.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_locationsTable];
+    _locationsTable.alpha = 0;
     
-    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:16 bearing:0 viewingAngle:1];
+    _resetLocation = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_resetLocation withIcon:kFontIconLocation fontSize:kGeomIconSize width:30 height:30 backgroundColor:kColorBlack target:self selector:@selector(resetLocationToHere:)];
+    [_resetLocation setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+//    _changeLocationButton.layer.borderColor = UIColorRGBA(kColorGrayMiddle).CGColor;
+    [self.view addSubview: _resetLocation];
+    _resetLocation.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:14 bearing:0 viewingAngle:1];
     
     _tags = [NSMutableSet set];
     
     [self.view addSubview:_mapView];
-    
-//    _filterView = [[OOFilterView alloc] init];
-//    _filterView.translatesAutoresizingMaskIntoConstraints = NO;
-//    [_filterView addFilter:@"Around Me" target:self selector:@selector(selectNearby)];
-//    [_filterView addFilter:@"Top Spots" target:self selector:@selector(selectTopSpots)];
-//    [self.view addSubview:_filterView];
+
+    [self.view bringSubviewToFront:_locationsTable];
     _nearby = YES;
-//    [_filterView setCurrent:1];
     
     _nto = [[NavTitleObject alloc] initWithHeader:@"Explore" subHeader:nil];
     self.navTitle = _nto;
@@ -146,49 +170,105 @@ static NSString * const ListRowID = @"HLRCell";
     [self populateOptions];
 }
 
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    if (searchBar == _locationSearchBar) {
+        _locationsTable.alpha = 1;
+    } else {
+        _locationsTable.alpha = 0;
+    }
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    if (searchBar == _locationSearchBar) {
+        if ([_locations count]) {
+            _locationsTable.alpha = 0;
+            CLPlacemark *placemark = [_locations objectAtIndex:0];
+            _locationSearchBar.text = [Common locationString:placemark];
+            _currentLocation = placemark.location.coordinate;
+            [self moveToCurrentLocation];
+        }
+    } else {
+        
+    }
+}
+
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    if ([searchText length]) {
-        [self getRestaurants];
+    if (searchBar == _locationSearchBar) {
+        [self searchLocations];
+    } else {
+        if ([searchText length]) {
+            [self getRestaurants];
+        }
     }
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [_searchBar resignFirstResponder];
+    if ([searchBar.text length] < kMinCharactersForAutoSearch) {
+        [self getRestaurants];
+    }
 }
 
-
-- (void)userPressedChangeLocation: (UIButton*)sender
-{
-    UINavigationController *nc = [[UINavigationController alloc] init];
-    
-    ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
-    vc.delegate = self;
-    [nc addChildViewController:vc];
-    
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setTranslucent:YES];
-    nc.view.backgroundColor = [UIColor clearColor];
-    
-    [self.navigationController presentViewController:nc animated:YES completion:^{
-        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    }];
-
-}
-
-- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC {
+- (void)resetLocationToHere:(id)sender {
     _currentLocation = [LocationManager sharedInstance].currentUserLocation;
-    [self dismissViewControllerAnimated:YES completion:^{
-        ;
-    }];
+    [self moveToCurrentLocation];
 }
 
-- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark {
-    _currentLocation = placemark.location.coordinate;
-    [self moveToCurrentLocation];
-    [self dismissViewControllerAnimated:YES completion:^{
-        ;
-    }];
+- (void)searchLocations {
+    __weak  ExploreVC *weakSelf = self;
+    CLGeocoder * geocoder = [[CLGeocoder alloc] init];
+    CLRegion *region = [[CLRegion alloc] init];
+    
+    
+    [geocoder geocodeAddressString:_locationSearchBar.text inRegion:region
+                 completionHandler:^(NSArray* placemarks, NSError* error) {
+                     _locations = placemarks;
+                     if (![_locations count]) {
+                         NSLog(@"Could not find a location that matched: %@", _locationSearchBar.text);
+                     } else {
+                         NSLog(@"Found %lu locations that matched: %@", (unsigned long)[_locations count], _locationSearchBar.text);
+                         for (CLPlacemark *pm in placemarks) {
+                             NSLog(@"placemark name: %@", pm.addressDictionary);
+                         }
+                         
+                     }
+                     [weakSelf.locationsTable reloadData];
+                 }];
 }
+
+
+//- (void)userPressedChangeLocation: (UIButton*)sender
+//{
+//    UINavigationController *nc = [[UINavigationController alloc] init];
+//    
+//    ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
+//    vc.delegate = self;
+//    [nc addChildViewController:vc];
+//    
+//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+//    [nc.navigationBar setTranslucent:YES];
+//    nc.view.backgroundColor = [UIColor clearColor];
+//    
+//    [self.navigationController presentViewController:nc animated:YES completion:^{
+//        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+//    }];
+//
+//}
+
+//- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC {
+//    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
+//    [self dismissViewControllerAnimated:YES completion:^{
+//        ;
+//    }];
+//}
+
+//- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark {
+//    _currentLocation = placemark.location.coordinate;
+//    [self moveToCurrentLocation];
+//    [self dismissViewControllerAnimated:YES completion:^{
+//        ;
+//    }];
+//}
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
     NSLog(@"The map became idle at %f,%f", position.target.latitude, position.target.longitude);
@@ -196,38 +276,38 @@ static NSString * const ListRowID = @"HLRCell";
     [self getRestaurants];
 }
 
-- (void)showOptions {
-    UINavigationController *nc = [[UINavigationController alloc] init];
-    
-    OptionsVC *vc = [[OptionsVC alloc] init];
-    vc.delegate = self;
-    vc.view.frame = CGRectMake(0, 0, 40, 44);
-    [nc addChildViewController:vc];
-    
-    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-    [nc.navigationBar setTranslucent:YES];
-    nc.view.backgroundColor = [UIColor clearColor];
+//- (void)showOptions {
+//    UINavigationController *nc = [[UINavigationController alloc] init];
+//    
+//    OptionsVC *vc = [[OptionsVC alloc] init];
+//    vc.delegate = self;
+//    vc.view.frame = CGRectMake(0, 0, 40, 44);
+//    [nc addChildViewController:vc];
+//    
+//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+//    [nc.navigationBar setTranslucent:YES];
+//    nc.view.backgroundColor = [UIColor clearColor];
+//
+//    vc.userTags = _tags;
+//    [vc setMinPrice:_minPrice maxPrice:_maxPrice];
+//    
+//    [self.navigationController presentViewController:nc animated:YES completion:^{
+//        ;
+//    }];
+//}
 
-    vc.userTags = _tags;
-    [vc setMinPrice:_minPrice maxPrice:_maxPrice];
-    
-    [self.navigationController presentViewController:nc animated:YES completion:^{
-        ;
-    }];
-}
-
-- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags andMinPrice:(NSUInteger)minPrice andMaxPrice:(NSUInteger)maxPrice {
-    _tags = [NSMutableSet setWithSet:tags];
-    _minPrice = minPrice;
-    _maxPrice = maxPrice;
-    _listToDisplay = nil;
-    //[_filterView setNeedsLayout];
-    _nearby = NO;
-    [self getRestaurants];
-    [self dismissViewControllerAnimated:YES completion:^{
-        ;
-    }];
-}
+//- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags andMinPrice:(NSUInteger)minPrice andMaxPrice:(NSUInteger)maxPrice {
+//    _tags = [NSMutableSet setWithSet:tags];
+//    _minPrice = minPrice;
+//    _maxPrice = maxPrice;
+//    _listToDisplay = nil;
+//    //[_filterView setNeedsLayout];
+//    _nearby = NO;
+//    [self getRestaurants];
+//    [self dismissViewControllerAnimated:YES completion:^{
+//        ;
+//    }];
+//}
 
 - (void)populateOptions {
     __weak ExploreVC *weakSelf = self;
@@ -306,16 +386,18 @@ static NSString * const ListRowID = @"HLRCell";
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((_showMap)?(height(self.view)-kGeomHeightNavBarStatusBar)*0.4:0), @"mapWidth" : @(width(self.view))};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _locationSearchBar);//, _filterView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _locationSearchBar, _locationsTable, _resetLocation);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     
     _mapContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar(40)]-[_mapView(mapHeight)]-[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     
     [self.view addConstraints:_mapContraints];
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation(40)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationSearchBar]-[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar][_resetLocation(40)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 //    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
@@ -465,20 +547,35 @@ static NSString * const ListRowID = @"HLRCell";
 #pragma table view delegates/datasources
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
+    if (tableView == _locationsTable) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:locationCellIdentifier forIndexPath:indexPath];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        [cell.textLabel setTextColor:UIColorRGBA(kColorText)];
+        [cell.detailTextLabel setTextColor:UIColorRGBA(kColorText)];
+        cell.backgroundColor = UIColorRGBA(kColorClear);
+        cell.textLabel.backgroundColor = UIColorRGBA(kColorClear);
+        [cell.textLabel setFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH3]];
+        [cell.detailTextLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
+        cell.textLabel.numberOfLines = 2;
+        CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
+        cell.textLabel.text = [Common locationString:placemark];
+        return cell;
+    } else {
+        RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
+        
+        RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
+        
+        cell.eventBeingEdited= self.eventBeingEdited;
+        cell.listToAddTo = _listToAddTo;
+        cell.restaurant = ro;
+        cell.nc = self.navigationController;
+        cell.index = indexPath.row + 1;
+        [cell updateConstraintsIfNeeded];
+        
+        [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
+        return cell;
+    }
     
-    RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:ListRowID forIndexPath:indexPath];
-    
-    cell.eventBeingEdited= self.eventBeingEdited;
-    cell.listToAddTo = _listToAddTo;
-    cell.restaurant = ro;
-    cell.nc = self.navigationController;
-    cell.index = indexPath.row + 1;
-    [cell updateConstraintsIfNeeded];
-    
-    [(OOMapMarker *)[_mapMarkers objectAtIndex:indexPath.row] highLight:YES];
-    
-    return cell;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -551,7 +648,7 @@ static NSString * const ListRowID = @"HLRCell";
         }];
     } else {
         NSMutableArray *searchTerms;
-        if ([_searchBar.text length] >=3) {
+        if ([_searchBar.text length] >= kMinCharactersForAutoSearch) {
             searchTerms = [NSMutableArray array];
             [searchTerms addObject:_searchBar.text];
         } else if (_tags && [_tags count]) {
@@ -699,17 +796,24 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
-    
-    RestaurantVC *vc = [[RestaurantVC alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
-    vc.title = ro.name;
-    vc.restaurant = ro;
-    vc.eventBeingEdited= self.eventBeingEdited;
-    vc.listToAddTo = _listToAddTo;
-    [vc getRestaurant];
-    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore");
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (tableView == _locationsTable ) {
+        CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
+        _locationSearchBar.text = [Common locationString:placemark];
+        _currentLocation = placemark.location.coordinate;
+        [self moveToCurrentLocation];
+    } else {
+        RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
+        
+        RestaurantVC *vc = [[RestaurantVC alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+        vc.title = ro.name;
+        vc.restaurant = ro;
+        vc.eventBeingEdited= self.eventBeingEdited;
+        vc.listToAddTo = _listToAddTo;
+        [vc getRestaurant];
+        ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore");
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -719,7 +823,11 @@ static NSString * const ListRowID = @"HLRCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_restaurants count];
+    if (tableView == _locationsTable) {
+        return [_locations count];
+    } else {
+        return [_restaurants count];
+    }
 }
 
 @end
