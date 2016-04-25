@@ -18,7 +18,6 @@
 #import "TileCVCell.h"
 #import "EventWhenVC.h"
 #import "EventWhoVC.h"
-#import "ExploreVC.h"
 #import "RestaurantVC.h"
 #import "OOStripHeader.h"
 #import "PieView.h"

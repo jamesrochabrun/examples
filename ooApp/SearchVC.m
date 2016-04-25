@@ -27,7 +27,6 @@
 
 @interface SearchVC () <GMSMapViewDelegate>
 
-@property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
 @property (nonatomic, assign) CLLocationCoordinate2D desiredLocation;
@@ -47,6 +46,7 @@
 @property (nonatomic, strong) UISearchBar *locationSearchBar;
 @property (nonatomic, assign) BOOL showMap;
 @property (nonatomic, strong) NSArray *mapContraints;
+@property (nonatomic, strong) UITableView *restaurantsTable;
 @property (nonatomic, strong) UITableView *locationsTable;
 @property (nonatomic, strong) NSArray *locations;
 
@@ -111,16 +111,16 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [_mapView setMinZoom:0 maxZoom:20];
     _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    _tableView = [[UITableView alloc] init];
-    [self.view addSubview:_tableView];
-    _tableView.delegate = self;
-    _tableView.dataSource = self;
-    _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableView.rowHeight = kGeomHeightHorizontalListRow;
-    _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    _restaurantsTable = [[UITableView alloc] init];
+    [self.view addSubview:_restaurantsTable];
+    _restaurantsTable.delegate = self;
+    _restaurantsTable.dataSource = self;
+    _restaurantsTable.translatesAutoresizingMaskIntoConstraints = NO;
+    _restaurantsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _restaurantsTable.rowHeight = kGeomHeightHorizontalListRow;
+    _restaurantsTable.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
+    [_restaurantsTable registerClass:[RestaurantTVCell class] forCellReuseIdentifier:ListRowID];
     
     _locationsTable = [UITableView new];
     _locationsTable.dataSource = self;
@@ -149,7 +149,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [self.view bringSubviewToFront:_locationsTable];
     _nearby = YES;
     
-    _nto = [[NavTitleObject alloc] initWithHeader:@"Explore" subHeader:nil];
+    _nto = [[NavTitleObject alloc] initWithHeader:@"Search" subHeader:nil];
     self.navTitle = _nto;
     self.navigationItem.titleView = _searchBar;
 
@@ -203,17 +203,21 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [_searchBar resignFirstResponder];
+    [searchBar resignFirstResponder];
+    
     if ([searchBar.text length] < kMinCharactersForAutoSearch) {
         [self getRestaurants];
     }
+    _locationsTable.alpha = 0;
 }
 
 - (void)resetLocationToHere:(id)sender {
     _currentLocation = [LocationManager sharedInstance].currentUserLocation;
     _locationSearchBar.text = @"";
     _locations = @[];
+    [_locationsTable reloadData];
     [self moveToCurrentLocation];
+    _locationsTable.alpha = 0;
 }
 
 - (void)searchLocations {
@@ -278,38 +282,6 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [self getRestaurants];
 }
 
-//- (void)showOptions {
-//    UINavigationController *nc = [[UINavigationController alloc] init];
-//    
-//    OptionsVC *vc = [[OptionsVC alloc] init];
-//    vc.delegate = self;
-//    vc.view.frame = CGRectMake(0, 0, 40, 44);
-//    [nc addChildViewController:vc];
-//    
-//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-//    [nc.navigationBar setTranslucent:YES];
-//    nc.view.backgroundColor = [UIColor clearColor];
-//
-//    vc.userTags = _tags;
-//    [vc setMinPrice:_minPrice maxPrice:_maxPrice];
-//    
-//    [self.navigationController presentViewController:nc animated:YES completion:^{
-//        ;
-//    }];
-//}
-
-//- (void)optionsVCDismiss:(OptionsVC *)optionsVC withTags:(NSMutableSet *)tags andMinPrice:(NSUInteger)minPrice andMaxPrice:(NSUInteger)maxPrice {
-//    _tags = [NSMutableSet setWithSet:tags];
-//    _minPrice = minPrice;
-//    _maxPrice = maxPrice;
-//    _listToDisplay = nil;
-//    //[_filterView setNeedsLayout];
-//    _nearby = NO;
-//    [self getRestaurants];
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        ;
-//    }];
-//}
 
 - (void)populateOptions {
     __weak SearchVC *weakSelf = self;
@@ -388,17 +360,17 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((_showMap)?(height(self.view)-kGeomHeightNavBarStatusBar)*0.4:0), @"mapWidth" : @(width(self.view))};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _mapView, _locationSearchBar, _locationsTable, _resetLocation);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_restaurantsTable, _mapView, _locationSearchBar, _locationsTable, _resetLocation);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     
-    _mapContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar(40)]-[_mapView(mapHeight)]-[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    _mapContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar(40)]-[_mapView(mapHeight)]-[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     
     [self.view addConstraints:_mapContraints];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation(40)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationSearchBar]-[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar][_resetLocation(55)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 //    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -417,7 +389,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
                               success:^(NSArray *restaurants) {
                                   ON_MAIN_THREAD(^ {
                                       weakSelf.listToAddTo.venues= restaurants.mutableCopy;
-                                      [weakSelf.tableView reloadData];
+                                      [weakSelf.restaurantsTable reloadData];
                                   });
                               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                   ;
@@ -452,8 +424,8 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
                                                  name:UIApplicationDidBecomeActiveNotification object:nil];
     
     [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
-    [_tableView addSubview:self.refreshControl];
-    _tableView.alwaysBounceVertical = YES;
+    [_restaurantsTable addSubview:self.refreshControl];
+    _restaurantsTable.alwaysBounceVertical = YES;
 }
 
 - (void)forceRefresh:(id)sender {
@@ -581,15 +553,19 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
-    [marker highLight:YES];
+    if (tableView == _restaurantsTable) {
+        OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
+        [marker highLight:YES];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([_mapMarkers count] > indexPath.row) {
-        OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
-        [marker highLight:NO];
+    if (tableView == _restaurantsTable) {
+        if ([_mapMarkers count] > indexPath.row) {
+            OOMapMarker *marker = [_mapMarkers objectAtIndex:indexPath.row];
+            [marker highLight:NO];
+        }
     }
 }
 
@@ -707,7 +683,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(OOMapMarker *)marker {
-    [_tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:marker.index inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+    [_restaurantsTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:marker.index inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
     [_mapView setSelectedMarker:marker];
     return YES;
 }
@@ -721,7 +697,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     vc.eventBeingEdited= self.eventBeingEdited;
     vc.listToAddTo = _listToAddTo;
     [vc getRestaurant];
-    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore-MarkerInfoWindow");
+    ANALYTICS_EVENT_UI(@"RestaurantVC-from-Search-MarkerInfoWindow");
 }
 
 -(UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {
@@ -791,20 +767,21 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
         [marker highLight:NO];
         [_mapMarkers addObject:marker];
     }];
-    [_tableView reloadData];
+    [_restaurantsTable reloadData];
     
     if ([_restaurants count]) {
-        [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [_restaurantsTable scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == _locationsTable ) {
+    if (tableView == _locationsTable) {
         CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
         _locationSearchBar.text = [Common locationString:placemark];
         _currentLocation = placemark.location.coordinate;
         [self moveToCurrentLocation];
+        _locationsTable.alpha = 0;
     } else {
         RestaurantObject *ro = [_restaurants objectAtIndex:indexPath.row];
         
@@ -815,7 +792,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
         vc.eventBeingEdited= self.eventBeingEdited;
         vc.listToAddTo = _listToAddTo;
         [vc getRestaurant];
-        ANALYTICS_EVENT_UI(@"RestaurantVC-from-Explore");
+        ANALYTICS_EVENT_UI(@"RestaurantVC-from-Search");
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }

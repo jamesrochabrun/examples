@@ -62,15 +62,15 @@
     nc = [[UINavigationController alloc] initWithRootViewController:_searchVC];
     [self addChildViewController:nc];
 
-    image.text = selectedImage.text = kFontIconMap;
-    [image sizeToFit];
-    [selectedImage sizeToFit];
-    tbi = [[UITabBarItem alloc] initWithTitle:@"Explore" image:[UIImage imageFromView:image] selectedImage:[UIImage imageFromView:selectedImage]];
-
-    _exploreVC = [[ExploreVC alloc] init];
-    _exploreVC.tabBarItem = tbi;
-    nc = [[UINavigationController alloc] initWithRootViewController:_exploreVC];
-    [self addChildViewController:nc];
+//    image.text = selectedImage.text = kFontIconMap;
+//    [image sizeToFit];
+//    [selectedImage sizeToFit];
+//    tbi = [[UITabBarItem alloc] initWithTitle:@"Explore" image:[UIImage imageFromView:image] selectedImage:[UIImage imageFromView:selectedImage]];
+//
+//    _exploreVC = [[ExploreVC alloc] init];
+//    _exploreVC.tabBarItem = tbi;
+//    nc = [[UINavigationController alloc] initWithRootViewController:_exploreVC];
+//    [self addChildViewController:nc];
     
     image.text = selectedImage.text = kFontIconFeed;
     [image sizeToFit];

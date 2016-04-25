@@ -898,7 +898,6 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     
     _searchMode = NO;
     _searchBar = [UISearchBar new];
-    _searchBar.placeholder = kSearchPlaceholderYou;
     _searchBar.alpha = 0;
     _searchBar.delegate = self;
     [self.view addSubview:_searchBar];
@@ -946,6 +945,8 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
     }
+    
+    _searchBar.placeholder = (_viewingOwnProfile) ? @"Find places on your lists" : [NSString stringWithFormat:@"Find places on @%@'s lists", _userInfo.username];
     
 //    _lastShownUser = _userInfo.userID;
     
