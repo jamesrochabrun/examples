@@ -288,7 +288,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     __weak ConnectVC *weakSelf = self;
     _roSearch = [OOAPI getUsersWithKeyword:_searchBar.text
                                             success:^(NSArray *users) {
-                                                _searchResultsArray = users;
+                                                weakSelf.searchResultsArray = users;
                                                 dispatch_async(dispatch_get_main_queue(), ^{
                                                     [weakSelf reloadSection:0];
                                                 });
@@ -406,11 +406,16 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [OOAPI getFoodieUsersForUser:user
                          success:^(NSArray *users) {
                              weakSelf.foodiesArray = users;
-                             _gotFoodiesResult = YES;
-                             [self reloadSection:kConnectSectionFoodies];
+                             weakSelf.gotFoodiesResult = YES;
+                             dispatch_async(dispatch_get_main_queue(), ^{
+                                 [weakSelf reloadSection:kConnectSectionFoodies];
+                             });
                          }
                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                             _gotFoodiesResult = YES;
+                             weakSelf.gotFoodiesResult = YES;
+                             dispatch_async(dispatch_get_main_queue(), ^{
+                                 [weakSelf reloadSection:kConnectSectionFoodies];
+                             });
                          }
      ];
 }
@@ -421,12 +426,18 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     self.roRecentUsers = [OOAPI getRecentUsersSuccess:^(NSArray *users) {
                             weakSelf.recentUsersArray = users;
-                            _gotRecentUsersResult = YES;
-                            [self reloadSection:kConnectSectionRecentUsers];
+                            weakSelf.gotRecentUsersResult = YES;
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [weakSelf reloadSection:kConnectSectionRecentUsers];
+                            });
                         }
                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             NSLog(@"unable to fetch recent users");
-                            _gotRecentUsersResult = YES;
+                            weakSelf.gotRecentUsersResult = YES;
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [weakSelf reloadSection:kConnectSectionRecentUsers];
+                            });
+
                         }];
 
 }
@@ -437,18 +448,23 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                              forUser:[Settings sharedInstance].userObject.userID
                                              success:^(NSArray *users) {
                                                  weakSelf.inTheKnowUsersArray = users;
-                                                 _gotInTheKnowResult = YES;
-                                                 [self reloadSection:kConnectSectionInTheKnow];
+                                                 weakSelf.gotInTheKnowResult = YES;
+                                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                                     [weakSelf reloadSection:kConnectSectionInTheKnow];
+                                                 });
                                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                 _gotInTheKnowResult = YES;
+                                                 weakSelf.gotInTheKnowResult = YES;
+                                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                                     [weakSelf reloadSection:kConnectSectionInTheKnow];
+                                                 });
                                                  NSLog(@"unable to fetch in the know users");
                                              }];
 }
 
 - (void)reloadSection:(NSUInteger)section {
     dispatch_async(dispatch_get_main_queue(), ^ {
-        [_tableAccordion reloadData];
-//        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+        //[_tableAccordion reloadData];
+        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationNone];
         [self.refreshControl endRefreshing];
     });
 }
@@ -609,21 +625,25 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                 if (row < _foodiesArray.count) {
                     haveData = YES;
                 }
+                //if (!_canSeeFoodies) return 0;
                 break;
             case kConnectSectionFriends:
                 if (row < _suggestedUsersArray.count) {
                     haveData = YES;
                 }
+                //if (!_canSeeFriends) return 0;
                 break;
             case kConnectSectionInTheKnow:
                 if (row < _inTheKnowUsersArray.count) {
                     haveData = YES;
                 }
+                //if (!_canSeeInTheKnow) return 0;
                 break;
             case kConnectSectionRecentUsers:
                 if (row < _recentUsersArray.count) {
                     haveData = YES;
                 }
+                //if (!_canSeeRecentUsers) return 0;
                 break;
             default:
                 break;
@@ -642,7 +662,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 }
 
 //------------------------------------------------------------------------------
-// Name:    heightForHeaderInSection6+
+// Name:    heightForHeaderInSection
 // Purpose:
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -752,19 +772,19 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     } else {
         switch (section) {
             case kConnectSectionFriends:
-    //            return _suggestedUsersArray.count;
+                //return _suggestedUsersArray.count;
                 return _canSeeFriends? _suggestedUsersArray.count:0;
                 break;
             case kConnectSectionFoodies:
-    //            return _foodiesArray.count;
+                //return _foodiesArray.count;
                 return _canSeeFoodies? _foodiesArray.count:0;
                 break;
             case kConnectSectionRecentUsers:
-    //            return _recentUsersArray.count;
+                //return _recentUsersArray.count;
                 return _canSeeRecentUsers? _recentUsersArray.count:0;
                 break;
             case kConnectSectionInTheKnow:
-    //            return _inTheKnowUsersArray.count;
+                //return _inTheKnowUsersArray.count;
                 return _canSeeInTheKnow? _inTheKnowUsersArray.count:0;
                 break;
             default:
@@ -845,12 +865,16 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                   success:^(NSArray *users) {
                                       weakSelf.suggestedUsersArray = users;
                                       [weakSelf refreshSuggestedUsersSection];
-                                      _gotFriendsResult = YES;
-                                      [self reloadSection:kConnectSectionFriends];
+                                      weakSelf.gotFriendsResult = YES;
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          [weakSelf reloadSection:kConnectSectionFriends];;
+                                      });
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                       NSLog (@"FETCH OF NON-FOLLOWEES USING FB IDs FAILED");
-                                      _gotFriendsResult = YES;
-                                      [weakSelf refreshSuggestedUsersSection];
+                                      weakSelf.gotFriendsResult = YES;
+                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                          [weakSelf reloadSection:kConnectSectionFriends];;
+                                      });
                                   }];
     }
 }

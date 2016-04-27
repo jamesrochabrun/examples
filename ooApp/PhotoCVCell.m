@@ -310,27 +310,33 @@
         ;
     }];
 
-    [self updateLikedState];
+    //[self updateLikedState];
+    [_yumButton setSelected:_mediaItemObject.isUserYummed];
+    _yumButton.hidden = (_mediaItemObject.source == kMediaItemTypeOomami) ? NO : YES;
     
     if (_mediaItemObject.sourceUserID) {
-        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
-            _userObject = user;
-            NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
-            ON_MAIN_THREAD(^{
-                [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
-                [weakSelf setNeedsUpdateConstraints];
-                weakSelf.userButton.hidden = NO;
-//                weakSelf.gradient.hidden = NO;
-                weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            weakSelf.userButton.hidden = YES;
-//            weakSelf.gradient.hidden = YES;
-            weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
-        }];
+        [_userButton setTitle:_mediaItemObject.sourceUsername forState:UIControlStateNormal];
+        _userButton.hidden = NO;
+        [self setNeedsUpdateConstraints];
+        _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)_mediaItemObject.yumCount];
+        _numYums.hidden = (_mediaItemObject.yumCount) ? NO : YES;
+        _caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
+        
+//        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
+//            _userObject = user;
+//            NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
+//            ON_MAIN_THREAD(^{
+//                [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
+//                [weakSelf setNeedsUpdateConstraints];
+//                weakSelf.userButton.hidden = NO;
+//                weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
+//            });
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            weakSelf.userButton.hidden = YES;
+//            weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
+//        }];
         
     } else {
-//        _gradient.hidden = YES;
         _userButton.hidden = YES;
         _caption.hidden = YES;
     }

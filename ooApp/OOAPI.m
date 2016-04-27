@@ -246,7 +246,17 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                                success:(void (^)(NSArray *mediaItems))success
                                                failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL],(unsigned long) restaurant.restaurantID];
+    UserObject *userObject = [Settings sharedInstance].userObject;
+    
+    NSString *urlString;
+    
+    if (userObject && userObject.userID) {
+        urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos?user_id=%lu", kHTTPProtocol, [self ooURL], (unsigned long)restaurant.restaurantID, (unsigned long)userObject.userID];
+    } else {
+        urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL], (unsigned long)restaurant.restaurantID];
+    }
+    
+    
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
@@ -1919,7 +1929,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     //eg. /users/recent?days=30&limit=5
     
     NSString *urlString;
-    urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/recent", kHTTPProtocol, [OOAPI URL], user.userID];
+    urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/recent", kHTTPProtocol, [OOAPI URL], (unsigned long)user.userID];
     
     AFHTTPRequestOperation *op;
     

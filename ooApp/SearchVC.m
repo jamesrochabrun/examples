@@ -49,6 +49,7 @@
 @property (nonatomic, strong) UITableView *restaurantsTable;
 @property (nonatomic, strong) UITableView *locationsTable;
 @property (nonatomic, strong) NSArray *locations;
+@property (nonatomic, strong) UIView *locationsBgView;
 
 @end
 
@@ -84,6 +85,11 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     _locationSearchBar.delegate = self;
     _locationSearchBar.placeholder = LOCAL(@"Current Location");
     _locationSearchBar.enablesReturnKeyAutomatically = NO;
+    
+    _locationsBgView = [UIView new];
+    _locationsBgView.backgroundColor = UIColorRGBA(kColorNavBar);
+    _locationsBgView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_locationsBgView];
 
     UILabel *l = [UILabel new];
     [l withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorText backgroundColor:kColorClear];
@@ -93,11 +99,8 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
     _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
     _locationSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-
-    
     _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_locationSearchBar];
-    
+    [_locationsBgView addSubview:_locationSearchBar];
 
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
     _mapView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -137,8 +140,9 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [_resetLocation withIcon:kFontIconLocation fontSize:kGeomIconSize width:30 height:30 backgroundColor:kColorNavBar target:self selector:@selector(resetLocationToHere:)];
     [_resetLocation setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     _resetLocation.layer.cornerRadius = 0;
-    [self.view addSubview: _resetLocation];
+    //[self.view addSubview: _resetLocation];
     _resetLocation.translatesAutoresizingMaskIntoConstraints = NO;
+    [_locationsBgView addSubview:_resetLocation];
     
     _camera = [GMSCameraPosition cameraWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude zoom:14 bearing:0 viewingAngle:1];
     
@@ -168,6 +172,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
+    //[DebugUtilities addBorderToViews:@[_resetLocation]];
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
@@ -242,40 +247,6 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
                  }];
 }
 
-
-//- (void)userPressedChangeLocation: (UIButton*)sender
-//{
-//    UINavigationController *nc = [[UINavigationController alloc] init];
-//    
-//    ChangeLocationVC *vc = [[ChangeLocationVC alloc] init];
-//    vc.delegate = self;
-//    [nc addChildViewController:vc];
-//    
-//    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
-//    [nc.navigationBar setTranslucent:YES];
-//    nc.view.backgroundColor = [UIColor clearColor];
-//    
-//    [self.navigationController presentViewController:nc animated:YES completion:^{
-//        nc.topViewController.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-//    }];
-//
-//}
-
-//- (void)changeLocationVCCanceled:(ChangeLocationVC *)changeLocationVC {
-//    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        ;
-//    }];
-//}
-
-//- (void)changeLocationVC:(ChangeLocationVC *)changeLocationVC locationSelected:(CLPlacemark *)placemark {
-//    _currentLocation = placemark.location.coordinate;
-//    [self moveToCurrentLocation];
-//    [self dismissViewControllerAnimated:YES completion:^{
-//        ;
-//    }];
-//}
-
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
     NSLog(@"The map became idle at %f,%f", position.target.latitude, position.target.longitude);
     _desiredLocation = position.target;
@@ -348,7 +319,6 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 }
 
 - (void)toggleMap {
-    [self.view removeConstraints:_mapContraints];
     _showMap = !_showMap;
     [self.view setNeedsUpdateConstraints];
     [UIView animateWithDuration:0.5 animations:^{
@@ -360,16 +330,18 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((_showMap)?(height(self.view)-kGeomHeightNavBarStatusBar)*0.4:0), @"mapWidth" : @(width(self.view))};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_restaurantsTable, _mapView, _locationSearchBar, _locationsTable, _resetLocation);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_restaurantsTable, _mapView, _locationSearchBar, _locationsTable, _resetLocation, _locationsBgView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    
-    _mapContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar(40)]-[_mapView(mapHeight)]-[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    [self.view removeConstraints:_mapContraints];
+    _mapContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationsBgView(40)][_mapView(mapHeight)]-[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     
     [self.view addConstraints:_mapContraints];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation(40)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationSearchBar]-[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar][_resetLocation(55)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsBgView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationsBgView]-[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar(>=0)][_resetLocation(40)]-15-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];

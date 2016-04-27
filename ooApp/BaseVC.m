@@ -63,9 +63,7 @@
     self.navigationItem.leftBarButtonItems = _leftBarItems;// @[_leftNavButton];
     
     _navTitleView = [[NavTitleView alloc] init];
-    _navTitleView.frame = CGRectMake(0, 0,
-                                     [UIScreen mainScreen].bounds.size.width-250 /*- kGeomWidthMenuButton*2*/,
-                                     44);
+    _navTitleView.frame = CGRectZero;// (0, 0, [UIScreen mainScreen].bounds.size.width-250 /*- kGeomWidthMenuButton*2*/, 44);
     self.navigationItem.titleView = _navTitleView;
     
     _mainCoverView = [[UIView alloc] initWithFrame:self.view.frame];
@@ -106,7 +104,7 @@
     
     _refreshControl = [[UIRefreshControl alloc] init];
     _refreshControl.tintColor = [UIColor grayColor];
-//    [DebugUtilities addBorderToViews:@[_leftBarButtonView, _rightBarButtonView, _navTitleView]];
+    //[DebugUtilities addBorderToViews:@[_leftBarButtonView, _rightBarButtonView, _navTitleView]];
 }
 
 - (void)toggleDropDown {
@@ -138,7 +136,6 @@
         frame = CGRectMake(0, 0, [_leftBarItems count]*40, 40);
         _leftBarButtonView.frame = frame;
         bbi = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
-        
         self.navigationItem.leftBarButtonItem = bbi;
     } else if (side == kNavBarSideTypeRight) {
         [_rightBarButtonView addSubview:button];
@@ -153,6 +150,8 @@
         bbi = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
         self.navigationItem.rightBarButtonItem = bbi;
     }
+    
+    _navTitleView.frame = CGRectMake(0, 0, width(self.view) - fmaxf(2*width(_leftBarButtonView), 2*width(_rightBarButtonView)) - 50, kGeomHeightNavBar);
     
     //[DebugUtilities addBorderToViews:@[button]];
 }

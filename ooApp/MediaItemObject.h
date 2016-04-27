@@ -24,6 +24,9 @@ extern NSString *const kKeyMediaItemSourceUserID;
 extern NSString *const kKeyMediaItemCaption;
 extern NSString *const kKeyMediaItemIsFood;
 extern NSString *const kKeyMediaItemRestaurantID;
+extern NSString *const kKeyMediaItemYumCount;
+extern NSString *const kKeyMediaItemSourceUsername;
+extern NSString *const kKeyMediaItemIsYummedByUser;
 
 @interface MediaItemObject : NSObject
 
@@ -38,6 +41,9 @@ extern NSString *const kKeyMediaItemRestaurantID;
 @property (nonatomic) NSUInteger sourceUserID;
 @property (nonatomic) NSUInteger restaurantID; // if given.
 @property (nonatomic) BOOL isFood;
+@property (nonatomic) BOOL isUserYummed;
+@property (nonatomic) NSUInteger yumCount;
+@property (nonatomic, strong) NSString *sourceUsername;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryOfMediaItem;
