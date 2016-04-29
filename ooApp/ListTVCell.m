@@ -29,21 +29,22 @@
     return self;
 }
 
-- (void)addTheAddAllButton;
-{
-    _buttonAddAll= makeButton(self,  @"ADD ALL", kGeomFontSizeHeader,
-                              UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self,
-                              @selector(userPressedAddAll:) , 1);
-    _buttonAddAll.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    [self bringSubviewToFront:_buttonAddAll];
-}
 
-- (void)userPressedAddAll:(id)sender
-{
-    NSLog  (@"USER PRESSED ADD ALL BUTTON");
-    [self.delegate userPressedAddAllForList:self.listToAddTo ];
-}
+//- (void)addTheAddAllButton
+//{
+//    _buttonAddAll= makeButton(self,  @"ADD ALL", kGeomFontSizeHeader,
+//                              UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear), self,
+//                              @selector(userPressedAddAll:) , 1);
+//    _buttonAddAll.translatesAutoresizingMaskIntoConstraints = NO;
+//    
+//    [self bringSubviewToFront:_buttonAddAll];
+//}
+
+//- (void)userPressedAddAll:(id)sender
+//{
+//    NSLog  (@"USER PRESSED ADD ALL BUTTON");
+//    [self.delegate userPressedAddAllForList:self.listToAddTo ];
+//}
 
 - (void)updateConstraints {
     [super updateConstraints];
@@ -72,8 +73,9 @@
 {
     [super prepareForReuse];
     [self.buttonAddAll removeFromSuperview];
-    self.buttonAddAll= nil;
-    self.listToAddTo= nil;
+    self.buttonAddAll = nil;
+    self.listToAddTo = nil;
+    self.thumbnail.image = nil;
 }
 
 - (void)toggleListInclusion {
@@ -84,6 +86,12 @@
         //remove from list
         [api deleteRestaurant:_restaurantToAdd.restaurantID fromList:_list.listID success:^(NSArray *lists) {
             [weakSelf getListsForRestaurant];
+            OOAPI *apiInner = [[OOAPI alloc] init];
+            [apiInner getList:_list.listID success:^(ListObject *list) {
+                weakSelf.list.numRestaurants = list.numRestaurants;
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
@@ -92,6 +100,12 @@
         //add to list
         [api addRestaurants:@[_restaurantToAdd] toList:_list.listID success:^(id response) {
             [weakSelf getListsForRestaurant];
+            OOAPI *apiInner = [[OOAPI alloc] init];
+            [apiInner getList:_list.listID success:^(ListObject *list) {
+                weakSelf.list.numRestaurants = list.numRestaurants;
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
@@ -135,7 +149,7 @@
             *stop = YES;
         }
     }];
-    
+
     [self setOnList:onList];
 }
 
@@ -151,16 +165,10 @@
     
     [self updateAddButton];
     
-    self.thumbnail.image = nil;
+    //self.thumbnail.image = nil;
     self.header.text = [_list listName];
-    if (_list.numRestaurants == 1) {
-        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurant", (unsigned long)_list.numRestaurants];
-    } else if (_list.numRestaurants) {
-        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurants", (unsigned long)_list.numRestaurants];
-    } else {
-        self.subHeader1.text = @"";
-    }
-
+    [self updateRestaurantCount];
+    
     if (_restaurantToAdd) {
         self.actionButton.hidden = NO;
         [self.actionButton removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
@@ -177,7 +185,7 @@
     //get the list's image
     OOAPI *api = [[OOAPI alloc] init];
 
-    if (_list.mediaItem) {
+    if (_list.mediaItem && !self.thumbnail.image) {
         __weak UIImageView *weakIV = self.thumbnail;
         __weak ListTVCell *weakSelf = self;
         
@@ -204,6 +212,16 @@
         }];
     }
 
+}
+
+- (void)updateRestaurantCount {
+    if (_list.numRestaurants == 1) {
+        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurant", (unsigned long)_list.numRestaurants];
+    } else if (_list.numRestaurants) {
+        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurants", (unsigned long)_list.numRestaurants];
+    } else {
+        self.subHeader1.text = @"";
+    }
 }
 
 - (void)addAllRestaurantsFromList {

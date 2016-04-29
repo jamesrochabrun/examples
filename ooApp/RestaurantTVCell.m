@@ -10,11 +10,17 @@
 #import "LocationManager.h"
 #import "ListsVC.h"
 #import "OOActivityItemProvider.h"
+#import "OOUserView.h"
+#import "DebugUtilities.h"
 
 @interface RestaurantTVCell ()
 @property (nonatomic, strong) UIAlertController *restaurantOptionsAC;
 @property (nonatomic, strong) UIAlertController *createListAC;
 @property (nonatomic, assign) NSUInteger mode;
+@property (nonatomic, strong) NSArray *followees;
+@property (nonatomic, strong) UIView *followeesView;
+@property (nonatomic, strong) UILabel *numberAdditionalFollowees;
+@property (nonatomic, strong) AFHTTPRequestOperation *roFollowes;
 @end
 
 enum  {
@@ -29,6 +35,13 @@ enum  {
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        _followeesView = [UIView new];
+        _followeesView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:_followeesView];
+        
+        _numberAdditionalFollowees = [UILabel new];
+        [_numberAdditionalFollowees withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorBlack backgroundColor:kColorClear];
+        //[DebugUtilities addBorderToViews:@[_followeesView, _numberAdditionalFollowees]];
     }
     return self;
 }
@@ -42,22 +55,8 @@ enum  {
     self.subHeader1.text =  _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
                             (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
     
-    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+    self.subHeader2.text = [self subheader2String];
     
-    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
-    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];
-    
-    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-    
-    NSString *distance = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)] : @"";
-    NSString *rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
-    
-    if ([distance length] && [rating length]) {
-        self.subHeader2.text = [NSString stringWithFormat:@"%@ | %@", distance, rating];
-    } else {
-        self.subHeader2.text = [NSString stringWithFormat:@"%@", [distance length] ? distance : rating];
-    }
-
     OOAPI *api = [[OOAPI alloc] init];
     
     NSString *imageRef;
@@ -114,8 +113,111 @@ enum  {
             ;
         }];
     }
+    __weak RestaurantTVCell *weakSelf = self;
     
+    if (!_restaurant.restaurantID) {
+        [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
+            _restaurant = restaurant;
+            if (_restaurant.restaurantID) {
+                
+                [weakSelf addFolloweesWithRestaurant];
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
+        }];
+    } else {
+        [self addFolloweesWithRestaurant];
+    }
     [self setupActionButton];
+}
+
+- (void)addFolloweesWithRestaurant {
+    __weak RestaurantTVCell *weakSelf = self;
+    if (!_restaurant.restaurantID) {
+        NSLog(@"rest=%@", _restaurant.name);
+    }
+    _roFollowes = [OOAPI getFolloweesForRestaurant:_restaurant success:^(NSArray *users) {
+        weakSelf.followees = users;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf gotFollowees];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf gotFollowees];
+        });
+    }];
+}
+
+- (void)gotFollowees {
+    NSUInteger index = 0;
+    NSUInteger count = [_followees count];
+    for (UserObject *u in _followees) {
+        OOUserView *uv = [[OOUserView alloc] init];
+        uv.user = u;
+        uv.frame = CGRectMake(33*index, 0, 30, 30);
+        [_followeesView addSubview:uv];
+        index++;
+        if (index == 2) {
+            if (count > index) {
+                _numberAdditionalFollowees.text = [NSString stringWithFormat:@"+%lu", count-index];
+                
+                [_numberAdditionalFollowees sizeToFit];
+                _numberAdditionalFollowees.frame = CGRectMake(33*index, (30-CGRectGetHeight(_numberAdditionalFollowees.frame))/2, CGRectGetWidth(_numberAdditionalFollowees.frame), CGRectGetHeight(_numberAdditionalFollowees.frame));
+                [_followeesView addSubview:_numberAdditionalFollowees];
+            }
+            break;
+        }
+    }
+    
+    if (count) {
+        self.subHeader2.text = [self subheader2String];
+    }
+    [self setNeedsLayout];
+}
+
+- (NSString *)subheader2String {
+    NSString *s;
+    
+    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+    
+    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
+    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:_restaurant.location.latitude longitude:_restaurant.location.longitude];
+    
+    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
+    
+    NSString *distance = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)] : @"";
+    NSString *rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
+
+    if ([distance length] && [rating length]) {
+        s = [NSString stringWithFormat:@"%@ | %@", distance, rating];
+    } else {
+        s = [NSString stringWithFormat:@"%@", [distance length] ? distance : rating];
+    }
+    
+    if ([_followees count]) {
+        s = [s stringByAppendingString:@" | "];
+    }
+    return s;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+}
+
+- (void)updateConstraints {
+    [super updateConstraints];
+    
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButtonSmall)};
+        
+    UIView *superview = self, *subheader2 = self.subHeader2;
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _followeesView, subheader2);
+    
+    // Vertical layout - note the options for aligning the top and bottom of all views
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_followeesView(30)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_followeesView(100)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_followeesView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:subheader2 attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_followeesView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:subheader2 attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
 }
 
 - (void)setListToAddTo:(ListObject *)listToAddTo
@@ -128,11 +230,14 @@ enum  {
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    [self.actionButton setTitle:  @"" forState:UIControlStateNormal];
+    [_roFollowes cancel];
+    [self.actionButton setTitle:@"" forState:UIControlStateNormal];
     self.restaurant= nil;
     self.eventBeingEdited= nil;
     self.listToAddTo=nil;
     self.mode= MODE_NONE;
+    _followees = nil;
+    [[_followeesView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
 - (void)expressMode
@@ -217,10 +322,10 @@ enum  {
 
 - (void)userPressedActionButton:(id)sender
 {
-    OOAPI *api = [[OOAPI alloc] init];
+//    OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
-    [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
-        _restaurant = restaurant;
+//    [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
+//        _restaurant = restaurant;
         if (_restaurant.restaurantID) {
             switch (weakSelf.mode) {
                 case MODE_ADD:
@@ -264,9 +369,9 @@ enum  {
                     });
             }
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
-    }];
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
+//    }];
 }
 
 - (void)presentUnverifiedMessage:(NSString *)message {

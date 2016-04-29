@@ -13,7 +13,7 @@
 #import "EventTVCell.h"
 
 @interface EventsListVC : BaseVC <UITableViewDataSource, UITableViewDelegate,
-        EventTVCellDelegate, EventCoordinatorVCDelegate>
+        ObjectTVCellDelegate, EventCoordinatorVCDelegate>
 @property (nonatomic,strong) EventObject* eventBeingEdited;
 @end
 

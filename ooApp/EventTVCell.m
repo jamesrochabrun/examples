@@ -90,7 +90,7 @@
 
 - (void)userPressedButtonForProfile:(NSUInteger)userid
 {
-    [_delegate userTappedOnProfilePicture:userid];
+//    [_delegate userTappedOnProfilePicture:userid];
 }
 
 - (void)setNameHeader:(OOStripHeader *)header

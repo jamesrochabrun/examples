@@ -10,6 +10,12 @@
 #import "OOAPI.h"
 #import "UIImageView+AFNetworking.h"
 
+@class ObjectTVCell;
+
+@protocol ObjectTVCellDelegate <NSObject>
+- (void)objectTVCellIconTapped:(ObjectTVCell *)objectTVCell;
+@end
+
 @interface ObjectTVCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *thumbnail;
@@ -24,6 +30,7 @@
 @property (nonatomic, strong) CAGradientLayer *gradient;
 @property (nonatomic, strong) UILabel *icon;
 @property (nonatomic, strong) UILabel *iconLabel;
+@property (weak) id<ObjectTVCellDelegate> delegate;
 
 - (void)hideShadow;
 - (void)showShadow;

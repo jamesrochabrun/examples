@@ -340,7 +340,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsBgView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationsBgView]-[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_locationsBgView][_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views] ];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationSearchBar(>=0)][_resetLocation(40)]-15-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -630,7 +630,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
                                                    maxPrice:_maxPrice
                                                      isPlay:NO
                                                    success:^(NSArray *r) {
-            _restaurants = r;
+            weakSelf.restaurants = r;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf gotRestaurants];
                 [weakSelf.aiv stopAnimating];
@@ -766,6 +766,11 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
         [vc getRestaurant];
         ANALYTICS_EVENT_UI(@"RestaurantVC-from-Search");
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
+    if ([_searchBar isFirstResponder]) {
+        [_searchBar resignFirstResponder];
+    } else if ([_locationSearchBar isFirstResponder]) {
+        [_locationSearchBar resignFirstResponder];
     }
 }
 

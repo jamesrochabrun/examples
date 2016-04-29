@@ -14,7 +14,7 @@
 #import "EventTVCell.h"
 
 @interface EventSelectionVC : BaseVC <UITableViewDataSource, UITableViewDelegate,
-        EventTVCellDelegate, EventCoordinatorVCDelegate>
+        ObjectTVCellDelegate, EventCoordinatorVCDelegate>
 @property (nonatomic,strong) RestaurantObject* restaurantBeingAdded;
 @end
 

@@ -76,6 +76,19 @@ typedef enum {
 
     _requestOperation = nil;
     _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    [self registerForNotification:kNotificationRestaurantListsNeedsUpdate
+                          calling:@selector(handleRestaurantListAltered:)];
+}
+
+- (void)handleRestaurantListAltered:(NSNotification*)not
+{
+//    [self getLists];
+    //[_headerView refreshUserStats];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)updateViewConstraints
@@ -198,45 +211,45 @@ typedef enum {
     }];
 }
 
-- (void)userPressedAddAllForList:(ListObject *)list
-{
-    if  (!list) {
-        return;
-    }
-    
-    if  (_operationToFetchAll ) {
-        return;
-    }
-    
-    OOAPI *api= [[OOAPI alloc] init];
-    __weak ListsVC *weakSelf = self;
-    _operationToFetchAll = [api getRestaurantsWithListID:list.listID
-                          andLocation:[LocationManager sharedInstance].currentUserLocation                            
-                                                 success:^(NSArray *restaurants) {
-                                                     if (!restaurants || !restaurants.count) {
-                                                         return;
-                                                     }
-                                                   
-                                                     weakSelf.operationToAddAll = [OOAPI addRestaurants:restaurants
-                                                                 toEvent:weakSelf.eventBeingEdited
-                                                                 success:^(id response) {
-                                                                     NSLog (@"ADDED RESTAURANTS TO EVENT.");
-                                                                     weakSelf.operationToAddAll= nil;
-                                                                     weakSelf.eventBeingEdited.hasBeenAltered= YES;
-                                                                     message(@"Added restaurants to event.");
-                                                                     
-                                                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                                     message(@"There was a problem adding the restaurants of that list to the event.");
-                                                                     NSLog(@"CANNOT ADD RESTAURANTS TO EVENT.");
-                                                                     weakSelf.operationToAddAll= nil;
-                                                                 }];
-                                                   
-                                                   weakSelf.operationToFetchAll= nil;
-                                               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                   NSLog(@"CANNOT GET RESTAURANT WITH LIST ID");
-                                                   weakSelf.operationToFetchAll= nil;
-                                               }];
-}
+//- (void)userPressedAddAllForList:(ListObject *)list
+//{
+//    if  (!list) {
+//        return;
+//    }
+//    
+//    if  (_operationToFetchAll ) {
+//        return;
+//    }
+//    
+//    OOAPI *api= [[OOAPI alloc] init];
+//    __weak ListsVC *weakSelf = self;
+//    _operationToFetchAll = [api getRestaurantsWithListID:list.listID
+//                          andLocation:[LocationManager sharedInstance].currentUserLocation                            
+//                                                 success:^(NSArray *restaurants) {
+//                                                     if (!restaurants || !restaurants.count) {
+//                                                         return;
+//                                                     }
+//                                                   
+//                                                     weakSelf.operationToAddAll = [OOAPI addRestaurants:restaurants
+//                                                                 toEvent:weakSelf.eventBeingEdited
+//                                                                 success:^(id response) {
+//                                                                     NSLog (@"ADDED RESTAURANTS TO EVENT.");
+//                                                                     weakSelf.operationToAddAll= nil;
+//                                                                     weakSelf.eventBeingEdited.hasBeenAltered= YES;
+//                                                                     message(@"Added restaurants to event.");
+//                                                                     
+//                                                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                                                     message(@"There was a problem adding the restaurants of that list to the event.");
+//                                                                     NSLog(@"CANNOT ADD RESTAURANTS TO EVENT.");
+//                                                                     weakSelf.operationToAddAll= nil;
+//                                                                 }];
+//                                                   
+//                                                   weakSelf.operationToFetchAll= nil;
+//                                               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                                   NSLog(@"CANNOT GET RESTAURANT WITH LIST ID");
+//                                                   weakSelf.operationToFetchAll= nil;
+//                                               }];
+//}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -275,6 +288,7 @@ typedef enum {
         ListObject *list = [_lists objectAtIndex:indexPath.row];
         cell.lists = _listsWithRestaurant;
         cell.list = list;
+        cell.delegate = self;
         
         [cell updateConstraintsIfNeeded];
         return cell;
@@ -354,14 +368,17 @@ typedef enum {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ListObject *list = [_lists objectAtIndex:indexPath.row];
-    
+    ListTVCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    [cell toggleListInclusion];
+}
+
+- (void)objectTVCellIconTapped:(ObjectTVCell *)objectTVCell {
+    ListTVCell *cell = (ListTVCell *)objectTVCell;
+    ListObject *list = cell.list;
     RestaurantListVC *vc = [[RestaurantListVC alloc] init];
     vc.listItem = list;
     vc.eventBeingEdited= self.eventBeingEdited;
-    [self.navigationController pushViewController:vc animated:YES];
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self.navigationController pushViewController:vc animated:YES];    
 }
 
 - (void)addToFavorites {

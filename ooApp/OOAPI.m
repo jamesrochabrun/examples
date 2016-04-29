@@ -1671,10 +1671,10 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
         failure(nil,nil);
         return nil;
     }
-    NSInteger restaurantID = restaurant.restaurantID;
+    NSUInteger restaurantID = restaurant.restaurantID;
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/restaurants/%lu/followees", kHTTPProtocol, [OOAPI URL], (unsigned long)userID, (long)restaurantID];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/restaurants/%lu/followees", kHTTPProtocol, [OOAPI URL], (unsigned long)userID, (unsigned long)restaurantID];
     
     AFHTTPRequestOperation *op;
     

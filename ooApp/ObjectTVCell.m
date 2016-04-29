@@ -12,6 +12,7 @@
 @interface ObjectTVCell ()
 
 @property (nonatomic, strong) UIView *verticalLine1;
+@property (nonatomic, strong) UITapGestureRecognizer *iconTappedGesture;
 
 @end
 
@@ -53,7 +54,10 @@
         [_icon withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextActive backgroundColor:kColorClear];
         _icon.text = kFontIconPinDot;
         _icon.textAlignment = NSTextAlignmentCenter;
-        [self addSubview:_icon];
+        
+        _iconTappedGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(iconTapped:)];
+        _icon.userInteractionEnabled = YES;
+        [_icon addGestureRecognizer:_iconTappedGesture];
         
         _header = [[UILabel alloc] init];
         [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
@@ -86,6 +90,7 @@
         [self addSubview:_subHeader1];
         [self addSubview:_subHeader2];
         [_icon addSubview:_iconLabel];
+        [self addSubview:_icon];
         
         //set the selected color for the cell
         UIView *bgColorView = [[UIView alloc] init];
@@ -102,7 +107,7 @@
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-//        [DebugUtilities addBorderToViews:@[_viewShadow/*_thumbnail, _header, _subHeader1, _subHeader2, _viewShadow*/]];
+        //[DebugUtilities addBorderToViews:@[_icon]];
     }
     return self;
 }
@@ -194,6 +199,13 @@
                          attribute:NSLayoutAttributeCenterY
                          multiplier:1
                          constant:0]];
+}
+
+- (void)iconTapped:(id)sender {
+    NSLog(@"icon tapped");
+    if ([_delegate respondsToSelector:@selector(objectTVCellIconTapped:)]) {
+        [_delegate objectTVCellIconTapped:self];
+    }
 }
 
 - (void)layoutSubviews {

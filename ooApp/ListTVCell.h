@@ -9,10 +9,9 @@
 #import "ObjectTVCell.h"
 #import "ListObject.h"
 
-@protocol ListTVCellDelegate
-- (void) userPressedAddAllForList: (ListObject*)list;
-
-@end
+//@protocol ListTVCellDelegate
+//- (void) userPressedAddAllForList:(ListObject*)list;
+//@end
 
 @interface ListTVCell : ObjectTVCell
 
@@ -20,11 +19,11 @@
 @property (nonatomic, strong) ListObject *list;
 @property (nonatomic) BOOL onList;
 
-- (void) addTheAddAllButton;
-
+//- (void)addTheAddAllButton;
+- (void)toggleListInclusion;
 
 @property (nonatomic, strong) RestaurantObject *restaurantToAdd;
 @property (nonatomic, strong) ListObject *listToAddTo;
 
-@property (nonatomic,weak) id <ListTVCellDelegate>delegate;
+//@property (nonatomic,weak) id <ListTVCellDelegate>delegate;
 @end

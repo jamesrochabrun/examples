@@ -11,9 +11,9 @@
 #import "OOStripHeader.h"
 #import "ParticipantsView.h"
 
-@protocol EventTVCellDelegate <NSObject>
-- (void) userTappedOnProfilePicture: (NSUInteger)userid;
-@end
+//@protocol EventTVCellDelegate <NSObject>
+//- (void) userTappedOnProfilePicture: (NSUInteger)userid;
+//@end
 
 @interface EventTVCell : ObjectTVCell <ParticipantsViewDelegate>
 
@@ -22,5 +22,5 @@
 - (void)setMessageMode:(NSString *)message;
 
 @property (nonatomic,strong) OOStripHeader *nameHeader;
-@property (nonatomic,weak) id <EventTVCellDelegate> delegate;
+//@property (nonatomic,weak) id <EventTVCellDelegate> delegate;
 @end
