@@ -417,22 +417,24 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showYums {
-    __weak ViewPhotoVC *weakSelf = self;
-    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf showYummers:users];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
-    }];
-}
-
-- (void)showYummers:(NSArray *)users {
     UserListVC *vc = [[UserListVC alloc] init];
     vc.desiredTitle = @"Yummers";
     vc.user = _user;
-    vc.usersArray = [NSMutableArray arrayWithArray:users];
+    
+    __weak UserListVC *weakVC = vc;
+    
+    [vc.view bringSubviewToFront:vc.aiv];
+    [vc.aiv startAnimating];
+    
     [self.navigationController pushViewController:vc animated:YES];
+    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakVC.usersArray = users.mutableCopy;
+            [weakVC.aiv stopAnimating];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [weakVC.aiv stopAnimating];
+    }];
 }
 
 - (void)close {

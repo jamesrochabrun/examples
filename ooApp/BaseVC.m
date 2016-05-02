@@ -33,6 +33,7 @@
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _aiv = [[OOAIV alloc] initWithFrame:CGRectMake(0, 0, 100, 80)];
+    _aiv.message = @"loading";
 
     CGRect frame = _aiv.frame;
     frame.origin.x = (width(self.view) - width(_aiv))/2;

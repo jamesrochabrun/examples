@@ -13,6 +13,7 @@
 #import "OOUserView.h"
 #import "UserObject.h"
 #import "UserListTVC.h"
+#import "UnverifiedUserVC.h"
 
 typedef enum {
     kConnectSectionFriends = 0,
@@ -34,7 +35,8 @@ typedef enum {
 
 @interface ConnectVC : BaseVC <ConnectTableSectionHeaderDelegate,
                                 UserListTVCDelegate,
-                                UISearchBarDelegate>
+                                UISearchBarDelegate,
+                                UnverifiedUserVCDelegate>
 @property (nonatomic, assign) NSInteger defaultSection;
 @end
 

@@ -124,6 +124,13 @@
     _needRefresh = YES;
 }
 
+- (void)setUsersArray:(NSMutableArray *)usersArray {
+    if (_usersArray == usersArray) return;
+    _usersArray = usersArray;
+    [_tableUsers reloadData];
+    [self refreshIfNeeded];
+}
+
 - (void)done:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -149,7 +156,6 @@
     ANALYTICS_SCREEN( @( object_getClassName(self)));
  
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-    [self refreshIfNeeded];
 }
 
 - (void)refreshIfNeeded {
@@ -203,8 +209,6 @@
 
 - (void)fetchFollowees
 {
-    // NOTE: Need to make the call to find out who we are following before anything else is displayed.
-    
     __weak UserListVC *weakSelf = self;
     
     UserObject *currentUser = [Settings sharedInstance].userObject;
@@ -215,7 +219,11 @@
             NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
                     ( unsigned long)weakSelf.followeesArray.count);
         }
-        ON_MAIN_THREAD(^{ [weakSelf.tableUsers  reloadData]; });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSArray *visibleRowIndeces = [_tableUsers indexPathsForVisibleRows];
+            [_tableUsers reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
+//            [weakSelf.tableUsers reloadData];
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
     }];

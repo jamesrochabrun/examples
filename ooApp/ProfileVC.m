@@ -387,7 +387,17 @@
 
 - (void)fetchFollowers
 {
-    __weak ProfileHeaderView *weakSelf = self;
+    //__weak ProfileHeaderView *weakSelf = self;
+ 
+    UserListVC *vc = [[UserListVC alloc] init];
+    vc.desiredTitle = @"FOLLOWERS";
+    vc.user = _userInfo;
+    [_vc.navigationController pushViewController:vc animated:YES];
+    
+    __weak UserListVC *weakVC = vc;
+    
+    [vc.view bringSubviewToFront:vc.aiv];
+    [vc.aiv startAnimating];
     
     [OOAPI getFollowersForUser:_userInfo.userID
                   success:^(NSArray *users) {
@@ -400,17 +410,15 @@
                               return ;
                           }
                           
-                          UserListVC *vc = [[UserListVC alloc] init];
-                          vc.desiredTitle = @"FOLLOWERS";
-                          vc.usersArray = users.mutableCopy;
-                          vc.user = _userInfo;
-                          [weakSelf.vc.navigationController pushViewController:vc animated:YES];
+                          weakVC.usersArray = users.mutableCopy;
+                          [weakVC.aiv stopAnimating];
                           
                           NSLog (@"SUCCESS IN FETCHING %lu FOLLOWERS", (unsigned long)users.count);
                       });
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                      NSLog  (@"UNABLE TO FETCH FOLLOWERS");
-                  }     ];
+                      NSLog (@"UNABLE TO FETCH FOLLOWERS");
+                      [weakVC.aiv stopAnimating];
+                  }];
 }
 
 - (void)userPressedFollowers: (id) sender
@@ -424,7 +432,17 @@
 
 - (void)fetchFollowing
 {
-    __weak  ProfileHeaderView *weakSelf = self;
+    //__weak  ProfileHeaderView *weakSelf = self;
+
+    UserListVC *vc = [[UserListVC alloc] init];
+    vc.user = _userInfo;
+    vc.desiredTitle = @"Following";
+    [_vc.navigationController pushViewController: vc animated:YES];
+    
+    __weak UserListVC *weakVC = vc;
+    
+    [vc.view bringSubviewToFront:vc.aiv];
+    [vc.aiv startAnimating];
     
     [OOAPI getFollowingForUser:_userInfo.userID
                   success:^(NSArray *users) {
@@ -437,15 +455,17 @@
                               NSLog  (@"NO FOLLOWEES");
                               return ;
                           }
-                          UserListVC *vc = [[UserListVC alloc] init];
-                          vc.user= _userInfo;
-                          vc.desiredTitle = @"Following";
-                          vc.usersArray = users.mutableCopy;
-                          [weakSelf.vc.navigationController pushViewController: vc animated:YES];
+//                          UserListVC *vc = [[UserListVC alloc] init];
+//                          vc.user= _userInfo;
+//                          vc.desiredTitle = @"Following";
+                          weakVC.usersArray = users.mutableCopy;
+                          [weakVC.aiv stopAnimating];
+//                          [weakSelf.vc.navigationController pushViewController: vc animated:YES];
                           NSLog(@"SUCCESS IN FETCHING %lu FOLLOWEES", (unsigned long)users.count);
                       });
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                       NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
+                      [weakVC.aiv stopAnimating];
                   }];
     
 }

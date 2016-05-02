@@ -1374,6 +1374,8 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                     success:(void (^)(NSArray *mediaObjects))success
                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 {
+    UserObject *currentUser = [Settings sharedInstance].userObject;
+    
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/photos", kHTTPProtocol, [OOAPI URL], (unsigned long)userid];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
@@ -1386,6 +1388,10 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     } else if (maxHeight) {
         maxHeight = (isRetinaDisplay()) ? 2*maxHeight:maxHeight;
         [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)maxWidth] forKey:@"maxHeight"];
+    }
+    
+    if (currentUser) {
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)currentUser.userID]  forKey:kKeyUserID];
     }
     
     return [rm GET:urlString parameters:parameters success:^(id responseObject) {

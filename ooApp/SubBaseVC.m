@@ -32,6 +32,10 @@
         _navTitleView.frame = CGRectMake(0, 0,
                                          [UIScreen mainScreen].bounds.size.width - kGeomWidthMenuButton*2,
                                          44);
+        
+        _aiv = [[OOAIV alloc] initWithFrame:CGRectMake(0, 0, 100, 80)];
+        _aiv.message = @"loading";
+
         self.navigationItem.titleView = _navTitleView;
     }
     return self;
@@ -40,9 +44,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    _aiv = [[OOAIV alloc] initWithFrame:CGRectMake(0, 0, 100, 80)];
-    
+
     CGRect frame = _aiv.frame;
     frame.origin.x = (width(self.view) - width(_aiv))/2;
     frame.origin.y = ((height(self.view) - kGeomHeightNavBarStatusBar - kGeomHeightTabBar) - height(_aiv))/2;

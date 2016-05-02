@@ -121,13 +121,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @interface ConnectVC ()
 @property (nonatomic, strong) UITableView *tableAccordion;
 
-@property (nonatomic, strong) NSArray *suggestedUsersArray; // section 0
+@property (nonatomic, strong) NSArray *friendsArray; // section 0
 @property (nonatomic, strong) NSArray *foodiesArray; // section 1
 @property (nonatomic, strong) NSArray *followeesArray; // section 2
 @property (nonatomic, strong) NSArray *recentUsersArray; // section 3
 @property (nonatomic, strong) NSArray *inTheKnowUsersArray; // section
 
-@property (nonatomic, strong) AFHTTPRequestOperation *roSuggestedUsers; // fb
+@property (nonatomic, strong) AFHTTPRequestOperation *roFriends; // fb
 @property (nonatomic, strong) AFHTTPRequestOperation *roFoodies; // foodies
 @property (nonatomic, strong) AFHTTPRequestOperation *roRecentUsers; // users new to Oomami
 @property (nonatomic, strong) AFHTTPRequestOperation *roInTheKnow; // users in the know around you
@@ -147,9 +147,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)dealloc
 {
- //   [_suggestedUsersArray removeAllObjects];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationConnectNeedsUpdate object:nil];
-    self.suggestedUsersArray = nil;
+    self.friendsArray = nil;
     self.foodiesArray = nil;
     self.followeesArray = nil;
     self.recentUsersArray = nil;
@@ -172,7 +171,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
-    _suggestedUsersArray = [NSArray new];
+    _friendsArray = [NSArray new];
     _foodiesArray = [NSArray new];
     _followeesArray = [NSArray new];
     _recentUsersArray = [NSArray new];
@@ -247,7 +246,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         [_searchBar becomeFirstResponder];
     } else {
         _searchBar.text = @"";
-        [self reloadSection:0];
+        [_tableAccordion reloadData];
         [_searchBar resignFirstResponder];
     }
     
@@ -270,13 +269,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         [_roSearch cancel];
         [self searchForPeople];
     } else {
-        [self reloadSection:0];
+        [_tableAccordion reloadData];
     }
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     [self showSearch:NO];
-    [self reloadSection:0];
+    [_tableAccordion reloadData];
     _searchBar.text = @"";
 }
 
@@ -290,7 +289,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                             success:^(NSArray *users) {
                                                 weakSelf.searchResultsArray = users;
                                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                                    [weakSelf reloadSection:0];
+                                                    [_tableAccordion reloadData];
                                                 });
                                             } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                 NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
@@ -391,7 +390,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     UserObject *currentUser = [Settings sharedInstance].userObject;
     [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
         weakSelf.followeesArray = users;
-        [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
     }];
@@ -405,16 +406,35 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     self.roFoodies =
     [OOAPI getFoodieUsersForUser:user
                          success:^(NSArray *users) {
-                             weakSelf.foodiesArray = users;
-                             weakSelf.gotFoodiesResult = YES;
                              dispatch_async(dispatch_get_main_queue(), ^{
-                                 [weakSelf reloadSection:kConnectSectionFoodies];
+                                 NSMutableArray *deletedPaths = [NSMutableArray array];
+                                 NSUInteger d, i;
+                                 for (d=0; d<[weakSelf.foodiesArray count]; d++) {
+                                     [deletedPaths addObject:[NSIndexPath indexPathForRow:d inSection:kConnectSectionFoodies]];
+                                 }
+                                 NSMutableArray *insertedPaths = [NSMutableArray array];
+                                 
+                                 for (i=0; i<[users count]; i++) {
+                                     [insertedPaths addObject:[NSIndexPath indexPathForRow:i inSection:kConnectSectionFoodies]];
+                                 }
+                                 weakSelf.foodiesArray = users;
+                                 weakSelf.gotFoodiesResult = YES;
+                                 
+                                 NSLog(@"foodies(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionFoodies, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
+
+                             
+                                 [weakSelf.tableAccordion beginUpdates];
+                                 [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                 [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                 [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionFoodies] withRowAnimation:UITableViewRowAnimationNone];
+                                 [weakSelf.tableAccordion endUpdates];
+                                 [weakSelf.refreshControl endRefreshing];
                              });
                          }
                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                              weakSelf.gotFoodiesResult = YES;
                              dispatch_async(dispatch_get_main_queue(), ^{
-                                 [weakSelf reloadSection:kConnectSectionFoodies];
+                                 [weakSelf.refreshControl endRefreshing];
                              });
                          }
      ];
@@ -425,17 +445,35 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     __weak ConnectVC *weakSelf = self;
     
     self.roRecentUsers = [OOAPI getRecentUsersSuccess:^(NSArray *users) {
-                            weakSelf.recentUsersArray = users;
-                            weakSelf.gotRecentUsersResult = YES;
                             dispatch_async(dispatch_get_main_queue(), ^{
-                                [weakSelf reloadSection:kConnectSectionRecentUsers];
+                                NSMutableArray *deletedPaths = [NSMutableArray array];
+                                NSUInteger d, i;
+                                for (d=0; d<[weakSelf.recentUsersArray count]; d++) {
+                                    [deletedPaths addObject:[NSIndexPath indexPathForRow:d inSection:kConnectSectionRecentUsers]];
+                                }
+                                NSMutableArray *insertedPaths = [NSMutableArray array];
+            
+                                for (i=0; i<[users count]; i++) {
+                                    [insertedPaths addObject:[NSIndexPath indexPathForRow:i inSection:kConnectSectionRecentUsers]];
+                                }
+                                weakSelf.recentUsersArray = users;
+                                weakSelf.gotRecentUsersResult = YES;
+            
+                                NSLog(@"recent users(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionRecentUsers, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
+        
+                                [weakSelf.tableAccordion beginUpdates];
+                                [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionRecentUsers] withRowAnimation:UITableViewRowAnimationNone];
+                                [weakSelf.tableAccordion endUpdates];
+                                [weakSelf.refreshControl endRefreshing];
                             });
                         }
                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             NSLog(@"unable to fetch recent users");
                             weakSelf.gotRecentUsersResult = YES;
                             dispatch_async(dispatch_get_main_queue(), ^{
-                                [weakSelf reloadSection:kConnectSectionRecentUsers];
+                                [weakSelf.refreshControl endRefreshing];
                             });
 
                         }];
@@ -447,26 +485,38 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     self.roInTheKnow = [OOAPI getUsersAroundLocation:[LocationManager sharedInstance].currentUserLocation
                                              forUser:[Settings sharedInstance].userObject.userID
                                              success:^(NSArray *users) {
-                                                 weakSelf.inTheKnowUsersArray = users;
-                                                 weakSelf.gotInTheKnowResult = YES;
                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                     [weakSelf reloadSection:kConnectSectionInTheKnow];
+                                                     NSMutableArray *deletedPaths = [NSMutableArray array];
+                                                     NSUInteger d, i;
+                                                     for (d=0; d<[weakSelf.inTheKnowUsersArray count]; d++) {
+                                                         [deletedPaths addObject:[NSIndexPath indexPathForRow:d inSection:kConnectSectionInTheKnow]];
+                                                     }
+                                                     NSMutableArray *insertedPaths = [NSMutableArray array];
+                                                     
+                                                     for (i=0; i<[users count]; i++) {
+                                                         [insertedPaths addObject:[NSIndexPath indexPathForRow:i inSection:kConnectSectionInTheKnow]];
+                                                     }
+                                                     weakSelf.inTheKnowUsersArray = users;
+                                                     weakSelf.gotInTheKnowResult = YES;
+                                                     
+                                                     NSLog(@"in the know(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionInTheKnow, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
+                                                 
+                                                     [weakSelf.tableAccordion beginUpdates];
+                                                     [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                                     [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                                     [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionInTheKnow] withRowAnimation:UITableViewRowAnimationNone];
+                                                     [weakSelf.tableAccordion endUpdates];
+                                                     
+                                                     [weakSelf.refreshControl endRefreshing];
                                                  });
+                                                 
                                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                  weakSelf.gotInTheKnowResult = YES;
                                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                                     [weakSelf reloadSection:kConnectSectionInTheKnow];
+                                                     [weakSelf.refreshControl endRefreshing];
                                                  });
                                                  NSLog(@"unable to fetch in the know users");
                                              }];
-}
-
-- (void)reloadSection:(NSUInteger)section {
-    dispatch_async(dispatch_get_main_queue(), ^ {
-        //[_tableAccordion reloadData];
-        [_tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:section] withRowAnimation:UITableViewRowAnimationNone];
-        [self.refreshControl endRefreshing];
-    });
 }
 
 //- (void)reloadTableData {
@@ -478,11 +528,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)reloadAfterDeterminingWhoWeAreFollowing
 {
-    [self.roSuggestedUsers cancel];
+    [self.roFriends cancel];
     [self.roFoodies cancel];
     [self.roRecentUsers cancel];
     [self.roInTheKnow cancel];
-    self.roSuggestedUsers = nil;
+    self.roFriends = nil;
     self.roFoodies = nil;
     self.roRecentUsers = nil;
     self.roInTheKnow = nil;
@@ -532,8 +582,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     } else {
         switch (section) {
             case kConnectSectionFriends:
-                if (row < _suggestedUsersArray.count) {
-                        u = _suggestedUsersArray[row];
+                if (row < _friendsArray.count) {
+                        u = _friendsArray[row];
                 }
                 break;
             case kConnectSectionFoodies:
@@ -628,7 +678,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                 //if (!_canSeeFoodies) return 0;
                 break;
             case kConnectSectionFriends:
-                if (row < _suggestedUsersArray.count) {
+                if (row < _friendsArray.count) {
                     haveData = YES;
                 }
                 //if (!_canSeeFriends) return 0;
@@ -697,7 +747,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
             break;
         case kConnectSectionFriends:
             if (!_gotFriendsResult) return kGeomConnectScreenHeaderHeight;
-            count = [_suggestedUsersArray count];
+            count = [_friendsArray count];
             hv.numberUsers = count;
             if (count) return kGeomConnectScreenHeaderHeight;
             return 100;
@@ -724,8 +774,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     } else {
         switch (section) {
             case kConnectSectionFriends:
-                if (row<_suggestedUsersArray.count) {
-                    u = _suggestedUsersArray[row];
+                if (row<_friendsArray.count) {
+                    u = _friendsArray[row];
                 }
                 break;
             case kConnectSectionFoodies:
@@ -768,12 +818,16 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (_searchMode && [_searchBar.text length]) {
-        return [_searchResultsArray count];
+        if (section == 0) {
+            return [_searchResultsArray count];
+        } else {
+            return 0;
+        }
     } else {
         switch (section) {
             case kConnectSectionFriends:
                 //return _suggestedUsersArray.count;
-                return _canSeeFriends? _suggestedUsersArray.count:0;
+                return _canSeeFriends? _friendsArray.count:0;
                 break;
             case kConnectSectionFoodies:
                 //return _foodiesArray.count;
@@ -841,9 +895,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
             return;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (!friends.count) {
-                [weakSelf refreshSuggestedUsersSection];
-            }
             [weakSelf determineWhichFriendsAreNotOOUsers:friends];
         });
 //        [weakSelf fetchFoodies];
@@ -863,17 +914,34 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         [OOAPI getUnfollowedFacebookUsers:array
                                   forUser:[Settings sharedInstance].userObject.userID
                                   success:^(NSArray *users) {
-                                      weakSelf.suggestedUsersArray = users;
-                                      [weakSelf refreshSuggestedUsersSection];
-                                      weakSelf.gotFriendsResult = YES;
                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                          [weakSelf reloadSection:kConnectSectionFriends];;
+                                          NSMutableArray *deletedPaths = [NSMutableArray array];
+                                          NSUInteger d, i;
+                                          for (d=0; d<[weakSelf.friendsArray count];d++) {
+                                              [deletedPaths addObject:[NSIndexPath indexPathForRow:d inSection:kConnectSectionFriends]];
+                                          }
+                                          NSMutableArray *insertedPaths = [NSMutableArray array];
+                                          
+                                          for (i=0; i<[users count]; i++) {
+                                              [insertedPaths addObject:[NSIndexPath indexPathForRow:i inSection:kConnectSectionFriends]];
+                                          }
+                                          weakSelf.friendsArray = users;
+                                          weakSelf.gotFriendsResult = YES;
+                                          
+                                          NSLog(@"friends(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionFriends, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
+
+                                          [weakSelf.tableAccordion beginUpdates];
+                                          [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                          [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                          [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionFriends] withRowAnimation:UITableViewRowAnimationNone];
+                                          [_tableAccordion endUpdates];
+                                          [weakSelf.refreshControl endRefreshing];
                                       });
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                       NSLog (@"FETCH OF NON-FOLLOWEES USING FB IDs FAILED");
                                       weakSelf.gotFriendsResult = YES;
                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                          [weakSelf reloadSection:kConnectSectionFriends];;
+                                          [weakSelf.refreshControl endRefreshing];
                                       });
                                   }];
     }
@@ -892,13 +960,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     });
 }
 
-- (void)refreshSuggestedUsersSection
-{
-    // RULE: Don't reload the section unless the foodies are visible.
-    if (_canSeeFriends) {
-    }
-    dispatch_async(dispatch_get_main_queue(), ^{
-    });
+- (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    [self dismissViewControllerAnimated:YES completion:^{
+        ;
+    }];
 }
 
 @end
