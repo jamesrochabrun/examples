@@ -385,13 +385,14 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _gotRecentUsersResult =
     _gotInTheKnowResult = NO;
     
+    [self reloadAfterDeterminingWhoWeAreFollowing];
     __weak  ConnectVC *weakSelf = self;
     
     UserObject *currentUser = [Settings sharedInstance].userObject;
     [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
         weakSelf.followeesArray = users;
         dispatch_async(dispatch_get_main_queue(), ^{
-          [weakSelf reloadAfterDeterminingWhoWeAreFollowing];
+          //[weakSelf reloadAfterDeterminingWhoWeAreFollowing];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
@@ -422,12 +423,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                  
                                  NSLog(@"foodies(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionFoodies, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
 
-                             
-                                 [weakSelf.tableAccordion beginUpdates];
-                                 [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                 [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                 [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionFoodies] withRowAnimation:UITableViewRowAnimationNone];
-                                 [weakSelf.tableAccordion endUpdates];
+                                 if (_canSeeFoodies) {
+                                     [weakSelf.tableAccordion beginUpdates];
+                                     [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                     [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                     [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionFoodies] withRowAnimation:UITableViewRowAnimationNone];
+                                     [weakSelf.tableAccordion endUpdates];
+                                 }
                                  [weakSelf.refreshControl endRefreshing];
                              });
                          }
@@ -461,11 +463,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
             
                                 NSLog(@"recent users(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionRecentUsers, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
         
-                                [weakSelf.tableAccordion beginUpdates];
-                                [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionRecentUsers] withRowAnimation:UITableViewRowAnimationNone];
-                                [weakSelf.tableAccordion endUpdates];
+                                if (_canSeeRecentUsers) {
+                                    [weakSelf.tableAccordion beginUpdates];
+                                    [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                    [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                    [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionRecentUsers] withRowAnimation:UITableViewRowAnimationNone];
+                                    [weakSelf.tableAccordion endUpdates];
+                                }
                                 [weakSelf.refreshControl endRefreshing];
                             });
                         }
@@ -501,12 +505,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                                      
                                                      NSLog(@"in the know(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionInTheKnow, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
                                                  
-                                                     [weakSelf.tableAccordion beginUpdates];
-                                                     [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                                     [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                                     [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionInTheKnow] withRowAnimation:UITableViewRowAnimationNone];
-                                                     [weakSelf.tableAccordion endUpdates];
-                                                     
+                                                     if (_canSeeInTheKnow) {
+                                                         [weakSelf.tableAccordion beginUpdates];
+                                                         [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                                         [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                                         [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionInTheKnow] withRowAnimation:UITableViewRowAnimationNone];
+                                                         [weakSelf.tableAccordion endUpdates];
+                                                     }
                                                      [weakSelf.refreshControl endRefreshing];
                                                  });
                                                  
@@ -930,11 +935,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                           
                                           NSLog(@"friends(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionFriends, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
 
-                                          [weakSelf.tableAccordion beginUpdates];
-                                          [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                          [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                          [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionFriends] withRowAnimation:UITableViewRowAnimationNone];
-                                          [_tableAccordion endUpdates];
+                                          if (_canSeeFriends) {
+                                              [weakSelf.tableAccordion beginUpdates];
+                                              [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                              [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
+                                              [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionFriends] withRowAnimation:UITableViewRowAnimationNone];
+                                              [_tableAccordion endUpdates];
+                                          }
                                           [weakSelf.refreshControl endRefreshing];
                                       });
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

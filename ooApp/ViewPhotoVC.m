@@ -508,7 +508,7 @@ static CGFloat kNextPhotoTolerance = 40;
             _swipeType = kSwipeTypeDismiss;
             [self.interactiveController cancelInteractiveTransition];
             self.interactiveController = nil;
-        } else if (_swipeType != kSwipeTypeDismiss && delta.x > 0) {
+        } else if (_swipeType != kSwipeTypeDismiss && delta.x > 30) {
 //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != 1) {
                 _swipeType = kSwipeTypeNextPhoto;
@@ -523,7 +523,7 @@ static CGFloat kNextPhotoTolerance = 40;
                 
                 [self.navigationController pushViewController:_nextPhoto animated:YES];
             }
-        } else if (_swipeType != kSwipeTypeDismiss && delta.x < 0) {
+        } else if (_swipeType != kSwipeTypeDismiss && delta.x < -30) {
 //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != -1) {
                 _swipeType = kSwipeTypeNextPhoto;

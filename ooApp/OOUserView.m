@@ -35,7 +35,7 @@
         _imageView.clipsToBounds= YES;
         
         _emptyUserView = [[UILabel alloc] init];
-        [_emptyUserView withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorWhite backgroundColor:kColorGrayMiddle];
+        [_emptyUserView withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH1] textColor:kColorWhite backgroundColor:kColorGrayMiddle];
         _emptyUserView.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_emptyUserView];
         _emptyUserView.clipsToBounds= YES;
@@ -58,7 +58,7 @@
         _circle.text = kFontIconFilledCircle;
         _circle.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_circle];
-//        [DebugUtilities addBorderToViews:@[_buttonSettings, _circle]];
+        //[DebugUtilities addBorderToViews:@[_buttonSettings, _circle, _emptyUserView, self]];
     }
     return self;
 }
@@ -102,6 +102,10 @@
     CGFloat w = width(self);
     CGFloat h = height(self);
     
+    [_emptyUserView sizeToFit];
+    if (CGRectGetWidth(_emptyUserView.frame) > 0.5*w) {
+        _emptyUserView.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
+    }
     _emptyUserView.frame = self.bounds;
     _imageView.frame = self.bounds;
     _viewHalo.frame = self.bounds;
@@ -188,8 +192,9 @@
 - (void)displayEmptyView:(BOOL)displayIt {
     if (displayIt) {
         _imageView.alpha = 0;
+        
         _emptyUserView.alpha = 1;
-        [self setNeedsUpdateConstraints];
+        [self setNeedsLayout];
     }
 }
 
