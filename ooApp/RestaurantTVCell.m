@@ -455,13 +455,13 @@ enum  {
     }
     
     if (!addToList) {
-        addToList = [UIAlertAction actionWithTitle:@"Add to Existing List..."
+        addToList = [UIAlertAction actionWithTitle:@"Add to Existing List"
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                NSLog(@"Add/Remove from Existing List");
                                                                [weakSelf  addToList];
                                                            }];
     }
-    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
+    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List"
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                NSLog(@"Add to New List");
                                                                [weakSelf setupCreateListAC];

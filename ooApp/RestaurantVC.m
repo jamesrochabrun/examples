@@ -274,7 +274,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 //                                                              NSLog(@"Add to New Event");
 //                                                              [weakSelf addToNewEvent];
 //                                                          }];
-    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List..."
+    UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List"
                                                            style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
                                                              NSLog(@"Add to New List");
