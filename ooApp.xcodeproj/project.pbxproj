@@ -54,6 +54,7 @@
 		364D70C71CBF5A8200FADC29 /* S3.png in Resources */ = {isa = PBXBuildFile; fileRef = 364D70C41CBF5A8200FADC29 /* S3.png */; };
 		364D70C81CBF5A8200FADC29 /* S4.png in Resources */ = {isa = PBXBuildFile; fileRef = 364D70C51CBF5A8200FADC29 /* S4.png */; };
 		364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */ = {isa = PBXBuildFile; fileRef = 364F9BA51BFEDE2600DBD012 /* OOUserView.m */; };
+		365638F11CD8341C003F3C7E /* ConfirmPhotoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365638F01CD8341C003F3C7E /* ConfirmPhotoVC.m */; };
 		36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B741B93C7AD00D01EB5 /* ListCVFL.m */; };
 		36587B7B1B9423D700D01EB5 /* TileCVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36587B7A1B9423D700D01EB5 /* TileCVCell.m */; };
 		365D117D1C86FBF000156204 /* oomami-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3679D2041BAC8887004BF4DC /* oomami-icons.ttf */; };
@@ -363,6 +364,8 @@
 		364D70C51CBF5A8200FADC29 /* S4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S4.png; path = "Graphic Assets/S4.png"; sourceTree = "<group>"; };
 		364F9BA41BFEDE2600DBD012 /* OOUserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOUserView.h; sourceTree = "<group>"; };
 		364F9BA51BFEDE2600DBD012 /* OOUserView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOUserView.m; sourceTree = "<group>"; };
+		365638EF1CD8341C003F3C7E /* ConfirmPhotoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfirmPhotoVC.h; sourceTree = "<group>"; };
+		365638F01CD8341C003F3C7E /* ConfirmPhotoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfirmPhotoVC.m; sourceTree = "<group>"; };
 		36587B731B93C7AD00D01EB5 /* ListCVFL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListCVFL.h; sourceTree = "<group>"; };
 		36587B741B93C7AD00D01EB5 /* ListCVFL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListCVFL.m; sourceTree = "<group>"; };
 		36587B791B9423D700D01EB5 /* TileCVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileCVCell.h; sourceTree = "<group>"; };
@@ -854,6 +857,8 @@
 		367704021B88078400B594E5 /* Common Tools */ = {
 			isa = PBXGroup;
 			children = (
+				365638EF1CD8341C003F3C7E /* ConfirmPhotoVC.h */,
+				365638F01CD8341C003F3C7E /* ConfirmPhotoVC.m */,
 				3697D9F51C02A95C0022944F /* DropDownListTVC.h */,
 				3697D9F61C02A95C0022944F /* DropDownListTVC.m */,
 				3677043C1B8BCB9100B594E5 /* ooApp.pch */,
@@ -1623,6 +1628,7 @@
 				367112D41BA14071006FDCE7 /* RestaurantListVC.m in Sources */,
 				365F175E1B91046B00015D5D /* DefaultVC.m in Sources */,
 				367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */,
+				365638F11CD8341C003F3C7E /* ConfirmPhotoVC.m in Sources */,
 				965A1A971BBA05B500727773 /* ExploreVC.m in Sources */,
 				3629F0C81BFCF42500E2D912 /* OverlayView.m in Sources */,
 				962B00C31BD95D22008790FD /* VoteObject.m in Sources */,

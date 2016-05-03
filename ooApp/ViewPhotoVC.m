@@ -500,15 +500,15 @@ static CGFloat kNextPhotoTolerance = 40;
  
 //        NSLog(@"changed: %@", NSStringFromCGPoint(delta));
 
-        if (_swipeType == kSwipeTypeDismiss) {
-            _iv.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, delta.y);
-        }
+        //if (_swipeType == kSwipeTypeDismiss) {
+            _iv.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, delta.x, delta.y);
+        //}
         if (_swipeType == kSwipeTypeNone &&
             fabs(delta.y) > kDismissTolerance) {
             _swipeType = kSwipeTypeDismiss;
             [self.interactiveController cancelInteractiveTransition];
             self.interactiveController = nil;
-        } else if (_swipeType != kSwipeTypeDismiss && delta.x > 30) {
+        } else if (_swipeType != kSwipeTypeDismiss && delta.x > 55) {
 //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != 1) {
                 _swipeType = kSwipeTypeNextPhoto;
@@ -523,7 +523,7 @@ static CGFloat kNextPhotoTolerance = 40;
                 
                 [self.navigationController pushViewController:_nextPhoto animated:YES];
             }
-        } else if (_swipeType != kSwipeTypeDismiss && delta.x < -30) {
+        } else if (_swipeType != kSwipeTypeDismiss && delta.x < -55) {
 //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != -1) {
                 _swipeType = kSwipeTypeNextPhoto;
@@ -560,6 +560,9 @@ static CGFloat kNextPhotoTolerance = 40;
         } else {
             NSLog(@"cancel transition");
             [self.interactiveController cancelInteractiveTransition];
+            [UIView animateWithDuration:0.3 animations:^{
+                _iv.transform = CGAffineTransformIdentity;;
+            }];
             _direction = 0;
             _nextPhoto = nil;
         }

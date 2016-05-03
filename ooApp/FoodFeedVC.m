@@ -325,7 +325,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    UIImage *image =  info[@"UIImagePickerControllerEditedImage"];
+    UIImage *image = info[@"UIImagePickerControllerEditedImage"];
     if (!image) {
         image = info[@"UIImagePickerControllerOriginalImage"];
     }
@@ -338,11 +338,53 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     CGSize s = image.size;
     _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
+    
+    if (picker.sourceType == UIImagePickerControllerSourceTypeSavedPhotosAlbum ||
+        picker.sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
 
+        ConfirmPhotoVC *vc = [ConfirmPhotoVC new];
+        vc.photoInfo = info;
+        vc.iv.image = _imageToUpload;
+        vc.delegate = self;
+        
+        UINavigationController *nc = [[UINavigationController alloc] init];
+        
+        [nc addChildViewController:vc];
+        [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+        [nc.navigationBar setTranslucent:YES];
+        nc.view.backgroundColor = [UIColor clearColor];
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            [self.navigationController presentViewController:nc animated:YES completion:^{
+                [vc.view setNeedsUpdateConstraints];
+            }];
+        }];
+        
+        
+    } else {
+        [self imageConfirmedWithMediaWithInfo:info];
+    }
+}
+
+- (void)confirmPhotoVCCancelled:(ConfirmPhotoVC *)confirmPhotoVC getNewPhoto:(BOOL)getNewPhoto {
+    [self dismissViewControllerAnimated:YES completion:^{
+        if (getNewPhoto) {
+            [self showPhotoLibraryUI];
+        }
+    }];
+}
+
+- (void)confirmPhotoVCAccepted:(ConfirmPhotoVC *)confirmPhotoVC photoInfo:(NSDictionary *)photoInfo {
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self imageConfirmedWithMediaWithInfo:photoInfo];
+    }];
+}
+
+- (void)imageConfirmedWithMediaWithInfo:(NSDictionary<NSString *,id> *)info {
     NSURL *url = info[@"UIImagePickerControllerReferenceURL"];
-
+    
     __weak FoodFeedVC *weakSelf = self;
-
+    
     if (url) {
         ALAssetsLibrary *lib = [[ALAssetsLibrary alloc] init];
         [lib assetForURL:url resultBlock:^(ALAsset *asset) {
@@ -359,7 +401,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                 
                 if (longitude && latitude) {
                     CLLocationCoordinate2D photoLocation = CLLocationCoordinate2DMake([latitude doubleValue],
-                                                       [longitude doubleValue]);
+                                                                                      [longitude doubleValue]);
                     [weakSelf dismissViewControllerAnimated:YES completion:nil];
                     [weakSelf showRestaurantPickerAtCoordinate:photoLocation];
                 } else {

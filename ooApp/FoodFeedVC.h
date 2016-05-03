@@ -15,8 +15,19 @@
 #import "ShowModalAnimator.h"
 #import "AddCaptionToMIOVC.h"
 #import "UnverifiedUserVC.h"
+#import "ConfirmPhotoVC.h"
 
-@interface FoodFeedVC : BaseVC <FoodFeedVCCollectionViewDelegate, UICollectionViewDataSource, PhotoCVCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, RestaurantPickerVCDelegate, ViewPhotoVCDelegate, UIViewControllerTransitioningDelegate, OOTextEntryVCDelegate, UnverifiedUserVCDelegate>
+@interface FoodFeedVC : BaseVC <FoodFeedVCCollectionViewDelegate,
+                                UICollectionViewDataSource,
+                                PhotoCVCellDelegate,
+                                UIImagePickerControllerDelegate,
+                                UINavigationControllerDelegate,
+                                RestaurantPickerVCDelegate,
+                                ViewPhotoVCDelegate,
+                                UIViewControllerTransitioningDelegate,
+                                OOTextEntryVCDelegate,
+                                UnverifiedUserVCDelegate,
+                                ConfirmPhotoVCDelegate>
 
 - (void)selectAll;
 

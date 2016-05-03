@@ -918,7 +918,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         //[DebugUtilities addBorderToViews:@[reuseView, header]];
     } else if (indexPath.section == kRestaurantSectionTypeLists) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
-        header.name = @"On Your Lists";
+        header.name = @"On your lists";
         header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
         header.tag = 111;
         [collectionView bringSubviewToFront:reuseView];
@@ -927,7 +927,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         //[DebugUtilities addBorderToViews:@[reuseView, header]];
     } else if (indexPath.section == kRestaurantSectionTypeFollowees) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
-        header.name = @"On Their Lists";
+        header.name = @"These friends have been here";
         header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
         header.tag = 111;
         [collectionView bringSubviewToFront:reuseView];
