@@ -657,6 +657,35 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     }];
 }
 
++ (AFHTTPRequestOperation *)getUserWithUsername:(NSString *)username
+                                  success:(void (^)(UserObject *user))success
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!username || !username.length) {
+        failure(nil,nil);
+        return nil;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/usernames/%@", kHTTPProtocol,
+                           [OOAPI URL], username];
+    OONetworkManager *rm = [[OONetworkManager alloc] init] ;
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        //NSArray *array = responseObject;
+        //for (NSDictionary* d  in array) {
+        
+        UserObject *user = [UserObject userFromDict:responseObject];
+            success(user);
+        //}
+        failure(nil, nil);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        NSLog(@"Error: %@", error);
+        failure(operation, error);
+    }
+
+            ];
+}
+
 + (AFHTTPRequestOperation *)getStatsForUser:(NSUInteger)identifier
                                    success:(void (^)(NSDictionary *response))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;

@@ -35,7 +35,7 @@
         if (_mio) {
             message = [NSString stringWithFormat:@"Check this out at \"%@\" on Oomami! %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
         } else {
-            message = [NSString stringWithFormat:@"Check out \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+            message = [NSString stringWithFormat:@"<HTML><BODY><B>Check out</B> \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8</BODY></HTML>"];
         }
     } else {
         message = [NSString stringWithFormat:@"I use Oomami to find and share the best dishes with my friends (like you!). Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
@@ -44,13 +44,16 @@
     if ([activityType isEqualToString:UIActivityTypePostToTwitter]) {
         NSString *iTunesLink = message;
         return iTunesLink;
-    } else if ( [activityType isEqualToString:UIActivityTypePostToFacebook] ) {
+    } else if ([activityType isEqualToString:UIActivityTypePostToFacebook] ) {
         NSString *iTunesLink = message;
         return iTunesLink;
-    } else if ( [activityType isEqualToString:UIActivityTypeMessage] ) {
+    } else if ([activityType isEqualToString:UIActivityTypeMessage] ) {
         NSString *iTunesLink = message;
         return iTunesLink;
-    } else if ( [activityType isEqualToString:UIActivityTypeMail] ) {
+    } else if ([activityType isEqualToString:UIActivityTypeMail] ) {
+        NSString *iTunesLink = message;
+        return iTunesLink;
+    } else {
         NSString *iTunesLink = message;
         return iTunesLink;
     }

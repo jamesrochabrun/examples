@@ -23,6 +23,8 @@
 #import "RestaurantListVC.h"
 #import "ViewPhotoVC.h"
 #import "iRate.h"
+#import "NSString+Util.h"
+#import "UserObject.h"
 
 @interface AppDelegate ()
 @property (nonatomic, strong) NSMutableArray *notifications;
@@ -129,6 +131,9 @@
     [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
+
+//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+//}
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
@@ -252,6 +257,76 @@
     }
 }
 
+- (void)showRestaurant:(NSUInteger)identifier {
+    [self makeSureNCIsSet];
+
+    __weak UINavigationController *weakNC = _nc;
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)identifier] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
+        if (restaurant) {
+            RestaurantVC *vc = [[RestaurantVC alloc] init];
+            vc.title = trimString(restaurant.name);
+            vc.restaurant = restaurant;
+            [weakNC pushViewController:vc animated:YES];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)showMediaItem:(NSUInteger)identifier {
+    [self makeSureNCIsSet];
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    [OOAPI getMediaItem:identifier success:^(MediaItemObject *mio){
+        [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)mio.restaurantID] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
+            if (restaurant) {
+                [self launchViewPhoto:mio restaurant:restaurant originFrame:CGRectMake(0, 0, 0, 0)];
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+        ;
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+
+}
+
+
+- (void)showUser:(NSString *)username {
+    [self makeSureNCIsSet];
+    
+    __weak UINavigationController *weakNC = _nc;
+    
+    [OOAPI getUserWithUsername:username success:^(UserObject *user) {
+        ProfileVC *vc = [[ProfileVC alloc] init];
+        vc.userInfo = user;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakNC pushViewController:vc animated:YES];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)makeSureNCIsSet {
+    UIViewController *vc = [_tabBar.viewControllers objectAtIndex:_tabBar.selectedIndex];
+    if ([vc isKindOfClass:[UINavigationController class]]) {
+        _nc = (UINavigationController *)vc;
+    }
+    
+    if (!_nc) {
+        NSLog(@"*** NC not set yet");
+        return;
+    }
+    
+    [_nc popToRootViewControllerAnimated:NO];
+}
+
 - (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject *)restaurant originFrame:(CGRect)originFrame
 {
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
@@ -286,22 +361,85 @@
     NSLog(@"Error in remote notification registration. Error: %@", err);
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
     ENTRY;
     
-    if ([[FBSDKApplicationDelegate sharedInstance] application:application
+    NSString *sourceApplication = [options objectForKey:UIApplicationOpenURLOptionsSourceApplicationKey];
+    
+    if ([[FBSDKApplicationDelegate sharedInstance] application:app
                                                        openURL:url
                                              sourceApplication:sourceApplication
-                                                    annotation:annotation
+                                                    annotation:nil
          ])
     {
         ANALYTICS_EVENT_OTHER(@"FacebookLink");
         return YES;
     } else {
+        if ([[url scheme] isEqualToString:@"oomami"]) {
+            NSString *host = [url host];
+            NSString *page = [url path];
+            NSString *query = [url query];
+            NSArray *parameters = [query parseURLParams];
+            
+            ANALYTICS_EVENT_OTHER(@"OomamiDeepLink");
+            
+            BOOL result = NO;
+            
+            if ([page isEqualToString:@"/profile"]) {
+                NSString *username = [parameters valueForKey:kKeyUserUsername];
+                [self showUser:username];
+                result = YES;
+            } else if ([page isEqualToString:@"/restaurant"]) {
+                [self showRestaurant:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
+                result = YES;
+            } else if ([page isEqualToString:@"/mediaItem"]) {
+                [self showMediaItem:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
+                result = YES;
+            }
+            
+            return result;
+        }
+        
         return NO;
     }
 }
+
+//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+//{
+//    ENTRY;
+//    
+//    if ([[FBSDKApplicationDelegate sharedInstance] application:application
+//                                                       openURL:url
+//                                             sourceApplication:sourceApplication
+//                                                    annotation:annotation
+//         ])
+//    {
+//        ANALYTICS_EVENT_OTHER(@"FacebookLink");
+//        message(@"got to show user");
+//        return YES;
+//    } else {
+//        if ([[url scheme] isEqualToString:@"oomami"]) {
+//            message(@"got to show user");
+//            NSString *host = [url host];
+//            NSString *page = [url path];
+//            NSString *query = [url query];
+//            NSArray *parameters = [query parseURLParams];
+//            
+//            ANALYTICS_EVENT_OTHER(@"OomamiDeepLink");
+//            
+//            if ([page isEqualToString:@"/profile"]) {
+//                NSString *username = [parameters valueForKey:kKeyUserUsername];
+//                [self showUser:username];
+//                message(@"show username");
+//            };
+//            
+//            
+//            return YES;
+//        }
+//
+//        return NO;
+//    }
+//}
 
 - (BOOL)connected {
     return [AFNetworkReachabilityManager sharedManager].reachable;

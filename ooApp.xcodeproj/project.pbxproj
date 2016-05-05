@@ -152,6 +152,7 @@
 		36DD24261B7C88E800C6348F /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36DD24251B7C88E800C6348F /* EventObject.m */; };
 		36DD24281B7D723B00C6348F /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */; };
 		36E592971C2A62BD00A56367 /* NotificationObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E592961C2A62BD00A56367 /* NotificationObject.m */; };
+		36E633721CDA305A0077DE2E /* NSString+Util.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E633711CDA305A0077DE2E /* NSString+Util.m */; };
 		36E957CE1CC6B35000DA2618 /* S1ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 36E957CA1CC6B35000DA2618 /* S1ipad.png */; };
 		36E957CF1CC6B35000DA2618 /* S2ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 36E957CB1CC6B35000DA2618 /* S2ipad.png */; };
 		36E957D01CC6B35000DA2618 /* S3ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 36E957CC1CC6B35000DA2618 /* S3ipad.png */; };
@@ -509,6 +510,8 @@
 		36DD24271B7D723A00C6348F /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../../../Downloads/FacebookSDKs-iOS-20150810/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
 		36E592951C2A62BD00A56367 /* NotificationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationObject.h; sourceTree = "<group>"; };
 		36E592961C2A62BD00A56367 /* NotificationObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationObject.m; sourceTree = "<group>"; };
+		36E633701CDA305A0077DE2E /* NSString+Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Util.h"; sourceTree = "<group>"; };
+		36E633711CDA305A0077DE2E /* NSString+Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Util.m"; sourceTree = "<group>"; };
 		36E957CA1CC6B35000DA2618 /* S1ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S1ipad.png; path = "Graphic Assets/S1ipad.png"; sourceTree = "<group>"; };
 		36E957CB1CC6B35000DA2618 /* S2ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S2ipad.png; path = "Graphic Assets/S2ipad.png"; sourceTree = "<group>"; };
 		36E957CC1CC6B35000DA2618 /* S3ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S3ipad.png; path = "Graphic Assets/S3ipad.png"; sourceTree = "<group>"; };
@@ -924,6 +927,8 @@
 				3648B8701CAF2467002875A3 /* UnverifiedUserVC.m */,
 				36A7A90B1CB6F0FA00B9A3F8 /* OOFeedbackView.h */,
 				36A7A90C1CB6F0FA00B9A3F8 /* OOFeedbackView.m */,
+				36E633701CDA305A0077DE2E /* NSString+Util.h */,
+				36E633711CDA305A0077DE2E /* NSString+Util.m */,
 			);
 			name = "Common Tools";
 			sourceTree = "<group>";
@@ -1537,6 +1542,7 @@
 				366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */,
 				36A7A90D1CB6F0FA00B9A3F8 /* OOFeedbackView.m in Sources */,
 				36FDA6F91B585F650029D29D /* AppDelegate.m in Sources */,
+				36E633721CDA305A0077DE2E /* NSString+Util.m in Sources */,
 				36D5D21A1B69DA48009EE877 /* OONetworkManager.m in Sources */,
 				3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */,
 				367B453D1BCE62BC00E96B69 /* RestaurantMainCVCell.m in Sources */,
