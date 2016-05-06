@@ -1968,7 +1968,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     AFHTTPRequestOperation *op;
     
-    NSDictionary *parameters = @{kKeyDays:@(15), kKeySearchLimit:@(10)};
+    NSDictionary *parameters = @{kKeyDays:@(15), kKeySearchLimit:@(5)};
     
     op = [rm GET:urlString parameters:parameters
          success:^(id responseObject) {

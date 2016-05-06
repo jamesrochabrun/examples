@@ -359,8 +359,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                 [vc.view setNeedsUpdateConstraints];
             }];
         }];
-        
-        
     } else {
         [self imageConfirmedWithMediaWithInfo:info];
     }
@@ -374,7 +372,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     }];
 }
 
-- (void)confirmPhotoVCAccepted:(ConfirmPhotoVC *)confirmPhotoVC photoInfo:(NSDictionary *)photoInfo {
+- (void)confirmPhotoVCAccepted:(ConfirmPhotoVC *)confirmPhotoVC photoInfo:(NSDictionary *)photoInfo image:(UIImage *)image {
     [self dismissViewControllerAnimated:YES completion:^{
         [self imageConfirmedWithMediaWithInfo:photoInfo];
     }];

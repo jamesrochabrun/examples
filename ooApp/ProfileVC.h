@@ -17,6 +17,7 @@
 #import "ViewPhotoVC.h"
 #import "AddCaptionToMIOVC.h"
 #import "UnverifiedUserVC.h"
+#import "ConfirmPhotoVC.h"
 
 @protocol ProfileEmptyCellDelegate
 - (void) userPressedEmptyCell;
@@ -44,7 +45,8 @@
                                 UnverifiedUserVCDelegate,
                                 UISearchBarDelegate,
                                 UITableViewDelegate,
-                                UITableViewDataSource>
+                                UITableViewDataSource,
+                                ConfirmPhotoVCDelegate>
 @property (nonatomic, assign) NSInteger userID;
 @property (nonatomic, strong) UserObject *userInfo;
 

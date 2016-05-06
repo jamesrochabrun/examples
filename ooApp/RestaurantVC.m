@@ -303,7 +303,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)sharePressed:(id)sender {
-    MediaItemObject *mio;
+    //MediaItemObject *mio;
     
 //    if ([_mediaItems count]) {
 //        
@@ -330,8 +330,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)showShare:(NSString *)url fromView:(id)sender {
-    NSURL *nsURL = [NSURL URLWithString:url];
-    NSData *data = [NSData dataWithContentsOfURL:nsURL];
+    //NSURL *nsURL = [NSURL URLWithString:url];
+    //NSData *data = [NSData dataWithContentsOfURL:nsURL];
     PhotoCVCell *cell = (PhotoCVCell *)[_collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kRestaurantSectionTypeMediaItems]];
     UIImage *img = cell.cellImage;// [UIImage imageWithData:data];
     
@@ -1225,11 +1225,50 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     CGSize s = image.size;
     UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
     
+    
+    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+        [self uploadPhoto:newImage];
+    } else {
+        ConfirmPhotoVC *vc = [ConfirmPhotoVC new];
+        vc.photoInfo = info;
+        vc.iv.image = newImage;
+        vc.delegate = self;
+        
+        UINavigationController *nc = [[UINavigationController alloc] init];
+        
+        [nc addChildViewController:vc];
+        [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+        [nc.navigationBar setTranslucent:YES];
+        nc.view.backgroundColor = [UIColor clearColor];
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            [self.navigationController presentViewController:nc animated:YES completion:^{
+                [vc.view setNeedsUpdateConstraints];
+            }];
+        }];
+    }
+}
+
+- (void)confirmPhotoVCCancelled:(ConfirmPhotoVC *)confirmPhotoVC getNewPhoto:(BOOL)getNewPhoto {
+    [self dismissViewControllerAnimated:YES completion:^{
+        if (getNewPhoto) {
+            [self showPhotoLibraryUI];
+        }
+    }];
+}
+
+- (void)confirmPhotoVCAccepted:(ConfirmPhotoVC *)confirmPhotoVC photoInfo:(NSDictionary *)photoInfo image:(UIImage *)image {
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self uploadPhoto:image];
+    }];
+}
+
+- (void)uploadPhoto:(UIImage *)image {
     self.uploading = YES;
     self.uploadProgressBar.hidden = NO;
     
     __weak RestaurantVC *weakSelf = self;
-    [OOAPI uploadPhoto:newImage forObject:_restaurant
+    [OOAPI uploadPhoto:image forObject:_restaurant
                success:^(MediaItemObject *mio){
                    weakSelf.uploading = NO;
                    dispatch_async(dispatch_get_main_queue(), ^{
@@ -1242,15 +1281,15 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                        weakSelf.uploadProgressBar.hidden = YES;
                    });
                } progress:^(NSUInteger __unused bytesWritten,
-                          long long totalBytesWritten,
-                          long long totalBytesExpectedToWrite) {
+                            long long totalBytesWritten,
+                            long long totalBytesExpectedToWrite) {
                    long double d= totalBytesWritten;
                    d/=totalBytesExpectedToWrite;
                    dispatch_async(dispatch_get_main_queue(), ^{
                        weakSelf.uploadProgressBar.progress = (float)d;
                    });
                }];
-
+    
     [weakSelf dismissViewControllerAnimated:YES completion:nil];
 }
 

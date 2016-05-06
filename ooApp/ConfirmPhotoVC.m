@@ -59,7 +59,7 @@ static NSString * const cellIdentifier = @"locationCell";
 }
 
 - (void)usePhoto:(id)sender {
-    [_delegate confirmPhotoVCAccepted:self photoInfo:_photoInfo];
+    [_delegate confirmPhotoVCAccepted:self photoInfo:_photoInfo image:_iv.image];
 }
 
 - (void)getDifferentPhoto:(id)sender {

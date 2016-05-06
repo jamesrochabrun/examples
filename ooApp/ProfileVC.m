@@ -1296,16 +1296,113 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
             _imageToUpload = [UIImage imageWithImage:image scaledToSize:CGSizeMake(kGeomUploadWidth, kGeomUploadWidth*s.height/s.width)];
         }
         
-        [self dismissViewControllerAnimated:YES completion:^{
-            [weakSelf showRestaurantPicker];
-        }];
+        if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
+            [self imageConfirmedWithMediaWithInfo:info];
+        } else {
+            ConfirmPhotoVC *vc = [ConfirmPhotoVC new];
+            vc.photoInfo = info;
+            vc.iv.image = _imageToUpload;
+            vc.delegate = self;
+            
+            UINavigationController *nc = [[UINavigationController alloc] init];
+            
+            [nc addChildViewController:vc];
+            [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+            [nc.navigationBar setTranslucent:YES];
+            nc.view.backgroundColor = [UIColor clearColor];
+            
+            [self dismissViewControllerAnimated:YES completion:^{
+                [self.navigationController presentViewController:nc animated:YES completion:^{
+                    [vc.view setNeedsUpdateConstraints];
+                }];
+            }];
+        }
     } else {
         [self dismissViewControllerAnimated:YES completion:^{
-            
             [weakSelf setUserPhoto: image];
         }];
         
     }
+}
+
+- (void)confirmPhotoVCCancelled:(ConfirmPhotoVC *)confirmPhotoVC getNewPhoto:(BOOL)getNewPhoto {
+    [self dismissViewControllerAnimated:YES completion:^{
+        if (getNewPhoto) {
+            [self showPhotoLibraryUI];
+        }
+    }];
+}
+
+- (void)confirmPhotoVCAccepted:(ConfirmPhotoVC *)confirmPhotoVC photoInfo:(NSDictionary *)photoInfo image:(UIImage *)image {
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self imageConfirmedWithMediaWithInfo:photoInfo];
+    }];
+}
+
+- (void)imageConfirmedWithMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    NSURL *url = info[@"UIImagePickerControllerReferenceURL"];
+    
+    __weak ProfileVC *weakSelf = self;
+    
+    if (url) {
+        ALAssetsLibrary *lib = [[ALAssetsLibrary alloc] init];
+        [lib assetForURL:url resultBlock:^(ALAsset *asset) {
+            NSDictionary *metadata = asset.defaultRepresentation.metadata;
+            if (metadata) {
+                NSString *longitudeRef = metadata[@"{GPS}"][@"LongitudeRef"];
+                NSNumber *longitude = metadata[@"{GPS}"][@"Longitude"];
+                NSString *latitudeRef = metadata[@"{GPS}"][@"LatitudeRef"];
+                NSNumber *latitude = metadata[@"{GPS}"][@"Latitude"];
+                
+                if ([longitudeRef isEqualToString:@"W"]) longitude = [NSNumber numberWithDouble:-[longitude doubleValue]];
+                
+                if ([latitudeRef isEqualToString:@"S"]) latitude = [NSNumber numberWithDouble:-[latitude doubleValue]];
+                
+                if (longitude && latitude) {
+                    CLLocationCoordinate2D photoLocation = CLLocationCoordinate2DMake([latitude doubleValue],
+                                                                                      [longitude doubleValue]);
+                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                    [weakSelf showRestaurantPickerAtCoordinate:photoLocation];
+                } else {
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                    [weakSelf showMissinGPSMessage];
+                }
+            } else {
+                [self dismissViewControllerAnimated:YES completion:nil];
+                [weakSelf showMissinGPSMessage];
+            }
+        } failureBlock:^(NSError *error) {
+            //User denied access
+            NSLog(@"Unable to access image: %@", error);
+            [self dismissViewControllerAnimated:YES completion:nil];
+            [weakSelf showMissinGPSMessage];
+        }];
+    } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
+        [weakSelf showMissinGPSMessage];
+    }
+}
+
+- (void)showMissinGPSMessage {
+    [self showRestaurantPickerAtCoordinate:[LocationManager sharedInstance].currentUserLocation];
+}
+
+- (void)showRestaurantPickerAtCoordinate:(CLLocationCoordinate2D)location {
+    RestaurantPickerVC *restaurantPicker = [[RestaurantPickerVC alloc] init];
+    restaurantPicker.location = location;
+    restaurantPicker.delegate = self;
+    restaurantPicker.imageToUpload = _imageToUpload;
+    
+    UINavigationController *nc = [[UINavigationController alloc] init];
+    
+    [nc addChildViewController:restaurantPicker];
+    [nc.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    [nc.navigationBar setTranslucent:YES];
+    nc.view.backgroundColor = [UIColor clearColor];
+    
+    [self.navigationController presentViewController:nc animated:YES completion:^{
+        [restaurantPicker.view setNeedsUpdateConstraints];
+    }];
 }
 
 - (void) userPressedEmptyCell;
