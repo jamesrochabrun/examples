@@ -407,6 +407,10 @@
     }];
 }
 
+- (UIImage *)cellImage {
+    return self.backgroundImage.image;
+}
+
 - (void)prepareForReuse {
     [super prepareForReuse];
     [_backgroundImage.layer removeAllAnimations];

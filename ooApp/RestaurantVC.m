@@ -305,33 +305,35 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 - (void)sharePressed:(id)sender {
     MediaItemObject *mio;
     
-    if ([_mediaItems count]) {
-        mio = [_mediaItems objectAtIndex:0];
-        
-        OOAPI *api = [[OOAPI alloc] init];
-        
-        if (mio) {
-            _requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self showShare:link fromView:sender];
-                });
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self showShare:nil fromView:sender];
-                });
-            }];
-        } else {
-            [self showShare:nil fromView:sender];
-        }
-    } else {
+//    if ([_mediaItems count]) {
+//        
+//        mio = [_mediaItems objectAtIndex:0];
+//        
+//        OOAPI *api = [[OOAPI alloc] init];
+//        
+//        if (mio) {
+//            _requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [self showShare:link fromView:sender];
+//                });
+//            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [self showShare:nil fromView:sender];
+//                });
+//            }];
+//        } else {
+//            [self showShare:nil fromView:sender];
+//        }
+//    } else {
         [self showShare:nil fromView:sender];
-    }
+//    }
 }
 
 - (void)showShare:(NSString *)url fromView:(id)sender {
     NSURL *nsURL = [NSURL URLWithString:url];
     NSData *data = [NSData dataWithContentsOfURL:nsURL];
-    UIImage *img = [UIImage imageWithData:data];
+    PhotoCVCell *cell = (PhotoCVCell *)[_collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kRestaurantSectionTypeMediaItems]];
+    UIImage *img = cell.cellImage;// [UIImage imageWithData:data];
     
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;

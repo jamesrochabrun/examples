@@ -10,7 +10,7 @@
 
 @implementation OOActivityItemProvider
 
-- (id) activityViewController:(UIActivityViewController *)activityViewController
+- (id)activityViewController:(UIActivityViewController *)activityViewController
           itemForActivityType:(NSString *)activityType
 {
     NSString *itemType;
@@ -33,9 +33,9 @@
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {
-            message = [NSString stringWithFormat:@"Check this out at \"%@\" on Oomami! %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+            message = [NSString stringWithFormat:@"Yum! Let's go to \"%@\" \nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
         } else {
-            message = [NSString stringWithFormat:@"<HTML><BODY><B>Check out</B> \"%@\" on Oomami - %@", title, @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8</BODY></HTML>"];
+            message = [NSString stringWithFormat:@"Let's go to \"%@\" \nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
         }
     } else {
         message = [NSString stringWithFormat:@"I use Oomami to find and share the best dishes with my friends (like you!). Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];

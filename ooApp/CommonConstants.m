@@ -17,6 +17,8 @@ NSString *const kAPIKeyInstabug = @"bea287aa56f2d9ee7b66d8899f801938";
 NSString *const kAPIKeyInstabug = @"b98174251aa663e9f299ea17bd8ab1b4";
 #endif
 
+NSString *const kWebAppHost = @"www.oomamiapp.com";
+
 NSString *const kUserDefaultsUsingStagingServer = @"usingStaging";
 NSString *const kNotificationMenuWillOpen = @"notificationMenuWillOpen";
 

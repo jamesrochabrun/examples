@@ -22,7 +22,9 @@ static inline BOOL isRetinaDisplay() {return ([[UIScreen mainScreen] respondsToS
 
 extern NSString *const kAPIKeyGoogleMaps;
 extern NSString *const kAPIKeyInstabug;
+
 extern NSString *const kSupportEmail;
+extern NSString *const kWebAppHost;
 
 //#define SECRET_BACKEND_SALT @"48723492NaCl"
 #define GOOGLE_ANALYTICS_ID  @"UA-70502958-1"

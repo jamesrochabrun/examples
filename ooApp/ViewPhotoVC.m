@@ -293,25 +293,25 @@ static CGFloat kNextPhotoTolerance = 40;
     
     OOAPI *api = [[OOAPI alloc] init];
     
-    if (_mio) {
-        _requestOperation = [api getRestaurantImageWithMediaItem:_mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self showShare:link fromView:sender];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self showShare:nil fromView:sender];
-            });
-        }];
-    } else {
+//    if (_mio) {
+//        _requestOperation = [api getRestaurantImageWithMediaItem:_mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self showShare:link fromView:sender];
+//            });
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self showShare:nil fromView:sender];
+//            });
+//        }];
+//    } else {
         [self showShare:nil fromView:sender];
-    }
+//    }
 }
 
 - (void)showShare:(NSString *)url fromView:(id)sender {
-    NSURL *nsURL = [NSURL URLWithString:url];
-    NSData *data = [NSData dataWithContentsOfURL:nsURL];
-    UIImage *img = [UIImage imageWithData:data];
+    //NSURL *nsURL = [NSURL URLWithString:url];
+    //NSData *data = [NSData dataWithContentsOfURL:nsURL];
+    UIImage *img = _iv.image;// [UIImage imageWithData:data];
     
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;

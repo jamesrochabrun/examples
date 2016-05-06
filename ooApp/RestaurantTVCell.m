@@ -558,8 +558,8 @@ enum  {
 
 - (void)showShare:(NSString *)url fromView:(id)sender {
     NSURL *nsURL = [NSURL URLWithString:url];
-    NSData *data = [NSData dataWithContentsOfURL:nsURL];
-    UIImage *img = [UIImage imageWithData:data];
+    //NSData *data = [NSData dataWithContentsOfURL:nsURL];
+    UIImage *img = self.thumbnail.image;// [UIImage imageWithData:data];
     
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;

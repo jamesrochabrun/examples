@@ -153,38 +153,26 @@
 }
 
 - (void)processNotifications {
-    UIViewController *vc = [_tabBar.viewControllers objectAtIndex:0];
-    
-    if ([vc isKindOfClass:[UINavigationController class]]) {
-        _nc = (UINavigationController *)vc;
-    }
-    
-    if (!_nc || ![_notifications count]) {
-        NSLog(@"*** NC not set yet");
-        return;
-    }
+//    UIViewController *vc = [_tabBar.viewControllers objectAtIndex:0];
+//    
+//    if ([vc isKindOfClass:[UINavigationController class]]) {
+//        _nc = (UINavigationController *)vc;
+//    }
+//    
+//    if (!_nc || ![_notifications count]) {
+//        NSLog(@"*** NC not set yet");
+//        return;
+//    }
     
     NotificationObject *notif =[_notifications firstObject];
     [_notifications removeObject:notif];
-    
-    __weak UINavigationController *weakNC = _nc;
     
     switch (notif.type) {
         case kNotificationTypeViewUser:
             //show user profile
         {
             NSLog(@"Show user: %lu", (unsigned long)notif.identifier);
-            [OOAPI getUserWithID:notif.identifier success:^(UserObject *user) {
-                if (user) {
-                    ProfileVC *vc = [[ProfileVC alloc] init];
-                    vc.userInfo = user;
-                    ON_MAIN_THREAD(^{
-                        [weakNC pushViewController:vc animated:YES];
-                    });
-                }
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
-            }];
+            [self showUserwithUserId:(unsigned long)notif.identifier];
         }
             break;
         case kNotificationTypeViewEvent:
@@ -194,62 +182,22 @@
         case kNotificationTypeViewList:
             //show list
         {
-
             NSLog(@"Show list: %lu", (unsigned long)notif.identifier);
-            
-            OOAPI *api = [[OOAPI alloc] init];
-            
-            [api getList:notif.identifier success:^(ListObject *list) {
-                RestaurantListVC *vc = [[RestaurantListVC alloc] init];
-                [weakNC pushViewController:vc animated:YES];
-                vc.title = list.name;
-                vc.listItem = list;
-                ;
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
-            }];
-            
+            [self showList:(unsigned long)notif.identifier];
         }
             break;
         case kNotificationTypeViewRestaurant:
             //show restaurant
         {
             NSLog(@"Show restaurant: %lu", (unsigned long)notif.identifier);
-            
-            OOAPI *api = [[OOAPI alloc] init];
-            
-            [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)notif.identifier] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
-                if (restaurant) {
-                    RestaurantVC *vc = [[RestaurantVC alloc] init];
-                    vc.title = trimString(restaurant.name);
-                    vc.restaurant = restaurant;
-                    [weakNC pushViewController:vc animated:YES];
-                }
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
-            }];
+            [self showRestaurant:(unsigned long)notif.identifier];
         }
             break;
         case kNotificationTypeViewMediaItem:
             //show restaurant
         {
             NSLog(@"Show media item: %lu", (unsigned long)notif.identifier);
-            
-            OOAPI *api = [[OOAPI alloc] init];
-            
-            [OOAPI getMediaItem:notif.identifier success:^(MediaItemObject *mio){
-                [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)mio.restaurantID] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
-                    if (restaurant) {
-                        [self launchViewPhoto:mio restaurant:restaurant originFrame:CGRectMake(0, 0, 0, 0)];
-                    }
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    ;
-                }];
-                ;
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                ;
-            }];
-            
+            [self showMediaItem:(unsigned long)notif.identifier];
         }
             break;
         default:
@@ -257,14 +205,14 @@
     }
 }
 
-- (void)showRestaurant:(NSUInteger)identifier {
+- (void)showRestaurant:(NSUInteger)restaurantID {
     [self makeSureNCIsSet];
 
     __weak UINavigationController *weakNC = _nc;
     
     OOAPI *api = [[OOAPI alloc] init];
     
-    [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)identifier] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
+    [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)restaurantID] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
         if (restaurant) {
             RestaurantVC *vc = [[RestaurantVC alloc] init];
             vc.title = trimString(restaurant.name);
@@ -276,12 +224,12 @@
     }];
 }
 
-- (void)showMediaItem:(NSUInteger)identifier {
+- (void)showMediaItem:(NSUInteger)mediaItemID {
     [self makeSureNCIsSet];
     
     OOAPI *api = [[OOAPI alloc] init];
     
-    [OOAPI getMediaItem:identifier success:^(MediaItemObject *mio){
+    [OOAPI getMediaItem:mediaItemID success:^(MediaItemObject *mio){
         [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)mio.restaurantID] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
             if (restaurant) {
                 [self launchViewPhoto:mio restaurant:restaurant originFrame:CGRectMake(0, 0, 0, 0)];
@@ -296,8 +244,23 @@
 
 }
 
+- (void)showUserwithUserId:(NSUInteger)userID {
+    [self makeSureNCIsSet];
+    
+    __weak UINavigationController *weakNC = _nc;
+    
+    [OOAPI getUserWithID:userID success:^(UserObject *user) {
+        ProfileVC *vc = [[ProfileVC alloc] init];
+        vc.userInfo = user;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakNC pushViewController:vc animated:YES];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
 
-- (void)showUser:(NSString *)username {
+- (void)showUserWithUsername:(NSString *)username {
     [self makeSureNCIsSet];
     
     __weak UINavigationController *weakNC = _nc;
@@ -308,6 +271,24 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakNC pushViewController:vc animated:YES];
         });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
+}
+
+- (void)showList:(NSUInteger)listID {
+    [self makeSureNCIsSet];
+    
+    __weak UINavigationController *weakNC = _nc;
+    
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    [api getList:listID success:^(ListObject *list) {
+        RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+        [weakNC pushViewController:vc animated:YES];
+        vc.title = list.name;
+        vc.listItem = list;
+        ;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
@@ -376,10 +357,16 @@
         return YES;
     } else {
         if ([[url scheme] isEqualToString:@"oomami"]) {
+/* deep linking logic handles
+        oomami://oomami/profile?username=<username>
+        oomami://oomami/restaurant?id=<restaurantID>
+        oomami://oomami/mediaItem?id=<mediaItemID>
+        oomami://oomami/list?id=<listID>
+*/
             NSString *host = [url host];
             NSString *page = [url path];
             NSString *query = [url query];
-            NSArray *parameters = [query parseURLParams];
+            NSDictionary *parameters = [query parseURLParams];
             
             ANALYTICS_EVENT_OTHER(@"OomamiDeepLink");
             
@@ -387,7 +374,7 @@
             
             if ([page isEqualToString:@"/profile"]) {
                 NSString *username = [parameters valueForKey:kKeyUserUsername];
-                [self showUser:username];
+                [self showUserWithUsername:username];
                 result = YES;
             } else if ([page isEqualToString:@"/restaurant"]) {
                 [self showRestaurant:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
@@ -395,7 +382,11 @@
             } else if ([page isEqualToString:@"/mediaItem"]) {
                 [self showMediaItem:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
                 result = YES;
+            } else if ([page isEqualToString:@"/list"]) {
+                [self showList:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
+                result = YES;
             }
+
             
             return result;
         }
