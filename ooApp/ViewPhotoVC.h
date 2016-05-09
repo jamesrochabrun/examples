@@ -43,7 +43,7 @@ typedef enum {
 @property (nonatomic) CGRect originRect;
 @property (nonatomic, strong) UIView *backgroundView;
 
-@property (nonatomic, strong) NSArray *restaurants;
+@property (nonatomic, strong) NSArray *items;
 @property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSInteger direction;
 @property (nonatomic, weak) id<ViewPhotoVCDelegate> delegate;

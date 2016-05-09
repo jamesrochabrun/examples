@@ -954,6 +954,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
         vc.originRect = originRect;
         vc.mio = mio;
+        vc.items = _mediaItems;
+        vc.currentIndex = indexPath.row;
         vc.restaurant = _restaurant;
         vc.delegate = self;
         

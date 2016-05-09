@@ -662,7 +662,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     vc.mio = mio;
     vc.restaurant = restaurant;
     vc.delegate = self;
-    vc.restaurants = _restaurants;
+    vc.items = _restaurants;
     vc.currentIndex = indexPath.row;
     //vc.rootViewController = self;
     

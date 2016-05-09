@@ -314,7 +314,7 @@
     vc.originRect = CGRectZero;// originRect;
     vc.mio = mediaObject;
     vc.restaurant = restaurant;
-    vc.restaurants = nil;//_restaurants;
+    vc.items = nil;
     vc.currentIndex = 0;//indexPath.row;
     [_nc pushViewController:vc animated:YES];
 }

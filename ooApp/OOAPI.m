@@ -79,6 +79,22 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     }];
 }
 
++ (AFHTTPRequestOperation *)getRestaurantsWithID:(NSUInteger)restaurantID
+                                          success:(void (^)(RestaurantObject *restaurant))success
+                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)restaurantID];
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               RestaurantObject *restaurant = [RestaurantObject restaurantFromDict:responseObject];
+               success(restaurant);
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               NSLog(@"Error: %@", error);
+           }];
+}
+
 + (AFHTTPRequestOperation *)getNumMediaItemLikes:(NSUInteger)mediaItemID
                                       success:(void (^)(NSUInteger count))success
                                       failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {

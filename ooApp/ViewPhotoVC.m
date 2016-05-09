@@ -291,7 +291,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)shareDish:(id)sender {
     
-    OOAPI *api = [[OOAPI alloc] init];
+//    OOAPI *api = [[OOAPI alloc] init];
     
 //    if (_mio) {
 //        _requestOperation = [api getRestaurantImageWithMediaItem:_mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
@@ -608,20 +608,51 @@ static CGFloat kNextPhotoTolerance = 40;
     NSInteger nextIndex = _currentIndex + (-direction);
     NSLog(@"currentIndex=%ld nextIndex=%ld", (long)_currentIndex, (long)nextIndex);
     
-    if (nextIndex < 0 || nextIndex >= [_restaurants count]) return nil;
+    if (nextIndex < 0 || nextIndex >= [_items count]) return nil;
     
     self.direction = direction;
     
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
-    RestaurantObject *r = [_restaurants objectAtIndex:nextIndex];
-    MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
+    
+    __weak ViewPhotoVC *weakSelf = self;
+    
+    RestaurantObject *r;
+    id object = [_items objectAtIndex:nextIndex];
+    if ([object isKindOfClass:[RestaurantObject class]]) {
+        r = (RestaurantObject *)object;
+        MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
+        [self setUpNextVC:vc restaurant:r mediaItem:mio direction:direction nextIndex:nextIndex];
+        return vc;
+    } else if ([object isKindOfClass:[MediaItemObject class]]) {
+        MediaItemObject *m = (MediaItemObject *)object;
+        if (m.restaurantID == _restaurant.restaurantID) {
+            r = _restaurant;
+            [self setUpNextVC:vc restaurant:r mediaItem:m direction:direction nextIndex:nextIndex];
+            return vc;
+        } else {
+            [weakSelf setUpNextVC:vc restaurant:nil mediaItem:m direction:direction nextIndex:nextIndex];
+            [OOAPI getRestaurantsWithID:m.restaurantID success:^(RestaurantObject *restaurant) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    vc.restaurant = restaurant;
+                    [vc.view setNeedsLayout];
+                });
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                ;
+            }];
+        }
+    }
+
+    return vc;
+}
+             
+- (ViewPhotoVC *)setUpNextVC:(ViewPhotoVC *)vc restaurant:(RestaurantObject *)restaurant mediaItem:(MediaItemObject *)mio direction:(NSInteger)direction nextIndex:(NSUInteger)nextIndex {
     
     vc.originRect = CGRectMake(CGRectGetMidX(self.view.frame), CGRectGetMidY(self.view.frame), 20, 20);
     vc.mio = mio;
-    vc.restaurant = r;
+    vc.restaurant = restaurant;
     vc.direction = direction;
     vc.delegate = _delegate;
-    vc.restaurants = _restaurants;
+    vc.items = _items;
     vc.currentIndex = nextIndex;
     
     //vc.rootViewController = _rootViewController;
@@ -631,7 +662,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     vc.dismissNCDelegate = _dismissNCDelegate;
     vc.dismissTransitionDelegate = _dismissTransitionDelegate;
-
+    
     return vc;
 }
 
@@ -806,6 +837,8 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
+    
+    if (!_mio) return;
     
     self.view.frame = APP.window.bounds;
     CGFloat w = width(self.view);

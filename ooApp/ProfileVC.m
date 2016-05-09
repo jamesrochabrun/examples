@@ -1944,7 +1944,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
         MediaItemObject *mediaObject = _arrayPhotos[row];
         NSUInteger restaurantID = mediaObject.restaurantID;
         if (!restaurantID) {
-            [self launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
+            [self launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
         } else {
             __weak ProfileVC *weakSelf = self;
             OOAPI *api = [[OOAPI alloc] init];
@@ -1953,26 +1953,28 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
                              success:^(RestaurantObject *restaurant) {
                                  dispatch_async(dispatch_get_main_queue(), ^{
                                      if (restaurant) {
-                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant originFrame:originRect];
+                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant originFrame:originRect index:row];
                                      } else {
-                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
+                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
                                      }
                                  });
                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                  dispatch_async(dispatch_get_main_queue(), ^{
-                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect];
+                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
                                  });
                              }];
         }
     }
 }
 
-- (void)launchViewPhoto:(MediaItemObject*)mio restaurant:(RestaurantObject*)restaurant originFrame:(CGRect)originFrame
+- (void)launchViewPhoto:(MediaItemObject*)mio restaurant:(RestaurantObject*)restaurant originFrame:(CGRect)originFrame index:(NSUInteger)index
 {
     ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];    
     vc.originRect = originFrame;
     vc.mio = mio;
     vc.restaurant = restaurant;
+    vc.items = _arrayPhotos;
+    vc.currentIndex = index;
     vc.delegate = self;
     vc.dismissNCDelegate = self;
     vc.dismissTransitionDelegate = self;
