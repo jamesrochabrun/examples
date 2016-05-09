@@ -126,6 +126,10 @@
     [button removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
     [button setTitle:icon forState:UIControlStateNormal];
     [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+//    button.layer.cornerRadius = 20;
+//    button.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
+//    button.layer.borderWidth = 1;
+//    button.backgroundColor = UIColorRGBA(kColorTextActive);
     
     CGRect frame;
     UIBarButtonItem *bbi;
