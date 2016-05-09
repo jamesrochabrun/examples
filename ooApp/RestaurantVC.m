@@ -49,6 +49,7 @@
 @property (nonatomic, strong) NSArray *followees;
 @property (nonatomic) BOOL listsNeedUpdate;
 @property (nonatomic, strong) UINavigationController *aNC;
+@property (nonatomic, strong) UIButton *shareRestaurant;
 @end
 
 static NSString *const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
@@ -114,6 +115,20 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     _listButtons = [NSMutableSet set];
     
+    _shareRestaurant = [UIButton buttonWithType:UIButtonTypeCustom];
+    UILabel *iconLabel = [UILabel new];
+    [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+    iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    iconLabel.text = kFontIconShare;
+    iconLabel.textColor = UIColorRGBA(kColorTextReverse);
+    [iconLabel sizeToFit];
+    UIImage *icon = [UIImage imageFromView:iconLabel];
+    [_shareRestaurant withText:@"share restaurant" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(sharePressed:)];
+    [_shareRestaurant setImage:icon forState:UIControlStateNormal];
+    [self.view addSubview:_shareRestaurant];
+    _shareRestaurant.translatesAutoresizingMaskIntoConstraints = NO;
+    _shareRestaurant.layer.cornerRadius = 0;
+    
     _listsNeedUpdate = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setListsUpdateNeeded)
@@ -146,17 +161,18 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 
 -(void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"listContainerHeight":@(_listButtonsContainerHeight), @"buttonDimensions":@(kGeomDimensionsIconButton)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"listContainerHeight":@(_listButtonsContainerHeight), @"buttonDimensions":@(kGeomDimensionsIconButton), @"buttonHeight":@(kGeomHeightButton)};
     
     UIView *superview = self.view;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _listButtonsContainer, _collectionView, _shareRestaurant);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view removeConstraints:_verticalLayoutContraints];
-    _verticalLayoutContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    _verticalLayoutContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_collectionView][_shareRestaurant(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     [self.view addConstraints:_verticalLayoutContraints];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_shareRestaurant]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
 - (void)setupCreateListAC {

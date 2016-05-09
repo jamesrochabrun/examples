@@ -68,7 +68,7 @@
                 toVPVC.view.frame = frame;
                 [toVPVC setComponentsAlpha:1.0];
                 [fromVPVC setComponentsAlpha:0];
-                [fromVPVC.backgroundView setAlpha:0];
+                //[fromVPVC.backgroundView setAlpha:0];
             } completion:^(BOOL finished) {
                 if (![transitionContext transitionWasCancelled]) { //transition not canceled
                     [self logVCs:[fromVPVC.navigationController viewControllers]];
@@ -92,16 +92,16 @@
             
             vcViewFrame.size.height += (kGeomHeightNavBarStatusBar + kGeomHeightTabBar);
             vcViewFrame.origin.y = 0;
-            toVPVC.backgroundView.alpha = 0;
+            //toVPVC.backgroundView.alpha = 0;
             
             [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:1.1 options:UIViewAnimationOptionCurveEaseIn animations:^{
                 toIV.frame = vcViewFrame;
                 toIV.center = toVPVC.view.center;
                 toIV.alpha = 1;
 
-                toVPVC.backgroundView.alpha = kAlphaBackground;
-//                toVPVC.tabBarController.tabBar.hidden = YES;
-//
+//                toVPVC.backgroundView.alpha = kAlphaBackground;
+
+
             } completion:^(BOOL finished) {
                 [transitionContext completeTransition:![transitionContext transitionWasCancelled]];;
                 toVPVC.view.frame = vcViewFrame;

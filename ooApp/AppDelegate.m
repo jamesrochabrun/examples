@@ -386,7 +386,6 @@
                 [self showList:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
                 result = YES;
             }
-
             
             return result;
         }

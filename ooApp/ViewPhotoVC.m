@@ -42,6 +42,8 @@
 @property (nonatomic, strong) UIActivityIndicatorView *aiv;
 @property (nonatomic) NSUInteger toTryListID;
 @property (nonatomic, strong) OOFeedbackView *fv;
+@property (nonatomic, strong) UIScrollView *backgroundView;
+@property (nonatomic, strong) UIButton *share;
 
 @end
 
@@ -53,9 +55,10 @@ static CGFloat kNextPhotoTolerance = 40;
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _backgroundView = [[UIView alloc] init];
+        _backgroundView = [[UIScrollView alloc] init];
         _backgroundView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _backgroundView.alpha = kAlphaBackground;
+        //[_backgroundView setBounces:NO];
         
         _iv = [[UIImageView alloc] init];
         _iv.contentMode = UIViewContentModeScaleAspectFit;
@@ -123,7 +126,20 @@ static CGFloat kNextPhotoTolerance = 40;
         _userViewButton.delegate = self;
         
         _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
-        [self.view addSubview:_fv];
+        [self.backgroundView addSubview:_fv];
+        
+        _share = [UIButton buttonWithType:UIButtonTypeCustom];
+        UILabel *iconLabel = [UILabel new];
+        [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+        iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+        iconLabel.text = kFontIconShare;
+        iconLabel.textColor = UIColorRGBA(kColorTextReverse);
+        [iconLabel sizeToFit];
+        UIImage *icon = [UIImage imageFromView:iconLabel];
+        [_share withText:@"share it!" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(shareDish:)];
+        [_share setImage:icon forState:UIControlStateNormal];
+        _share.layer.cornerRadius = 0;
+
 
         //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton, _wishlistButton]];
@@ -454,19 +470,20 @@ static CGFloat kNextPhotoTolerance = 40;
     [super viewDidLoad];
     
     [_iv addSubview:_aiv];
-    [self.view addSubview:_fv];
-    [self.view addSubview:_yumIndicator];
-    [self.view addSubview:_iv];
-    [self.view addSubview:_restaurantName];
-    [self.view addSubview:_closeButton];
-    [self.view addSubview:_captionButton];
-    [self.view addSubview:_userButton];
-    [self.view addSubview:_userViewButton];
-    [self.view addSubview:_numYums];
-    [self.view addSubview:_yumButton];
+    [self.backgroundView addSubview:_fv];
+    [self.backgroundView addSubview:_yumIndicator];
+    [self.backgroundView addSubview:_iv];
+    [self.backgroundView addSubview:_restaurantName];
+    [self.backgroundView addSubview:_closeButton];
+    [self.backgroundView addSubview:_captionButton];
+    [self.backgroundView addSubview:_userButton];
+    [self.backgroundView addSubview:_userViewButton];
+    [self.backgroundView addSubview:_numYums];
+    [self.backgroundView addSubview:_yumButton];
+    [self.backgroundView addSubview:_share];
     [self.view addSubview:_backgroundView];
-    [self.view bringSubviewToFront:_yumIndicator];
-    [self.view sendSubviewToBack:_backgroundView];
+    [self.backgroundView bringSubviewToFront:_yumIndicator];
+    [self.backgroundView sendSubviewToBack:_backgroundView];
 
     [self.view setAutoresizesSubviews:NO];
     
@@ -672,6 +689,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showComponents:(BOOL)show {
+    _share.hidden =
     _optionsButton.hidden =
     _closeButton.hidden =
     _captionButton.hidden =
@@ -692,6 +710,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {
+    _share.alpha =
     _optionsButton.alpha =
     _closeButton.alpha =
     _captionButton.alpha =
@@ -745,7 +764,7 @@ static CGFloat kNextPhotoTolerance = 40;
     _mio = mio;
     
     if (_mio.source == kMediaItemTypeOomami) {
-        [self.view addSubview:_optionsButton];
+        [_backgroundView addSubview:_optionsButton];
     } else {
         [_optionsButton removeFromSuperview];
     }
@@ -873,22 +892,20 @@ static CGFloat kNextPhotoTolerance = 40;
     y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
     frame = _restaurantName.frame;
     frame.size.width = [_restaurantName sizeThatFits:CGSizeMake(w-width(_optionsButton)-width(_closeButton), 40)].width;
-    frame.origin.y = y;
+    frame.origin.y = CGRectGetMaxY(_closeButton.frame);// y;
     frame.origin.x = (width(self.view) - width(_restaurantName))/2;
     frame.size.height = kGeomDimensionsIconButton;
     _restaurantName.frame = frame;
+    
+    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantName.frame), imageWidth, imageHeight);
     
     frame = _optionsButton.frame;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
     _optionsButton.frame = frame;
 
     imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
-
-    frame = _userButton.frame;
-    frame.origin.y = height(self.view) - 3*kGeomDimensionsIconButton/4;
-    frame.origin.x = kGeomSpaceEdge;
-    frame.size.height = 3*kGeomDimensionsIconButton/4;
-    _userButton.frame = frame;
+    
+    _share.frame = CGRectMake(0, CGRectGetMaxY(_iv.frame), width(self.view), kGeomHeightButton);
     
     if (_mio.source == kMediaItemTypeOomami) {
         frame = _userViewButton.frame;
@@ -896,24 +913,31 @@ static CGFloat kNextPhotoTolerance = 40;
         frame.origin.x = kGeomSpaceEdge;
         frame.size.height = kGeomDimensionsIconButton;
         frame.size.width = kGeomDimensionsIconButton;
-        frame.origin.y = CGRectGetMinY(_userButton.frame) - kGeomDimensionsIconButton;
+        frame.origin.y = CGRectGetMaxY(_share.frame) + kGeomSpaceInter;// CGRectGetMinY(_userButton.frame) - kGeomDimensionsIconButton;
         _userViewButton.frame = frame;
     } else {
         _userViewButton.frame = CGRectZero;
     }
+
+    frame = _userButton.frame;
+    frame.origin.y = CGRectGetMaxY(_userViewButton.frame);//  height(self.view) - 3*kGeomDimensionsIconButton/4;
+    frame.origin.x = kGeomSpaceEdge;
+    frame.size.height = 3*kGeomDimensionsIconButton/4;
+    _userButton.frame = frame;
     
     if (_mio.source == kMediaItemTypeOomami) {
         [_numYums sizeToFit];
-        frame = _numYums.frame;
-        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, height(self.view)-3*kGeomDimensionsIconButton/4);
-        frame.size.height = 3*kGeomDimensionsIconButton/4;
-        _numYums.frame = frame;
-        _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
         
         frame = _yumButton.frame;
         frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMinY(_numYums.frame)-CGRectGetHeight(frame));
+        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_share.frame)+kGeomSpaceInter);
         _yumButton.frame = frame;
+        
+        frame = _numYums.frame;
+        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));// height(self.view)-3*kGeomDimensionsIconButton/4);
+        frame.size.height = 3*kGeomDimensionsIconButton/4;
+        _numYums.frame = frame;
+        _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
     } else {
         _yumButton.frame = CGRectZero;
         _numYums.frame = CGRectZero;
@@ -930,6 +954,8 @@ static CGFloat kNextPhotoTolerance = 40;
     _captionButton.frame = frame;
     
     _fv.center = self.view.center;
+    
+    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_userButton.frame));
     
     NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }

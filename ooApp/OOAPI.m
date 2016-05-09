@@ -57,27 +57,27 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // Name:    getRestaurantsWithIDs
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIds
-                                          success:(void (^)(NSArray *restaurants))success
-                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants", kHTTPProtocol, [self ooURL]];
-    OONetworkManager *rm = [[OONetworkManager alloc] init];
-    
-    return [rm GET:urlString parameters: @{
-                                           @"restaurant_ids": restaurantIds
-                                           }
-           success:^(id responseObject) {
-        NSMutableArray *restaurants = [NSMutableArray array];
-        for (id dict in responseObject) {
-            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
-            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
-        }
-        success(restaurants);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-        NSLog(@"Error: %@", error);
-    }];
-}
+//- (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIds
+//                                          success:(void (^)(NSArray *restaurants))success
+//                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+//{
+//    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants", kHTTPProtocol, [self ooURL]];
+//    OONetworkManager *rm = [[OONetworkManager alloc] init];
+//    
+//    return [rm GET:urlString parameters: @{
+//                                           @"restaurant_ids": restaurantIds
+//                                           }
+//           success:^(id responseObject) {
+//        NSMutableArray *restaurants = [NSMutableArray array];
+//        for (id dict in responseObject) {
+//            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
+//            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
+//        }
+//        success(restaurants);
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+//        NSLog(@"Error: %@", error);
+//    }];
+//}
 
 + (AFHTTPRequestOperation *)getRestaurantsWithID:(NSUInteger)restaurantID
                                           success:(void (^)(RestaurantObject *restaurant))success

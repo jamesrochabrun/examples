@@ -140,6 +140,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, assign) BOOL searchMode;
 @property (nonatomic, strong) NSArray *searchResultsArray;
+@property (nonatomic, strong) UIButton *inviteFriends;
 
 @end
 
@@ -228,7 +229,20 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft];
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
-    [self addNavButtonWithIcon:kFontIconInvite target:self action:@selector(invitePerson:) forSide:kNavBarSideTypeRight];
+//    [self addNavButtonWithIcon:kFontIconInvite target:self action:@selector(invitePerson:) forSide:kNavBarSideTypeRight];
+    
+    _inviteFriends = [UIButton buttonWithType:UIButtonTypeCustom];
+    UILabel *iconLabel = [UILabel new];
+    [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+    iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    iconLabel.text = kFontIconInvite;
+    iconLabel.textColor = UIColorRGBA(kColorTextReverse);
+    [iconLabel sizeToFit];
+    UIImage *icon = [UIImage imageFromView:iconLabel];
+    [_inviteFriends withText:@"invite friends" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(invitePerson:)];
+    [_inviteFriends setImage:icon forState:UIControlStateNormal];
+    _inviteFriends.layer.cornerRadius = 0;
+    [self.view addSubview:_inviteFriends];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setNeedsRefresh)
@@ -244,7 +258,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     if (showIt) {
         [_searchBar becomeFirstResponder];
+        _inviteFriends.hidden = YES;
     } else {
+        _inviteFriends.hidden = NO;
         _searchBar.text = @"";
         [_tableAccordion reloadData];
         [_searchBar resignFirstResponder];
@@ -312,8 +328,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [avc setValue:[NSString stringWithFormat:@"Let's try out Oomami together!"] forKey:@"subject"];
     [avc setExcludedActivityTypes:
      @[UIActivityTypeAssignToContact,
-       UIActivityTypePostToTwitter,
-       UIActivityTypePostToFacebook,
        UIActivityTypePostToFlickr,
        UIActivityTypeCopyToPasteboard,
        UIActivityTypePrint,
@@ -337,7 +351,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     [super viewWillLayoutSubviews];
     _searchBar.frame = CGRectMake(0, 0, width(self.view), 40);
-    _tableAccordion.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
+    _inviteFriends.frame = CGRectMake(0, height(self.view)-kGeomHeightButton, width(self.view), kGeomHeightButton);
+    _tableAccordion.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0)- (_searchMode?0:CGRectGetHeight(_inviteFriends.frame)));
 }
 
 //------------------------------------------------------------------------------

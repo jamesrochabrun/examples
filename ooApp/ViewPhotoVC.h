@@ -41,7 +41,6 @@ typedef enum {
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic) CGRect originRect;
-@property (nonatomic, strong) UIView *backgroundView;
 
 @property (nonatomic, strong) NSArray *items;
 @property (nonatomic) NSInteger currentIndex;
