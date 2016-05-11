@@ -33,7 +33,7 @@ typedef enum {
 - (void)unregisterFromNotifications;
 - (CGRect)getRightButtonFrame;
 
-- (void)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side;
+- (void)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side isCTA:(BOOL)isCTA;
 - (void)removeNavButtonForSide:(NavBarSideType)side;
 
 

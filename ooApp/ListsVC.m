@@ -13,6 +13,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "ListObject.h"
 #import "RestaurantListVC.h"
+#import "OOFeedbackView.h"
 
 @interface ListsVC ()
 
@@ -28,6 +29,7 @@
 @property (nonatomic) NSUInteger favoritesListID;
 @property (nonatomic) NSUInteger wishListID;
 @property (nonatomic, strong) UIAlertController *createListAC;
+@property (nonatomic, strong) OOFeedbackView *fv;
 @end
 
 static NSString * const cellIdentifier = @"listCell";
@@ -77,6 +79,10 @@ typedef enum {
     _requestOperation = nil;
     _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
+    _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
+    _fv.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_fv];
+    
     [self registerForNotification:kNotificationRestaurantListsNeedsUpdate
                           calling:@selector(handleRestaurantListAltered:)];
 }
@@ -96,17 +102,27 @@ typedef enum {
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv);
 
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_fv(110)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_fv(90)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_fv attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:1]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_fv attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:1]];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self.view bringSubviewToFront:_fv];
 }
 
 - (void)didReceiveMemoryWarning
@@ -202,6 +218,7 @@ typedef enum {
 - (void)addRestaurantToList:(ListObject *)list {
     OOAPI *api = [[OOAPI alloc] init];
     __weak ListsVC *weakSelf = self;
+
     [api addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf getListsForRestaurant];
@@ -369,6 +386,15 @@ typedef enum {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ListTVCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    if (cell.onList) {
+        _fv.icon = kFontIconRemove;
+        _fv.message = [NSString stringWithFormat:@"Removing from %@", cell.list.name];
+    } else {
+        _fv.icon = kFontIconCheckmark;
+        _fv.message = [NSString stringWithFormat:@"Adding to %@", cell.list.name];
+    }
+    [_fv show];
+    
     [cell toggleListInclusion];
 }
 

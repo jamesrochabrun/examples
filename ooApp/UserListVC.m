@@ -61,9 +61,9 @@
 
 //==============================================================================
 @interface UserListVC ()
-@property (nonatomic,strong) UITableView *tableUsers;
-@property (nonatomic,strong) NSMutableArray *followeesArray; 
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationFollowees;
+@property (nonatomic, strong) UITableView *tableUsers;
+@property (nonatomic, strong) NSMutableArray *followeesArray;
+@property (nonatomic, strong) AFHTTPRequestOperation *fetchOperationFollowees;
 @property (nonatomic) BOOL needRefresh;
 @end
 
@@ -100,7 +100,7 @@
     
     self.navTitle = nto;
     
-    self.tableUsers = makeTable(self.view,self);
+    self.tableUsers = [[UITableView alloc] init];// makeTable(self.view,self);
     _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_tableUsers registerClass:[UserListTVC class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER];
     [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
@@ -109,6 +109,7 @@
     _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
     _tableUsers.separatorInset = UIEdgeInsetsZero;
     _tableUsers.showsVerticalScrollIndicator= NO;
+    [self.view addSubview:_tableUsers];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setNeedsRefresh)
@@ -256,8 +257,8 @@
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     cell.textLabel.textAlignment=NSTextAlignmentCenter;
     cell.selectionStyle= UITableViewCellSeparatorStyleNone;
-    cell.delegate= self;
-    cell.vc=self;
+    cell.delegate = self;
+    cell.vc = self;
     [cell provideUser:u];
     
     if (_followeesArray) {

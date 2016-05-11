@@ -13,6 +13,7 @@
 #import "AddCaptionToMIOVC.h"
 #import "OOUserView.h"
 #import "UnverifiedUserVC.h"
+#import <FBSDKShareKit/FBSDKShareKit.h>
 
 static CGFloat kAlphaBackground = 1;
 
@@ -36,7 +37,9 @@ typedef enum {
                                     OOTextEntryVCDelegate,
                                     UINavigationControllerDelegate,
                                     UIViewControllerTransitioningDelegate,
-                                    UnverifiedUserVCDelegate>
+                                    UnverifiedUserVCDelegate,
+                                    UIActivityItemSource,
+                                    FBSDKSharingDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) UIImageView *iv;

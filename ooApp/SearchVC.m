@@ -159,13 +159,13 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 
     if (_listToAddTo || _eventBeingEdited) {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
-        [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
     }
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
-    [self addNavButtonWithIcon:kFontIconMap target:self action:@selector(toggleMap) forSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconMap target:self action:@selector(toggleMap) forSide:kNavBarSideTypeRight isCTA:NO];
     
     _minPrice = 0;
     _maxPrice = 3;

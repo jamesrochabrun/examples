@@ -961,7 +961,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     
     if (_viewingOwnProfile) {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
-        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
     }
@@ -973,11 +973,11 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     NSUInteger totalControllers= self.navigationController.viewControllers.count;
     if (totalControllers  == 1) {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
-        [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft isCTA:NO];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
-        [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
-        [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft];
+        [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
+        [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft isCTA:NO];
     }
     
     self.listsAndPhotosLayout= [[ProfileVCCVLayout alloc] init];
@@ -1670,7 +1670,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 
     if (_viewingOwnProfile) {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
-        [self addNavButtonWithIcon:kFontIconCreateList target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:kFontIconCreateList target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
     }
 
     _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;
@@ -1684,7 +1684,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     
     if (_viewingOwnProfile) {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
-        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
     }
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayPhotos.count==0;

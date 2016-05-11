@@ -564,7 +564,7 @@ enum  {
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;
     
-    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    NSArray *items = @[aip, img];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -574,6 +574,7 @@ enum  {
     [avc setValue:[NSString stringWithFormat:@"Take a look at %@", _restaurant.name] forKey:@"subject"];
     [avc setExcludedActivityTypes:
      @[UIActivityTypeAssignToContact,
+       UIActivityTypePostToFlickr,
        UIActivityTypeCopyToPasteboard,
        UIActivityTypePrint,
        UIActivityTypeSaveToCameraRoll,

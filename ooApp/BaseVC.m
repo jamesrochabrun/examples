@@ -116,40 +116,42 @@
     }
 }
 
-- (void)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side {
+- (void)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side isCTA:(BOOL)isCTA {
     //side = -1 left, 1 = right
     
+    isCTA = NO;
+    
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button withText:icon fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:target selector:selector];
-    [button setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+    [button withText:icon fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:target selector:selector];
+    [button setTitleColor:(isCTA)?UIColorRGBA(kColorTextActive):UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     button.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
     [button removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
     [button setTitle:icon forState:UIControlStateNormal];
     [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-//    button.layer.cornerRadius = 20;
-//    button.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
-//    button.layer.borderWidth = 1;
-//    button.backgroundColor = UIColorRGBA(kColorTextActive);
+    button.layer.cornerRadius = kGeomWidthNavBarCTAButton/2;
+    button.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
+    button.layer.borderWidth = (isCTA)?2:0;
+    button.backgroundColor = isCTA?UIColorRGBA(kColorClear):UIColorRGBA(kColorClear);
     
     CGRect frame;
     UIBarButtonItem *bbi;
     
     if (side == kNavBarSideTypeLeft) {
-        button.frame = CGRectMake([_leftBarItems count]*40, 0, 40, 40);
+        button.frame = CGRectMake([_leftBarItems count]*40, 0, (isCTA)?kGeomWidthNavBarButton:kGeomWidthNavBarCTAButton, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
         [_leftBarButtonView addSubview:button];
         [_leftBarItems addObject:button];
-        frame = CGRectMake(0, 0, [_leftBarItems count]*40, 40);
+        frame = CGRectMake(0, 0, [_leftBarItems count]*40, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
         _leftBarButtonView.frame = frame;
         bbi = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
         self.navigationItem.leftBarButtonItem = bbi;
     } else if (side == kNavBarSideTypeRight) {
         [_rightBarButtonView addSubview:button];
         [_rightBarItems addObject:button];
-        frame = CGRectMake(0, 0, [_rightBarItems count]*40, 40);
+        frame = CGRectMake(0, 0, [_rightBarItems count]*40, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
         _rightBarButtonView.frame = frame;
         NSInteger i = 0;
         for (UIView *v in [_rightBarItems reverseObjectEnumerator]) {
-            v.frame = CGRectMake(i*40, 0, 40, 40);
+            v.frame = CGRectMake(i*40, 0,  (isCTA)?kGeomWidthNavBarCTAButton:kGeomWidthNavBarButton, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
             i++;
         }
         bbi = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];

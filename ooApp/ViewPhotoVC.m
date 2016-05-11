@@ -126,7 +126,6 @@ static CGFloat kNextPhotoTolerance = 40;
         _userViewButton.delegate = self;
         
         _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
-        [self.backgroundView addSubview:_fv];
         
         _share = [UIButton buttonWithType:UIButtonTypeCustom];
         UILabel *iconLabel = [UILabel new];
@@ -329,11 +328,12 @@ static CGFloat kNextPhotoTolerance = 40;
     //NSData *data = [NSData dataWithContentsOfURL:nsURL];
     UIImage *img = _iv.image;// [UIImage imageWithData:data];
     
-    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@"Yum!"];
     aip.restaurant = _restaurant;
     aip.mio = _mio;
+    aip.image = img;
     
-    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    NSArray *items = @[img, aip];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -347,17 +347,55 @@ static CGFloat kNextPhotoTolerance = 40;
     }
     [avc setExcludedActivityTypes:
      @[UIActivityTypeAssignToContact,
+       UIActivityTypePostToFlickr,
        UIActivityTypeCopyToPasteboard,
        UIActivityTypePrint,
        UIActivityTypeSaveToCameraRoll,
        UIActivityTypePostToWeibo]];
+
     [self.navigationController presentViewController:avc animated:YES completion:^{
         ;
     }];
     
-    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
-        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
-    };
+    
+//    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+//        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+//    };
+}
+
+- (id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(NSString *)activityType {
+
+    if ([activityType isEqualToString:UIActivityTypePostToFacebook]) {
+        FBSDKShareLinkContent *content = [[FBSDKShareLinkContent alloc] init];
+        content.contentTitle = @"F-Spot";
+        content.contentDescription = [NSString stringWithFormat:@"%@  %@", @"arg1", @"arg2"];
+        [content setValue:@{@"caption":@"?"} forKey:@"feedParameters"];
+        //content.imageURL = [NSURL URLWithString:shareImage];
+        content.contentURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID]];
+//        FBSDKShareDialog *shareDialog = [[FBSDKShareDialog alloc] init];
+//        shareDialog.mode = FBSDKShareDialogModeNative;
+//        if(shareDialog.canShow) {
+//            shareDialog.mode = FBSDKShareDialogModeFeedBrowser;
+//        }
+//        shareDialog.shareContent = content;
+//        shareDialog.delegate = self;
+//
+//        [shareDialog show];
+        return content;
+    }
+    return nil;
+}
+
+- (void)sharerDidCancel:(id<FBSDKSharing>)sharer {
+    
+}
+
+- (void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error {
+    
+}
+
+- (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results {
+    
 }
 
 - (void)flagPhoto:(MediaItemObject *)mio {
@@ -482,6 +520,7 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.backgroundView addSubview:_yumButton];
     [self.backgroundView addSubview:_share];
     [self.view addSubview:_backgroundView];
+    [self.backgroundView bringSubviewToFront:_fv];
     [self.backgroundView bringSubviewToFront:_yumIndicator];
     [self.backgroundView sendSubviewToBack:_backgroundView];
 
@@ -903,26 +942,17 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
     _optionsButton.frame = frame;
 
-    imageMaxY = CGRectGetMidY(_iv.frame) + imageHeight/2;
-    
-    _share.frame = CGRectMake(0, CGRectGetMaxY(_iv.frame), width(self.view), kGeomHeightButton);
-    
-    if (_mio.source == kMediaItemTypeOomami) {
-        frame = _userViewButton.frame;
-        //      frame.origin.y = imageMaxY + kGeomSpaceCellPadding;
-        frame.origin.x = kGeomSpaceEdge;
-        frame.size.height = kGeomDimensionsIconButton;
-        frame.size.width = kGeomDimensionsIconButton;
-        frame.origin.y = CGRectGetMaxY(_share.frame) + kGeomSpaceInter;// CGRectGetMinY(_userButton.frame) - kGeomDimensionsIconButton;
-        _userViewButton.frame = frame;
-    } else {
-        _userViewButton.frame = CGRectZero;
-    }
+    frame = _userViewButton.frame;
+    frame.origin.x = kGeomSpaceEdge;
+    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
+    frame.size.width = kGeomDimensionsIconButton;
+    frame.origin.y = CGRectGetMaxY(_iv.frame) + kGeomSpaceInter;
+    _userViewButton.frame = frame;
 
     frame = _userButton.frame;
     frame.origin.y = CGRectGetMaxY(_userViewButton.frame);//  height(self.view) - 3*kGeomDimensionsIconButton/4;
     frame.origin.x = kGeomSpaceEdge;
-    frame.size.height = 3*kGeomDimensionsIconButton/4;
+    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
     _userButton.frame = frame;
     
     if (_mio.source == kMediaItemTypeOomami) {
@@ -930,7 +960,7 @@ static CGFloat kNextPhotoTolerance = 40;
         
         frame = _yumButton.frame;
         frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_share.frame)+kGeomSpaceInter);
+        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_iv.frame)+kGeomSpaceInter);
         _yumButton.frame = frame;
         
         frame = _numYums.frame;
@@ -955,7 +985,9 @@ static CGFloat kNextPhotoTolerance = 40;
     
     _fv.center = self.view.center;
     
-    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_userButton.frame));
+    _share.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), width(self.view), kGeomHeightButton);
+    
+    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_share.frame));
     
     NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }

@@ -10,13 +10,16 @@
 #import "RestaurantObject.h"
 #import "MediaItemObject.h"
 #import "ListObject.h"
+#import <FBSDKShareKit/FBSDKShareKit.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
-@interface OOActivityItemProvider : UIActivityItemProvider <UIActivityItemSource>
+@interface OOActivityItemProvider : UIActivityItemProvider <UIActivityItemSource, FBSDKSharingDelegate>
 
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) ListObject *list;
 @property (nonatomic, strong) MediaItemObject *mio;
+@property (nonatomic, strong) UIImage *image;
 
 @end
 

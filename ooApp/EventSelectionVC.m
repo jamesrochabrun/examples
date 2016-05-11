@@ -61,7 +61,7 @@
     }
     
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
-    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
     self.incompleteEventsArray= @[];
     

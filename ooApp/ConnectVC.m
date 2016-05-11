@@ -226,7 +226,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 //    [self setLeftNavWithIcon:@"" target:nil action:nil];
     
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
-    [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft isCTA:NO];
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
 //    [self addNavButtonWithIcon:kFontIconInvite target:self action:@selector(invitePerson:) forSide:kNavBarSideTypeRight];
@@ -317,8 +317,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     UIImage *img = [UIImage imageNamed:@"Oomami_AppStoreLogo(120x120).png"];
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = nil;
+    aip.mio = nil;
     
-    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    NSArray *items = @[aip, img];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -333,6 +334,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
        UIActivityTypePrint,
        UIActivityTypeSaveToCameraRoll,
        UIActivityTypePostToWeibo]];
+    
     [self.navigationController presentViewController:avc animated:YES completion:^{
         ;
     }];
@@ -642,6 +644,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     }
     
     [cell fetchStats];
+    cell.vc = self;
     
     return cell;
 }
@@ -870,7 +873,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 
 - (void)userTappedFollowButtonForUser:(UserObject *)user following:(BOOL)following
 {
-    [self reload];
+    //[self reload];
 }
 
 - (void)userTappedSectionHeader:(int)which

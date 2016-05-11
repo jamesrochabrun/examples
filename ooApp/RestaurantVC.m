@@ -354,7 +354,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;
     
-    NSMutableArray *items = [NSMutableArray arrayWithObjects:aip, img, nil];
+    NSArray *items = @[aip, img];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -364,6 +364,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [avc setValue:[NSString stringWithFormat:@"Take a look at %@", _restaurant.name] forKey:@"subject"];
     [avc setExcludedActivityTypes:
      @[UIActivityTypeAssignToContact,
+       UIActivityTypePostToFlickr,
        UIActivityTypeCopyToPasteboard,
        UIActivityTypePrint,
        UIActivityTypeSaveToCameraRoll,

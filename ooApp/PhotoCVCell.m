@@ -322,21 +322,21 @@
         _numYums.hidden = (_mediaItemObject.yumCount) ? NO : YES;
         _caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
         
-        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
-            _userObject = user;
-//            NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                weakSelf.userButton.hidden = NO;
-                weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
-            });
-            ON_MAIN_THREAD(^{
-//                [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
-//                [weakSelf setNeedsUpdateConstraints];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            weakSelf.userButton.hidden = YES;
-            weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
-        }];
+//        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
+//            _userObject = user;
+////            NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                weakSelf.userButton.hidden = NO;
+//                weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
+//            });
+//            ON_MAIN_THREAD(^{
+////                [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
+////                [weakSelf setNeedsUpdateConstraints];
+//            });
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            weakSelf.userButton.hidden = YES;
+//            weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
+//        }];
     } else {
         _userButton.hidden = YES;
         _caption.hidden = YES;

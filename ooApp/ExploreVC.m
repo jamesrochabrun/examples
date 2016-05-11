@@ -515,7 +515,7 @@ typedef enum: char {
         case FILTER_PLACES:
             _searchBar.placeholder = kSearchPlaceholderPlaces;
             [self removeNavButtonForSide:kNavBarSideTypeRight];
-            [self addNavButtonWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:) forSide:kNavBarSideTypeRight];
+            [self addNavButtonWithIcon:kFontIconLocation target:self action:@selector(userPressedChangeLocation:) forSide:kNavBarSideTypeRight isCTA:NO];
 
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden = NO;
