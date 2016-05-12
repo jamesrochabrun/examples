@@ -455,10 +455,10 @@ enum  {
     }
     
     if (!addToList) {
-        addToList = [UIAlertAction actionWithTitle:@"Add to Existing List"
+        addToList = [UIAlertAction actionWithTitle:@"Add to an Existing List"
                                                            style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                NSLog(@"Add/Remove from Existing List");
-                                                               [weakSelf  addToList];
+                                                               [weakSelf addToList];
                                                            }];
     }
     UIAlertAction *addToNewList = [UIAlertAction actionWithTitle:@"Add to New List"
@@ -531,29 +531,29 @@ enum  {
 }
 
 - (void)sharePressed:(id)sender {
-    MediaItemObject *mio;
-    NSArray *mediaItems = _restaurant.mediaItems;
-    if (mediaItems && [mediaItems count]) {
-        mio = [mediaItems objectAtIndex:0];
-        
-        OOAPI *api = [[OOAPI alloc] init];
-        
-        if (mio) {
-            self.requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self showShare:link fromView:sender];
-                });
-            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self showShare:nil fromView:sender];
-                });
-            }];
-        } else {
-            [self showShare:nil fromView:sender];
-        }
-    } else {
+//    MediaItemObject *mio;
+//    NSArray *mediaItems = _restaurant.mediaItems;
+//    if (mediaItems && [mediaItems count]) {
+//        mio = [mediaItems objectAtIndex:0];
+//        
+//        OOAPI *api = [[OOAPI alloc] init];
+//        
+//        if (mio) {
+//            self.requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [self showShare:link fromView:sender];
+//                });
+//            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [self showShare:nil fromView:sender];
+//                });
+//            }];
+//        } else {
+//            [self showShare:nil fromView:sender];
+//        }
+//    } else {
         [self showShare:nil fromView:sender];
-    }
+//    }
 }
 
 - (void)showShare:(NSString *)url fromView:(id)sender {
