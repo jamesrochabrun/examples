@@ -128,8 +128,16 @@
 }
 
 - (void)showProfile {
+    __weak PhotoCVCell *weakSelf = self;
     if ([_delegate respondsToSelector:@selector(photoCell:showProfile:)]) {
-        [_delegate photoCell:self showProfile:_userObject];
+        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
+            weakSelf.userObject = user;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.delegate photoCell:self showProfile:_userObject];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Could not get the user");
+        }];
     }
 }
 
@@ -321,22 +329,6 @@
         _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)_mediaItemObject.yumCount];
         _numYums.hidden = (_mediaItemObject.yumCount) ? NO : YES;
         _caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
-        
-//        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
-//            _userObject = user;
-////            NSString *userName = [NSString stringWithFormat:@"@%@", _userObject.username];
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                weakSelf.userButton.hidden = NO;
-//                weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
-//            });
-//            ON_MAIN_THREAD(^{
-////                [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
-////                [weakSelf setNeedsUpdateConstraints];
-//            });
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            weakSelf.userButton.hidden = YES;
-//            weakSelf.caption.hidden = (_mediaItemObject.caption.length) ? NO : YES;
-//        }];
     } else {
         _userButton.hidden = YES;
         _caption.hidden = YES;

@@ -30,7 +30,7 @@
 @property (nonatomic, strong) OOUserView *userViewButton;
 @property (nonatomic, strong) UIButton *restaurantName;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
-@property (nonatomic, strong) UITapGestureRecognizer *showRestaurantTapGesture;
+//@property (nonatomic, strong) UITapGestureRecognizer *showRestaurantTapGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *yumPhotoTapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 @property (nonatomic, strong) UserObject *user;
@@ -93,12 +93,12 @@ static CGFloat kNextPhotoTolerance = 40;
         _optionsButton.hidden = _closeButton.hidden = YES;
         
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorClear textColor:kColorTextActive borderColor:kColorClear target:self selector:@selector(showRestaurant)];
+        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
         [_restaurantName setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
         [_restaurantName.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
         
-        _showRestaurantTapGesture = [[UITapGestureRecognizer alloc] init];
+//        _showRestaurantTapGesture = [[UITapGestureRecognizer alloc] init];
         _yumPhotoTapGesture = [[UITapGestureRecognizer alloc] init];
         _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
 
@@ -123,7 +123,6 @@ static CGFloat kNextPhotoTolerance = 40;
         _userButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
 
         _userViewButton = [[OOUserView alloc] init];
-        _userViewButton.delegate = self;
         
         _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
         
@@ -141,7 +140,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 
         //        [DebugUtilities addBorderToViews:@[self.view]];
-        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton, _wishlistButton]];
+        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
     return self;
 }
@@ -445,13 +444,21 @@ static CGFloat kNextPhotoTolerance = 40;
     if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
         UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
         if (tapGesture.state == UIGestureRecognizerStateEnded) {
-            if (tapGesture == _showRestaurantTapGesture) {
-                [self showRestaurant];
-            } else if (tapGesture == _yumPhotoTapGesture) {
+//            if (tapGesture == _showRestaurantTapGesture) {
+//                [self showRestaurant];
+//            } else if (tapGesture == _yumPhotoTapGesture) {
                 [self yumPhotoTapped];
-            }
+//            }
         }
     }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    CGPoint location = [touch locationInView:self.view];
+    CGRect frame = _userViewButton.frame;
+    if (CGRectContainsPoint(frame, location))
+        return NO;
+    return YES;
 }
 
 - (void)showRestaurant {
@@ -526,13 +533,13 @@ static CGFloat kNextPhotoTolerance = 40;
 
     [self.view setAutoresizesSubviews:NO];
     
-    [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
-    [_showRestaurantTapGesture setNumberOfTapsRequired:1];
+//    [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
+//    [_showRestaurantTapGesture setNumberOfTapsRequired:1];
     [_yumPhotoTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
     [_yumPhotoTapGesture setNumberOfTapsRequired:2];
     
-    [_showRestaurantTapGesture requireGestureRecognizerToFail:_yumPhotoTapGesture];
-    [_backgroundView addGestureRecognizer:_showRestaurantTapGesture];
+//    [_showRestaurantTapGesture requireGestureRecognizerToFail:_yumPhotoTapGesture];
+//    [_backgroundView addGestureRecognizer:_showRestaurantTapGesture];
     [_backgroundView addGestureRecognizer:_yumPhotoTapGesture];
     [self.view addGestureRecognizer:_panGesture];
     
@@ -765,6 +772,8 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    _userViewButton.delegate = self;
+    
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     self.tabBarController.tabBar.hidden = YES;
@@ -902,13 +911,11 @@ static CGFloat kNextPhotoTolerance = 40;
     CGFloat w = width(self.view);
     CGFloat h = height(self.view);
     CGRect frame;
-    CGFloat imageMaxY;
     CGFloat y;
         
     _backgroundView.frame = self.view.frame;
     
     frame = _iv.frame;
-    //frame.size.height = frame.size.height;// (maxImageHeight > frame.size.height) ? frame.size.height : maxImageHeight;
     
     CGFloat imageWidth = width(self.view);
     
@@ -930,13 +937,13 @@ static CGFloat kNextPhotoTolerance = 40;
     
     y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
     frame = _restaurantName.frame;
-    frame.size.width = [_restaurantName sizeThatFits:CGSizeMake(w-width(_optionsButton)-width(_closeButton), 40)].width;
+    frame.size.width = w-2*kGeomSpaceEdge;
     frame.origin.y = CGRectGetMaxY(_closeButton.frame);// y;
     frame.origin.x = (width(self.view) - width(_restaurantName))/2;
-    frame.size.height = kGeomDimensionsIconButton;
+    frame.size.height = kGeomHeightButton;
     _restaurantName.frame = frame;
     
-    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantName.frame), imageWidth, imageHeight);
+    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceInter, imageWidth, imageHeight);
     
     frame = _optionsButton.frame;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
@@ -950,7 +957,7 @@ static CGFloat kNextPhotoTolerance = 40;
     _userViewButton.frame = frame;
 
     frame = _userButton.frame;
-    frame.origin.y = CGRectGetMaxY(_userViewButton.frame);//  height(self.view) - 3*kGeomDimensionsIconButton/4;
+    frame.origin.y = CGRectGetMaxY(_userViewButton.frame);
     frame.origin.x = kGeomSpaceEdge;
     frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
     _userButton.frame = frame;
@@ -964,8 +971,8 @@ static CGFloat kNextPhotoTolerance = 40;
         _yumButton.frame = frame;
         
         frame = _numYums.frame;
-        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));// height(self.view)-3*kGeomDimensionsIconButton/4);
-        frame.size.height = 3*kGeomDimensionsIconButton/4;
+        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
+        frame.size.height = kGeomDimensionsIconButton;
         _numYums.frame = frame;
         _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
     } else {

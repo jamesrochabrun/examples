@@ -41,7 +41,7 @@
             urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         }
     } else {
-        message = [NSString stringWithFormat:@"I use Oomami to find and share the best dishes with my friends (like you!). Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        message = [NSString stringWithFormat:@"I use Oomami to figure out where to eat and share the best places and food with my friends (like you!). Check it out now! https://%@", kWebAppHost];
         urlLink = [NSString stringWithFormat:@"https://%@", kWebAppHost];
     }
     

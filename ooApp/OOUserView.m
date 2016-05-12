@@ -58,9 +58,22 @@
         _circle.text = kFontIconFilledCircle;
         _circle.textAlignment = NSTextAlignmentCenter;
         [self addSubview:_circle];
+        
         //[DebugUtilities addBorderToViews:@[_buttonSettings, _circle, _emptyUserView, self]];
     }
     return self;
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    UIView *hitView = [super hitTest:point withEvent:event];
+    
+    // If the hitView is THIS view, return the view that you want to receive the touch instead:
+    if (hitView == self) {
+        return hitView;
+    }
+    // Else return the hitView (as it could be one of this view's buttons):
+    return hitView;
 }
 
 //- (void)updateConstraints {
@@ -208,8 +221,7 @@
     _showCog = NO;
 }
 
-- (void)userPressedSettings:(id)sender
-{
+- (void)userPressedSettings:(id)sender {
     [self userTapped];
 }
 
