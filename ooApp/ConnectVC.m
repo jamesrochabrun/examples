@@ -393,23 +393,24 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _needRefresh = YES;
 }
 
-- (void)reload
-{
-    // NOTE: Need to make the call to find out who we are following before anything else is displayed.
-    
+- (void)reload {
     _gotFriendsResult =
     _gotFoodiesResult =
     _gotRecentUsersResult =
     _gotInTheKnowResult = NO;
     
     [self reloadAfterDeterminingWhoWeAreFollowing];
+    [self updateFollowing];
+}
+
+- (void)updateFollowing {
     __weak  ConnectVC *weakSelf = self;
     
     UserObject *currentUser = [Settings sharedInstance].userObject;
     [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
         weakSelf.followeesArray = users;
         dispatch_async(dispatch_get_main_queue(), ^{
-          //[weakSelf reloadAfterDeterminingWhoWeAreFollowing];
+            //[weakSelf reloadAfterDeterminingWhoWeAreFollowing];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
@@ -871,9 +872,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     return 0;
 }
 
-- (void)userTappedFollowButtonForUser:(UserObject *)user following:(BOOL)following
-{
-    //[self reload];
+- (void)userTappedFollowButtonForUser:(UserObject *)user following:(BOOL)following {
+    [self updateFollowing];
 }
 
 - (void)userTappedSectionHeader:(int)which

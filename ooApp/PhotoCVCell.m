@@ -117,6 +117,7 @@
 
 - (void)dealloc {
     [self unregisterFromNotifications];
+    _delegate = nil;
 }
 
 - (void)layoutSubviews {

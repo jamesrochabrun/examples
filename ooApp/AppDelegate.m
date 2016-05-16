@@ -28,6 +28,7 @@
 
 @interface AppDelegate ()
 @property (nonatomic, strong) NSMutableArray *notifications;
+@property (nonatomic, strong) NSURL *launchedURL;
 @end
 
 @implementation AppDelegate
@@ -52,8 +53,34 @@
         // RULE: For the debug build the default server is Staging.
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kUserDefaultsUsingStagingServer];
     }
+    
+//    NSDictionary *notification;
+//    
+//    notification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+//    if (!notification) {
+//        UIAlertView *av = [UIAlertView new];
+//        av.message = @"no remote not";
+//        [av show];
+//    } else {
+////        UIAlertView *av = [UIAlertView new];
+////        av.message = [NSString stringWithFormat:@"%@", notification] ;
+////        [av show];
+//
+//        NotificationObject *n = [self parseNotification:notification];
+//        if (n) {
+//            [_notifications addObject:n];
+//            message([NSString stringWithFormat:@"type=%lu id=%lu", (unsigned long)n.type, (unsigned long)n.identifier]);
+//        }
+//    }
+
+    _launchedURL = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+    
+    
+    // uncomment to test deep link
+    //_launchedURL = [NSURL URLWithString:@"oomami://oomami/restaurant?id=1"];
+    
     _usingStagingServer= [[NSUserDefaults standardUserDefaults] boolForKey: kUserDefaultsUsingStagingServer];
-    self.diagnosticLogString= [NSMutableString new ];
+    self.diagnosticLogString= [NSMutableString new];
     ENTRY;
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString *applicationName = [infoDictionary objectForKey:@"CFBundleName"];
@@ -71,7 +98,6 @@
     #endif
 #endif
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-    _notifications = [NSMutableArray array];
     
     // Override point for customization after application launch.
     NSLog(@"application finished launching");
@@ -132,19 +158,28 @@
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
-//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-//}
-
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     if ([userInfo isKindOfClass:[NSDictionary class]]) {
         ANALYTICS_EVENT_OTHER(@"Notification");
+//        UIAlertView *av = [UIAlertView new];
+//        av.message = [NSString stringWithFormat:@"%@", userInfo] ;
+//        [av show];
 
-        NotificationObject *notif = [[NotificationObject alloc] init];
-        notif.type = (NotificationObjectType)parseIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationType]);
-        notif.identifier = parseUnsignedIntegerOrNullFromServer([userInfo objectForKey:kKeyNotificationID]);
-        [_notifications addObject:notif];
+        NotificationObject *n = [self parseNotification:userInfo];
+        if (n) {
+            if (!_notifications) _notifications = [NSMutableArray array];
+            [_notifications addObject:n];
+        }
+        [self processNotifications];
     }
+}
+
+- (NotificationObject *)parseNotification:(NSDictionary *)info {
+    NotificationObject *notif = [[NotificationObject alloc] init];
+    notif.type = (NotificationObjectType)parseIntegerOrNullFromServer([info objectForKey:kKeyNotificationType]);
+    notif.identifier = parseUnsignedIntegerOrNullFromServer([info objectForKey:kKeyNotificationID]);
+    return notif;
 }
 
 - (void)setNc:(UINavigationController *)nc {
@@ -164,6 +199,7 @@
 //        return;
 //    }
     
+    if (![self makeSureNCIsSet]) return;
     NotificationObject *notif =[_notifications firstObject];
     [_notifications removeObject:notif];
     
@@ -206,7 +242,7 @@
 }
 
 - (void)showRestaurant:(NSUInteger)restaurantID {
-    [self makeSureNCIsSet];
+    if (![self makeSureNCIsSet]) return;
 
     __weak UINavigationController *weakNC = _nc;
     
@@ -225,7 +261,7 @@
 }
 
 - (void)showMediaItem:(NSUInteger)mediaItemID {
-    [self makeSureNCIsSet];
+    if (![self makeSureNCIsSet]) return;
     
     OOAPI *api = [[OOAPI alloc] init];
     
@@ -245,7 +281,7 @@
 }
 
 - (void)showUserwithUserId:(NSUInteger)userID {
-    [self makeSureNCIsSet];
+    if (![self makeSureNCIsSet]) return;
     
     __weak UINavigationController *weakNC = _nc;
     
@@ -261,7 +297,7 @@
 }
 
 - (void)showUserWithUsername:(NSString *)username {
-    [self makeSureNCIsSet];
+    if (![self makeSureNCIsSet]) return;
     
     __weak UINavigationController *weakNC = _nc;
     
@@ -277,7 +313,7 @@
 }
 
 - (void)showList:(NSUInteger)listID {
-    [self makeSureNCIsSet];
+    if (![self makeSureNCIsSet]) return;
     
     __weak UINavigationController *weakNC = _nc;
     
@@ -294,7 +330,7 @@
     }];
 }
 
-- (void)makeSureNCIsSet {
+- (BOOL)makeSureNCIsSet {
     UIViewController *vc = [_tabBar.viewControllers objectAtIndex:_tabBar.selectedIndex];
     if ([vc isKindOfClass:[UINavigationController class]]) {
         _nc = (UINavigationController *)vc;
@@ -302,10 +338,11 @@
     
     if (!_nc) {
         NSLog(@"*** NC not set yet");
-        return;
+        return NO;
     }
     
     [_nc popToRootViewControllerAnimated:NO];
+    return YES;
 }
 
 - (void)launchViewPhoto:(MediaItemObject*)mediaObject restaurant:(RestaurantObject *)restaurant originFrame:(CGRect)originFrame
@@ -363,30 +400,7 @@
         oomami://oomami/mediaItem?id=<mediaItemID>
         oomami://oomami/list?id=<listID>
 */
-            NSString *host = [url host];
-            NSString *page = [url path];
-            NSString *query = [url query];
-            NSDictionary *parameters = [query parseURLParams];
-            
-            ANALYTICS_EVENT_OTHER(@"OomamiDeepLink");
-            
-            BOOL result = NO;
-            
-            if ([page isEqualToString:@"/profile"]) {
-                NSString *username = [parameters valueForKey:kKeyUserUsername];
-                [self showUserWithUsername:username];
-                result = YES;
-            } else if ([page isEqualToString:@"/restaurant"]) {
-                [self showRestaurant:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
-                result = YES;
-            } else if ([page isEqualToString:@"/mediaItem"]) {
-                [self showMediaItem:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
-                result = YES;
-            } else if ([page isEqualToString:@"/list"]) {
-                [self showList:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
-                result = YES;
-            }
-            
+            BOOL result = [self openLink:url];
             return result;
         }
         
@@ -394,42 +408,31 @@
     }
 }
 
-//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-//{
-//    ENTRY;
-//    
-//    if ([[FBSDKApplicationDelegate sharedInstance] application:application
-//                                                       openURL:url
-//                                             sourceApplication:sourceApplication
-//                                                    annotation:annotation
-//         ])
-//    {
-//        ANALYTICS_EVENT_OTHER(@"FacebookLink");
-//        message(@"got to show user");
-//        return YES;
-//    } else {
-//        if ([[url scheme] isEqualToString:@"oomami"]) {
-//            message(@"got to show user");
-//            NSString *host = [url host];
-//            NSString *page = [url path];
-//            NSString *query = [url query];
-//            NSArray *parameters = [query parseURLParams];
-//            
-//            ANALYTICS_EVENT_OTHER(@"OomamiDeepLink");
-//            
-//            if ([page isEqualToString:@"/profile"]) {
-//                NSString *username = [parameters valueForKey:kKeyUserUsername];
-//                [self showUser:username];
-//                message(@"show username");
-//            };
-//            
-//            
-//            return YES;
-//        }
-//
-//        return NO;
-//    }
-//}
+- (BOOL)openLink:(NSURL *)url {
+    NSString *host = [url host];
+    NSString *page = [url path];
+    NSString *query = [url query];
+    NSDictionary *parameters = [query parseURLParams];
+    
+    ANALYTICS_EVENT_OTHER(@"OomamiDeepLink");
+    BOOL result = NO;
+    
+    if ([page isEqualToString:@"/profile"]) {
+        NSString *username = [parameters valueForKey:kKeyUserUsername];
+        [self showUserWithUsername:username];
+        result = YES;
+    } else if ([page isEqualToString:@"/restaurant"]) {
+        [self showRestaurant:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
+        result = YES;
+    } else if ([page isEqualToString:@"/mediaItem"]) {
+        [self showMediaItem:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
+        result = YES;
+    } else if ([page isEqualToString:@"/list"]) {
+        [self showList:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
+        result = YES;
+    }
+    return result;
+}
 
 - (BOOL)connected {
     return [AFNetworkReachabilityManager sharedManager].reachable;
@@ -469,6 +472,15 @@
     [FBSDKAppEvents activateApp];
     
 //    [self testRemoteNotification];
+}
+
+- (void)openLink {
+    if (_launchedURL) {
+        [self openLink:_launchedURL];
+        _launchedURL = nil;
+    } else if ([_notifications count]) {
+        [self processNotifications];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

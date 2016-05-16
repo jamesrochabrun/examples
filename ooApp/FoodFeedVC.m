@@ -162,6 +162,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    [APP openLink];
+    
 //    [self.navigationController setNavigationBarHidden:NO animated:animated];
 
     //    [APP processNotifications];

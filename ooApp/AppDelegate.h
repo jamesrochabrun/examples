@@ -28,6 +28,7 @@
 - (void)registerForPushNotifications;
 - (void)clearCache;
 - (void)processNotifications;
+- (void)openLink;
 
 // Later, remove from production
 #define ENTRY { [APP.diagnosticLogString appendFormat:  @"Entered %s\r",__FUNCTION__]; }
