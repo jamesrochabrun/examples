@@ -83,7 +83,7 @@ static NSUInteger kColorDarkImageOverlay = (kColorOverlay30 | 0x00FFFFFF);
 static NSUInteger kColorText = 0xFF111111;
 static NSUInteger kColorTextReverse = kColorWhite;
 static const NSUInteger kColorNavBarText = kColorWhite;
-static const NSUInteger kColorNavBar = 0xff121212;//gray 0xFF626064;//
+static const NSUInteger kColorNavBar = 0xff121212;
 static const NSUInteger kColorReverseBackground = kColorElements1;
 static const NSUInteger kColorStripHeader = kColorElements2;
 static const NSUInteger kColorButtonBackground = kColorElements2;
@@ -322,5 +322,10 @@ extern NSString *const kNotificationUserStatsChanged;
 extern NSString *const kNotificationUserFollowingChanged;
 
 extern NSString *const kImageBackgroundImage;
+extern NSString *const kImageBackgroundFoodFeed;
+extern NSString *const kImageBackgroundConnect;
+extern NSString *const kImageBackgroundProfile;
+extern NSString *const kImageBackgroundSearch;
+
 
 #endif

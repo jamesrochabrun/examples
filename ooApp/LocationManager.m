@@ -26,12 +26,10 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
 // Name:    +sharedInstance
 // Purpose: Provides the singleton instance.
 //------------------------------------------------------------------------------
-+ (instancetype)sharedInstance;
-{
++ (instancetype)sharedInstance {
     static id sharedInstance;
     static dispatch_once_t once=0;
-    dispatch_once(&once,
-                  ^{
+    dispatch_once(&once, ^{
         sharedInstance = [[self alloc] init];
     });
     return sharedInstance;

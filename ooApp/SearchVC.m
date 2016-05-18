@@ -172,6 +172,9 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self populateOptions];
+    
+    _currentLocation = [LocationManager sharedInstance].currentUserLocation;
+    [self updateLocation];
     //[DebugUtilities addBorderToViews:@[_resetLocation]];
 }
 
@@ -202,7 +205,9 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
         [self searchLocations];
     } else {
         if ([searchText length] >= kMinCharactersForAutoSearch) {
-            [self getRestaurants];
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(getRestaurants) object:nil];
+            [self performSelector:@selector(getRestaurants) withObject:nil afterDelay:1];
+            //[self getRestaurants];
         }
     }
 }
@@ -250,7 +255,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
     NSLog(@"The map became idle at %f,%f", position.target.latitude, position.target.longitude);
     _desiredLocation = position.target;
-    [self getRestaurants];
+   [self getRestaurants];
 }
 
 
@@ -295,26 +300,6 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     self.navigationItem.titleView = _searchBar;
     
     [self displayDropDown:NO];
-    [self getRestaurants];
-}
-
-- (void)selectNearby {
-    _nearby = YES;
-    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *mm = (OOMapMarker *)obj;
-        mm.map = nil;
-    }];
-    [_mapMarkers removeAllObjects];
-    [self getRestaurants];
-}
-
-- (void)selectTopSpots {
-    _nearby = NO;
-    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        OOMapMarker *mm = (OOMapMarker *)obj;
-        mm.map = nil;
-    }];
-    [_mapMarkers removeAllObjects];
     [self getRestaurants];
 }
 
@@ -417,11 +402,14 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     CLLocation *loc1 = [[CLLocation alloc] initWithLatitude:currentLocation.latitude longitude:currentLocation.longitude];
     CLLocation *loc2 = [[CLLocation alloc] initWithLatitude:_desiredLocation.latitude longitude:_desiredLocation.longitude];
     
-    if ([loc1 distanceFromLocation:loc2] > kMetersMovedBeforeForcedUpdate) {
+    if ([loc1 distanceFromLocation:loc2] > kMetersMovedBeforeForcedUpdate &&
+        ![_locationSearchBar.text length]) {
         [self updateLocation];
         [self getRestaurants];
         APP.dateLeft = [NSDate date];
         return;
+    } else if ([_locationSearchBar isFirstResponder]) {
+        [_searchBar becomeFirstResponder];
     }
     
     if (!APP.dateLeft || (APP.dateLeft && [[NSDate date] timeIntervalSinceDate:APP.dateLeft] > [TimeUtilities intervalFromDays:0 hours:0 minutes:45 second:00])) {
@@ -436,7 +424,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     __weak SearchVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf updateLocation];
-        [weakSelf getRestaurants];
+        //[weakSelf getRestaurants];
     });
 }
 
@@ -448,17 +436,14 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self verifyTrackingIsOkay];
 }
 
-- (void)verifyTrackingIsOkay
-{
+- (void)verifyTrackingIsOkay {
     if (_currentLocation.longitude == 0) {
         TrackingChoice c = [[LocationManager sharedInstance] dontTrackLocation];
         if (TRACKING_UNKNOWN == c) {
             [[LocationManager sharedInstance] askUserWhetherToTrack];
-        }
-        else if (TRACKING_YES == c) {
+        } else if (TRACKING_YES == c) {
             [self updateLocation];
             [self getRestaurants];
         }
@@ -544,6 +529,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 - (void)getRestaurants
 {
     [_requestOperation cancel];
+    _requestOperation = nil;
     CLLocationCoordinate2D bottomLeftCoord = _mapView.projection.visibleRegion.nearLeft;
     CLLocationCoordinate2D bottomRightCoord = _mapView.projection.visibleRegion.nearRight;
     CLLocationCoordinate2D topLeftCoord = _mapView.projection.visibleRegion.farLeft;
@@ -589,12 +575,14 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
                           andLocation:[LocationManager sharedInstance].currentUserLocation
                               success:^(NSArray *restaurants) {
             _restaurants = restaurants;
-            ON_MAIN_THREAD(^ {
+            dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.aiv stopAnimating];
                 [weakSelf gotRestaurants];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [weakSelf.aiv stopAnimating];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.aiv stopAnimating];
+            });
         }];
     } else {
         NSMutableArray *searchTerms;
@@ -636,7 +624,9 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
                 [weakSelf.aiv stopAnimating];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *err) {
-            [weakSelf.aiv stopAnimating];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.aiv stopAnimating];
+            });
         }];
     }
 }

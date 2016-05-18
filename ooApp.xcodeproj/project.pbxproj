@@ -61,6 +61,10 @@
 		365F175E1B91046B00015D5D /* DefaultVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F175C1B91046B00015D5D /* DefaultVC.m */; };
 		365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 365F17601B9105B500015D5D /* ListStripTVCell.m */; };
 		365FB7861C59198000826629 /* ShowMediaItemAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 365FB7851C59198000826629 /* ShowMediaItemAnimator.m */; };
+		3660B97A1CEC29F1009FA59A /* Connect_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 3660B9761CEC29F0009FA59A /* Connect_Background.png */; };
+		3660B97B1CEC29F1009FA59A /* Food_Feed_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 3660B9771CEC29F0009FA59A /* Food_Feed_Background.png */; };
+		3660B97C1CEC29F1009FA59A /* Profile_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 3660B9781CEC29F0009FA59A /* Profile_Background.png */; };
+		3660B97D1CEC29F1009FA59A /* Search_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 3660B9791CEC29F0009FA59A /* Search_Background.png */; };
 		366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8A1BA8B70100292F80 /* NavTitleView.m */; };
 		366BBC8E1BA8B74A00292F80 /* NavTitleObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8D1BA8B74A00292F80 /* NavTitleObject.m */; };
 		366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 366BBC8F1BA8DEB400292F80 /* SettingsVC.m */; };
@@ -377,6 +381,10 @@
 		365F17601B9105B500015D5D /* ListStripTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListStripTVCell.m; sourceTree = "<group>"; };
 		365FB7841C59198000826629 /* ShowMediaItemAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowMediaItemAnimator.h; sourceTree = "<group>"; };
 		365FB7851C59198000826629 /* ShowMediaItemAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowMediaItemAnimator.m; sourceTree = "<group>"; };
+		3660B9761CEC29F0009FA59A /* Connect_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Connect_Background.png; path = "Graphic Assets/Connect_Background.png"; sourceTree = "<group>"; };
+		3660B9771CEC29F0009FA59A /* Food_Feed_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Food_Feed_Background.png; path = "Graphic Assets/Food_Feed_Background.png"; sourceTree = "<group>"; };
+		3660B9781CEC29F0009FA59A /* Profile_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Profile_Background.png; path = "Graphic Assets/Profile_Background.png"; sourceTree = "<group>"; };
+		3660B9791CEC29F0009FA59A /* Search_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Search_Background.png; path = "Graphic Assets/Search_Background.png"; sourceTree = "<group>"; };
 		366BBC891BA8B70100292F80 /* NavTitleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavTitleView.h; sourceTree = "<group>"; };
 		366BBC8A1BA8B70100292F80 /* NavTitleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavTitleView.m; sourceTree = "<group>"; };
 		366BBC8C1BA8B74A00292F80 /* NavTitleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavTitleObject.h; sourceTree = "<group>"; };
@@ -833,6 +841,10 @@
 		367703FF1B87E41F00B594E5 /* Graphic Assets */ = {
 			isa = PBXGroup;
 			children = (
+				3660B9761CEC29F0009FA59A /* Connect_Background.png */,
+				3660B9771CEC29F0009FA59A /* Food_Feed_Background.png */,
+				3660B9781CEC29F0009FA59A /* Profile_Background.png */,
+				3660B9791CEC29F0009FA59A /* Search_Background.png */,
 				36E957D21CC6B90800DA2618 /* background_image.jpg */,
 				36E957CA1CC6B35000DA2618 /* S1ipad.png */,
 				36E957CB1CC6B35000DA2618 /* S2ipad.png */,
@@ -1326,6 +1338,7 @@
 			files = (
 				367704571B8BF05100B594E5 /* Lato-Heavy.ttf in Resources */,
 				96567E871C59658C00DCEF1B /* FoodieBubble.png in Resources */,
+				3660B97C1CEC29F1009FA59A /* Profile_Background.png in Resources */,
 				36BA03431C50CE1D00802EF8 /* ooLoading79.png in Resources */,
 				3677045A1B8BF05100B594E5 /* Lato-Light.ttf in Resources */,
 				361329851C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png in Resources */,
@@ -1359,6 +1372,7 @@
 				36FC99C61C478C8200768FF0 /* ooLoading28.png in Resources */,
 				36FC99CB1C478C8200768FF0 /* ooLoading33.png in Resources */,
 				96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */,
+				3660B97A1CEC29F1009FA59A /* Connect_Background.png in Resources */,
 				36BA03371C50CE1D00802EF8 /* ooLoading67.png in Resources */,
 				36FC99E91C478C8200768FF0 /* ooLoading08.png in Resources */,
 				36FC99E41C478C8200768FF0 /* ooLoading03.png in Resources */,
@@ -1369,6 +1383,7 @@
 				36FC99B91C478C8200768FF0 /* ooLoading44.png in Resources */,
 				364D70C21CBF14D200FADC29 /* S1.png in Resources */,
 				36FC99C11C478C8200768FF0 /* ooLoading52.png in Resources */,
+				3660B97D1CEC29F1009FA59A /* Search_Background.png in Resources */,
 				367704621B8BF05100B594E5 /* Lato-ThinItalic.ttf in Resources */,
 				36BA033C1C50CE1D00802EF8 /* ooLoading72.png in Resources */,
 				36FC99D71C478C8200768FF0 /* ooLoading15.png in Resources */,
@@ -1378,6 +1393,7 @@
 				36E957D31CC6B90800DA2618 /* background_image.jpg in Resources */,
 				36FC99B41C478C8200768FF0 /* ooLoading58.png in Resources */,
 				36BA03331C50CE1D00802EF8 /* ooLoading63.png in Resources */,
+				3660B97B1CEC29F1009FA59A /* Food_Feed_Background.png in Resources */,
 				367704631B8BF05100B594E5 /* OFL.txt in Resources */,
 				36FC99C81C478C8200768FF0 /* ooLoading30.png in Resources */,
 				36FC99EA1C478C8200768FF0 /* ooLoading09.png in Resources */,

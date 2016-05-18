@@ -81,7 +81,9 @@
     _verticalLine = [[UIView alloc] init];
     _verticalLine.backgroundColor = UIColorRGBA(kColorWhite);
     
-    _backgroundImageView = makeImageView(self.view, backgroundImage);
+    _backgroundImageView = [UIImageView new];
+    _backgroundImageView.image = backgroundImage;
+    [self.view addSubview:_backgroundImageView];
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
     _backgroundImageView.clipsToBounds = YES;
     _backgroundImageView.opaque = NO;
@@ -476,8 +478,16 @@
     [_activeScrollView scrollRectToVisible:CGRectMake(width(_activeScrollView), 0, width(_activeScrollView), height(_activeScrollView)) animated:YES];
     NSUInteger page = 1;
     _pageControl.currentPage = page;
+    
+    [UIView transitionWithView:_backgroundImageView
+                      duration:0.3f
+                       options:UIViewAnimationOptionTransitionCrossDissolve
+                    animations:^{
+                        _backgroundImageView.image = [self getImageForPage:page];
+                    } completion:NULL];
+    
     [UIView animateWithDuration:0.3 animations:^{
-        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.65:0.35));
+        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.65:0.45));
         _pageControl.hidden = (page) ? NO : YES;
     }];
 }
@@ -493,13 +503,40 @@
     NSUInteger page = roundf(_activeScrollView.contentOffset.x/_activeScrollView.frame.size.width);
     _pageControl.currentPage = page;
     
-//    UIView *v = [_introScreenBackgroundViews objectAtIndex:page];
-//    v.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.75:0.35));;
+    [UIView transitionWithView:_backgroundImageView
+                      duration:0.3f
+                       options:UIViewAnimationOptionTransitionCrossDissolve
+                    animations:^{
+                        _backgroundImageView.image = [self getImageForPage:page];
+                    } completion:NULL];
     
     [UIView animateWithDuration:0.3 animations:^{
-        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.75:0.45));
+        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.65:0.45));
         _pageControl.hidden = (page) ? NO : YES;
     }];
+}
+
+- (UIImage *)getImageForPage:(NSUInteger)page {
+    switch (page) {
+        case 0:
+            return [UIImage imageNamed:kImageBackgroundImage];
+            break;
+        case 1:
+            return [UIImage imageNamed:kImageBackgroundFoodFeed];
+            break;
+        case 2:
+            return [UIImage imageNamed:kImageBackgroundSearch];
+            break;
+        case 3:
+            return [UIImage imageNamed:kImageBackgroundConnect];
+            break;
+        case 4:
+            return [UIImage imageNamed:kImageBackgroundProfile];
+            break;
+        default:
+            break;
+    }
+    return [UIImage imageNamed:kImageBackgroundImage];
 }
 
 

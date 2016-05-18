@@ -72,6 +72,10 @@ NSString *const kFontIconCreateList = @"J";
 NSString *const kFontIconInvite = @"N";
 
 NSString *const kImageNoProfileImage= @"No-Profile_Image";
+NSString *const kImageBackgroundFoodFeed = @"Food_Feed_Background.png";
+NSString *const kImageBackgroundConnect = @"Connect_Background.png";
+NSString *const kImageBackgroundProfile = @"Profile_Background.png";
+NSString *const kImageBackgroundSearch = @"Search_Background.png";
 NSString *const kImageBackgroundImage = @"background_image.jpg";
 
 NSString *const kNotificationConnectNeedsUpdate = @"notificationConnectNeedsUpdate";

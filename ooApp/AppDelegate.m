@@ -202,6 +202,8 @@
     if (![self makeSureNCIsSet]) return;
     NotificationObject *notif =[_notifications firstObject];
     [_notifications removeObject:notif];
+
+    ANALYTICS_EVENT_OTHER(@"ProcessNotification");
     
     switch (notif.type) {
         case kNotificationTypeViewUser:
@@ -419,7 +421,11 @@
     
     if ([page isEqualToString:@"/profile"]) {
         NSString *username = [parameters valueForKey:kKeyUserUsername];
-        [self showUserWithUsername:username];
+        if ([username length]) {
+            [self showUserWithUsername:username];
+        } else {
+            [self showUserwithUserId:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];
+        }
         result = YES;
     } else if ([page isEqualToString:@"/restaurant"]) {
         [self showRestaurant:parseUnsignedIntegerOrNullFromServer([parameters valueForKey:@"id"])];

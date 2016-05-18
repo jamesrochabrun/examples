@@ -231,12 +231,13 @@ enum  {
 {
     [super prepareForReuse];
     [_roFollowes cancel];
+    _roFollowes = nil;
+    _followees = nil;
     [self.actionButton setTitle:@"" forState:UIControlStateNormal];
     self.restaurant= nil;
     self.eventBeingEdited= nil;
     self.listToAddTo=nil;
     self.mode= MODE_NONE;
-    _followees = nil;
     [[_followeesView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
