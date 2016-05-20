@@ -91,6 +91,8 @@
     
     if (_userInfo.userType != kUserTypeTrusted) {
         [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];
+    } else {
+        [self userTappedOnListsFilter:nil];
     }
     [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];
     
@@ -737,10 +739,10 @@
     [_labelLikesCount sizeToFit];
     float w1 = width(_labelVenues);
     float w2 = width(_labelVenuesCount);
-    float w3 = width(_labelPhoto);
-    float w4 = width(_labelPhotoCount);
-    float w5 = width(_labelLikes);
-    float w6 = width(_labelLikesCount);
+    float w3 = (_userInfo.userType == kUserTypeTrusted) ? 0:width(_labelPhoto);
+    float w4 = (_userInfo.userType == kUserTypeTrusted) ? 0:width(_labelPhotoCount);
+    float w5 = (_userInfo.userType == kUserTypeTrusted) ? 0:width(_labelLikes);
+    float w6 = (_userInfo.userType == kUserTypeTrusted) ? 0:width(_labelLikesCount);
     float x = (w-w1-w2-w3-w4-w6-w5-2*kGeomSpaceInter)/2;
     _labelPhoto.frame = CGRectMake(x,y ,w3,kGeomProfileStatsItemHeight);
     x += w3;
@@ -1255,7 +1257,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     [self getSpecialties];
     [self.refreshControl endRefreshing];
     
-    if (_userInfo.userType == kUserTypeTrusted) _viewingLists = NO;
+    //_viewingLists = (_userInfo.userType == kUserTypeTrusted) ? YES:NO;
 
     if (_viewingLists) {
         [self getLists];
@@ -1763,10 +1765,10 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
                                                  withReuseIdentifier:kProfileHeaderCellIdentifier
                                                         forIndexPath:indexPath];
         
-        [view setUserInfo:_profileOwner];
-
-        view.vc = self;
         view.delegate = self;
+        [view setUserInfo:_profileOwner];
+        view.vc = self;
+        
         _headerView = view;
 //        [DebugUtilities addBorderToViews:@[_headerView, _cv]];
         return view;

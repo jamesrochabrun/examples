@@ -315,9 +315,11 @@
     [_labelFollowing setText:@"following"];
     
     [_placesNumber setText:[NSString stringWithFormat:@"%lu", (unsigned long)restaurantCount]];
-    
     _photosNumber.text = [NSString stringWithFormat:@"%lu", (unsigned long)photosCount];
-    
+
+    [_photosIcon sizeToFit];
+    [_yumIcon sizeToFit];
+    [_placesIcon sizeToFit];
     [_photosNumber sizeToFit];
     [_yumNumber sizeToFit];
     [_placesNumber sizeToFit];
@@ -371,11 +373,11 @@
     x = margin + imageSize + spacing;
     y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
     
-    _photosIcon.frame = CGRectMake(x, y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_photosIcon.frame), labelHeight);
-    _photosNumber.frame = CGRectMake(CGRectGetMaxX(_photosIcon.frame), y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_photosNumber.frame),  labelHeight);
+    _photosIcon.frame = CGRectMake(x, y, ((_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_photosIcon.frame)), labelHeight);
+    _photosNumber.frame = CGRectMake(CGRectGetMaxX(_photosIcon.frame), y, ((_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_photosNumber.frame)),  labelHeight);
     
-    _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_yumIcon.frame), labelHeight);
-    _yumNumber.frame = CGRectMake(CGRectGetMaxX(_yumIcon.frame), y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_yumNumber.frame), labelHeight);
+    _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, ((_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_yumIcon.frame)), labelHeight);
+    _yumNumber.frame = CGRectMake(CGRectGetMaxX(_yumIcon.frame), y, ((_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_yumNumber.frame)), labelHeight);
     
     _placesIcon.frame = CGRectMake(CGRectGetMaxX(_yumNumber.frame) + spacing, y, CGRectGetWidth(_placesIcon.frame), labelHeight);
     _placesNumber.frame = CGRectMake(CGRectGetMaxX(_placesIcon.frame), y, CGRectGetWidth(_placesNumber.frame), labelHeight);

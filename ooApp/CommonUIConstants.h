@@ -305,9 +305,9 @@ extern NSString *const kFontIconInvite;
 extern NSString *const kFontIconPhone;
 extern NSString *const kFontIconOfficial;
 extern NSString *const kFontIconOfficialFilled;
-extern NSString *const kFontIconCreateListFilled;
-extern NSString *const kFontIconMoreSolid;
 extern NSString *const kFontIconCreateListThick;
+extern NSString *const kFontIconMoreSolid;
+extern NSString *const kFontIconAddToList;
 extern NSString *const kFontIconPhotoThick;
 
 extern NSString *const kNotificationConnectNeedsUpdate;

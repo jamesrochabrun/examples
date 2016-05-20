@@ -70,9 +70,9 @@ NSString *const kFontIconInvite = @"N";
 NSString *const kFontIconPhone = @"S";
 NSString *const kFontIconOfficial = @"s";
 NSString *const kFontIconOfficialFilled = @"]";
-NSString *const kFontIconCreateListFilled = @"/";
+NSString *const kFontIconCreateListThick = @"/";
 NSString *const kFontIconMoreSolid = @"\\";
-NSString *const kFontIconCreateListThick = @"[";
+NSString *const kFontIconAddToList = @"[";
 NSString *const kFontIconPhotoThick = @",";
 
 
