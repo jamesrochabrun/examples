@@ -21,11 +21,13 @@ typedef enum: int {
 } ParticipantType;
 
 typedef enum: NSUInteger {
-    USER_TYPE_NONE = 0,
-    USER_TYPE_ADMIN = 1,
-    USER_TYPE_NORMAL = 2,
-    USER_TYPE_INACTIVE = 3,
-    USER_TYPE_FOODIE = 4,
+    kUserTypeNone = 0,
+    kUserTypeAdmin = 1,
+    kUserTypeNormal = 2,
+    kUserTypeInactive = 3,
+    kUserTypeFoodie = 4,
+    kUserTypeGuest = 5,
+    kUserTypeTrusted = 6,
 } UserType;
 
 typedef enum: NSUInteger {
@@ -52,6 +54,7 @@ extern NSString *const kKeyUserParticipantState;
 extern NSString *const kKeyUserAbout;
 extern NSString *const kKeyUserPassword;
 extern NSString *const kKeyUserIsVerified;
+extern NSString *const kKeyUserIsOfficial;
 
 @interface UserObject : NSObject
 
@@ -59,6 +62,7 @@ extern NSString *const kKeyUserIsVerified;
 @property (nonatomic, assign) UserType userType;
 @property (nonatomic, assign) BOOL isFoodie, hasSpecialties;
 @property (nonatomic, assign) BOOL isVerified;
+@property (nonatomic, assign) BOOL isOfficial;
 @property (nonatomic, strong) NSArray *specialties;
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *middleName;

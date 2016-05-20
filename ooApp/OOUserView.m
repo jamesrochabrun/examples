@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UIImageView *ivFoodie;
 @property (nonatomic, strong) UILabel *emptyUserView;
 @property (nonatomic, strong) UILabel *circle;
+@property (nonatomic, strong) UILabel *isOfficial;
 @property (nonatomic, strong) UIButton *buttonSettings, *buttonSettingsInner;
 @property (nonatomic, assign) BOOL isFoodie;
 @property (nonatomic, assign) BOOL showCog;
@@ -43,6 +44,11 @@
         _ivFoodie = makeImageView(self,  nil);
         _ivFoodie.contentMode = UIViewContentModeScaleAspectFit;
         _ivFoodie.clipsToBounds = NO;
+        
+        _isOfficial = [UILabel new];
+        [_isOfficial withFont:[UIFont fontWithName:kFontIcons size:15] textColor:kColorTextActive backgroundColor:kColorClear];
+        _isOfficial.text = kFontIconOfficial;
+        [self addSubview:_isOfficial];
         
         _viewHalo= makeView(self, UIColorRGBA(kColorClear));
         addBorder(_viewHalo, 1.5, UIColorRGBA(kColorTextActive));
@@ -75,23 +81,6 @@
     // Else return the hitView (as it could be one of this view's buttons):
     return hitView;
 }
-
-//- (void)updateConstraints {
-//    [super updateConstraints];
-//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButton)};
-//    
-//    UIView *superview = self;
-//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _imageView, _emptyUserView);
-//    
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_imageView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_emptyUserView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    
-//    _imageView.layer.cornerRadius = width(_imageView)/2;
-//    _imageView.layer.borderColor = UIColorRGBA(kColorWhite).CGColor;
-//    _imageView.layer.borderWidth = 0;
-//}
 
 - (void)setIsFoodie
 {
@@ -138,6 +127,12 @@
     CGRect frame = _buttonSettings.frame;
     frame.origin.y -=1;
     _circle.frame = frame;
+    
+    [_isOfficial sizeToFit];
+    frame = _isOfficial.frame;
+    frame.origin = CGPointMake(width(self)-CGRectGetWidth(frame), 0);
+    _isOfficial.frame = frame;
+    if (CGRectGetWidth(self.frame) < 50) _isOfficial.hidden = YES;
 }
 
 - (void)setUser:(UserObject *)user

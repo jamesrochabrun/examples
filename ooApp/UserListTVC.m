@@ -28,6 +28,7 @@
 @property (nonatomic, strong) UILabel *labelName;
 @property (nonatomic, strong) UserObject *userInfo;
 @property (nonatomic, strong) AFHTTPRequestOperation* op;
+
 @end
 
 @implementation UserListTVC
@@ -104,6 +105,7 @@
         [_buttonFollow setTitleColor: UIColorRGBA(kColorTextActive) forState:UIControlStateSelected];
         _buttonFollow.hidden= YES;
         _buttonFollow.layer.borderColor= UIColorRGBA(kColorTextActive).CGColor;
+        
 //        [DebugUtilities addBorderToViews:@[_photosIcon, _photosNumber, _yumIcon, _yumNumber, _placesIcon, _placesNumber, _labelFollowing, _labelFollowers, _labelFollowersNumber, _labelFollowingNumber]];
     }
     return self;
@@ -270,8 +272,8 @@
     _labelUserName.text = string;
     
     _labelName.text = [NSString stringWithFormat:@"%@ %@",
-                       user.firstName ? : @"First",
-                       user.lastName ? : @"Last"];
+                       user.firstName ? : @"",
+                       user.lastName ? : @""];
 }
 
 - (void)prepareForReuse
@@ -319,6 +321,12 @@
     [_photosNumber sizeToFit];
     [_yumNumber sizeToFit];
     [_placesNumber sizeToFit];
+    
+    if (_userInfo.userType == kUserTypeTrusted) {
+        _yumNumber.frame = CGRectZero;
+        _photosNumber.frame = CGRectZero;
+    }
+    
     [self setNeedsLayout];
 }
 
@@ -363,11 +371,11 @@
     x = margin + imageSize + spacing;
     y = _userView.frame.size.height + _userView.frame.origin.y - labelHeight;
     
-    _photosIcon.frame = CGRectMake(x, y, CGRectGetWidth(_photosIcon.frame), labelHeight);
-    _photosNumber.frame = CGRectMake(CGRectGetMaxX(_photosIcon.frame), y, CGRectGetWidth(_photosNumber.frame),  labelHeight);
+    _photosIcon.frame = CGRectMake(x, y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_photosIcon.frame), labelHeight);
+    _photosNumber.frame = CGRectMake(CGRectGetMaxX(_photosIcon.frame), y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_photosNumber.frame),  labelHeight);
     
-    _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, CGRectGetWidth(_yumIcon.frame), labelHeight);
-    _yumNumber.frame = CGRectMake(CGRectGetMaxX(_yumIcon.frame), y, CGRectGetWidth(_yumNumber.frame), labelHeight);
+    _yumIcon.frame = CGRectMake(CGRectGetMaxX(_photosNumber.frame) + spacing, y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_yumIcon.frame), labelHeight);
+    _yumNumber.frame = CGRectMake(CGRectGetMaxX(_yumIcon.frame), y, (_userInfo.userType == kUserTypeTrusted) ? 0:CGRectGetWidth(_yumNumber.frame), labelHeight);
     
     _placesIcon.frame = CGRectMake(CGRectGetMaxX(_yumNumber.frame) + spacing, y, CGRectGetWidth(_placesIcon.frame), labelHeight);
     _placesNumber.frame = CGRectMake(CGRectGetMaxX(_placesIcon.frame), y, CGRectGetWidth(_placesNumber.frame), labelHeight);
@@ -392,7 +400,7 @@
         _labelFollowingNumber.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), CGRectGetMaxY(_labelFollowers.frame), labelWidth, labelHeight);
         _labelFollowing.frame = CGRectMake(CGRectGetMinX(_buttonFollow.frame), CGRectGetMaxY(_labelFollowingNumber.frame), labelWidth, labelHeight);
     }
-    
+
     [_userView layoutIfNeeded];
 }
 

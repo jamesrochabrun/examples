@@ -14,10 +14,15 @@
 @interface SubBaseVC ()
 
 @property (nonatomic, strong) NavTitleView *navTitleView;
-@property (nonatomic, strong) UIBarButtonItem *leftNavButton;
-@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
-@property (nonatomic, strong) UIButton *rightBarButtonView;
-@property (nonatomic, strong) UIButton *leftBarButtonView;
+//@property (nonatomic, strong) UIBarButtonItem *leftNavButton;
+//@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
+//@property (nonatomic, strong) UIButton *rightBarButtonView;
+//@property (nonatomic, strong) UIButton *leftBarButtonView;
+@property (nonatomic, strong) UIView *leftBarButtonView;
+@property (nonatomic, strong) UIView *rightBarButtonView;
+@property (nonatomic, strong) NSMutableArray *leftBarItems;
+@property (nonatomic, strong) NSMutableArray *rightBarItems;
+
 @end
 
 @implementation SubBaseVC
@@ -41,8 +46,7 @@
     return self;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     CGRect frame = _aiv.frame;
@@ -51,21 +55,26 @@
     _aiv.frame = frame;
     [self.view addSubview:_aiv];
     
-    _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-    _rightBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-    
-    _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
-    self.navigationItem.rightBarButtonItem = _rightNavButton;
+//    _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
+//    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+//    _rightBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+//    
+//    _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
+//    self.navigationItem.rightBarButtonItem = _rightNavButton;
+//
+//    _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
+//    [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+//    _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+//    
+//    _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
+//    self.navigationItem.leftBarButtonItem = _leftNavButton;
 
-    _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-    [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-    _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-    
-    _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
-    self.navigationItem.leftBarButtonItem = _leftNavButton;
+    _leftBarItems = [NSMutableArray array];
+    _rightBarItems = [NSMutableArray array];
+    _leftBarButtonView = [UIView new];
+    _rightBarButtonView = [UIView new];
 
     self.uploadProgressBar = [UIProgressView new];
     [self.view addSubview:self.uploadProgressBar];
@@ -85,6 +94,66 @@
     frame.origin.y = kGeomHeightStatusBar;
     self.navigationController.navigationBar.frame = frame;
 }
+
+- (UIButton *)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side isCTA:(BOOL)isCTA {
+    //side = -1 left, 1 = right
+    
+    isCTA = NO;
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button withText:icon fontSize:kGeomIconSize width:0 height:0 backgroundColor:kColorClear target:target selector:selector];
+    [button setTitleColor:(isCTA)?UIColorRGBA(kColorTextActive):UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    [button removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+    [button setTitle:icon forState:UIControlStateNormal];
+    [button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+    button.layer.cornerRadius = kGeomWidthNavBarCTAButton/2;
+    button.layer.borderColor = UIColorRGBA(kColorTextActive).CGColor;
+    button.layer.borderWidth = (isCTA)?2:0;
+    button.backgroundColor = isCTA?UIColorRGBA(kColorClear):UIColorRGBA(kColorClear);
+    
+    CGRect frame;
+    UIBarButtonItem *bbi;
+    
+    if (side == kNavBarSideTypeLeft) {
+        button.frame = CGRectMake([_leftBarItems count]*40, 0, (isCTA)?kGeomWidthNavBarButton:kGeomWidthNavBarCTAButton, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
+        [_leftBarButtonView addSubview:button];
+        [_leftBarItems addObject:button];
+        frame = CGRectMake(0, 0, [_leftBarItems count]*40, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
+        _leftBarButtonView.frame = frame;
+        bbi = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
+        self.navigationItem.leftBarButtonItem = bbi;
+    } else if (side == kNavBarSideTypeRight) {
+        [_rightBarButtonView addSubview:button];
+        [_rightBarItems addObject:button];
+        frame = CGRectMake(0, 0, [_rightBarItems count]*40, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
+        _rightBarButtonView.frame = frame;
+        NSInteger i = 0;
+        for (UIView *v in [_rightBarItems reverseObjectEnumerator]) {
+            v.frame = CGRectMake(i*40, 0,  (isCTA)?kGeomWidthNavBarCTAButton:kGeomWidthNavBarButton, (isCTA)?kGeomHeightNavBarCTAButton:kGeomHeightNavBarButton);
+            i++;
+        }
+        bbi = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
+        self.navigationItem.rightBarButtonItem = bbi;
+    }
+    
+    _navTitleView.frame = CGRectMake(0, 0, width(self.view) - fmaxf(2*width(_leftBarButtonView), 2*width(_rightBarButtonView)) - 50, kGeomHeightNavBar);
+    
+    return button;
+    
+    //[DebugUtilities addBorderToViews:@[button]];
+}
+
+- (void)removeNavButtonForSide:(NavBarSideType)side {
+    if (side == kNavBarSideTypeLeft) {
+        [_leftBarItems removeAllObjects];
+        [[_leftBarButtonView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    } else if (side == kNavBarSideTypeRight) {
+        [_rightBarItems removeAllObjects];
+        [[_rightBarButtonView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    }
+}
+
 
 - (BOOL)prefersStatusBarHidden {
     return NO;
@@ -117,15 +186,15 @@
     [self unregisterFromNotifications];
 }
 
-- (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-    [self.leftBarButtonView setTitle:icon forState:UIControlStateNormal];
-    [self.leftBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-}
-
-- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-    [self.rightBarButtonView setTitle:icon forState:UIControlStateNormal];
-    [self.rightBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-}
+//- (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+//    [self.leftBarButtonView setTitle:icon forState:UIControlStateNormal];
+//    [self.leftBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+//}
+//
+//- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
+//    [self.rightBarButtonView setTitle:icon forState:UIControlStateNormal];
+//    [self.rightBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
+//}
 
 - (void)setNavTitle:(NavTitleObject *)navTitle {
     _navTitle = navTitle;

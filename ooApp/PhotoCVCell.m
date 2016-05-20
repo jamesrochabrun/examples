@@ -43,7 +43,7 @@
         
         _takeAction = [UIButton buttonWithType:UIButtonTypeCustom];
         _takeAction.translatesAutoresizingMaskIntoConstraints = NO;
-        [_takeAction roundButtonWithIcon:kFontIconMore fontSize:kGeomIconSizeSmallest width:25 height:0 backgroundColor:kColorBackgroundTheme target:self selector:@selector(showOptions)];
+        [_takeAction roundButtonWithIcon:kFontIconMoreSolid fontSize:kGeomIconSizeSmallest width:25 height:0 backgroundColor:kColorBackgroundTheme target:self selector:@selector(showOptions)];
         
         _yumButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _yumButton.translatesAutoresizingMaskIntoConstraints = NO;

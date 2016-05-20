@@ -66,11 +66,11 @@
 - (void)formatHeader {
     NSDictionary *titleAttributes =  @{
                         NSFontAttributeName:
-                            [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH1]
+                            [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeBig]
                         };
     NSDictionary *descriptionAttributes =  @{
                                        NSFontAttributeName:
-                                           [UIFont fontWithName:kFontLatoLight size:kGeomFontSizeH1]
+                                           [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1]
                                        };
     
     NSString *s = [NSString stringWithFormat:@"%@ %@", _introTitle, _introDescription];

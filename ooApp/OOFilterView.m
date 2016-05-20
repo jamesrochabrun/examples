@@ -60,7 +60,7 @@
     
     UIButton *filterControl = [UIButton buttonWithType:UIButtonTypeCustom];
     [filterControl withText:name fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(filterPressed:)];
-    [filterControl setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
+    [filterControl setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     filterControl.tag = [_filterControls count];
     [_filterControls addObject:filterControl];
     
@@ -90,12 +90,14 @@
     }];
     
     CGRect lineFrame = _currentLine.frame;
-    lineFrame.size.height = 4;
+    lineFrame.size.height = 2;
     lineFrame.size.width = filterSize.width *0.7;
-    lineFrame.origin.y = CGRectGetHeight(frame) - 8;
+    lineFrame.origin.y = CGRectGetHeight(frame) - 6;
     lineFrame.origin.x = CGRectGetMinX(currentFrame) + (CGRectGetWidth(currentFrame) - CGRectGetWidth(lineFrame))/2;
 //    _currentLine.frame = currentFrame;
     _currentLine.frame = lineFrame;
+    
+    _currentLine.hidden = ([_filterControls count] > 1)?NO:YES;
 }
 
 - (void)selectCurrent {

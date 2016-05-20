@@ -48,8 +48,11 @@ static NSString * const cellIdentifier = @"tagCell";
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"Manage Tags" subHeader:nil];
     [self setNavTitle:nto];
     
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-    [self setRightNavWithIcon:@"" target:nil action:nil];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 }
 
 - (void)done:(id)sender {

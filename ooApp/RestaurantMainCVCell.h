@@ -34,6 +34,6 @@
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;
 @property (nonatomic, weak) id<RestaurantMainCVCellDelegate>delegate;
 
-- (void)setFavorite:(BOOL)on;
-
+- (CGFloat)getHeight;
+    
 @end

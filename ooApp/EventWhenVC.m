@@ -157,7 +157,8 @@ static int votingEndingValues[3]= {
     _headerWhen.textColor=UIColorRGBA(kColorOffWhite);
     _headerEndOfVoting.textColor=UIColorRGBA(kColorOffWhite);
     
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 }
 
 - (void)userAlteredPicker: (id) sender

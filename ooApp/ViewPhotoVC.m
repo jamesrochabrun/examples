@@ -30,7 +30,6 @@
 @property (nonatomic, strong) OOUserView *userViewButton;
 @property (nonatomic, strong) UIButton *restaurantName;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
-//@property (nonatomic, strong) UITapGestureRecognizer *showRestaurantTapGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *yumPhotoTapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 @property (nonatomic, strong) UserObject *user;
@@ -87,7 +86,7 @@ static CGFloat kNextPhotoTolerance = 40;
         [_closeButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_optionsButton withIcon:kFontIconMore fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
+        [_optionsButton withIcon:kFontIconMoreSolid fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
         _optionsButton.hidden = _closeButton.hidden = YES;
@@ -777,6 +776,8 @@ static CGFloat kNextPhotoTolerance = 40;
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     self.tabBarController.tabBar.hidden = YES;
+    
+    [self.view bringSubviewToFront:_fv];
     
 //    _backgroundView.alpha = kAlphaBackground;
 }

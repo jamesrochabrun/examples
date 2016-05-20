@@ -114,10 +114,11 @@
                                              selector:@selector(setNeedsRefresh)
                                                  name:kNotificationUserFollowingChanged object:nil];
 
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     
-    
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
-    [self setRightNavWithIcon:@"" target:nil action:nil];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 }
 
 - (void)setNeedsRefresh {

@@ -487,7 +487,7 @@
                     } completion:NULL];
     
     [UIView animateWithDuration:0.3 animations:^{
-        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.65:0.45));
+        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorBlack:kColorBlack), ((page) ? 0.55:0.45));
         _pageControl.hidden = (page) ? NO : YES;
     }];
 }
@@ -511,7 +511,7 @@
                     } completion:NULL];
     
     [UIView animateWithDuration:0.3 animations:^{
-        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorTextActive:kColorBlack), ((page) ? 0.65:0.45));
+        _overlay.backgroundColor = UIColorRGBOverlay(((page) ? kColorBlack:kColorBlack), ((page) ? 0.55:0.45));
         _pageControl.hidden = (page) ? NO : YES;
     }];
 }

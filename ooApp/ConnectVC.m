@@ -124,18 +124,18 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 @property (nonatomic, strong) NSArray *friendsArray; // section 0
 @property (nonatomic, strong) NSArray *foodiesArray; // section 1
 @property (nonatomic, strong) NSArray *followeesArray; // section 2
-@property (nonatomic, strong) NSArray *recentUsersArray; // section 3
+@property (nonatomic, strong) NSArray *trustedUsersArray; // section 3
 @property (nonatomic, strong) NSArray *inTheKnowUsersArray; // section
 
 @property (nonatomic, strong) AFHTTPRequestOperation *roFriends; // fb
 @property (nonatomic, strong) AFHTTPRequestOperation *roFoodies; // foodies
-@property (nonatomic, strong) AFHTTPRequestOperation *roRecentUsers; // users new to Oomami
+@property (nonatomic, strong) AFHTTPRequestOperation *roTrustedUsers; // users new to Oomami
 @property (nonatomic, strong) AFHTTPRequestOperation *roInTheKnow; // users in the know around you
 @property (nonatomic, strong) AFHTTPRequestOperation *roSearch;
 
 @property (nonatomic, strong) NSArray *arraySectionHeaderViews;
-@property (nonatomic, assign) BOOL canSeeFriends, canSeeFoodies, canSeeRecentUsers, canSeeInTheKnow;
-@property (nonatomic, assign) BOOL gotFriendsResult, gotFoodiesResult, gotRecentUsersResult, gotInTheKnowResult;
+@property (nonatomic, assign) BOOL canSeeFriends, canSeeFoodies, canSeeTrustedUsers, canSeeInTheKnow;
+@property (nonatomic, assign) BOOL gotFriendsResult, gotFoodiesResult, gotTrustedUsersResult, gotInTheKnowResult;
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, assign) BOOL searchMode;
@@ -152,7 +152,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     self.friendsArray = nil;
     self.foodiesArray = nil;
     self.followeesArray = nil;
-    self.recentUsersArray = nil;
+    self.trustedUsersArray = nil;
     self.arraySectionHeaderViews = nil;
 }
 
@@ -164,7 +164,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     [super viewDidLoad];
     
-    _canSeeFoodies = _canSeeFriends = _canSeeInTheKnow = _canSeeRecentUsers = YES;
+    _canSeeFoodies = _canSeeFriends = _canSeeInTheKnow = _canSeeTrustedUsers = YES;
     
     _needRefresh = YES;
     
@@ -175,13 +175,13 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _friendsArray = [NSArray new];
     _foodiesArray = [NSArray new];
     _followeesArray = [NSArray new];
-    _recentUsersArray = [NSArray new];
+    _trustedUsersArray = [NSArray new];
     _inTheKnowUsersArray = [NSArray new];
     _searchResultsArray = [NSArray new];
     
-    ConnectTableSectionHeader *hvNewestUsers = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeRecentUsers];
-    hvNewestUsers.noUsersMessage = @"Recently added users will appear here.";
-    hvNewestUsers.labelTitle.text = @"Newest Users";
+    ConnectTableSectionHeader *hvTrustedUsers = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeTrustedUsers];
+    hvTrustedUsers.noUsersMessage = @"Trusted sources will appear here.";
+    hvTrustedUsers.labelTitle.text = @"Trusted Sources";
     
     ConnectTableSectionHeader *hvFriendsToFollow = [[ConnectTableSectionHeader alloc] initWithExpandedFlag:_canSeeFriends];
     hvFriendsToFollow.noUsersMessage = @"Invite Facebook friends to use Oomami. When they join you'll be able to find out what they like to eat.";
@@ -195,7 +195,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     hvInTheKnow.noUsersMessage = @"User that know this area will appear here.";
     hvInTheKnow.labelTitle.text = @"In the Know Around You";
     
-    _arraySectionHeaderViews= @[hvFriendsToFollow, hvTopFoodies, hvInTheKnow, hvNewestUsers];
+    _arraySectionHeaderViews= @[hvTrustedUsers, hvFriendsToFollow, hvTopFoodies, hvInTheKnow];
     
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc] initWithHeader:LOCAL(@"Connect")
@@ -229,7 +229,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft isCTA:NO];
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
-//    [self addNavButtonWithIcon:kFontIconInvite target:self action:@selector(invitePerson:) forSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     
     _inviteFriends = [UIButton buttonWithType:UIButtonTypeCustom];
     UILabel *iconLabel = [UILabel new];
@@ -396,7 +396,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (void)reload {
     _gotFriendsResult =
     _gotFoodiesResult =
-    _gotRecentUsersResult =
+    _gotTrustedUsersResult =
     _gotInTheKnowResult = NO;
     
     [self reloadAfterDeterminingWhoWeAreFollowing];
@@ -460,40 +460,40 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
      ];
 }
 
-- (void)fetchRecentUsers
+- (void)fetchTrustedUsers
 {
     __weak ConnectVC *weakSelf = self;
     
-    self.roRecentUsers = [OOAPI getRecentUsersSuccess:^(NSArray *users) {
-                            dispatch_async(dispatch_get_main_queue(), ^{
+    self.roTrustedUsers = [OOAPI getUsersOfType:kUserTypeTrusted success:^(NSArray *users) {
+                       dispatch_async(dispatch_get_main_queue(), ^{
                                 NSMutableArray *deletedPaths = [NSMutableArray array];
                                 NSUInteger d, i;
-                                for (d=0; d<[weakSelf.recentUsersArray count]; d++) {
-                                    [deletedPaths addObject:[NSIndexPath indexPathForRow:d inSection:kConnectSectionRecentUsers]];
+                                for (d=0; d<[weakSelf.trustedUsersArray count]; d++) {
+                                    [deletedPaths addObject:[NSIndexPath indexPathForRow:d inSection:kConnectSectionTrusted]];
                                 }
                                 NSMutableArray *insertedPaths = [NSMutableArray array];
             
                                 for (i=0; i<[users count]; i++) {
-                                    [insertedPaths addObject:[NSIndexPath indexPathForRow:i inSection:kConnectSectionRecentUsers]];
+                                    [insertedPaths addObject:[NSIndexPath indexPathForRow:i inSection:kConnectSectionTrusted]];
                                 }
-                                weakSelf.recentUsersArray = users;
-                                weakSelf.gotRecentUsersResult = YES;
+                                weakSelf.trustedUsersArray = users;
+                                weakSelf.gotTrustedUsersResult = YES;
             
-                                NSLog(@"recent users(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionRecentUsers, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
+                                NSLog(@"trusted souces(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionTrusted, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
         
-                                if (_canSeeRecentUsers) {
+                                if (_canSeeTrustedUsers) {
                                     [weakSelf.tableAccordion beginUpdates];
                                     [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
                                     [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
-                                    [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionRecentUsers] withRowAnimation:UITableViewRowAnimationNone];
+                                    [weakSelf.tableAccordion reloadSections:[[NSIndexSet alloc] initWithIndex:kConnectSectionTrusted] withRowAnimation:UITableViewRowAnimationNone];
                                     [weakSelf.tableAccordion endUpdates];
                                 }
                                 [weakSelf.refreshControl endRefreshing];
                             });
                         }
                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                            NSLog(@"unable to fetch recent users");
-                            weakSelf.gotRecentUsersResult = YES;
+                            NSLog(@"unable to fetch trusted sources");
+                            weakSelf.gotTrustedUsersResult = YES;
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 [weakSelf.refreshControl endRefreshing];
                             });
@@ -553,17 +553,17 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 {
     [self.roFriends cancel];
     [self.roFoodies cancel];
-    [self.roRecentUsers cancel];
+    [self.roTrustedUsers cancel];
     [self.roInTheKnow cancel];
     self.roFriends = nil;
     self.roFoodies = nil;
-    self.roRecentUsers = nil;
+    self.roTrustedUsers = nil;
     self.roInTheKnow = nil;
     
     [self fetchUserFriendListFromFacebook];
     [self fetchFoodies];
     [self fetchInTheKnow];
-    [self fetchRecentUsers];
+    [self fetchTrustedUsers];
 }
 
 - (BOOL)weAreFollowingUser:(NSUInteger)userID
@@ -619,9 +619,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                     u = _inTheKnowUsersArray[row];
                 }
                 break;
-            case kConnectSectionRecentUsers:
-                if (row < _recentUsersArray.count) {
-                    u = _recentUsersArray[row];
+            case kConnectSectionTrusted:
+                if (row < _trustedUsersArray.count) {
+                    u = _trustedUsersArray[row];
                 }
                 break;
             default:
@@ -655,7 +655,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     if (_searchMode && [_searchBar.text length]) {
         return 1;
     } else {
-        return 4;
+        return kConnectNumberOfSections;
     }
 }
 
@@ -713,11 +713,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                 }
                 //if (!_canSeeInTheKnow) return 0;
                 break;
-            case kConnectSectionRecentUsers:
-                if (row < _recentUsersArray.count) {
+            case kConnectSectionTrusted:
+                if (row < _trustedUsersArray.count) {
                     haveData = YES;
                 }
-                //if (!_canSeeRecentUsers) return 0;
+                //if (!_canSeeTrustedUsers) return 0;
                 break;
             default:
                 break;
@@ -748,9 +748,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     ConnectTableSectionHeader *hv = [_arraySectionHeaderViews objectAtIndex:section];
     
     switch (section) {
-        case kConnectSectionRecentUsers:
-            if (!_gotRecentUsersResult) return kGeomConnectScreenHeaderHeight;
-            count = [_recentUsersArray count];
+        case kConnectSectionTrusted:
+            if (!_gotTrustedUsersResult) return kGeomConnectScreenHeaderHeight;
+            count = [_trustedUsersArray count];
             hv.numberUsers = count;
             if (count) return kGeomConnectScreenHeaderHeight;
             return 100;
@@ -812,9 +812,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                     u = _inTheKnowUsersArray[row];
                 }
                 break;
-            case kConnectSectionRecentUsers:
-                if (row < _recentUsersArray.count) {
-                    u = _recentUsersArray[row];
+            case kConnectSectionTrusted:
+                if (row < _trustedUsersArray.count) {
+                    u = _trustedUsersArray[row];
                 }
                 break;
             default:
@@ -857,9 +857,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                 //return _foodiesArray.count;
                 return _canSeeFoodies? _foodiesArray.count:0;
                 break;
-            case kConnectSectionRecentUsers:
-                //return _recentUsersArray.count;
-                return _canSeeRecentUsers? _recentUsersArray.count:0;
+            case kConnectSectionTrusted:
+                //return _trustedUsersArray.count;
+                return _canSeeTrustedUsers? _trustedUsersArray.count:0;
                 break;
             case kConnectSectionInTheKnow:
                 //return _inTheKnowUsersArray.count;
@@ -891,8 +891,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
             _canSeeInTheKnow = !_canSeeInTheKnow;
             break;
             
-        case kConnectSectionRecentUsers:
-            _canSeeRecentUsers = !_canSeeRecentUsers;
+        case kConnectSectionTrusted:
+            _canSeeTrustedUsers = !_canSeeTrustedUsers;
             break;
     }
     
@@ -914,13 +914,11 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     __weak ConnectVC *weakSelf= self;
     [SocialMedia fetchUserFriendListFromFacebook:^(NSArray *friends) {
         if (!friends) {
-//            [weakSelf fetchFoodies];
             return;
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf determineWhichFriendsAreNotOOUsers:friends];
         });
-//        [weakSelf fetchFoodies];
     }];
 }
 

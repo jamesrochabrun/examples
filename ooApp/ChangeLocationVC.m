@@ -56,7 +56,9 @@ static NSString * const cellIdentifier = @"locationCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(pickerCanceled)];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(pickerCanceled) forSide:kNavBarSideTypeRight isCTA:NO];
     
     [self.view addSubview:_tableView];
     [self.view addSubview:_locationSearchBar];

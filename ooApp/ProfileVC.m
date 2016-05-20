@@ -89,6 +89,11 @@
     if (u == _userInfo) return;
     _userInfo = u;
     
+    if (_userInfo.userType != kUserTypeTrusted) {
+        [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];
+    }
+    [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];
+    
     [self loadUserInfo];
 }
 
@@ -154,21 +159,20 @@
     
     [_userView setUser:_userInfo];
     
-    if  (_userInfo.isFoodie) {
-        [self enableURLButton];
-        
-        if (!_userInfo.website.length) {
-            if (_viewingOwnProfile) {
-                [_buttonURL setTitle:@"Tap here to enter your URL." forState:UIControlStateNormal];
-            } else {
-                [_buttonURL setTitle:@"This foodie has no web link." forState:UIControlStateNormal];
-            }
-            [_buttonURL setTitle:@"" forState:UIControlStateNormal]; //For now the url is not editable
+    [self enableURLButton];
+
+    if (!_userInfo.website.length) {
+        if (_viewingOwnProfile) {
+            [_buttonURL setTitle:@"Tap here to enter your URL." forState:UIControlStateNormal];
         } else {
-            [_buttonURL setTitle:_userInfo.website forState:UIControlStateNormal];
+            [_buttonURL setTitle:@"This foodie has no web link." forState:UIControlStateNormal];
         }
-        [_buttonURL sizeToFit];
+        [_buttonURL setTitle:@"" forState:UIControlStateNormal]; //For now the url is not editable
+    } else {
+        [_buttonURL setTitle:_userInfo.website forState:UIControlStateNormal];
     }
+    [_buttonURL sizeToFit];
+
     
     // RULE: Only update the button when we know for sure whose profile is.
     if ( _viewingOwnProfile) {
@@ -247,9 +251,6 @@
 
         _filterView= [[OOFilterView alloc] init];
         [self addSubview:_filterView];
-        
-        [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];
-        [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];
         
         _userView= [[OOUserView alloc] init];
         _userView.delegate= self;
@@ -768,7 +769,7 @@
         y += CGRectGetHeight(_buttonFollow.frame) + 2*kGeomSpaceEdge;
     }
     
-    if (_userInfo.isFoodie && _userInfo.website.length) {
+    if (_userInfo.website.length) {
         _buttonURL.frame = CGRectMake(0, y, w, kGeomProfileHeaderViewHeightOfBloggerButton);
         y += CGRectGetHeight(_buttonURL.frame) + kGeomSpaceEdge;
     }
@@ -961,7 +962,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     
     if (_viewingOwnProfile) {
         [self removeNavButtonForSide:kNavBarSideTypeLeft];
-        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
+        [self addNavButtonWithIcon:kFontIconPhotoThick target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
     }
@@ -996,7 +997,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     
     NSString *string = _profileOwner.username.length ? concatenateStrings(@"@", _profileOwner.username) :  @"Oomami User";
     _nto = [[NavTitleObject alloc] initWithHeader:string
-                                        subHeader:[NSString stringWithFormat:@"%@ %@", _profileOwner.firstName, _profileOwner.lastName]];
+                                        subHeader:[NSString stringWithFormat:@"%@ %@", (_profileOwner.firstName)?(_profileOwner.firstName):@"", (_profileOwner.lastName)?_profileOwner.lastName:@""]];
     
     [self.view bringSubviewToFront:self.uploadProgressBar];
 }
@@ -1253,6 +1254,9 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 {
     [self getSpecialties];
     [self.refreshControl endRefreshing];
+    
+    if (_userInfo.userType == kUserTypeTrusted) _viewingLists = NO;
+
     if (_viewingLists) {
         [self getLists];
     } else {
@@ -1670,7 +1674,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 
     if (_viewingOwnProfile) {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
-        [self addNavButtonWithIcon:kFontIconCreateList target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
+        [self addNavButtonWithIcon:kFontIconCreateListThick target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
     }
 
     _listsAndPhotosLayout.thereAreNoItems= _arrayLists.count==0;
@@ -1684,7 +1688,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     
     if (_viewingOwnProfile) {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
-        [self addNavButtonWithIcon:kFontIconPhoto target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
+        [self addNavButtonWithIcon:kFontIconPhotoThick target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
     }
     
     _listsAndPhotosLayout.thereAreNoItems= _arrayPhotos.count==0;

@@ -50,6 +50,7 @@
 @property (nonatomic) BOOL listsNeedUpdate;
 @property (nonatomic, strong) UINavigationController *aNC;
 @property (nonatomic, strong) UIButton *shareRestaurant;
+@property (nonatomic, strong) UIButton *favoriteButton;
 @end
 
 static NSString *const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
@@ -69,7 +70,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
+    
     [self updateIfNeeded];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
@@ -315,7 +318,14 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [_styleSheetAC addAction:addToNewEvent];
 #endif
     [_styleSheetAC addAction:cancel];
-    [self setRightNavWithIcon:kFontIconPhoto target:self action:@selector(showPickPhotoUI)];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    
+    [self addNavButtonWithIcon:kFontIconPhotoThick target:self action:@selector(showPickPhotoUI) forSide:kNavBarSideTypeRight isCTA:YES];
+    [self addNavButtonWithIcon:kFontIconPinDot target:self action:@selector(showOnMap) forSide:kNavBarSideTypeRight isCTA:NO];
+    [self addNavButtonWithIcon:kFontIconAdd target:self action:@selector(moreButtonPressed:) forSide:kNavBarSideTypeRight isCTA:NO];
+    _favoriteButton = [self addNavButtonWithIcon:kFontIconFavorite target:self action:@selector(favoriteButtonTapped) forSide:kNavBarSideTypeRight isCTA:NO];
+    [self addNavButtonWithIcon:kFontIconPhone target:self action:@selector(phoneButtonPressed) forSide:kNavBarSideTypeRight isCTA:NO];
 }
 
 - (void)sharePressed:(id)sender {
@@ -481,6 +491,14 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (void)phoneButtonPressed {
+    NSString *number = [_restaurant.phone stringByReplacingOccurrencesOfString:@"-" withString:@""];
+    number = [number stringByReplacingOccurrencesOfString:@" " withString:@""];
+    number = [number stringByReplacingOccurrencesOfString:@")" withString:@""];
+    number = [number stringByReplacingOccurrencesOfString:@"(" withString:@""];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", number]]];
+}
+
 - (void)moreButtonPressed:(id)sender
 {
     _styleSheetAC.popoverPresentationController.sourceView = sender;
@@ -515,8 +533,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     if (_restaurant == restaurant) return;
     _restaurant = restaurant;
     
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:restaurant.name subHeader:nil];
-    self.navTitle = nto;
+//    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:restaurant.name subHeader:nil];
+//    self.navTitle = nto;
     
     [self getRestaurant];
 }
@@ -587,6 +605,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                         [_listButtons addObject:b];
                     }];
                     dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.favoriteButton setTitle:(_favoriteID)?kFontIconFavoriteFilled:kFontIconFavorite forState:UIControlStateNormal];
                         [weakSelf displayListButtons];
                     });
                 }
@@ -722,7 +741,6 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         } else {
             message(@"There was a problem verifying your account.");
         }
-        return;
     }];
 }
 
@@ -786,7 +804,6 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
             cvc.restaurant = _restaurant;
             cvc.delegate = self;
-            [cvc setFavorite:(_favoriteID) ? YES: NO];
             cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
 //            [DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
@@ -903,9 +920,12 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         case kRestaurantSectionTypeFollowees:
             return 50;
             break;
-        case kRestaurantSectionTypeMain:
-            return 200;
+        case kRestaurantSectionTypeMain: {
+            RestaurantMainCVCell *cvc = (RestaurantMainCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
+            return [cvc getHeight];
+            return 170;
             break;
+        }
         case kRestaurantSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/kRestaurantNumColumnsForMediaItems; //NOTE: this should not happen
@@ -1039,6 +1059,14 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [self.navigationController pushViewController:svc animated:YES];
 }
 
+- (void)favoriteButtonTapped {
+    if (_favoriteID) {
+        [self removeFromList:_favoriteID];
+    } else {
+        [self addToFavorites];
+    }
+}
+
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell listButtonTapped:(ListType)listType {
     if (listType == kListTypeFavorites) {
         if (_favoriteID) {
@@ -1065,6 +1093,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     vc.listItem = list;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)showOnMap {
+    [self showOnMap:_restaurant.location];
 }
 
 - (void)showOnMap:(CLLocationCoordinate2D)location {

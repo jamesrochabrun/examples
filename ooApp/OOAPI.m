@@ -775,6 +775,36 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 }
 
 //------------------------------------------------------------------------------
+// Name:    getUsersWithKeyword
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)getUsersOfType:(UserType)userType
+                                        success:(void (^)(NSArray *users))success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users", kHTTPProtocol, [OOAPI URL]];
+    NSDictionary *parameters = @{
+                                 @"type":[NSString stringWithFormat:@"%lu", (unsigned long)userType],
+                                 };
+    
+    //    NSLog (@" URL = %@",urlString);
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
+        NSMutableArray *users = [NSMutableArray array];
+        for (id dict in responseObject) {
+            UserObject *u=[UserObject userFromDict:dict];
+            NSLog(@"FOUND USER: %@", u.username);
+            [users addObject:u];
+        }
+        success(users);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        failure(operation, error);
+    }];
+}
+
+//------------------------------------------------------------------------------
 // Name:    lookupUserByID
 // Purpose:
 //------------------------------------------------------------------------------

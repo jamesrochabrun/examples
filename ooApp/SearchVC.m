@@ -24,10 +24,12 @@
 #import "ListObject.h"
 #import "TagObject.h"
 #import "AppDelegate.h"
+#import "OOFeedbackView.h"
 
 @interface SearchVC () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) NSArray *restaurants;
+@property (nonatomic, strong) OOFeedbackView *fv;
 @property (nonatomic, assign) CLLocationCoordinate2D currentLocation;
 @property (nonatomic, assign) CLLocationCoordinate2D desiredLocation;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
@@ -71,6 +73,9 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [super viewDidLoad];
     
     _showMap = YES;
+    
+    _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
+    [self.view addSubview:_fv];
 
     _searchBar = [UISearchBar new];
     _searchBar.placeholder = kSearchPlaceholderPlaces;

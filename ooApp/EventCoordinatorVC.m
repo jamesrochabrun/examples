@@ -918,7 +918,9 @@
     
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader: eventName ?:  @"UNNAMED" subHeader:  nil];
     self.navTitle = nto;
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
     self.view.backgroundColor= UIColorRGBA(kColorBlack);
     self.automaticallyAdjustsScrollViewInsets= NO;
@@ -942,9 +944,9 @@
     [_table  registerClass:[ EventCoordinatorWhoCell class] forCellReuseIdentifier:TABLE_REUSE_WHO_IDENTIFIER];
     [_table  registerClass:[ EventCoordinatorWhereCell class] forCellReuseIdentifier:TABLE_REUSE_WHERE_IDENTIFIER];
     [_table  registerClass:[ EventCoordinatorWhenCell class] forCellReuseIdentifier:TABLE_REUSE_WHEN_IDENTIFIER];
-    
-    [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
-    
+
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconMoreSolid target:self action:@selector(userPressedMenuButton:) forSide:kNavBarSideTypeRight isCTA:NO];
 }
 
 - (void)done:(id)sender {

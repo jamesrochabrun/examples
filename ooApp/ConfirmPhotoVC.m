@@ -45,8 +45,10 @@ static NSString * const cellIdentifier = @"locationCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(getDifferentPhoto:)];
     
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(getDifferentPhoto:) forSide:kNavBarSideTypeRight isCTA:NO];
+
     [self.view addSubview:_iv];
     [self.view addSubview:_usePhoto];
     [self.view addSubview:_getDifferentPhoto];

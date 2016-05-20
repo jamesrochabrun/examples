@@ -926,14 +926,16 @@
 
     self.automaticallyAdjustsScrollViewInsets= NO;
    
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
     
     NSTimeInterval votingEnds= [self.eventBeingEdited.dateWhenVotingClosed timeIntervalSince1970];
     NSTimeInterval now= [[NSDate date ] timeIntervalSince1970];
     if (votingEnds &&  now >= votingEnds) {
-        [self setRightNavWithIcon:@"" target:nil action:nil];
+        [self removeNavButtonForSide:kNavBarSideTypeRight];
     } else {
-        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(userPressedMenuButton:)];
+        [self removeNavButtonForSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:kFontIconMoreSolid target:self action:@selector(userPressedMenuButton:) forSide:kNavBarSideTypeRight isCTA:NO];
     }
 }
 
@@ -1241,8 +1243,7 @@
 
 - (void)votingEnded
 {
-    [self setRightNavWithIcon:@"" target:nil action:nil];
-
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
     [self setMode: VOTING_MODE_SHOW_RESULTS];
 }
 

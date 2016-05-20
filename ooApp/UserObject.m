@@ -32,6 +32,7 @@ NSString *const kKeyUserWebsite = @"website";
 NSString *const kKeyUserType = @"user_type";
 NSString *const kKeyUserPassword = @"password";
 NSString *const kKeyUserIsVerified = @"is_verified";
+NSString *const kKeyUserIsOfficial = @"is_official";
 
 @interface UserObject()
 
@@ -71,6 +72,7 @@ BOOL isUserObject (id  object)
     if  ( self.userType != other.userType)  return NO;
     if  ( self.hasSpecialties != other.hasSpecialties)  return NO;
     if  ( self.isFoodie != other.isFoodie)  return NO;
+    if  ( self.isOfficial != other.isOfficial)  return NO;
     
     if  ( self.mediaItem.mediaItemId != other.mediaItem.mediaItemId)  return NO;
     if  (![(self.mediaItem.url ?:  @"") isEqualToString: (other.mediaItem.url?:  @"")])  return NO;
@@ -84,6 +86,7 @@ BOOL isUserObject (id  object)
     if  (![(self.gender?:  @"") isEqualToString: (other.gender?:  @"")])  return NO;
     if  (![(self.username?:  @"") isEqualToString: (other.username?:  @"")])  return NO;
     if  (![(self.website?:  @"") isEqualToString: (other.website?:  @"")])  return NO;
+
     return YES;
 }
 
@@ -111,8 +114,9 @@ BOOL isUserObject (id  object)
     user.website = parseStringOrNullFromServer(dict [kKeyUserWebsite]);
     user.userType = parseNumberOrNullFromServer(dict [kKeyUserType]);
     user.isVerified = parseBoolOrNullFromServer(dict [kKeyUserIsVerified]);
-    user.isFoodie = user.userType == USER_TYPE_FOODIE;
+    user.isFoodie = user.userType == kUserTypeFoodie;
     user.specialties= nil;
+    user.isOfficial = parseBoolOrNullFromServer(dict [kKeyUserIsOfficial]);
 
     if (user.about.length > kUserObjectMaximumAboutTextLength) {
         user.about= [user.about substringToIndex: kUserObjectMaximumAboutTextLength-1];
@@ -238,6 +242,7 @@ BOOL isUserObject (id  object)
                       weakSelf.imageIdentifier = user.imageIdentifier;
                       weakSelf.website = user.website;
                       weakSelf.userType = user.userType;
+                      weakSelf.isOfficial = user.isOfficial;
                     
                       success( changed);
                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

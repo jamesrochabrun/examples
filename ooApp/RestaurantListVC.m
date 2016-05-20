@@ -37,7 +37,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
@@ -73,11 +75,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
     if (_listItem.type == kListTypeUser &&
         [_listItem isListOwner:userID]) {
         [self setupAlertController];
-//        self.moreButton.hidden = NO;
-        [self setRightNavWithIcon:kFontIconMore target:self action:@selector(moreButtonPressed:)];
+
+        [self removeNavButtonForSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:kFontIconMoreSolid target:self action:@selector(moreButtonPressed:) forSide:kNavBarSideTypeRight isCTA:NO];
     } else {
-        [self setRightNavWithIcon:@"" target:nil action:nil];
-//        self.moreButton.hidden = YES;
+        [self removeNavButtonForSide:kNavBarSideTypeRight];
     }
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 }

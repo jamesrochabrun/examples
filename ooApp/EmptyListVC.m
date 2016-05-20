@@ -55,7 +55,8 @@
     
     self.view.backgroundColor= UIColorRGBA(kColorBackgroundTheme);
 
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
     float borderWidth= 0;
     if  ([UIScreen  mainScreen].bounds.size.height  < 481 ) {

@@ -16,10 +16,11 @@
 #import "UnverifiedUserVC.h"
 
 typedef enum {
-    kConnectSectionFriends = 0,
-    kConnectSectionFoodies = 1,
-    kConnectSectionInTheKnow = 2,
-    kConnectSectionRecentUsers = 3,
+    kConnectSectionTrusted = 0,
+    kConnectSectionFriends = 1,
+    kConnectSectionFoodies = 2,
+    kConnectSectionInTheKnow = 3,
+    kConnectNumberOfSections = 4
 } kConnectSection;
 
 @protocol ConnectTableSectionHeaderDelegate

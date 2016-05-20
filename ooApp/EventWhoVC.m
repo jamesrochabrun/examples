@@ -290,7 +290,8 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     _table.backgroundColor= UIColorRGBA(kColorOffBlack);
     _table.showsVerticalScrollIndicator= NO;
 
-    [self setLeftNavWithIcon:kFontIconBack target:self action:@selector(done:)];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 }
 
 - (void)done:(id)sender
@@ -574,7 +575,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
     if  (lastName ) {
         parametersDictionary [ kKeyUserLastName]= lastName;
     }
-    parametersDictionary [ @"user_type"]= @(USER_TYPE_INACTIVE);
+    parametersDictionary [ @"user_type"]= @(kUserTypeInactive);
 
     UserObject* userInfo= [Settings sharedInstance].userObject;
     userInfo.backendAuthorizationToken= nil;

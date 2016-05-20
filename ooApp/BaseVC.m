@@ -16,7 +16,7 @@
 @property (nonatomic, strong) UIButton *displayDropDownButton;
 @property (nonatomic, strong) UIView *mainCoverView;
 @property (nonatomic, strong) UITapGestureRecognizer *tap;
-@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
+//@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
 //@property (nonatomic, strong) UIButton *rightBarButtonView;
 @property (nonatomic, strong) UIView *leftBarButtonView;
 @property (nonatomic, strong) UIView *rightBarButtonView;
@@ -116,7 +116,7 @@
     }
 }
 
-- (void)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side isCTA:(BOOL)isCTA {
+- (UIButton *)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side isCTA:(BOOL)isCTA {
     //side = -1 left, 1 = right
     
     isCTA = NO;
@@ -160,6 +160,7 @@
     
     _navTitleView.frame = CGRectMake(0, 0, width(self.view) - fmaxf(2*width(_leftBarButtonView), 2*width(_rightBarButtonView)) - 50, kGeomHeightNavBar);
     
+    return button;
     //[DebugUtilities addBorderToViews:@[button]];
 }
 
@@ -172,18 +173,6 @@
         [[_rightBarButtonView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     }
 }
-
-//- (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-////    [self.leftBarButtonView removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
-////    [self.leftBarButtonView setTitle:icon forState:UIControlStateNormal];
-////    [self.leftBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-//}
-//
-//- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector {
-////    [self.rightBarButtonView removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
-////    [self.rightBarButtonView setTitle:icon forState:UIControlStateNormal];
-////    [self.rightBarButtonView addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-//}
 
 - (CGRect)getRightButtonFrame {
     CGRect frame;

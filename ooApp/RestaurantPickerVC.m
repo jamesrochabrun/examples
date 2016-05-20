@@ -92,7 +92,9 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(pickerCanceled)];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(pickerCanceled) forSide:kNavBarSideTypeRight isCTA:NO];
 
     [self.view addSubview:_iv];
     [self.view addSubview:_tableView];

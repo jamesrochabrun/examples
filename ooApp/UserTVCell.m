@@ -39,7 +39,7 @@
         _userView.delegate= self;
         _header = makeLabelLeft(self, nil, kGeomFontSizeHeader);
         [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorText backgroundColor:kColorClear];
-        
+
         _subHeader1 = makeLabelLeft(self, nil, kGeomFontSizeHeader);
         [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
         

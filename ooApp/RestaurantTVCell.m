@@ -248,7 +248,7 @@ enum  {
         if (self.listToAddTo) {
             if ( _useModalForListedVenues) {
                 
-                string= kFontIconMore;
+                string= kFontIconMoreSolid;
                 self.mode= MODE_MODAL;
             } else {
                 
@@ -267,7 +267,7 @@ enum  {
                 }
             }
         } else {
-            string= kFontIconMore;
+            string= kFontIconMoreSolid;
             self.mode= MODE_MODAL;
         }
     } else {
@@ -558,7 +558,7 @@ enum  {
 }
 
 - (void)showShare:(NSString *)url fromView:(id)sender {
-    NSURL *nsURL = [NSURL URLWithString:url];
+    //NSURL *nsURL = [NSURL URLWithString:url];
     //NSData *data = [NSData dataWithContentsOfURL:nsURL];
     UIImage *img = self.thumbnail.image;// [UIImage imageWithData:data];
     

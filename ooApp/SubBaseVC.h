@@ -17,8 +17,8 @@
 @property (nonatomic, strong) UIProgressView *uploadProgressBar;
 @property (nonatomic, assign) BOOL uploading;
 
-- (void)setLeftNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
-- (void)setRightNavWithIcon:(NSString *)icon target:(id)target action:(SEL)selector;
+- (UIButton *)addNavButtonWithIcon:(NSString *)icon target:(id)target action:(SEL)selector forSide:(NavBarSideType)side isCTA:(BOOL)isCTA;
+- (void)removeNavButtonForSide:(NavBarSideType)side;
 
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector;
 - (void)unregisterFromNotifications;

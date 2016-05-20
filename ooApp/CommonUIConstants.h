@@ -168,7 +168,7 @@ static NSUInteger kGeomPlayIconSize = 35;
 static NSUInteger kGeomPlayButtonSize = 65;
 static CGFloat kGeomSpaceCellPadding = 3;
 static CGFloat kGeomSpaceEdge = 6;
-static CGFloat kGeomSpaceInter = 8;
+static CGFloat kGeomSpaceInter = 4;
 static CGFloat kGeomSampleUsernameTableHeight = 175;
 static CGFloat kGeomInterImageGap = 2;
 static CGFloat kGeomSpaceLineEdgeBuffer = 4;
@@ -247,12 +247,9 @@ extern NSString *const kFontIcons;
 //extern NSString *const kFontLatoThin; feel to thin
 extern NSString *const kFontLatoLight;
 extern NSString *const kFontLatoRegular;
-extern NSString *const kFontLatoBold;
 extern NSString *const kFontLatoMedium;
-//extern NSString *const kFontLatoMediumItalic;
-//extern NSString *const kFontLatoSemiboldItalic;
-//extern NSString *const kFontLatoBoldItalic;
-//extern NSString *const kFontLatoHeavyItalic;
+extern NSString *const kFontLatoBold;
+
 
 // Icon font mappings
 extern NSString *const kFontIconAdd;
@@ -305,7 +302,13 @@ extern NSString *const kFontIconArrow;
 extern NSString *const kFontIconClosed;
 extern NSString *const kFontIconCreateList;
 extern NSString *const kFontIconInvite;
-
+extern NSString *const kFontIconPhone;
+extern NSString *const kFontIconOfficial;
+extern NSString *const kFontIconOfficialFilled;
+extern NSString *const kFontIconCreateListFilled;
+extern NSString *const kFontIconMoreSolid;
+extern NSString *const kFontIconCreateListThick;
+extern NSString *const kFontIconPhotoThick;
 
 extern NSString *const kNotificationConnectNeedsUpdate;
 extern NSString *const kNotificationFoodFeedNeedsUpdate;

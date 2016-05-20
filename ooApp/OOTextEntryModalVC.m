@@ -69,9 +69,10 @@
     [self.view addSubview:_postButton];
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
-    [self setRightNavWithIcon:kFontIconRemove target:self action:@selector(closeTextEntry)];
-    [self setLeftNavWithIcon:@"" target:nil action:nil];
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
     
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(closeTextEntry) forSide:kNavBarSideTypeRight isCTA:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated
