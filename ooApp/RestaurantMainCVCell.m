@@ -296,10 +296,13 @@
         y+=kGeomSpaceInter;
         
         frame = _hoursButton.frame;
+        frame.size.width = [_hoursButton intrinsicContentSize].width;
         frame.size.height = 30;
         frame.origin = CGPointMake(kGeomSpaceEdge, y);
         _hoursButton.frame = frame;
         y = CGRectGetMaxY(_hoursButton.frame);
+        
+        
     }
     
     if (_restaurant.address) {
@@ -413,7 +416,7 @@
     
     NSString *hrsButtonText = [ho formattedHoursOpen];
     [_hoursButton setTitle:hrsButtonText forState:UIControlStateNormal];
-    
+
     _hoursButton.hidden = (hrsButtonText.length) ? NO : YES;
     
     NSMutableString *hrs = [NSMutableString string];
