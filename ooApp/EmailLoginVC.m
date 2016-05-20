@@ -40,17 +40,19 @@
     [_info withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorTextReverse backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
     _info.hidden = YES;
     
-    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:kImageBackgroundImage] withRadius:30 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
+    UIImage *backgroundImage = [UIImageEffects imageByApplyingBlurToImage:[UIImage imageNamed:kImageBackgroundImage] withRadius:7 tintColor: UIColorRGBOverlay(kColorBlack, 0) saturationDeltaFactor:1 maskImage:nil];
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     _hLine1 = [[UIView alloc] init];
     _hLine1.backgroundColor = UIColorRGBA(kColorBordersAndLines);
     
-    _backgroundImageView = makeImageView(self.view, backgroundImage);
+    _backgroundImageView = [UIImageView new];
+    _backgroundImageView.image = backgroundImage;
     _backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
     _backgroundImageView.clipsToBounds = YES;
     _backgroundImageView.opaque = NO;
+    [self.view addSubview:_backgroundImageView];
 
     _emailTextField = [[UITextField alloc] init];
     _emailTextField.backgroundColor = UIColorRGBA(kColorBackgroundTheme);

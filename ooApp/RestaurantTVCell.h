@@ -12,6 +12,8 @@
 #import "UnverifiedUserVC.h"
 #import <GoogleMaps/GoogleMaps.h>
 
+@class RestaurantTVCell;
+
 @interface RestaurantTVCell : ObjectTVCell <UnverifiedUserVCDelegate>
 
 @property (nonatomic, strong) RestaurantObject *restaurant;

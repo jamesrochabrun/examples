@@ -27,6 +27,7 @@
 		3613BE611BC5D87E00F1AF67 /* ListsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */; };
 		36175CDA1C22940700E6FE3D /* FoodFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36175CD91C22940700E6FE3D /* FoodFeedVC.m */; };
 		36175CDD1C22AE9C00E6FE3D /* FoodFeedVCCVL.m in Sources */ = {isa = PBXBuildFile; fileRef = 36175CDC1C22AE9C00E6FE3D /* FoodFeedVCCVL.m */; };
+		3620EE6E1CEF7F3E00B612BA /* background_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3620EE6D1CEF7F3E00B612BA /* background_image.jpg */; };
 		36215DA91C37CA11000A293C /* OOTextEntryVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36215DA81C37CA10000A293C /* OOTextEntryVC.m */; };
 		3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F11E1B8F6E32004537B6 /* MenuTVCell.m */; };
 		3621F1221B8F7E7A004537B6 /* MenuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3621F1211B8F7E7A004537B6 /* MenuObject.m */; };
@@ -161,7 +162,6 @@
 		36E957CF1CC6B35000DA2618 /* S2ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 36E957CB1CC6B35000DA2618 /* S2ipad.png */; };
 		36E957D01CC6B35000DA2618 /* S3ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 36E957CC1CC6B35000DA2618 /* S3ipad.png */; };
 		36E957D11CC6B35000DA2618 /* S4ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 36E957CD1CC6B35000DA2618 /* S4ipad.png */; };
-		36E957D31CC6B90800DA2618 /* background_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 36E957D21CC6B90800DA2618 /* background_image.jpg */; };
 		36F159151C27CB8C0064140F /* RestaurantPickerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F159141C27CB8C0064140F /* RestaurantPickerVC.m */; };
 		36F7F6901BDAB02F000F8C32 /* HoursOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F7F68F1BDAB02F000F8C32 /* HoursOpen.m */; };
 		36F872D91B919BC200006C29 /* ListObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36F872D81B919BC200006C29 /* ListObject.m */; };
@@ -321,6 +321,7 @@
 		36175CD91C22940700E6FE3D /* FoodFeedVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoodFeedVC.m; sourceTree = "<group>"; };
 		36175CDB1C22AE9C00E6FE3D /* FoodFeedVCCVL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoodFeedVCCVL.h; sourceTree = "<group>"; };
 		36175CDC1C22AE9C00E6FE3D /* FoodFeedVCCVL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoodFeedVCCVL.m; sourceTree = "<group>"; };
+		3620EE6D1CEF7F3E00B612BA /* background_image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = background_image.jpg; path = "Graphic Assets/background_image.jpg"; sourceTree = "<group>"; };
 		36215DA71C37CA10000A293C /* OOTextEntryVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOTextEntryVC.h; sourceTree = "<group>"; };
 		36215DA81C37CA10000A293C /* OOTextEntryVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOTextEntryVC.m; sourceTree = "<group>"; };
 		3621F11D1B8F6E32004537B6 /* MenuTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuTVCell.h; sourceTree = "<group>"; };
@@ -524,7 +525,6 @@
 		36E957CB1CC6B35000DA2618 /* S2ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S2ipad.png; path = "Graphic Assets/S2ipad.png"; sourceTree = "<group>"; };
 		36E957CC1CC6B35000DA2618 /* S3ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S3ipad.png; path = "Graphic Assets/S3ipad.png"; sourceTree = "<group>"; };
 		36E957CD1CC6B35000DA2618 /* S4ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = S4ipad.png; path = "Graphic Assets/S4ipad.png"; sourceTree = "<group>"; };
-		36E957D21CC6B90800DA2618 /* background_image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = background_image.jpg; path = "Graphic Assets/background_image.jpg"; sourceTree = "<group>"; };
 		36F159131C27CB8C0064140F /* RestaurantPickerVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantPickerVC.h; sourceTree = "<group>"; };
 		36F159141C27CB8C0064140F /* RestaurantPickerVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantPickerVC.m; sourceTree = "<group>"; };
 		36F7F68E1BDAB02F000F8C32 /* HoursOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HoursOpen.h; sourceTree = "<group>"; };
@@ -841,11 +841,11 @@
 		367703FF1B87E41F00B594E5 /* Graphic Assets */ = {
 			isa = PBXGroup;
 			children = (
+				3620EE6D1CEF7F3E00B612BA /* background_image.jpg */,
 				3660B9761CEC29F0009FA59A /* Connect_Background.png */,
 				3660B9771CEC29F0009FA59A /* Food_Feed_Background.png */,
 				3660B9781CEC29F0009FA59A /* Profile_Background.png */,
 				3660B9791CEC29F0009FA59A /* Search_Background.png */,
-				36E957D21CC6B90800DA2618 /* background_image.jpg */,
 				36E957CA1CC6B35000DA2618 /* S1ipad.png */,
 				36E957CB1CC6B35000DA2618 /* S2ipad.png */,
 				36E957CC1CC6B35000DA2618 /* S3ipad.png */,
@@ -1390,7 +1390,6 @@
 				36FC99C71C478C8200768FF0 /* ooLoading29.png in Resources */,
 				36FC99DD1C478C8200768FF0 /* ooLoading21.png in Resources */,
 				36BA03301C50CE1D00802EF8 /* ooLoading60.png in Resources */,
-				36E957D31CC6B90800DA2618 /* background_image.jpg in Resources */,
 				36FC99B41C478C8200768FF0 /* ooLoading58.png in Resources */,
 				36BA03331C50CE1D00802EF8 /* ooLoading63.png in Resources */,
 				3660B97B1CEC29F1009FA59A /* Food_Feed_Background.png in Resources */,
@@ -1417,6 +1416,7 @@
 				36FC99B51C478C8200768FF0 /* ooLoading59.png in Resources */,
 				36FC99CC1C478C8200768FF0 /* ooLoading34.png in Resources */,
 				36FC99C01C478C8200768FF0 /* ooLoading51.png in Resources */,
+				3620EE6E1CEF7F3E00B612BA /* background_image.jpg in Resources */,
 				36BA034A1C50CE1D00802EF8 /* ooLoading86.png in Resources */,
 				36E957D01CC6B35000DA2618 /* S3ipad.png in Resources */,
 				3677045C1B8BF05100B594E5 /* Lato-Medium.ttf in Resources */,

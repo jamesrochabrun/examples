@@ -81,12 +81,10 @@
         _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
         _backgroundImage.clipsToBounds = YES;
         [self addSubview:_backgroundImage];
-        //_backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         
         _imageOverlay = [[UIView alloc] init];
         _imageOverlay.backgroundColor = UIColorRGBOverlay(kColorWhite, 0.5);
         [_backgroundImage addSubview:_imageOverlay];
-        //_imageOverlay.translatesAutoresizingMaskIntoConstraints = NO;
         
         _verticalLine1 = [[UIView alloc] init];
         _verticalLine2 = [[UIView alloc] init];
@@ -94,20 +92,16 @@
         [self addSubview:_verticalLine2];
         
         _verticalLine1.backgroundColor = _verticalLine2.backgroundColor = UIColorRGBA(kColorText);
-//        _verticalLine1.translatesAutoresizingMaskIntoConstraints =
-//        _verticalLine2.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_hoursButton withText:@"" fontSize:kGeomFontSizeH2 width:100 height:30 backgroundColor:kColorClear target:self selector:@selector(viewHours)];
         [_hoursButton setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
         _hoursButton.titleLabel.textAlignment = NSTextAlignmentLeft;
         [_hoursButton setContentEdgeInsets:UIEdgeInsetsMake(0, kGeomSpaceEdge, 0, kGeomSpaceEdge)];
-//        _hoursButton.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_hoursButton];
         
         _hoursScroll = [[UIScrollView alloc] init];
         _hoursScroll.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-//        _hoursScroll.translatesAutoresizingMaskIntoConstraints = NO;
         
         _hoursView = [[UILabel alloc] init];
         _hoursView.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2];
@@ -115,7 +109,7 @@
         _hoursView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         _hoursView.numberOfLines = 0;
         _hoursView.lineBreakMode = NSLineBreakByWordWrapping;
-        _hoursView.textAlignment = NSTextAlignmentCenter;
+        _hoursView.textAlignment = NSTextAlignmentLeft;
         [_hoursScroll addSubview:_hoursView];
         
         _name = [[UILabel alloc] init];
@@ -191,9 +185,7 @@
 
 - (void)viewHours {
     _hoursScroll.hidden = !_hoursScroll.hidden;
-//    [self setNeedsUpdateConstraints];
     [self setNeedsLayout];
-//    [self updateConstraintsIfNeeded];
 }
 
 - (void)goToMenuURL {
@@ -231,10 +223,7 @@
     CGRect frame;
     CGSize s;
     CGFloat y, x;
-    
-    s = [_hoursView.text sizeWithAttributes:@{NSFontAttributeName:_hoursView.font}];
-    _hoursScroll.contentSize = CGSizeMake(width(_hoursScroll), s.height);
-    
+
     _message1.frame = CGRectMake((w-width(_message1))/2, 2*kGeomSpaceEdge, width(_message1), height(_message1));
     _message2.frame = CGRectMake((w-width(_message2))/2, CGRectGetMaxY(_message1.frame), width(_message2), height(_message2));
     _closedButton.frame = CGRectMake(0, 0, w, CGRectGetMaxY(_message2.frame) + 2*kGeomSpaceEdge);
@@ -295,14 +284,25 @@
     if (_restaurant.hours) {
         y+=kGeomSpaceInter;
         
+        s = [_hoursView.text sizeWithAttributes:@{NSFontAttributeName:_hoursView.font}];
+        _hoursScroll.contentSize = CGSizeMake(width(_hoursScroll), s.height);
+        
         frame = _hoursButton.frame;
-        frame.size.width = [_hoursButton intrinsicContentSize].width;
+        frame.size.width = s.width;
         frame.size.height = 30;
         frame.origin = CGPointMake(kGeomSpaceEdge, y);
         _hoursButton.frame = frame;
         y = CGRectGetMaxY(_hoursButton.frame);
         
+        frame = _hoursScroll.frame;
+        frame.origin = CGPointMake(CGRectGetMinX(_hoursButton.frame), y);
+        frame.size.height = height(self) - y - kGeomSpaceEdge;
+        frame.size.width = width(_hoursButton);
+        _hoursScroll.frame = frame;
         
+        frame = _hoursScroll.bounds;
+        frame.size.height = s.height;
+        _hoursView.frame = frame;
     }
     
     if (_restaurant.address) {
