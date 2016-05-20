@@ -46,8 +46,8 @@
         _ivFoodie.clipsToBounds = NO;
         
         _isOfficial = [UILabel new];
-        [_isOfficial withFont:[UIFont fontWithName:kFontIcons size:15] textColor:kColorTextActive backgroundColor:kColorClear];
-        _isOfficial.text = kFontIconOfficial;
+        [_isOfficial withFont:[UIFont fontWithName:kFontIcons size:14] textColor:kColorTextActive backgroundColor:kColorClear];
+        _isOfficial.text = kFontIconOfficialFilled;
         [self addSubview:_isOfficial];
         
         _viewHalo= makeView(self, UIColorRGBA(kColorClear));
@@ -132,7 +132,8 @@
     frame = _isOfficial.frame;
     frame.origin = CGPointMake(width(self)-CGRectGetWidth(frame), 0);
     _isOfficial.frame = frame;
-    if (CGRectGetWidth(self.frame) < 50) _isOfficial.hidden = YES;
+    _isOfficial.hidden = (_user.isOfficial) ? NO:YES;
+    if (CGRectGetWidth(self.frame) < 75) _isOfficial.hidden = YES;
 }
 
 - (void)setUser:(UserObject *)user
