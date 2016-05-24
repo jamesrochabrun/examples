@@ -539,8 +539,9 @@ enum  {
     //shareView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     CGRect frame;
     UIImageView *iv = [UIImageView new];
-    iv.frame =  self.thumbnail.bounds;
-    iv.image =  self.thumbnail.image;
+    CGFloat height = width(self)*self.thumbnail.image.size.height/self.thumbnail.image.size.width;
+    iv.frame = CGRectMake(0, 0, width(self), height);
+    iv.image = self.thumbnail.image;
     UILabel *logo = [UILabel new];
     [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
     logo.text = kFontIconLogoFull;
