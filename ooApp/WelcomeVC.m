@@ -27,7 +27,7 @@
 @property (nonatomic, strong) UIView *overlay;
 @property (nonatomic, strong) UIButton *loginButton;
 @property (nonatomic, strong) UIButton *signupButton;
-@property (nonatomic, strong) UIButton *tryAgain;
+//@property (nonatomic, strong) UIButton *tryAgain;
 @property (nonatomic, strong) UILabel *logoLabel;
 @property (nonatomic, strong) UILabel *questionLabel;
 @property (nonatomic, strong) UILabel *answerLabel;
@@ -95,10 +95,10 @@
     _logoLabel.text = kFontIconLogoFull;
     _logoLabel.frame = CGRectMake(0, 0, width(self.view)*0.75, IS_IPAD ? 175:100);
     
-    _tryAgain = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_tryAgain withText:@"Try Again" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(initiateLoginFlow)];
-    _tryAgain.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
-    _tryAgain.layer.cornerRadius = kGeomCornerRadius;
+//    _tryAgain = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [_tryAgain withText:@"Try Again" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorClear target:self selector:@selector(startAuthFlow)];
+//    _tryAgain.titleLabel.font = [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH2];
+//    _tryAgain.layer.cornerRadius = kGeomCornerRadius;
     
     _loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_loginButton withText:@"Log In" fontSize:kGeomFontSizeH3 width:100 height:kGeomHeightButton backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(showLogin)];
@@ -130,7 +130,7 @@
     [mainView addSubview:_answerButton];
     [mainView addSubview:_aiv];
     [mainView addSubview:_info];
-    [mainView addSubview:_tryAgain];
+//    [mainView addSubview:_tryAgain];
     
     [self.view addSubview:_backgroundImageView];
     [self.view addSubview:_overlay];
@@ -138,7 +138,7 @@
     [self.view addSubview:_loginButton];
     [_signupButton addSubview:_verticalLine];
     
-    _tryAgain.hidden = YES;
+//    _tryAgain.hidden = YES;
     
     CGFloat paralaxWidth = self.view.frame.size.width*kParalaxFactor;
     
@@ -148,23 +148,27 @@
     IntroScreenView *bIntro2 = [[IntroScreenView alloc] initWithFrame:frame];
     IntroScreenView *bIntro3 = [[IntroScreenView alloc] initWithFrame:frame];
     IntroScreenView *bIntro4 = [[IntroScreenView alloc] initWithFrame:frame];
-    _introScreenBackgroundViews = [NSArray arrayWithObjects:bMainView, bIntro1, bIntro2, bIntro3, bIntro4, nil];
+    _introScreenBackgroundViews = [NSArray arrayWithObjects:bMainView, bIntro4, bIntro3, bIntro2, bIntro1, nil];
     //[DebugUtilities addBorderToViews:_introScreenBackgroundViews];
     for (UIView *v in _introScreenBackgroundViews) {
         [_introScreensScrollView addSubview:v];
     }
     
     bIntro1.introTitle = @"Food Feed.";
-    bIntro1.introDescription = @"See what people are eating. Recommend dishes to all your followers with the snap of a photo.";
+    bIntro1.introDescription = @"Oomami reveals the best dishes and drinks shared by your food network. The food feed is your local menu on steroids.";
+    bIntro1.underlinedWords = @[@"shared"];
     
-    bIntro2.introTitle = @"Explore.";
-    bIntro2.introDescription = @"Find the top spots around you with the tap of a button, or move around and see what's out there.";
+    bIntro2.introTitle = @"Search.";
+    bIntro2.introDescription = @"Search by location, cuisine or name for the best spots. Oomami tells you what is popular in your food network.";
+    bIntro2.underlinedWords = @[@"your food network"];
     
     bIntro3.introTitle = @"Connect.";
-    bIntro3.introDescription = @"Find friends in the know and discover new foodies to follow.";
+    bIntro3.introDescription = @"Invite your friends and follow foodies around the world. Create your personalized food network!";
+    bIntro3.underlinedWords = @[@"follow foodies"];
     
-    bIntro4.introTitle = @"Profile.";
-    bIntro4.introDescription = @"Never forget your most memorable meals or favorite places with the help of your personal food diary.";
+    bIntro4.introTitle = @"You.";
+    bIntro4.introDescription = @"Never forget your foodie finds by uploading photos and creating lists of your experiences. Your little black book is just a few taps away.";
+    bIntro4.underlinedWords = @[@"photos", @"lists"];
     
     frame = self.view.frame;
     frame.size.height = frame.size.height - kGeomHeightButton;
@@ -173,7 +177,7 @@
     IntroScreenView *intro2 = [[IntroScreenView alloc] initWithFrame:frame];
     IntroScreenView *intro3 = [[IntroScreenView alloc] initWithFrame:frame];
     IntroScreenView *intro4 = [[IntroScreenView alloc] initWithFrame:frame];
-    _introScreenViews = [NSArray arrayWithObjects:mainView, intro1, intro2, intro3, intro4, nil];
+    _introScreenViews = [NSArray arrayWithObjects:mainView, intro4, intro3, intro2, intro1, nil];
     for (UIView *v in _introScreenViews) {
         [_activeScrollView addSubview:v];
     }
@@ -241,16 +245,17 @@
     _loginButton.layer.cornerRadius =
     _signupButton.layer.cornerRadius = 0;
     
-    _tryAgain.frame =  CGRectMake((w-CGRectGetWidth(_tryAgain.frame))/2, CGRectGetMinY(_answerLabel.frame) - 2*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
+    CGPoint center = CGPointMake(w/2, CGRectGetMinY(_answerLabel.frame) - 2*kGeomHeightButton - kGeomSpaceInter);
+//    _tryAgain.frame =  CGRectMake((w-CGRectGetWidth(_tryAgain.frame))/2, CGRectGetMinY(_answerLabel.frame) - 2*kGeomHeightButton - kGeomSpaceInter, CGRectGetWidth(_tryAgain.frame), kGeomHeightButton);
     [_aiv sizeToFit];
-    _aiv.center = _tryAgain.center;
+    _aiv.center = center;
     
     _verticalLine.frame = CGRectMake(CGRectGetWidth(_signupButton.frame)-1, kGeomSpaceLineEdgeBuffer, 1, CGRectGetHeight(_signupButton.frame)-2*kGeomSpaceLineEdgeBuffer);
     
     frame = _info.frame;
     frame.size = [_info sizeThatFits:CGSizeMake(width(self.view) - 2*kGeomSpaceEdge, 100)];
     frame.size.width = width(self.view) - 2*kGeomSpaceEdge;
-    frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMaxY(_tryAgain.frame) + kGeomSpaceEdge);
+    frame.origin = CGPointMake(kGeomSpaceEdge, CGRectGetMidY(_aiv.frame) + kGeomHeightButton/2 + kGeomSpaceEdge);
     _info.frame = frame;
     
     frame = self.view.frame;
@@ -428,6 +433,8 @@
     } else {
         [self performSegueWithIdentifier:@"gotoCreateUsername" sender:self];
     }
+    
+    _signupButton.hidden = _loginButton.hidden = NO;
 }
 
 //------------------------------------------------------------------------------
@@ -441,6 +448,10 @@
     _signupButton.hidden =
     _loginButton.hidden = YES;
 
+    [self startAuthFlow];
+}
+
+- (void)startAuthFlow {
     UserObject *user = [Settings sharedInstance].userObject;
     if (user.backendAuthorizationToken && user.userID) {
         NSString *token = user.backendAuthorizationToken;
@@ -458,6 +469,7 @@
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             _info.hidden = YES;
+            _info.text = @"Could not log you in";
             [_aiv stopAnimating];
             _signupButton.hidden =
             _loginButton.hidden = NO;
@@ -467,7 +479,7 @@
         if (facebookToken) {
             [self initiateLoginFlow:facebookToken];
         } else {
-            _info.hidden = YES;
+            _info.hidden = NO;
             _signupButton.hidden =
             _loginButton.hidden = NO;
         }
@@ -521,16 +533,16 @@
         case 0:
             return [UIImage imageNamed:kImageBackgroundImage];
             break;
-        case 1:
+        case 4:
             return [UIImage imageNamed:kImageBackgroundFoodFeed];
             break;
-        case 2:
+        case 3:
             return [UIImage imageNamed:kImageBackgroundSearch];
             break;
-        case 3:
+        case 2:
             return [UIImage imageNamed:kImageBackgroundConnect];
             break;
-        case 4:
+        case 1:
             return [UIImage imageNamed:kImageBackgroundProfile];
             break;
         default:
@@ -566,7 +578,7 @@
 }
 
 - (void)initiateLoginFlow:(FBSDKAccessToken *)facebookToken {
-    _tryAgain.hidden = YES;
+//    _tryAgain.hidden = YES;
     
     
     [_aiv startAnimating];
@@ -585,6 +597,9 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self showMainUI];
                 });
+            } else {
+                _info.hidden = NO;
+                _info.text = @"hmmmmm";
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"auth failure %@", error);
@@ -592,7 +607,7 @@
             
             if (error.code == kCFURLErrorNotConnectedToInternet) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    _tryAgain.hidden = NO;
+//                    _tryAgain.hidden = NO;
                     _info.text = @"You don't appear to be connected to the internet. Make sure you have a good connection and try again.";
                     [self.view setNeedsLayout];
                 });

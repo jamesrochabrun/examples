@@ -34,10 +34,10 @@
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {
-            message = [NSString stringWithFormat:@"Yum! Let's go to %@. \nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
+            message = [NSString stringWithFormat:@"Yum! Let's go to %@. For details click:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
             urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         } else {
-            message = [NSString stringWithFormat:@"Let's go to %@. \nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
+            message = [NSString stringWithFormat:@"Let's go to %@. For details click:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
             urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         }
     } else {

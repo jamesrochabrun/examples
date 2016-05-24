@@ -97,80 +97,6 @@ void addBorder (UIView*v, float width, UIColor *color)
     v.layer.borderWidth= width;
 }
 
-UIImageView *makeImageViewFromURL(UIView *parent, NSString *urlString, NSString *placeholderImageName)
-{
-    NSURL *url= [NSURL  URLWithString:urlString];
-    UIImageView *iv= nil;
-    UIImage *image=nil;
-    if ( !url) {
-        // RULE:  if the URL is bad just go with the placeholder.
-        image = [UIImage imageNamed:placeholderImageName];
-        iv = [[UIImageView alloc] initWithImage:image];
-    } else {
-        image = [UIImage imageNamed:placeholderImageName];
-        iv = [[UIImageView alloc] initWithImage:image];
-        [iv setImageWithURL:url placeholderImage:image];
-    }
-    
-    [parent addSubview:iv];
-    return iv;
-}
-
-UIButton *makeProfileImageButton (UIView *parent,UserObject* user,id delegate,SEL callback)
-{
-    UIButton* b= makeButton( parent, nil, 0, UIColorRGBA(kColorWhite), UIColorRGBA(kColorClear),  delegate,  callback, 1);
-    b.tag=  user.userID;
-    [b setImage:APP.imageForNoProfileSilhouette forState:UIControlStateNormal];
-    b.layer.cornerRadius=kGeomFaceBubbleDiameter/2;
-    b.clipsToBounds= YES;
-    b.layer.borderColor= UIColorRGBA(kColorWhite).CGColor;
-
-    if ( user.imageIdentifier && user.imageIdentifier.length) {
-        
-        /*self.requestOperation =*/
-        [OOAPI getUserImageWithImageID: user.imageIdentifier
-                              maxWidth: kGeomFaceBubbleDiameter
-                             maxHeight: 0
-                               success: ^(NSString *link)  {
-                                   NSURL *url= [NSURL URLWithString: link];
-                                   if  (url) {
-                                       NSURLRequest *r= [NSURLRequest requestWithURL:url];
-                                       __weak UIButton *weakButton = b;
-                                       [b.imageView setImageWithURLRequest:r
-                                                          placeholderImage:APP.imageForNoProfileSilhouette
-                                                                   success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                                                       ON_MAIN_THREAD( ^{
-                                                                           [weakButton setImage:image forState:UIControlStateNormal];
-                                                                       });
-                                                                       
-                                                                   } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                                                       ;
-                                                                   }];
-                                   }
-                               }
-                               failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                               }];
-    }
-    else if (user.facebookProfileImageURLString  && user.facebookProfileImageURLString.length) {//  Facebook photo
-        NSURL *url= [NSURL URLWithString: user.facebookProfileImageURLString];
-        if  ( url) {
-            NSURLRequest*r= [NSURLRequest requestWithURL:url];
-            __weak UIButton *weakButton = b;
-            [b.imageView setImageWithURLRequest:r
-                               placeholderImage:APP.imageForNoProfileSilhouette
-                                        success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                            ON_MAIN_THREAD( ^{
-                                                [weakButton setImage:image forState:UIControlStateNormal];
-                                            });
-                                        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                            ;
-                                        }];
-        }
-    }
-    
-    return b;
-}
-
 UIImageView* makeImageView (UIView *parent, id image_)
 {
     BOOL imageIsURL= NO;
@@ -372,33 +298,6 @@ UIButton* makeIconButton (UIView *parent, NSString*  title, float fontSize,  UIC
     return button;
 }
 
-UIButton* makeButtonForAutolayout (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
-{
-    UIButton* button= [UIButton buttonWithType:  UIButtonTypeCustom];
-    button.translatesAutoresizingMaskIntoConstraints = NO;
-
-    if  (title ) {
-        [button setTitle: title forState:UIControlStateNormal ];
-        button.titleLabel.font= [UIFont fontWithName: kFontLatoRegular size:fontSize];
-    }
-    if ( target && callback) {
-        [button addTarget: target action: callback forControlEvents:UIControlEventTouchUpInside ];
-    }
-    if  (fg ) {
-        [button setTitleColor:fg forState:UIControlStateNormal];
-        if (borderWidth > 0 ) {
-            button.layer.borderColor=fg.CGColor;
-            button.layer.borderWidth= borderWidth;
-            button.layer.cornerRadius= kGeomCornerRadius;
-        }
-    }
-    if  (bg ) {
-        button.layer.backgroundColor= bg.CGColor;
-    }
-    [parent addSubview: button ];
-    return button;
-}
-
 UIButton* makeButton (UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id  target, SEL callback, float borderWidth)
 {
     UIButton* button= [UIButton buttonWithType:  UIButtonTypeCustom];
@@ -438,14 +337,6 @@ UIButton* makeRoundIconButton (UIView *parent, NSString*  title, float fontSize,
     return b;
 }
 
-UIButton* makeRoundIconButtonForAutolayout(UIView *parent, NSString*  title, float fontSize,  UIColor *fg, UIColor *bg, id target, SEL callback, float borderWidth, float radius)
-{
-    UIButton *b = makeButtonForAutolayout(parent, title, fontSize, fg, bg, target, callback, borderWidth);
-    b.titleLabel.font = [UIFont fontWithName:kFontIcons size:fontSize];
-    b.layer.cornerRadius = radius;
-    return b;
-}
-
 NSAttributedString* attributedStringOf(NSString* string,double fontSize)
 {
     NSAttributedString* a= [[NSAttributedString alloc]
@@ -475,18 +366,6 @@ NSAttributedString* attributedStringWithColorOf(NSString* string,double fontSize
                             attributes: @{
                                           NSFontAttributeName:[UIFont fontWithName: kFontLatoRegular size:fontSize],
                                           NSForegroundColorAttributeName:color
-                                          }];
-    return a;
-}
-
-NSAttributedString* attributedIconStringWithColorOf(NSString* string,double fontSize, UIColor*color)
-{
-    NSAttributedString* a= [[NSAttributedString alloc]
-                            initWithString:string ?: @""
-                            attributes: @{
-                                          NSFontAttributeName: [UIFont fontWithName: kFontIcons size:fontSize],
-                                          NSForegroundColorAttributeName:color
-                                          
                                           }];
     return a;
 }

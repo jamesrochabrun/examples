@@ -133,7 +133,7 @@ static CGFloat kNextPhotoTolerance = 40;
         iconLabel.textColor = UIColorRGBA(kColorTextReverse);
         [iconLabel sizeToFit];
         UIImage *icon = [UIImage imageFromView:iconLabel];
-        [_share withText:@"share it!" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(shareDish:)];
+        [_share withText:@"share it!" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(sharePressed:)];
         [_share setImage:icon forState:UIControlStateNormal];
         _share.layer.cornerRadius = 0;
 
@@ -146,6 +146,36 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
+}
+
+- (UIImage *)shareImage {
+    UIView *shareView = [UIView new];
+    //shareView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    CGRect frame;
+    UIImageView *iv = [UIImageView new];
+    iv.frame = _iv.bounds;
+    iv.image = _iv.image;
+    UILabel *logo = [UILabel new];
+    [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
+    logo.text = kFontIconLogoFull;
+    [logo sizeToFit];
+    frame = logo.frame;
+    frame.size.width = CGRectGetWidth(iv.frame)-5;
+    frame.origin = CGPointMake(0, -15);
+    logo.frame = frame;
+    
+    if (_mio.source == kMediaItemTypeOomami) {
+        [iv addSubview:logo];
+    }
+    
+    [shareView addSubview:iv];
+    
+    frame = iv.bounds;
+    shareView.frame = frame;
+    
+    [shareView setNeedsLayout];
+    
+    return [UIImage imageFromView:shareView];
 }
 
 -(void)showOptions:(id)sender {
@@ -164,7 +194,7 @@ static CGFloat kNextPhotoTolerance = 40;
                                                           }];
     UIAlertAction *shareDish = [UIAlertAction actionWithTitle:@"Share Dish"
                                                                   style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                                                                      [self shareDish:sender];
+                                                                      [self sharePressed:sender];
                                                                   }];
     UIAlertAction *toggleWishlist = [UIAlertAction actionWithTitle:(_toTryListID ? @"Remove from Wishlist": @"Add to Wishlist")
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -321,11 +351,16 @@ static CGFloat kNextPhotoTolerance = 40;
 //    }
 }
 
-- (void)showShare:(NSString *)url fromView:(id)sender {
-    //NSURL *nsURL = [NSURL URLWithString:url];
-    //NSData *data = [NSData dataWithContentsOfURL:nsURL];
-    UIImage *img = _iv.image;// [UIImage imageWithData:data];
+- (void)sharePressed:(id)sender {
+    UIImage *img = [self shareImage];
     
+    __weak ViewPhotoVC *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf showShare:img fromView:sender];
+    });
+}
+
+- (void)showShare:(UIImage *)img fromView:(id)sender {
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@"Yum!"];
     aip.restaurant = _restaurant;
     aip.mio = _mio;
@@ -910,7 +945,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     self.view.frame = APP.window.bounds;
     CGFloat w = width(self.view);
-    CGFloat h = height(self.view);
+    //CGFloat h = height(self.view);
     CGRect frame;
     CGFloat y;
         

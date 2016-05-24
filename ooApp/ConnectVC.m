@@ -305,10 +305,14 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                             success:^(NSArray *users) {
                                                 weakSelf.searchResultsArray = users;
                                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                                    [_tableAccordion reloadData];
+                                                    [weakSelf.tableAccordion reloadData];
+                                                    [weakSelf.refreshControl endRefreshing];
                                                 });
                                             } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                 NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
+                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                    [weakSelf.refreshControl endRefreshing];
+                                                });
                                             }
                           ];
 }
@@ -394,13 +398,18 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 }
 
 - (void)reload {
-    _gotFriendsResult =
-    _gotFoodiesResult =
-    _gotTrustedUsersResult =
-    _gotInTheKnowResult = NO;
-    
-    [self reloadAfterDeterminingWhoWeAreFollowing];
-    [self updateFollowing];
+    if (_searchMode) {
+        [_roSearch cancel];
+        [self searchForPeople];
+    } else {
+        _gotFriendsResult =
+        _gotFoodiesResult =
+        _gotTrustedUsersResult =
+        _gotInTheKnowResult = NO;
+        
+        [self reloadAfterDeterminingWhoWeAreFollowing];
+        [self updateFollowing];
+    }
 }
 
 - (void)updateFollowing {

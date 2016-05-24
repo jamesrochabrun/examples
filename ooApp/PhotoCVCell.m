@@ -29,6 +29,7 @@
 @property (nonatomic, strong) NSArray *captionConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *imageContraint;
 @property (nonatomic, strong) UILabel *yumIndicator;
+@property (nonatomic, strong) UIImage *imageToShare;
 @end
 
 @implementation PhotoCVCell
@@ -400,8 +401,35 @@
     }];
 }
 
-- (UIImage *)cellImage {
-    return self.backgroundImage.image;
+- (UIImage *)shareImage {
+    UIView *shareView = [UIView new];
+    //shareView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    CGRect frame;
+    UIImageView *iv = [UIImageView new];
+    iv.frame = _backgroundImage.frame;
+    iv.image = _backgroundImage.image;
+    UILabel *logo = [UILabel new];
+    [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
+    logo.text = kFontIconLogoFull;
+    [logo sizeToFit];
+    frame = logo.frame;
+    frame.size.width = CGRectGetWidth(iv.frame)-5;
+    frame.origin = CGPointMake(0, -15);
+    logo.frame = frame;
+
+    if (_mediaItemObject.source == kMediaItemTypeOomami) {
+        [iv addSubview:logo];
+    }
+    
+    [shareView addSubview:iv];
+    
+    frame = iv.bounds;
+    shareView.frame = frame;
+    [shareView setNeedsLayout];
+    
+    _imageToShare = [UIImage imageFromView:shareView];
+    
+    return _imageToShare;
 }
 
 - (void)prepareForReuse {

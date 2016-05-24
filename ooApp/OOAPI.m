@@ -1267,6 +1267,42 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     return op;
 }
+
+//------------------------------------------------------------------------------
+// Name:    addList
+// Purpose:
+//------------------------------------------------------------------------------
++ (AFHTTPRequestOperation *)updateList:(ListObject *)list
+                            success:(void (^)(ListObject *listObject))success
+                            failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    if (!list) {
+        failure(nil,nil);
+        return nil;
+    }
+    UserObject *userInfo = [Settings sharedInstance].userObject;
+    NSUInteger userID = userInfo.userID;
+    if (!userID) {
+        failure(nil,nil);
+        return nil;
+    }
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)list.listID];
+    NSDictionary *parameters = @{
+                                 kKeyListName:list.name,
+                                 kKeyListType:[NSString stringWithFormat:@"%d", list.type],
+                                 };
+    AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      ListObject *l = [ListObject listFromDict:responseObject];
+                                      success(l);
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    
+    return op;
+}
+
 //------------------------------------------------------------------------------
 // Name:    removeVenue fromList
 // Purpose: Remove a restaurant from a list.
@@ -1311,18 +1347,12 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 - (AFHTTPRequestOperation *)addRestaurantsFromList:(NSUInteger)fromListID toList:(NSUInteger)toListID
                                    success:(void (^)(id response))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
-//    NSMutableArray *restaurantIDs;
+    
     if (!fromListID || !toListID) {
         failure(nil,nil);
         return nil;
     }
-//    else {
-//        restaurantIDs = [NSMutableArray array];
-//        [restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//            RestaurantObject *ro = (RestaurantObject *)obj;
-//            [restaurantIDs addObject:[NSString stringWithFormat:@"%lu", (unsigned long)ro.restaurantID]];
-//        }];
-//    }
+
     UserObject *userInfo= [Settings sharedInstance].userObject;
     NSUInteger userID= userInfo.userID;
     if (!userID) {
@@ -1333,7 +1363,6 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/lists/%lu/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)fromListID];
     
-//    NSString *IDs = [restaurantIDs componentsJoinedByString:@","];
     NSDictionary *parameters = @{
                                  kKeyListID: [NSString stringWithFormat:@"[%lu]", (unsigned long)fromListID]
                                  };
@@ -1602,7 +1631,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     AFHTTPRequestOperation *op;
     if (following) {
         NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/followees", kHTTPProtocol, [OOAPI URL], (unsigned long)selfUserID];
-        op = [rm POST: urlString parameters: @{
+        op = [rm POST:urlString parameters: @{
                                                @"user_id": @(otherUserID)
                                               }
              success:^(id responseObject) {

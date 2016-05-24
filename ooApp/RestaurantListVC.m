@@ -16,6 +16,7 @@
 #import "RestaurantVC.h"
 #import "ListsVC.h"
 #import "SearchVC.h"
+#import "OOFeedbackView.h"
 
 @interface RestaurantListVC ()
 
@@ -23,6 +24,8 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *restaurants;
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
+@property (nonatomic, strong) UIAlertController *editListNameAC;
+@property (nonatomic, strong) OOFeedbackView *fv;
 
 @end
 
@@ -41,6 +44,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
+    [self.view bringSubviewToFront:_fv];
+    
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
 
@@ -51,6 +56,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
+    _fv.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_fv];
+    
     _tableView = [[UITableView alloc] init];
     [self.view addSubview:_tableView];
     _tableView.delegate = self;
@@ -82,18 +92,81 @@ static NSString * const cellIdentifier = @"horizontalCell";
         [self removeNavButtonForSide:kNavBarSideTypeRight];
     }
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [self setupEditListAC];
+}
+
+- (void)setupEditListAC {
+    _editListNameAC = [UIAlertController alertControllerWithTitle:@"Edit List Name"
+                                                        message:nil
+                                                 preferredStyle:UIAlertControllerStyleAlert];
+    
+    __weak RestaurantListVC *weakSelf = self;
+    [_editListNameAC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Enter new list name";
+        textField.text = weakSelf.listItem.name;
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel
+                                                   handler:^(UIAlertAction * action) {
+                                                   }];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"Modify"
+                                                 style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                     NSString *name = [_editListNameAC.textFields[0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                                                     
+                                                     if ([name length]) {
+                                                         [weakSelf updateList:name];
+                                                     } else {
+                                                         _editListNameAC.textFields[0].text = weakSelf.listItem.name;
+                                                         _fv.icon = kFontIconRemove;
+                                                         _fv.message = [NSString stringWithFormat:@"Could not change list name"];
+                                                         [_fv show];
+                                                     }
+                                                 }];
+    
+    [_editListNameAC addAction:cancel];
+    [_editListNameAC addAction:ok];
+}
+
+- (void)updateList:(NSString *)name {
+    _listItem.name = name;
+    __weak RestaurantListVC *weakSelf = self;
+    
+    [OOAPI updateList:_listItem success:^(ListObject *listObject) {
+        NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listObject.listName subHeader:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.navTitle = nto;
+            _fv.icon = kFontIconCheckmark;
+            _fv.message = [NSString stringWithFormat:@"Modified list name"];
+            [_fv show];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _fv.icon = kFontIconRemove;
+            _fv.message = [NSString stringWithFormat:@"Could not change list name"];
+            [_fv show];
+        });
+    }];
 }
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv);
 
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_fv(110)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_fv(90)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_fv attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1 constant:1]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_fv attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1 constant:1]];
 }
 
 - (void)setupAlertController {
@@ -117,6 +190,12 @@ static NSString * const cellIdentifier = @"horizontalCell";
 //                                                                       [weakSelf addRestaurantsFromList];
 //                                                                   }];
 
+    UIAlertAction *editName = [UIAlertAction actionWithTitle:@"Edit Name"
+                                                         style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * action) {
+                                                           [weakSelf presentViewController:weakSelf.editListNameAC animated:YES completion:nil];
+                                                       }];
+
     UIAlertAction *deleteList = [UIAlertAction actionWithTitle:@"Delete List"
                                                          style:UIAlertActionStyleDestructive
                                                        handler:^(UIAlertAction * action) {
@@ -130,6 +209,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
                                                      }]; // 3
     
 
+    [_alertController addAction:editName];
     [_alertController addAction:addRestaurantsFromExplore];
 //    [_alertController addAction:addRestaurantsFromList];
     [_alertController addAction:deleteList];

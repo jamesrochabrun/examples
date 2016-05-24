@@ -37,6 +37,8 @@ BOOL isListObject (id  object)
         return nil;
     }
     
+    //NSLog(@"dict=%@", dict);
+    
     ListObject *list = [[ListObject alloc] init];
     list.listID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyListID]);
     if (!list.listID) return nil;

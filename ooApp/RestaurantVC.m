@@ -44,6 +44,7 @@
 @property (nonatomic, strong) NSArray *verticalLayoutContraints;
 @property (nonatomic, strong) NSArray *mediaItems;
 @property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, strong) RestaurantVCCVL *cvl;
 @property (nonatomic) NSUInteger favoriteID;
 @property (nonatomic) NSUInteger toTryID;
 @property (nonatomic, strong) NSArray *followees;
@@ -98,10 +99,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [self setupStyleSheetAC];
     [self setupCreateListAC];
     
-    RestaurantVCCVL *cvl = [[RestaurantVCCVL alloc] init];
-    cvl.delegate = self;
+    _cvl = [[RestaurantVCCVL alloc] init];
+    _cvl.delegate = self;
     
-    _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:cvl];
+    _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:_cvl];
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
     
@@ -329,42 +330,19 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)sharePressed:(id)sender {
-    //MediaItemObject *mio;
-    
-//    if ([_mediaItems count]) {
-//        
-//        mio = [_mediaItems objectAtIndex:0];
-//        
-//        OOAPI *api = [[OOAPI alloc] init];
-//        
-//        if (mio) {
-//            _requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [self showShare:link fromView:sender];
-//                });
-//            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [self showShare:nil fromView:sender];
-//                });
-//            }];
-//        } else {
-//            [self showShare:nil fromView:sender];
-//        }
-//    } else {
-        [self showShare:nil fromView:sender];
-//    }
+    PhotoCVCell *cell = (PhotoCVCell *)[_collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kRestaurantSectionTypeMediaItems]];
+    UIImage *img = [cell shareImage];
+    __weak RestaurantVC *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf showShare:img fromView:sender];
+    });
 }
 
-- (void)showShare:(NSString *)url fromView:(id)sender {
-    //NSURL *nsURL = [NSURL URLWithString:url];
-    //NSData *data = [NSData dataWithContentsOfURL:nsURL];
-    PhotoCVCell *cell = (PhotoCVCell *)[_collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kRestaurantSectionTypeMediaItems]];
-    UIImage *img = cell.cellImage;// [UIImage imageWithData:data];
-    
+- (void)showShare:(UIImage *)image fromView:(id)sender {
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;
     
-    NSArray *items = @[aip, img];
+    NSArray *items = @[aip, image];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -922,8 +900,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             break;
         case kRestaurantSectionTypeMain: {
             RestaurantMainCVCell *cvc = (RestaurantMainCVCell *)[collectionView cellForItemAtIndexPath:indexPath];
-            return [cvc getHeight];
-            return 170;
+            return ([cvc getHeight] ? [cvc getHeight]:170);
             break;
         }
         case kRestaurantSectionTypeMediaItems: {

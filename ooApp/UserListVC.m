@@ -28,16 +28,16 @@
 
 @implementation UserListTableSectionHeader
 
-- (instancetype) initWithExpandedFlag: (BOOL) expanded_
+- (instancetype)initWithExpandedFlag:(BOOL)expanded
 {
     self=[super init];
     if (self) {
-        _labelTitle=makeLabelLeft (self, nil, kGeomFontSizeH3);
-        _labelTitle.textColor=UIColorRGBA(kColorWhite);
-        _labelExpander=makeIconLabel(self, kFontIconBack, kGeomIconSize);
-        _labelExpander.textColor= UIColorRGBA(kColorTextActive);
-        self.backgroundColor=UIColorRGBA(kColorOffWhite);
-        _isExpanded=expanded_;
+        _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH3);
+        _labelTitle.textColor = UIColorRGBA(kColorWhite);
+        _labelExpander = makeIconLabel(self, kFontIconBack, kGeomIconSize);
+        _labelExpander.textColor = UIColorRGBA(kColorTextActive);
+        self.backgroundColor = UIColorRGBA(kColorOffWhite);
+        _isExpanded=expanded;
     }
     return self;
 }

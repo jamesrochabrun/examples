@@ -19,7 +19,6 @@
 @property (nonatomic, strong) UIImageView *backgroundImage;
 @property (nonatomic, strong) UIImageView *phoneImage;
 @property (nonatomic, strong) UILabel *title;
-
 @end
 
 @implementation IntroScreenView
@@ -53,26 +52,39 @@
 - (void)setIntroTitle:(NSString *)introTitle {
     if (_introTitle == introTitle) return;
     _introTitle = introTitle;
-    _title.text = _introTitle;
+    //_title.text = _introTitle;
     [self formatHeader];
 }
 
 - (void)setIntroDescription:(NSString *)introDescription {
     if (_introDescription == introDescription) return;
     _introDescription = introDescription;
+    //_title.text = _introTitle;
+    [self formatHeader];
+}
+
+- (void)setUnderlinedWords:(NSArray *)underlinedWords {
+    if (_underlinedWords == underlinedWords) return;
+    _underlinedWords = underlinedWords;
+    //_title.text = _introTitle;
     [self formatHeader];
 }
 
 - (void)formatHeader {
-    NSDictionary *titleAttributes =  @{
-                        NSFontAttributeName:
-                            [UIFont fontWithName:kFontLatoBold size:kGeomFontSizeBig]
-                        };
-    NSDictionary *descriptionAttributes =  @{
-                                       NSFontAttributeName:
-                                           [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1]
-                                       };
+    NSDictionary *titleAttributes = @{
+        NSFontAttributeName:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH1]
+        };
     
+    NSDictionary *descriptionAttributes = @{
+        NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2]
+        };
+
+    NSDictionary *underlineAttributes =  @{
+        NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2],
+        NSUnderlineStyleAttributeName:@(NSUnderlineStyleThick),
+        NSUnderlineColorAttributeName:UIColorRGBA(kColorTextActive)
+        };
+
     NSString *s = [NSString stringWithFormat:@"%@ %@", _introTitle, _introDescription];
     NSMutableAttributedString *as = [[NSMutableAttributedString alloc] initWithString:s];
     
@@ -85,6 +97,13 @@
     if (_introDescription) {
         r = [s rangeOfString:_introDescription];
         [as setAttributes:descriptionAttributes range:r];
+    }
+
+    for (NSString *u in _underlinedWords) {
+        r = [s rangeOfString:u];
+        if (r.length != NSNotFound) {
+            [as setAttributes:underlineAttributes range:r];
+        }
     }
 
     _title.attributedText = as;
@@ -104,7 +123,7 @@
     [super layoutSubviews];
     CGFloat w = windowWidth();
     CGFloat h = height(self);
-    CGFloat imageWidth = w*3/4;
+    CGFloat imageWidth = w*5/6;
     CGFloat imageY = h*1/3;
     CGFloat imageHeight = 0;
     

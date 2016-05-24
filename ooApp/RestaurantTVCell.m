@@ -21,6 +21,7 @@
 @property (nonatomic, strong) UIView *followeesView;
 @property (nonatomic, strong) UILabel *numberAdditionalFollowees;
 @property (nonatomic, strong) AFHTTPRequestOperation *roFollowes;
+@property (nonatomic, strong) MediaItemObject *mio;
 @end
 
 enum  {
@@ -60,15 +61,15 @@ enum  {
     OOAPI *api = [[OOAPI alloc] init];
     
     NSString *imageRef;
-    MediaItemObject *mio;
+    
     if ([restaurant.mediaItems count]) {
-        mio = [restaurant.mediaItems objectAtIndex:0];
+        _mio = [restaurant.mediaItems objectAtIndex:0];
     } else if ([restaurant.imageRefs count]) {
         imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
     }
     
-    if (mio) {
-        self.requestOperation = [api getRestaurantImageWithMediaItem:mio
+    if (_mio) {
+        self.requestOperation = [api getRestaurantImageWithMediaItem:_mio
                                                             maxWidth:width(self)
                                                            maxHeight:0
                                                              success:^(NSString *link) {
@@ -531,37 +532,45 @@ enum  {
     }
 }
 
-- (void)sharePressed:(id)sender {
-//    MediaItemObject *mio;
-//    NSArray *mediaItems = _restaurant.mediaItems;
-//    if (mediaItems && [mediaItems count]) {
-//        mio = [mediaItems objectAtIndex:0];
-//        
-//        OOAPI *api = [[OOAPI alloc] init];
-//        
-//        if (mio) {
-//            self.requestOperation = [api getRestaurantImageWithMediaItem:mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [self showShare:link fromView:sender];
-//                });
-//            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [self showShare:nil fromView:sender];
-//                });
-//            }];
-//        } else {
-//            [self showShare:nil fromView:sender];
-//        }
-//    } else {
-        [self showShare:nil fromView:sender];
-//    }
+- (UIImage *)shareImage {
+    UIView *shareView = [UIView new];
+    //shareView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    CGRect frame;
+    UIImageView *iv = [UIImageView new];
+    iv.frame =  self.thumbnail.bounds;
+    iv.image =  self.thumbnail.image;
+    UILabel *logo = [UILabel new];
+    [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
+    logo.text = kFontIconLogoFull;
+    [logo sizeToFit];
+    frame = logo.frame;
+    frame.size.width = CGRectGetWidth(iv.frame)-5;
+    frame.origin = CGPointMake(0, -15);
+    logo.frame = frame;
+    
+    if (_mio && _mio.source == kMediaItemTypeOomami) {
+        [iv addSubview:logo];
+    }
+    
+    [shareView addSubview:iv];
+    
+    frame = iv.bounds;
+    shareView.frame = frame;
+    [shareView setNeedsLayout];
+    
+    return [UIImage imageFromView:shareView];
 }
 
-- (void)showShare:(NSString *)url fromView:(id)sender {
-    //NSURL *nsURL = [NSURL URLWithString:url];
-    //NSData *data = [NSData dataWithContentsOfURL:nsURL];
-    UIImage *img = self.thumbnail.image;// [UIImage imageWithData:data];
+- (void)sharePressed:(id)sender {
+    UIImage *img = [self shareImage];
     
+    __weak RestaurantTVCell *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf showShare:img fromView:sender];
+    });
+}
+
+- (void)showShare:(UIImage *)img fromView:(id)sender {
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;
     

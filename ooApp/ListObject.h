@@ -42,10 +42,10 @@ extern NSString *const kKeyListNumRestaurants;
 
 @property (nonatomic) NSUInteger listID;
 @property (nonatomic, strong) NSArray *userIDs;
-@property (nonatomic,strong) NSMutableArray *venues;
+@property (nonatomic, strong) NSMutableArray *venues;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) ListType type;
-@property (nonatomic, strong) NSString *imageURL;
+//@property (nonatomic, strong) NSString *imageURL;
 @property (nonatomic) NSUInteger numRestaurants;
 @property (nonatomic, strong) MediaItemObject *mediaItem;
 @property (nonatomic) ListDisplayType listDisplayType;

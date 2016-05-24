@@ -15,5 +15,6 @@
 @property (nonatomic, strong) NSString *phoneImageURL;
 @property (nonatomic, strong) NSString *introTitle;
 @property (nonatomic, strong) NSString *introDescription;
+@property (nonatomic, strong) NSArray *underlinedWords;
 
 @end

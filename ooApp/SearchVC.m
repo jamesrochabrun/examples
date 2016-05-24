@@ -176,7 +176,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     _maxPrice = 3;
     
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [self populateOptions];
+//    [self populateOptions];
     
     _currentLocation = [LocationManager sharedInstance].currentUserLocation;
     [self updateLocation];
@@ -193,7 +193,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
     if (searchBar == _locationSearchBar) {
-        if ([_locations count]) {
+        if ([_locations count] == 1) {
             _locationsTable.alpha = 0;
             CLPlacemark *placemark = [_locations objectAtIndex:0];
             _locationSearchBar.text = [Common locationString:placemark];
@@ -264,32 +264,32 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 }
 
 
-- (void)populateOptions {
-    __weak SearchVC *weakSelf = self;
-    
-    self.dropDownList.delegate = self;
-    OOAPI *api = [[OOAPI alloc] init];
-    [api getListsOfUser:[Settings sharedInstance].userObject.userID
-         withRestaurant:0
-             includeAll:YES
-                success:^(NSArray *lists) {
-        if ([lists count]) {
-            _defaultListObject = [[ListObject alloc] init];
-            _defaultListObject.listID = 0;
-            _defaultListObject.name = [self getFilteredListName];
-            NSMutableArray *theLists = [NSMutableArray arrayWithObject:_defaultListObject];
-            
-            [theLists addObjectsFromArray:lists];
-            weakSelf.dropDownList.options = theLists;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.navTitleView setDDLState:YES];
-            });
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
-    }];
-}
+//- (void)populateOptions {
+//    __weak SearchVC *weakSelf = self;
+//    
+//    self.dropDownList.delegate = self;
+//    OOAPI *api = [[OOAPI alloc] init];
+//    [api getListsOfUser:[Settings sharedInstance].userObject.userID
+//         withRestaurant:0
+//             includeAll:YES
+//                success:^(NSArray *lists) {
+//        if ([lists count]) {
+//            _defaultListObject = [[ListObject alloc] init];
+//            _defaultListObject.listID = 0;
+//            _defaultListObject.name = [self getFilteredListName];
+//            NSMutableArray *theLists = [NSMutableArray arrayWithObject:_defaultListObject];
+//            
+//            [theLists addObjectsFromArray:lists];
+//            weakSelf.dropDownList.options = theLists;
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self.navTitleView setDDLState:YES];
+//            });
+//        }
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        ;
+//    }];
+//}
 
 - (void)dropDownList:(DropDownListTVC *)dropDownList optionTapped:(id)object {
     if (![object isKindOfClass:[ListObject class]]) return;

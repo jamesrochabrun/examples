@@ -25,5 +25,6 @@
 @property (nonatomic, weak) id<PhotoCVCellDelegate> delegate;
 
 - (void)showActionButton:(BOOL)show;
-- (UIImage *)cellImage;
+- (UIImage *)shareImage;
+
 @end

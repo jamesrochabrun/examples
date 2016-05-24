@@ -57,5 +57,6 @@ typedef enum {
 
 - (void)showComponents:(BOOL)show;
 - (void)setComponentsAlpha:(CGFloat)alpha;
+- (UIImage *)shareImage;
 
 @end
