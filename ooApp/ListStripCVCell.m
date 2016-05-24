@@ -70,9 +70,29 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
         _noRestautantsMessage.translatesAutoresizingMaskIntoConstraints = NO;
         _noRestautantsMessage.hidden = YES;
 //        [DebugUtilities addBorderToViews:@[_nameHeader]];
+        
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        [center addObserver:self selector:@selector(listAltered:)
+                       name:kNotificationListAltered
+                     object:nil];
     }
     
     return self;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)listAltered:(NSNotification *)not {
+    id list = [not object];
+    
+    if ([list isKindOfClass:[ListObject class]]) {
+        ListObject *l = (ListObject *)list;
+        if (l.listID == _listItem.listID) {
+            [self setListItem:l];
+        }
+    }
 }
 
 - (void)prepareForReuse

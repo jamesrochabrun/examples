@@ -139,6 +139,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
             _fv.icon = kFontIconCheckmark;
             _fv.message = [NSString stringWithFormat:@"Modified list name"];
             [_fv show];
+            NOTIFY_WITH(kNotificationListAltered, listObject);
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{

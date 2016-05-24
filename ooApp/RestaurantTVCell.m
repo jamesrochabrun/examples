@@ -305,17 +305,19 @@ enum  {
 {
     if (_listToAddTo) {
         __weak  RestaurantTVCell *weakSelf = self;
+        __weak ListObject *weakList = _listToAddTo;
         [_listToAddTo removeVenue: _restaurant
                   completionBlock:^(BOOL success) {
                       [weakSelf expressMode];
-                      NOTIFY_WITH(kNotificationListAltered, @(_listToAddTo.listID));
+                      NOTIFY_WITH(kNotificationListAltered, weakList);
                   }];
     } else {
         NSLog (@"THERE IS NO LIST TO REMOVE FROM.");
     }
 }
 
-- (void)showLists {
+- (void)showLists
+{
     ListsVC *vc = [[ListsVC alloc] init];
     vc.restaurantToAdd = _restaurant;
     [vc getLists];

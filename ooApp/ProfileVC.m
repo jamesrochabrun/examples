@@ -1104,7 +1104,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 - (void)handleListAltered: (NSNotification*)not
 {
     NSLog (@"LIST ALTERED");
-    [self getLists];
+    //[self getLists];
 }
 
 //------------------------------------------------------------------------------
