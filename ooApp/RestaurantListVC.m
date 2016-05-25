@@ -233,12 +233,13 @@ static NSString * const cellIdentifier = @"horizontalCell";
 //------------------------------------------------------------------------------
 - (void)handleListAltered: (NSNotification*)not
 {
-    NSNumber* listObjectIDNumber= not.object;
-    NSUInteger listObjectID= [listObjectIDNumber isKindOfClass: [NSNumber class ]] ?listObjectIDNumber.unsignedIntegerValue:0;
-    if (listObjectID && listObjectID==_listItem.listID ) {
-        
-        NSLog (@"LIST ALTERED");
-        [self fetchRestaurants];
+    id object = not.object;
+    if ([object isKindOfClass:[ListObject class]]) {
+        ListObject *l = (ListObject *)object;
+        if (l.listID ==_listItem.listID ) {
+            NSLog (@"LIST ALTERED");
+            [self fetchRestaurants];
+        }
     }
 }
 
@@ -426,12 +427,13 @@ static NSString * const cellIdentifier = @"horizontalCell";
         
         [api deleteRestaurant:restaurant.restaurantID fromList:_listItem.listID
                       success:^(NSArray *lists) {
+                          NOTIFY_WITH(kNotificationListAltered, _listItem);
                           [api getRestaurantsWithListID:_listItem.listID
                                             andLocation:[LocationManager sharedInstance].currentUserLocation
                                                 success:^(NSArray *restaurants) {
                                                     _restaurants = restaurants;
-                                                    weakSelf.listItem.venues= restaurants.mutableCopy;
-                                                    ON_MAIN_THREAD(^{
+                                                    weakSelf.listItem.venues = restaurants.mutableCopy;
+                                                    dispatch_async(dispatch_get_main_queue(), ^{
                                                         [weakSelf.tableView reloadData];
                                                     });
                                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

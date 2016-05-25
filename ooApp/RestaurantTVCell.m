@@ -599,7 +599,6 @@ enum  {
     avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
         NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
     };
-    
 }
 
 - (void)setupCreateListAC {
@@ -649,31 +648,54 @@ enum  {
     __weak RestaurantTVCell *weakSelf = self;
     __weak ListObject *weakList = list;
     
-    OOAPI *api= [[OOAPI alloc] init];
-    [api addRestaurants:@[_restaurant] toList:list.listID
-                success:^(id response) {
-                    NSLog (@"SUCCESS IN ADDING LIST.");
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [weakSelf expressMode];
-                        NOTIFY_WITH(kNotificationListAltered, weakList);
-                        
-                        UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@", list.listName]
-                                                                                  message:[NSString stringWithFormat:@"Added '%@' to the list.", weakSelf.restaurant.name]
-                                                                           preferredStyle:UIAlertControllerStyleAlert];
-                        
-                        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
-                                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-
-                                                                     }];
-                        
-                        [a addAction:ok];
-                        //seem like a hack...use delegates instead
-                        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
-
-                    });
-                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                    NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
-                }];
+    [list addVenue:_restaurant completionBlock:^(BOOL added) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (added) {
+                [weakSelf expressMode];
+                NOTIFY_WITH(kNotificationListAltered, weakList);
+                UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@", weakList.listName]
+                                                                          message:[NSString stringWithFormat:@"Added '%@' to the list.", weakSelf.restaurant.name]
+                                                                   preferredStyle:UIAlertControllerStyleAlert];
+                
+                UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
+                                                             style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                                 
+                                                             }];
+                
+                [a addAction:ok];
+                //seem like a hack...use delegates instead
+                [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
+            } else {
+                
+            }
+        });
+    }];
+    
+//    OOAPI *api= [[OOAPI alloc] init];
+//    [api addRestaurants:@[_restaurant] toList:list.listID
+//                success:^(id response) {
+//                    NSLog (@"SUCCESS IN ADDING LIST.");
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        [weakSelf expressMode];
+//                        NOTIFY_WITH(kNotificationListAltered, weakList);
+//                        
+//                        UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@", list.listName]
+//                                                                                  message:[NSString stringWithFormat:@"Added '%@' to the list.", weakSelf.restaurant.name]
+//                                                                           preferredStyle:UIAlertControllerStyleAlert];
+//                        
+//                        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK"
+//                                                                     style: UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//
+//                                                                     }];
+//                        
+//                        [a addAction:ok];
+//                        //seem like a hack...use delegates instead
+//                        [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
+//
+//                    });
+//                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                    NSLog  (@"Failed to add venue to list %@",error);
+//                }];
 }
 
 - (void)addToList:(RestaurantObject *)restaurant {

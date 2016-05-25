@@ -109,14 +109,14 @@ BOOL isListObject (id  object)
     [OOAPI removeVenue: venue
               fromList: self
                success:^(id response) {
-                   NSLog (@"SUCCESS IN REMOVING VENUE FROM EVENT.");
+                   NSLog (@"Venue removed from list.");
                    weakSelf.numRestaurants--;
                    [weakSelf.venues removeObject: venue];
                    if  (completionBlock) completionBlock (YES);
                }
                failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 
-                   NSLog  (@"FAILED TO REMOVE VENUE FROM EVENT %@",error);
+                   NSLog  (@"Failed to remove venue from list %@", error);
                    if  (completionBlock) completionBlock (NO);
                }];
 }
@@ -129,7 +129,7 @@ BOOL isListObject (id  object)
     }
     
     if (!_venues)
-        _venues=[NSMutableArray new];
+        _venues = [NSMutableArray new];
     
     @synchronized(_venues)  {
         if (![_venues containsObject: venue]) {
@@ -137,11 +137,11 @@ BOOL isListObject (id  object)
             OOAPI *api= [[OOAPI alloc] init];
             [api addRestaurants: @[venue] toList:_listID
                         success:^(id response) {
-                            NSLog (@"SUCCESS IN ADDING VENUE TO EVENT.");
+                            NSLog (@"Venue added to list");
                             self.numRestaurants++;
                             if  (completionBlock) completionBlock (YES);
                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                            NSLog  (@"FAILED TO ADD VENUE TO EVENT %@",error);
+                            NSLog  (@"Failed to add venue to list %@",error);
                             [_venues removeObject: venue];
                             if  (completionBlock) completionBlock (NO);
                         }];

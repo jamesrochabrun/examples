@@ -72,15 +72,15 @@
 
 - (void)formatHeader {
     NSDictionary *titleAttributes = @{
-        NSFontAttributeName:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH1]
+        NSFontAttributeName:[UIFont fontWithName:kFontLatoBold size:(IS_IPHONE4) ? kGeomFontSizeH1 : kGeomFontSizeBig]
         };
     
     NSDictionary *descriptionAttributes = @{
-        NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2]
+                                            NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:(IS_IPHONE4) ? kGeomFontSizeH2 : kGeomFontSizeH1]
         };
 
     NSDictionary *underlineAttributes =  @{
-        NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2],
+        NSFontAttributeName:[UIFont fontWithName:kFontLatoRegular size:(IS_IPHONE4) ? kGeomFontSizeH2 : kGeomFontSizeH1],
         NSUnderlineStyleAttributeName:@(NSUnderlineStyleThick),
         NSUnderlineColorAttributeName:UIColorRGBA(kColorTextActive)
         };
@@ -142,7 +142,7 @@
     frame.size = s;
     _title.frame = frame;
     
-    frame.origin = CGPointMake((self.frame.size.width - _title.frame.size.width)/2, (imageY-CGRectGetHeight(frame))/2);//45);
+    frame.origin = CGPointMake((self.frame.size.width - _title.frame.size.width)/2, (imageY-CGRectGetHeight(frame))/2);
     
     _title.frame = frame;
     

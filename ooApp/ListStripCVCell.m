@@ -161,7 +161,7 @@ static NSString * const FeaturedRestaurantCellIdentifier = @"FeaturedRestaurantC
 
 - (void)setListItem:(ListObject *)listItem
 {
-    if (_listItem == listItem) return;
+//    if (_listItem == listItem) return;
     
     _listItem = listItem;
     _nameHeader.name = _listItem.listName;

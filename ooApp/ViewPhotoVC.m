@@ -391,9 +391,9 @@ static CGFloat kNextPhotoTolerance = 40;
     }];
     
     
-//    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
-//        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
-//    };
+    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+    };
 }
 
 - (id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(NSString *)activityType {
