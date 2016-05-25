@@ -222,9 +222,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)addRestaurantToList:(ListObject *)list {
-    OOAPI *api = [[OOAPI alloc] init];
+    //OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
-    [api addRestaurants:@[_restaurant] toList:list.listID success:^(id response) {
+    [OOAPI addRestaurants:@[_restaurant] toList:list.listID success:^(id response) {
         ON_MAIN_THREAD(^{
             [weakSelf getListsForRestaurant];
         });
@@ -330,8 +330,14 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)sharePressed:(id)sender {
-    PhotoCVCell *cell = (PhotoCVCell *)[_collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kRestaurantSectionTypeMediaItems]];
-    UIImage *img = [cell shareImage];
+    UIImage *img = nil;
+    for (id cell in [_collectionView visibleCells]) {
+        if ([cell isKindOfClass:[PhotoCVCell class]]) {
+            PhotoCVCell *p = (PhotoCVCell *)cell;
+            img = [p shareImage];
+            break;
+        }
+    }
     __weak RestaurantVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf showShare:img fromView:sender];
@@ -342,7 +348,13 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;
     
-    NSArray *items = @[aip, image];
+    NSArray *items;
+    
+    if (image) {
+        items = @[aip, image];
+    } else {
+        items = @[aip];
+    }
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     

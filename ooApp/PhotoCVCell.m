@@ -348,10 +348,18 @@
 
 - (void)handleMediaItemAltered:(NSNotification*)not
 {
-    NSNumber *number= not.object;
-    NSUInteger identifier = [number isKindOfClass:[NSNumber class]]? number.unsignedIntegerValue:0;
-    if (identifier ==_mediaItemObject.mediaItemId) {
-        [self updateLikedState];
+    id object = not.object;
+    if ([object isKindOfClass:[MediaItemObject class]]) {
+        MediaItemObject *mio = (MediaItemObject *)object;
+        if (mio && mio.mediaItemId == _mediaItemObject.mediaItemId) {
+            
+            _mediaItemObject.caption = mio.caption;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self updateLikedState];
+                [self setNeedsUpdateConstraints];
+            });
+            
+        }
     }
 }
 
@@ -408,6 +416,8 @@
     UIImageView *iv = [UIImageView new];
     iv.frame = _backgroundImage.frame;
     iv.image = _backgroundImage.image;
+    if (!iv.image) return nil;
+    
     UILabel *logo = [UILabel new];
     [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
     logo.text = kFontIconLogoFull;

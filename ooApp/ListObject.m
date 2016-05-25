@@ -134,8 +134,7 @@ BOOL isListObject (id  object)
     @synchronized(_venues)  {
         if (![_venues containsObject: venue]) {
             [_venues addObject: venue];
-            OOAPI *api= [[OOAPI alloc] init];
-            [api addRestaurants: @[venue] toList:_listID
+            [OOAPI addRestaurants: @[venue] toList:_listID
                         success:^(id response) {
                             NSLog (@"Venue added to list");
                             self.numRestaurants++;

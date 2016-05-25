@@ -86,12 +86,18 @@ typedef enum {
     
     [self registerForNotification:kNotificationRestaurantListsNeedsUpdate
                           calling:@selector(handleRestaurantListAltered:)];
+    [self registerForNotification:kNotificationListDeleted
+                          calling:@selector(handleListDeleted:)];
+}
+
+- (void)handleListDeleted:(NSNotification*)not
+{
+    [self getLists];
 }
 
 - (void)handleRestaurantListAltered:(NSNotification*)not
 {
-//    [self getLists];
-    //[_headerView refreshUserStats];
+    [self getLists];
 }
 
 - (void)dealloc {
@@ -197,18 +203,17 @@ typedef enum {
 - (void)createListNamed:(NSString *)name {
     OOAPI *api = [[OOAPI alloc] init];
     __weak ListsVC *weakSelf = self;
-    __weak OOAPI *weakAPI = api;
+
     [api addList:name success:^(ListObject *listObject) {
         if (listObject.listID) {
-            [weakAPI addRestaurants:@[_restaurantToAdd] toList:listObject.listID success:^(id response) {
+            [OOAPI addRestaurants:@[_restaurantToAdd] toList:listObject.listID success:^(id response) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakSelf getLists];
                     [weakSelf getListsForRestaurant];
                 });
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                NSLog(@"Could not add restaurant to list: %@", error);
+                NSLog(@"Could not create list: %@", error);
             }];
-//            [weakSelf addRestaurantToList:listObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Could not create list: %@", error);
@@ -216,10 +221,9 @@ typedef enum {
 }
 
 - (void)addRestaurantToList:(ListObject *)list {
-    OOAPI *api = [[OOAPI alloc] init];
     __weak ListsVC *weakSelf = self;
 
-    [api addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
+    [OOAPI addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf getListsForRestaurant];
         });

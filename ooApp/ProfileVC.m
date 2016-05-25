@@ -1901,7 +1901,9 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
                        caption:text
                        success:^{
                            weakSelf.mediaItemBeingEdited.caption= text;
+                           NOTIFY_WITH(kNotificationMediaItemAltered, weakSelf.mediaItemBeingEdited);
                            weakSelf.mediaItemBeingEdited= nil;
+                           
                            NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
                            
                        }

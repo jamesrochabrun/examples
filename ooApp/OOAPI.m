@@ -1380,7 +1380,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // Name:    addRestaurants:toList
 // Purpose: Add restaurants to a user's favorites list
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listID
++ (AFHTTPRequestOperation *)addRestaurants:(NSArray *)restaurants toList:(NSUInteger)listID
                                    success:(void (^)(id response))success
                                    failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
     NSMutableArray *restaurantIDs;
@@ -3313,16 +3313,16 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
-//    APP.usingStagingServer=NO;
+#ifdef ADHOC
+    APP.usingStagingServer=NO;
     return kOOURLProduction;
-//#else
-//    if (APP.usingStagingServer) {
-//        return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#endif
+#else
+    if (APP.usingStagingServer) {
+        return kOOURLStage;
+    } else {
+        return kOOURLProduction;
+    }
+#endif
 }
 
 @end

@@ -1050,7 +1050,7 @@ static CGFloat kNextPhotoTolerance = 40;
                         [weakSelf.yumButton setSelected:NO];
                         [weakSelf updateNumYums];
                         NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
-                        NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
+                        NOTIFY_WITH(kNotificationMediaItemAltered, _mio)
                     });
                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                     NSLog(@"ERROR: failed to unlike photo: %@", error);;
@@ -1069,7 +1069,7 @@ static CGFloat kNextPhotoTolerance = 40;
                         }];
                         
                         NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
-                        NOTIFY_WITH(kNotificationMediaItemAltered, @(_mio.mediaItemId))
+                        NOTIFY_WITH(kNotificationMediaItemAltered, _mio)
                     });
                 } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                     NSLog(@"ERROR: failed to like photo: %@", error);;

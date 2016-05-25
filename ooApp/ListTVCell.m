@@ -98,7 +98,7 @@
         }];
     } else {
         //add to list
-        [api addRestaurants:@[_restaurantToAdd] toList:_list.listID success:^(id response) {
+        [OOAPI addRestaurants:@[_restaurantToAdd] toList:_list.listID success:^(id response) {
             [weakSelf getListsForRestaurant];
             OOAPI *apiInner = [[OOAPI alloc] init];
             [apiInner getList:_list.listID success:^(ListObject *list) {
@@ -229,7 +229,7 @@
     [api getRestaurantsWithListID:_list.listID
                           andLocation:[LocationManager sharedInstance].currentUserLocation
                           success:^(NSArray *restaurants) {
-        [api addRestaurants:restaurants toList:_listToAddTo.listID success:^(id response) {
+        [OOAPI addRestaurants:restaurants toList:_listToAddTo.listID success:^(id response) {
             ;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;

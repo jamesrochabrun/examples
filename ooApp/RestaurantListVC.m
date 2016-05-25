@@ -248,10 +248,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
     __weak  RestaurantListVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
     [api deleteList:_listItem.listID success:^(NSArray *lists) {
-        NOTIFY_WITH(kNotificationListDeleted, @(_listItem.listID));
-        
-        [ weakSelf.navigationController popViewControllerAnimated:YES];
-
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+            NOTIFY_WITH(kNotificationListDeleted, _listItem);
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];
