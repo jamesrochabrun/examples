@@ -1900,9 +1900,9 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     [OOAPI setMediaItemCaption:_mediaItemBeingEdited.mediaItemId
                        caption:text
                        success:^{
-                           weakSelf.mediaItemBeingEdited.caption= text;
-                           NOTIFY_WITH(kNotificationMediaItemAltered, weakSelf.mediaItemBeingEdited);
-                           weakSelf.mediaItemBeingEdited= nil;
+                           _mediaItemBeingEdited.caption = text;
+                           NOTIFY_WITH(kNotificationMediaItemAltered, _mediaItemBeingEdited);
+                           _mediaItemBeingEdited= nil;
                            
                            NSLog (@"SUCCESSFULLY SET THE CAPTION OF A PHOTO");
                            

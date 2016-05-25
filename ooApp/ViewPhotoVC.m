@@ -88,8 +88,6 @@ static CGFloat kNextPhotoTolerance = 40;
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_optionsButton withIcon:kFontIconMoreSolid fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-
-        _optionsButton.hidden = _closeButton.hidden = YES;
         
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
         [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorClear target:self selector:@selector(showRestaurant)];
