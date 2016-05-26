@@ -163,6 +163,7 @@
                 [OOAPI unsetMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
                     ON_MAIN_THREAD(^{
                         [_yumButton setSelected:NO];
+                        _mediaItemObject.isUserYummed = NO;
                         [weakSelf updateNumYums];
                         if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
                             [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
@@ -183,6 +184,7 @@
                         } completion:^(BOOL finished) {
                             [_yumButton setSelected:YES];
                         }];
+                        _mediaItemObject.isUserYummed = YES;
                         [weakSelf updateNumYums];
                         if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
                             [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
@@ -389,6 +391,7 @@
 - (void)updateNumYums {
     __weak PhotoCVCell *weakSelf = self;
     _roGetNumLikes = [OOAPI getNumMediaItemLikes:_mediaItemObject.mediaItemId success:^(NSUInteger count) {
+        _mediaItemObject.yumCount = count;
         if (count) {
             _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)count];
             ON_MAIN_THREAD(^ {

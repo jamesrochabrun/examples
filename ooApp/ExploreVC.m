@@ -472,6 +472,7 @@ typedef enum: char {
         case FILTER_PEOPLE:
             _searchBar.placeholder = kSearchPlaceholderPeople;
             [self removeNavButtonForSide:kNavBarSideTypeRight];
+            [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
 
             _tablePeople.hidden = NO;
             _tableRestaurants.hidden= YES;
@@ -494,6 +495,7 @@ typedef enum: char {
         case FILTER_YOU:
             _searchBar.placeholder = kSearchPlaceholderYou;
             [self removeNavButtonForSide:kNavBarSideTypeRight];
+            [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
             
             _tablePeople.hidden = YES;
             _tableRestaurants.hidden= NO;

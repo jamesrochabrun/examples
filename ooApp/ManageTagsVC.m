@@ -50,6 +50,7 @@ static NSString * const cellIdentifier = @"tagCell";
     
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];

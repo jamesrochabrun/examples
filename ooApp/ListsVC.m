@@ -52,6 +52,7 @@ typedef enum {
     [super viewWillAppear:animated];
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     
     [self.navigationController setNavigationBarHidden:NO animated:NO];
     

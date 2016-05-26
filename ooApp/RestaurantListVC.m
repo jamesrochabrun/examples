@@ -90,6 +90,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
         [self addNavButtonWithIcon:kFontIconMoreSolid target:self action:@selector(moreButtonPressed:) forSide:kNavBarSideTypeRight isCTA:NO];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     }
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self setupEditListAC];
@@ -178,7 +179,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _alertController.view.tintColor = UIColorRGBA(kColorBlack);
 
     __weak  RestaurantListVC *weakSelf = self;
-    UIAlertAction *addRestaurantsFromExplore = [UIAlertAction actionWithTitle:@"Add Restaurants from Explore"
+    UIAlertAction *addRestaurantsFromExplore = [UIAlertAction actionWithTitle:@"Add Restaurants from Search"
                                                                          style:UIAlertActionStyleDefault
                                                                        handler:^(UIAlertAction * action) {
                                                                            [weakSelf addRestaurantsFromExplore];

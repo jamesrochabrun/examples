@@ -933,6 +933,7 @@
     NSTimeInterval now= [[NSDate date ] timeIntervalSince1970];
     if (votingEnds &&  now >= votingEnds) {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
+        [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
         [self addNavButtonWithIcon:kFontIconMoreSolid target:self action:@selector(userPressedMenuButton:) forSide:kNavBarSideTypeRight isCTA:NO];
@@ -1244,6 +1245,7 @@
 - (void)votingEnded
 {
     [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     [self setMode: VOTING_MODE_SHOW_RESULTS];
 }
 

@@ -146,8 +146,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     self.navTitle = _nto;
     
-    [self removeNavButtonForSide:kNavBarSideTypeRight];
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
     [self addNavButtonWithIcon:kFontIconPhotoThick target:self action:@selector(showPickPhotoUI) forSide:kNavBarSideTypeRight isCTA:YES];
     
     [self.navigationController setNavigationBarHidden:NO animated:NO];
