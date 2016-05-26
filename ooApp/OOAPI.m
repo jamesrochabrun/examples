@@ -3314,14 +3314,14 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // add the compiler flag -DADHOC
  
 //#ifdef ADHOC
-//    APP.usingStagingServer=NO;
-    return kOOURLProduction;
-//#else
+//    APP.usingStagingServer = NO;
 //    if (APP.usingStagingServer) {
 //        return kOOURLStage;
 //    } else {
 //        return kOOURLProduction;
 //    }
+//#else
+    return kOOURLProduction;
 //#endif
 }
 

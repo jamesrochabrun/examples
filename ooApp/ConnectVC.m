@@ -174,7 +174,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     
     _friendsArray = [NSArray new];
     _foodiesArray = [NSArray new];
-    _followeesArray = [NSArray new];
+    //_followeesArray = [NSArray new];
     _trustedUsersArray = [NSArray new];
     _inTheKnowUsersArray = [NSArray new];
     _searchResultsArray = [NSArray new];
@@ -309,7 +309,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                                     [weakSelf.refreshControl endRefreshing];
                                                 });
                                             } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
-                                                NSLog  (@"ERROR FETCHING USERS BY KEYWORD: %@",e );
+                                                NSLog(@"ERROR FETCHING USERS BY KEYWORD: %@",e );
                                                 dispatch_async(dispatch_get_main_queue(), ^{
                                                     [weakSelf.refreshControl endRefreshing];
                                                 });
@@ -419,6 +419,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
         weakSelf.followeesArray = users;
         dispatch_async(dispatch_get_main_queue(), ^{
+            NSArray *visibleRowIndeces = [weakSelf.tableAccordion indexPathsForVisibleRows];
+            [weakSelf.tableAccordion reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
+
             //[weakSelf reloadAfterDeterminingWhoWeAreFollowing];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -646,11 +649,15 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     cell.delegate = self;
     [cell provideUser:u];
     
-    BOOL following = [self weAreFollowingUser:u.userID];
-    if ([Settings sharedInstance].userObject.userID == u.userID) {
-        cell.buttonFollow.hidden = YES;
-    } else {
-        [cell showFollowButton:following];
+    if (self.followeesArray) {
+        @synchronized(self.followeesArray) {
+            BOOL following = [self weAreFollowingUser:u.userID];
+            if ([Settings sharedInstance].userObject.userID == u.userID) {
+                cell.buttonFollow.hidden = YES;
+            } else {
+                [cell showFollowButton:following];
+            }
+        }
     }
     
     [cell fetchStats];

@@ -4,14 +4,24 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>ooApp copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
 		<key>ooApp.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>36C09C3A1CF76C470085A13D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>36FDA6EF1B585F650029D29D</key>
 		<dict>
 			<key>primary</key>
