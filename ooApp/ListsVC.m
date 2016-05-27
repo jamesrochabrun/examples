@@ -50,12 +50,14 @@ typedef enum {
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
     [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-    
+
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
 
@@ -99,6 +101,7 @@ typedef enum {
 - (void)handleRestaurantListAltered:(NSNotification*)not
 {
     [self getLists];
+    [self getListsForRestaurant];
 }
 
 - (void)dealloc {
@@ -144,9 +147,9 @@ typedef enum {
     NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:@"My Lists" subHeader:nil];
     self.navTitle = nto;
     
-    [self.view bringSubviewToFront:self.aiv];
-    [self.aiv startAnimating];
-    self.aiv.message = @"loading";
+//    [self.view bringSubviewToFront:self.aiv];
+//    [self.aiv startAnimating];
+//    self.aiv.message = @"loading";
     
     __weak ListsVC *weakSelf = self;
     UserObject *userInfo = [Settings sharedInstance].userObject;
@@ -156,12 +159,12 @@ typedef enum {
                                      includeAll:NO
                                         success:^(NSArray *lists) {
         weakSelf.lists = lists;
-        ON_MAIN_THREAD( ^{
-            [weakSelf.aiv stopAnimating];
+        dispatch_async(dispatch_get_main_queue(), ^{
+//            [weakSelf.aiv stopAnimating];
             [weakSelf gotLists];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [weakSelf.aiv stopAnimating];
+//        [weakSelf.aiv stopAnimating];
     }];
 }
 
@@ -221,17 +224,17 @@ typedef enum {
     }];
 }
 
-- (void)addRestaurantToList:(ListObject *)list {
-    __weak ListsVC *weakSelf = self;
-
-    [OOAPI addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf getListsForRestaurant];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Could not add restaurant to list: %@", error);
-    }];
-}
+//- (void)addRestaurantToList:(ListObject *)list {
+//    __weak ListsVC *weakSelf = self;
+//
+//    [OOAPI addRestaurants:@[_restaurantToAdd] toList:list.listID success:^(id response) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [weakSelf getListsForRestaurant];
+//        });
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        NSLog(@"Could not add restaurant to list: %@", error);
+//    }];
+//}
 
 //- (void)userPressedAddAllForList:(ListObject *)list
 //{
@@ -379,8 +382,7 @@ typedef enum {
     
     __weak ListsVC *weakSelf = self;
     [api deleteRestaurant:_restaurantToAdd.restaurantID fromList:listID success:^(NSArray *lists) {
-        ON_MAIN_THREAD(^{
-            [weakSelf getListsForRestaurant];
+        dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -417,7 +419,6 @@ typedef enum {
     __weak ListsVC *weakSelf = self;
     
     [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeFavorites success:^(id response) {
-        [weakSelf getListsForRestaurant];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
@@ -429,7 +430,6 @@ typedef enum {
     __weak ListsVC *weakSelf = self;
     
     [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeToTry success:^(id response) {
-        [weakSelf getListsForRestaurant];
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
@@ -465,7 +465,7 @@ typedef enum {
                 success:^(NSArray *foundLists) {
                     NSLog (@"number of lists with this restaurant: %ld", ( long) foundLists.count);
                     _listsWithRestaurant = foundLists;
-                    ON_MAIN_THREAD( ^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         [weakSelf updateButtonsSection];
                     });
                 }
@@ -482,7 +482,10 @@ typedef enum {
         if (_wishListID && _favoritesListID) break;
     }
 
-    [_tableView reloadData];
+    NSArray *visibleRowIndeces = [_tableView indexPathsForVisibleRows];
+    [_tableView reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
+
+    //[_tableView reloadData];
 }
 
 /*
