@@ -55,6 +55,15 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
+    
+    [self.thumbnail.layer removeAllAnimations];
+    [self.thumbnail cancelImageRequestOperation];
+    [self.thumbnail setImage: nil];
+    
+    [self.requestOperation cancel];
+    self.requestOperation = nil;
+
+    
     [self.buttonAddAll removeFromSuperview];
     self.buttonAddAll = nil;
     self.listToAddTo = nil;
