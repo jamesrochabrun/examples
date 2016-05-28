@@ -19,7 +19,7 @@ NSString *const kKeyListNumRestaurants = @"num_restaurants";
 
 BOOL isListObject (id  object)
 {
-    return [ object isKindOfClass:[ListObject  class]];
+    return [object isKindOfClass:[ListObject class]];
 }
 
 @implementation ListObject
@@ -44,7 +44,12 @@ BOOL isListObject (id  object)
     if (!list.listID) return nil;
     
     if ([dict objectForKey:kKeyListUserIDs] && ![[dict objectForKey:kKeyListUserIDs] isKindOfClass:[NSNull class]]) {
-        list.userIDs = [dict objectForKey:kKeyListUserIDs];
+        NSMutableArray *uids = [NSMutableArray array];
+        for (id uID in [dict objectForKey:kKeyListUserIDs]) {
+            [uids addObject:[NSNumber numberWithUnsignedInteger:parseUnsignedIntegerOrNullFromServer(uID)]];
+        }
+//        list.userIDs = [dict objectForKey:kKeyListUserIDs];
+        list.userIDs = uids;
     }
 
     list.name = [[dict objectForKey:kKeyListName] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyListName];
@@ -152,7 +157,9 @@ BOOL isListObject (id  object)
     if (_type == kListTypePlaceIveBeen) {
         UserObject *user = [Settings sharedInstance].userObject;
         if (_userIDs && [_userIDs count]) {
-            if (user.userID == [[_userIDs objectAtIndex:0] unsignedIntegerValue]) {
+            
+            if ([[_userIDs objectAtIndex:0] isKindOfClass:[NSNumber class]] &&
+                (user.userID == [[_userIDs objectAtIndex:0] unsignedIntegerValue])) {
                 return @"Places I've Been";
             } else {
                 return @"Places They Went";

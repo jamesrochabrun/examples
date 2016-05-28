@@ -955,7 +955,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         //[DebugUtilities addBorderToViews:@[reuseView, header]];
     } else if (indexPath.section == kRestaurantSectionTypeFollowees) {
         OOStripHeader *header = [[OOStripHeader alloc] init];
-        header.name = @"These friends have been here";
+        header.name = @"On these friends lists";
         header.frame = CGRectMake(0, 0, width(self.view), kGeomStripHeaderHeight);
         header.tag = 111;
         [collectionView bringSubviewToFront:reuseView];
