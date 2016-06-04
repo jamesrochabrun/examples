@@ -327,7 +327,7 @@
     _yumButton.hidden = (_mediaItemObject.source == kMediaItemTypeOomami) ? NO : YES;
     
     if (_mediaItemObject.sourceUserID) {
-        [_userButton setTitle:_mediaItemObject.sourceUsername forState:UIControlStateNormal];
+        [_userButton setTitle:[NSString stringWithFormat:@"@%@", _mediaItemObject.sourceUsername] forState:UIControlStateNormal];
         _userButton.hidden = NO;
         [self setNeedsUpdateConstraints];
         _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)_mediaItemObject.yumCount];

@@ -253,7 +253,9 @@
             RestaurantVC *vc = [[RestaurantVC alloc] init];
             vc.title = trimString(restaurant.name);
             vc.restaurant = restaurant;
-            [weakNC pushViewController:vc animated:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakNC pushViewController:vc animated:YES];
+            });
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
@@ -264,11 +266,14 @@
     if (![self makeSureNCIsSet]) return;
     
     OOAPI *api = [[OOAPI alloc] init];
+    __weak AppDelegate *weakSelf = self;
     
     [OOAPI getMediaItem:mediaItemID success:^(MediaItemObject *mio){
         [api getRestaurantWithID:[NSString stringWithFormat:@"%lu", (unsigned long)mio.restaurantID] source:kRestaurantSourceTypeOomami success:^(RestaurantObject *restaurant) {
             if (restaurant) {
-                [self launchViewPhoto:mio restaurant:restaurant originFrame:CGRectMake(0, 0, 0, 0)];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf launchViewPhoto:mio restaurant:restaurant originFrame:CGRectMake(0, 0, 0, 0)];
+                });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
@@ -320,11 +325,12 @@
     OOAPI *api = [[OOAPI alloc] init];
     
     [api getList:listID success:^(ListObject *list) {
-        RestaurantListVC *vc = [[RestaurantListVC alloc] init];
-        [weakNC pushViewController:vc animated:YES];
-        vc.title = list.name;
-        vc.listItem = list;
-        ;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+            [weakNC pushViewController:vc animated:YES];
+            vc.title = list.name;
+            vc.listItem = list;
+        });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         ;
     }];

@@ -126,15 +126,16 @@ BOOL isListObject (id  object)
                }];
 }
 
-- (void)addVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL))completionBlock
+- (void)addVenue:(RestaurantObject *)venue completionBlock:(void (^)(BOOL, ListObject*))completionBlock
 {
     if (!venue) {
-        if  (completionBlock) completionBlock (NO);
+        if  (completionBlock) completionBlock (NO, self);
         return;
     }
     
-    if (!_venues)
+    if (!_venues) {
         _venues = [NSMutableArray new];
+    }
     
     @synchronized(_venues)  {
         if (![_venues containsObject: venue]) {
@@ -143,11 +144,11 @@ BOOL isListObject (id  object)
                         success:^(id response) {
                             NSLog (@"Venue added to list");
                             self.numRestaurants++;
-                            if  (completionBlock) completionBlock (YES);
+                            if  (completionBlock) completionBlock (YES, self);
                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                             NSLog  (@"Failed to add venue to list %@",error);
                             [_venues removeObject: venue];
-                            if  (completionBlock) completionBlock (NO);
+                            if  (completionBlock) completionBlock (NO, self);
                         }];
         }
     }

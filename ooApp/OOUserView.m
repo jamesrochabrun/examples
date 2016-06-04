@@ -132,7 +132,6 @@
     frame = _isOfficial.frame;
     frame.origin = CGPointMake(width(self)-CGRectGetWidth(frame), 0);
     _isOfficial.frame = frame;
-    _isOfficial.hidden = (_user.isOfficial) ? NO:YES;
     if (CGRectGetWidth(self.frame) < 75) _isOfficial.hidden = YES;
 }
 
@@ -140,6 +139,8 @@
 {
     if (_user == user) return;
     _user = user;
+    
+    _isOfficial.hidden = (_user.isOfficial) ? NO:YES;
     
     NSString *first = _user.firstName.length? [_user.firstName substringToIndex:1] : @"";
     NSString *last =_user.lastName.length? [_user.lastName substringToIndex:1] : @"";

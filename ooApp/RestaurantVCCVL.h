@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 typedef enum {
+    kRestaurantSectionTypeMap,
     kRestaurantSectionTypeMain,
     kRestaurantSectionTypeFollowees,
     kRestaurantSectionTypeLists,

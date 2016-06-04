@@ -158,7 +158,7 @@ enum  {
         uv.frame = CGRectMake(33*index, 0, 30, 30);
         [_followeesView addSubview:uv];
         index++;
-        if (index == 2) {
+        if (index == 3) {
             if (count > index) {
                 _numberAdditionalFollowees.text = [NSString stringWithFormat:@"+%lu", count-index];
                 
@@ -646,14 +646,14 @@ enum  {
 - (void)addRestaurantToList:(ListObject *)list
 {
     __weak RestaurantTVCell *weakSelf = self;
-    __weak ListObject *weakList = list;
+    //__weak ListObject *weakList = list;
     
-    [list addVenue:_restaurant completionBlock:^(BOOL added) {
+    [list addVenue:_restaurant completionBlock:^(BOOL added, ListObject *list) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (added) {
                 [weakSelf expressMode];
-                NOTIFY_WITH(kNotificationListAltered, weakList);
-                UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@", weakList.listName]
+
+                UIAlertController *a= [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@", list.listName]
                                                                           message:[NSString stringWithFormat:@"Added '%@' to the list.", weakSelf.restaurant.name]
                                                                    preferredStyle:UIAlertControllerStyleAlert];
                 
@@ -665,6 +665,8 @@ enum  {
                 [a addAction:ok];
                 //seem like a hack...use delegates instead
                 [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject presentViewController:a animated:YES completion:nil];
+                
+                NOTIFY_WITH(kNotificationListAltered, list);
             } else {
                 
             }
