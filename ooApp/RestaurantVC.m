@@ -7,6 +7,8 @@
 //
 
 #import <SafariServices/SafariServices.h>
+#import <GoogleMaps/GoogleMaps.h>
+#import "OOMapMarker.h"
 #import "AppDelegate.h"
 #import "RestaurantVC.h"
 #import "OOAPI.h"
@@ -31,7 +33,7 @@
 
 #import "DebugUtilities.h"
 
-@interface RestaurantVC ()
+@interface RestaurantVC () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIAlertController *styleSheetAC;
@@ -52,8 +54,12 @@
 @property (nonatomic, strong) UINavigationController *aNC;
 @property (nonatomic, strong) UIButton *shareRestaurant;
 @property (nonatomic, strong) UIButton *favoriteButton;
+@property (nonatomic, strong) GMSMapView *mapView;
+@property (nonatomic, strong) GMSCameraPosition *camera;
+
 @end
 
+static NSString *const kRestaurantMapCellIdentifier = @"RestaurantMapCell";
 static NSString *const kRestaurantMainCellIdentifier = @"RestaurantMainCell";
 static NSString *const kRestaurantListsCellIdentifier = @"RestaurantListsCell";
 static NSString *const kRestaurantFolloweesCellIdentifier = @"RestaurantFolloweesCell";
@@ -108,6 +114,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     
     [_collectionView registerClass:[RestaurantMainCVCell class] forCellWithReuseIdentifier:kRestaurantMainCellIdentifier];
+    [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantMapCellIdentifier];
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantListsCellIdentifier];
     [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:kRestaurantFolloweesCellIdentifier];
     [_collectionView registerClass:[PhotoCVCell class] forCellWithReuseIdentifier:kRestaurantPhotoCellIdentifier];
@@ -134,6 +141,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     _shareRestaurant.layer.cornerRadius = 0;
     
     _listsNeedUpdate = NO;
+    
+    _mapView = [GMSMapView new];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setListsUpdateNeeded)
                                                  name:kNotificationRestaurantListsNeedsUpdate object:nil];
@@ -225,7 +235,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     //OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantVC *weakSelf = self;
     [OOAPI addRestaurants:@[_restaurant] toList:list.listID success:^(id response) {
-        ON_MAIN_THREAD(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf getListsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -523,6 +533,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     if (_restaurant == restaurant) return;
     _restaurant = restaurant;
     
+    _camera = [GMSCameraPosition cameraWithLatitude:_restaurant.location.latitude longitude:_restaurant.location.longitude zoom:14 bearing:0 viewingAngle:1];
+
 //    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:restaurant.name subHeader:nil];
 //    self.navTitle = nto;
     
@@ -535,8 +547,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
-        ON_MAIN_THREAD(^{
-            [_collectionView reloadData];// Sections:is];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.collectionView reloadData];// Sections:is];
             [weakSelf getListsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -549,12 +561,12 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     [OOAPI getFolloweesForRestaurant:_restaurant success:^(NSArray *users) {
         weakSelf.followees = users;
-        ON_MAIN_THREAD(^{
-            [_collectionView reloadData];// Sections:is];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.collectionView reloadData];// Sections:is];
             [weakSelf getMediaItemsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ON_MAIN_THREAD(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf getMediaItemsForRestaurant];;
         });
     }];
@@ -601,7 +613,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                 }
                 failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                     NSLog  (@" error while getting lists for user:  %@",e);
-                    ON_MAIN_THREAD(^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         [weakSelf getFolloweesWithRestaurantOnList];
                     });
                 }];
@@ -612,7 +624,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     __weak RestaurantVC *weakSelf = self;
     [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
         _mediaItems = mediaItems;
-        ON_MAIN_THREAD(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf gotMediaItems];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -624,6 +636,11 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     NSMutableIndexSet *is = [NSMutableIndexSet indexSetWithIndex:kRestaurantSectionTypeMediaItems];
     [is addIndex:kRestaurantSectionTypeMain];
     [_collectionView reloadSections:is];
+    [self performSelector:@selector(scroll) withObject:nil afterDelay:0.3];
+}
+
+- (void)scroll {
+    [_collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:kRestaurantSectionTypeMain] atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
 }
 
 - (void)displayListButtons {
@@ -654,9 +671,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     }];
     //_listButtonsContainerHeight += (_listButtonsContainerHeight) ? kGeomSpaceInter : 0;
     
-    ON_MAIN_THREAD(^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf.view setNeedsUpdateConstraints];
-        [_collectionView reloadData];// Sections:is];
+        [weakSelf.collectionView reloadData];// Sections:is];
+
         [self getFolloweesWithRestaurantOnList];
     });
 }
@@ -702,7 +720,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     __weak RestaurantVC *weakSelf = self;
     [api deleteRestaurant:_restaurant.restaurantID fromList:listID success:^(NSArray *lists) {
-        ON_MAIN_THREAD(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf getListsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -757,6 +775,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     switch (section) {
+//        case kRestaurantSectionTypeMap:
+//            return 1;
+//            break;
         case kRestaurantSectionTypeMain:
             return 1;
             break;
@@ -790,6 +811,23 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 //    NSUInteger userID = [Settings sharedInstance].userObject.userID;
     
     switch (indexPath.section) {
+//        case kRestaurantSectionTypeMap: {
+//            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMapCellIdentifier forIndexPath:indexPath];
+//            //            [DebugUtilities addBorderToViews:@[cvc]];
+//            [cvc.contentView addSubview:_mapView];
+//
+//            OOMapMarker *marker = [[OOMapMarker alloc] init];
+//            marker.objectID = _restaurant.googleID;
+//            marker.position = _restaurant.location;
+//            marker.map = _mapView;
+//            [marker highLight:YES];
+//
+//            _mapView.frame = cvc.contentView.bounds;
+//            [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
+//
+//            return cvc;
+//            break;
+//        }
         case kRestaurantSectionTypeMain: {
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
             cvc.restaurant = _restaurant;
@@ -915,6 +953,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             return ([cvc getHeight] ? [cvc getHeight]:170);
             break;
         }
+//        case kRestaurantSectionTypeMap: {
+//            return 125;
+//            break;
+//        }
         case kRestaurantSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/kRestaurantNumColumnsForMediaItems; //NOTE: this should not happen
@@ -1190,8 +1232,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     vc.modalPresentationStyle = UIModalPresentationCurrentContext;
     vc.transitioningDelegate = vc;
     self.navigationController.delegate = vc;
+    __weak RestaurantVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationController presentViewController:vc animated:YES completion:^{
+        [weakSelf.navigationController presentViewController:vc animated:YES completion:^{
         }];
     });
 }
@@ -1313,7 +1356,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                    weakSelf.uploading = NO;
                    dispatch_async(dispatch_get_main_queue(), ^{
                        weakSelf.uploadProgressBar.hidden = YES;
-                       [self addCaption:mio forceIsFoodFeed:YES];
+                       [weakSelf addCaption:mio forceIsFoodFeed:YES];
                    });
                } failure:^(NSError *error) {
                    weakSelf.uploading = NO;

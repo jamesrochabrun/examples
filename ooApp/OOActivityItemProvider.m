@@ -30,7 +30,7 @@
     NSString *message, *title, *urlLink;
     
     if (_list) {
-        message = [NSString stringWithFormat:@"Check out tI use Oomami to find and share the best dishes with my friends (like you!). Download it from iTunes - %@", @"itms://itunes.apple.com/us/app/apple-store/id1053373398?mt=8"];
+        message = [NSString stringWithFormat:@"Check out this list on Oomami \"%@\".\nhttps://%@/list/%lu",_list.name, kWebAppHost, (unsigned long)_list.listID]; ;
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {

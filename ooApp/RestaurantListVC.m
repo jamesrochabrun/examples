@@ -17,6 +17,7 @@
 #import "ListsVC.h"
 #import "SearchVC.h"
 #import "OOFeedbackView.h"
+#import "OOActivityItemProvider.h"
 
 @interface RestaurantListVC ()
 
@@ -26,6 +27,9 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UIAlertController *editListNameAC;
 @property (nonatomic, strong) OOFeedbackView *fv;
+@property (nonatomic, strong) UIButton *shareList;
+@property (nonatomic, strong) UserObject *owner;
+@property (nonatomic, strong) NavTitleObject *nto;
 
 @end
 
@@ -94,6 +98,20 @@ static NSString * const cellIdentifier = @"horizontalCell";
     }
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self setupEditListAC];
+    
+    _shareList = [UIButton buttonWithType:UIButtonTypeCustom];
+    UILabel *iconLabel = [UILabel new];
+    [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+    iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    iconLabel.text = kFontIconShare;
+    iconLabel.textColor = UIColorRGBA(kColorTextReverse);
+    [iconLabel sizeToFit];
+    UIImage *icon = [UIImage imageFromView:iconLabel];
+    [_shareList withText:@"share list" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(sharePressed:)];
+    [_shareList setImage:icon forState:UIControlStateNormal];
+    [self.view addSubview:_shareList];
+    _shareList.translatesAutoresizingMaskIntoConstraints = NO;
+    _shareList.layer.cornerRadius = 0;
 }
 
 - (void)setupEditListAC {
@@ -134,9 +152,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
     __weak RestaurantListVC *weakSelf = self;
     
     [OOAPI updateList:_listItem success:^(ListObject *listObject) {
-        NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listObject.listName subHeader:nil];
+        _nto = [[NavTitleObject alloc] initWithHeader:listObject.listName subHeader:nil];
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.navTitle = nto;
+            weakSelf.navTitle = _nto;
             _fv.icon = kFontIconCheckmark;
             _fv.message = [NSString stringWithFormat:@"Modified list name"];
             [_fv show];
@@ -153,14 +171,16 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter),@"buttonHeight":@(kGeomHeightButton)};
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv, _shareList);
 
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView][_shareList(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_shareList]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_fv(110)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
@@ -294,14 +314,33 @@ static NSString * const cellIdentifier = @"horizontalCell";
     if (_listItem == listItem) return;
     _listItem = listItem;
 
-    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:listItem.listName subHeader:nil];
-    self.navTitle = nto;
+    _nto = [[NavTitleObject alloc] initWithHeader:listItem.listName subHeader:nil];
+    self.navTitle = _nto;
     
     [self.view bringSubviewToFront:self.aiv];
     self.aiv.message = @"loading";
     [self.aiv startAnimating];
     
     [self fetchRestaurants];
+    [self getListOwner];
+}
+
+- (void)getListOwner {
+    if (![_listItem.userIDs count]) return;
+    
+    __weak RestaurantListVC *weakSelf = self;
+    
+    [OOAPI getUserWithID:[[_listItem.userIDs objectAtIndex:0] unsignedIntegerValue] success:^(UserObject *user) {
+        weakSelf.owner = user;
+        weakSelf.nto.subheader = [NSString stringWithFormat:@"by @%@", user.username];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.navTitle = weakSelf.nto;
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        weakSelf.owner = nil;
+    }];
+    
+    
 }
 
 - (void)getRestaurants
@@ -444,6 +483,49 @@ static NSString * const cellIdentifier = @"horizontalCell";
                           ;
         }];
     }
+}
+
+- (void)sharePressed:(id)sender {
+    UIImage *img = nil;
+
+    __weak RestaurantListVC *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf showShare:img fromView:sender];
+    });
+}
+
+- (void)showShare:(UIImage *)image fromView:(id)sender {
+    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aip.list = _listItem;
+    
+    NSArray *items;
+    
+    if (image) {
+        items = @[aip, image];
+    } else {
+        items = @[aip];
+    }
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    avc.popoverPresentationController.sourceView = sender;
+    avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+    
+    [avc setValue:[NSString stringWithFormat:@"Check out this Oomami list: \"%@\"", _listItem.name] forKey:@"subject"];
+    [avc setExcludedActivityTypes:
+     @[UIActivityTypeAssignToContact,
+       UIActivityTypePostToFlickr,
+       UIActivityTypeCopyToPasteboard,
+       UIActivityTypePrint,
+       UIActivityTypeSaveToCameraRoll,
+       UIActivityTypePostToWeibo]];
+    [self.navigationController presentViewController:avc animated:YES completion:^{
+        ;
+    }];
+    
+    avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+    };
 }
 /*
 #pragma mark - Navigation

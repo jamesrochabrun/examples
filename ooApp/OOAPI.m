@@ -3315,16 +3315,16 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-//#ifdef ADHOC
-//    APP.usingStagingServer = YES;
-//    if (APP.usingStagingServer) {
+#ifdef ADHOC
+    APP.usingStagingServer = YES;
+    if (APP.usingStagingServer) {
         return kOOURLStage;
-//    } else {
-//        return kOOURLProduction;
-//    }
-//#else
-//    return kOOURLProduction;
-//#endif
+    } else {
+        return kOOURLProduction;
+    }
+#else
+    return kOOURLProduction;
+#endif
 }
 
 @end
