@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Oomami Inc. All rights reserved.
 //
 
+#import <GoogleMaps/GoogleMaps.h>
 #import "RestaurantListVC.h"
 #import "RestaurantTVCell.h"
 #import "RestaurantObject.h"
@@ -18,8 +19,9 @@
 #import "SearchVC.h"
 #import "OOFeedbackView.h"
 #import "OOActivityItemProvider.h"
+#import "OOMapMarker.h"
 
-@interface RestaurantListVC ()
+@interface RestaurantListVC () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) UIAlertController *alertController;
 @property (nonatomic, strong) UITableView *tableView;
@@ -30,6 +32,11 @@
 @property (nonatomic, strong) UIButton *shareList;
 @property (nonatomic, strong) UserObject *owner;
 @property (nonatomic, strong) NavTitleObject *nto;
+@property (nonatomic) BOOL showMap;
+@property (nonatomic, strong) GMSMapView *mapView;
+@property (nonatomic, strong) NSMutableArray *mapMarkers;
+@property (nonatomic, strong) GMSCameraPosition *camera;
+@property (nonatomic, strong) NSArray *mapConstraints;
 
 @end
 
@@ -92,9 +99,10 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
         [self removeNavButtonForSide:kNavBarSideTypeRight];
         [self addNavButtonWithIcon:kFontIconMoreSolid target:self action:@selector(moreButtonPressed:) forSide:kNavBarSideTypeRight isCTA:NO];
+        [self addNavButtonWithIcon:kFontIconMap target:self action:@selector(mapButtonPressed:) forSide:kNavBarSideTypeRight isCTA:NO];
     } else {
         [self removeNavButtonForSide:kNavBarSideTypeRight];
-        [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
+        [self addNavButtonWithIcon:kFontIconMap target:self action:@selector(mapButtonPressed:) forSide:kNavBarSideTypeRight isCTA:NO];
     }
     self.tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [self setupEditListAC];
@@ -112,6 +120,37 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [self.view addSubview:_shareList];
     _shareList.translatesAutoresizingMaskIntoConstraints = NO;
     _shareList.layer.cornerRadius = 0;
+    
+    _mapView = [GMSMapView mapWithFrame:CGRectZero camera:nil];
+    [self.view addSubview:_mapView];
+    _mapView.translatesAutoresizingMaskIntoConstraints = NO;
+    _mapView.mapType = kGMSTypeNormal;
+    _mapView.myLocationEnabled = YES;
+    _mapView.settings.myLocationButton = NO;
+    _mapView.settings.scrollGestures = YES;
+    _mapView.settings.zoomGestures = YES;
+    _mapView.settings.rotateGestures = NO;
+    _mapView.delegate = self;
+    [_mapView setMinZoom:0 maxZoom:20];
+    _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    _mapMarkers = [NSMutableArray array];
+    
+    _showMap = NO;
+}
+
+- (void)mapButtonPressed:(id)sender {
+    _showMap = !_showMap;
+    [self.view setNeedsUpdateConstraints];
+    [UIView animateWithDuration:0.5 animations:^{
+        [self.view layoutIfNeeded];
+    }];
+    
+    if (_showMap && _restaurants) {
+        RestaurantObject *r = [_restaurants objectAtIndex:0];
+        _mapView.camera = [GMSCameraPosition cameraWithLatitude:r.location.latitude longitude:r.location.longitude zoom:14];
+        [self setHighlightedMarkers];
+    }
 }
 
 - (void)setupEditListAC {
@@ -171,12 +210,20 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter),@"buttonHeight":@(kGeomHeightButton)};
+    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter),@"buttonHeight":@(kGeomHeightButton), @"mapHeight" : @((_showMap)?(height(self.view)-kGeomHeightNavBarStatusBar)*0.4:0)};
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv, _shareList);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv, _shareList, _mapView);
+    
+    [self.view removeConstraints:_mapConstraints];
+    _mapConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_mapView(mapHeight)][_tableView][_shareList(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+
 
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView][_shareList(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:_mapConstraints];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_mapView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    
+//    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView][_shareList(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
@@ -322,7 +369,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [self.aiv startAnimating];
     
     [self fetchRestaurants];
-    [self getListOwner];
+    if (![_listItem isListOwner:[Settings sharedInstance].userObject.userID]) {
+        [self getListOwner];
+    }
 }
 
 - (void)getListOwner {
@@ -405,6 +454,56 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 }
 
+- (void)setRestaurants:(NSArray *)restaurants {
+    _restaurants = restaurants;
+    [self setUpMapMarkers];
+}
+
+- (void)setUpMapMarkers {
+    //clear old markers
+    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OOMapMarker *marker = (OOMapMarker *)obj;
+        marker.map = nil;
+    }];
+    [_mapMarkers removeAllObjects];
+    
+    //set new ones
+    [_restaurants enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        OOMapMarker *marker = [[OOMapMarker alloc] init];
+        RestaurantObject *ro = (RestaurantObject *)obj;
+        
+        marker.objectID = ro.googleID;
+        marker.index = idx;
+        marker.position = ro.location;
+        marker.title = ro.name;
+        marker.map = _mapView;
+        [marker highLight:NO];
+        [_mapMarkers addObject:marker];
+    }];
+}
+
+- (void)objectTVCellIconTapped:(ObjectTVCell *)objectTVCell {
+    if (![objectTVCell isKindOfClass:[RestaurantTVCell class]]) return;
+    RestaurantTVCell *cell = (RestaurantTVCell *)objectTVCell;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        _mapView.camera = [GMSCameraPosition cameraWithLatitude:cell.restaurant.location.latitude longitude:cell.restaurant.location.longitude zoom:14];
+    }];
+    [self setHighlightedMarkers];
+}
+
+- (void)setHighlightedMarkers {
+    NSArray *visibleIndexPaths = [_tableView indexPathsForVisibleRows];
+    
+    [_mapMarkers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj highLight:NO];
+    }];
+    for (NSIndexPath *ip in visibleIndexPaths) {
+        OOMapMarker *marker = [_mapMarkers objectAtIndex:ip.row];
+        [marker highLight:YES];
+    }
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -425,8 +524,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
     //cell.listToAddTo= self.listItem;  WTF!
     cell.nc = self.navigationController;
     cell.eventBeingEdited=self.eventBeingEdited;
+    cell.delegate = self;
+    cell.index = indexPath.row + 1;
     [cell updateConstraintsIfNeeded];
-    
     return cell;
 }
 

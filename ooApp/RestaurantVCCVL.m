@@ -148,7 +148,7 @@
         xOffset = kGeomSpaceEdge;
         UICollectionViewLayoutAttributes *theLastAttribute = [itemAttributes lastObject];
         if (theLastAttribute) {
-            yOffset = /*yOffset +*/ theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height + kGeomSpaceEdge;
+            yOffset = theLastAttribute.frame.origin.y+theLastAttribute.frame.size.height;// + kGeomSpaceEdge;
         }
 
         NSLog(@"after section:%ld items:%ld yOffset=%f numColumns=%ld",(long) section,(long) [self.collectionView numberOfItemsInSection:section], yOffset, (long)numberOfColumnsInRow);

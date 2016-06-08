@@ -288,7 +288,7 @@
         _hoursScroll.contentSize = CGSizeMake(width(_hoursScroll), s.height);
         
         frame = _hoursButton.frame;
-        frame.size.width = s.width;
+        frame.size.width = s.width + 20;
         frame.size.height = 30;
         frame.origin = CGPointMake(kGeomSpaceEdge, y);
         _hoursButton.frame = frame;

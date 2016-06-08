@@ -971,13 +971,13 @@ static CGFloat kNextPhotoTolerance = 40;
     
     y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
     frame = _restaurantName.frame;
-    frame.size.width = w-2*kGeomSpaceEdge;
+    frame.size.width = w;//-2*kGeomSpaceEdge;
     frame.origin.y = CGRectGetMaxY(_closeButton.frame);// y;
-    frame.origin.x = (width(self.view) - width(_restaurantName))/2;
+    frame.origin.x = 0;//(width(self.view) - width(_restaurantName))/2;
     frame.size.height = kGeomHeightButton;
     _restaurantName.frame = frame;
     
-    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceInter, imageWidth, imageHeight);
+    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantName.frame) /*+ kGeomSpaceInter*/, imageWidth, imageHeight);
     
     frame = _optionsButton.frame;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);

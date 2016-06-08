@@ -775,9 +775,9 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     switch (section) {
-//        case kRestaurantSectionTypeMap:
-//            return 1;
-//            break;
+        case kRestaurantSectionTypeMap:
+            return 1;
+            break;
         case kRestaurantSectionTypeMain:
             return 1;
             break;
@@ -811,29 +811,29 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 //    NSUInteger userID = [Settings sharedInstance].userObject.userID;
     
     switch (indexPath.section) {
-//        case kRestaurantSectionTypeMap: {
-//            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMapCellIdentifier forIndexPath:indexPath];
-//            //            [DebugUtilities addBorderToViews:@[cvc]];
-//            [cvc.contentView addSubview:_mapView];
-//
-//            OOMapMarker *marker = [[OOMapMarker alloc] init];
-//            marker.objectID = _restaurant.googleID;
-//            marker.position = _restaurant.location;
-//            marker.map = _mapView;
-//            [marker highLight:YES];
-//
-//            _mapView.frame = cvc.contentView.bounds;
-//            [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
-//
-//            return cvc;
-//            break;
-//        }
+        case kRestaurantSectionTypeMap: {
+            UICollectionViewCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMapCellIdentifier forIndexPath:indexPath];
+
+            [cvc.contentView addSubview:_mapView];
+
+            OOMapMarker *marker = [[OOMapMarker alloc] init];
+            marker.objectID = _restaurant.googleID;
+            marker.position = _restaurant.location;
+            marker.map = _mapView;
+            [marker highLight:YES];
+
+            _mapView.frame = cvc.contentView.bounds;
+            [_mapView moveCamera:[GMSCameraUpdate setCamera:_camera]];
+            //[DebugUtilities addBorderToViews:@[cvc]];
+            return cvc;
+            break;
+        }
         case kRestaurantSectionTypeMain: {
             RestaurantMainCVCell *cvc = [collectionView dequeueReusableCellWithReuseIdentifier:kRestaurantMainCellIdentifier forIndexPath:indexPath];
             cvc.restaurant = _restaurant;
             cvc.delegate = self;
             cvc.mediaItemObject = ([_mediaItems count]) ? [_mediaItems objectAtIndex:0] : nil;
-//            [DebugUtilities addBorderToViews:@[cvc]];
+            //[DebugUtilities addBorderToViews:@[cvc]];
             return cvc;
             break;
         }
@@ -953,10 +953,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             return ([cvc getHeight] ? [cvc getHeight]:170);
             break;
         }
-//        case kRestaurantSectionTypeMap: {
-//            return 125;
-//            break;
-//        }
+        case kRestaurantSectionTypeMap: {
+            return 125;
+            break;
+        }
         case kRestaurantSectionTypeMediaItems: {
             MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
             if (!mio.width || !mio.height) return width(collectionView)/kRestaurantNumColumnsForMediaItems; //NOTE: this should not happen
@@ -1005,6 +1005,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         [header setNeedsLayout];
         //[DebugUtilities addBorderToViews:@[reuseView]];
     }
+
     return reuseView;
 }
 

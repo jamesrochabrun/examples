@@ -47,7 +47,7 @@
 @property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, strong) UISearchBar *locationSearchBar;
 @property (nonatomic, assign) BOOL showMap;
-@property (nonatomic, strong) NSArray *mapContraints;
+@property (nonatomic, strong) NSArray *mapConstraints;
 @property (nonatomic, strong) UITableView *restaurantsTable;
 @property (nonatomic, strong) UITableView *locationsTable;
 @property (nonatomic, strong) NSArray *locations;
@@ -323,10 +323,10 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     NSDictionary *views = NSDictionaryOfVariableBindings(_restaurantsTable, _mapView, _locationSearchBar, _locationsTable, _resetLocation, _locationsBgView);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self.view removeConstraints:_mapContraints];
-    _mapContraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationsBgView(40)][_mapView(mapHeight)]-[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
+    [self.view removeConstraints:_mapConstraints];
+    _mapConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationsBgView(40)][_mapView(mapHeight)]-[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     
-    [self.view addConstraints:_mapContraints];
+    [self.view addConstraints:_mapConstraints];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsBgView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];

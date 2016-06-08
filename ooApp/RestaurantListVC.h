@@ -10,8 +10,11 @@
 #import "ListObject.h"
 #import "SubBaseVC.h"
 #import "EventObject.h"
+#import "ObjectTVCell.h"
 
-@interface RestaurantListVC : SubBaseVC <UITableViewDataSource, UITableViewDelegate>
+@interface RestaurantListVC : SubBaseVC <UITableViewDataSource,
+                                        UITableViewDelegate,
+                                        ObjectTVCellDelegate>
 
 @property (nonatomic, strong) ListObject *listItem;
 @property (nonatomic,strong) EventObject *eventBeingEdited;
