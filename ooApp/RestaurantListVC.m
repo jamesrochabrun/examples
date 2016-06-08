@@ -485,11 +485,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)objectTVCellIconTapped:(ObjectTVCell *)objectTVCell {
     if (![objectTVCell isKindOfClass:[RestaurantTVCell class]]) return;
     RestaurantTVCell *cell = (RestaurantTVCell *)objectTVCell;
-    
+    [_mapView animateToLocation:cell.restaurant.location];
     [UIView animateWithDuration:0.5 animations:^{
-        _mapView.camera = [GMSCameraPosition cameraWithLatitude:cell.restaurant.location.latitude longitude:cell.restaurant.location.longitude zoom:14];
+        [self setHighlightedMarkers];
     }];
-    [self setHighlightedMarkers];
+    
 }
 
 - (void)setHighlightedMarkers {
