@@ -489,7 +489,6 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [UIView animateWithDuration:0.5 animations:^{
         [self setHighlightedMarkers];
     }];
-    
 }
 
 - (void)setHighlightedMarkers {

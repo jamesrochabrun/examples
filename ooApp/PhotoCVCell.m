@@ -421,16 +421,15 @@
     iv.image = _backgroundImage.image;
     if (!iv.image) return nil;
     
-    UILabel *logo = [UILabel new];
-    [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
-    logo.text = kFontIconLogoFull;
-    [logo sizeToFit];
-    frame = logo.frame;
-    frame.size.width = CGRectGetWidth(iv.frame)-5;
-    frame.origin = CGPointMake(0, -15);
-    logo.frame = frame;
-
     if (_mediaItemObject.source == kMediaItemTypeOomami) {
+        UILabel *logo = [UILabel new];
+        [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
+        logo.text = kFontIconLogoFull;
+        [logo sizeToFit];
+        frame = logo.frame;
+        frame.size.width = CGRectGetWidth(iv.frame)-8;
+        frame.origin = CGPointMake(0, height(iv) - height(logo) + 15);
+        logo.frame = frame;
         [iv addSubview:logo];
     }
     

@@ -153,17 +153,18 @@ static CGFloat kNextPhotoTolerance = 40;
     UIImageView *iv = [UIImageView new];
     iv.frame = _iv.bounds;
     iv.image = _iv.image;
-    UILabel *logo = [UILabel new];
-    [logo withFont:[UIFont fontWithName:kFontIcons size:50] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
-    logo.text = kFontIconLogoFull;
-    [logo sizeToFit];
-    frame = logo.frame;
-    frame.size.width = CGRectGetWidth(iv.frame)-5;
-    frame.origin = CGPointMake(0, -15);
-    logo.frame = frame;
     
     if (_mio.source == kMediaItemTypeOomami) {
+        UILabel *logo = [UILabel new];
+        [logo withFont:[UIFont fontWithName:kFontIcons size:80] textColor:kColorWhite backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentRight];
+        logo.text = kFontIconLogoFull;
+        [logo sizeToFit];
+        frame = logo.frame;
+        frame.size.width = CGRectGetWidth(iv.frame)-16;
+        frame.origin = CGPointMake(0, height(iv) - height(logo) + 20);
+        logo.frame = frame;
         [iv addSubview:logo];
+        //[DebugUtilities addBorderToViews:@[logo]];
     }
     
     [shareView addSubview:iv];
@@ -961,8 +962,6 @@ static CGFloat kNextPhotoTolerance = 40;
     _iv.center = self.view.center;
     _aiv.center = CGPointMake(CGRectGetWidth(_iv.frame)/2, CGRectGetHeight(_iv.frame)/2);
     
-    _yumIndicator.center = self.view.center;
-    
     y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
     
     frame = _closeButton.frame;
@@ -978,6 +977,8 @@ static CGFloat kNextPhotoTolerance = 40;
     _restaurantName.frame = frame;
     
     _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantName.frame) /*+ kGeomSpaceInter*/, imageWidth, imageHeight);
+    
+    _yumIndicator.center = _iv.center;
     
     frame = _optionsButton.frame;
     frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
