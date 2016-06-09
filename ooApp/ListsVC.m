@@ -337,7 +337,7 @@ typedef enum {
             [_addToFavoritesButton setTitle:@"Remove from Favorites" forState:UIControlStateNormal];
             [_addToFavoritesButton addTarget:self action:@selector(removeFromList:) forControlEvents:UIControlEventTouchUpInside];
         } else {
-            [_addToFavoritesButton setTitle:@"Add fo Favorites" forState:UIControlStateNormal];
+            [_addToFavoritesButton setTitle:@"Add to Favorites" forState:UIControlStateNormal];
             [_addToFavoritesButton addTarget:self action:@selector(addToFavorites) forControlEvents:UIControlEventTouchUpInside];
         }
         
