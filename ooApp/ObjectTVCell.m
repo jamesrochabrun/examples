@@ -79,6 +79,8 @@
         _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
         _actionButton.hidden = YES;
         
+//        [DebugUtilities addBorderToViews:@[_actionButton]];
+        
         _viewShadow = [[UIView alloc] init];
         [self addSubview:_viewShadow];
         _viewShadow.backgroundColor = UIColorRGBA(kColorWhite);
@@ -224,8 +226,8 @@
     //    [self.backgroundImage cancelImageRequestOperation];
     
     // AFNetworking
-    [_requestOperation cancel];
-    _requestOperation = nil;
+//    [_requestOperation cancel];
+//    _requestOperation = nil;
 }
 
 - (void)hideShadow

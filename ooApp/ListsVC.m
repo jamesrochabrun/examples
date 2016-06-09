@@ -380,7 +380,7 @@ typedef enum {
     
     OOAPI *api = [[OOAPI alloc] init];
     
-    __weak ListsVC *weakSelf = self;
+    //__weak ListsVC *weakSelf = self;
     [api deleteRestaurant:_restaurantToAdd.restaurantID fromList:listID success:^(NSArray *lists) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
@@ -416,7 +416,7 @@ typedef enum {
 
 - (void)addToFavorites {
     OOAPI *api = [[OOAPI alloc] init];
-    __weak ListsVC *weakSelf = self;
+    //__weak ListsVC *weakSelf = self;
     
     [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeFavorites success:^(id response) {
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
@@ -427,7 +427,7 @@ typedef enum {
 
 - (void)addToWishlist {
     OOAPI *api = [[OOAPI alloc] init];
-    __weak ListsVC *weakSelf = self;
+    //__weak ListsVC *weakSelf = self;
     
     [api addRestaurantsToSpecialList:@[_restaurantToAdd] listType:kListTypeToTry success:^(id response) {
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationRestaurantListsNeedsUpdate object:nil];
@@ -482,10 +482,10 @@ typedef enum {
         if (_wishListID && _favoritesListID) break;
     }
 
-    NSArray *visibleRowIndeces = [_tableView indexPathsForVisibleRows];
-    [_tableView reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
+//    NSArray *visibleRowIndeces = [_tableView indexPathsForVisibleRows];
+//    [_tableView reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
 
-    //[_tableView reloadData];
+    [_tableView reloadData];
 }
 
 /*

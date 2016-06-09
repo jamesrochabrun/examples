@@ -24,12 +24,13 @@
 @property (nonatomic, strong) MediaItemObject *mio;
 @end
 
-enum  {
-    MODE_ADD=1,
-    MODE_REMOVE= 2,
-    MODE_MODAL= 3,
-    MODE_NONE= 0
-};
+typedef enum {
+    kActionButtonModeNone = 0,
+    kActionButtonModeAdd = 1,
+    kActionButtonModeRemove = 2,
+    kActionButtonModeModal = 3,
+    kActionButtonModeAddToList = 4
+} kActionButtonMode;
 
 @implementation RestaurantTVCell
 
@@ -238,7 +239,7 @@ enum  {
     self.restaurant= nil;
     self.eventBeingEdited= nil;
     self.listToAddTo=nil;
-    self.mode= MODE_NONE;
+    self.mode= kActionButtonModeNone;
     [[_followeesView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
@@ -247,42 +248,44 @@ enum  {
     NSString *string = @"";
     if (!self.eventBeingEdited) {
         if (self.listToAddTo) {
-            if ( _useModalForListedVenues) {
+            if (_useModalForListedVenues) { //
                 
                 string= kFontIconMoreSolid;
-                self.mode= MODE_MODAL;
+                self.mode= kActionButtonModeModal;
             } else {
                 
                 if ( !self.listToAddTo.venues) {
                     // NOTE: We do not yet know what venues are in this list.
-                    self.mode= MODE_NONE;
+                    self.mode= kActionButtonModeNone;
                     string=  @"";
                 } else {
                     if ( [_listToAddTo alreadyHasVenue:_restaurant]) {
                         string= kFontIconRemove;
-                        self.mode= MODE_REMOVE;
+                        self.mode= kActionButtonModeRemove;
                     } else {
                         string= kFontIconAdd;
-                        self.mode= MODE_ADD;
+                        self.mode= kActionButtonModeAdd;
                     }
                 }
             }
         } else {
-            string= kFontIconMoreSolid;
-            self.mode= MODE_MODAL;
+            //string = kFontIconMoreSolid;
+            string = kFontIconAddToList;
+            self.mode= kActionButtonModeAddToList;
+            [self.actionButton.titleLabel setFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize]];
         }
     } else {
         if ( [self.eventBeingEdited alreadyHasVenue:_restaurant ]) {
             string=kFontIconRemove;
-            self.mode= MODE_REMOVE;
+            self.mode= kActionButtonModeRemove;
             
         } else {
             string= kFontIconAdd;
-            self.mode= MODE_ADD;
+            self.mode= kActionButtonModeAdd;
         }
     }
     
-    [self.actionButton setTitle: string forState:UIControlStateNormal];
+    [self.actionButton setTitle:string forState:UIControlStateNormal];
 }
 
 - (void)setupActionButton
@@ -332,32 +335,28 @@ enum  {
 //        _restaurant = restaurant;
         if (_restaurant.restaurantID) {
             switch (weakSelf.mode) {
-                case MODE_ADD:
+                case kActionButtonModeAdd:
                     if ( weakSelf.listToAddTo) {
                         [weakSelf addToList];
-                    }
-                    else if ( weakSelf.eventBeingEdited) {
+                    } else if ( weakSelf.eventBeingEdited) {
                         [weakSelf addToEvent];
-                    }
-                    else {
+                    } else {
                         NSLog (@"WARNING: NOTHING TO ADD RESTAURANT TO.");
                     }
                     break;
                     
-                case MODE_REMOVE:
+                case kActionButtonModeRemove:
                     if ( weakSelf.listToAddTo) {
                         [weakSelf removeFromList];
-                    }
-                    else if ( weakSelf.eventBeingEdited) {
+                    } else if ( weakSelf.eventBeingEdited) {
                         [weakSelf removeFromEvent];
-                    }
-                    else {
+                    } else {
                         NSLog (@"WARNING: NOTHING TO REMOVE RESTAURANT FROM.");
                     }
                     break;
                     
-                case MODE_MODAL:
-                    ON_MAIN_THREAD(^{
+                case kActionButtonModeModal: {
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         [weakSelf setupRestaurantOptionsAC];
                         _restaurantOptionsAC.popoverPresentationController.sourceView = sender;
                         _restaurantOptionsAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
@@ -371,6 +370,11 @@ enum  {
                             ;
                         }];
                     });
+                    break;
+                }
+                case kActionButtonModeAddToList:
+                    [self addToList];
+                    break;
             }
         }
 //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

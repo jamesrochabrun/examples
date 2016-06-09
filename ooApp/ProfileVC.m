@@ -88,13 +88,13 @@
 {
     if (u == _userInfo) return;
     _userInfo = u;
-    
+
+    [self userTappedOnListsFilter:nil];
+    [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];
+
     if (_userInfo.userType != kUserTypeTrusted) {
         [_filterView addFilter:LOCAL(@"PHOTOS") target:self selector:@selector(userTappedOnPhotosFilter:)];
-    } else {
-        [self userTappedOnListsFilter:nil];
     }
-    [_filterView addFilter:LOCAL(@"LISTS") target:self selector:@selector(userTappedOnListsFilter:)];
     
     [self loadUserInfo];
 }
@@ -903,7 +903,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     [super viewDidLoad];
     
     _userID = 0;
-    _viewingLists = NO;
+    _viewingLists = YES;
     _needRefresh = YES;
     _arrayLists = @[];
     _arrayPhotos = @[];

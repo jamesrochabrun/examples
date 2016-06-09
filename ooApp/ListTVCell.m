@@ -52,22 +52,19 @@
     }
 }
 
-- (void)prepareForReuse
-{
+- (void)prepareForReuse {
     [super prepareForReuse];
-    
-    [self.thumbnail.layer removeAllAnimations];
-    [self.thumbnail cancelImageRequestOperation];
-    [self.thumbnail setImage: nil];
     
     [self.requestOperation cancel];
     self.requestOperation = nil;
-
+    
+    [self.thumbnail cancelImageRequestOperation];
+    [self.thumbnail.layer removeAllAnimations];
+    [self.thumbnail setImage:nil];
     
     [self.buttonAddAll removeFromSuperview];
     self.buttonAddAll = nil;
     self.listToAddTo = nil;
-    self.thumbnail.image = nil;
 }
 
 - (void)toggleListInclusion {
@@ -226,6 +223,8 @@
         ;
     }];
 }
+
+
 
 /*
 // Only override drawRect: if you perform custom drawing.

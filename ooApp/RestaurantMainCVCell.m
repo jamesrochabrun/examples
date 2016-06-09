@@ -36,9 +36,6 @@
 @property (nonatomic, strong) UILabel *hoursView;
 @property (nonatomic, strong) UIView *verticalLine1;
 @property (nonatomic, strong) UIView *verticalLine2;
-@property (nonatomic, strong) UIView *closedButton;
-@property (nonatomic, strong) UILabel *closedIcon1, *closedIcon2, *message1, *message2;
-@property (nonatomic, strong) UITapGestureRecognizer *closedTap;
 @end
 
 @implementation RestaurantMainCVCell
@@ -46,36 +43,6 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _closedButton = [UIView new];
-        _closedButton.backgroundColor = UIColorRGBA(kColorTextActive);
-        _closedIcon1 = [UILabel new];
-        [_closedIcon1 withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextReverse backgroundColor:kColorTextActive];
-        _closedIcon1.text = kFontIconClosed;
-        [_closedIcon1 sizeToFit];
-
-        _closedIcon2 = [UILabel new];
-        [_closedIcon2 withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextReverse backgroundColor:kColorTextActive];
-        _closedIcon2.text = kFontIconClosed;
-        [_closedIcon2 sizeToFit];
-        
-        _message1 = [UILabel new];
-        [_message1 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorTextActive];
-        _message1.text = @"This location is CLOSED";
-        [_message1 sizeToFit];
-        
-        _message2 = [UILabel new];
-        [_message2 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorTextActive];
-        _message2.text = @"Tap here to explore nearby.";
-        [_message2 sizeToFit];
-        
-        _closedTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closedTapped)];
-        [_closedButton addGestureRecognizer:_closedTap];
-        
-        [_closedButton addSubview:_closedIcon1];
-        [_closedButton addSubview:_closedIcon2];
-        [_closedButton addSubview:_message1];
-        [_closedButton addSubview:_message2];
-        
         _backgroundImage = [[UIImageView alloc] init];
         _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
         _backgroundImage.image = [UIImage imageNamed:@"background-image.jpg"];
@@ -143,10 +110,7 @@
         _hoursScroll.layer.borderWidth = _hoursButton.layer.borderWidth = 1;
         _hoursScroll.hidden = YES;
         [self addSubview:_hoursScroll]; //should appear above everything
-        
-        [self addSubview:_closedButton];
-        _closedButton.hidden = YES;
-        
+                
         self.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 //        [DebugUtilities addBorderToViews:@[_name, _priceRange, _distance, _cuisine, _hoursButton, _address, _website]];
     }
@@ -176,11 +140,6 @@
     l.text = @"X";
     l.font = font;
     return [l intrinsicContentSize].height;
-}
-
-- (void)closedTapped {
-    [APP.tabBar setSelectedIndex:kTabIndexSearch];
-    [(UINavigationController *)APP.tabBar.selectedViewController popToRootViewControllerAnimated:YES];
 }
 
 - (void)viewHours {
@@ -223,12 +182,6 @@
     CGRect frame;
     CGSize s;
     CGFloat y, x;
-
-    _message1.frame = CGRectMake((w-width(_message1))/2, 2*kGeomSpaceEdge, width(_message1), height(_message1));
-    _message2.frame = CGRectMake((w-width(_message2))/2, CGRectGetMaxY(_message1.frame), width(_message2), height(_message2));
-    _closedButton.frame = CGRectMake(0, 0, w, CGRectGetMaxY(_message2.frame) + 2*kGeomSpaceEdge);
-    _closedIcon1.frame = CGRectMake(kGeomSpaceEdge, (height(_closedButton)-height(_closedIcon1))/2, width(_closedIcon1), height(_closedIcon1));
-    _closedIcon2.frame = CGRectMake(w - kGeomSpaceEdge - width(_closedIcon2), (height(_closedButton)-height(_closedIcon2))/2, width(_closedIcon2), height(_closedIcon2));
 
     _backgroundImage.frame = self.bounds;
     _imageOverlay.frame = self.bounds;
@@ -355,9 +308,6 @@
     _name.text = _restaurant.name;
     [_name sizeToFit];
     
-    if (_restaurant.permanentlyClosed) {
-        _closedButton.hidden = NO;
-    }
     _address.text = _restaurant.address;
     [_address sizeToFit];
     

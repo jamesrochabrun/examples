@@ -56,6 +56,10 @@
 @property (nonatomic, strong) UIButton *favoriteButton;
 @property (nonatomic, strong) GMSMapView *mapView;
 @property (nonatomic, strong) GMSCameraPosition *camera;
+@property (nonatomic, strong) UIView *closedButton;
+@property (nonatomic, strong) UILabel *closedIcon1, *closedIcon2, *message1, *message2;
+@property (nonatomic, strong) UITapGestureRecognizer *closedTap;
+
 
 @end
 
@@ -91,6 +95,39 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _closedButton = [UIView new];
+    _closedButton.backgroundColor = UIColorRGBA(kColorTextActive);
+    _closedIcon1 = [UILabel new];
+    [_closedIcon1 withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextReverse backgroundColor:kColorTextActive];
+    _closedIcon1.text = kFontIconClosed;
+    [_closedIcon1 sizeToFit];
+    
+    _closedIcon2 = [UILabel new];
+    [_closedIcon2 withFont:[UIFont fontWithName:kFontIcons size:kGeomIconSize] textColor:kColorTextReverse backgroundColor:kColorTextActive];
+    _closedIcon2.text = kFontIconClosed;
+    [_closedIcon2 sizeToFit];
+    
+    _message1 = [UILabel new];
+    [_message1 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorTextActive];
+    _message1.text = @"This location is CLOSED";
+    [_message1 sizeToFit];
+    
+    _message2 = [UILabel new];
+    [_message2 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorTextReverse backgroundColor:kColorTextActive];
+    _message2.text = @"Tap here to explore nearby.";
+    [_message2 sizeToFit];
+    
+    _closedTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closedTapped)];
+    [_closedButton addGestureRecognizer:_closedTap];
+    
+    [_closedButton addSubview:_closedIcon1];
+    [_closedButton addSubview:_closedIcon2];
+    [_closedButton addSubview:_message1];
+    [_closedButton addSubview:_message2];
+    
+    [self.view addSubview:_closedButton];
+    _closedButton.hidden = YES;
     
     _toTryID = 0;
     _favoriteID = 0;
@@ -143,6 +180,15 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     _listsNeedUpdate = NO;
     
     _mapView = [GMSMapView new];
+    _mapView.mapType = kGMSTypeNormal;
+    _mapView.myLocationEnabled = YES;
+    _mapView.settings.myLocationButton = NO;
+    _mapView.settings.scrollGestures = YES;
+    _mapView.settings.zoomGestures = YES;
+    _mapView.settings.rotateGestures = NO;
+    _mapView.delegate = self;
+    [_mapView setMinZoom:0 maxZoom:20];
+    _mapView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setListsUpdateNeeded)
@@ -151,6 +197,11 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                                              selector:@selector(handlePhotoDeleted:)
                                                  name:kNotificationPhotoDeleted object:nil];
     [self.view bringSubviewToFront:self.uploadProgressBar];
+}
+
+- (void)closedTapped {
+    [APP.tabBar setSelectedIndex:kTabIndexSearch];
+    [(UINavigationController *)APP.tabBar.selectedViewController popToRootViewControllerAnimated:YES];
 }
 
 - (void)dealloc {
@@ -548,6 +599,10 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
         _restaurant = restaurant;
         dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakSelf.restaurant.permanentlyClosed) {
+                weakSelf.closedButton.hidden = NO;
+                [self.view bringSubviewToFront:weakSelf.closedButton];
+            }
             [weakSelf.collectionView reloadData];// Sections:is];
             [weakSelf getListsForRestaurant];
         });
@@ -680,9 +735,19 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    CGFloat w = width(self.view);
+    
     _listButtonsContainer.frame = CGRectMake(0, 0, width(self.view)-2*kGeomSpaceEdge, _listButtonsContainerHeight);
     //    NSLog(@"_listButtonsContainer=%@", _listButtonsContainer);
     self.uploadProgressBar.frame = CGRectMake(0, 0, width(self.view), 2);
+    
+    _message1.frame = CGRectMake((w-width(_message1))/2, 2*kGeomSpaceEdge, width(_message1), height(_message1));
+    _message2.frame = CGRectMake((w-width(_message2))/2, CGRectGetMaxY(_message1.frame), width(_message2), height(_message2));
+    _closedButton.frame = CGRectMake(0, 0, w, CGRectGetMaxY(_message2.frame) + 2*kGeomSpaceEdge);
+    _closedIcon1.frame = CGRectMake(kGeomSpaceEdge, (height(_closedButton)-height(_closedIcon1))/2, width(_closedIcon1), height(_closedIcon1));
+    _closedIcon2.frame = CGRectMake(w - kGeomSpaceEdge - width(_closedIcon2), (height(_closedButton)-height(_closedIcon2))/2, width(_closedIcon2), height(_closedIcon2));
 }
 
 - (void)showList:(id)sender {
