@@ -178,7 +178,7 @@
     [super layoutSubviews];
     
     CGFloat w = width(self);
-    CGFloat h = height(self);
+//    CGFloat h = height(self);
     CGRect frame;
     CGSize s;
     CGFloat y, x;

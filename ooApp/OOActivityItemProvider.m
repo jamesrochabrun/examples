@@ -30,18 +30,18 @@
     NSString *message, *title, *urlLink;
     
     if (_list) {
-        message = [NSString stringWithFormat:@"Check out this list on Oomami \"%@\".\nhttps://%@/list/%lu",_list.name, kWebAppHost, (unsigned long)_list.listID]; ;
+        message = [NSString stringWithFormat:@"Check out the list \"%@\" on Oomami.\nhttps://%@/list/%lu",_list.name, kWebAppHost, (unsigned long)_list.listID]; ;
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {
-            message = [NSString stringWithFormat:@"Yum! Let's go to %@. For details click:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
+            message = [NSString stringWithFormat:@"Check out %@ on Oomami:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
             urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         } else {
-            message = [NSString stringWithFormat:@"Let's go to %@. For details click:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
+            message = [NSString stringWithFormat:@"Check out %@ on Oomami:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
             urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         }
     } else {
-        message = [NSString stringWithFormat:@"I use Oomami to figure out where to eat and share the best places and food with my friends (like you!). Check it out now! https://%@", kWebAppHost];
+        message = [NSString stringWithFormat:@"I use Oomami to find new bars and restaurants with my friends (like you!). Check it out: https://%@", kWebAppHost];
         urlLink = [NSString stringWithFormat:@"https://%@", kWebAppHost];
     }
     

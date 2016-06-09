@@ -212,7 +212,7 @@
     CGFloat w = width(self.view);
     CGFloat buttonWidth = (IS_IPAD) ? kGeomWidthButtoniPadMax : w - 4*kGeomSpaceEdge;
     
-    CGFloat cw = w;
+//    CGFloat cw = w;
     CGFloat ch = h - kGeomHeightButton;
     
     CGRect frame = self.view.bounds;

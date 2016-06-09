@@ -415,7 +415,7 @@
 }
 
 - (BOOL)openLink:(NSURL *)url {
-    NSString *host = [url host];
+//    NSString *host = [url host];
     NSString *page = [url path];
     NSString *query = [url query];
     NSDictionary *parameters = [query parseURLParams];
