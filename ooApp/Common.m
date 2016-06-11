@@ -24,6 +24,8 @@ NSString *const kOOURLProduction = @"api.oomamiapp.com/v1";
 //NSString *const kOOURL = @"localhost:3000/api/v1";
 NSString *const kHTTPProtocol = @"https";
 
+NSString *const kFBSDKAppEventNameViewScreen = @"FBSDKAppEventNameViewScreen";
+
 void message (NSString *str)
 {
     messageWithTitle (str,nil);

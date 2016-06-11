@@ -19,5 +19,6 @@
 #import "UIButton+Additions.h"
 #import "Common.h"
 #import "OOAIV.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 #endif

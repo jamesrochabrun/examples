@@ -246,8 +246,7 @@
     FBSDKAccessToken *facebookToken = [FBSDKAccessToken currentAccessToken];
     if (!facebookToken) {
         NSLog  (@"THERE IS NO FACEBOOK TOKEN");
-    }
-    else {
+    } else {
         NSSet *permissions = [facebookToken permissions];
         NSLog(@"USER PERMISSIONS = %@", permissions);
     }
