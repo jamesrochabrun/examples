@@ -804,6 +804,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
     
     _userViewButton.delegate = self;
     

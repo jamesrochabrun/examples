@@ -75,6 +75,7 @@ static NSString * const kOptionsTagsHeaderIdentifier = @"TagsHeaderIdentifier";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN( @( object_getClassName(self)));
+    
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     [self.view setNeedsUpdateConstraints];
     [self getAllTags];

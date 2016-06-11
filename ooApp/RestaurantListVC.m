@@ -51,13 +51,12 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
 
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
     [self.view bringSubviewToFront:_fv];
-    
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
 }
 
 - (void)done:(id)sender {
