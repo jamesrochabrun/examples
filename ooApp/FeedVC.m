@@ -302,12 +302,12 @@ static NSString * const FeedCellID = @"FeedCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
     
     if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
         [APP registerForPushNotifications];
     }
     
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
     [self getFeed];
 }
 

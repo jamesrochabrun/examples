@@ -97,7 +97,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     ANALYTICS_SCREEN( @( object_getClassName(self)));
     
     // RULE:  only fetch if it's the first time.

@@ -371,7 +371,6 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     ANALYTICS_SCREEN( @( object_getClassName(self)));
 
     [self.navigationController setNavigationBarHidden:NO animated:animated];
