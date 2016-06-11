@@ -1412,6 +1412,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
+                                      [FBSDKAppEvents logEvent:kFBSDKAppEventPlaceAddedToList parameters:@{kFBSDKAppEventParameterKeyListType:kFBSDKAppEventParameterValueCustomList}];
                                       success(responseObject);
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
@@ -1466,6 +1467,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
+                                      [FBSDKAppEvents logEvent:kFBSDKAppEventPlaceAddedToList parameters:@{kFBSDKAppEventParameterKeyListType:kFBSDKAppEventParameterValueSpecialList}];
                                       success(responseObject);
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
@@ -1637,6 +1639,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                                @"user_id": @(otherUserID)
                                               }
              success:^(id responseObject) {
+                 [FBSDKAppEvents logEvent:kFBSDKAppEventUserFollowed];
                  success(responseObject);
              } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                  failure(operation, error);
@@ -2293,19 +2296,25 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     NSData *imageData = UIImageJPEGRepresentation(image, 0.6);
     
     NSDictionary *parameters;
+
+    NSString *photoType = @"";
     
     if ([object isKindOfClass:[RestaurantObject class]]) {
         RestaurantObject *restaurant = (RestaurantObject *)object;
         parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
+        photoType = kFBSDKAppEventParameterValueItem;
     }
     else if ([object isKindOfClass:[UserObject class]]) {
         UserObject *user = (UserObject *)object;
         parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", (unsigned long)user.userID]};
+        photoType = kFBSDKAppEventParameterValueUser;
     }
     else if ([object isKindOfClass:[ListObject class]]) {
+        photoType = kFBSDKAppEventParameterValueList;
         ListObject *list = (ListObject *)object;
         parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", (unsigned long)list.listID]};
     } else if ([object isKindOfClass:[EventObject class]]) {
+        photoType = kFBSDKAppEventParameterValueEvent;
         EventObject *event = (EventObject *)object;
         parameters = @{kKeyEventEventID : [NSString stringWithFormat:@"%lu", (unsigned long)event.eventID]};
     } else {
@@ -2321,6 +2330,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@ ***** %@", operation.responseString, responseObject);
         MediaItemObject *mio = [MediaItemObject mediaItemFromDict:responseObject];
+        [FBSDKAppEvents logEvent:kFBSDKAppEventPhotoUploaded parameters:@{kFBSDKAppEventParameterKeyUploadType:photoType}];
         success(mio);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@ ***** %@", operation.responseString, error);

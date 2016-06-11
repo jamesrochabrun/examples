@@ -24,7 +24,6 @@
                showMapTapped:(CLLocationCoordinate2D)coordinate;
 - (void)restaurantMainCVCell:(RestaurantMainCVCell *)restaurantMainCVCell
                showListSearchingKeywords:(NSArray *)keywords;
-- (void)restaurantMainCVCellSharePressed:(id)sender;
 - (void)restaurantMainCVCellMorePressed:(id)sender;
 @end
 

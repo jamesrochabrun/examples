@@ -54,8 +54,7 @@ NSString *const kKeyMediaItemIsUserYummed = @"is_user_yummed";
     return mio;
 }
 
-- (NSDictionary*) dictionaryOfMediaItem;
-{
+- (NSDictionary *)dictionaryOfMediaItem {
     return @{
              kKeyMediaItemReference: self.reference ?:  @"",
              kKeyMediaItemID: self.mediaItemId ?  @(self.mediaItemId) :  @(0U),

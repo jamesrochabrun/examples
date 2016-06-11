@@ -1606,6 +1606,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
              success:^(ListObject *list) {
                  dispatch_async(dispatch_get_main_queue(), ^{
                      if (list) {
+                         [FBSDKAppEvents logEvent:kFBSDKAppEventListCreated];
                          [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
                          [weakSelf getLists];
                      } else {

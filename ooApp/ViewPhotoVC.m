@@ -191,7 +191,7 @@ static CGFloat kNextPhotoTolerance = 40;
                                                               });
                                                               
                                                           }];
-    UIAlertAction *shareDish = [UIAlertAction actionWithTitle:@"Share Dish"
+    UIAlertAction *shareItem = [UIAlertAction actionWithTitle:@"Share Item"
                                                                   style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                       [self sharePressed:sender];
                                                                   }];
@@ -215,7 +215,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
     UserObject *uo = [Settings sharedInstance].userObject;
 
-    [photoOptions addAction:shareDish];
+    [photoOptions addAction:shareItem];
     [photoOptions addAction:toggleWishlist];
     [photoOptions addAction:addRestaurantToList];
     if (_mio.sourceUserID == uo.userID) {
@@ -331,27 +331,10 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-- (void)shareDish:(id)sender {
-    
-//    OOAPI *api = [[OOAPI alloc] init];
-    
-//    if (_mio) {
-//        _requestOperation = [api getRestaurantImageWithMediaItem:_mio maxWidth:150 maxHeight:0 success:^(NSString *link) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                [self showShare:link fromView:sender];
-//            });
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                [self showShare:nil fromView:sender];
-//            });
-//        }];
-//    } else {
-        [self showShare:nil fromView:sender];
-//    }
-}
-
 - (void)sharePressed:(id)sender {
     UIImage *img = [self shareImage];
+    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
+                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValueItem}];
     
     __weak ViewPhotoVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1059,6 +1042,7 @@ static CGFloat kNextPhotoTolerance = 40;
                 NSLog(@"like photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;
                 [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
+                    [FBSDKAppEvents logEvent:kFBSDKAppEventPhotoYummed];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         weakSelf.yumIndicator.alpha = 1;
                         [UIView animateKeyframesWithDuration:1.3 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{

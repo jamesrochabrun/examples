@@ -411,15 +411,15 @@ typedef enum {
 }
 
 - (void)setupRestaurantOptionsAC {
-    _restaurantOptionsAC = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
-                                                               message:@"What would you like to do with this restaurant."
+    _restaurantOptionsAC = [UIAlertController alertControllerWithTitle:@"Place Options"
+                                                               message:@"What would you like to do with this place."
                                                         preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
     _restaurantOptionsAC.view.tintColor = UIColorRGBA(kColorBlack);
     
     __weak RestaurantTVCell *weakSelf = self;
     
-    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
+    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Place"
                                                               style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
                                                                   [weakSelf  sharePressed:weakSelf];
                                                               }];
@@ -570,7 +570,8 @@ typedef enum {
 
 - (void)sharePressed:(id)sender {
     UIImage *img = [self shareImage];
-    
+    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
+                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValuePlace}];
     __weak RestaurantTVCell *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf showShare:img fromView:sender];
@@ -639,6 +640,7 @@ typedef enum {
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
     [api addList:name success:^(ListObject *listObject) {
+        [FBSDKAppEvents logEvent:kFBSDKAppEventListCreated];
         if (listObject.listID) {
             [weakSelf addRestaurantToList:listObject];
         }

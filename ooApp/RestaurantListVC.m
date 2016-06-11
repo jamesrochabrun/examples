@@ -585,6 +585,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (void)sharePressed:(id)sender {
     UIImage *img = nil;
+    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
+                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValueList}];
 
     __weak RestaurantListVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{

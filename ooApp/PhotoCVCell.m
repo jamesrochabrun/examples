@@ -176,6 +176,7 @@
                 NSLog(@"like photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;
                 [OOAPI setMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
+                    [FBSDKAppEvents logEvent:kFBSDKAppEventPhotoYummed];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         weakSelf.yumIndicator.alpha = 1;
                         weakSelf.yumIndicator.center = weakSelf.center;

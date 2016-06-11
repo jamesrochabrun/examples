@@ -24,7 +24,25 @@ NSString *const kOOURLProduction = @"api.oomamiapp.com/v1";
 //NSString *const kOOURL = @"localhost:3000/api/v1";
 NSString *const kHTTPProtocol = @"https";
 
-NSString *const kFBSDKAppEventNameViewScreen = @"FBSDKAppEventNameViewScreen";
+//Facebook Events
+NSString *const kFBSDKAppEventPhotoYummed = @"Photo Yummed";
+NSString *const kFBSDKAppEventPhotoUploaded = @"Photo Uploaded";
+NSString *const kFBSDKAppEventSharePressed = @"Share Pressed";
+NSString *const kFBSDKAppEventListCreated = @"List Created";
+NSString *const kFBSDKAppEventPlaceAddedToList = @"Place Added To List";
+NSString *const kFBSDKAppEventUserFollowed = @"User Followed";
+
+NSString *const kFBSDKAppEventParameterKeyShareType = @"Share Type";
+NSString *const kFBSDKAppEventParameterKeyUploadType = @"Upload Type";
+NSString *const kFBSDKAppEventParameterKeyListType = @"List Type";
+
+NSString *const kFBSDKAppEventParameterValuePlace = @"Place";
+NSString *const kFBSDKAppEventParameterValueList = @"List";
+NSString *const kFBSDKAppEventParameterValueItem = @"Item";
+NSString *const kFBSDKAppEventParameterValueUser = @"User";
+NSString *const kFBSDKAppEventParameterValueEvent = @"Event";
+NSString *const kFBSDKAppEventParameterValueCustomList = @"Custom List";
+NSString *const kFBSDKAppEventParameterValueSpecialList = @"Special List";
 
 void message (NSString *str)
 {

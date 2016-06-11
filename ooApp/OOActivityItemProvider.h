@@ -13,6 +13,13 @@
 #import <FBSDKShareKit/FBSDKShareKit.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 
+typedef enum {
+    kShareTypeList = 0,
+    kShareTypePlace = 1,
+    KShareTypeItem = 2,
+    kShareTypeApp = 3
+} kShareType;
+
 @interface OOActivityItemProvider : UIActivityItemProvider <UIActivityItemSource, FBSDKSharingDelegate>
 
 

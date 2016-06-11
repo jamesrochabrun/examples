@@ -171,7 +171,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     iconLabel.textColor = UIColorRGBA(kColorTextReverse);
     [iconLabel sizeToFit];
     UIImage *icon = [UIImage imageFromView:iconLabel];
-    [_shareRestaurant withText:@"share restaurant" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(sharePressed:)];
+    [_shareRestaurant withText:@"share place" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(sharePressed:)];
     [_shareRestaurant setImage:icon forState:UIControlStateNormal];
     [self.view addSubview:_shareRestaurant];
     _shareRestaurant.translatesAutoresizingMaskIntoConstraints = NO;
@@ -275,6 +275,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     __weak RestaurantVC *weakSelf = self;
     [api addList:name success:^(ListObject *listObject) {
         if (listObject.listID) {
+            [FBSDKAppEvents logEvent:kFBSDKAppEventListCreated];
             [weakSelf addRestaurantToList:listObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -290,23 +291,18 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             [weakSelf getListsForRestaurant];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Could add restaurant to list: %@", error);
+        NSLog(@"Could not add restaurant to list: %@", error);
     }];
 }
 
 - (void)setupStyleSheetAC {
-    _styleSheetAC = [UIAlertController alertControllerWithTitle:@"Restaurant Options"
-                                                        message:@"What would you like to do with this restaurant."
+    _styleSheetAC = [UIAlertController alertControllerWithTitle:@"Place Options"
+                                                        message:@"What would you like to do with this place."
                                                  preferredStyle:UIAlertControllerStyleActionSheet]; // 1
     
     _styleSheetAC.view.tintColor = UIColorRGBA(kColorBlack);
     
     __weak RestaurantVC *weakSelf = self;
-    
-    //    UIAlertAction *shareRestaurant = [UIAlertAction actionWithTitle:@"Share Restaurant"
-    //                                                              style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-    //                                                                  [self sharePressed];
-    //                                                              }];
     
     UIAlertAction *addToList = [UIAlertAction actionWithTitle:(_listToAddTo) ? [NSString stringWithFormat:@"Add to \"%@\"", _listToAddTo.name] : @"Add/Remove from List"
                                                         style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
@@ -392,6 +388,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 
 - (void)sharePressed:(id)sender {
     UIImage *img = nil;
+    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
+                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValuePlace}];
     for (id cell in [_collectionView visibleCells]) {
         if ([cell isKindOfClass:[PhotoCVCell class]]) {
             PhotoCVCell *p = (PhotoCVCell *)cell;

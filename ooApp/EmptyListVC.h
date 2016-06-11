@@ -13,6 +13,6 @@
 #import "EventObject.h"
 
 @interface EmptyListVC : SubBaseVC
-@property (nonatomic,strong) EventObject *eventBeingEdited;
-@property (nonatomic, strong) ListObject* listItem;
+@property (nonatomic, strong) EventObject *eventBeingEdited;
+@property (nonatomic, strong) ListObject *listItem;
 @end

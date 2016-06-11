@@ -221,10 +221,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _searchBar.alpha =0;
     _searchMode = NO;
     
-//    [self setRightNavWithIcon:kFontIconInvite target:self action:@selector(invitePerson:)];
-//    
-//    [self setLeftNavWithIcon:@"" target:nil action:nil];
-    
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconSearch target:self action:@selector(showSearch) forSide:kNavBarSideTypeLeft isCTA:NO];
     
@@ -239,7 +235,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     iconLabel.textColor = UIColorRGBA(kColorTextReverse);
     [iconLabel sizeToFit];
     UIImage *icon = [UIImage imageFromView:iconLabel];
-    [_inviteFriends withText:@"invite friends" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(invitePerson:)];
+    [_inviteFriends withText:@"invite friends" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(inviteFriends:)];
     [_inviteFriends setImage:icon forState:UIControlStateNormal];
     _inviteFriends.layer.cornerRadius = 0;
     [self.view addSubview:_inviteFriends];
@@ -317,7 +313,10 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                           ];
 }
 
-- (void)invitePerson:(id)sender {
+- (void)inviteFriends:(id)sender {
+    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
+                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValueUser}];
+
     UIImage *img = [UIImage imageNamed:@"Oomami_AppStoreLogo(120x120).png"];
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = nil;

@@ -157,11 +157,6 @@
     [_delegate restaurantMainCVCell:self gotoURL:url];
 }
 
-
-- (void)sharePressed:(id)sender {
-    [_delegate restaurantMainCVCellSharePressed:sender];
-}
-
 - (void)morePressed:(id)sender {
     [_delegate restaurantMainCVCellMorePressed:sender];
 }

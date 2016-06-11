@@ -206,9 +206,9 @@
 
 - (void)updateRestaurantCount {
     if (_list.numRestaurants == 1) {
-        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurant", (unsigned long)_list.numRestaurants];
+        self.subHeader1.text = [NSString stringWithFormat:@"%lu place", (unsigned long)_list.numRestaurants];
     } else if (_list.numRestaurants) {
-        self.subHeader1.text = [NSString stringWithFormat:@"%lu restaurants", (unsigned long)_list.numRestaurants];
+        self.subHeader1.text = [NSString stringWithFormat:@"%lu places", (unsigned long)_list.numRestaurants];
     } else {
         self.subHeader1.text = @"";
     }
