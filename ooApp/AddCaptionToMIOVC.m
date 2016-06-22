@@ -80,6 +80,12 @@
 //    [DebugUtilities addBorderToViews:@[_iv, self.textView]];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)toggleFavoritesState {
     OOAPI *api = [[OOAPI alloc] init];
     __weak AddCaptionToMIOVC *weakSelf = self;

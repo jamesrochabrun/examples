@@ -163,27 +163,14 @@
     //_rating.text = (restaurant.rating && ([restaurant.rating floatValue] > 3.7)) ? kFontIconWhatsNewFilled : @"";
     
     OOAPI *api = [[OOAPI alloc] init];
+    __weak TileCVCell *weakSelf = self;
     
     if ([restaurant.mediaItems count]) {
-        MediaItemObject *mediaItem = ((MediaItemObject*)[restaurant.mediaItems objectAtIndex:0]);
-        _requestOperation = [api getRestaurantImageWithMediaItem:mediaItem maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-            __weak UIImageView *weakIV = _backgroundImage;
-            __weak TileCVCell *weakSelf = self;
-            [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]] placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                ON_MAIN_THREAD(^ {
-                    [weakIV setAlpha:0.0];
-                    weakIV.image = image;
-                    [UIView beginAnimations:nil context:NULL];
-                    [UIView setAnimationDuration:0.3];
-                    [weakIV setAlpha:1.0];
-                    [UIView commitAnimations];
-                    [weakSelf setNeedsUpdateConstraints];
-                    [weakSelf setNeedsLayout];
-                });
-            } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                NSLog  (@"ERROR= %@",error);
-                NSLog(@"FAILED TO GET IMAGE FOR RESTAURANT NAME = %@, #MEDIA= %lu", restaurant.name,  (unsigned long)restaurant.mediaItems.count);
-            }];
+        [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
+            weakSelf.restaurant.mediaItems = [NSMutableArray arrayWithArray:mediaItems];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf setThumbnailImage:[weakSelf.restaurant getUserContextMediaItem:[Settings sharedInstance].userObject.userID]];
+            });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
@@ -194,7 +181,7 @@
                 __weak UIImageView *weakIV = _backgroundImage;
                 __weak TileCVCell *weakSelf = self;
                 [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]] placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                    ON_MAIN_THREAD(^ {
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         [weakIV setAlpha:0.0];
                         weakIV.image = image;
                         [UIView beginAnimations:nil context:NULL];
@@ -213,6 +200,39 @@
         }
     }
 }
+
+- (void)setThumbnailImage:(MediaItemObject *)mio {
+    OOAPI *api = [[OOAPI alloc] init];
+    
+    //    __weak RestaurantTVCell *weakSelf = self;
+    
+    self.requestOperation = [api getRestaurantImageWithMediaItem:mio
+                                                        maxWidth:width(self)
+                                                       maxHeight:0
+                                                         success:^(NSString *link) {
+                                                             __weak UIImageView *weakIV = self.backgroundImage;
+                                                             __weak TileCVCell *weakSelf = self;
+                                                             [weakSelf.backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                                                                       placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
+                                                                                                success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                                                                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                                                                                        [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                                                                                                            weakIV.image = image;
+                                                                                                        } completion:^(BOOL finished) {
+                                                                                                            ;
+                                                                                                        }];
+                                                                                                        [weakSelf setNeedsUpdateConstraints];
+                                                                                                        [weakSelf setNeedsLayout];
+                                                                                                    });
+                                                                                                }
+                                                                                                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                                                                                    weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
+                                                                                                }];
+                                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                             ;
+                                                         }];
+}
+
 
 - (void)prepareForReuse
 {

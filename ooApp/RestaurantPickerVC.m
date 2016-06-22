@@ -108,6 +108,12 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
     self.navTitle = _nto;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)searchLocations {
 //    __weak  RestaurantPickerVC *weakSelf = self;
     CLGeocoder * geocoder = [[CLGeocoder alloc] init];

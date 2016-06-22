@@ -78,7 +78,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:cellIdentifier];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    _tableView.rowHeight = kGeomHeightHorizontalListRow;
+    _tableView.rowHeight = kGeomHeightHorizontalListRow + 20;
     _tableView.separatorInset = UIEdgeInsetsZero;
     _tableView.layoutMargins = UIEdgeInsetsZero;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -585,8 +585,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
 - (void)sharePressed:(id)sender {
     UIImage *img = nil;
-    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
-                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValueList}];
+    [FBSDKAppEvents logEvent:kAppEventSharePressed
+                  parameters:@{kAppEventParameterValueItem:kAppEventParameterValueList}];
 
     __weak RestaurantListVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{

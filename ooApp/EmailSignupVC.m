@@ -132,6 +132,12 @@
     [_firstnameTextField addSubview:_hLine3];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)signUp {
     if (![self validateForm]) return;
     

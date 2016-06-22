@@ -31,11 +31,11 @@ static NSString * const cellIdentifier = @"locationCell";
         _nto = [[NavTitleObject alloc] initWithHeader:@"Confirm Photo" subHeader:@""];
         
         _usePhoto = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_usePhoto withText:@"Use This Photo" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorBordersAndLines target:self selector:@selector(usePhoto:)];
+        [_usePhoto withText:@"Use This Photo" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorBordersAndLines target:self selector:@selector(usePhoto:)];
         _usePhoto.translatesAutoresizingMaskIntoConstraints = NO;
         
         _getDifferentPhoto = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_getDifferentPhoto withText:@"Get Different Photo" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorText borderColor:kColorBordersAndLines target:self selector:@selector(getDifferentPhoto:)];
+        [_getDifferentPhoto withText:@"Get Different Photo" fontSize:kGeomFontSizeH2 width:kGeomWidthButton height:kGeomHeightButton backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorBordersAndLines target:self selector:@selector(getDifferentPhoto:)];
         _getDifferentPhoto.translatesAutoresizingMaskIntoConstraints = NO;
     }
     //[DebugUtilities addBorderToViews:@[_iv, _usePhoto, _getDifferentPhoto]];
@@ -47,7 +47,10 @@ static NSString * const cellIdentifier = @"locationCell";
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
-    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(getDifferentPhoto:) forSide:kNavBarSideTypeRight isCTA:NO];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(getDifferentPhoto:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
     [self.view addSubview:_iv];
     [self.view addSubview:_usePhoto];
@@ -55,6 +58,13 @@ static NSString * const cellIdentifier = @"locationCell";
 
     self.navTitle = _nto;
 }
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

@@ -62,66 +62,44 @@ typedef enum {
     OOAPI *api = [[OOAPI alloc] init];
     
     NSString *imageRef;
+
+    __weak RestaurantTVCell *weakSelf = self;
     
     if ([restaurant.mediaItems count]) {
-        _mio = [restaurant.mediaItems objectAtIndex:0];
-    } else if ([restaurant.imageRefs count]) {
-        imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
-    }
-    
-    if (_mio) {
-        self.requestOperation = [api getRestaurantImageWithMediaItem:_mio
-                                                            maxWidth:width(self)
-                                                           maxHeight:0
-                                                             success:^(NSString *link) {
-            __weak UIImageView *weakIV = self.thumbnail;
-            __weak RestaurantTVCell *weakSelf = self;
-            [self.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
-                                  placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
-                                           success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-                                               ON_MAIN_THREAD(^ {
-                                                   [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-                                                       weakIV.image = image;
-                                                   } completion:^(BOOL finished) {
-                                                       ;
-                                                   }];
-                                                   [weakSelf setNeedsUpdateConstraints];
-                                                   [weakSelf setNeedsLayout];
-                                               });
-                                           }
-                                           failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-                                               weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
-                                           }];
+        [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
+            weakSelf.restaurant.mediaItems = [NSMutableArray arrayWithArray:mediaItems];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf setThumbnailImage:[weakSelf.restaurant getUserContextMediaItem:[Settings sharedInstance].userObject.userID]];
+            });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
-    } else if (imageRef) {
+    } else if ([restaurant.imageRefs count]) {
+        imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
         self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-
+            
             __weak UIImageView *weakIV = self.thumbnail;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                       placeholderImage:[UIImage imageNamed:@"background-image.jpg"] success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                    [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-                        weakIV.image = image;;
-                    } completion:^(BOOL finished) {
-                        ;
-                    }];
-                } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                    ;
-                }];//thURL:[NSURL URLWithString:link]];
+                                          [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                                              weakIV.image = image;
+                                          } completion:^(BOOL finished) {
+                                              ;
+                                          }];
+                                      } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                          ;
+                                      }];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
     }
-    __weak RestaurantTVCell *weakSelf = self;
     
     if (!_restaurant.restaurantID) {
         [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
             _restaurant = restaurant;
             if (_restaurant.restaurantID) {
-                
                 [weakSelf addFolloweesWithRestaurant];
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -131,6 +109,38 @@ typedef enum {
         [self addFolloweesWithRestaurant];
     }
     [self setupActionButton];
+}
+
+- (void)setThumbnailImage:(MediaItemObject *)mio {
+    OOAPI *api = [[OOAPI alloc] init];
+    
+//    __weak RestaurantTVCell *weakSelf = self;
+    
+    self.requestOperation = [api getRestaurantImageWithMediaItem:mio
+                        maxWidth:width(self)
+                        maxHeight:0
+                        success:^(NSString *link) {
+                            __weak UIImageView *weakIV = self.thumbnail;
+                            __weak RestaurantTVCell *weakSelf = self;
+                            [weakSelf.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                                      placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
+                                                               success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                                                                   dispatch_async(dispatch_get_main_queue(), ^{
+                                                                       [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+                                                                           weakIV.image = image;
+                                                                                                        } completion:^(BOOL finished) {
+                                                                                                            ;
+                                                                                                        }];
+                                                                       [weakSelf setNeedsUpdateConstraints];
+                                                                       [weakSelf setNeedsLayout];
+                                                                                                    });
+                                                                                                }
+                                                               failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                                                                   weakIV.image = [UIImage imageNamed:@"background-image.jpg"];
+                                                               }];
+                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                            ;
+                        }];
 }
 
 - (void)addFolloweesWithRestaurant {
@@ -570,8 +580,8 @@ typedef enum {
 
 - (void)sharePressed:(id)sender {
     UIImage *img = [self shareImage];
-    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
-                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValuePlace}];
+    [FBSDKAppEvents logEvent:kAppEventSharePressed
+                  parameters:@{kAppEventParameterValueItem:kAppEventParameterValuePlace}];
     __weak RestaurantTVCell *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakSelf showShare:img fromView:sender];
@@ -640,7 +650,7 @@ typedef enum {
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
     [api addList:name success:^(ListObject *listObject) {
-        [FBSDKAppEvents logEvent:kFBSDKAppEventListCreated];
+        [FBSDKAppEvents logEvent:kAppEventListCreated];
         if (listObject.listID) {
             [weakSelf addRestaurantToList:listObject];
         }

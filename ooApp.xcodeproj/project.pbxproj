@@ -15,6 +15,7 @@
 		361329831C196215009413D6 /* Oomami_AppStoreLogo(167x167).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */; };
 		361329841C196215009413D6 /* Oomami_AppStoreLogo(180x180).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */; };
 		361329851C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png in Resources */ = {isa = PBXBuildFile; fileRef = 3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */; };
+		36132A071D12080000EE3710 /* AppLogObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36132A061D12080000EE3710 /* AppLogObject.m */; };
 		3613B4821CB1A94900AA5B14 /* ShowModalAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613B4811CB1A94900AA5B14 /* ShowModalAnimator.m */; };
 		3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE461BB9CF6000F1AF67 /* TimeUtilities.m */; };
 		3613BE4A1BBA330000F1AF67 /* OOMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3613BE491BBA330000F1AF67 /* OOMapMarker.m */; };
@@ -289,6 +290,8 @@
 		3613297D1C196215009413D6 /* Oomami_AppStoreLogo(167x167).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(167x167).png"; path = "Graphic Assets/Oomami_AppStoreLogo(167x167).png"; sourceTree = "<group>"; };
 		3613297E1C196215009413D6 /* Oomami_AppStoreLogo(180x180).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(180x180).png"; path = "Graphic Assets/Oomami_AppStoreLogo(180x180).png"; sourceTree = "<group>"; };
 		3613297F1C196215009413D6 /* Oomami_AppStoreLogo(1024x1024).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Oomami_AppStoreLogo(1024x1024).png"; path = "Graphic Assets/Oomami_AppStoreLogo(1024x1024).png"; sourceTree = "<group>"; };
+		36132A051D12080000EE3710 /* AppLogObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppLogObject.h; sourceTree = "<group>"; };
+		36132A061D12080000EE3710 /* AppLogObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppLogObject.m; sourceTree = "<group>"; };
 		3613B4801CB1A94900AA5B14 /* ShowModalAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowModalAnimator.h; sourceTree = "<group>"; };
 		3613B4811CB1A94900AA5B14 /* ShowModalAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowModalAnimator.m; sourceTree = "<group>"; };
 		3613BE451BB9CF6000F1AF67 /* TimeUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeUtilities.h; sourceTree = "<group>"; };
@@ -782,6 +785,8 @@
 				36C572D91C01309900C57DA2 /* TagObject.m */,
 				36E592951C2A62BD00A56367 /* NotificationObject.h */,
 				36E592961C2A62BD00A56367 /* NotificationObject.m */,
+				36132A051D12080000EE3710 /* AppLogObject.h */,
+				36132A061D12080000EE3710 /* AppLogObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1586,6 +1591,7 @@
 				367B45371BCCA9B100E96B69 /* RestaurantVCCVL.m in Sources */,
 				96E954E21BDFF99100F5197A /* Reachability.m in Sources */,
 				36B1CC9D1CA9CFD9007D0263 /* OOErrorObject.m in Sources */,
+				36132A071D12080000EE3710 /* AppLogObject.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
 				3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */,
 				3632F7781C44BEDF007901D9 /* OOTBC.m in Sources */,

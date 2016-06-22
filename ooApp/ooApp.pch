@@ -20,5 +20,6 @@
 #import "Common.h"
 #import "OOAIV.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import "AppLogObject.h"
 
 #endif

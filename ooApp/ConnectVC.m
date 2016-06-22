@@ -314,8 +314,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 }
 
 - (void)inviteFriends:(id)sender {
-    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
-                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValueUser}];
+    [FBSDKAppEvents logEvent:kAppEventSharePressed
+                  parameters:@{kAppEventParameterValueItem:kAppEventParameterValueUser}];
 
     UIImage *img = [UIImage imageNamed:@"Oomami_AppStoreLogo(120x120).png"];
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];

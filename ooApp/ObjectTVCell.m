@@ -212,8 +212,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _gradient.frame = _thumbnail.bounds;
-//    _gradient.frame = CGRectMake(kGeomSpaceEdge, kGeomSpaceCellPadding, width(self)*5/5, height(_viewShadow));
+    _gradient.frame = _thumbnail.bounds; //CGRectZero;
     [_gradient setStartPoint:CGPointMake(0, 0)];
     [_gradient setEndPoint:CGPointMake(1, 0)];
 }

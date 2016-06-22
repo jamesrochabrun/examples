@@ -275,7 +275,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     __weak RestaurantVC *weakSelf = self;
     [api addList:name success:^(ListObject *listObject) {
         if (listObject.listID) {
-            [FBSDKAppEvents logEvent:kFBSDKAppEventListCreated];
+            [FBSDKAppEvents logEvent:kAppEventListCreated];
             [weakSelf addRestaurantToList:listObject];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -388,8 +388,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 
 - (void)sharePressed:(id)sender {
     UIImage *img = nil;
-    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
-                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValuePlace}];
+    [FBSDKAppEvents logEvent:kAppEventSharePressed
+                  parameters:@{kAppEventParameterValueItem:kAppEventParameterValuePlace}];
     for (id cell in [_collectionView visibleCells]) {
         if ([cell isKindOfClass:[PhotoCVCell class]]) {
             PhotoCVCell *p = (PhotoCVCell *)cell;

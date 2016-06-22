@@ -333,8 +333,8 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)sharePressed:(id)sender {
     UIImage *img = [self shareImage];
-    [FBSDKAppEvents logEvent:kFBSDKAppEventSharePressed
-                  parameters:@{kFBSDKAppEventParameterValueItem:kFBSDKAppEventParameterValueItem}];
+    [FBSDKAppEvents logEvent:kAppEventSharePressed
+                  parameters:@{kAppEventParameterValueItem:kAppEventParameterValueItem}];
     
     __weak ViewPhotoVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1042,7 +1042,7 @@ static CGFloat kNextPhotoTolerance = 40;
                 NSLog(@"like photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;
                 [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
-                    [FBSDKAppEvents logEvent:kFBSDKAppEventPhotoYummed];
+                    [FBSDKAppEvents logEvent:kAppEventPhotoYummed];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         weakSelf.yumIndicator.alpha = 1;
                         [UIView animateKeyframesWithDuration:1.3 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeLinear animations:^{

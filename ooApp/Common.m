@@ -20,29 +20,9 @@ NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationU
 
 NSString *const kOOURLStage = @"stage.oomamiapp.com/v1";
 NSString *const kOOURLProduction = @"api.oomamiapp.com/v1";
+NSString *const kOOURLLocal = @"127.0.0.1:3000/v1";
 
-//NSString *const kOOURL = @"localhost:3000/api/v1";
 NSString *const kHTTPProtocol = @"https";
-
-//Facebook Events
-NSString *const kFBSDKAppEventPhotoYummed = @"Photo Yummed";
-NSString *const kFBSDKAppEventPhotoUploaded = @"Photo Uploaded";
-NSString *const kFBSDKAppEventSharePressed = @"Share Pressed";
-NSString *const kFBSDKAppEventListCreated = @"List Created";
-NSString *const kFBSDKAppEventPlaceAddedToList = @"Place Added To List";
-NSString *const kFBSDKAppEventUserFollowed = @"User Followed";
-
-NSString *const kFBSDKAppEventParameterKeyShareType = @"Share Type";
-NSString *const kFBSDKAppEventParameterKeyUploadType = @"Upload Type";
-NSString *const kFBSDKAppEventParameterKeyListType = @"List Type";
-
-NSString *const kFBSDKAppEventParameterValuePlace = @"Place";
-NSString *const kFBSDKAppEventParameterValueList = @"List";
-NSString *const kFBSDKAppEventParameterValueItem = @"Item";
-NSString *const kFBSDKAppEventParameterValueUser = @"User";
-NSString *const kFBSDKAppEventParameterValueEvent = @"Event";
-NSString *const kFBSDKAppEventParameterValueCustomList = @"Custom List";
-NSString *const kFBSDKAppEventParameterValueSpecialList = @"Special List";
 
 void message (NSString *str)
 {
@@ -645,6 +625,7 @@ void ANALYTICS_SCREEN(NSString* name)
 	id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
 	[tracker set:kGAIScreenName value:name];
 	[tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    [AppLogObject logEvent:kAppEventScreenView originScreen:name];
 }
 
 void ANALYTICS_FORCE_SYNC ()
@@ -696,6 +677,19 @@ void ANALYTICS_EVENT_UI (NSString* name)
 }
 
 @implementation Common
+
+// From
+// http://www.techrepublic.com/blog/software-engineer/better-code-determine-device-types-and-ios-versions/
+//
++ (NSString *)platformRawString {
+    size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char *machine = malloc(size);
+    sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    NSString *platform = [NSString stringWithUTF8String:machine];
+    free(machine);
+    return platform;
+}
 
 + (NSString *)versionString {
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];

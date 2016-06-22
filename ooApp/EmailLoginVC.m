@@ -122,6 +122,12 @@
     [_emailTextField addSubview:_hLine1];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    ANALYTICS_SCREEN( @( object_getClassName(self)));
+}
+
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     

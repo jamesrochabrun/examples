@@ -815,6 +815,9 @@
 @property (nonatomic, strong) NSArray *arrayLists;
 @property (nonatomic, strong) NSArray *arrayPhotos;
 
+@property (nonatomic, strong) UIImageView *profilePhoto;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
+
 @property (nonatomic, strong) UserObject *profileOwner;
 @property (nonatomic, assign) BOOL viewingOwnProfile;
 @property (nonatomic, strong) UIAlertController *optionsAC;
@@ -1000,7 +1003,50 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     _nto = [[NavTitleObject alloc] initWithHeader:string
                                         subHeader:[NSString stringWithFormat:@"%@ %@", (_profileOwner.firstName)?(_profileOwner.firstName):@"", (_profileOwner.lastName)?_profileOwner.lastName:@""]];
     
+    _profilePhoto = [UIImageView new];
+    _profilePhoto.contentMode = UIViewContentModeScaleAspectFit;
+    _profilePhoto.backgroundColor = UIColorRGBOverlay(kColorBackgroundTheme, 0.90);
+    _profilePhoto.userInteractionEnabled = YES;
+    
+    _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showProfilePhotoFullScreen:)];
+    [_tapGestureRecognizer setNumberOfTapsRequired:1];
+    [_profilePhoto addGestureRecognizer:_tapGestureRecognizer];
+    _profilePhoto.hidden = YES;
+    
+    [self.view addSubview:_profilePhoto];
+    
     [self.view bringSubviewToFront:self.uploadProgressBar];
+    [self.view bringSubviewToFront:_profilePhoto];
+}
+
+- (void)showProfilePhotoFullScreen:(id)sender {
+    if (sender == _tapGestureRecognizer) {
+        _profilePhoto.hidden = YES;
+    } else {
+        __weak ProfileVC *weakSelf = self;
+        if (!_profileOwner.mediaItem) return;
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        [api getRestaurantImageWithMediaItem:_profileOwner.mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
+            [weakSelf.profilePhoto setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                          placeholderImage:nil
+                                   success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                           weakSelf.profilePhoto.image = image;
+                                           [weakSelf.profilePhoto setAlpha:1.0];
+                                           weakSelf.profilePhoto.hidden = NO;
+                                       });
+                                   } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                           
+                                       });
+                                   }];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+            });
+        }];
+    }
 }
 
 - (void)showSearch {
@@ -1165,6 +1211,8 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     CGFloat w = width(self.view);
     self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
     [_cv.collectionViewLayout invalidateLayout];
+    
+    _profilePhoto.frame = self.view.bounds;
 }
 
 - (void)updateSpecialtiesLabel
@@ -1606,7 +1654,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
              success:^(ListObject *list) {
                  dispatch_async(dispatch_get_main_queue(), ^{
                      if (list) {
-                         [FBSDKAppEvents logEvent:kFBSDKAppEventListCreated];
+                         [FBSDKAppEvents logEvent:kAppEventListCreated];
                          [weakSelf performSelectorOnMainThread:@selector(goToExploreScreen:) withObject:list waitUntilDone:NO];
                          [weakSelf getLists];
                      } else {
@@ -2066,7 +2114,12 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 
 - (void)userPressedSettings:(id)sender;
 {
-    if  (self.uploading || !_viewingOwnProfile) {
+    if (!_viewingOwnProfile) {
+        [self showProfilePhotoFullScreen:sender];
+        return;
+    }
+    
+    if  (self.uploading) {
         return;
     }
     __weak  ProfileVC *weakSelf = self;
@@ -2109,6 +2162,10 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     [_optionsAC addAction:logout];
     [_optionsAC addAction:cancel];
     [self presentViewController:_optionsAC animated:YES completion:nil];
+}
+
+- (void)showPhoto {
+    
 }
 
 - (void)userPressedChangeProfilePicture

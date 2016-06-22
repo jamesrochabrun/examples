@@ -210,7 +210,7 @@ typedef enum {
     [api addList:name success:^(ListObject *listObject) {
         if (listObject.listID) {
             [OOAPI addRestaurants:@[_restaurantToAdd] toList:listObject.listID success:^(id response) {
-                [FBSDKAppEvents logEvent:kFBSDKAppEventListCreated];
+                [FBSDKAppEvents logEvent:kAppEventListCreated];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakSelf getLists];
                     [weakSelf getListsForRestaurant];

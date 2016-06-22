@@ -277,7 +277,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     return [rm GET:urlString parameters:nil success:^(id responseObject) {
         NSMutableArray *mediaItems = [NSMutableArray array];
-        NSLog(@"rest name = %@ \nmedia items %@", restaurant.name, responseObject);
+        //NSLog(@"rest name = %@ \nmedia items %@", restaurant.name, responseObject);
         for (id dict in responseObject) {
             [mediaItems addObject:[MediaItemObject mediaItemFromDict:dict]];
         }
@@ -1412,7 +1412,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
-                                      [FBSDKAppEvents logEvent:kFBSDKAppEventPlaceAddedToList parameters:@{kFBSDKAppEventParameterKeyListType:kFBSDKAppEventParameterValueCustomList}];
+                                      [FBSDKAppEvents logEvent:kAppEventPlaceAddedToList parameters:@{kAppEventParameterKeyListType:kAppEventParameterValueCustomList}];
                                       success(responseObject);
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
@@ -1467,7 +1467,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                  };
     AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
                                   success:^(id responseObject) {
-                                      [FBSDKAppEvents logEvent:kFBSDKAppEventPlaceAddedToList parameters:@{kFBSDKAppEventParameterKeyListType:kFBSDKAppEventParameterValueSpecialList}];
+                                      [FBSDKAppEvents logEvent:kAppEventPlaceAddedToList parameters:@{kAppEventParameterKeyListType:kAppEventParameterValueSpecialList}];
                                       success(responseObject);
                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                       failure(operation, error);
@@ -1639,7 +1639,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                                @"user_id": @(otherUserID)
                                               }
              success:^(id responseObject) {
-                 [FBSDKAppEvents logEvent:kFBSDKAppEventUserFollowed];
+                 [FBSDKAppEvents logEvent:kAppEventUserFollowed];
                  success(responseObject);
              } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                  failure(operation, error);
@@ -2302,19 +2302,19 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     if ([object isKindOfClass:[RestaurantObject class]]) {
         RestaurantObject *restaurant = (RestaurantObject *)object;
         parameters = @{kKeyRestaurantRestaurantID : [NSString stringWithFormat:@"%lu", (unsigned long)restaurant.restaurantID]};
-        photoType = kFBSDKAppEventParameterValueItem;
+        photoType = kAppEventParameterValueItem;
     }
     else if ([object isKindOfClass:[UserObject class]]) {
         UserObject *user = (UserObject *)object;
         parameters = @{kKeyUserID : [NSString stringWithFormat:@"%lu", (unsigned long)user.userID]};
-        photoType = kFBSDKAppEventParameterValueUser;
+        photoType = kAppEventParameterValueUser;
     }
     else if ([object isKindOfClass:[ListObject class]]) {
-        photoType = kFBSDKAppEventParameterValueList;
+        photoType = kAppEventParameterValueList;
         ListObject *list = (ListObject *)object;
         parameters = @{kKeyListID : [NSString stringWithFormat:@"%lu", (unsigned long)list.listID]};
     } else if ([object isKindOfClass:[EventObject class]]) {
-        photoType = kFBSDKAppEventParameterValueEvent;
+        photoType = kAppEventParameterValueEvent;
         EventObject *event = (EventObject *)object;
         parameters = @{kKeyEventEventID : [NSString stringWithFormat:@"%lu", (unsigned long)event.eventID]};
     } else {
@@ -2330,7 +2330,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Success: %@ ***** %@", operation.responseString, responseObject);
         MediaItemObject *mio = [MediaItemObject mediaItemFromDict:responseObject];
-        [FBSDKAppEvents logEvent:kFBSDKAppEventPhotoUploaded parameters:@{kFBSDKAppEventParameterKeyUploadType:photoType}];
+        [FBSDKAppEvents logEvent:kAppEventPhotoUploaded parameters:@{kAppEventParameterKeyUploadType:photoType}];
         success(mio);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@ ***** %@", operation.responseString, error);
@@ -3318,6 +3318,44 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
            }];
 }
 
++ (AFHTTPRequestOperation *)sendAppLog:(AppLogObject *)appLog
+                               success:(void (^)())success
+                               failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    if  (!appLog || !appLog.userID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/appLogs",
+                           kHTTPProtocol, [OOAPI URL]];
+    
+    NSDictionary *parameters = @{
+                        kKeyAppLogUserID : [NSString stringWithFormat:@"%lu", (unsigned long)appLog.userID],
+                        kKeyAppLogDeviceType : appLog.deviceType,
+                        kKeyAppLogOS: appLog.OS,
+                        kKeyAppLogBuildNumber: appLog.buildNumber,
+                        kKeyAppLogAppVersion: appLog.appVersion,
+                        kKeyAppLogLatitude : [NSString stringWithFormat:@"%.6f", appLog.location.latitude],
+                        kKeyAppLogLongitude : [NSString stringWithFormat:@"%.6f", appLog.location.longitude],
+                        kKeyAppLogOriginScreen : appLog.originScreen,
+                        kKeyAppLogEventType : appLog.eventType,
+                        kKeyAppLogP1 : appLog.p1,
+                        kKeyAppLogP2 : appLog.p2,
+                        kKeyAppLogP3 : appLog.p3,
+                        kKeyAppLogP4 : appLog.p4,
+                        kKeyAppLogP5 : appLog.p5
+          };
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+                                  success:^(id responseObject) {
+                                      success(responseObject);
+                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                      failure(operation, error);
+                                  }];
+    return op;
+}
+
 + (NSString *)URL
 {
 // To alleviate the need for commenting this out
@@ -3325,16 +3363,16 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 // and call it Adhoc. In the build settings for Adhoc
 // add the compiler flag -DADHOC
  
-#ifdef ADHOC
-    APP.usingStagingServer = YES;
-    if (APP.usingStagingServer) {
-        return kOOURLStage;
-    } else {
-        return kOOURLProduction;
-    }
-#else
+//#ifdef ADHOC
+//    APP.usingStagingServer = YES;
+//    if (APP.usingStagingServer) {
+//        return kOOURLStage;
+//    } else {
+//        return kOOURLProduction;
+//    }
+//#else
     return kOOURLProduction;
-#endif
+//#endif
 }
 
 @end

@@ -41,6 +41,7 @@
             urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         }
     } else {
+//        message = [NSString stringWithFormat:@"I use Oomami to find new bars and restaurants with my friends (like you!). Check it out: https://itunes.apple.com/us/app/oomami-best-restaurants-bars/id1053373398?mt=8"];
         message = [NSString stringWithFormat:@"I use Oomami to find new bars and restaurants with my friends (like you!). Check it out: https://%@", kWebAppHost];
         urlLink = [NSString stringWithFormat:@"https://%@", kWebAppHost];
     }
@@ -49,7 +50,6 @@
     if ([activityType isEqualToString:UIActivityTypePostToTwitter]) {
         return message;
     } else if ([activityType isEqualToString:UIActivityTypePostToFacebook] ) {
-        return [NSURL URLWithString:[NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID]];
         return message;
     } else if ([activityType isEqualToString:UIActivityTypeMessage] ) {
         return message;

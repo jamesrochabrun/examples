@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "MediaItemObject.h"
 
 extern NSString *const kKeyRestaurantGoogleID;
 extern NSString *const kKeyRestaurantRestaurantID;
@@ -64,6 +65,7 @@ typedef enum: char {
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant;
 - (NSString *)priceRangeText;
 - (NSString *)ratingText;
+- (MediaItemObject *)getUserContextMediaItem:(NSUInteger)userID;
 
 @end
 

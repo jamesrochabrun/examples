@@ -44,6 +44,7 @@ extern void messageWithTitleAndCompletionBlock(NSString *title, NSString *string
 
 extern NSString *const kOOURLStage;
 extern NSString *const kOOURLProduction;
+extern NSString *const kOOURLLocal;
 extern NSString *const kHTTPProtocol;
 extern NSString *getDateString();
 extern NSString *trimString(NSString *s);
@@ -118,6 +119,7 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 
 @interface Common : NSObject
 
++ (NSString *)platformRawString;
 + (NSString *)versionString;
 + (NSString *)locationString:(CLPlacemark *)placemark;
 + (void)goToSettings:(kAppSettings)settings;
@@ -125,25 +127,5 @@ extern void ANALYTICS_EVENT_ERROR(NSString *name);
 + (BOOL)validateEmailWithString:(NSString*)checkString;
 + (BOOL)validatePasswordWithString:(NSString*)checkString;
 + (void)addMotionEffectToView:(UIView *)view;
-
-//Facebook Events
-extern NSString *const kFBSDKAppEventPhotoYummed;
-extern NSString *const kFBSDKAppEventPhotoUploaded;
-extern NSString *const kFBSDKAppEventSharePressed;
-extern NSString *const kFBSDKAppEventListCreated;
-extern NSString *const kFBSDKAppEventPlaceAddedToList;
-extern NSString *const kFBSDKAppEventUserFollowed;
-
-extern NSString *const kFBSDKAppEventParameterKeyShareType;
-extern NSString *const kFBSDKAppEventParameterKeyUploadType;
-extern NSString *const kFBSDKAppEventParameterKeyListType;
-
-extern NSString *const kFBSDKAppEventParameterValuePlace;
-extern NSString *const kFBSDKAppEventParameterValueList;
-extern NSString *const kFBSDKAppEventParameterValueItem;
-extern NSString *const kFBSDKAppEventParameterValueUser;
-extern NSString *const kFBSDKAppEventParameterValueEvent;
-extern NSString *const kFBSDKAppEventParameterValueCustomList;
-extern NSString *const kFBSDKAppEventParameterValueSpecialList;
 
 @end
