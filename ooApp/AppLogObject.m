@@ -75,12 +75,7 @@ NSString *const kAppEventParameterValueSpecialList = @"Special List";
     self.p4 = p4?p4:@"";
     self.p5 = p5?p5:@"";
 
-//    if ([[OOAPI URL] isEqualToString:kOOURLProduction]) {
-//        NSLog(@"App Log not yet on production: %@ %@", self.eventType, self.originScreen);
-//        return;
-//    } else {
-        NSLog(@"App Log: %@ %@", self.eventType, self.originScreen);
-//    }
+    NSLog(@"App Log: %@ %@", self.eventType, self.originScreen);
 
     [OOAPI sendAppLog:self success:^{
         NSLog(@"event logged: %@", self.eventType);

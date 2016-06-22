@@ -189,22 +189,17 @@ typedef enum {
 
 - (NSString *)subheader2String {
     NSString *s;
+    if (!_restaurant) return @"";
     
-    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+    NSMutableArray *subheader2Components = [NSMutableArray array];
     
-    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
-    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:_restaurant.location.latitude longitude:_restaurant.location.longitude];
-    
-    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-    
-    NSString *distance = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)] : @"";
+    [subheader2Components addObject:[_restaurant distanceOrAddressString]];
+
     NSString *rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
 
-    if ([distance length] && [rating length]) {
-        s = [NSString stringWithFormat:@"%@ | %@", distance, rating];
-    } else {
-        s = [NSString stringWithFormat:@"%@", [distance length] ? distance : rating];
-    }
+    if ([rating length]) [subheader2Components addObject:rating];
+
+    s = [subheader2Components componentsJoinedByString:@" | "];
     
     if ([_followees count]) {
         s = [s stringByAppendingString:@" | "];

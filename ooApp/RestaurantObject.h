@@ -28,6 +28,14 @@ extern NSString *const kKeyRestaurantHours;
 extern NSString *const kKeyRestaurantCuisine;
 extern NSString *const kKeyRestaurantMobileMenuURL;
 extern NSString *const kKeyRestaurantPermanentlyClosed;
+extern NSString *const kKeyRestaurantStreetNumber;
+extern NSString *const kKeyRestaurantStreet;
+extern NSString *const kKeyRestaurantCity;
+extern NSString *const kKeyRestaurantState;
+extern NSString *const kKeyRestaurantCountry;
+extern NSString *const kKeyRestaurantStateCode;
+extern NSString *const kKeyRestaurantCountryCode;
+extern NSString *const kKeyRestaurantPostalCode;
 
 typedef enum {
     kRestaurantSourceTypeOomami = 1,
@@ -56,6 +64,14 @@ typedef enum: char {
 @property (nonatomic, strong) NSString *website;
 @property (nonatomic, strong) NSString *phone;
 @property (nonatomic, strong) NSString *address;
+@property (nonatomic, strong) NSString *streetNumber;
+@property (nonatomic, strong) NSString *street;
+@property (nonatomic, strong) NSString *city;
+@property (nonatomic, strong) NSString *state;
+@property (nonatomic, strong) NSString *country;
+@property (nonatomic, strong) NSString *stateCode;
+@property (nonatomic, strong) NSString *countryCode;
+@property (nonatomic, strong) NSString *postalCode;
 @property (nonatomic, strong) NSArray *hours;
 @property (nonatomic, strong) NSString *mobileMenuURL;
 @property (nonatomic, assign) NSInteger totalVotes;// tally of all vote values
@@ -66,6 +82,7 @@ typedef enum: char {
 - (NSString *)priceRangeText;
 - (NSString *)ratingText;
 - (MediaItemObject *)getUserContextMediaItem:(NSUInteger)userID;
+- (NSString *)distanceOrAddressString;
 
 @end
 

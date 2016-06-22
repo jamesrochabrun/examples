@@ -491,7 +491,6 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                     [weakSelf setNoPhotosMessage:@"You'll see food photos from people you follow here. You can find people to follow in connect." target:self selector:@selector(goToConnect) show:YES];
                 } else if (weakSelf.feedType == kFoodFeedTypeAroundMe) {
                     [weakSelf setNoPhotosMessage:@"People haven't yet uploaded photos around you. Opportunity? Tap the camera icon and add photos from restaurants or bars." target:self selector:@selector(showPickPhotoUI) show:YES];
-//                    CGRect frame = [self getRightButtonFrame];
                 } else {
                     [self hideNoPhotosMessage];
                 }

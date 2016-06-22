@@ -29,6 +29,15 @@ NSString *const kKeyRestaurantCuisine = @"cuisine";
 NSString *const kKeyRestaurantMobileMenuURL = @"mobile_menu_url";
 NSString *const kKeyRestaurantVoteCount=  @"totalVotes";
 NSString *const kKeyRestaurantPermanentlyClosed = @"permanently_closed";
+NSString *const kKeyRestaurantStreetNumber = @"street_number";
+NSString *const kKeyRestaurantStreet = @"street";
+NSString *const kKeyRestaurantCity = @"city";
+NSString *const kKeyRestaurantState = @"state";
+NSString *const kKeyRestaurantCountry = @"country";
+NSString *const kKeyRestaurantStateCode = @"state_code";
+NSString *const kKeyRestaurantCountryCode = @"country_code";
+NSString *const kKeyRestaurantPostalCode = @"postal_code";
+
 
 BOOL isRestaurantObject (id  object)
 {
@@ -115,6 +124,14 @@ BOOL isRestaurantObject (id  object)
     restaurant.mobileMenuURL = [[dict objectForKey:kKeyRestaurantMobileMenuURL] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantMobileMenuURL];
     
     restaurant.permanentlyClosed = parseBoolOrNullFromServer(dict [kKeyRestaurantPermanentlyClosed]);
+    restaurant.streetNumber = parseStringOrNullFromServer(dict[kKeyRestaurantStreetNumber]);
+    restaurant.street = parseStringOrNullFromServer(dict[kKeyRestaurantStreet]);
+    restaurant.city = parseStringOrNullFromServer(dict[kKeyRestaurantCity]);
+    restaurant.state = parseStringOrNullFromServer(dict[kKeyRestaurantState]);
+    restaurant.country = parseStringOrNullFromServer(dict[kKeyRestaurantCountry]);
+    restaurant.stateCode = parseStringOrNullFromServer(dict[kKeyRestaurantStateCode]);
+    restaurant.countryCode = parseStringOrNullFromServer(dict[kKeyRestaurantCountryCode]);
+    restaurant.postalCode = parseStringOrNullFromServer(dict[kKeyRestaurantPostalCode]);
     
     return restaurant;
 }
@@ -201,6 +218,40 @@ BOOL isRestaurantObject (id  object)
     if (topUserMIO) return topUserMIO;
     if (topOOMIO) return topOOMIO;
     return firstGMIO;
+}
+
+- (NSString *)distanceOrAddressString {
+    NSString *s = @"";
+    
+    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
+    
+    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
+    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:self.location.latitude longitude:self.location.longitude];
+    
+    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
+    
+    NSString *distance = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)] : @"";
+    
+    NSMutableArray *addressComponents = [NSMutableArray array];
+    if ([self.city length]) [addressComponents addObject:self.city];
+    if ([self.stateCode length]) [addressComponents addObject:self.stateCode];
+    if ([self.countryCode length]) [addressComponents addObject:self.countryCode];
+    
+    if (distanceInMeters<=100) {
+        s = @"close by";
+    } else if (distanceInMeters > 5000 &&
+               ([addressComponents count])) {
+        s = [addressComponents componentsJoinedByString:@", "];
+    } else {
+        s = distance;
+    }
+    
+    if (!s) {
+        NSLog(@"*** No valid distanceOrAddressString for: %@", self.name);
+        s = @"";
+    }
+    
+    return s;
 }
 
 
