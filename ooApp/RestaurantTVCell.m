@@ -57,8 +57,6 @@ typedef enum {
     self.subHeader1.text =  _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
                             (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
     
-    self.subHeader2.text = [self subheader2String];
-    
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
     
@@ -68,6 +66,9 @@ typedef enum {
             if (_restaurant.restaurantID) {
                 [weakSelf addFolloweesWithRestaurant];
                 [weakSelf updateThumbnail];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    weakSelf.subHeader2.text = [weakSelf subheader2String];
+                });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
@@ -75,63 +76,39 @@ typedef enum {
     } else {
         [self addFolloweesWithRestaurant];
         [self updateThumbnail];
+        self.subHeader2.text = [self subheader2String];
     }
     [self setupActionButton];
 }
 
 - (void)updateThumbnail {
-//    NSString *imageRef;
-//    OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
     
-//    if ([_restaurant.mediaItems count]) {
-        [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([mediaItems count]) {
-                    [weakSelf setThumbnailImage:[mediaItems objectAtIndex:0]];
-                } else {
-                    weakSelf.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
-                }
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
-//    } else if ([_restaurant.imageRefs count]) {
-//        imageRef = ((ImageRefObject *)[_restaurant.imageRefs objectAtIndex:0]).reference;
-//        self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-//            
-//            __weak UIImageView *weakIV = weakSelf.thumbnail;
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
-//                              placeholderImage:[UIImage imageNamed:@"background-image.jpg"] success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-//                                  [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-//                                      weakIV.image = image;
-//                                  } completion:^(BOOL finished) {
-//                                      ;
-//                                  }];
-//                              } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-//                                  ;
-//                              }];
-//            });
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            ;
-//        }];
-//    }
+    [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([mediaItems count]) {
+                [weakSelf setThumbnailImage:[mediaItems objectAtIndex:0]];
+            } else {
+                weakSelf.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
+            }
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        ;
+    }];
 }
 
 - (void)setThumbnailImage:(MediaItemObject *)mio {
     OOAPI *api = [[OOAPI alloc] init];
     
-//    __weak RestaurantTVCell *weakSelf = self;
-    
-    self.requestOperation = [api getRestaurantImageWithMediaItem:mio
-                        maxWidth:width(self)
-                        maxHeight:0
-                        success:^(NSString *link) {
-                            __weak UIImageView *weakIV = self.thumbnail;
-                            __weak RestaurantTVCell *weakSelf = self;
-                            [weakSelf.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
-                                                      placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
+    self.requestOperation =
+    [api getRestaurantImageWithMediaItem:mio
+                                maxWidth:width(self)
+                               maxHeight:0
+                                 success:^(NSString *link) {
+                                     __weak UIImageView *weakIV = self.thumbnail;
+                                     __weak RestaurantTVCell *weakSelf = self;
+                                     [weakSelf.thumbnail setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                                               placeholderImage:[UIImage imageNamed:@"background-image.jpg"]
                                                                success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                                                                    dispatch_async(dispatch_get_main_queue(), ^{
                                                                        [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
@@ -205,6 +182,7 @@ typedef enum {
 
     NSString *rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
 
+    if ([[_restaurant priceRangeText] length]) [subheader2Components addObject:[_restaurant priceRangeText]];
     if ([rating length]) [subheader2Components addObject:rating];
 
     s = [subheader2Components componentsJoinedByString:@" | "];

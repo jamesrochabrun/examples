@@ -145,10 +145,15 @@ static NSString * const cellIdentifier = @"horizontalCell";
         [self.view layoutIfNeeded];
     }];
     
-    if (_showMap && _restaurants) {
+    if (_showMap &&
+        _restaurants &&
+        [_restaurants count]) {
         RestaurantObject *r = [_restaurants objectAtIndex:0];
         _mapView.camera = [GMSCameraPosition cameraWithLatitude:r.location.latitude longitude:r.location.longitude zoom:14];
         [self setHighlightedMarkers];
+    } else {
+        CLLocationCoordinate2D location = [LocationManager sharedInstance].currentUserLocation;
+        _mapView.camera = [GMSCameraPosition cameraWithLatitude:location.latitude longitude:location.longitude zoom:14];
     }
 }
 
@@ -245,7 +250,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _alertController.view.tintColor = UIColorRGBA(kColorBlack);
 
     __weak  RestaurantListVC *weakSelf = self;
-    UIAlertAction *addRestaurantsFromExplore = [UIAlertAction actionWithTitle:@"Add Restaurants from Search"
+    UIAlertAction *addRestaurantsFromExplore = [UIAlertAction actionWithTitle:@"Add Places from Search"
                                                                          style:UIAlertActionStyleDefault
                                                                        handler:^(UIAlertAction * action) {
                                                                            [weakSelf addRestaurantsFromExplore];
@@ -279,12 +284,9 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
     [_alertController addAction:editName];
     [_alertController addAction:addRestaurantsFromExplore];
-//    [_alertController addAction:addRestaurantsFromList];
     [_alertController addAction:deleteList];
     [_alertController addAction:cancel];
-    
- //   [self.moreButton addTarget:self action:@selector(moreButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-}
+ }
 
 - (void)moreButtonPressed:(id)sender {
     
@@ -348,7 +350,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     // Dispose of any resources that can be recreated.
 }
 
-- (void) fetchRestaurants
+- (void)fetchRestaurants
 {
     if (_listItem) {
         [self getRestaurants];
@@ -450,7 +452,30 @@ static NSString * const cellIdentifier = @"horizontalCell";
     NSLog(@"%@: %lu", _listItem.name, (unsigned long)[_restaurants count]);
     [_tableView reloadData];
     [self.aiv stopAnimating];
-
+    
+    if ([_restaurants count]) {
+        UILabel *iconLabel = [UILabel new];
+        [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+        iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+        iconLabel.text = kFontIconShare;
+        iconLabel.textColor = UIColorRGBA(kColorTextReverse);
+        [iconLabel sizeToFit];
+        UIImage *icon = [UIImage imageFromView:iconLabel];
+        [_shareList removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+        [_shareList withText:@"share list" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(sharePressed:)];
+        [_shareList setImage:icon forState:UIControlStateNormal];
+    } else {
+        UILabel *iconLabel = [UILabel new];
+        [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+        iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+        iconLabel.text = kFontIconAdd;
+        iconLabel.textColor = UIColorRGBA(kColorTextReverse);
+        [iconLabel sizeToFit];
+        UIImage *icon = [UIImage imageFromView:iconLabel];
+        [_shareList removeTarget:nil action:nil forControlEvents:UIControlEventAllEvents];
+        [_shareList withText:@"add places to list" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(addRestaurantsFromExplore)];
+        [_shareList setImage:icon forState:UIControlStateNormal];
+    }
 }
 
 - (void)setRestaurants:(NSArray *)restaurants {
