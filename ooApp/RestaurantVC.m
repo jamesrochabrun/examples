@@ -820,26 +820,19 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)addToList {
-    if (_listToAddTo) {
-        [self addRestaurantToList:_listToAddTo];
-    } else {
-        [self showLists];
-    }
-}
-
-- (void)showLists {
     __weak RestaurantVC *weakSelf = self;
     
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
             [weakSelf presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
         } else {
-            ListsVC *vc = [[ListsVC alloc] init];
-            vc.restaurantToAdd = _restaurant;
-            [vc getLists];
-            [weakSelf.navigationController pushViewController:vc animated:YES];
-
-            //[weakSelf presentViewController:_styleSheetAC animated:YES completion:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (weakSelf.listToAddTo) {
+                    [weakSelf addRestaurantToList:_listToAddTo];
+                } else {
+                    [weakSelf showLists];
+                }
+            });
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"*** Problem verifying user");
@@ -850,6 +843,13 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         }
         return;
     }];
+}
+
+- (void)showLists {
+    ListsVC *vc = [[ListsVC alloc] init];
+    vc.restaurantToAdd = _restaurant;
+    [vc getLists];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Collection View stuff

@@ -24,6 +24,8 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *roRestaurant;
 @property (nonatomic, strong) AFHTTPRequestOperation *roMIO;
 @property (nonatomic, strong) MediaItemObject *mio;
+@property (nonatomic, strong) NSString *rating;
+@property (nonatomic, strong) NSString *open;
 @end
 
 typedef enum {
@@ -45,7 +47,7 @@ typedef enum {
         
         _numberAdditionalFollowees = [UILabel new];
         [_numberAdditionalFollowees withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorBlack backgroundColor:kColorClear];
-        //[DebugUtilities addBorderToViews:@[_followeesView, _numberAdditionalFollowees]];
+//        [DebugUtilities addBorderToViews:@[self.subHeader2, _followeesView, _numberAdditionalFollowees]];
     }
     return self;
 }
@@ -56,8 +58,10 @@ typedef enum {
     _restaurant = restaurant;
     self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
     self.header.text = _restaurant.name;
-    self.subHeader1.text =  _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
+    _open =  _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
                             (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
+    _rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
+    
     
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
@@ -69,6 +73,7 @@ typedef enum {
                 [weakSelf addFolloweesWithRestaurant];
                 [weakSelf updateThumbnail];
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    weakSelf.subHeader1.text = [weakSelf subheader1String];
                     weakSelf.subHeader2.text = [weakSelf subheader2String];
                 });
             }
@@ -78,6 +83,7 @@ typedef enum {
     } else {
         [self addFolloweesWithRestaurant];
         [self updateThumbnail];
+        self.subHeader1.text = [self subheader1String];
         self.subHeader2.text = [self subheader2String];
     }
     [self setupActionButton];
@@ -174,23 +180,34 @@ typedef enum {
     [self setNeedsLayout];
 }
 
+- (NSString *)subheader1String {
+    NSString *s;
+    if (!_restaurant) return @"";
+    
+    NSMutableArray *components = [NSMutableArray array];
+    if ([_restaurant distanceOrAddressString]) [components addObject:[_restaurant distanceOrAddressString]];
+    if ([_open length]) [components addObject:_open];
+    if ([[_restaurant priceRangeText] length]) [components addObject:[_restaurant priceRangeText]];
+
+    s = [components componentsJoinedByString:@" | "];
+    return s;
+}
+
 - (NSString *)subheader2String {
     NSString *s;
     if (!_restaurant) return @"";
     
-    NSMutableArray *subheader2Components = [NSMutableArray array];
+    NSMutableArray *components = [NSMutableArray array];
+    if (_restaurant.cuisine) [components addObject:_restaurant.cuisine];
+    if ([_rating length]) [components addObject:_rating];
     
-    [subheader2Components addObject:[_restaurant distanceOrAddressString]];
-
-    NSString *rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
-
-    if ([[_restaurant priceRangeText] length]) [subheader2Components addObject:[_restaurant priceRangeText]];
-    if ([rating length]) [subheader2Components addObject:rating];
-
-    s = [subheader2Components componentsJoinedByString:@" | "];
+    s = [components componentsJoinedByString:@" | "];
     
     if ([s length] && [_followees count]) {
         s = [s stringByAppendingString:@" | "];
+    }
+    if (![s length]) {
+        s = @" ";
     }
     return s;
 }

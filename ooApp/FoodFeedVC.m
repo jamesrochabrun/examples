@@ -56,7 +56,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [_filterView addFilter:@"Newest" target:self selector:@selector(selectAll)];
     [_filterView addFilter:@"Around Me" target:self selector:@selector(selectAroundMe)];
     [_filterView addFilter:@"Following" target:self selector:@selector(selectFriends)];
-    [_filterView setCurrent:0];
+    [_filterView setCurrent:1];
     [self.view addSubview:_filterView];
     
     _cvl = [[FoodFeedVCCVL alloc] init];

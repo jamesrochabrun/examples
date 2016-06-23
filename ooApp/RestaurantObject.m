@@ -195,10 +195,10 @@ BOOL isRestaurantObject (id  object)
     
     NSMutableArray *addressComponents = [NSMutableArray array];
     if ([self.city length]) [addressComponents addObject:self.city];
-    if ([self.stateCode length]) [addressComponents addObject:self.stateCode];
+    //if ([self.stateCode length]) [addressComponents addObject:self.stateCode];
     if ([self.countryCode length]) [addressComponents addObject:self.countryCode];
     
-    if (distanceInMeters <= 60) {
+    if (distanceInMeters <= 180) {
         s = [NSString stringWithFormat:@"%0.0f ft", metersToFeet(distanceInMeters)];
     } else if (distanceInMeters > 5000 &&
                ([addressComponents count])) {
