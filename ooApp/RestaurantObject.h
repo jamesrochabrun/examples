@@ -81,7 +81,6 @@ typedef enum: char {
 + (NSDictionary *)dictFromRestaurant:(RestaurantObject *)restaurant;
 - (NSString *)priceRangeText;
 - (NSString *)ratingText;
-- (MediaItemObject *)getUserContextMediaItem:(NSUInteger)userID;
 - (NSString *)distanceOrAddressString;
 
 @end

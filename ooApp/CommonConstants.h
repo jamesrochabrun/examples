@@ -14,6 +14,7 @@
 static inline CGFloat width(UIView *view) { return view.bounds.size.width; }
 static inline CGFloat height(UIView *view) { return view.bounds.size.height; }
 static inline CGFloat metersToMiles(CGFloat meters) { return meters/1000/1.6; }
+static inline CGFloat metersToFeet(CGFloat meters) { return meters*3.28084;}
 static inline CGFloat distanceBetweenPoints(CGPoint p1, CGPoint p2) { return sqrt(pow(p2.x-p1.x,2)+pow(p2.y-p1.y,2)); }
 static inline CGFloat windowWidth(){return ([[UIApplication sharedApplication] keyWindow].frame.size.width);}
 static inline CGFloat windowHeight(){return ([[UIApplication sharedApplication] keyWindow].frame.size.height);}

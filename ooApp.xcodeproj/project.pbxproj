@@ -99,6 +99,9 @@
 		3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490B1BE04B73003BF98B /* UIImageEffects.m */; };
 		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
+		3695BE0D1D1B2C6B00369F53 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3695BE0A1D1B2C6B00369F53 /* FBSDKCoreKit.framework */; };
+		3695BE0E1D1B2C6B00369F53 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3695BE0B1D1B2C6B00369F53 /* FBSDKLoginKit.framework */; };
+		3695BE0F1D1B2C6B00369F53 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3695BE0C1D1B2C6B00369F53 /* FBSDKShareKit.framework */; };
 		3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3697D9F61C02A95C0022944F /* DropDownListTVC.m */; };
 		36A7A90D1CB6F0FA00B9A3F8 /* OOFeedbackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 36A7A90C1CB6F0FA00B9A3F8 /* OOFeedbackView.m */; };
 		36AF0CCA1C6A9ABF0063A58E /* UserListTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 36AF0CC91C6A9ABF0063A58E /* UserListTVC.m */; };
@@ -433,6 +436,9 @@
 		3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOActivityItemProvider.m; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
+		3695BE0A1D1B2C6B00369F53 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = Frameworks/FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		3695BE0B1D1B2C6B00369F53 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
+		3695BE0C1D1B2C6B00369F53 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = Frameworks/FBSDKShareKit.framework; sourceTree = "<group>"; };
 		3697D9F51C02A95C0022944F /* DropDownListTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropDownListTVC.h; sourceTree = "<group>"; };
 		3697D9F61C02A95C0022944F /* DropDownListTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropDownListTVC.m; sourceTree = "<group>"; };
 		36A7A90B1CB6F0FA00B9A3F8 /* OOFeedbackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOFeedbackView.h; sourceTree = "<group>"; };
@@ -668,9 +674,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3695BE0F1D1B2C6B00369F53 /* FBSDKShareKit.framework in Frameworks */,
 				967163E51C29E15B002DFDDB /* AddressBook.framework in Frameworks */,
+				3695BE0D1D1B2C6B00369F53 /* FBSDKCoreKit.framework in Frameworks */,
 				967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */,
 				96CA59D21BE14E2200618B57 /* MessageUI.framework in Frameworks */,
+				3695BE0E1D1B2C6B00369F53 /* FBSDKLoginKit.framework in Frameworks */,
 				96CA59D01BE14C2E00618B57 /* UIKit.framework in Frameworks */,
 				46D52CAEB19A46D0AB43E61E /* libPods.a in Frameworks */,
 			);
@@ -1213,6 +1222,9 @@
 		DF3DC48B77314A2BA614CB58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3695BE0A1D1B2C6B00369F53 /* FBSDKCoreKit.framework */,
+				3695BE0B1D1B2C6B00369F53 /* FBSDKLoginKit.framework */,
+				3695BE0C1D1B2C6B00369F53 /* FBSDKShareKit.framework */,
 				967163E31C29E15B002DFDDB /* AddressBook.framework */,
 				967163E41C29E15B002DFDDB /* AddressBookUI.framework */,
 				96CA59D11BE14E2200618B57 /* MessageUI.framework */,
@@ -1781,6 +1793,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"Frameworks/**",
 					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ooApp/ooApp.pch";
@@ -1863,6 +1876,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"Frameworks/**",
 					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ooApp/ooApp.pch";
@@ -2025,6 +2039,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"Frameworks/**",
 					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ooApp/ooApp.pch";

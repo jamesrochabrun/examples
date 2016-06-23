@@ -181,45 +181,6 @@ BOOL isRestaurantObject (id  object)
     return text;
 }
 
-//
-// getUserContextMediaItem: return a media item most relevant to a user
-//
-// top OOmami media item of user
-// if no user media item then top Oomami mediaItem
-// if not oo media item then first google mediaItem
-//
-- (MediaItemObject *)getUserContextMediaItem:(NSUInteger)userID {
-    MediaItemObject *topUserMIO, *topOOMIO, *firstGMIO;
-    
-    for (MediaItemObject *mio in self.mediaItems) {
-        if (mio.sourceUserID == userID) {
-            if (!topUserMIO) {
-                topUserMIO = mio;
-            } else {
-                if (mio.yumCount > topUserMIO.yumCount) {
-                    topUserMIO = mio;
-                }
-            }
-        } else if (mio.type == kMediaItemTypeOomami) {
-            if (!topOOMIO) {
-                topOOMIO = mio;
-            } else {
-                if (mio.yumCount > topOOMIO.yumCount) {
-                    topOOMIO = mio;
-                }
-            }
-        } else {
-            if (!firstGMIO) {
-                firstGMIO = mio;
-            }
-        }
-    }
-    
-    if (topUserMIO) return topUserMIO;
-    if (topOOMIO) return topOOMIO;
-    return firstGMIO;
-}
-
 - (NSString *)distanceOrAddressString {
     NSString *s = @"";
     
@@ -230,20 +191,20 @@ BOOL isRestaurantObject (id  object)
     
     CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
     
-    NSString *distance = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)] : @"";
+//    NSString *distance = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)] : @"";
     
     NSMutableArray *addressComponents = [NSMutableArray array];
     if ([self.city length]) [addressComponents addObject:self.city];
     if ([self.stateCode length]) [addressComponents addObject:self.stateCode];
     if ([self.countryCode length]) [addressComponents addObject:self.countryCode];
     
-    if (distanceInMeters<=100) {
-        s = @"close by";
+    if (distanceInMeters <= 60) {
+        s = [NSString stringWithFormat:@"%0.0f ft", metersToFeet(distanceInMeters)];
     } else if (distanceInMeters > 5000 &&
                ([addressComponents count])) {
         s = [addressComponents componentsJoinedByString:@", "];
     } else {
-        s = distance;
+        s = (distanceInMeters) ? [NSString stringWithFormat:@"%0.1f mi", metersToMiles(distanceInMeters)] : @"";
     }
     
     if (!s) {

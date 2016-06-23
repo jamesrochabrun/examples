@@ -166,11 +166,8 @@
     __weak TileCVCell *weakSelf = self;
     
     if ([restaurant.mediaItems count]) {
-        [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
-            weakSelf.restaurant.mediaItems = [NSMutableArray arrayWithArray:mediaItems];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf setThumbnailImage:[weakSelf.restaurant getUserContextMediaItem:[Settings sharedInstance].userObject.userID]];
-            });
+        [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
+            [weakSelf setThumbnailImage:[mediaItems objectAtIndex:0]];
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];

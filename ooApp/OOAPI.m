@@ -2365,6 +2365,42 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     }];
 }
 
+
++ (AFHTTPRequestOperation *)getUserRelevantMediaItemForRestaurant:(NSUInteger)restaurantID
+                                     success:(void (^)(NSArray *mediaItems))success
+                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    if (!user || user.userID) {
+        failure(nil, nil);
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/users/%lu/mediaItem", kHTTPProtocol, [OOAPI URL], (unsigned long)restaurantID, (unsigned long)user.userID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil
+           success:^(id responseObject) {
+               if ([responseObject isKindOfClass:[NSArray class]]) {
+                   NSMutableArray *mediaItems = [NSMutableArray array];
+                   for (id dict in responseObject) {
+                       MediaItemObject *mio = [MediaItemObject mediaItemFromDict:dict];
+                       //NSLog(@"Event name: %@", [RestaurantObject restaurantFromDict:dict].name);
+                       [mediaItems addObject:mio];
+                   }
+                   success(mediaItems);
+               } else {
+                   NSLog  (@"Could not get a media item for the restaurant");
+                   failure(nil,nil);
+               }
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               NSLog(@"Error: %@", error);
+               failure(operation, error);
+           }];
+}
+
 //------------------------------------------------------------------------------
 // Name:    getEventsForUser
 // Purpose: Obtain a list of user events that are either complete or incomplete.

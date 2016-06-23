@@ -60,55 +60,63 @@ typedef enum {
     self.subHeader2.text = [self subheader2String];
     
     OOAPI *api = [[OOAPI alloc] init];
-    
-    NSString *imageRef;
-
     __weak RestaurantTVCell *weakSelf = self;
-    
-    if ([restaurant.mediaItems count]) {
-        [api getMediaItemsForRestaurant:_restaurant success:^(NSArray *mediaItems) {
-            weakSelf.restaurant.mediaItems = [NSMutableArray arrayWithArray:mediaItems];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf setThumbnailImage:[weakSelf.restaurant getUserContextMediaItem:[Settings sharedInstance].userObject.userID]];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
-    } else if ([restaurant.imageRefs count]) {
-        imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
-        self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
-            
-            __weak UIImageView *weakIV = self.thumbnail;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
-                                      placeholderImage:[UIImage imageNamed:@"background-image.jpg"] success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
-                                          [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-                                              weakIV.image = image;
-                                          } completion:^(BOOL finished) {
-                                              ;
-                                          }];
-                                      } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
-                                          ;
-                                      }];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
-    }
     
     if (!_restaurant.restaurantID) {
         [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
             _restaurant = restaurant;
             if (_restaurant.restaurantID) {
                 [weakSelf addFolloweesWithRestaurant];
+                [weakSelf updateThumbnail];
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
         }];
     } else {
         [self addFolloweesWithRestaurant];
+        [self updateThumbnail];
     }
     [self setupActionButton];
+}
+
+- (void)updateThumbnail {
+//    NSString *imageRef;
+//    OOAPI *api = [[OOAPI alloc] init];
+    __weak RestaurantTVCell *weakSelf = self;
+    
+//    if ([_restaurant.mediaItems count]) {
+        [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([mediaItems count]) {
+                    [weakSelf setThumbnailImage:[mediaItems objectAtIndex:0]];
+                } else {
+                    weakSelf.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
+                }
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+//    } else if ([_restaurant.imageRefs count]) {
+//        imageRef = ((ImageRefObject *)[_restaurant.imageRefs objectAtIndex:0]).reference;
+//        self.requestOperation = [api getRestaurantImageWithImageRef:imageRef maxWidth:self.frame.size.width maxHeight:0 success:^(NSString *link) {
+//            
+//            __weak UIImageView *weakIV = weakSelf.thumbnail;
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [weakIV setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+//                              placeholderImage:[UIImage imageNamed:@"background-image.jpg"] success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+//                                  [UIView transitionWithView:weakIV duration:0.2f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+//                                      weakIV.image = image;
+//                                  } completion:^(BOOL finished) {
+//                                      ;
+//                                  }];
+//                              } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+//                                  ;
+//                              }];
+//            });
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            ;
+//        }];
+//    }
 }
 
 - (void)setThumbnailImage:(MediaItemObject *)mio {
@@ -201,7 +209,7 @@ typedef enum {
 
     s = [subheader2Components componentsJoinedByString:@" | "];
     
-    if ([_followees count]) {
+    if ([s length] && [_followees count]) {
         s = [s stringByAppendingString:@" | "];
     }
     return s;
@@ -241,10 +249,10 @@ typedef enum {
     _roFollowes = nil;
     _followees = nil;
     [self.actionButton setTitle:@"" forState:UIControlStateNormal];
-    self.restaurant= nil;
-    self.eventBeingEdited= nil;
-    self.listToAddTo=nil;
-    self.mode= kActionButtonModeNone;
+    self.restaurant = nil;
+    self.eventBeingEdited = nil;
+    self.listToAddTo = nil;
+    self.mode = kActionButtonModeNone;
     [[_followeesView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
