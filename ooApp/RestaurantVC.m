@@ -381,7 +381,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     
     [self addNavButtonWithIcon:kFontIconPhotoThick target:self action:@selector(showPickPhotoUI) forSide:kNavBarSideTypeRight isCTA:YES];
     [self addNavButtonWithIcon:kFontIconPinDot target:self action:@selector(showOnMap) forSide:kNavBarSideTypeRight isCTA:NO];
-    [self addNavButtonWithIcon:kFontIconAdd target:self action:@selector(moreButtonPressed:) forSide:kNavBarSideTypeRight isCTA:NO];
+    [self addNavButtonWithIcon:kFontIconAdd target:self action:@selector(addToList) forSide:kNavBarSideTypeRight isCTA:NO];
     _favoriteButton = [self addNavButtonWithIcon:kFontIconFavorite target:self action:@selector(favoriteButtonTapped) forSide:kNavBarSideTypeRight isCTA:NO];
     [self addNavButtonWithIcon:kFontIconPhone target:self action:@selector(phoneButtonPressed) forSide:kNavBarSideTypeRight isCTA:NO];
 }
@@ -828,10 +828,28 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)showLists {
-    ListsVC *vc = [[ListsVC alloc] init];
-    vc.restaurantToAdd = _restaurant;
-    [vc getLists];
-    [self.navigationController pushViewController:vc animated:YES];
+    __weak RestaurantVC *weakSelf = self;
+    
+    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+        if (!result) {
+            [weakSelf presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
+        } else {
+            ListsVC *vc = [[ListsVC alloc] init];
+            vc.restaurantToAdd = _restaurant;
+            [vc getLists];
+            [weakSelf.navigationController pushViewController:vc animated:YES];
+
+            //[weakSelf presentViewController:_styleSheetAC animated:YES completion:nil];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"*** Problem verifying user");
+        if (error.code == kCFURLErrorNotConnectedToInternet) {
+            message(@"You do not appear to be connected to the internet.");
+        } else {
+            message(@"There was a problem verifying your account.");
+        }
+        return;
+    }];
 }
 
 #pragma mark - Collection View stuff

@@ -82,18 +82,19 @@ static CGFloat kNextPhotoTolerance = 40;
         [Common addShadowTo:_yumIndicator withColor:kColorWhite];
         
         _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(close)];
+        [_closeButton withIcon:kFontIconRemove fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:kGeomHeightButton backgroundColor:kColorClear target:self selector:@selector(close)];
         [_closeButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
 
         _optionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_optionsButton withIcon:kFontIconMoreSolid fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:40 backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
+        [_optionsButton withIcon:kFontIconMoreSolid fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:kGeomHeightButton backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         
         _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorClear target:self selector:@selector(showRestaurant)];
+        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(showRestaurant)];
         _restaurantName.titleLabel.numberOfLines = 0;
-        [_restaurantName setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
+        //[_restaurantName setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
         [_restaurantName.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
+        _restaurantName.layer.cornerRadius = 0;
         
 //        _showRestaurantTapGesture = [[UITapGestureRecognizer alloc] init];
         _yumPhotoTapGesture = [[UITapGestureRecognizer alloc] init];
@@ -128,10 +129,10 @@ static CGFloat kNextPhotoTolerance = 40;
         [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
         iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
         iconLabel.text = kFontIconShare;
-        iconLabel.textColor = UIColorRGBA(kColorTextReverse);
+        iconLabel.textColor = UIColorRGBA(kColorTextActive);
         [iconLabel sizeToFit];
         UIImage *icon = [UIImage imageFromView:iconLabel];
-        [_share withText:@"share it!" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorTextActive target:self selector:@selector(sharePressed:)];
+        [_share withText:@"share it!" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
         [_share setImage:icon forState:UIControlStateNormal];
         _share.layer.cornerRadius = 0;
 
@@ -817,7 +818,7 @@ static CGFloat kNextPhotoTolerance = 40;
     if (restaurant == _restaurant) return;
 
     _restaurant = restaurant;
-    if ( _restaurant) {
+    if (_restaurant) {
         [_restaurantName setTitle:_restaurant.name forState:UIControlStateNormal];
     } else {
         [_restaurantName setTitle:@"NO RESTAURANT" forState:UIControlStateNormal];

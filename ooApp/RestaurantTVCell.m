@@ -21,6 +21,8 @@
 @property (nonatomic, strong) UIView *followeesView;
 @property (nonatomic, strong) UILabel *numberAdditionalFollowees;
 @property (nonatomic, strong) AFHTTPRequestOperation *roFollowes;
+@property (nonatomic, strong) AFHTTPRequestOperation *roRestaurant;
+@property (nonatomic, strong) AFHTTPRequestOperation *roMIO;
 @property (nonatomic, strong) MediaItemObject *mio;
 @end
 
@@ -61,7 +63,7 @@ typedef enum {
     __weak RestaurantTVCell *weakSelf = self;
     
     if (!_restaurant.restaurantID) {
-        [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
+        _roRestaurant = [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
             _restaurant = restaurant;
             if (_restaurant.restaurantID) {
                 [weakSelf addFolloweesWithRestaurant];
@@ -84,7 +86,7 @@ typedef enum {
 - (void)updateThumbnail {
     __weak RestaurantTVCell *weakSelf = self;
     
-    [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
+    _roMIO = [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([mediaItems count]) {
                 [weakSelf setThumbnailImage:[mediaItems objectAtIndex:0]];
@@ -225,6 +227,13 @@ typedef enum {
     [super prepareForReuse];
     [_roFollowes cancel];
     _roFollowes = nil;
+    [_roMIO cancel];
+    _roMIO = nil;
+    [_roRestaurant cancel];
+    _roRestaurant = nil;
+    [self.requestOperation  cancel];
+    self.requestOperation = nil;
+    
     _followees = nil;
     [self.actionButton setTitle:@"" forState:UIControlStateNormal];
     self.restaurant = nil;
