@@ -76,16 +76,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     _toggleNumColumnsButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_toggleNumColumnsButton withIcon:kFontIconFoodFeed fontSize:40 width:40 height:40 backgroundColor:kColorClear target:self selector:@selector(toggleNumColumns)];
-//    [self.view addSubview:_toggleNumColumnsButton];
+    [self.view addSubview:_toggleNumColumnsButton];
     _toggleNumColumnsButton.hidden = YES;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setUpdateNeeded)
-                                                 name:kNotificationFoodFeedNeedsUpdate object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(appBecameActive)
-                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
-
     [self.view bringSubviewToFront:self.uploadProgressBar];
     _needsUpdate = YES;
     _numColumns = 2;
@@ -93,12 +86,24 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     _noPhotosMessage = [UIButton buttonWithType:UIButtonTypeCustom];
     _noPhotosMessage.translatesAutoresizingMaskIntoConstraints = NO;
-    [_noPhotosMessage withText:@"" fontSize:kGeomFontSizeH2 width:40 height:40 backgroundColor:kColorClear textColor:kColorGrayMiddle borderColor:kColorClear target:self selector:@selector(goToConnect)];
+    [_noPhotosMessage withText:@"" fontSize:kGeomFontSizeH2 width:40 height:40 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(goToConnect)];
     _noPhotosMessage.titleLabel.numberOfLines = 0;
     _noPhotosMessage.titleLabel.textAlignment = NSTextAlignmentCenter;
     [_collectionView addSubview:_noPhotosMessage];
     
-//    [DebugUtilities addBorderToViews:@[self.view]];
+    //[DebugUtilities addBorderToViews:@[_noPhotosMessage]];
+}
+
+- (void)gotFirstLocation:(id)notification
+{
+    NSLog(@"LOCATION BECAME AVAILABLE FROM iOS");
+    __weak FoodFeedVC *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (_feedType == kFoodFeedTypeAroundMe) {
+            [weakSelf refreshFeed];
+        }
+        //[weakSelf getRestaurants];
+    });
 }
 
 - (void)goToConnect {
@@ -155,7 +160,17 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
     [self.refreshControl addTarget:self action:@selector(forceRefresh:) forControlEvents:UIControlEventValueChanged];
     [_collectionView addSubview:self.refreshControl];
-    _collectionView.alwaysBounceVertical = YES;    
+    _collectionView.alwaysBounceVertical = YES;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setUpdateNeeded)
+                                                 name:kNotificationFoodFeedNeedsUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appBecameActive)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gotFirstLocation:)
+                                                 name:kNotificationGotFirstLocation object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -452,27 +467,36 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)selectAroundMe {
     _feedType = kFoodFeedTypeAroundMe;
-    [self getFoodFeed:kFoodFeedTypeAroundMe];
     _noPhotosMessage.hidden = YES;
+    [self getFoodFeed:kFoodFeedTypeAroundMe];
 }
 
 - (void)selectAll {
     _feedType = kFoodFeedTypeAll;
-    [self getFoodFeed:kFoodFeedTypeAll];
     _noPhotosMessage.hidden = YES;
+    [self getFoodFeed:kFoodFeedTypeAll];
 }
 
 - (void)selectFriends {
     _feedType = kFoodFeedTypeFriends;
-    [self getFoodFeed:kFoodFeedTypeFriends];
     _noPhotosMessage.hidden = YES;
+    [self getFoodFeed:kFoodFeedTypeFriends];
 }
 
 - (void)getFoodFeed:(FoodFeedType)type {
-    __weak FoodFeedVC *weakSelf = self;
-
     [self.refreshControl endRefreshing];
     
+    if (type == kFoodFeedTypeAroundMe) {
+        CLLocationCoordinate2D l = [LocationManager sharedInstance].currentUserLocation;
+        if (l.longitude == 0 && l.latitude == 0) {
+            [self setNoPhotosMessage:@"Tap here to give access to your location. Then come back to see amazing food & drinks around you." target:self selector:@selector(goToLocationSettings) show:YES];
+            self.restaurants = @[ ];
+            [self.collectionView reloadData];
+            return;
+        }
+    }
+
+    __weak FoodFeedVC *weakSelf = self;
     [self.view bringSubviewToFront:self.aiv];
     [self.aiv startAnimating];
     self.aiv.message = @"loading";
@@ -482,15 +506,15 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.collectionView reloadData];
             [weakSelf.aiv stopAnimating];
-//            weakSelf.restaurants = @[]; //Uncomment to test no results
+            //weakSelf.restaurants = @[]; //Uncomment to test no results
             if ([weakSelf.restaurants count]) {
                 [weakSelf.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
                 [self hideNoPhotosMessage];
             } else {
                 if (weakSelf.feedType == kFoodFeedTypeFriends) {
-                    [weakSelf setNoPhotosMessage:@"You'll see food photos from people you follow here. You can find people to follow in connect." target:self selector:@selector(goToConnect) show:YES];
+                    [weakSelf setNoPhotosMessage:@"Tap here to follow people you trust. Then come back to see dishes and drinks they recommend." target:self selector:@selector(goToConnect) show:YES];
                 } else if (weakSelf.feedType == kFoodFeedTypeAroundMe) {
-                    [weakSelf setNoPhotosMessage:@"People haven't yet uploaded photos around you. Opportunity? Tap the camera icon and add photos from restaurants or bars." target:self selector:@selector(showPickPhotoUI) show:YES];
+                    [weakSelf setNoPhotosMessage:@"People haven't yet uploaded photos around you. Opportunity? Tap here to add photos from restaurants or bars." target:self selector:@selector(showPickPhotoUI) show:YES];
                 } else {
                     [self hideNoPhotosMessage];
                 }
@@ -502,6 +526,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         [weakSelf.collectionView reloadData];
         [weakSelf.aiv stopAnimating];
     }];
+}
+
+- (void)goToLocationSettings {
+    [Common goToSettings:kAppSettingsLocation];
 }
 
 - (void)refreshFeed {
@@ -516,8 +544,11 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [_noPhotosMessage removeTarget:nil action:nil forControlEvents:UIControlEventAllTouchEvents];
     _noPhotosMessage.hidden = !show;
     [_noPhotosMessage setTitle:message forState:UIControlStateNormal];
+    _noPhotosMessage.titleLabel.numberOfLines = 0;
     [_noPhotosMessage addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
     [_noPhotosMessage sizeToFit];
+    [_noPhotosMessage setNeedsLayout];
+    [_noPhotosMessage setNeedsDisplay];
 }
 
 - (void)toggleNumColumns {
@@ -552,7 +583,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)updateViewConstraints {
     [super updateViewConstraints];
-    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view))};
+    NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((height(self.view)-kGeomHeightNavBarStatusBar)/2), @"mapWidth" : @(width(self.view)),  @"buttonHeight":@(kGeomHeightButton)};
     
     NSDictionary *views;
     views = NSDictionaryOfVariableBindings(_filterView, _collectionView, _noPhotosMessage);
@@ -563,7 +594,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_noPhotosMessage(60)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_filterView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_collectionView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[_noPhotosMessage]-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-20-[_noPhotosMessage]-20-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_noPhotosMessage
                                                          attribute:NSLayoutAttributeCenterX
                                                          relatedBy:NSLayoutRelationEqual

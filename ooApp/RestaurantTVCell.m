@@ -58,7 +58,7 @@ typedef enum {
     _restaurant = restaurant;
     self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
     self.header.text = _restaurant.name;
-    _open =  _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
+    _open = _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
                             (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
     _rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
     

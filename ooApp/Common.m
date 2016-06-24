@@ -17,6 +17,7 @@
 
 NSString *const kNotificationLocationBecameAvailable = @"notificationLocationAvailable";
 NSString *const kNotificationLocationBecameUnavailable = @"notificationLocationUnavailable";
+NSString *const kNotificationGotFirstLocation = @"notificationGotFirstLocation";
 
 NSString *const kOOURLStage = @"stage.oomamiapp.com/v1";
 NSString *const kOOURLProduction = @"api.oomamiapp.com/v1";
@@ -711,6 +712,11 @@ void ANALYTICS_EVENT_UI (NSString* name)
     return [locationElements componentsJoinedByString:@", "];
 }
 
+
+//
+// For other settings check:
+// http://stackoverflow.com/questions/9092142/ios-uialertview-button-to-go-to-setting-app
+//
 + (void)goToSettings:(kAppSettings)settings
 {
     NSString *path;
@@ -721,6 +727,9 @@ void ANALYTICS_EVENT_UI (NSString* name)
             break;
         case kAppSettingsPhotos:
             path = @"prefs:root=Privacy&path=PHOTOS";
+            break;
+        case kAppSettingsLocation:
+            path = @"prefs:root=LOCATION_SERVICES";
             break;
         default:
             break;

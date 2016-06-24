@@ -375,8 +375,11 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(locationBecameAvailable:)
-                                                 name:kNotificationLocationBecameAvailable object:nil];
+                                             selector:@selector(gotFirstLocation:)
+                                                 name:kNotificationGotFirstLocation object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(locationBecameAvailable:)
+//                                                 name:kNotificationLocationBecameAvailable object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(locationBecameUnavailable:)
                                                  name:kNotificationLocationBecameUnavailable object:nil];
@@ -422,7 +425,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     }
 }
 
-- (void)locationBecameAvailable:(id)notification
+- (void)gotFirstLocation:(id)notification
 {
     NSLog(@"LOCATION BECAME AVAILABLE FROM iOS");
     __weak SearchVC *weakSelf = self;

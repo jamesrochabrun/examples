@@ -36,6 +36,7 @@ typedef enum {
 
 extern NSString *const kNotificationLocationBecameAvailable;
 extern NSString *const kNotificationLocationBecameUnavailable;
+extern NSString *const kNotificationGotFirstLocation;
 
 extern void message(NSString *str);
 extern void messageWithTitle(NSString *str, NSString *string);

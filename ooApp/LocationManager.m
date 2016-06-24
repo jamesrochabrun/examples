@@ -130,10 +130,27 @@ NSString *const kDefaultsUserLocationLastKnownLongitude = @"lastKnownLocationLon
            fromLocation:(CLLocation *)oldLocation
 {
     CLLocationCoordinate2D coord = newLocation.coordinate;
-    
-//    float la = coord.latitude;
-//    float lo = coord.longitude;
-//    NSLog  (@"New location data lat= %g, long= %g",la,lo);
+
+    if (!oldLocation) {
+        if (_currentLocation.longitude || _currentLocation.latitude) {
+            CLLocation *locationA = [[CLLocation alloc] initWithLatitude:coord.latitude longitude:coord.longitude];
+            CLLocation *locationB = [[CLLocation alloc] initWithLatitude:_currentLocation.latitude longitude:_currentLocation.longitude];
+            
+            CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
+            if (distanceInMeters > 100) {
+                float la = coord.latitude;
+                float lo = coord.longitude;
+                NSLog  (@"New location data lat= %g, long= %g",la,lo);
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationGotFirstLocation object:nil];
+            }
+        } else {
+            float la = coord.latitude;
+            float lo = coord.longitude;
+            NSLog  (@"New location data lat= %g, long= %g",la,lo);
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationGotFirstLocation object:nil];
+        }
+    }
+
     self.currentLocation = coord;
     
     [[Settings sharedInstance] setMostRecentLocation:coord];
