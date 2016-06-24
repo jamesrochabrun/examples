@@ -72,9 +72,9 @@
 - (void)dealloc
 {
     [_usersArray removeAllObjects];
-    self.usersArray = nil;
+    _usersArray = nil;
     [_followeesArray removeAllObjects];
-    self.followeesArray = nil;
+    _followeesArray = nil;
     [_fetchOperationFollowees cancel];
     _fetchOperationFollowees = nil;
 }
