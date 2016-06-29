@@ -12,6 +12,7 @@
 #import "OOActivityItemProvider.h"
 #import "OOUserView.h"
 #import "DebugUtilities.h"
+#import "NSString+Util.h"
 
 @interface RestaurantTVCell ()
 @property (nonatomic, strong) UIAlertController *restaurantOptionsAC;
@@ -56,13 +57,13 @@ typedef enum {
 {
     if (restaurant == _restaurant) return;
     _restaurant = restaurant;
+    
     self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
     self.header.text = _restaurant.name;
     _open = _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
                             (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
     _rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
-    
-    
+        
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
     

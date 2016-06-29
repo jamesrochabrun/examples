@@ -33,11 +33,14 @@ NSString *const kAppEventSharePressed = @"Share Pressed";
 NSString *const kAppEventListCreated = @"List Created";
 NSString *const kAppEventPlaceAddedToList = @"Place Added To List";
 NSString *const kAppEventUserFollowed = @"User Followed";
+NSString *const kAppEventItemShared = @"Item Shared";
 
 NSString *const kAppEventParameterKeyShareType = @"Share Type";
 NSString *const kAppEventParameterKeyUploadType = @"Upload Type";
 NSString *const kAppEventParameterKeyListType = @"List Type";
 
+NSString *const kAppEventParameterValueYes = @"Yes";
+NSString *const kAppEventParameterValueNo = @"No";
 NSString *const kAppEventParameterValuePlace = @"Place";
 NSString *const kAppEventParameterValueList = @"List";
 NSString *const kAppEventParameterValueItem = @"Item";

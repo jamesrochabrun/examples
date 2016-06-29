@@ -69,7 +69,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 
         _locationSearchBar = [[UISearchBar alloc] init];
         //_locationSearchBar.searchBarStyle = UISearchBarStyleMinimal;
-        _locationSearchBar.placeholder = LOCAL( @"Current Location");
+        _locationSearchBar.placeholder = LOCAL( @"Around Here");
         _locationSearchBar.backgroundColor = UIColorRGBA(kColorNavBar);
         _locationSearchBar.barTintColor = UIColorRGBA(kColorNavBar);
         UILabel *l = [UILabel new];
@@ -111,7 +111,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
 }
 
 - (void)searchLocations {
@@ -146,17 +146,17 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     _currentSearchBar = searchBar;
     if (searchBar == _searchBar) {
-        _searchRestaurants = nil;
-        _restaurants = _searchRestaurants;
-        [_tableView reloadData];
+//        _searchRestaurants = nil;
+//        _restaurants = _searchRestaurants;
+//        [_tableView reloadData];
         
         if (_locations && [_locations count] == 1) {
             CLPlacemark *placemark = (CLPlacemark *)[_locations objectAtIndex:0];
             _locationSearchBar.text = [Common locationString:placemark];
             _selectedLocation = placemark.location.coordinate;
-            if ([searchBar.text length] > 3) {
+            //if ([searchBar.text length]) {
                 [self searchForRestaurants];
-            }
+            //}
         }
     } else if (searchBar == _locationSearchBar) {
         _locations = nil;
@@ -166,8 +166,12 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     if (searchBar == _searchBar) {
-        if ([searchText length] > 3) {
+        if ([searchText length] > 0) {
+            _restaurants = _searchRestaurants;
             [self searchForRestaurants];
+        } else if ([searchText length] == 0) {
+            _restaurants = _nearbyRestaurants;
+            [_tableView reloadData];
         }
     } else if (searchBar == _locationSearchBar) {
         if ([searchText length] > 0) {

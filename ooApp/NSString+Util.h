@@ -11,5 +11,6 @@
 @interface NSString (Util)
 
 - (NSDictionary *)parseURLParams;
+- (NSString *)stringWithAlphaNumericAndHyphens;
 
 @end

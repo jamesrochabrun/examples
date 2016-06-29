@@ -146,7 +146,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
 
     self.navTitle = _nto;
     
@@ -829,6 +829,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                    weakSelf.uploading = NO;
                    dispatch_async(dispatch_get_main_queue(), ^{
                        weakSelf.uploadProgressBar.hidden = YES;
+                       [weakSelf.filterView setCurrent:2];
                        [weakSelf addCaption:mio];
                        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                    });
@@ -856,6 +857,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                                weakSelf.uploading = NO;
                                dispatch_async(dispatch_get_main_queue(), ^{
                                    weakSelf.uploadProgressBar.hidden = YES;
+                                   [weakSelf.filterView setCurrent:2];
                                    [weakSelf addCaption:mio];
                                    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                                });

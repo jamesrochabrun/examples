@@ -166,7 +166,7 @@ typedef enum: char {
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuOpened:)
                                                  name:kNotificationMenuWillOpen

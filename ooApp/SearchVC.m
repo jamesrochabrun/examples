@@ -88,7 +88,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     _locationSearchBar.barTintColor = UIColorRGBA(kColorNavBar);
     _locationSearchBar.placeholder = kSearchPlaceholderPlaces;
     _locationSearchBar.delegate = self;
-    _locationSearchBar.placeholder = LOCAL(@"Current Location");
+    _locationSearchBar.placeholder = LOCAL(@"Around Here");
     _locationSearchBar.enablesReturnKeyAutomatically = NO;
     
     _locationsBgView = [UIView new];
@@ -371,7 +371,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
 
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self

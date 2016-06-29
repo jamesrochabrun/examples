@@ -125,7 +125,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
 }
 
 - (void)viewDidLayoutSubviews {

@@ -49,11 +49,14 @@ extern NSString *const kAppEventSharePressed;
 extern NSString *const kAppEventListCreated;
 extern NSString *const kAppEventPlaceAddedToList;
 extern NSString *const kAppEventUserFollowed;
+extern NSString *const kAppEventItemShared;
 
 extern NSString *const kAppEventParameterKeyShareType;
 extern NSString *const kAppEventParameterKeyUploadType;
 extern NSString *const kAppEventParameterKeyListType;
 
+extern NSString *const kAppEventParameterValueYes;
+extern NSString *const kAppEventParameterValueNo;
 extern NSString *const kAppEventParameterValuePlace;
 extern NSString *const kAppEventParameterValueList;
 extern NSString *const kAppEventParameterValueItem;

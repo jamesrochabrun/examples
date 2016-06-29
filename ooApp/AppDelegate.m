@@ -103,7 +103,7 @@
     NSLog(@"application finished launching");
     //    [DebugUtilities displayAllFonts];
     
-    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:10 * 1024 * 1024
+    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:2 * 1024 * 1024
                                                             diskCapacity:100 * 1024 * 1024
                                                                 diskPath:nil];
     [NSURLCache setSharedURLCache:sharedCache];
@@ -114,7 +114,8 @@
     
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
-    [Instabug startWithToken:kAPIKeyInstabug invocationEvent:IBGInvocationEventShake];
+    [Instabug startWithToken:kAPIKeyInstabug invocationEvent:IBGInvocationEventNone];
+    [Instabug setIntroMessageEnabled:NO];
     
     //TODO: If we asked the user for remote notifications already then register for remote notifications. This needs to be done every lauch to get a new token
     if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {

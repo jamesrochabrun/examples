@@ -349,7 +349,7 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
 
     __weak EventWhoVC *weakSelf = self;
     

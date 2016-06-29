@@ -7,6 +7,7 @@
 //
 
 #import "OOActivityItemProvider.h"
+#import "NSString+Util.h"
 
 
 @implementation OOActivityItemProvider
@@ -15,6 +16,13 @@
           itemForActivityType:(NSString *)activityType
 {
     NSString *itemType;
+    
+    if (_image && [activityType isEqualToString:UIActivityTypePostToFacebook]) {
+        return nil;
+    } else if (_image) {
+        return _image;
+    }
+    
     if (_list) {
         itemType = @"list";
     } else if (_restaurant) {
@@ -30,19 +38,19 @@
     NSString *message, *title, *urlLink;
     
     if (_list) {
-        message = [NSString stringWithFormat:@"Check out the list \"%@\" on Oomami.\nhttps://%@/list/%lu",_list.name, kWebAppHost, (unsigned long)_list.listID]; ;
+        message = [NSString stringWithFormat:@"\"%@\" by @%@ on Oomami.\nhttps://%@/list/%lu",_list.name, _username, kWebAppHost, (unsigned long)_list.listID];
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {
-            message = [NSString stringWithFormat:@"Check out %@ on Oomami:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
-            urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
+            message = [NSString stringWithFormat:@"%@ on Oomami:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
+            urlLink = [NSString stringWithFormat:@"https://%@/restaurant/%@/%lu", kWebAppHost, [_restaurant.name stringWithAlphaNumericAndHyphens], (unsigned long)_restaurant.restaurantID];
         } else {
-            message = [NSString stringWithFormat:@"Check out %@ on Oomami:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
+            message = [NSString stringWithFormat:@"%@ on Oomami:\nhttps://%@/restaurant/%@/%lu", title, kWebAppHost, [_restaurant.name stringWithAlphaNumericAndHyphens], (unsigned long)_restaurant.restaurantID];
             urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         }
     } else {
 //        message = [NSString stringWithFormat:@"I use Oomami to find new bars and restaurants with my friends (like you!). Check it out: https://itunes.apple.com/us/app/oomami-best-restaurants-bars/id1053373398?mt=8"];
-        message = [NSString stringWithFormat:@"I use Oomami to find new bars and restaurants with my friends (like you!). Check it out: https://%@", kWebAppHost];
+        message = [NSString stringWithFormat:@"Get Oomami: https://%@", kWebAppHost];
         urlLink = [NSString stringWithFormat:@"https://%@", kWebAppHost];
     }
     
@@ -60,6 +68,7 @@
     }
     return nil;
 }
+
 ////net.whatsapp.WhatsApp.ShareExtension
 //static NSString *encodeByAddingPercentEscapes(NSString *input) {
 //    NSString *encodedValue = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)input, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]", kCFStringEncodingUTF8));

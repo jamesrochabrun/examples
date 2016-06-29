@@ -27,6 +27,7 @@ typedef enum {
 @property (nonatomic, strong) ListObject *list;
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) NSString *username;
 
 @end
 

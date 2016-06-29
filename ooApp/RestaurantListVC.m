@@ -51,7 +51,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
 
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
@@ -622,6 +622,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)showShare:(UIImage *)image fromView:(id)sender {
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.list = _listItem;
+    aip.username = (_owner)? _owner.username : [Settings sharedInstance].userObject.username;
     
     NSArray *items;
     
@@ -636,7 +637,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     avc.popoverPresentationController.sourceView = sender;
     avc.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
     
-    [avc setValue:[NSString stringWithFormat:@"Check out this Oomami list: \"%@\"", _listItem.name] forKey:@"subject"];
+    [avc setValue:[NSString stringWithFormat:@"Oomami list: \"%@\" by @%@", _listItem.name, aip.username] forKey:@"subject"];
     [avc setExcludedActivityTypes:
      @[UIActivityTypeAssignToContact,
        UIActivityTypePostToFlickr,

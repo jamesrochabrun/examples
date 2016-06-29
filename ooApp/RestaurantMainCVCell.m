@@ -15,6 +15,7 @@
 #import "UIImageEffects.h"
 #import "RestaurantListVC.h"
 #import "AppDelegate.h"
+#import "NSString+Util.h"
 
 @interface RestaurantMainCVCell()
 

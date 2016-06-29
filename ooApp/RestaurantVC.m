@@ -79,7 +79,7 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
     
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
@@ -404,16 +404,15 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 }
 
 - (void)showShare:(UIImage *)image fromView:(id)sender {
+    NSMutableArray *items = [NSMutableArray array];
+    
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
     aip.restaurant = _restaurant;
-    
-    NSArray *items;
-    
-    if (image) {
-        items = @[aip, image];
-    } else {
-        items = @[aip];
-    }
+    [items addObject:aip];
+     
+    OOActivityItemProvider *aipImage = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aipImage.image = image;
+    [items addObject:aipImage];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -428,12 +427,14 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
        UIActivityTypePrint,
        UIActivityTypeSaveToCameraRoll,
        UIActivityTypePostToWeibo]];
+    
     [self.navigationController presentViewController:avc animated:YES completion:^{
         ;
     }];
     
     avc.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
         NSLog(@"completed dialog - activity: %@ - finished flag: %d", activityType, completed);
+        [AppLogObject logEvent:kAppEventItemShared originScreen:@(object_getClassName(self)) p1:activityType p2:completed?kAppEventParameterValueYes:kAppEventParameterValueNo];
     };
 }
 

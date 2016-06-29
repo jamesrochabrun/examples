@@ -41,7 +41,7 @@ static NSString * const cellIdentifier = @"locationCell";
         _locationSearchBar = [[UISearchBar alloc] init];
         _locationSearchBar.searchBarStyle = UISearchBarStyleMinimal;
         _locationSearchBar.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        _locationSearchBar.placeholder = LOCAL( @"Current Location");
+        _locationSearchBar.placeholder = LOCAL( @"Around Here");
         _locationSearchBar.barTintColor = UIColorRGBA(kColorBlack);
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         _locationSearchBar.delegate = self;
@@ -69,7 +69,7 @@ static NSString * const cellIdentifier = @"locationCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
 }
 
 - (void)didReceiveMemoryWarning {

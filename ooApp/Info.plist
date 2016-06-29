@@ -33,7 +33,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>108</string>
+	<string>109</string>
 	<key>FacebookAppID</key>
 	<string>927463500628206</string>
 	<key>FacebookDisplayName</key>
@@ -89,11 +89,11 @@
 		</dict>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Oomami uses your location to find the best restaurants and events near you.</string>
+	<string>Oomami uses your location to find the best food and drinks near you.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Oomami uses your location to find the best restaurants and events near you.</string>
+	<string>Oomami uses your location to find the best food and drinks near you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Oomami uses your location to find the best restaurants and events near you.</string>
+	<string>Oomami uses your location to find the best food and drinks near you.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>oomami-icons.ttf</string>

@@ -343,13 +343,16 @@ static CGFloat kNextPhotoTolerance = 40;
     });
 }
 
-- (void)showShare:(UIImage *)img fromView:(id)sender {
+- (void)showShare:(UIImage *)image fromView:(id)sender {
+    NSMutableArray *items = [NSMutableArray array];
+    
     OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@"Yum!"];
     aip.restaurant = _restaurant;
-    aip.mio = _mio;
-    aip.image = img;
+    [items addObject:aip];
     
-    NSArray *items = @[img, aip];
+    OOActivityItemProvider *aipImage = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aipImage.image = image;
+    [items addObject:aipImage];
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -788,7 +791,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
     
     _userViewButton.delegate = self;
     

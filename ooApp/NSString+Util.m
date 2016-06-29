@@ -24,4 +24,14 @@
     return params;
 }
 
+- (NSString *)stringWithAlphaNumericAndHyphens {
+    NSMutableCharacterSet *charactersToRemove = [NSMutableCharacterSet alphanumericCharacterSet];
+    [charactersToRemove addCharactersInString:@" "];
+    
+    NSString *strippedReplacement = [[self componentsSeparatedByCharactersInSet:[charactersToRemove invertedSet]] componentsJoinedByString:@""];
+    strippedReplacement = [strippedReplacement stringByReplacingOccurrencesOfString:@"  " withString:@" "];
+    
+    return [strippedReplacement stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+}
+
 @end

@@ -317,12 +317,21 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [FBSDKAppEvents logEvent:kAppEventSharePressed
                   parameters:@{kAppEventParameterValueItem:kAppEventParameterValueUser}];
 
-    UIImage *img = [UIImage imageNamed:@"Oomami_AppStoreLogo(120x120).png"];
-    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    UIImage *image = [UIImage imageNamed:@"Oomami_AppStoreLogo(120x120).png"];
+    
+    NSMutableArray *items = [NSMutableArray array];
+    
+    OOActivityItemProvider *aip = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@"Yum!"];
     aip.restaurant = nil;
     aip.mio = nil;
+    [items addObject:aip];
     
-    NSArray *items = @[aip, img];
+    OOActivityItemProvider *aipImage = [[OOActivityItemProvider alloc] initWithPlaceholderItem:@""];
+    aipImage.restaurant = nil;
+    aipImage.mio = nil;
+    aipImage.image = image;
+    [items addObject:aipImage];
+
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
@@ -367,7 +376,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    ANALYTICS_SCREEN( @( object_getClassName(self)));
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
     
     if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
         [APP registerForPushNotifications];
