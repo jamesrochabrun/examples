@@ -92,18 +92,13 @@ typedef enum {
 
 - (void)updateThumbnail {
     __weak RestaurantTVCell *weakSelf = self;
-    
-    _roMIO = [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([mediaItems count]) {
-                [weakSelf setThumbnailImage:[mediaItems objectAtIndex:0]];
-            } else {
-                weakSelf.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
-            }
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
-    }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([weakSelf.restaurant.mediaItems count]) {
+            [weakSelf setThumbnailImage:[weakSelf.restaurant.mediaItems objectAtIndex:0]];
+        } else {
+            weakSelf.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
+        }
+    });    
 }
 
 - (void)setThumbnailImage:(MediaItemObject *)mio {
@@ -347,57 +342,51 @@ typedef enum {
 
 - (void)userPressedActionButton:(id)sender
 {
-//    OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
-//    [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
-//        _restaurant = restaurant;
-        if (_restaurant.restaurantID) {
-            switch (weakSelf.mode) {
-                case kActionButtonModeAdd:
-                    if ( weakSelf.listToAddTo) {
-                        [weakSelf addToList];
-                    } else if ( weakSelf.eventBeingEdited) {
-                        [weakSelf addToEvent];
-                    } else {
-                        NSLog (@"WARNING: NOTHING TO ADD RESTAURANT TO.");
-                    }
-                    break;
-                    
-                case kActionButtonModeRemove:
-                    if ( weakSelf.listToAddTo) {
-                        [weakSelf removeFromList];
-                    } else if ( weakSelf.eventBeingEdited) {
-                        [weakSelf removeFromEvent];
-                    } else {
-                        NSLog (@"WARNING: NOTHING TO REMOVE RESTAURANT FROM.");
-                    }
-                    break;
-                    
-                case kActionButtonModeModal: {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [weakSelf setupRestaurantOptionsAC];
-                        _restaurantOptionsAC.popoverPresentationController.sourceView = sender;
-                        _restaurantOptionsAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
-                        [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
-                            if (!result) {
-                                [weakSelf presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
-                            } else {
-                                [weakSelf.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
-                            }
-                        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                            ;
-                        }];
-                    });
-                    break;
+    if (_restaurant.restaurantID) {
+        switch (weakSelf.mode) {
+            case kActionButtonModeAdd:
+                if ( weakSelf.listToAddTo) {
+                    [weakSelf addToList];
+                } else if ( weakSelf.eventBeingEdited) {
+                    [weakSelf addToEvent];
+                } else {
+                    NSLog (@"WARNING: NOTHING TO ADD RESTAURANT TO.");
                 }
-                case kActionButtonModeAddToList:
-                    [self addToList];
-                    break;
+                break;
+                
+            case kActionButtonModeRemove:
+                if ( weakSelf.listToAddTo) {
+                    [weakSelf removeFromList];
+                } else if ( weakSelf.eventBeingEdited) {
+                    [weakSelf removeFromEvent];
+                } else {
+                    NSLog (@"WARNING: NOTHING TO REMOVE RESTAURANT FROM.");
+                }
+                break;
+                
+            case kActionButtonModeModal: {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf setupRestaurantOptionsAC];
+                    _restaurantOptionsAC.popoverPresentationController.sourceView = sender;
+                    _restaurantOptionsAC.popoverPresentationController.sourceRect = ((UIView *)sender).bounds;
+                    [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
+                        if (!result) {
+                            [weakSelf presentUnverifiedMessage:@"You will need to verify your email to do this.\n\nCheck your email for a verification link."];
+                        } else {
+                            [weakSelf.nc presentViewController:_restaurantOptionsAC animated:YES completion:nil];
+                        }
+                    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                        ;
+                    }];
+                });
+                break;
             }
+            case kActionButtonModeAddToList:
+                [self addToList];
+                break;
         }
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
-//    }];
+        }
 }
 
 - (void)presentUnverifiedMessage:(NSString *)message {

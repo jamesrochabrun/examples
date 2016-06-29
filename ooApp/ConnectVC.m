@@ -306,7 +306,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                                 });
                                             } failure:^(AFHTTPRequestOperation *operation, NSError *e) {
                                                 NSLog(@"ERROR FETCHING USERS BY KEYWORD: %@",e );
+                                                weakSelf.searchResultsArray = @[];
                                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                                    [weakSelf.tableAccordion reloadData];
                                                     [weakSelf.refreshControl endRefreshing];
                                                 });
                                             }
@@ -429,8 +431,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         dispatch_async(dispatch_get_main_queue(), ^{
             NSArray *visibleRowIndeces = [weakSelf.tableAccordion indexPathsForVisibleRows];
             [weakSelf.tableAccordion reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
-
-            //[weakSelf reloadAfterDeterminingWhoWeAreFollowing];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
@@ -461,7 +461,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                  
                                  NSLog(@"foodies(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionFoodies, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
 
-                                 if (_canSeeFoodies) {
+                                 if (_canSeeFoodies && !_searchMode) {
                                      [weakSelf.tableAccordion beginUpdates];
                                      [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
                                      [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
@@ -501,7 +501,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
             
                                 NSLog(@"trusted souces(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionTrusted, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
         
-                                if (_canSeeTrustedUsers) {
+                                if (_canSeeTrustedUsers && !_searchMode) {
                                     [weakSelf.tableAccordion beginUpdates];
                                     [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
                                     [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
@@ -543,7 +543,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                                      
                                                      NSLog(@"in the know(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionInTheKnow, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
                                                  
-                                                     if (_canSeeInTheKnow) {
+                                                     if (_canSeeInTheKnow && !_searchMode) {
                                                          [weakSelf.tableAccordion beginUpdates];
                                                          [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
                                                          [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];
@@ -975,7 +975,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
                                           
                                           NSLog(@"friends(%lu) deleting=%lu inserting=%lu", (unsigned long)kConnectSectionFriends, (unsigned long)[deletedPaths count], (unsigned long)[insertedPaths count]);
 
-                                          if (_canSeeFriends) {
+                                          if (_canSeeFriends && !_searchMode) {
                                               [weakSelf.tableAccordion beginUpdates];
                                               [weakSelf.tableAccordion deleteRowsAtIndexPaths:deletedPaths withRowAnimation:UITableViewRowAnimationNone];
                                               [weakSelf.tableAccordion insertRowsAtIndexPaths:insertedPaths withRowAnimation:UITableViewRowAnimationNone];

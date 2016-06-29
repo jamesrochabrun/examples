@@ -714,7 +714,7 @@ static CGFloat kNextPhotoTolerance = 40;
             return vc;
         } else {
             [weakSelf setUpNextVC:vc restaurant:nil mediaItem:m direction:direction nextIndex:nextIndex];
-            [OOAPI getRestaurantsWithID:m.restaurantID success:^(RestaurantObject *restaurant) {
+            [OOAPI getRestaurantWithID:m.restaurantID success:^(RestaurantObject *restaurant) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     vc.restaurant = restaurant;
                     [vc.view setNeedsLayout];

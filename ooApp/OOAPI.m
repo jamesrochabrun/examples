@@ -53,40 +53,23 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 - (NSString *)ooURL {
     return [OOAPI URL];
 }
-//------------------------------------------------------------------------------
-// Name:    getRestaurantsWithIDs
-// Purpose:
-//------------------------------------------------------------------------------
-//- (AFHTTPRequestOperation *)getRestaurantsWithIDs:(NSArray *)restaurantIds
-//                                          success:(void (^)(NSArray *restaurants))success
-//                                          failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-//{
-//    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants", kHTTPProtocol, [self ooURL]];
-//    OONetworkManager *rm = [[OONetworkManager alloc] init];
-//    
-//    return [rm GET:urlString parameters: @{
-//                                           @"restaurant_ids": restaurantIds
-//                                           }
-//           success:^(id responseObject) {
-//        NSMutableArray *restaurants = [NSMutableArray array];
-//        for (id dict in responseObject) {
-//            //NSLog(@"rest name: %@", [RestaurantObject restaurantFromDict:dict].name);
-//            [restaurants addObject:[RestaurantObject restaurantFromDict:dict]];
-//        }
-//        success(restaurants);
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-//        NSLog(@"Error: %@", error);
-//    }];
-//}
 
-+ (AFHTTPRequestOperation *)getRestaurantsWithID:(NSUInteger)restaurantID
++ (AFHTTPRequestOperation *)getRestaurantWithID:(NSUInteger)restaurantID
                                           success:(void (^)(RestaurantObject *restaurant))success
                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)restaurantID];
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters:nil
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (user.userID) {
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)user.userID] forKey:kKeyUserID];
+    }
+    
+    return [rm GET:urlString parameters:parameters
            success:^(id responseObject) {
                RestaurantObject *restaurant = [RestaurantObject restaurantFromDict:responseObject];
                success(restaurant);
@@ -288,14 +271,14 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 }
 
 //------------------------------------------------------------------------------
-// Name:    getRestaurantsWithID
+// Name:    getRestaurantWithID
 // Purpose:
 //------------------------------------------------------------------------------
-- (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantId source:(NSUInteger)source
+- (AFHTTPRequestOperation *)getRestaurantWithID:(NSString *)restaurantID source:(NSUInteger)source
                                         success:(void (^)(RestaurantObject *restaurant))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    if (!restaurantId) {
+    if (!restaurantID) {
         if (failure)
             failure(nil,nil);
         return nil;
@@ -303,15 +286,27 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 
     NSString *urlString;
     
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@", kHTTPProtocol, [self ooURL], restaurantID];
+    
     if (source == kRestaurantSourceTypeOomami) {
-        urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@", kHTTPProtocol, [self ooURL], restaurantId];
+        
     } else {
-        urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%@?source=%lu", kHTTPProtocol, [self ooURL], restaurantId, (unsigned long)source];
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)source] forKey:@"source"];
     }
+    
+    if (user.userID) {
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)user.userID] forKey:kKeyUserID];
+    }
+    
+    
 
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+    return [rm GET:urlString parameters:parameters success:^(id responseObject) {
         RestaurantObject *restaurant = [RestaurantObject restaurantFromDict:responseObject];
         success(restaurant);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {

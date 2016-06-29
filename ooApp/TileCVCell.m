@@ -165,12 +165,10 @@
     OOAPI *api = [[OOAPI alloc] init];
     __weak TileCVCell *weakSelf = self;
     
-    if ([restaurant.mediaItems count]) {
-        [OOAPI getUserRelevantMediaItemForRestaurant:_restaurant.restaurantID success:^(NSArray *mediaItems) {
-            [weakSelf setThumbnailImage:[mediaItems objectAtIndex:0]];
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ;
-        }];
+    if ([_restaurant.mediaItems count]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf setThumbnailImage:[restaurant.mediaItems objectAtIndex:0]];
+        });
     } else if ([restaurant.imageRefs count]) {
         NSString *imageRef = ((ImageRefObject *)[restaurant.imageRefs objectAtIndex:0]).reference;
         if (imageRef) {

@@ -103,7 +103,7 @@
     NSLog(@"application finished launching");
     //    [DebugUtilities displayAllFonts];
     
-    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:2 * 1024 * 1024
+    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:6 * 1024 * 1024
                                                             diskCapacity:100 * 1024 * 1024
                                                                 diskPath:nil];
     [NSURLCache setSharedURLCache:sharedCache];
@@ -187,17 +187,6 @@
 }
 
 - (void)processNotifications {
-//    UIViewController *vc = [_tabBar.viewControllers objectAtIndex:0];
-//    
-//    if ([vc isKindOfClass:[UINavigationController class]]) {
-//        _nc = (UINavigationController *)vc;
-//    }
-//    
-//    if (!_nc || ![_notifications count]) {
-//        NSLog(@"*** NC not set yet");
-//        return;
-//    }
-    
     if (![self makeSureNCIsSet]) return;
     NotificationObject *notif =[_notifications firstObject];
     [_notifications removeObject:notif];
