@@ -231,7 +231,6 @@ UserObject* makeEmailOnlyUserObject(NSString* email)
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
-    ENTRY;
     [super viewDidLoad];
     
     self.automaticallyAdjustsScrollViewInsets= NO;

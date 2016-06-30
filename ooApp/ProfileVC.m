@@ -901,7 +901,6 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
-    ENTRY;
     [super viewDidLoad];
     
     _userID = 0;

@@ -80,14 +80,7 @@
     //_launchedURL = [NSURL URLWithString:@"oomami://oomami/restaurant?id=1"];
     
     _usingStagingServer= [[NSUserDefaults standardUserDefaults] boolForKey: kUserDefaultsUsingStagingServer];
-    self.diagnosticLogString= [NSMutableString new];
-    ENTRY;
-    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
-    NSString *applicationName = [infoDictionary objectForKey:@"CFBundleName"];
-    NSString *majorVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
-    NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
-    [_diagnosticLogString appendFormat: @"PLATFORM %@\r",platformString()];
-    [_diagnosticLogString appendFormat:  @"APPLICATION %@ %@ build %@\r\r",applicationName,majorVersion, minorVersion];
+    
 #else
     #define INTERNAL_RELEASE
 
@@ -103,14 +96,13 @@
     NSLog(@"application finished launching");
     //    [DebugUtilities displayAllFonts];
     
-    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:6 * 1024 * 1024
+    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:10 * 1024 * 1024
                                                             diskCapacity:100 * 1024 * 1024
                                                                 diskPath:nil];
     [NSURLCache setSharedURLCache:sharedCache];
     
     CLLocationCoordinate2D location= [[Settings sharedInstance] mostRecentLocation ];
     NSLog  (@"Last known location: %g,%g", location.latitude,location.longitude);
-    [_diagnosticLogString appendFormat: @"LAST LOCATION: %.6g,%.6g\r", location.latitude,location.longitude];
     
     [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
     [GMSServices provideAPIKey:kAPIKeyGoogleMaps];
@@ -122,11 +114,10 @@
         [self registerForPushNotifications];
     }
     
-    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4be2767211390447c381617f13fc2437"];
     // Do some additional configuration if needed here
+    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4be2767211390447c381617f13fc2437"];
     [[BITHockeyManager sharedHockeyManager] startManager];
-    [[BITHockeyManager sharedHockeyManager].authenticator
-     authenticateInstallation];
+    [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
     
     self.imageForNoProfileSilhouette= [UIImage  imageNamed: @"No-Profile_Image.png"];
     
@@ -376,8 +367,6 @@
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
-    ENTRY;
-    
     NSString *sourceApplication = [options objectForKey:UIApplicationOpenURLOptionsSourceApplicationKey];
     
     if ([[FBSDKApplicationDelegate sharedInstance] application:app
@@ -440,14 +429,13 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    ENTRY;
+
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    ENTRY;
     [[Settings sharedInstance] save];
     ANALYTICS_EVENT_OTHER(@"Background");
     ANALYTICS_FORCE_SYNC();
@@ -460,14 +448,12 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    ENTRY;
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     ANALYTICS_EVENT_OTHER(@"Foreground");
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    ENTRY;
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [FBSDKAppEvents activateApp];
     
@@ -497,11 +483,9 @@
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
-    ENTRY;
     [[Settings sharedInstance] save];
     ANALYTICS_EVENT_OTHER(@"Memory");
     ANALYTICS_FORCE_SYNC();
-    
 }
 
 @end

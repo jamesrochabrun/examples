@@ -437,8 +437,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     }];
 }
 
-- (void)fetchFoodies
-{
+- (void)fetchFoodies {
     UserObject*user= [Settings sharedInstance].userObject;
     __weak ConnectVC *weakSelf = self;
     
@@ -480,8 +479,7 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
      ];
 }
 
-- (void)fetchTrustedUsers
-{
+- (void)fetchTrustedUsers {
     __weak ConnectVC *weakSelf = self;
     
     self.roTrustedUsers = [OOAPI getUsersOfType:kUserTypeTrusted success:^(NSArray *users) {

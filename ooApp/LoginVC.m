@@ -46,8 +46,6 @@
 //------------------------------------------------------------------------------
 - (void) viewDidLoad
 {
-    ENTRY;
-
     [super viewDidLoad];
     
     _wentToExplore = NO;
@@ -206,8 +204,6 @@
 //------------------------------------------------------------------------------
 - (void)showMainUI
 {
-    ENTRY;
-
     if (_wentToExplore) { // Prevent duplicate simultaneous calls.
         return;
     }
@@ -257,10 +253,7 @@
 
 - (void)showMainUIWithUserEmail:(NSString *)email
 {
-    ENTRY;
-    
     if  (!email || !email.length) {
-        LOGS(@"NO EMAIL.");
         return;
     }
     
@@ -297,7 +290,6 @@
 //------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated
 {
-    ENTRY;
     [super viewDidAppear:animated];
 }
 
@@ -382,8 +374,6 @@
 
 - (void)loginButtonDidimageViewLogout:(FBSDKLoginButton *)loginButton
 {
-    ENTRY;
-
     NSLog (@"loginButtonDidimageViewLogout: USER LOGGED OUT");
 }
 
@@ -393,8 +383,6 @@
 //------------------------------------------------------------------------------
 - (void)loginButton:(FBSDKLoginButton *)loginButton didCompleteWithResult:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
 {
-    ENTRY;
-    
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me?fields=email"
                                        parameters:nil]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {

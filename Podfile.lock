@@ -37,9 +37,9 @@ PODS:
   - GoogleSymbolUtilities (1.0.3)
   - GoogleUtilities (1.1.0):
     - GoogleSymbolUtilities (~> 1.0.0)
-  - HockeySDK (3.8.2):
-    - HockeySDK/AllFeaturesLib (= 3.8.2)
-  - HockeySDK/AllFeaturesLib (3.8.2)
+  - HockeySDK (3.8.6):
+    - HockeySDK/AllFeaturesLib (= 3.8.6)
+  - HockeySDK/AllFeaturesLib (3.8.6)
   - Instabug (5.1.2)
   - iRate (1.11.4)
   - TTTAttributedLabel (1.13.4)
@@ -62,7 +62,7 @@ SPEC CHECKSUMS:
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
   GoogleSymbolUtilities: 82ad9f93d3615244b3f4ce440f5ab2515e8b4f56
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
-  HockeySDK: 9f4ac41263acf9d8a4d59491a7f17af16529b935
+  HockeySDK: ab68303eec6680f6b539de65d747742dd276e934
   Instabug: c315abe1a1c4cbd3ea1cc6ec8f9954d6c5371c39
   iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
   TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f

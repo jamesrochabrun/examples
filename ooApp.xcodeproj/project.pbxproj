@@ -241,7 +241,6 @@
 		96567E871C59658C00DCEF1B /* FoodieBubble.png in Resources */ = {isa = PBXBuildFile; fileRef = 96567E861C59658C00DCEF1B /* FoodieBubble.png */; };
 		965A1A971BBA05B500727773 /* ExploreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 965A1A961BBA05B500727773 /* ExploreVC.m */; };
 		966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 966E08391BC6E38800A4B866 /* EventWhoVC.m */; };
-		967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 967124951BB5E6A900F28904 /* DiagnosticVC.m */; };
 		967163E51C29E15B002DFDDB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E31C29E15B002DFDDB /* AddressBook.framework */; };
 		967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967163E41C29E15B002DFDDB /* AddressBookUI.framework */; };
 		968EE95E1C3C501900DFE30E /* EventSelectionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 968EE95D1C3C501900DFE30E /* EventSelectionVC.m */; };
@@ -622,8 +621,6 @@
 		965A1A961BBA05B500727773 /* ExploreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExploreVC.m; sourceTree = "<group>"; };
 		966E08381BC6E38800A4B866 /* EventWhoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWhoVC.h; sourceTree = "<group>"; };
 		966E08391BC6E38800A4B866 /* EventWhoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWhoVC.m; sourceTree = "<group>"; };
-		967124941BB5E6A900F28904 /* DiagnosticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticVC.h; sourceTree = "<group>"; };
-		967124951BB5E6A900F28904 /* DiagnosticVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiagnosticVC.m; sourceTree = "<group>"; };
 		967163E31C29E15B002DFDDB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		967163E41C29E15B002DFDDB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		968EE95C1C3C501900DFE30E /* EventSelectionVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSelectionVC.h; sourceTree = "<group>"; };
@@ -1130,8 +1127,6 @@
 				366BBC931BA8E59F00292F80 /* SearchVC.h */,
 				9695C0FE1C1618D100911E84 /* ConnectVC.h */,
 				9695C0FF1C1618D100911E84 /* ConnectVC.m */,
-				967124941BB5E6A900F28904 /* DiagnosticVC.h */,
-				967124951BB5E6A900F28904 /* DiagnosticVC.m */,
 				366BBC8F1BA8DEB400292F80 /* SettingsVC.m */,
 				366BBC901BA8DEB400292F80 /* SettingsVC.h */,
 				36C572DB1C01477600C57DA2 /* ManageTagsVC.h */,
@@ -1568,7 +1563,6 @@
 				966E083A1BC6E38800A4B866 /* EventWhoVC.m in Sources */,
 				9643BD331C56B38F00059002 /* SocialMedia.m in Sources */,
 				36FDA6FC1B585F650029D29D /* WhatsNewVC.m in Sources */,
-				967124961BB5E6A900F28904 /* DiagnosticVC.m in Sources */,
 				364F9BA61BFEDE2600DBD012 /* OOUserView.m in Sources */,
 				361329791C17BE34009413D6 /* NSData+Conversion.m in Sources */,
 				9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */,

@@ -911,7 +911,6 @@
 
 - (void)viewDidLoad
 {
-    ENTRY;
     [super viewDidLoad];
     
     NSString* eventName= self.eventBeingEdited.name;

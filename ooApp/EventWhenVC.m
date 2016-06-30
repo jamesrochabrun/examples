@@ -58,7 +58,6 @@ static int votingEndingValues[3]= {
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
-    ENTRY;
    [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.    
     

@@ -16,7 +16,6 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
-@property (nonatomic, strong) NSMutableString *diagnosticLogString;
 @property (nonatomic, assign) BOOL usingStagingServer;
 @property (nonatomic, strong) UIImage *imageForNoProfileSilhouette;
 @property (nonatomic, strong) NSDate *dateLeft;
@@ -29,12 +28,6 @@
 - (void)clearCache;
 - (void)processNotifications;
 - (void)openLink;
-
-// Later, remove from production
-#define ENTRY { [APP.diagnosticLogString appendFormat:  @"Entered %s\r",__FUNCTION__]; }
-#define LOGS(STRING) { [APP.diagnosticLogString appendFormat: @"%@\r",STRING]; }
-//#define LOGS2(STRING1,STRING2) { [APP.diagnosticLogString appendFormat: @"%@: %@\r",STRING1,STRING2]; }
-#define LOGSN(STRING,NUMBER) { [APP.diagnosticLogString appendFormat: @"%@: %lu\r",STRING,(unsigned long)NUMBER]; }
 
 @end
 

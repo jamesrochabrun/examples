@@ -70,7 +70,6 @@
 //------------------------------------------------------------------------------
 - (void)viewDidLoad
 {
-    ENTRY;
     [super viewDidLoad];
     
     _arrayOfSuggestions = [NSMutableArray new];
@@ -352,8 +351,7 @@
     [_username resignFirstResponder];
     
     UserObject *userInfo= [Settings sharedInstance].userObject;
-    [APP.diagnosticLogString appendFormat:@"Username set to %@", userInfo.username];
-
+    
     @try {
         [self performSegueWithIdentifier:@"mainUISegue" sender:self];
     }
