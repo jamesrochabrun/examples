@@ -29,27 +29,32 @@
     return self;
 }
 
-- (void)updateConstraints {
-    [super updateConstraints];
+//- (void)updateConstraints {
+//    [super updateConstraints];
+//
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonHeight":@(kGeomHeightButton)};
+//    
+//    if  (self.buttonAddAll) {
+//        
+//    UIView *superview = self;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _buttonAddAll);
+//    
+//    [self addConstraints:
+//     [NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=0)-[_buttonAddAll(>=80)]-(spaceEdge)-|"
+//                                             options:0
+//                                             metrics:metrics
+//                                               views:views]];
+//    [ self addConstraints:
+//     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_buttonAddAll(buttonHeight)]-|"
+//                                             options:NSLayoutFormatAlignAllCenterY
+//                                             metrics:metrics
+//                                               views:views]];
+//    }
+//}
 
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonHeight":@(kGeomHeightButton)};
+- (void)layoutSubviews {
+    [super layoutSubviews];
     
-    if  (self.buttonAddAll) {
-        
-    UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _buttonAddAll);
-    
-    [self addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=0)-[_buttonAddAll(>=80)]-(spaceEdge)-|"
-                                             options:0
-                                             metrics:metrics
-                                               views:views]];
-    [ self addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_buttonAddAll(buttonHeight)]-|"
-                                             options:NSLayoutFormatAlignAllCenterY
-                                             metrics:metrics
-                                               views:views]];
-    }
 }
 
 - (void)prepareForReuse {
@@ -123,6 +128,10 @@
     
     //self.thumbnail.image = nil;
     self.header.text = [_list listName];
+    
+    [self setNeedsUpdateConstraints];
+    [self setNeedsLayout];
+    
     [self updateRestaurantCount];
     
     if (_restaurantToAdd) {
@@ -201,7 +210,6 @@
     } else {
         self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
     }
-
 }
 
 - (void)updateRestaurantCount {
@@ -212,6 +220,11 @@
     } else {
         self.subHeader1.text = @"";
     }
+    
+    [self.subHeader1 sizeToFit];
+    
+    [self setNeedsUpdateConstraints];
+    [self setNeedsLayout];
 }
 
 - (void)addAllRestaurantsFromList {
@@ -228,8 +241,6 @@
         ;
     }];
 }
-
-
 
 /*
 // Only override drawRect: if you perform custom drawing.

@@ -52,6 +52,8 @@
 @property (nonatomic, strong) UITableView *locationsTable;
 @property (nonatomic, strong) NSArray *locations;
 @property (nonatomic, strong) UIView *locationsBgView;
+@property (nonatomic, strong) UIImageView *restaurantImage;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
 
 @end
 
@@ -180,6 +182,22 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     
     _currentLocation = [LocationManager sharedInstance].currentUserLocation;
     [self updateLocation];
+    
+    _restaurantImage = [UIImageView new];
+    _restaurantImage.contentMode = UIViewContentModeScaleAspectFit;
+    _restaurantImage.backgroundColor = UIColorRGBOverlay(kColorBackgroundTheme, 0.90);
+    _restaurantImage.userInteractionEnabled = YES;
+    _restaurantImage.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showRestaurantPhotoFullScreen:)];
+    [_tapGestureRecognizer setNumberOfTapsRequired:1];
+    [_restaurantImage addGestureRecognizer:_tapGestureRecognizer];
+    _restaurantImage.hidden = YES;
+    
+    [self.view addSubview:_restaurantImage];
+    
+    [self.view bringSubviewToFront:_restaurantImage];
+    
     //[DebugUtilities addBorderToViews:@[_resetLocation]];
 }
 
@@ -320,13 +338,15 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"heightFilters":@(kGeomHeightFilters), @"width":@200.0, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"mapHeight" : @((_showMap)?(height(self.view)-kGeomHeightNavBarStatusBar)*0.4:0), @"mapWidth" : @(width(self.view))};
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(_restaurantsTable, _mapView, _locationSearchBar, _locationsTable, _resetLocation, _locationsBgView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_restaurantsTable, _mapView, _locationSearchBar, _locationsTable, _resetLocation, _locationsBgView, _restaurantImage);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self.view removeConstraints:_mapConstraints];
     _mapConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationsBgView(40)][_mapView(mapHeight)]-[_restaurantsTable]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
     
     [self.view addConstraints:_mapConstraints];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_restaurantImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_restaurantImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resetLocation]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_locationSearchBar]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_locationsBgView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -507,6 +527,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
         cell.listToAddTo = _listToAddTo;
         cell.restaurant = ro;
         cell.nc = self.navigationController;
+        cell.delegate = self;
         cell.index = indexPath.row + 1;
         [cell updateConstraintsIfNeeded];
         
@@ -782,6 +803,69 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
         return [_locations count];
     } else {
         return [_restaurants count];
+    }
+}
+
+- (void)objectTVCellThumbnailTapped:(ObjectTVCell *)objectTVCell {
+    if (![objectTVCell isKindOfClass:[RestaurantTVCell class]]) return;
+    
+    RestaurantObject *restaurant = ((RestaurantTVCell *)objectTVCell).restaurant;
+    MediaItemObject *mio = ([restaurant.mediaItems count]) ? [restaurant.mediaItems objectAtIndex:0] : nil;
+    
+    if (!mio) {
+        RestaurantVC *vc = [[RestaurantVC alloc] init];
+        vc.restaurant = restaurant;
+        [self.navigationController pushViewController:vc animated:YES];
+        return; //can pop up a message to tell the user to upload a photo
+    } else {
+        [self showRestaurantPhotoFullScreen:mio];
+    }
+    
+//    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+//    vc.originRect = objectTVCell.thumbnail.frame;
+//    vc.mio = mio;
+//    vc.restaurant = restaurant;
+//    vc.delegate = self;
+//    vc.items = nil;// _restaurants;
+//    vc.currentIndex = [_restaurantsTable indexPathForCell:objectTVCell].row;
+//    
+//    vc.modalPresentationStyle = UIModalPresentationCustom;
+//    vc.transitioningDelegate = self;
+//    self.navigationController.delegate = self;
+//    vc.dismissTransitionDelegate = self;
+//    vc.dismissNCDelegate = self;
+//    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)showRestaurantPhotoFullScreen:(id)sender {
+    if (!_restaurantImage.hidden) {
+        _restaurantImage.hidden = YES;
+    } else {
+        __weak SearchVC *weakSelf = self;
+        if (!sender || ![sender isKindOfClass:[MediaItemObject class]]) return;
+        MediaItemObject *mediaItem = (MediaItemObject *)sender;
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        [api getRestaurantImageWithMediaItem:mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
+            [weakSelf.restaurantImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                            placeholderImage:nil
+                                                     success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                                         dispatch_async(dispatch_get_main_queue(), ^{
+                                                             weakSelf.restaurantImage.image = image;
+                                                             [weakSelf.restaurantImage setAlpha:1.0];
+                                                             weakSelf.restaurantImage.hidden = NO;
+                                                             [weakSelf.view setNeedsUpdateConstraints];
+                                                         });
+                                                     } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                         dispatch_async(dispatch_get_main_queue(), ^{
+                                                             
+                                                         });
+                                                     }];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+            });
+        }];
     }
 }
 

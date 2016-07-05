@@ -37,6 +37,8 @@
 @property (nonatomic, strong) NSMutableArray *mapMarkers;
 @property (nonatomic, strong) GMSCameraPosition *camera;
 @property (nonatomic, strong) NSArray *mapConstraints;
+@property (nonatomic, strong) UIImageView *restaurantImage;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
 
 @end
 
@@ -53,6 +55,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN(@(object_getClassName(self)));
 
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
 
@@ -78,7 +81,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
 
     [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:cellIdentifier];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    _tableView.rowHeight = kGeomHeightHorizontalListRow + 20;
+    _tableView.rowHeight = kGeomHeightHorizontalListRow;
     _tableView.separatorInset = UIEdgeInsetsZero;
     _tableView.layoutMargins = UIEdgeInsetsZero;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -136,6 +139,21 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _mapMarkers = [NSMutableArray array];
     
     _showMap = NO;
+    
+    _restaurantImage = [UIImageView new];
+    _restaurantImage.contentMode = UIViewContentModeScaleAspectFit;
+    _restaurantImage.backgroundColor = UIColorRGBOverlay(kColorBackgroundTheme, 0.90);
+    _restaurantImage.userInteractionEnabled = YES;
+    _restaurantImage.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showRestaurantPhotoFullScreen:)];
+    [_tapGestureRecognizer setNumberOfTapsRequired:1];
+    [_restaurantImage addGestureRecognizer:_tapGestureRecognizer];
+    _restaurantImage.hidden = YES;
+    
+    [self.view addSubview:_restaurantImage];
+    
+    [self.view bringSubviewToFront:_restaurantImage];
 }
 
 - (void)mapButtonPressed:(id)sender {
@@ -216,7 +234,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [super updateViewConstraints];
     NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter),@"buttonHeight":@(kGeomHeightButton), @"mapHeight" : @((_showMap)?(height(self.view)-kGeomHeightNavBarStatusBar)*0.4:0)};
 
-    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv, _shareList, _mapView);
+    NSDictionary *views = NSDictionaryOfVariableBindings(_tableView, _fv, _shareList, _mapView, _restaurantImage);
     
     [self.view removeConstraints:_mapConstraints];
     _mapConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_mapView(mapHeight)][_tableView][_shareList(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
@@ -230,7 +248,11 @@ static NSString * const cellIdentifier = @"horizontalCell";
 //    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[_tableView][_shareList(buttonHeight)]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_tableView]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_restaurantImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_restaurantImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_shareList]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_fv(110)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -513,6 +535,71 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [UIView animateWithDuration:0.5 animations:^{
         [self setHighlightedMarkers];
     }];
+}
+
+- (void)objectTVCellThumbnailTapped:(ObjectTVCell *)objectTVCell {
+    if (![objectTVCell isKindOfClass:[RestaurantTVCell class]]) return;
+    
+    RestaurantObject *restaurant = ((RestaurantTVCell *)objectTVCell).restaurant;
+    MediaItemObject *mio = ([restaurant.mediaItems count]) ? [restaurant.mediaItems objectAtIndex:0] : nil;
+    
+    if (!mio) {
+        RestaurantVC *vc = [[RestaurantVC alloc] init];
+        vc.restaurant = restaurant;
+        [self.navigationController pushViewController:vc animated:YES];
+        return; //can pop up a message to tell the user to upload a photo
+    } else {
+        [self showRestaurantPhotoFullScreen:mio];
+    }
+    
+    
+//    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
+//    vc.originRect = objectTVCell.thumbnail.frame;
+//    vc.mio = mio;
+//    vc.restaurant = restaurant;
+//    vc.delegate = self;
+//    vc.items = nil;//_restaurants;
+//    vc.currentIndex = [_tableView indexPathForCell:objectTVCell].row;
+//    //vc.rootViewController = self;
+//    
+//    vc.modalPresentationStyle = UIModalPresentationCustom;
+//    vc.transitioningDelegate = self;
+//    self.navigationController.delegate = self;
+//    vc.dismissTransitionDelegate = self;
+//    vc.dismissNCDelegate = self;
+//    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)showRestaurantPhotoFullScreen:(id)sender {
+    if (!_restaurantImage.hidden) {
+        _restaurantImage.hidden = YES;
+    } else {
+        __weak RestaurantListVC *weakSelf = self;
+        if (!sender || ![sender isKindOfClass:[MediaItemObject class]]) return;
+        MediaItemObject *mediaItem = (MediaItemObject *)sender;
+        
+        OOAPI *api = [[OOAPI alloc] init];
+        [api getRestaurantImageWithMediaItem:mediaItem maxWidth:200 maxHeight:0 success:^(NSString *link) {
+            [weakSelf.restaurantImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
+                                         placeholderImage:nil
+                                                  success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, UIImage * _Nonnull image) {
+                                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                                          weakSelf.restaurantImage.image = image;
+                                                          [weakSelf.restaurantImage setAlpha:1.0];
+                                                          weakSelf.restaurantImage.hidden = NO;
+                                                          [weakSelf.view setNeedsUpdateConstraints];
+                                                      });
+                                                  } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nonnull response, NSError * _Nonnull error) {
+                                                      dispatch_async(dispatch_get_main_queue(), ^{
+                                                          
+                                                      });
+                                                  }];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+            });
+        }];
+    }
 }
 
 - (void)setHighlightedMarkers {

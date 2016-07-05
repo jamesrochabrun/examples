@@ -43,7 +43,7 @@ typedef enum {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _followeesView = [UIView new];
-        _followeesView.translatesAutoresizingMaskIntoConstraints = NO;
+//        _followeesView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_followeesView];
         
         _numberAdditionalFollowees = [UILabel new];
@@ -60,6 +60,7 @@ typedef enum {
     
     self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
     self.header.text = _restaurant.name;
+    
     _open = _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
                             (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
     _rating = _restaurant.rating ? [NSString stringWithFormat:@"%0.1f rating", _restaurant.rating] : @"";
@@ -75,7 +76,9 @@ typedef enum {
                 [weakSelf updateThumbnail];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     weakSelf.subHeader1.text = [weakSelf subheader1String];
+                    [self.subHeader1 sizeToFit];
                     weakSelf.subHeader2.text = [weakSelf subheader2String];
+                    [self.subHeader2 sizeToFit];
                 });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -85,7 +88,9 @@ typedef enum {
         [self addFolloweesWithRestaurant];
         [self updateThumbnail];
         self.subHeader1.text = [self subheader1String];
+        [self.subHeader1 sizeToFit];
         self.subHeader2.text = [self subheader2String];
+        [self.subHeader2 sizeToFit];
     }
     [self setupActionButton];
 }
@@ -172,6 +177,7 @@ typedef enum {
     
     if (count) {
         self.subHeader2.text = [self subheader2String];
+        [self.subHeader2 sizeToFit];
     }
     [self setNeedsLayout];
 }
@@ -208,25 +214,41 @@ typedef enum {
     return s;
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-}
+//- (void)updateConstraints {
+//    [super updateConstraints];
 
-- (void)updateConstraints {
-    [super updateConstraints];
-    
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButtonSmall)};
-        
-    UIView *superview = self, *subheader2 = self.subHeader2;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _followeesView, subheader2);
+//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButtonSmall)};
+//        
+//    UIView *superview = self, *subheader2 = self.subHeader2;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _followeesView, subheader2);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_followeesView(30)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_followeesView(100)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_followeesView(30)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[_followeesView(100)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+//    
+//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_followeesView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:subheader2 attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_followeesView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:subheader2 attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+//}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
     
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_followeesView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:subheader2 attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_followeesView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:subheader2 attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    if (!_followees || ![_followees count]) return;
+    
+    CGRect frame;
+    
+    frame = _followeesView.frame;
+    frame.size.height = 30;
+    frame.size.width = 100;
+    frame.origin.x = CGRectGetMaxX(self.subHeader2.frame);
+    frame.origin.y = CGRectGetMinY(self.subHeader2.frame) + (CGRectGetHeight(_followeesView.frame) - CGRectGetHeight(_followeesView.frame))/2;
+    _followeesView.frame = frame;
+    
+    frame = self.subHeader2.frame;
+    frame.size.height = CGRectGetHeight(_followeesView.frame);
+    self.subHeader2.frame = frame;
 }
+
 
 - (void)setListToAddTo:(ListObject *)listToAddTo
 {
@@ -415,6 +437,7 @@ typedef enum {
 - (void)setIndex:(NSUInteger)index {
     self.icon.text = kFontIconPin;
     self.iconLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)index];
+    [self.iconLabel sizeToFit];
 }
 
 - (void)setupRestaurantOptionsAC {

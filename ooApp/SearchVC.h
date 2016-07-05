@@ -11,6 +11,8 @@
 #import "BaseVC.h"
 #import "ListObject.h"
 #import "EventObject.h"
+#import "ViewPhotoVC.h"
+#import "RestaurantTVCell.h"
 //#import "OptionsVC.h"
 //#import "ChangeLocationVC.h"
 
@@ -18,7 +20,11 @@
                                 UITableViewDelegate,
                                 //OptionsVCDelegate,
                                 //ChangeLocationVCDelegate,
-                                UISearchBarDelegate>
+                                ViewPhotoVCDelegate,
+                                UISearchBarDelegate,
+                                UINavigationControllerDelegate,
+                                UIViewControllerTransitioningDelegate,
+                                ObjectTVCellDelegate>
 
 @property (nonatomic, strong) ListObject *listToAddTo;
 @property (nonatomic, strong) EventObject *eventBeingEdited;

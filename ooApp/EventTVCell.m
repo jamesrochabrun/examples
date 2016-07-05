@@ -50,7 +50,6 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    [self showShadow];
     [_participantsView clearFaces];
     [self.operation cancel];
     [_imageOperation cancel];
@@ -70,22 +69,20 @@
 
 - (void)setMessageMode:(NSString *)message;
 {
-    self.thumbnail.image= nil;
-    self.viewShadow.backgroundColor= UIColorRGBA(kColorClear);
+    self.thumbnail.image = nil;
     self.thumbnail.backgroundColor = UIColorRGBA(kColorClear);
-    self.header.text=  message;
-    [self hideShadow];
-    _isMessage= YES;
-    self.backgroundColor= UIColorRGBA(kColorClear);
-    self.header.textColor= UIColorRGBA(kColorWhite);
-    self.header.layer.shadowRadius= 0;
-    self.header.layer.shadowOffset= CGSizeZero;
-    self.header.layer.shadowColor= UIColorRGBA(kColorClear).CGColor;
+    self.header.text = message;
+    _isMessage = YES;
+    self.backgroundColor = UIColorRGBA(kColorClear);
+    self.header.textColor = UIColorRGBA(kColorWhite);
+    self.header.layer.shadowRadius = 0;
+    self.header.layer.shadowOffset = CGSizeZero;
+    self.header.layer.shadowColor = UIColorRGBA(kColorClear).CGColor;
 }
 
 - (void)setIsFirst
 {
-    self.isFirst= YES;
+    self.isFirst = YES;
 }
 
 - (void)userPressedButtonForProfile:(NSUInteger)userid
@@ -99,7 +96,7 @@
         return;
     }
     _nameHeader = header;
-    [self addSubview: header];
+    [self addSubview:header];
     _nameHeader.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
@@ -140,7 +137,6 @@
             y= (thumbHeight-kGeomFaceBubbleDiameter-2*kGeomFontSizeHeader)/2;
         }
         
-        self.viewShadow.frame = self.thumbnail.frame;
         _viewFadeOverlay.frame = self.thumbnail.frame;
 
         [self.header sizeToFit];

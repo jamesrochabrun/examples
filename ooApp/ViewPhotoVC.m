@@ -580,6 +580,8 @@ static CGFloat kNextPhotoTolerance = 40;
         
     } else if (_panGesture.state == UIGestureRecognizerStateChanged) {
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
+        
+        delta.x = ([_items count] > 1)? delta.x:0;
  
 //        NSLog(@"changed: %@", NSStringFromCGPoint(delta));
 

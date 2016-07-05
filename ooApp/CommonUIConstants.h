@@ -135,6 +135,7 @@ static NSUInteger kGeomFontSizeH3 = 13;
 static NSUInteger kGeomFontSizeH4 = 12;
 static NSUInteger kGeomFontSizeH5 = 11;
 static NSUInteger kGeomFontSizeH6 = 9;
+static NSUInteger kGeomFontSizeH7 = 7;
 static NSUInteger kGeomFontSizeHeader = 16;
 static NSUInteger kGeomFontSizeSubheader = 13;
 static CGFloat kGeomIconSize = 30;

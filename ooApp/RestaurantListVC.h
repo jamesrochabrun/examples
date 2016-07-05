@@ -11,10 +11,14 @@
 #import "SubBaseVC.h"
 #import "EventObject.h"
 #import "ObjectTVCell.h"
+#import "ViewPhotoVC.h"
 
 @interface RestaurantListVC : SubBaseVC <UITableViewDataSource,
                                         UITableViewDelegate,
-                                        ObjectTVCellDelegate>
+                                        ObjectTVCellDelegate,
+                                        UINavigationControllerDelegate,
+                                        UIViewControllerTransitioningDelegate,
+                                        ViewPhotoVCDelegate>
 
 @property (nonatomic, strong) ListObject *listItem;
 @property (nonatomic,strong) EventObject *eventBeingEdited;

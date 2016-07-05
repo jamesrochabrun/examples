@@ -316,6 +316,7 @@ typedef enum {
         cell.delegate = self;
         
         [cell updateConstraintsIfNeeded];
+        [cell setNeedsLayout];
         return cell;
     } else {
         UITableViewCell *cell = (UITableViewCell *)[_tableView dequeueReusableCellWithIdentifier:buttonsCellIdentifier];
@@ -412,6 +413,21 @@ typedef enum {
     vc.listItem = list;
     vc.eventBeingEdited= self.eventBeingEdited;
     [self.navigationController pushViewController:vc animated:YES];    
+}
+
+- (void)objectTVCellThumbnailTapped:(ObjectTVCell *)objectTVCell {
+    if (![objectTVCell isKindOfClass:[ListTVCell class]]) return;
+    
+    ListObject *list = ((ListTVCell *)objectTVCell).list;
+    
+    if (!list) {
+        return;
+    } else {
+        RestaurantListVC *vc = [[RestaurantListVC alloc] init];
+        vc.listItem = list;
+        vc.eventBeingEdited= self.eventBeingEdited;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 - (void)addToFavorites {
