@@ -84,7 +84,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _tableView.rowHeight = kGeomHeightHorizontalListRow;
     _tableView.separatorInset = UIEdgeInsetsZero;
     _tableView.layoutMargins = UIEdgeInsetsZero;
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     
     [self registerForNotification: kNotificationListAltered
                           calling:@selector(handleListAltered:)
@@ -543,31 +543,14 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantObject *restaurant = ((RestaurantTVCell *)objectTVCell).restaurant;
     MediaItemObject *mio = ([restaurant.mediaItems count]) ? [restaurant.mediaItems objectAtIndex:0] : nil;
     
-    if (!mio) {
+//    if (!mio) {
         RestaurantVC *vc = [[RestaurantVC alloc] init];
         vc.restaurant = restaurant;
         [self.navigationController pushViewController:vc animated:YES];
         return; //can pop up a message to tell the user to upload a photo
-    } else {
-        [self showRestaurantPhotoFullScreen:mio];
-    }
-    
-    
-//    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
-//    vc.originRect = objectTVCell.thumbnail.frame;
-//    vc.mio = mio;
-//    vc.restaurant = restaurant;
-//    vc.delegate = self;
-//    vc.items = nil;//_restaurants;
-//    vc.currentIndex = [_tableView indexPathForCell:objectTVCell].row;
-//    //vc.rootViewController = self;
-//    
-//    vc.modalPresentationStyle = UIModalPresentationCustom;
-//    vc.transitioningDelegate = self;
-//    self.navigationController.delegate = self;
-//    vc.dismissTransitionDelegate = self;
-//    vc.dismissNCDelegate = self;
-//    [self.navigationController pushViewController:vc animated:YES];
+//    } else {
+//        [self showRestaurantPhotoFullScreen:mio];
+//    }
 }
 
 - (void)showRestaurantPhotoFullScreen:(id)sender {

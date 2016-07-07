@@ -77,7 +77,7 @@ typedef enum {
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.separatorInset = UIEdgeInsetsZero;
     _tableView.layoutMargins = UIEdgeInsetsZero;
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
 
     _requestOperation = nil;
     _tableView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);

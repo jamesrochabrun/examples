@@ -126,7 +126,10 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     _restaurantsTable.delegate = self;
     _restaurantsTable.dataSource = self;
     _restaurantsTable.translatesAutoresizingMaskIntoConstraints = NO;
-    _restaurantsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _restaurantsTable.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    _restaurantsTable.separatorInset = UIEdgeInsetsZero;
+    _restaurantsTable.layoutMargins = UIEdgeInsetsZero;
+    
     _restaurantsTable.rowHeight = kGeomHeightHorizontalListRow;
     _restaurantsTable.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     
@@ -137,7 +140,10 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     _locationsTable.delegate = self;
     _locationsTable.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     _locationsTable.rowHeight = 44;
-    _locationsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _locationsTable.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    _locationsTable.separatorInset = UIEdgeInsetsZero;
+    _locationsTable.layoutMargins = UIEdgeInsetsZero;
+
     [_locationsTable registerClass:[UITableViewCell class] forCellReuseIdentifier:locationCellIdentifier];
     _locationsTable.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:_locationsTable];
@@ -812,29 +818,14 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     RestaurantObject *restaurant = ((RestaurantTVCell *)objectTVCell).restaurant;
     MediaItemObject *mio = ([restaurant.mediaItems count]) ? [restaurant.mediaItems objectAtIndex:0] : nil;
     
-    if (!mio) {
+//    if (!mio) {
         RestaurantVC *vc = [[RestaurantVC alloc] init];
         vc.restaurant = restaurant;
         [self.navigationController pushViewController:vc animated:YES];
         return; //can pop up a message to tell the user to upload a photo
-    } else {
-        [self showRestaurantPhotoFullScreen:mio];
-    }
-    
-//    ViewPhotoVC *vc = [[ViewPhotoVC alloc] init];
-//    vc.originRect = objectTVCell.thumbnail.frame;
-//    vc.mio = mio;
-//    vc.restaurant = restaurant;
-//    vc.delegate = self;
-//    vc.items = nil;// _restaurants;
-//    vc.currentIndex = [_restaurantsTable indexPathForCell:objectTVCell].row;
-//    
-//    vc.modalPresentationStyle = UIModalPresentationCustom;
-//    vc.transitioningDelegate = self;
-//    self.navigationController.delegate = self;
-//    vc.dismissTransitionDelegate = self;
-//    vc.dismissNCDelegate = self;
-//    [self.navigationController pushViewController:vc animated:YES];
+//    } else {
+//        [self showRestaurantPhotoFullScreen:mio];
+//    }
 }
 
 - (void)showRestaurantPhotoFullScreen:(id)sender {

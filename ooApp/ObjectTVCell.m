@@ -67,25 +67,26 @@
         _iconTappedGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(iconTapped:)];
         _icon.userInteractionEnabled = YES;
         [_icon addGestureRecognizer:_iconTappedGesture];
+        _icon.hidden = YES;
         
         _header = [[UILabel alloc] init];
-        [_header withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
+        [_header withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
         
         _subHeader1 = [[UILabel alloc] init];
-        [_subHeader1 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
+        [_subHeader1 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorText backgroundColor:kColorClear];
         
         _iconLabel = [[UILabel alloc] init];
         [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH7] textColor:kColorTextActive backgroundColor:kColorClear];
         _iconLabel.text = @"";
+        _iconLabel.hidden = YES;
         
         _subHeader2 = [[UILabel alloc] init];
-        [_subHeader2 withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeSubheader] textColor:kColorText backgroundColor:kColorClear];
+        [_subHeader2 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorText backgroundColor:kColorClear];
         
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_actionButton roundButtonWithIcon:kFontIconAdd fontSize:kGeomIconSizeSmall width:kGeomDimensionsIconButtonSmall height:0 backgroundColor:kColorBackgroundTheme target:nil selector:nil];
         //[_actionButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [self addSubview:_actionButton];
-//        _actionButton.translatesAutoresizingMaskIntoConstraints = NO;
         _actionButton.hidden = YES;
         
         [self addSubview:_header];
@@ -99,66 +100,16 @@
         bgColorView.backgroundColor = UIColorRGBA(kColorCellSelected);
         [self setSelectedBackgroundView:bgColorView];
         
-//        _thumbnail.translatesAutoresizingMaskIntoConstraints =
-//        _header.translatesAutoresizingMaskIntoConstraints =
-//        _subHeader1.translatesAutoresizingMaskIntoConstraints =
-//        _subHeader2.translatesAutoresizingMaskIntoConstraints =
-//        _icon.translatesAutoresizingMaskIntoConstraints =
-//        _iconLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        
         self.separatorInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
 
-//        [DebugUtilities addBorderToViews:@[_icon]];
+//        [DebugUtilities addBorderToViews:@[_header]];
     }
     return self;
 }
 
 - (void)updateConstraints {
     [super updateConstraints];
-
-//    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceEdge":@(kGeomSpaceEdge), @"spaceEdgeX2":@(2*kGeomSpaceEdge), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"buttonWidth":@(kGeomDimensionsIconButtonSmall)};
-//    
-//    UIView *superview = self;
-//    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _thumbnail, _header, _subHeader1, _subHeader2, _actionButton, _icon, _iconLabel);
-//    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[_actionButton(buttonWidth)]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_icon(45)]-spaceInter-[_header]-[_actionButton(buttonWidth)]-spaceEdgeX2-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-
-//    [self addConstraint:[NSLayoutConstraint
-//                         constraintWithItem:_iconLabel
-//                         attribute:NSLayoutAttributeCenterX
-//                         relatedBy:NSLayoutRelationEqual
-//                         toItem:_icon
-//                         attribute:NSLayoutAttributeCenterX
-//                         multiplier:1
-//                         constant:0]];
-//    [self addConstraint:[NSLayoutConstraint
-//                         constraintWithItem:_iconLabel
-//                         attribute:NSLayoutAttributeCenterY
-//                         relatedBy:NSLayoutRelationEqual
-//                         toItem:_icon
-//                         attribute:NSLayoutAttributeCenterY
-//                         multiplier:1
-//                         constant:-6]];
-    
-//    [self addConstraint:[NSLayoutConstraint
-//                         constraintWithItem:_subHeader1
-//                         attribute:NSLayoutAttributeCenterY
-//                         relatedBy:NSLayoutRelationEqual
-//                         toItem:_icon
-//                         attribute:NSLayoutAttributeCenterY
-//                         multiplier:1
-//                         constant:0]];
-//    [self addConstraint:[NSLayoutConstraint
-//                         constraintWithItem:_icon
-//                         attribute:NSLayoutAttributeCenterY
-//                         relatedBy:NSLayoutRelationEqual
-//                         toItem:self
-//                         attribute:NSLayoutAttributeCenterY
-//                         multiplier:1
-//                         constant:0]];
 }
 
 - (void)layoutSubviews {
@@ -193,16 +144,15 @@
     frame.origin.x = CGRectGetMaxX(_thumbnail.frame);
     frame.origin.y = CGRectGetMinY(_subHeader1.frame) - iconHeight - kGeomSpaceInter;
     frame.size.height = iconHeight;
-    frame.size.width = CGRectGetHeight(_header.frame) + 5;
+    frame.size.width = 0;//CGRectGetHeight(_header.frame) + 5;
     _icon.frame = frame;
 
+    [_header sizeToFit];
     frame = _header.frame;
-    frame.origin.x = CGRectGetMaxX(_icon.frame);
-    frame.size = [self.header sizeThatFits:CGSizeMake(CGRectGetMinX(_actionButton.frame)-CGRectGetMaxX(_icon.frame), 100)];
+    frame.origin.x = leftMargin;// CGRectGetMaxX(_icon.frame);
+    frame.size = CGSizeMake(CGRectGetMinX(_actionButton.frame)-CGRectGetMaxX(_icon.frame), frame.size.height);
     frame.origin.y = CGRectGetMinY(_subHeader1.frame) - CGRectGetHeight(frame) - kGeomSpaceInter;
     _header.frame = frame;
-    
-    NSLog(@"header: %@, rect: %@, width: %f ", _header.text, NSStringFromCGRect(_header.frame), w);
     
     frame = _iconLabel.frame;
     frame.origin.x = (CGRectGetWidth(_icon.frame) - CGRectGetWidth(_iconLabel.frame))/2;

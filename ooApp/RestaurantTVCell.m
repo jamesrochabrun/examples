@@ -59,7 +59,7 @@ typedef enum {
     _restaurant = restaurant;
     
     self.thumbnail.image = [UIImage imageNamed:@"background-image.jpg"];
-    self.header.text = _restaurant.name;
+    self.header.text = [self headerString];
     
     _open = _restaurant.isOpen==kRestaurantOpen ? @"Open Now" :
                             (_restaurant.isOpen==kRestaurantClosed? @"Not Open" : @"");
@@ -180,6 +180,15 @@ typedef enum {
         [self.subHeader2 sizeToFit];
     }
     [self setNeedsLayout];
+}
+
+- (NSString *)headerString {
+    NSString *s;
+    if (!_restaurant) return @"";
+    
+    s = [NSString stringWithFormat:@"%lu. %@", _index, _restaurant.name];
+    
+    return s;
 }
 
 - (NSString *)subheader1String {
@@ -435,9 +444,13 @@ typedef enum {
 }
 
 - (void)setIndex:(NSUInteger)index {
+    _index = index;
     self.icon.text = kFontIconPin;
     self.iconLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)index];
     [self.iconLabel sizeToFit];
+    
+    self.header.text = [self headerString];
+    [self setNeedsLayout];
 }
 
 - (void)setupRestaurantOptionsAC {
