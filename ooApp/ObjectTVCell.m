@@ -73,7 +73,7 @@
         [_header withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
         
         _subHeader1 = [[UILabel alloc] init];
-        [_subHeader1 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorText backgroundColor:kColorClear];
+        [_subHeader1 withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentLeft];
         
         _iconLabel = [[UILabel alloc] init];
         [_iconLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH7] textColor:kColorTextActive backgroundColor:kColorClear];
@@ -137,6 +137,7 @@
     frame = _subHeader1.frame;
     frame.origin.x = leftMargin;
     frame.origin.y = (h - CGRectGetHeight(_subHeader1.frame))/2;
+    frame.size.width = CGRectGetMinX(_actionButton.frame)-CGRectGetMaxX(_icon.frame);
     _subHeader1.frame = frame;
     
     CGFloat iconHeight = 25;

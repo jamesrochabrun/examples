@@ -81,7 +81,7 @@
         [_hoursScroll addSubview:_hoursView];
         
         _name = [[UILabel alloc] init];
-        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeBig] textColor:kColorText backgroundColor:kColorClear];
+        [_name withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeBig] textColor:kColorText backgroundColor:kColorClear numberOfLines:2 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
         [self addSubview:_name];
         
         _priceRange = [[UILabel alloc] init];
@@ -184,7 +184,7 @@
     
     frame = _name.frame;
     frame.origin = CGPointMake(kGeomSpaceEdge, kGeomSpaceEdge);
-    frame.size = CGSizeMake(width(_name), height(_name));
+    frame.size = [_name sizeThatFits:CGSizeMake(w-2*kGeomSpaceEdge, 100)];
     _name.frame = frame;
     
     y = CGRectGetMaxY(_name.frame);

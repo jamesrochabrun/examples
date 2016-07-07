@@ -28,7 +28,10 @@
 @property (nonatomic, strong) UIButton *closeButton;
 @property (nonatomic, strong) UIButton *optionsButton;
 @property (nonatomic, strong) OOUserView *userViewButton;
-@property (nonatomic, strong) UIButton *restaurantName;
+@property (nonatomic, strong) UIButton *restaurantButton;
+@property (nonatomic, strong) UILabel *restaurantName;
+@property (nonatomic, strong) UILabel *subheader;
+
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
 @property (nonatomic, strong) UITapGestureRecognizer *yumPhotoTapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
@@ -89,12 +92,19 @@ static CGFloat kNextPhotoTolerance = 40;
         [_optionsButton withIcon:kFontIconMoreSolid fontSize:kGeomIconSize width:kGeomDimensionsIconButton height:kGeomHeightButton backgroundColor:kColorClear target:self selector:@selector(showOptions:)];
         [_optionsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         
-        _restaurantName = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_restaurantName withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(showRestaurant)];
-        _restaurantName.titleLabel.numberOfLines = 0;
-        //[_restaurantName setTitleShadowColor:UIColorRGBA(kColorBackgroundTheme) forState:UIControlStateNormal];
-        [_restaurantName.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
-        _restaurantName.layer.cornerRadius = 0;
+        _restaurantButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_restaurantButton withText:@"" fontSize:kGeomFontSizeH1 width:10 height:10 backgroundColor:kColorTextActive textColor:kColorTextReverse borderColor:kColorClear target:self selector:@selector(showRestaurant)];
+        _restaurantButton.titleLabel.numberOfLines = 0;
+        [_restaurantButton.titleLabel setShadowOffset:CGSizeMake(-0.5, 0.4)];
+        _restaurantButton.layer.cornerRadius = 0;
+        
+        _restaurantName = [UILabel new];
+        [_restaurantName withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1] textColor:kColorTextReverse backgroundColor:kColorTextActive numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
+        [_restaurantButton addSubview:_restaurantName];
+        
+        _subheader = [UILabel new];
+        [_subheader withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorTextReverse backgroundColor:kColorTextActive numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
+        [_restaurantButton addSubview:_subheader];
         
 //        _showRestaurantTapGesture = [[UITapGestureRecognizer alloc] init];
         _yumPhotoTapGesture = [[UITapGestureRecognizer alloc] init];
@@ -538,7 +548,7 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.backgroundView addSubview:_fv];
     [self.backgroundView addSubview:_yumIndicator];
     [self.backgroundView addSubview:_iv];
-    [self.backgroundView addSubview:_restaurantName];
+    [self.backgroundView addSubview:_restaurantButton];
     [self.backgroundView addSubview:_closeButton];
     [self.backgroundView addSubview:_captionButton];
     [self.backgroundView addSubview:_userButton];
@@ -761,7 +771,7 @@ static CGFloat kNextPhotoTolerance = 40;
     _optionsButton.hidden =
     _closeButton.hidden =
     _captionButton.hidden =
-    _restaurantName.hidden =
+    _restaurantButton.hidden =
     _yumButton.hidden =
     _userButton.hidden =
     _userViewButton.hidden = !show;
@@ -782,7 +792,7 @@ static CGFloat kNextPhotoTolerance = 40;
     _optionsButton.alpha =
     _closeButton.alpha =
     _captionButton.alpha =
-    _restaurantName.alpha =
+    _restaurantButton.alpha =
     _yumButton.alpha =
     _userButton.alpha =
     _userViewButton.alpha =
@@ -824,12 +834,29 @@ static CGFloat kNextPhotoTolerance = 40;
 
     _restaurant = restaurant;
     if (_restaurant) {
-        [_restaurantName setTitle:_restaurant.name forState:UIControlStateNormal];
+        _restaurantName.text =_restaurant.name;
     } else {
-        [_restaurantName setTitle:@"NO RESTAURANT" forState:UIControlStateNormal];
+        _restaurantName.text = @"NO RESTAURANT";
     }
+    
+    [_restaurantName sizeToFit];
+    _subheader.text = [self subheaderString];
+    [_subheader sizeToFit];
+    
     [self.view setNeedsLayout];
     [self.view layoutIfNeeded];
+}
+
+- (NSString *)subheaderString {
+    NSString *s;
+    
+    NSMutableArray *components = [NSMutableArray array];
+    if (_restaurant.cuisine) [components addObject:[NSString stringWithFormat:@"#%@", _restaurant.cuisine]];
+    if ([_restaurant distanceOrAddressString]) [components addObject:[_restaurant distanceOrAddressString]];
+    
+    s = [components componentsJoinedByString:@" - "];
+    
+    return s;
 }
 
 - (void)setMio:(MediaItemObject *)mio {
@@ -959,14 +986,24 @@ static CGFloat kNextPhotoTolerance = 40;
     _closeButton.frame = frame;
     
     y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
-    frame = _restaurantName.frame;
+    frame = _restaurantButton.frame;
     frame.size.width = w;//-2*kGeomSpaceEdge;
     frame.origin.y = CGRectGetMaxY(_closeButton.frame);// y;
-    frame.origin.x = 0;//(width(self.view) - width(_restaurantName))/2;
+    frame.origin.x = 0;//(width(self.view) - width(_restaurantButton))/2;
     frame.size.height = kGeomHeightButton;
-    _restaurantName.frame = frame;
+    _restaurantButton.frame = frame;
     
-    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantName.frame) /*+ kGeomSpaceInter*/, imageWidth, imageHeight);
+    frame = _restaurantName.frame;
+    frame.origin.y = 0;
+    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
+    _restaurantName.frame = frame;
+
+    frame = _subheader.frame;
+    frame.origin.y = CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceInter;
+    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
+    _subheader.frame = frame;
+
+    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantButton.frame) /*+ kGeomSpaceInter*/, imageWidth, imageHeight);
     
     _yumIndicator.center = _iv.center;
     
