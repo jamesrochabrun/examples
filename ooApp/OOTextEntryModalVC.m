@@ -14,6 +14,7 @@
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UINavigationBar *bar;
 @property (nonatomic, assign) CGFloat spaceRequiredForButton;
+@property (nonatomic, assign) CGFloat keyboardHeight;
 @end
 
 @implementation OOTextEntryModalVC
@@ -51,14 +52,13 @@
                  fontSize:kGeomFontSizeH3
                     width:66
                    height:40
-          backgroundColor:kColorButtonBackground
+          backgroundColor:kColorTextActive
                    target:self
                   selector:@selector(post:)];
-    [_postButton setTitleColor:UIColorRGBA(kColorText) forState:UIControlStateNormal];
+    [_postButton setTitleColor:UIColorRGBA(kColorTextReverse) forState:UIControlStateNormal];
     [_postButton.titleLabel sizeToFit];
     _spaceRequiredForButton = width(_postButton);
     
-    _postButton.translatesAutoresizingMaskIntoConstraints = NO;
     _postButton.titleLabel.numberOfLines= 0;
     _postButton.titleLabel.textAlignment= NSTextAlignmentCenter;
     _postButton.layer.borderWidth = 0.5;
@@ -70,9 +70,10 @@
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(closeTextEntry) forSide:kNavBarSideTypeLeft isCTA:NO];
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
-    [self addNavButtonWithIcon:kFontIconRemove target:self action:@selector(closeTextEntry) forSide:kNavBarSideTypeRight isCTA:NO];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -80,13 +81,9 @@
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN(@(object_getClassName(self)));
     
-    [_textView becomeFirstResponder];
-}
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShown:) name:UIKeyboardWillShowNotification object:nil];
 
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
-    
+    [_textView becomeFirstResponder];
 }
 
 - (NSString*)text;
@@ -133,9 +130,27 @@
     NSDictionary *views = NSDictionaryOfVariableBindings(superview, _textView, _postButton);
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_textView(>=60)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-spaceEdge-[_postButton(44)]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_textView]-[_postButton(buttonWidth)]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceEdge-[_textView]-spaceEdge-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 }
 
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    CGRect frame = _postButton.frame;
+    CGFloat h = height(self.view);
+    
+    frame.origin.x = 0;
+    frame.origin.y = h - _keyboardHeight - kGeomHeightButton;
+    frame.size.height = kGeomHeightButton;
+    frame.size.width = width(self.view);
+    _postButton.frame = frame;
+}
+
+- (void)keyboardShown:(NSNotification *)not {
+    NSDictionary* info = [not userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    _keyboardHeight = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)
+    ? kbSize.width : kbSize.height;
+    
+}
 
 @end

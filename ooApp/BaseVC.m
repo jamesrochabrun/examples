@@ -95,6 +95,7 @@
     _dropDownList.view.hidden = YES;
     
     self.uploadProgressBar = [UIProgressView new];
+    self.uploadProgressBar.tintColor = UIColorRGBA(kColorTextActive);
     [self.view addSubview:self.uploadProgressBar];
     self.uploadProgressBar.hidden = YES;
 

@@ -1208,7 +1208,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     _cv.frame = CGRectMake(0, _searchMode?40:0, width(self.view), height(self.view)-(_searchMode?40:0));
     //self.cv.frame = self.view.bounds;
     CGFloat w = width(self.view);
-    self.uploadProgressBar.frame = CGRectMake(0, 0, w, 10);
+    self.uploadProgressBar.frame = CGRectMake(0, 0, w, 12);
     [_cv.collectionViewLayout invalidateLayout];
     
     _profilePhoto.frame = self.view.bounds;
