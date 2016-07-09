@@ -152,15 +152,8 @@
     _name.text = _restaurant.name;
     _backgroundImage.image = nil;
     _priceRange.text = [_restaurant priceRangeText];
-    
-    CLLocationCoordinate2D loc = [[LocationManager sharedInstance] currentUserLocation];
-    
-    CLLocation *locationA = [[CLLocation alloc] initWithLatitude:loc.latitude longitude:loc.longitude];
-    CLLocation *locationB = [[CLLocation alloc] initWithLatitude:restaurant.location.latitude longitude:restaurant.location.longitude];
-    
-    CLLocationDistance distanceInMeters = [locationA distanceFromLocation:locationB];
-    _distance.text = [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
-    //_rating.text = (restaurant.rating && ([restaurant.rating floatValue] > 3.7)) ? kFontIconWhatsNewFilled : @"";
+        
+    _distance.text = [_restaurant distanceOrAddressString];//  [NSString stringWithFormat:@"%0.1f mi.", metersToMiles(distanceInMeters)];
     
     OOAPI *api = [[OOAPI alloc] init];
     __weak TileCVCell *weakSelf = self;
