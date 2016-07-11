@@ -77,6 +77,8 @@
     _rightBarButtonView = [UIView new];
 
     self.uploadProgressBar = [UIProgressView new];
+    self.uploadProgressBar.tintColor = UIColorRGBA(kColorTextActive);
+    self.uploadProgressBar.trackTintColor = UIColorRGBA(kColorTextReverse);
     [self.view addSubview:self.uploadProgressBar];
     self.uploadProgressBar.hidden = YES;
     
