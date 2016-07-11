@@ -570,7 +570,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(FoodFeedVCCVL *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if (_numColumns == 1) {
-        if (_selectedItem != indexPath.row) return 150;
+        if (_selectedItem != indexPath.row) return (width(self.view)*4/3)/2;
 //        return height(_collectionView);
     }
     
