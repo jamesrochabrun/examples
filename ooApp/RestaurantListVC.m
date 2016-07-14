@@ -20,6 +20,7 @@
 #import "OOFeedbackView.h"
 #import "OOActivityItemProvider.h"
 #import "OOMapMarker.h"
+#import "DebugUtilities.h"
 
 @interface RestaurantListVC () <GMSMapViewDelegate>
 
@@ -39,10 +40,12 @@
 @property (nonatomic, strong) NSArray *mapConstraints;
 @property (nonatomic, strong) UIImageView *restaurantImage;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
+@property (nonatomic, strong) UILabel *aboutLabel;
 
 @end
 
-static NSString * const cellIdentifier = @"horizontalCell";
+static NSString * const kRestaurantCellIdentifier = @"restaurantCell";
+static NSString * const kAboutCellIdentifier = @"aboutCell";
 
 @implementation RestaurantListVC
 
@@ -50,6 +53,16 @@ static NSString * const cellIdentifier = @"horizontalCell";
 // Name:    viewWillAppear
 // Purpose:
 //------------------------------------------------------------------------------
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _aboutLabel = [UILabel new];
+    }
+    return self;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -79,7 +92,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
     _tableView.delegate = self;
     _tableView.dataSource = self;
 
-    [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:cellIdentifier];
+    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kAboutCellIdentifier];
+    [_tableView registerClass:[RestaurantTVCell class] forCellReuseIdentifier:kRestaurantCellIdentifier];
     _tableView.translatesAutoresizingMaskIntoConstraints = NO;
     _tableView.rowHeight = kGeomHeightHorizontalListRow;
     _tableView.separatorInset = UIEdgeInsetsZero;
@@ -151,9 +165,12 @@ static NSString * const cellIdentifier = @"horizontalCell";
     [_restaurantImage addGestureRecognizer:_tapGestureRecognizer];
     _restaurantImage.hidden = YES;
     
-    [self.view addSubview:_restaurantImage];
+    [_aboutLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
     
+    [self.view addSubview:_restaurantImage];
     [self.view bringSubviewToFront:_restaurantImage];
+    
+//    [DebugUtilities addBorderToViews:@[_aboutLabel]];
 }
 
 - (void)mapButtonPressed:(id)sender {
@@ -163,12 +180,22 @@ static NSString * const cellIdentifier = @"horizontalCell";
         [self.view layoutIfNeeded];
     }];
     
+    [self updateMap];
+}
+
+- (void)updateMap {
     if (_showMap &&
         _restaurants &&
         [_restaurants count]) {
-        RestaurantObject *r = [_restaurants objectAtIndex:0];
-        _mapView.camera = [GMSCameraPosition cameraWithLatitude:r.location.latitude longitude:r.location.longitude zoom:14];
-        [self setHighlightedMarkers];
+        NSArray *cells = [_tableView visibleCells];
+        
+        for (UITableViewCell *c in cells) {
+            if ([c isKindOfClass:[RestaurantTVCell class]]) {
+                RestaurantObject *r = ((RestaurantTVCell *)c).restaurant;
+                _mapView.camera = [GMSCameraPosition cameraWithLatitude:r.location.latitude longitude:r.location.longitude zoom:14];
+                [self setHighlightedMarkers];
+            }
+        }
     } else {
         CLLocationCoordinate2D location = [LocationManager sharedInstance].currentUserLocation;
         _mapView.camera = [GMSCameraPosition cameraWithLatitude:location.latitude longitude:location.longitude zoom:14];
@@ -383,6 +410,8 @@ static NSString * const cellIdentifier = @"horizontalCell";
 - (void)setListItem:(ListObject *)listItem {
     if (_listItem == listItem) return;
     _listItem = listItem;
+    
+    _aboutLabel.text = _listItem.about;
 
     _nto = [[NavTitleObject alloc] initWithHeader:listItem.listName subHeader:nil];
     self.navTitle = _nto;
@@ -533,7 +562,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     RestaurantTVCell *cell = (RestaurantTVCell *)objectTVCell;
     [_mapView animateToLocation:cell.restaurant.location];
     [UIView animateWithDuration:0.5 animations:^{
-        [self setHighlightedMarkers];
+        [self updateMap];
     }];
 }
 
@@ -541,7 +570,7 @@ static NSString * const cellIdentifier = @"horizontalCell";
     if (![objectTVCell isKindOfClass:[RestaurantTVCell class]]) return;
     
     RestaurantObject *restaurant = ((RestaurantTVCell *)objectTVCell).restaurant;
-    MediaItemObject *mio = ([restaurant.mediaItems count]) ? [restaurant.mediaItems objectAtIndex:0] : nil;
+//    MediaItemObject *mio = ([restaurant.mediaItems count]) ? [restaurant.mediaItems objectAtIndex:0] : nil;
     
 //    if (!mio) {
         RestaurantVC *vc = [[RestaurantVC alloc] init];
@@ -597,53 +626,130 @@ static NSString * const cellIdentifier = @"horizontalCell";
     }
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_restaurants count];
+    switch (section) {
+        case kTableSectionAbout:
+            return (_listItem.about) ?1:0;
+            break;
+        case kTableSectionRestaurants:
+            return [_restaurants count];
+            break;
+        default:
+            break;
+    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    
-    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
-    cell.useModalForListedVenues= YES;
-    cell.restaurant = restaurant;
-    //cell.listToAddTo= self.listItem;  WTF!
-    cell.nc = self.navigationController;
-    cell.eventBeingEdited=self.eventBeingEdited;
-    cell.delegate = self;
-    cell.index = indexPath.row + 1;
-    [cell updateConstraintsIfNeeded];
-    return cell;
+    switch (indexPath.section) {
+        case kTableSectionRestaurants: {
+            RestaurantTVCell *cell = [_tableView dequeueReusableCellWithIdentifier:kRestaurantCellIdentifier];
+            
+            RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+            cell.useModalForListedVenues= YES;
+            cell.restaurant = restaurant;
+            //cell.listToAddTo= self.listItem;  WTF!
+            cell.nc = self.navigationController;
+            cell.eventBeingEdited=self.eventBeingEdited;
+            cell.delegate = self;
+            cell.index = indexPath.row + 1;
+            [cell updateConstraintsIfNeeded];
+            return cell;
+            break;
+        }
+        case kTableSectionAbout: {
+            UITableViewCell *cell = [_tableView dequeueReusableCellWithIdentifier:kAboutCellIdentifier];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            cell.separatorInset = UIEdgeInsetsZero;
+            cell.layoutMargins = UIEdgeInsetsZero;
+            
+            cell.contentView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+            CGRect frame = _aboutLabel.frame;
+            frame.size = [_aboutLabel sizeThatFits:CGSizeMake(CGRectGetWidth(self.view.frame) - 4*kGeomSpaceEdge, 200)];
+            frame.origin = CGPointMake((CGRectGetWidth(self.view.frame)-CGRectGetWidth(frame))/2, kGeomSpaceEdge);
+            _aboutLabel.frame = frame;
+            
+            [cell.contentView addSubview:_aboutLabel];
+            return cell;
+            break;
+        }
+        default:
+            break;
+    }
+    return nil;
+
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (_showMap) {
+        [self updateMap];
+    }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (_showMap && !decelerate) {
+        [self updateMap];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
-    
-    RestaurantVC *vc = [[RestaurantVC alloc] init];
-    ANALYTICS_EVENT_UI(@"RestaurantVC-from-RestaurantListVC");
-    vc.eventBeingEdited= self.eventBeingEdited;
-    vc.listToAddTo= self.listItem;
-    vc.restaurant = restaurant;
-    [self.navigationController pushViewController:vc animated:YES];
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    switch (indexPath.section) {
+        case kTableSectionRestaurants: {
+            RestaurantObject *restaurant = [_restaurants objectAtIndex:indexPath.row];
+            
+            RestaurantVC *vc = [[RestaurantVC alloc] init];
+            ANALYTICS_EVENT_UI(@"RestaurantVC-from-RestaurantListVC");
+            vc.eventBeingEdited= self.eventBeingEdited;
+            vc.listToAddTo= self.listItem;
+            vc.restaurant = restaurant;
+            [self.navigationController pushViewController:vc animated:YES];
+
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (_listItem.type == kListTypeUser &&
+    if ((_listItem.type == kListTypeUser ||
+         _listItem.type == kListTypeToTry ||
+         _listItem.type == kListTypeFavorites) &&
         [_listItem isListOwner:[Settings sharedInstance].userObject.userID]) {
         return YES;
     } else {
         return NO;
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat height = 0;
+    
+    switch (indexPath.section) {
+        case kTableSectionAbout: {
+            if (_aboutLabel.text && [_aboutLabel.text length]) {
+                height = [_aboutLabel sizeThatFits:CGSizeMake(CGRectGetWidth(self.view.frame) - 4*kGeomSpaceEdge, 200)].height;
+                height += 2*kGeomSpaceEdge;
+            }
+            break;
+        }
+        case kTableSectionRestaurants: {
+            height = kGeomHeightHorizontalListRow;
+        }
+        default:
+            break;
+    }
+    
+    return height;
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath

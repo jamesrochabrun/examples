@@ -33,7 +33,10 @@ extern NSString *const kKeyListName;
 extern NSString *const kKeyListType;
 extern NSString *const kKeyListMediaItem;
 extern NSString *const kKeyListNumRestaurants;
-
+extern NSString *const kKeyListAbout;
+extern NSString *const kKeyListCuisine;
+extern NSString *const kKeyListLongitude;
+extern NSString *const kKeyListLatitude;
 
 #import <Foundation/Foundation.h>
 #import "MediaItemObject.h"
@@ -44,6 +47,9 @@ extern NSString *const kKeyListNumRestaurants;
 @property (nonatomic, strong) NSArray *userIDs;
 @property (nonatomic, strong) NSMutableArray *venues;
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *about;
+@property (nonatomic, strong) NSString *cuisine;
+@property (nonatomic) CLLocationCoordinate2D location;
 @property (nonatomic, assign) ListType type;
 //@property (nonatomic, strong) NSString *imageURL;
 @property (nonatomic) NSUInteger numRestaurants;

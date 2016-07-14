@@ -13,6 +13,12 @@
 #import "ObjectTVCell.h"
 #import "ViewPhotoVC.h"
 
+typedef enum {
+  kTableSectionAbout,
+  kTableSectionRestaurants,
+  kTableSectionNumber
+} kTableSection;
+
 @interface RestaurantListVC : SubBaseVC <UITableViewDataSource,
                                         UITableViewDelegate,
                                         ObjectTVCellDelegate,

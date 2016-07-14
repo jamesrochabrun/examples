@@ -16,6 +16,10 @@ NSString *const kKeyListName = @"name";
 NSString *const kKeyListType = @"type";
 NSString *const kKeyListMediaItem = @"media_item";
 NSString *const kKeyListNumRestaurants = @"num_restaurants";
+NSString *const kKeyListAbout = @"about";
+NSString *const kKeyListCuisine = @"cuisine";
+NSString *const kKeyListLongitude = @"longitude";
+NSString *const kKeyListLatitude = @"latitude";
 
 BOOL isListObject (id  object)
 {
@@ -53,6 +57,8 @@ BOOL isListObject (id  object)
     }
 
     list.name = [[dict objectForKey:kKeyListName] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyListName];
+    list.about = parseStringOrNullFromServer([dict objectForKey:kKeyListAbout]);
+    list.cuisine = parseStringOrNullFromServer([dict objectForKey:kKeyListCuisine]);
     list.type = (ListType)[[dict objectForKey:kKeyListType] integerValue];
     list.numRestaurants = (NSUInteger)[dict[kKeyListNumRestaurants] integerValue];
     NSDictionary *mediaItem = [[dict objectForKey:kKeyListMediaItem] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyListMediaItem];

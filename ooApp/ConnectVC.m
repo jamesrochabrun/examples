@@ -430,7 +430,8 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
         weakSelf.followeesArray = users;
         dispatch_async(dispatch_get_main_queue(), ^{
             NSArray *visibleRowIndeces = [weakSelf.tableAccordion indexPathsForVisibleRows];
-            [weakSelf.tableAccordion reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
+            //[weakSelf.tableAccordion reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
+            [weakSelf.tableAccordion reloadData];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");

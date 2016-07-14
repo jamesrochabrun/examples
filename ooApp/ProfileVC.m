@@ -1126,6 +1126,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     RestaurantTVCell *cell = [tableView dequeueReusableCellWithIdentifier:kRestaurantCellIdentifier];
     cell.restaurant = [_searchResultsArray objectAtIndex:indexPath.row];
     cell.nc = self.navigationController;
+    cell.index = indexPath.row + 1;
     [cell updateConstraintsIfNeeded];
     return cell;
 }

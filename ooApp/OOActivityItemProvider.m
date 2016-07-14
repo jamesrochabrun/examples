@@ -35,23 +35,19 @@
         itemType = @"";
     }
     
-    NSString *message, *title, *urlLink;
+    NSString *message, *title;
     
     if (_list) {
-        message = [NSString stringWithFormat:@"\"%@\" by @%@ on Oomami.\nhttps://%@/list/%lu",_list.name, _username, kWebAppHost, (unsigned long)_list.listID];
+        message = [NSString stringWithFormat:@"\"%@\" by @%@ on Oomami.\nhttps://%@/list/%@/%lu",_list.name, _username, kWebAppHost, [_list.name stringWithAlphaNumericAndHyphens], (unsigned long)_list.listID];
     } else if (_restaurant) {
         title = _restaurant.name;
         if (_mio) {
-            message = [NSString stringWithFormat:@"%@ on Oomami:\nhttps://%@/restaurant//%lu", title, kWebAppHost, (unsigned long)_restaurant.restaurantID];
-            urlLink = [NSString stringWithFormat:@"https://%@/restaurant/%@/%lu", kWebAppHost, [_restaurant.name stringWithAlphaNumericAndHyphens], (unsigned long)_restaurant.restaurantID];
+            message = [NSString stringWithFormat:@"%@ on Oomami:\nhttps://%@/restaurant/%@/%lu", title, kWebAppHost, [_restaurant.name stringWithAlphaNumericAndHyphens], (unsigned long)_restaurant.restaurantID];
         } else {
             message = [NSString stringWithFormat:@"%@ on Oomami:\nhttps://%@/restaurant/%@/%lu", title, kWebAppHost, [_restaurant.name stringWithAlphaNumericAndHyphens], (unsigned long)_restaurant.restaurantID];
-            urlLink = [NSString stringWithFormat:@"https://%@/restaurant//%lu", kWebAppHost, (unsigned long)_restaurant.restaurantID];
         }
     } else {
-//        message = [NSString stringWithFormat:@"I use Oomami to find new bars and restaurants with my friends (like you!). Check it out: https://itunes.apple.com/us/app/oomami-best-restaurants-bars/id1053373398?mt=8"];
         message = [NSString stringWithFormat:@"Get Oomami: https://%@", kWebAppHost];
-        urlLink = [NSString stringWithFormat:@"https://%@", kWebAppHost];
     }
     
     //NSString *iTunesLink;
