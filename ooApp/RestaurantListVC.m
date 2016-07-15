@@ -194,6 +194,7 @@ static NSString * const kAboutCellIdentifier = @"aboutCell";
                 RestaurantObject *r = ((RestaurantTVCell *)c).restaurant;
                 _mapView.camera = [GMSCameraPosition cameraWithLatitude:r.location.latitude longitude:r.location.longitude zoom:14];
                 [self setHighlightedMarkers];
+                break;
             }
         }
     } else {
