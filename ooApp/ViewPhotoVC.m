@@ -47,6 +47,11 @@
 @property (nonatomic, strong) UIScrollView *backgroundView;
 @property (nonatomic, strong) UIButton *share;
 
+
+#pragma testing NewLayout properties
+@property (nonatomic, strong) UIButton *comment;
+
+
 @end
 
 static CGFloat kDismissTolerance = 20;
@@ -145,12 +150,32 @@ static CGFloat kNextPhotoTolerance = 40;
         [_share withText:@"share it!" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
         [_share setImage:icon forState:UIControlStateNormal];
         _share.layer.cornerRadius = 0;
+        
+        [self testignNewLayout];
 
 
         //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
     return self;
+}
+
+#pragma testingNewLayout
+- (void)testignNewLayout {
+    
+    _comment = [UIButton buttonWithType:UIButtonTypeCustom];
+    UILabel *iconLabel = [UILabel new];
+    [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+    iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    iconLabel.text = kFontIconShare;
+    iconLabel.textColor = UIColorRGBA(kColorTextActive);
+    [iconLabel sizeToFit];
+    UIImage *icon = [UIImage imageNamed:@""];
+    [_comment withText:@"comment" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
+    [_comment setImage:icon forState:UIControlStateNormal];
+    _comment.layer.cornerRadius = 0;
+    
+    
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -560,6 +585,9 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.backgroundView bringSubviewToFront:_fv];
     [self.backgroundView bringSubviewToFront:_yumIndicator];
     [self.backgroundView sendSubviewToBack:_backgroundView];
+    
+    //adding the buttons for testing purposes
+    [self.backgroundView addSubview:_comment];
 
     [self.view setAutoresizesSubviews:NO];
     
@@ -1054,7 +1082,9 @@ static CGFloat kNextPhotoTolerance = 40;
     
     _fv.center = self.view.center;
     
-    _share.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), width(self.view), kGeomHeightButton);
+    //_share.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), width(self.view), kGeomHeightButton);
+    _share.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), self.view.frame.size.width /3, kGeomHeightButton);
+    _comment.frame = CGRectMake(300 , CGRectGetMaxY(_userButton.frame), self.view.frame.size.width/3, kGeomHeightButton);
     
     _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_share.frame));
     
