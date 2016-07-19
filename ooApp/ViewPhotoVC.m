@@ -206,6 +206,20 @@ static CGFloat kNextPhotoTolerance = 40;
     _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
     [_seeYummersButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    _commentUserNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_commentUserNameButton withText:@"@foodie" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
+    [_commentUserNameButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
+    _commentUserNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    [_commentUserNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+    _commentUserNameButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    _userComment = [UILabel new];
+    _userComment.font = [UIFont fontWithName:kFontLatoLight size:kGeomFontSizeH5];
+    _userComment.text = @"user comments";
+    _userComment.textColor = UIColorRGBA(kColorBlack);
+    [_userComment sizeToFit];
+
 
 }
 
@@ -1138,7 +1152,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     //end test
     
-    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_share.frame));
+    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_commentUserNameButton.frame));
     
     NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }
