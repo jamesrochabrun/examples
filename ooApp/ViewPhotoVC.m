@@ -50,6 +50,11 @@
 
 #pragma testing NewLayout properties
 @property (nonatomic, strong) UIButton *comment;
+@property (nonatomic, strong) UIButton *yumTestButton;
+@property (nonatomic, strong) UIButton *seeCommentsButton;
+@property (nonatomic, strong) UIButton *seeYummersButton;
+@property (nonatomic, strong) UIButton *commentUserNameButton;
+@property (nonatomic, strong) UILabel *userComment;
 
 
 @end
@@ -176,6 +181,32 @@ static CGFloat kNextPhotoTolerance = 40;
     _comment.layer.cornerRadius = 0;
     
     
+    _yumTestButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    UILabel *iconLabel1 = [UILabel new];
+    [iconLabel1 setBackgroundColor:UIColorRGBA(kColorClear)];
+    iconLabel1.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+    iconLabel1.text = kFontIconShare;
+    iconLabel1.textColor = UIColorRGBA(kColorTextActive);
+    [iconLabel1 sizeToFit];
+    UIImage *icon1 = [UIImage imageNamed:@""];
+    [_yumTestButton withText:@"yum" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
+    [_yumTestButton setImage:icon1 forState:UIControlStateNormal];
+    _yumTestButton.layer.cornerRadius = 0;
+    
+    _seeCommentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
+    [_seeCommentsButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
+    _seeCommentsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    [_seeCommentsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+    _seeCommentsButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    _seeYummersButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_seeYummersButton withText:@"see yummers" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
+    [_seeYummersButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
+    _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    [_seeYummersButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+    _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
+
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -587,7 +618,14 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.backgroundView sendSubviewToBack:_backgroundView];
     
     //adding the buttons for testing purposes
+
     [self.backgroundView addSubview:_comment];
+    [self.backgroundView addSubview:_yumTestButton];
+    [self.backgroundView addSubview:_seeCommentsButton];
+    [self.backgroundView addSubview:_seeYummersButton];
+    [self.backgroundView addSubview:_commentUserNameButton];
+    [self.backgroundView addSubview:_userComment];
+
 
     [self.view setAutoresizesSubviews:NO];
     
@@ -1083,8 +1121,22 @@ static CGFloat kNextPhotoTolerance = 40;
     _fv.center = self.view.center;
     
     //_share.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), width(self.view), kGeomHeightButton);
-    _share.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), self.view.frame.size.width /3, kGeomHeightButton);
-    _comment.frame = CGRectMake(300 , CGRectGetMaxY(_userButton.frame), self.view.frame.size.width/3, kGeomHeightButton);
+    
+    //testing
+    
+    CGFloat screenWidth = self.view.frame.size.width;
+    CGFloat buttonWidth = (screenWidth - (kGeomSpaceInter*2))/3;
+    
+    _comment.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
+    _share.frame = CGRectMake( buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
+    _yumTestButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
+    
+    _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
+    _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_yumTestButton.frame), buttonWidth, kGeomHeightButton);
+    _commentUserNameButton.frame = CGRectMake(0, CGRectGetMaxY(_seeCommentsButton.frame), buttonWidth, kGeomHeightButton);
+    _userComment.frame = CGRectMake(CGRectGetMaxX(_commentUserNameButton.frame), CGRectGetMaxY(_seeCommentsButton.frame), 200,40);
+    
+    //end test
     
     _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_share.frame));
     
