@@ -18,7 +18,7 @@ extern NSString *const kKeyCommentContent;
 @property (nonatomic, assign) NSUInteger mediaItemCommentID;
 @property (nonatomic, assign) NSUInteger userID;
 @property (nonatomic, assign) NSUInteger mediaItemID;
-@property (nonatomic, assign) NSString *content;
+@property (nonatomic, strong) NSString *content;
 
 
 + (CommentObject *)commentFromDict:(NSDictionary *)dict;

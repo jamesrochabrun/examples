@@ -19,6 +19,7 @@
 #import "NavTitleObject.h"
 #import "OOActivityItemProvider.h"
 #import "OOFeedbackView.h"
+#import "CommentObject.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -46,15 +47,18 @@
 @property (nonatomic, strong) OOFeedbackView *fv;
 @property (nonatomic, strong) UIScrollView *backgroundView;
 @property (nonatomic, strong) UIButton *share;
+@property (nonatomic, strong) UIButton *commentCaptionButton;
+@property (nonatomic, strong) UIButton *yumTestButton;
 
 
 #pragma testing NewLayout properties
-@property (nonatomic, strong) UIButton *comment;
-@property (nonatomic, strong) UIButton *yumTestButton;
 @property (nonatomic, strong) UIButton *seeCommentsButton;
 @property (nonatomic, strong) UIButton *seeYummersButton;
 @property (nonatomic, strong) UIButton *commentUserNameButton;
 @property (nonatomic, strong) UILabel *userComment;
+@property (nonatomic, strong) NSMutableArray *dummyCommentsArray;
+@property (nonatomic, strong) NSMutableArray *commentButtons;
+
 
 
 @end
@@ -144,6 +148,19 @@ static CGFloat kNextPhotoTolerance = 40;
         
         _fv = [[OOFeedbackView alloc] initWithFrame:CGRectMake(0, 0, 110, 90) andMessage:@"oy vey" andIcon:kFontIconCheckmark];
         
+        _commentCaptionButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        UILabel *iconCaptionLabel = [UILabel new];
+        [iconCaptionLabel setBackgroundColor:UIColorRGBA(kColorClear)];
+        iconCaptionLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+        iconCaptionLabel.text = kFontIconCaption;
+        iconCaptionLabel.textColor = UIColorRGBA(kColorTextActive);
+        [iconCaptionLabel sizeToFit];
+        
+        UIImage *iconCaption = [UIImage imageFromView:iconCaptionLabel];
+        [_commentCaptionButton withText:@"" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
+        [_commentCaptionButton setImage:iconCaption forState:UIControlStateNormal];
+        _commentCaptionButton.layer.cornerRadius = 0;
+        
         _share = [UIButton buttonWithType:UIButtonTypeCustom];
         UILabel *iconLabel = [UILabel new];
         [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
@@ -152,12 +169,55 @@ static CGFloat kNextPhotoTolerance = 40;
         iconLabel.textColor = UIColorRGBA(kColorTextActive);
         [iconLabel sizeToFit];
         UIImage *icon = [UIImage imageFromView:iconLabel];
-        [_share withText:@"share it!" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
+        [_share withText:@"" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
         [_share setImage:icon forState:UIControlStateNormal];
         _share.layer.cornerRadius = 0;
         
+        _yumTestButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        UILabel *iconLabelYum = [UILabel new];
+        [iconLabelYum setBackgroundColor:UIColorRGBA(kColorClear)];
+        iconLabelYum.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+        iconLabelYum.text = kFontIconYumOutline;
+        iconLabelYum.textColor = UIColorRGBA(kColorTextActive);
+        [iconLabelYum sizeToFit];
+        UIImage *iconYum = [UIImage imageFromView:iconLabelYum];
+        UILabel *iconLabelYumSelected = [UILabel new];
+        [iconLabelYumSelected setBackgroundColor:UIColorRGBA(kColorClear)];
+        iconLabelYumSelected.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
+        iconLabelYumSelected.text = kFontIconYum;
+        iconLabelYumSelected.textColor = UIColorRGBA(kColorTextActive);
+        [iconLabelYumSelected sizeToFit];
+        UIImage *iconYumSelected = [UIImage imageFromView:iconLabelYumSelected];
+        
+        [_yumTestButton withText:@"" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(yumPhotoTapped)];
+        [_yumTestButton setImage:iconYum forState:UIControlStateNormal];
+        [_yumTestButton setImage:iconYumSelected   forState:UIControlStateSelected];
+        _yumTestButton.layer.cornerRadius = 0;
+        
+        _seeCommentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(initializingDummyComments)];
+        [_seeCommentsButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
+        _seeCommentsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        [_seeCommentsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        _seeCommentsButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
+        
+        _seeYummersButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_seeYummersButton withText:@"see yummers" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showYums)];
+        [_seeYummersButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
+        _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+        [_seeYummersButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
+
+
         [self testignNewLayout];
 
+        UIButton *b;
+        for (int i =0; i <self.dummyCommentsArray.count; i++) {
+            b = [UIButton buttonWithType:UIButtonTypeCustom];
+            [self.view addSubview:b];
+            [_commentButtons addObject:b];
+            
+        }
 
         //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
@@ -165,63 +225,296 @@ static CGFloat kNextPhotoTolerance = 40;
     return self;
 }
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [_iv addSubview:_aiv];
+    [self.backgroundView addSubview:_fv];
+    [self.backgroundView addSubview:_yumIndicator];
+    [self.backgroundView addSubview:_iv];
+    [self.backgroundView addSubview:_restaurantButton];
+    [self.backgroundView addSubview:_closeButton];
+    [self.backgroundView addSubview:_captionButton];
+    [self.backgroundView addSubview:_userButton];
+    [self.backgroundView addSubview:_userViewButton];
+    [self.backgroundView addSubview:_numYums];
+    [self.backgroundView addSubview:_yumButton];
+    [self.backgroundView addSubview:_commentCaptionButton];
+    [self.backgroundView addSubview:_share];
+    [self.view addSubview:_backgroundView];
+    [self.backgroundView bringSubviewToFront:_fv];
+    [self.backgroundView bringSubviewToFront:_yumIndicator];
+    [self.backgroundView sendSubviewToBack:_backgroundView];
+    
+    //adding the buttons for testing purposes
+    
+    [self.backgroundView addSubview:_yumTestButton];
+    [self.backgroundView addSubview:_seeCommentsButton];
+    [self.backgroundView addSubview:_seeYummersButton];
+    [self.backgroundView addSubview:_commentUserNameButton];
+    [self.backgroundView addSubview:_userComment];
+    
+    
+    [self.view setAutoresizesSubviews:NO];
+    
+    //    [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
+    //    [_showRestaurantTapGesture setNumberOfTapsRequired:1];
+    [_yumPhotoTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
+    [_yumPhotoTapGesture setNumberOfTapsRequired:2];
+    
+    //    [_showRestaurantTapGesture requireGestureRecognizerToFail:_yumPhotoTapGesture];
+    //    [_backgroundView addGestureRecognizer:_showRestaurantTapGesture];
+    [_backgroundView addGestureRecognizer:_yumPhotoTapGesture];
+    [self.view addGestureRecognizer:_panGesture];
+    
+    //    [DebugUtilities addBorderToViews:@[self.view]];
+}
+
 #pragma testingNewLayout
 - (void)testignNewLayout {
-    
-    _comment = [UIButton buttonWithType:UIButtonTypeCustom];
-    UILabel *iconLabel = [UILabel new];
-    [iconLabel setBackgroundColor:UIColorRGBA(kColorClear)];
-    iconLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-    iconLabel.text = kFontIconShare;
-    iconLabel.textColor = UIColorRGBA(kColorTextActive);
-    [iconLabel sizeToFit];
-    UIImage *icon = [UIImage imageNamed:@""];
-    [_comment withText:@"comment" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
-    [_comment setImage:icon forState:UIControlStateNormal];
-    _comment.layer.cornerRadius = 0;
-    
-    
-    _yumTestButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    UILabel *iconLabel1 = [UILabel new];
-    [iconLabel1 setBackgroundColor:UIColorRGBA(kColorClear)];
-    iconLabel1.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-    iconLabel1.text = kFontIconShare;
-    iconLabel1.textColor = UIColorRGBA(kColorTextActive);
-    [iconLabel1 sizeToFit];
-    UIImage *icon1 = [UIImage imageNamed:@""];
-    [_yumTestButton withText:@"yum" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
-    [_yumTestButton setImage:icon1 forState:UIControlStateNormal];
-    _yumTestButton.layer.cornerRadius = 0;
-    
-    _seeCommentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
-    [_seeCommentsButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
-    _seeCommentsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    [_seeCommentsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-    _seeCommentsButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
-    
-    _seeYummersButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_seeYummersButton withText:@"see yummers" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
-    [_seeYummersButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
-    _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-    [_seeYummersButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-    _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
     
     _commentUserNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_commentUserNameButton withText:@"@foodie" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
     [_commentUserNameButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
-    _commentUserNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    _commentUserNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     [_commentUserNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
     _commentUserNameButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
     
     _userComment = [UILabel new];
-    _userComment.font = [UIFont fontWithName:kFontLatoLight size:kGeomFontSizeH5];
-    _userComment.text = @"user comments";
+    _userComment.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
+    _userComment.text = @"user comments user commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser comments";
     _userComment.textColor = UIColorRGBA(kColorBlack);
+    _userComment.textAlignment = NSTextAlignmentLeft;
+    _userComment.numberOfLines = 0;
     [_userComment sizeToFit];
 
-
 }
+
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    
+    if (!_mio) return;
+    
+    self.view.frame = APP.window.bounds;
+    CGFloat w = width(self.view);
+    //CGFloat h = height(self.view);
+    CGRect frame;
+    CGFloat y;
+    
+    _backgroundView.frame = self.view.frame;
+    
+    frame = _iv.frame;
+    
+    CGFloat imageWidth = width(self.view);
+    
+    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _mio.height/_mio.width * width(self.view);
+    
+    frame.size.width = imageWidth;
+    frame.size.height = imageHeight;
+    _iv.frame = CGRectIntegral(frame);
+    _iv.center = self.view.center;
+    _aiv.center = CGPointMake(CGRectGetWidth(_iv.frame)/2, CGRectGetHeight(_iv.frame)/2);
+    
+    y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
+    
+    frame = _closeButton.frame;
+    frame.origin = CGPointMake(0, 0);
+    _closeButton.frame = frame;
+    
+    y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
+    frame = _restaurantButton.frame;
+    frame.size.width = w;//-2*kGeomSpaceEdge;
+    frame.origin.y = CGRectGetMaxY(_closeButton.frame);// y;
+    frame.origin.x = 0;//(width(self.view) - width(_restaurantButton))/2;
+    frame.size.height = kGeomHeightButton;
+    _restaurantButton.frame = frame;
+    
+    frame = _restaurantName.frame;
+    frame.origin.y = 0;
+    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
+    _restaurantName.frame = frame;
+    
+    frame = _subheader.frame;
+    frame.origin.y = CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceInter;
+    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
+    _subheader.frame = frame;
+    
+    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantButton.frame) /*+ kGeomSpaceInter*/, imageWidth, imageHeight);
+    
+    _yumIndicator.center = _iv.center;
+    
+    frame = _optionsButton.frame;
+    frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
+    _optionsButton.frame = frame;
+    
+    frame = _userViewButton.frame;
+    frame.origin.x = kGeomSpaceEdge;
+    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
+    frame.size.width = kGeomDimensionsIconButton;
+    frame.origin.y = CGRectGetMaxY(_iv.frame) + kGeomSpaceInter;
+    _userViewButton.frame = frame;
+    
+    frame = _userButton.frame;
+    frame.origin.y = CGRectGetMaxY(_userViewButton.frame);
+    frame.origin.x = kGeomSpaceEdge;
+    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
+    _userButton.frame = frame;
+    
+    if (_mio.source == kMediaItemTypeOomami) {
+        [_numYums sizeToFit];
+        
+        frame = _yumButton.frame;
+        frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
+        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_iv.frame)+kGeomSpaceInter);
+        _yumButton.frame = frame;
+        
+        frame = _numYums.frame;
+        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
+        frame.size.height = kGeomDimensionsIconButton;
+        _numYums.frame = frame;
+        _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
+    } else {
+        _yumButton.frame = CGRectZero;
+        _numYums.frame = CGRectZero;
+    }
+    
+    CGFloat height;
+    
+    frame = _captionButton.frame;
+    frame.size.width = CGRectGetMinX(_yumButton.frame) - CGRectGetMaxX(_userViewButton.frame);
+    height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
+    frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
+    frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2;
+    frame.origin.x = (width(self.view) - frame.size.width)/2;
+    _captionButton.frame = frame;
+    
+    _fv.center = self.view.center;
+    
+    //testing
+    CGFloat buttonWidth = (w - (kGeomSpaceInter*2))/3;
+    
+    _commentCaptionButton.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
+    _share.frame = CGRectMake(buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
+    
+    _yumTestButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
+    
+    _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
+    _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_yumTestButton.frame), buttonWidth, kGeomHeightButton);
+    
+    frame = _commentUserNameButton.frame;
+    frame.origin.y = CGRectGetMaxY(_seeCommentsButton.frame);
+    frame.origin.x = kGeomSpaceEdge;
+    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
+    _commentUserNameButton.frame = frame;
+    
+    
+    _userComment.frame = CGRectMake(CGRectGetMaxX(_commentUserNameButton.frame), CGRectGetMaxY(_seeCommentsButton.frame), kGeomEmptyTextViewWidth, kGeomHeightTextField);
+    
+    //end test
+    
+    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_commentUserNameButton.frame));
+    
+    y = CGRectGetMaxY(_seeCommentsButton.frame);
+    for (UIButton *b in _commentButtons) {
+        frame = b.frame;
+        //manipulate frame here
+        frame.origin = CGPointMake(kGeomSpaceEdge, y);
+        y+=CGRectGetMaxY(frame);
+        b.frame = frame;
+    }
+    
+    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
+}
+
+- (void)initializingDummyComments {
+    
+    
+    NSDictionary *dummyComments = @{kKeyCommentContent : @"comment # 1",
+                                    kKeyCommentMediaItemID : @"userMediaItem",
+                                    kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                    kKeyCommentUserID : @"user Id1"
+                                    };
+    
+    NSDictionary *dummyComments1 = @{kKeyCommentContent : @"comment # 2",
+                                     kKeyCommentMediaItemID : @"userMediaItem",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id2"
+                                     };
+    NSDictionary *dummyComments2 = @{kKeyCommentContent : @"comment # 3",
+                                     kKeyCommentMediaItemID : @"userMediaItem",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id3"
+                                     };
+    NSDictionary *dummyComments3 = @{kKeyCommentContent : @"comment # 4",
+                                     kKeyCommentMediaItemID : @"userMediaItem",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id4"
+                                     };
+    NSDictionary *dummyComments4 = @{kKeyCommentContent : @"comment # 5",
+                                     kKeyCommentMediaItemID : @"userMediaItem",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id5"
+                                     };
+    
+    NSArray *arrayOfDummyCommentDicts = @[dummyComments, dummyComments1, dummyComments2, dummyComments3, dummyComments4];
+    _dummyCommentsArray = [NSMutableArray new];
+    
+    for (NSDictionary *dummyCommentDict in arrayOfDummyCommentDicts) {
+        CommentObject *comment = [CommentObject commentFromDict:dummyCommentDict];
+        NSLog(@"the comment content is %@", comment.content);
+        [_dummyCommentsArray addObject:comment];
+    }
+    NSLog(@"the count is %lu", self.dummyCommentsArray.count);
+    
+}
+
+- (void)showComponents:(BOOL)show {
+    _share.hidden =
+    _optionsButton.hidden =
+    _closeButton.hidden =
+    _captionButton.hidden =
+    _restaurantButton.hidden =
+    _yumButton.hidden =
+    _yumTestButton.hidden =
+    _commentCaptionButton.hidden =
+    _userButton.hidden =
+    _seeCommentsButton.hidden =
+    _seeYummersButton .hidden =
+    _userViewButton.hidden = !show;
+    
+    if (show) {
+        if (_numYums) {
+            _numYums.hidden = NO;
+        } else {
+            _numYums.hidden = YES;
+        }
+    } else {
+        _numYums.hidden = YES;
+    }
+}
+
+- (void)setComponentsAlpha:(CGFloat)alpha {
+    _share.alpha =
+    _optionsButton.alpha =
+    _closeButton.alpha =
+    _captionButton.alpha =
+    _restaurantButton.alpha =
+    _yumButton.alpha =
+    _yumTestButton.hidden =
+    _commentCaptionButton.hidden =
+    _userButton.alpha =
+    _seeCommentsButton.hidden =
+    _seeYummersButton .hidden = 
+    _userViewButton.alpha =
+    _numYums.alpha =
+    _iv.alpha =
+    alpha;
+}
+
+
+
+#pragma end of layout james
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -611,50 +904,6 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    [_iv addSubview:_aiv];
-    [self.backgroundView addSubview:_fv];
-    [self.backgroundView addSubview:_yumIndicator];
-    [self.backgroundView addSubview:_iv];
-    [self.backgroundView addSubview:_restaurantButton];
-    [self.backgroundView addSubview:_closeButton];
-    [self.backgroundView addSubview:_captionButton];
-    [self.backgroundView addSubview:_userButton];
-    [self.backgroundView addSubview:_userViewButton];
-    [self.backgroundView addSubview:_numYums];
-    [self.backgroundView addSubview:_yumButton];
-    [self.backgroundView addSubview:_share];
-    [self.view addSubview:_backgroundView];
-    [self.backgroundView bringSubviewToFront:_fv];
-    [self.backgroundView bringSubviewToFront:_yumIndicator];
-    [self.backgroundView sendSubviewToBack:_backgroundView];
-    
-    //adding the buttons for testing purposes
-
-    [self.backgroundView addSubview:_comment];
-    [self.backgroundView addSubview:_yumTestButton];
-    [self.backgroundView addSubview:_seeCommentsButton];
-    [self.backgroundView addSubview:_seeYummersButton];
-    [self.backgroundView addSubview:_commentUserNameButton];
-    [self.backgroundView addSubview:_userComment];
-
-
-    [self.view setAutoresizesSubviews:NO];
-    
-//    [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
-//    [_showRestaurantTapGesture setNumberOfTapsRequired:1];
-    [_yumPhotoTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
-    [_yumPhotoTapGesture setNumberOfTapsRequired:2];
-    
-//    [_showRestaurantTapGesture requireGestureRecognizerToFail:_yumPhotoTapGesture];
-//    [_backgroundView addGestureRecognizer:_showRestaurantTapGesture];
-    [_backgroundView addGestureRecognizer:_yumPhotoTapGesture];
-    [self.view addGestureRecognizer:_panGesture];
-    
-//    [DebugUtilities addBorderToViews:@[self.view]];
-}
 
 - (void)pan:(UIGestureRecognizer *)gestureRecognizer {
     if (_panGesture != gestureRecognizer) return;
@@ -846,40 +1095,6 @@ static CGFloat kNextPhotoTolerance = 40;
     // Dispose of any resources that can be recreated.
 }
 
-- (void)showComponents:(BOOL)show {
-    _share.hidden =
-    _optionsButton.hidden =
-    _closeButton.hidden =
-    _captionButton.hidden =
-    _restaurantButton.hidden =
-    _yumButton.hidden =
-    _userButton.hidden =
-    _userViewButton.hidden = !show;
-    
-    if (show) {
-        if (_numYums) {
-            _numYums.hidden = NO;
-        } else {
-            _numYums.hidden = YES;
-        }
-    } else {
-        _numYums.hidden = YES;
-    }
-}
-
-- (void)setComponentsAlpha:(CGFloat)alpha {
-    _share.alpha =
-    _optionsButton.alpha =
-    _closeButton.alpha =
-    _captionButton.alpha =
-    _restaurantButton.alpha =
-    _yumButton.alpha =
-    _userButton.alpha =
-    _userViewButton.alpha =
-    _numYums.alpha =
-    _iv.alpha =
-    alpha;
-}
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -1007,10 +1222,12 @@ static CGFloat kNextPhotoTolerance = 40;
         [OOAPI getMediaItemLiked:_mio.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.yumButton setSelected:liked];
+                [weakSelf.yumTestButton setSelected:liked];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.yumButton setSelected:NO];
+                [weakSelf.yumTestButton setSelected:NO];
             });
         }];
         //get the state of the yum button for this user
@@ -1034,128 +1251,6 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-- (void)viewWillLayoutSubviews {
-    [super viewWillLayoutSubviews];
-    
-    if (!_mio) return;
-    
-    self.view.frame = APP.window.bounds;
-    CGFloat w = width(self.view);
-    //CGFloat h = height(self.view);
-    CGRect frame;
-    CGFloat y;
-        
-    _backgroundView.frame = self.view.frame;
-    
-    frame = _iv.frame;
-    
-    CGFloat imageWidth = width(self.view);
-    
-    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _mio.height/_mio.width * width(self.view);
-    
-    frame.size.width = imageWidth;
-    frame.size.height = imageHeight;
-    _iv.frame = CGRectIntegral(frame);
-    _iv.center = self.view.center;
-    _aiv.center = CGPointMake(CGRectGetWidth(_iv.frame)/2, CGRectGetHeight(_iv.frame)/2);
-    
-    y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
-    
-    frame = _closeButton.frame;
-    frame.origin = CGPointMake(0, 0);
-    _closeButton.frame = frame;
-    
-    y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
-    frame = _restaurantButton.frame;
-    frame.size.width = w;//-2*kGeomSpaceEdge;
-    frame.origin.y = CGRectGetMaxY(_closeButton.frame);// y;
-    frame.origin.x = 0;//(width(self.view) - width(_restaurantButton))/2;
-    frame.size.height = kGeomHeightButton;
-    _restaurantButton.frame = frame;
-    
-    frame = _restaurantName.frame;
-    frame.origin.y = 0;
-    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
-    _restaurantName.frame = frame;
-
-    frame = _subheader.frame;
-    frame.origin.y = CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceInter;
-    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
-    _subheader.frame = frame;
-
-    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantButton.frame) /*+ kGeomSpaceInter*/, imageWidth, imageHeight);
-    
-    _yumIndicator.center = _iv.center;
-    
-    frame = _optionsButton.frame;
-    frame.origin = CGPointMake(width(self.view)-width(_optionsButton), 0);
-    _optionsButton.frame = frame;
-
-    frame = _userViewButton.frame;
-    frame.origin.x = kGeomSpaceEdge;
-    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
-    frame.size.width = kGeomDimensionsIconButton;
-    frame.origin.y = CGRectGetMaxY(_iv.frame) + kGeomSpaceInter;
-    _userViewButton.frame = frame;
-
-    frame = _userButton.frame;
-    frame.origin.y = CGRectGetMaxY(_userViewButton.frame);
-    frame.origin.x = kGeomSpaceEdge;
-    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
-    _userButton.frame = frame;
-    
-    if (_mio.source == kMediaItemTypeOomami) {
-        [_numYums sizeToFit];
-        
-        frame = _yumButton.frame;
-        frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_iv.frame)+kGeomSpaceInter);
-        _yumButton.frame = frame;
-        
-        frame = _numYums.frame;
-        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
-        frame.size.height = kGeomDimensionsIconButton;
-        _numYums.frame = frame;
-        _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
-    } else {
-        _yumButton.frame = CGRectZero;
-        _numYums.frame = CGRectZero;
-    }
-    
-    CGFloat height;
-    
-    frame = _captionButton.frame;
-    frame.size.width = CGRectGetMinX(_yumButton.frame) - CGRectGetMaxX(_userViewButton.frame);
-    height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
-    frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
-    frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2;
-    frame.origin.x = (width(self.view) - frame.size.width)/2;
-    _captionButton.frame = frame;
-    
-    _fv.center = self.view.center;
-    
-    //_share.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), width(self.view), kGeomHeightButton);
-    
-    //testing
-    
-    CGFloat screenWidth = self.view.frame.size.width;
-    CGFloat buttonWidth = (screenWidth - (kGeomSpaceInter*2))/3;
-    
-    _comment.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
-    _share.frame = CGRectMake( buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
-    _yumTestButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
-    
-    _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
-    _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_yumTestButton.frame), buttonWidth, kGeomHeightButton);
-    _commentUserNameButton.frame = CGRectMake(0, CGRectGetMaxY(_seeCommentsButton.frame), buttonWidth, kGeomHeightButton);
-    _userComment.frame = CGRectMake(CGRectGetMaxX(_commentUserNameButton.frame), CGRectGetMaxY(_seeCommentsButton.frame), 200,40);
-    
-    //end test
-    
-    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_commentUserNameButton.frame));
-    
-    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
-}
 
 - (void)yumPhotoTapped {
     __weak ViewPhotoVC *weakSelf = self;
@@ -1164,12 +1259,13 @@ static CGFloat kNextPhotoTolerance = 40;
         if (!result) {
             [weakSelf presentUnverifiedMessage:@"To yum this photo you will need to verify your email.\n\nCheck your email for a verification link."];
         } else {
-            if (_yumButton.isSelected) {
+            if (_yumButton.isSelected && _yumTestButton.isSelected) {
                 NSLog(@"unlike photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;
                 [OOAPI unsetMediaItemLike:_mio.mediaItemId forUser:userID success:^{
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [weakSelf.yumButton setSelected:NO];
+                        [weakSelf.yumTestButton setSelected:NO];
                         [weakSelf updateNumYums];
                         NOTIFY_WITH(kNotificationUserStatsChanged, @(userID));
                         NOTIFY_WITH(kNotificationMediaItemAltered, _mio)
@@ -1188,6 +1284,7 @@ static CGFloat kNextPhotoTolerance = 40;
                             weakSelf.yumIndicator.alpha = 0;
                         } completion:^(BOOL finished) {
                             [weakSelf.yumButton setSelected:YES];
+                            [weakSelf.yumTestButton setSelected:YES];
                             [weakSelf updateNumYums];
                         }];
                         
