@@ -229,6 +229,8 @@
 		36FDA7071B585F650029D29D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36FDA7051B585F650029D29D /* LaunchScreen.xib */; };
 		36FDA7131B585F650029D29D /* ooAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA7121B585F650029D29D /* ooAppTests.m */; };
 		59F64BAACABE82EE3D988A1F /* libPods-ooApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11ACB46AFAC92A3682065049 /* libPods-ooApp.a */; };
+		7B61A9211D3FDAFC005CB257 /* UserCommentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A9201D3FDAFC005CB257 /* UserCommentView.m */; };
+		7B61A94C1D40209C005CB257 /* CommentListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A94B1D40209C005CB257 /* CommentListVC.m */; };
 		7B8915361D3E8CD60065DB43 /* CommentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B8915351D3E8CD60065DB43 /* CommentObject.m */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
@@ -601,6 +603,10 @@
 		36FDA7121B585F650029D29D /* ooAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ooAppTests.m; sourceTree = "<group>"; };
 		437F4BC56C1FCF6A729494D3 /* Pods-ooApp.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ooApp.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-ooApp/Pods-ooApp.adhoc.xcconfig"; sourceTree = "<group>"; };
 		70AB7C3C5EFA9812059D2EDD /* Pods-ooApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ooApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-ooApp/Pods-ooApp.release.xcconfig"; sourceTree = "<group>"; };
+		7B61A91F1D3FDAFC005CB257 /* UserCommentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentView.h; sourceTree = "<group>"; };
+		7B61A9201D3FDAFC005CB257 /* UserCommentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCommentView.m; sourceTree = "<group>"; };
+		7B61A94A1D40209C005CB257 /* CommentListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommentListVC.h; path = ../CommentListVC.h; sourceTree = "<group>"; };
+		7B61A94B1D40209C005CB257 /* CommentListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CommentListVC.m; path = ../CommentListVC.m; sourceTree = "<group>"; };
 		7B8915341D3E8CD60065DB43 /* CommentObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentObject.h; sourceTree = "<group>"; };
 		7B8915351D3E8CD60065DB43 /* CommentObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentObject.m; sourceTree = "<group>"; };
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
@@ -699,6 +705,8 @@
 		3621F11C1B8F6DF5004537B6 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				7B61A94A1D40209C005CB257 /* CommentListVC.h */,
+				7B61A94B1D40209C005CB257 /* CommentListVC.m */,
 				3621F11D1B8F6E32004537B6 /* MenuTVCell.h */,
 				3621F11E1B8F6E32004537B6 /* MenuTVCell.m */,
 				365F175F1B9105B500015D5D /* ListStripTVCell.h */,
@@ -1084,6 +1092,7 @@
 				367704021B88078400B594E5 /* Common Tools */,
 				367703FC1B87E3A500B594E5 /* Resources */,
 				363B60BE1B6AC13900987A1B /* Models */,
+				7B61A91E1D3FDA8D005CB257 /* views */,
 				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
 				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
@@ -1209,6 +1218,15 @@
 				36FDA7111B585F650029D29D /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7B61A91E1D3FDA8D005CB257 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				7B61A91F1D3FDAFC005CB257 /* UserCommentView.h */,
+				7B61A9201D3FDAFC005CB257 /* UserCommentView.m */,
+			);
+			name = views;
 			sourceTree = "<group>";
 		};
 		838275ABF7295F8F9D0249ED /* Pods */ = {
@@ -1581,9 +1599,11 @@
 				3613BE4F1BBCBDF700F1AF67 /* OOTagButton.m in Sources */,
 				36175CDA1C22940700E6FE3D /* FoodFeedVC.m in Sources */,
 				962667471BBC8C9600D77EBE /* UserTVCell.m in Sources */,
+				7B61A9211D3FDAFC005CB257 /* UserCommentView.m in Sources */,
 				365F17611B9105B500015D5D /* ListStripTVCell.m in Sources */,
 				968EE95E1C3C501900DFE30E /* EventSelectionVC.m in Sources */,
 				96CC3A211BE97E1C00A43A04 /* PieView.m in Sources */,
+				7B61A94C1D40209C005CB257 /* CommentListVC.m in Sources */,
 				36FC99EE1C478D4F00768FF0 /* OOAIV.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,

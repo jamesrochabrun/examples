@@ -20,6 +20,7 @@
 #import "OOActivityItemProvider.h"
 #import "OOFeedbackView.h"
 #import "CommentObject.h"
+#import "CommentListVC.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -49,17 +50,18 @@
 @property (nonatomic, strong) UIButton *share;
 @property (nonatomic, strong) UIButton *commentCaptionButton;
 @property (nonatomic, strong) UIButton *yumTestButton;
+@property (nonatomic, strong) UIButton *seeCommentsButton;
+@property (nonatomic, strong) UIButton *seeYummersButton;
 
 
 #pragma testing NewLayout properties
-@property (nonatomic, strong) UIButton *seeCommentsButton;
-@property (nonatomic, strong) UIButton *seeYummersButton;
 @property (nonatomic, strong) UIButton *commentUserNameButton;
 @property (nonatomic, strong) UILabel *userComment;
 @property (nonatomic, strong) NSMutableArray *dummyCommentsArray;
+
+#pragma not accepted items
 @property (nonatomic, strong) NSMutableArray *commentButtons;
-
-
+@property (nonatomic, strong) UILabel *numYumsLabel;
 
 @end
 
@@ -193,9 +195,11 @@ static CGFloat kNextPhotoTolerance = 40;
         [_yumTestButton setImage:iconYum forState:UIControlStateNormal];
         [_yumTestButton setImage:iconYumSelected   forState:UIControlStateSelected];
         _yumTestButton.layer.cornerRadius = 0;
-        
+        _numYumsLabel = [UILabel new];
+        [_yumTestButton addSubview:_numYumsLabel];
+    
         _seeCommentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(initializingDummyComments)];
+        [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showComments)];
         [_seeCommentsButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _seeCommentsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [_seeCommentsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -208,7 +212,6 @@ static CGFloat kNextPhotoTolerance = 40;
         [_seeYummersButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
 
-
         [self testignNewLayout];
 
         UIButton *b;
@@ -218,8 +221,7 @@ static CGFloat kNextPhotoTolerance = 40;
             [_commentButtons addObject:b];
             
         }
-
-        //        [DebugUtilities addBorderToViews:@[self.view]];
+         //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
     return self;
@@ -391,38 +393,38 @@ static CGFloat kNextPhotoTolerance = 40;
     
     _fv.center = self.view.center;
     
-    //testing
     CGFloat buttonWidth = (w - (kGeomSpaceInter*2))/3;
     
+    //horizontal 3 buttons section
     _commentCaptionButton.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
     _share.frame = CGRectMake(buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
-    
     _yumTestButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
-    
+    /////////////////
     _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
     _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_yumTestButton.frame), buttonWidth, kGeomHeightButton);
     
+    //comments section in this view
     frame = _commentUserNameButton.frame;
     frame.origin.y = CGRectGetMaxY(_seeCommentsButton.frame);
     frame.origin.x = kGeomSpaceEdge;
     frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
     _commentUserNameButton.frame = frame;
     
-    
     _userComment.frame = CGRectMake(CGRectGetMaxX(_commentUserNameButton.frame), CGRectGetMaxY(_seeCommentsButton.frame), kGeomEmptyTextViewWidth, kGeomHeightTextField);
     
-    //end test
-    
-    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_commentUserNameButton.frame));
-    
+    //testing
+
     y = CGRectGetMaxY(_seeCommentsButton.frame);
     for (UIButton *b in _commentButtons) {
         frame = b.frame;
         //manipulate frame here
         frame.origin = CGPointMake(kGeomSpaceEdge, y);
-        y+=CGRectGetMaxY(frame);
+        y+=  CGRectGetMaxY(frame);
         b.frame = frame;
     }
+    //end test
+    
+    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_commentUserNameButton.frame));
     
     NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
 }
@@ -511,7 +513,6 @@ static CGFloat kNextPhotoTolerance = 40;
     _iv.alpha =
     alpha;
 }
-
 
 
 #pragma end of layout james
@@ -860,6 +861,7 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
+
 - (void)showProfile {
     if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
         [_delegate viewPhotoVC:self showProfile:_user];
@@ -890,6 +892,29 @@ static CGFloat kNextPhotoTolerance = 40;
         [weakVC.aiv stopAnimating];
     }];
 }
+
+- (void)showComments {
+    CommentListVC *vc = [[CommentListVC alloc] init];
+    vc.desiredTitle = @"Comments";
+    vc.user = _user;
+    
+    __weak CommentListVC *weakVC = vc;
+    
+    [vc.view bringSubviewToFront:vc.aiv];
+    [vc.aiv startAnimating];
+    
+    [self.navigationController pushViewController:vc animated:YES];
+    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakVC.usersArray = users.mutableCopy;
+            [weakVC.aiv stopAnimating];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [weakVC.aiv stopAnimating];
+    }];
+}
+
+
 
 - (void)close {
     if ([_delegate respondsToSelector:@selector(viewPhotoVCClosed:)]) {
@@ -1339,6 +1364,8 @@ static CGFloat kNextPhotoTolerance = 40;
         if (count) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.numYums setTitle:[NSString stringWithFormat:@"%lu %@", (unsigned long)count, (count == 1) ? @"yum" : @"yums"] forState:UIControlStateNormal];
+                
+                weakSelf.numYumsLabel.text = [NSString stringWithFormat:@"%lu %@", (unsigned long)count, (count == 1) ? @"yum" : @"yums"];
                 [weakSelf.view setNeedsLayout];
             });
         } else {
