@@ -17,6 +17,8 @@
 #import "ListObject.h"
 #import "Settings.h"
 #import "ProfileVC.h"
+#import "TextFieldView.h"
+
 
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER  @"commentListTVC"
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"commentListTableCellEmpty"
@@ -41,7 +43,7 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    
+
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
            initWithHeader: _desiredTitle ?: LOCAL(@"Users")
@@ -60,7 +62,7 @@
     _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
     _tableUsers.separatorInset = UIEdgeInsetsZero;
     _tableUsers.showsVerticalScrollIndicator= NO;
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setNeedsRefresh)
                                                  name:kNotificationUserFollowingChanged object:nil];
@@ -70,6 +72,17 @@
     
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
+    
+    
+    TextFieldView *textField = [TextFieldView new];
+    CGRect frame = textField.frame;
+    frame.size.width = 300;
+    frame.size.height = 200;
+    frame.origin.x = 100;
+    frame.origin.y = 100;
+    textField.frame = frame;
+    [self.view addSubview:textField];
+    
 }
 
 - (void)setNeedsRefresh {
@@ -103,8 +116,12 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN(@(object_getClassName(self)));
-    
+
     [self.navigationController setNavigationBarHidden:NO animated:NO];
+    self.tabBarController.tabBar.hidden = YES;
+    self.view.backgroundColor = [UIColor yellowColor];
+
+
 }
 
 - (void)refreshIfNeeded {

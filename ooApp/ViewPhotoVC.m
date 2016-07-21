@@ -146,7 +146,7 @@ static CGFloat kNextPhotoTolerance = 40;
         iconCaptionLabel.textColor = UIColorRGBA(kColorTextActive);
         [iconCaptionLabel sizeToFit];
         UIImage *iconCaption = [UIImage imageFromView:iconCaptionLabel];
-        [_commentCaptionButton withText:@"" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(sharePressed:)];
+        [_commentCaptionButton withText:@"" fontSize:kGeomFontSizeH1 width:0 height:0 backgroundColor:kColorButtonBackground textColor:kColorTextActive borderColor:kColorButtonBackground target:self selector:@selector(showComments)];
         [_commentCaptionButton setImage:iconCaption forState:UIControlStateNormal];
         _commentCaptionButton.layer.cornerRadius = 0;
         _numCommentsLabel = [UILabel new];
@@ -930,7 +930,6 @@ static CGFloat kNextPhotoTolerance = 40;
         [weakVC.aiv stopAnimating];
     }];
 }
-
 
 
 - (void)close {
