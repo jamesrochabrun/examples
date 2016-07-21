@@ -13,14 +13,12 @@
 
 @protocol CommentListTVCDelegate <NSObject>
 - (void)userTappedImageOfUser:(UserObject *)user;
-- (void)userTappedFollowButtonForUser:(UserObject *)user following:(BOOL)following;
 @end
 
 
 @interface CommentListTVCell : UITableViewCell <OOUserViewDelegate, UnverifiedUserVCDelegate>
 - (void)provideUser:(UserObject *)user;
 - (void)fetchStats;
-- (void)showFollowButton:(BOOL)following;
 @property (nonatomic, weak) UIViewController *vc;
 @property (nonatomic, weak) id<CommentListTVCDelegate>delegate;
 @property (nonatomic, strong) UIButton *buttonFollow;
