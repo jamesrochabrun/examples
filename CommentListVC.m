@@ -18,8 +18,217 @@
 #import "Settings.h"
 #import "ProfileVC.h"
 
-#define USER_LIST_TABLE_REUSE_IDENTIFIER  @"commentListTVC"
-#define USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"commentListTableCellEmpty"
+#define COMMENT_LIST_TABLE_REUSE_IDENTIFIER  @"commentListTVC"
+#define COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"commentListTableCellEmpty"
+
+//==============================================================================
+@interface CommentListVC ()
+@property (nonatomic,strong) UITableView *tableUsers;
+@property (nonatomic) BOOL needRefresh;
+@end
+
+@implementation CommentListVC
+
+//------------------------------------------------------------------------------
+// Name:    viewDidLoad
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    _needRefresh = YES;
+    
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.view.autoresizesSubviews = NO;
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
+    NavTitleObject *nto;
+    nto = [[NavTitleObject alloc]
+           initWithHeader: _desiredTitle ?: LOCAL(@"Users")
+           subHeader: nil];
+    
+    self.navTitle = nto;
+    
+    
+    //here is what creates a new instance of a tableView
+    self.tableUsers = makeTable(self.view,self);
+    _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    [_tableUsers registerClass:[CommentListTVCell class] forCellReuseIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER];
+    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
+    [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
+    _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
+    _tableUsers.separatorInset = UIEdgeInsetsZero;
+    _tableUsers.showsVerticalScrollIndicator= NO;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setNeedsRefresh)
+                                                 name:kNotificationUserFollowingChanged object:nil];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeRight];
+    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
+    
+    [self removeNavButtonForSide:kNavBarSideTypeLeft];
+    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
+}
+
+- (void)setNeedsRefresh {
+    _needRefresh = YES;
+}
+
+- (void)setUsersArray:(NSMutableArray *)usersArray {
+    if (_usersArray == usersArray) return;
+    _usersArray = usersArray;
+    [_tableUsers reloadData];
+    [self refreshIfNeeded];
+}
+
+- (void)done:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    [self doLayout];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    ANALYTICS_SCREEN(@(object_getClassName(self)));
+    
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
+}
+
+- (void)refreshIfNeeded {
+    if (_needRefresh) {
+        _needRefresh = NO;
+    }
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewWillDisappear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+}
+
+//------------------------------------------------------------------------------
+// Name:    viewDidAppear
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+}
+
+//------------------------------------------------------------------------------
+// Name:    doLayout
+// Purpose: Programmatic equivalent of constraint equations.
+//------------------------------------------------------------------------------
+- (void)doLayout {
+    _tableUsers.frame = self.view.bounds;
+}
+
+
+
+#pragma TableView methods
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSInteger row = indexPath.row;
+    UserObject *u = nil;
+    
+    @synchronized(self.usersArray)  {
+        if (row < _usersArray.count) {
+            u = _usersArray[row];
+        }
+    }
+    
+    if (!u) {
+        UITableViewCell *cell;
+        cell = [tableView dequeueReusableCellWithIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+        cell.textLabel.textAlignment=NSTextAlignmentCenter;
+        cell.textLabel.text=  @"Alas there are none.";
+        cell.textLabel.textColor=UIColorRGBA(kColorWhite);
+        cell.selectionStyle= UITableViewCellSeparatorStyleNone;
+        return cell;
+    }
+    
+    CommentListTVCell *cell;
+    cell = [tableView dequeueReusableCellWithIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    cell.textLabel.textAlignment=NSTextAlignmentCenter;
+    cell.selectionStyle= UITableViewCellSeparatorStyleNone;
+    cell.delegate = self;
+    cell.vc = self;
+    [cell provideUser:u];
+
+    [cell fetchStats];
+    
+    return cell;
+}
+
+//------------------------------------------------------------------------------
+// Name:    heightForRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return kGeomHeightHorizontalListRow;
+}
+
+//------------------------------------------------------------------------------
+// Name:    didSelectRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSInteger row = indexPath.row;
+    UserObject *u = nil;
+    
+    @synchronized(self.usersArray)  {
+        if (row < _usersArray.count) {
+            u = _usersArray[row];
+        }
+    }
+    
+    if (u) {
+        [self goToProfile:u];
+    }
+}
+
+- (void)goToProfile: (UserObject*)u {
+    ProfileVC *vc= [[ProfileVC alloc] init];
+    vc.userInfo = u;
+    vc.userID = u.userID;
+    [self.navigationController  pushViewController:vc animated:YES];
+}
+
+//------------------------------------------------------------------------------
+// Name:    numberOfRowsInSection
+// Purpose:
+//------------------------------------------------------------------------------
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    @synchronized(self.usersArray)  {
+        return _usersArray.count;
+    }
+}
+
+- (void)userTappedSectionHeader:(int)which {
+}
+
+
+- (void) userTappedImageOfUser:(UserObject*)user; {
+    [self goToProfile:user];
+}
+
+@end
 
 //==============================================================================
 
@@ -60,290 +269,5 @@
 
 @end
 
-//==============================================================================
-@interface CommentListVC ()
-@property (nonatomic,strong) UITableView *tableUsers;
-@property (nonatomic,strong) NSMutableArray *followeesArray;
-@property (nonatomic,strong) AFHTTPRequestOperation *fetchOperationFollowees;
-@property (nonatomic) BOOL needRefresh;
-@end
-
-@implementation CommentListVC
-
-- (void)dealloc
-{
-    [_usersArray removeAllObjects];
-    _usersArray = nil;
-    [_followeesArray removeAllObjects];
-    _followeesArray = nil;
-    [_fetchOperationFollowees cancel];
-    _fetchOperationFollowees = nil;
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewDidLoad
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    _needRefresh = YES;
-    
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    self.view.autoresizesSubviews = NO;
-    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    
-    NavTitleObject *nto;
-    nto = [[NavTitleObject alloc]
-           initWithHeader: _desiredTitle ?: LOCAL(@"Users")
-           subHeader: nil];
-    
-    self.navTitle = nto;
-    
-    self.tableUsers = makeTable(self.view,self);
-    _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [_tableUsers registerClass:[UserListTVC class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER];
-    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
-    [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
-    _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
-    _tableUsers.separatorInset = UIEdgeInsetsZero;
-    _tableUsers.showsVerticalScrollIndicator= NO;
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setNeedsRefresh)
-                                                 name:kNotificationUserFollowingChanged object:nil];
-    
-    [self removeNavButtonForSide:kNavBarSideTypeRight];
-    [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
-    
-    [self removeNavButtonForSide:kNavBarSideTypeLeft];
-    [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
-}
-
-- (void)setNeedsRefresh {
-    _needRefresh = YES;
-}
-
-- (void)setUsersArray:(NSMutableArray *)usersArray {
-    if (_usersArray == usersArray) return;
-    _usersArray = usersArray;
-    [_tableUsers reloadData];
-    [self refreshIfNeeded];
-}
-
-- (void)done:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewWillLayoutSubviews
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
-    [self doLayout];
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewWillAppear
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    ANALYTICS_SCREEN(@(object_getClassName(self)));
-    
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
-}
-
-- (void)refreshIfNeeded {
-    if (_needRefresh) {
-        [self fetchFollowees];
-        _needRefresh = NO;
-    }
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewWillDisappear
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewDidAppear
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-//------------------------------------------------------------------------------
-// Name:    doLayout
-// Purpose: Programmatic equivalent of constraint equations.
-//------------------------------------------------------------------------------
-- (void)doLayout
-{
-    _tableUsers.frame = self.view.bounds;
-}
-
-- (BOOL)user:(UserObject *)user isFollowingUser:(NSUInteger)userID
-{
-    if (!_followeesArray) {
-        return NO;
-    }
-    @synchronized(self.followeesArray) {
-        for (UserObject *user in _followeesArray) {
-            if (user.userID == userID) {
-                return YES;
-            }
-        }
-    }
-    return NO;
-}
-
-- (void)fetchFollowees
-{
-    __weak CommentListVC *weakSelf = self;
-    
-    UserObject *currentUser = [Settings sharedInstance].userObject;
-    
-    [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
-        @synchronized(weakSelf.followeesArray)  {
-            weakSelf.followeesArray= users.mutableCopy;
-            NSLog  (@"SUCCESS IN FETCHING %lu FOLLOWEES",
-                    ( unsigned long)weakSelf.followeesArray.count);
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSArray *visibleRowIndeces = [_tableUsers indexPathsForVisibleRows];
-            [_tableUsers reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
-            //            [weakSelf.tableUsers reloadData];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"CANNOT GET LIST OF PEOPLE WE ARE FOLLOWING");
-    }];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger row = indexPath.row;
-    UserObject *u = nil;
-    
-    @synchronized(self.usersArray)  {
-        if (row < _usersArray.count) {
-            u = _usersArray[row];
-        }
-    }
-    
-    if (!u) {
-        UITableViewCell *cell;
-        cell = [tableView dequeueReusableCellWithIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
-        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        cell.textLabel.textAlignment=NSTextAlignmentCenter;
-        cell.textLabel.text=  @"Alas there are none.";
-        cell.textLabel.textColor=UIColorRGBA(kColorWhite);
-        cell.selectionStyle= UITableViewCellSeparatorStyleNone;
-        return cell;
-    }
-    
-    UserListTVC *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
-    cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    cell.textLabel.textAlignment=NSTextAlignmentCenter;
-    cell.selectionStyle= UITableViewCellSeparatorStyleNone;
-    cell.delegate = self;
-    cell.vc = self;
-    [cell provideUser:u];
-    
-    if (_followeesArray) {
-        @synchronized(self.followeesArray) {
-            if ([Settings sharedInstance].userObject.userID == u.userID) {
-                cell.buttonFollow.hidden = YES;
-            } else {
-                [cell showFollowButton:[self user:self.user isFollowingUser:u.userID]];
-            }
-        }
-    }
-    
-    [cell fetchStats];
-    
-    return cell;
-}
-
-//------------------------------------------------------------------------------
-// Name:    heightForRowAtIndexPath
-// Purpose:
-//------------------------------------------------------------------------------
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return kGeomHeightHorizontalListRow;
-}
-
-//------------------------------------------------------------------------------
-// Name:    didSelectRowAtIndexPath
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger row = indexPath.row;
-    UserObject *u = nil;
-    
-    @synchronized(self.usersArray)  {
-        if (row < _usersArray.count) {
-            u = _usersArray[row];
-        }
-    }
-    
-    if (u) {
-        [self goToProfile:u];
-    }
-}
-
-- (void)goToProfile: (UserObject*)u
-{
-    ProfileVC *vc= [[ProfileVC alloc] init];
-    vc.userInfo = u;
-    vc.userID = u.userID;
-    [self.navigationController  pushViewController:vc animated:YES];
-}
-
-//------------------------------------------------------------------------------
-// Name:    numberOfRowsInSection
-// Purpose:
-//------------------------------------------------------------------------------
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    @synchronized(self.usersArray)  {
-        return _usersArray.count;
-    }
-}
-
-- (void)userTappedSectionHeader:(int)which
-{
-    
-    
-}
-
-- (void)userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following
-{
-    if (following ) {
-        [_followeesArray addObject: user];
-    } else {
-        [_followeesArray removeObject: user];
-    }
-}
-
-- (void) userTappedImageOfUser:(UserObject*)user;
-{
-    [self goToProfile:user];
-}
-
-@end
 
 

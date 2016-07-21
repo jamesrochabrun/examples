@@ -12,10 +12,18 @@
 #import "UserTVCell.h"
 #import "OOUserView.h"
 #import "UserObject.h"
-#import "UserListTVC.h"
+#import "CommentListTVCell.h"
 
 @protocol ComentListTableSectionHeaderDelegate
 - (void) userTappedSectionHeader:(int)which;
+@end
+
+//SubBase is a subclass of UIViewController
+@interface CommentListVC : SubBaseVC  <ComentListTableSectionHeaderDelegate, CommentListTVCDelegate>
+@property (nonatomic, strong) NSMutableArray *usersArray;
+@property (nonatomic, strong) NSString* desiredTitle;
+@property (nonatomic, strong) UserObject* user;
+
 @end
 
 @interface CommentListTableSectionHeader : UIView
@@ -24,9 +32,4 @@
 @property (nonatomic,assign) BOOL isExpanded;
 @end
 
-@interface CommentListVC : SubBaseVC  <ComentListTableSectionHeaderDelegate, UserListTVCDelegate>
-@property (nonatomic, strong) NSMutableArray *usersArray;
-@property (nonatomic, strong) NSString* desiredTitle;
-@property (nonatomic, strong) UserObject* user;
 
-@end

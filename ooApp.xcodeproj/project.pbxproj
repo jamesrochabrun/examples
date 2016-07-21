@@ -231,6 +231,7 @@
 		59F64BAACABE82EE3D988A1F /* libPods-ooApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11ACB46AFAC92A3682065049 /* libPods-ooApp.a */; };
 		7B61A9211D3FDAFC005CB257 /* UserCommentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A9201D3FDAFC005CB257 /* UserCommentView.m */; };
 		7B61A94C1D40209C005CB257 /* CommentListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A94B1D40209C005CB257 /* CommentListVC.m */; };
+		7B61A9521D4039E7005CB257 /* CommentListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A9511D4039E7005CB257 /* CommentListTVCell.m */; };
 		7B8915361D3E8CD60065DB43 /* CommentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B8915351D3E8CD60065DB43 /* CommentObject.m */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
@@ -607,6 +608,8 @@
 		7B61A9201D3FDAFC005CB257 /* UserCommentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCommentView.m; sourceTree = "<group>"; };
 		7B61A94A1D40209C005CB257 /* CommentListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommentListVC.h; path = ../CommentListVC.h; sourceTree = "<group>"; };
 		7B61A94B1D40209C005CB257 /* CommentListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CommentListVC.m; path = ../CommentListVC.m; sourceTree = "<group>"; };
+		7B61A9501D4039E7005CB257 /* CommentListTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentListTVCell.h; sourceTree = "<group>"; };
+		7B61A9511D4039E7005CB257 /* CommentListTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentListTVCell.m; sourceTree = "<group>"; };
 		7B8915341D3E8CD60065DB43 /* CommentObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentObject.h; sourceTree = "<group>"; };
 		7B8915351D3E8CD60065DB43 /* CommentObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentObject.m; sourceTree = "<group>"; };
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
@@ -705,8 +708,8 @@
 		3621F11C1B8F6DF5004537B6 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				7B61A94A1D40209C005CB257 /* CommentListVC.h */,
-				7B61A94B1D40209C005CB257 /* CommentListVC.m */,
+				7B61A9501D4039E7005CB257 /* CommentListTVCell.h */,
+				7B61A9511D4039E7005CB257 /* CommentListTVCell.m */,
 				3621F11D1B8F6E32004537B6 /* MenuTVCell.h */,
 				3621F11E1B8F6E32004537B6 /* MenuTVCell.m */,
 				365F175F1B9105B500015D5D /* ListStripTVCell.h */,
@@ -1096,6 +1099,8 @@
 				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
 				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
+				7B61A94A1D40209C005CB257 /* CommentListVC.h */,
+				7B61A94B1D40209C005CB257 /* CommentListVC.m */,
 				3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */,
 				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
 				36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */,
@@ -1621,6 +1626,7 @@
 				36215DA91C37CA11000A293C /* OOTextEntryVC.m in Sources */,
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
 				9695C1001C1618D100911E84 /* ConnectVC.m in Sources */,
+				7B61A9521D4039E7005CB257 /* CommentListTVCell.m in Sources */,
 				365FB7861C59198000826629 /* ShowMediaItemAnimator.m in Sources */,
 				36B1CC9A1CA5ECF8007D0263 /* ShowAuthScreenAnimator.m in Sources */,
 				364D70C01CBEB22400FADC29 /* IntroScreenView.m in Sources */,
