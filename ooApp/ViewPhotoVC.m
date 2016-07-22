@@ -21,6 +21,7 @@
 #import "OOFeedbackView.h"
 #import "CommentObject.h"
 #import "CommentListVC.h"
+#import "CommentPhotoView.h"
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -53,16 +54,14 @@
 @property (nonatomic, strong) UILabel *mioDateCreated;
 @property (nonatomic, strong) UILabel *numYumsLabel;
 @property (nonatomic, strong) UILabel *numCommentsLabel;
-
-
+@property (nonatomic, strong) CommentPhotoView *commentPhotoView;
+@property (nonatomic, strong) CommentPhotoView *secondCommentView;
+@property (nonatomic, strong) NSMutableArray *commentsButtonArray;
 
 #pragma testing NewLayout properties
-@property (nonatomic, strong) UIButton *commentUserNameButton;
-@property (nonatomic, strong) UILabel *userComment;
+
 @property (nonatomic, strong) NSMutableArray *dummyCommentsArray;
 
-#pragma not accepted items
-@property (nonatomic, strong) NSMutableArray *commentButtons;
 
 @end
 
@@ -206,16 +205,15 @@ static CGFloat kNextPhotoTolerance = 40;
         _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [_seeYummersButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
-
-        [self testignNewLayout];
-
-        UIButton *b;
-        for (int i =0; i <self.dummyCommentsArray.count; i++) {
-            b = [UIButton buttonWithType:UIButtonTypeCustom];
-            [self.view addSubview:b];
-            [_commentButtons addObject:b];
-            
+        
+        _commentsButtonArray = [NSMutableArray new];
+        CommentPhotoView *cPV;
+        for (int i = 0; i <5; i++) {
+            cPV = [CommentPhotoView new];
+            [_commentsButtonArray addObject:cPV];
         }
+
+
          //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
@@ -244,14 +242,11 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.backgroundView bringSubviewToFront:_yumIndicator];
     [self.backgroundView sendSubviewToBack:_backgroundView];
     [self.backgroundView addSubview:_yumButton];
+    for (CommentPhotoView *cPV in _commentsButtonArray) {
+        [self.backgroundView addSubview:cPV];
+    }
 
-    
-    //adding the buttons for testing purposes
-    
-    [self.backgroundView addSubview:_commentUserNameButton];
-    [self.backgroundView addSubview:_userComment];
-    
-    
+    NSLog(@"the amount of items in the array is %lu", _commentsButtonArray.count);
     [self.view setAutoresizesSubviews:NO];
     
     //    [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
@@ -266,27 +261,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
     //    [DebugUtilities addBorderToViews:@[self.view]];
 }
-
-#pragma testingNewLayout
-- (void)testignNewLayout {
-    
-    _commentUserNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_commentUserNameButton withText:@"@foodie" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
-    [_commentUserNameButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
-    _commentUserNameButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    [_commentUserNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-    _commentUserNameButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
-    
-    _userComment = [UILabel new];
-    _userComment.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
-    _userComment.text = @"user comments user commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser commentsuser comments";
-    _userComment.textColor = UIColorRGBA(kColorBlack);
-    _userComment.textAlignment = NSTextAlignmentLeft;
-    _userComment.numberOfLines = 0;
-    [_userComment sizeToFit];
-
-}
-
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
@@ -420,30 +394,25 @@ static CGFloat kNextPhotoTolerance = 40;
     _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
     _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_yumButton.frame), buttonWidth, kGeomHeightButton);
     
-    //comments section in this view
-    frame = _commentUserNameButton.frame;
-    frame.origin.y = CGRectGetMaxY(_seeCommentsButton.frame);
-    frame.origin.x = kGeomSpaceEdge;
-    frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
-    _commentUserNameButton.frame = frame;
-    
-    _userComment.frame = CGRectMake(CGRectGetMaxX(_commentUserNameButton.frame), CGRectGetMaxY(_seeCommentsButton.frame), kGeomEmptyTextViewWidth, kGeomHeightTextField);
-    
-    //testing
-
+    //comments View
     y = CGRectGetMaxY(_seeCommentsButton.frame);
-    for (UIButton *b in _commentButtons) {
-        frame = b.frame;
-        //manipulate frame here
-        frame.origin = CGPointMake(kGeomSpaceEdge, y);
-        y+=  CGRectGetMaxY(frame);
-        b.frame = frame;
+    
+    for (CommentPhotoView *v in _commentsButtonArray) {
+        v.backgroundColor = [UIColor yellowColor];
+        frame = v.frame;
+        frame.origin.x = 0;
+        frame.origin.y = y;
+        frame.size.width = self.view.frame.size.width;
+        y +=  frame.size.height;
+        v.frame = frame;
+        NSLog(@"cpv.frame = %@", NSStringFromCGRect(v.frame));
     }
-    //end test
     
-    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_commentUserNameButton.frame));
+
     
-    NSLog(@"imageView frame = %@", NSStringFromCGRect(_iv.frame));
+    CommentPhotoView *cPV = [_commentsButtonArray lastObject];
+    _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
+    
 }
 
 - (void)initializingDummyComments {
