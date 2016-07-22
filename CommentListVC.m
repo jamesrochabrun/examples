@@ -153,7 +153,7 @@
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
     frame.origin.y = self.view.bounds.origin.y;
-    frame.size.height = self.view.bounds.size.height - _textFieldView.frame.size.heightgit;
+    frame.size.height = self.view.bounds.size.height - _textFieldView.frame.size.height;
     frame.size.width = self.view.bounds.size.width;
     _tableUsers.frame = frame;
     
@@ -172,23 +172,24 @@
             u = _usersArray[row];
         }
     }
-    
+    NSLog(@"the count of users is %lu" , self.usersArray.count);
+
     if (!u) {
         UITableViewCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         cell.textLabel.textAlignment=NSTextAlignmentCenter;
-        cell.textLabel.text=  @"Alas there are none.";
-        cell.textLabel.textColor=UIColorRGBA(kColorWhite);
-        cell.selectionStyle= UITableViewCellSeparatorStyleNone;
+        cell.textLabel.text =  @"Alas there are none.";
+        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+        cell.selectionStyle = UITableViewCellSeparatorStyleNone;
         return cell;
     }
     
     CommentListTVCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    cell.textLabel.textAlignment=NSTextAlignmentCenter;
-    cell.selectionStyle= UITableViewCellSeparatorStyleNone;
+    cell.textLabel.textAlignment = NSTextAlignmentCenter;
+    cell.selectionStyle = UITableViewCellSeparatorStyleNone;
     cell.delegate = self;
     cell.vc = self;
     [cell provideUser:u];
@@ -260,8 +261,7 @@
 
 @implementation CommentListTableSectionHeader
 
-- (instancetype)initWithExpandedFlag:(BOOL)expanded
-{
+- (instancetype)initWithExpandedFlag:(BOOL)expanded {
     self=[super init];
     if (self) {
         _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH3);

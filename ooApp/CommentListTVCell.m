@@ -38,23 +38,22 @@
         
         _labelName = makeLabelLeft (self, @"Name ", kGeomFontSizeSubheader);
         _labelName.numberOfLines = 1;
-        
         _labelName.adjustsFontSizeToFitWidth = NO;
         _labelName.lineBreakMode = NSLineBreakByTruncatingTail;
         _labelName.textColor=UIColorRGBA(kColorText);
         
         _commentDateLabel = [UILabel new];
-        [_commentDateLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
+        [_commentDateLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
         _commentDateLabel.text = @"1d";
         [self addSubview:_commentDateLabel];
         
         _commentLabel = [UILabel new];
         [_commentLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorOffBlack backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByClipping textAlignment:NSTextAlignmentNatural];
-        _commentLabel.text = @"helloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhk helloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkj";
+        _commentLabel.text = @"hsdbkj ckjhkhelloeojmb;kjsdbkj";
         [self addSubview:_commentLabel];
         
         
-        //        [DebugUtilities addBorderToViews:@[_photosIcon, _photosNumber, _yumIcon, _yumNumber, _placesIcon, _placesNumber, _labelFollowing, _labelFollowers, _labelFollowersNumber, _labelFollowingNumber]];
+         //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel , _commentDateLabel]];
     }
     return self;
 }
@@ -121,7 +120,6 @@
     _labelName.text = nil;
     _commentDateLabel = nil;
     _commentLabel =  nil;
-    
     [_userView clear];
 
 }
@@ -141,7 +139,7 @@
     if  (labelHeight < 1) {
         labelHeight = kGeomHeightButton; //44.0
     }
-    _labelName.frame = CGRectMake(x, y, w - margin - x, labelHeight);
+    _labelName.frame = CGRectMake(x, y, w - x - kGeomDimensionsIconButtonSmall, labelHeight);
     
     CGRect frame = _userView.frame;
     frame.size.height = imageSize;
@@ -152,12 +150,15 @@
     
     frame = _commentDateLabel.frame;
     frame.size = CGSizeMake(kGeomDimensionsIconButtonSmall, kGeomDimensionsIconButtonSmall);
-    frame.origin = CGPointMake(width(self) - kGeomDimensionsIconButtonSmall + kGeomInterImageGap, self.frame.origin.y);
+    frame.origin.x = width(self) - kGeomDimensionsIconButtonSmall + kGeomInterImageGap;
+    frame.origin.y = CGRectGetMaxY(_labelName.frame);
     _commentDateLabel.frame = frame;
+    
+    //NSLog(@"self.frame=%@, _commentdatelabel.frame = %@, labelName.Frame=%@", NSStringFromCGRect(self.frame), NSStringFromCGRect(_commentDateLabel.frame), NSStringFromCGRect(_labelName.frame));
     
     CGFloat height;
     frame = _commentLabel.frame;
-    frame.size.width = CGRectGetMinX(_commentDateLabel.frame) - CGRectGetMaxX(_userView.frame) - kGeomSpaceEdge;
+    frame.size.width = _labelName.frame.size.width;
     height = [_commentLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
     frame.origin.y = CGRectGetMaxY(_labelName.frame) ;

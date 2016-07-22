@@ -21,7 +21,6 @@
 - (void)fetchStats;
 @property (nonatomic, weak) UIViewController *vc;
 @property (nonatomic, weak) id<CommentListTVCDelegate>delegate;
-@property (nonatomic, strong) UIButton *buttonFollow;
 
 
 @end

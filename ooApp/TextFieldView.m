@@ -59,13 +59,7 @@
    
     _textField.backgroundColor = [UIColor redColor];
     _postTextButton.backgroundColor = [UIColor blueColor];
- 
-    
-    
-    
 
-    
-    
 }
 
 @end
