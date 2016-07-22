@@ -49,8 +49,8 @@
         [self addSubview:_commentDateLabel];
         
         _commentLabel = [UILabel new];
-        [_commentLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorGrayMiddle backgroundColor:kColorGrayMiddle numberOfLines:0 lineBreakMode:NSLineBreakByClipping textAlignment:NSTextAlignmentLeft];
-        _commentLabel.text = @"helloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhk helloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkj";
+        [_commentLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorOffBlack backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByClipping textAlignment:NSTextAlignmentNatural];
+        _commentLabel.text = @"helloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhk helloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkjd cjbdjcdkjckjdc ckjhkhelloeojmb;kjsdbkj";
         [self addSubview:_commentLabel];
         
         
@@ -131,19 +131,11 @@
     
     CGFloat kGeomUserListVCCellMiddleGap = 7;
     CGFloat w = self.frame.size.width;
-    CGFloat h = self.frame.size.height;
     CGFloat margin = kGeomSpaceEdge; //6
     CGFloat spacing = kGeomSpaceCellPadding; //3
     CGFloat imageSize = kGeomDimensionsIconButton; //40
     
-    CGRect frame = _userView.frame;
-    frame.size.height = imageSize;
-    frame.size.width = imageSize;
-    frame.origin.x = margin + spacing;
-    frame.origin.y = (h - height(_userView)) / 4;
-    _userView.frame = frame;
-
-    float x = margin + imageSize + kGeomUserListVCCellMiddleGap; //53
+    float x = margin + imageSize + kGeomUserListVCCellMiddleGap + kGeomSpaceCellPadding; //53
     float y = margin; //6
     float labelHeight = _labelName.intrinsicContentSize.height;
     if  (labelHeight < 1) {
@@ -151,10 +143,16 @@
     }
     _labelName.frame = CGRectMake(x, y, w - margin - x, labelHeight);
     
-    //CGRect frame = self.frame;
+    CGRect frame = _userView.frame;
+    frame.size.height = imageSize;
+    frame.size.width = imageSize;
+    frame.origin.x = margin + spacing;
+    frame.origin.y = CGRectGetMaxY(_labelName.frame);
+    _userView.frame = frame;
+    
     frame = _commentDateLabel.frame;
     frame.size = CGSizeMake(kGeomDimensionsIconButtonSmall, kGeomDimensionsIconButtonSmall);
-    frame.origin = CGPointMake(width(self) - kGeomDimensionsIconButtonSmall + kGeomInterImageGap, _userView.frame.origin.y);
+    frame.origin = CGPointMake(width(self) - kGeomDimensionsIconButtonSmall + kGeomInterImageGap, self.frame.origin.y);
     _commentDateLabel.frame = frame;
     
     CGFloat height;
@@ -162,8 +160,8 @@
     frame.size.width = CGRectGetMinX(_commentDateLabel.frame) - CGRectGetMaxX(_userView.frame) - kGeomSpaceEdge;
     height = [_commentLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
-    frame.origin.y = CGRectGetMaxY(_labelName.frame);
-    frame.origin.x = CGRectGetMaxX(_userView.frame) + spacing;
+    frame.origin.y = CGRectGetMaxY(_labelName.frame) ;
+    frame.origin.x = CGRectGetMaxX(_userView.frame) + spacing + kGeomSpaceCellPadding;
     _commentLabel.frame = frame;
     
     [_userView layoutIfNeeded];
