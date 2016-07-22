@@ -1,18 +1,16 @@
- //
+//
 //  TextFieldView.m
-//  ooApp
+//  test1
 //
 //  Created by James Rochabrun on 21-07-16.
-//  Copyright © 2016 Oomami Inc. All rights reserved.
+//  Copyright © 2016 James Rochabrun. All rights reserved.
 //
 
 #import "TextFieldView.h"
-#import "UIButton+Additions.h"
-#import "CommonUIConstants.h"
+
 
 @interface TextFieldView ()
-@property UITextField *textField;
-@property UIButton *postTextButton;
+
 
 @end
 
@@ -25,12 +23,10 @@
         
         _textField = [UITextField new];
         _postTextButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_postTextButton withText:@"" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorTextActive target:self selector:@selector(test)];
-        _postTextButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+               [self addSubview:_postTextButton];
         
         [self addSubview:_textField];
-        [self addSubview:_postTextButton];
-
+        
     }
     return self;
 }
@@ -41,30 +37,35 @@
 
 - (void)layoutSubviews {
     
-    CGRect frame = _textField.frame;
-    CGFloat viewCenterY = CGRectGetMidY(self.frame);
+    CGRect frame = self.frame;
+    CGFloat w = self.frame.size.width;
+    CGFloat h = self.frame.size.height;
+    CGFloat margin = 8;
+    NSLog(@"the height of the view is %f", h);
     
-    frame.size.width = width(self) - width(_postTextButton);
-    frame.size.height = kGeomHeightTextField;
-    frame.origin.x = kGeomSpaceEdge;
-    [_textField setCenter:CGPointMake(frame.origin.x, viewCenterY)];
+    frame = _textField.frame;
+    frame.size.width = w * 0.7 - margin;
+    frame.size.height = 44;
+    frame.origin.x = margin;
+    frame.origin.y = (h - _textField.bounds.size.height)/2 ;
     _textField.frame = frame;
-    
+
     frame = _postTextButton.frame;
-    frame.size.width = kGeomWidthButton;
-    frame.size.height = kGeomHeightTextField;
-    frame.origin.x = CGRectGetMaxX(_textField.frame);
-    [_postTextButton setCenter:CGPointMake(frame.origin.x, viewCenterY)];
+    frame.size.width = w * 0.3 - margin * 2;
+    frame.size.height = 44;
+    frame.origin.x = CGRectGetMaxX(_textField.frame) + margin;
+    frame.origin.y = _textField.frame.origin.y;
+    _postTextButton.frame = frame;
+   
+    _textField.backgroundColor = [UIColor redColor];
+    _postTextButton.backgroundColor = [UIColor blueColor];
+ 
+    
+    
+    
+
     
     
 }
 
 @end
-
-
-
-
-
-
-
-

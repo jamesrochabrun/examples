@@ -232,7 +232,7 @@
 		7B61A9211D3FDAFC005CB257 /* UserCommentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A9201D3FDAFC005CB257 /* UserCommentView.m */; };
 		7B61A94C1D40209C005CB257 /* CommentListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A94B1D40209C005CB257 /* CommentListVC.m */; };
 		7B61A9521D4039E7005CB257 /* CommentListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A9511D4039E7005CB257 /* CommentListTVCell.m */; };
-		7B7114BE1D416ACB003EA054 /* TextFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B7114BD1D416ACB003EA054 /* TextFieldView.m */; };
+		7B7114C41D41E19F003EA054 /* TextFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B7114C31D41E19F003EA054 /* TextFieldView.m */; };
 		7B8915361D3E8CD60065DB43 /* CommentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B8915351D3E8CD60065DB43 /* CommentObject.m */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
@@ -611,8 +611,8 @@
 		7B61A94B1D40209C005CB257 /* CommentListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CommentListVC.m; path = ../CommentListVC.m; sourceTree = "<group>"; };
 		7B61A9501D4039E7005CB257 /* CommentListTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentListTVCell.h; sourceTree = "<group>"; };
 		7B61A9511D4039E7005CB257 /* CommentListTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentListTVCell.m; sourceTree = "<group>"; };
-		7B7114BC1D416ACB003EA054 /* TextFieldView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldView.h; sourceTree = "<group>"; };
-		7B7114BD1D416ACB003EA054 /* TextFieldView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldView.m; sourceTree = "<group>"; };
+		7B7114C21D41E19F003EA054 /* TextFieldView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldView.h; sourceTree = "<group>"; };
+		7B7114C31D41E19F003EA054 /* TextFieldView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldView.m; sourceTree = "<group>"; };
 		7B8915341D3E8CD60065DB43 /* CommentObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentObject.h; sourceTree = "<group>"; };
 		7B8915351D3E8CD60065DB43 /* CommentObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentObject.m; sourceTree = "<group>"; };
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
@@ -1231,8 +1231,8 @@
 		7B61A91E1D3FDA8D005CB257 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				7B7114BC1D416ACB003EA054 /* TextFieldView.h */,
-				7B7114BD1D416ACB003EA054 /* TextFieldView.m */,
+				7B7114C21D41E19F003EA054 /* TextFieldView.h */,
+				7B7114C31D41E19F003EA054 /* TextFieldView.m */,
 				7B61A91F1D3FDAFC005CB257 /* UserCommentView.h */,
 				7B61A9201D3FDAFC005CB257 /* UserCommentView.m */,
 			);
@@ -1626,7 +1626,7 @@
 				36132A071D12080000EE3710 /* AppLogObject.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
 				3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */,
-				7B7114BE1D416ACB003EA054 /* TextFieldView.m in Sources */,
+				7B7114C41D41E19F003EA054 /* TextFieldView.m in Sources */,
 				3632F7781C44BEDF007901D9 /* OOTBC.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36215DA91C37CA11000A293C /* OOTextEntryVC.m in Sources */,

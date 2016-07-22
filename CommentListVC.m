@@ -27,6 +27,7 @@
 @interface CommentListVC ()
 @property (nonatomic,strong) UITableView *tableUsers;
 @property (nonatomic) BOOL needRefresh;
+@property (nonatomic, strong) TextFieldView *textFieldView;
 @end
 
 @implementation CommentListVC
@@ -73,15 +74,9 @@
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
     
-    
-    TextFieldView *textField = [TextFieldView new];
-    CGRect frame = textField.frame;
-    frame.size.width = 300;
-    frame.size.height = 200;
-    frame.origin.x = 100;
-    frame.origin.y = 100;
-    textField.frame = frame;
-    [self.view addSubview:textField];
+    //creating the instance of the subclass of UIView that contains the textfield that takes the input(user comment);
+    _textFieldView = [TextFieldView new];
+    [self.view addSubview:_textFieldView];
     
 }
 
@@ -151,7 +146,17 @@
 // Purpose: Programmatic equivalent of constraint equations.
 //------------------------------------------------------------------------------
 - (void)doLayout {
-    _tableUsers.frame = self.view.bounds;
+    
+    _textFieldView.frame = CGRectMake(0, CGRectGetMaxY(self.view.bounds) - 70, self.view.bounds.size.width, 70);
+    _textFieldView.backgroundColor = [UIColor yellowColor];
+    
+    CGRect frame = _tableUsers.frame;
+    frame.origin.x = self.view.bounds.origin.x;
+    frame.origin.y = self.view.bounds.origin.y;
+    frame.size.height = self.view.bounds.size.height - _textFieldView.frame.size.heightgit;
+    frame.size.width = self.view.bounds.size.width;
+    _tableUsers.frame = frame;
+    
 }
 
 
@@ -269,8 +274,8 @@
     return self;
 }
 
-- (void)layoutSubviews
-{
+- (void)layoutSubviews {
+    
     [super layoutSubviews];
     CGFloat w = width(self);
     CGFloat h = height(self);

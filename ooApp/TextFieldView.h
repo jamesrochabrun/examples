@@ -1,16 +1,17 @@
 //
 //  TextFieldView.h
-//  ooApp
+//  test1
 //
 //  Created by James Rochabrun on 21-07-16.
-//  Copyright © 2016 Oomami Inc. All rights reserved.
+//  Copyright © 2016 James Rochabrun. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@class TextFieldView;
-
 @interface TextFieldView : UIView
+@property UITextField *textField;
+@property UIButton *postTextButton;
+
 
 
 @end
