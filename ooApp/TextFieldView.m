@@ -43,11 +43,10 @@
     CGFloat w = self.frame.size.width;
     CGFloat h = self.frame.size.height;
     CGFloat margin = 8;
-    NSLog(@"the height of the view is %f", h);
     
     frame = _textField.frame;
     frame.size.width = w * 0.7 - margin;
-    frame.size.height = 44;
+    frame.size.height = kGeomIconSize;
     frame.origin.x = margin;
     frame.origin.y = (h - _textField.bounds.size.height)/2 ;
     _textField.frame = frame;
@@ -55,9 +54,9 @@
 
     frame = _postTextButton.frame;
     frame.size.width = w * 0.3 - margin * 2;
-    frame.size.height = 44;
+    frame.size.height = kGeomIconSize;
     frame.origin.x = CGRectGetMaxX(_textField.frame) + margin;
-    frame.origin.y = _textField.frame.origin.y;
+    frame.origin.y = (h - _postTextButton.frame.size.height)/2;
     _postTextButton.frame = frame;
    
 

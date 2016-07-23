@@ -155,7 +155,7 @@ static CGFloat kNextPhotoTolerance = 40;
         [_commentCaptionButton addSubview:_numCommentsLabel];
         
         _mioDateCreated = [UILabel new];
-        [_mioDateCreated withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
+        [_mioDateCreated withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         
         _share = [UIButton buttonWithType:UIButtonTypeCustom];
         UILabel *iconLabel = [UILabel new];
@@ -197,14 +197,14 @@ static CGFloat kNextPhotoTolerance = 40;
         [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showComments)];
         [_seeCommentsButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _seeCommentsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        [_seeCommentsButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        [_seeCommentsButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
         _seeCommentsButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
         
         _seeYummersButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_seeYummersButton withText:@"see yummers" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showYums)];
         [_seeYummersButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        [_seeYummersButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        [_seeYummersButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
         
         _commentsButtonArray = [NSMutableArray new];
@@ -215,7 +215,7 @@ static CGFloat kNextPhotoTolerance = 40;
         }
 
          //        [DebugUtilities addBorderToViews:@[self.view]];
-        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
+        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
     }
     return self;
 }
@@ -351,12 +351,12 @@ static CGFloat kNextPhotoTolerance = 40;
 //    }
     
     frame = _mioDateCreated.frame;
-    frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-    frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_iv.frame)+kGeomSpaceInter);
+    frame.size.height = kGeomDimensionsIconButton;
+    CGFloat w2 = [_mioDateCreated sizeThatFits:CGSizeMake(0, frame.size.height)].width;
+    frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
+    frame.origin = CGPointMake(CGRectGetMaxX(self.view.bounds) - kGeomDimensionsIconButton - kGeomSpaceEdge * 2, CGRectGetMaxY(_iv.frame) + kGeomSpaceInter);
     _mioDateCreated.frame = frame;
-    [_mioDateCreated sizeToFit];
     
-    //here is a lesson
     CGFloat height;
     frame = _captionButton.frame;
     frame.size.width = CGRectGetMinX(_mioDateCreated.frame) - CGRectGetMaxX(_userViewButton.frame);

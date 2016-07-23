@@ -3427,12 +3427,12 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 //#ifdef ADHOC
 //    APP.usingStagingServer = YES;
 //    if (APP.usingStagingServer) {
-//        return kOOURLStage;
+        return kOOURLStage;
 //    } else {
 //        return kOOURLProduction;
 //    }
 //#else
-    return kOOURLProduction;
+    //return kOOURLProduction;
 //#endif
 }
 

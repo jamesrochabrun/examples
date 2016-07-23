@@ -730,8 +730,7 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     return infoWindow;
 }
 
-- (void)gotRestaurants
-{
+- (void)gotRestaurants {
     NSLog(@"%lu", (unsigned long)[_restaurants count]);
     if (![_restaurants count]) {
         NSLog (@"Received no restaurants.");
@@ -770,8 +769,8 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     }
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+   
     if (tableView == _locationsTable) {
         CLPlacemark *placemark = [_locations objectAtIndex:indexPath.row];
         _locationSearchBar.text = [Common locationString:placemark];
@@ -798,13 +797,11 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     }
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (tableView == _locationsTable) {
         return [_locations count];
     } else {

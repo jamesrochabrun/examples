@@ -6,6 +6,8 @@
 //
 
 #import "CommentPhotoView.h"
+#import "DebugUtilities.h"
+
 
 @implementation CommentPhotoView
 
@@ -22,12 +24,13 @@
         
         _userCommentButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_userCommentButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
-        [_userCommentButton setTitle:@";klnk" forState:UIControlStateNormal];
+        [_userCommentButton setTitle:@"; klnkklnkklnkklnkklnk klnk klnk klnk klnk klnk klnk klnk klnk klnk  klnk klnk klnk esto es el final de esto y vamos a ver como se crece y crece " forState:UIControlStateNormal];
         _userCommentButton.titleLabel.numberOfLines = 0;
         _userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
-        [_userCommentButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [_userCommentButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
         
         [self addSubview:_userCommentButton];
+        
     }
     return self;
 }
@@ -40,20 +43,30 @@
     CGFloat margin = 8;
     CGFloat space = 4;
     
+    //    frame = _userNameButton.frame;
+    //    CGFloat width = [_userNameButton.titleLabel sizeThatFits:CGSizeMake(FLT_MAX, FLT_MAX)].width;
+    //    NSLog(@"THE WIDTH OF THE USERNAMEBUTTON IS %f", width);
+    //    frame.size.width = width;
+    //    frame.size.height = 0;
+    //    frame.origin.x = margin;
+    //    frame.origin.y = CGRectGetMinY(self.bounds) + 20;
+    //    _userNameButton.frame = frame;
+    
     frame = _userNameButton.frame;
-    CGFloat width = [_userNameButton.titleLabel sizeThatFits:CGSizeMake(FLT_MAX, FLT_MAX)].width;
-    frame.size.width = width;
-    frame.size.height = 0;
+    frame.size.height = kGeomDimensionsIconButton;
+    CGFloat w2 = [_userNameButton sizeThatFits:CGSizeMake(0, frame.size.height)].width;
+    frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
     frame.origin.x = margin;
-    frame.origin.y = CGRectGetMinY(self.bounds) + 20;
+    frame.origin.y = CGRectGetMinY(self.bounds);
     _userNameButton.frame = frame;
+    
     
     frame = _userCommentButton.frame;
     frame.size.width = w - _userNameButton.frame.size.width - space - margin * 3;
-    CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width,FLT_MAX)].height;
+    CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width,0)].height;
     frame.size.height = height;
     frame.origin.x = CGRectGetMaxX(_userNameButton.frame) + space;
-    frame.origin.y = CGRectGetMidY(_userNameButton.frame) - 7;
+    frame.origin.y = CGRectGetMidY(_userNameButton.frame) - 8;
     _userCommentButton.frame = frame;
     
     frame = self.frame;
@@ -61,7 +74,22 @@
     frame.size.height = _userCommentButton.frame.size.height + margin + space;
     self.frame = frame;
     
+    [DebugUtilities addBorderToViews:@[_userNameButton, _userCommentButton, self]];
+    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

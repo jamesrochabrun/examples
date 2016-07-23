@@ -76,9 +76,13 @@
     
     //creating the instance of the subclass of UIView that contains the textfield that takes the input(user comment);
     _textFieldView = [TextFieldView new];
+    [_textFieldView.postTextButton addTarget:self action:@selector(postComment) forControlEvents:UIControlEventTouchUpInside];
     _textFieldView.textField.delegate = self;
     [self.view addSubview:_textFieldView];
-    
+}
+
+- (void)postComment {
+    NSLog(@"comment");
 }
 
 - (void)setNeedsRefresh {
@@ -145,7 +149,7 @@
 //------------------------------------------------------------------------------
 - (void)doLayout {
     
-    _textFieldView.frame = CGRectMake(0, CGRectGetMaxY(self.view.bounds) - 70, self.view.bounds.size.width, 70);
+    _textFieldView.frame = CGRectMake(0, CGRectGetMaxY(self.view.bounds) - 50, self.view.bounds.size.width, 50);
     _textFieldView.backgroundColor = [UIColor grayColor];
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
@@ -261,7 +265,6 @@
     comment.content = textField.text;
     NSLog(@"this is the content %@", comment.content);
     
-    
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
@@ -270,6 +273,7 @@
     comment.content = textField.text;
     NSLog(@"this is the content %@", comment.content);
 }
+
 
 
 @end
@@ -283,14 +287,14 @@
 @implementation CommentListTableSectionHeader
 
 - (instancetype)initWithExpandedFlag:(BOOL)expanded {
-    self=[super init];
+    self = [super init];
     if (self) {
         _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH3);
         _labelTitle.textColor = UIColorRGBA(kColorWhite);
         _labelExpander = makeIconLabel(self, kFontIconBack, kGeomIconSize);
         _labelExpander.textColor = UIColorRGBA(kColorTextActive);
         self.backgroundColor = UIColorRGBA(kColorOffWhite);
-        _isExpanded=expanded;
+        _isExpanded = expanded;
     }
     return self;
 }
