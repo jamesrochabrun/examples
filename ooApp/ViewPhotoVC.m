@@ -22,6 +22,8 @@
 #import "CommentObject.h"
 #import "CommentListVC.h"
 #import "CommentPhotoView.h"
+#import "NSString+NSStringToDate.h"
+
 
 @interface ViewPhotoVC ()
 @property (nonatomic, strong) UIButton *captionButton;
@@ -154,7 +156,6 @@ static CGFloat kNextPhotoTolerance = 40;
         
         _mioDateCreated = [UILabel new];
         [_mioDateCreated withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH1] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
-        _mioDateCreated.text = @"1d";
         
         _share = [UIButton buttonWithType:UIButtonTypeCustom];
         UILabel *iconLabel = [UILabel new];
@@ -214,7 +215,7 @@ static CGFloat kNextPhotoTolerance = 40;
         }
 
          //        [DebugUtilities addBorderToViews:@[self.view]];
-        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
+        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
     }
     return self;
 }
@@ -353,7 +354,7 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
     frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_iv.frame)+kGeomSpaceInter);
     _mioDateCreated.frame = frame;
-    
+    [_mioDateCreated sizeToFit];
     
     //here is a lesson
     CGFloat height;
@@ -1168,6 +1169,7 @@ static CGFloat kNextPhotoTolerance = 40;
     return s;
 }
 
+
 - (void)setMio:(MediaItemObject *)mio {
     if (mio == _mio) return;
     _mio = mio;
@@ -1180,8 +1182,14 @@ static CGFloat kNextPhotoTolerance = 40;
     
     UserObject *user = [Settings sharedInstance].userObject;
     
+    //test date
+    NSString *mioCreatedAt = [NSString getTimeAgoString:_mio.createdAt];
+    _mioDateCreated.text = mioCreatedAt;
+    NSLog(@"the date is %@", mioCreatedAt);
+    
     if ([_mio.caption length]) {
-        [_captionButton setTitle:_mio.caption forState:UIControlStateNormal];
+        [_captionButton setTitle:[NSString stringWithFormat:@"%@ \n%@",_mio.caption, _mio.createdAt] forState:UIControlStateNormal];
+        
     } else {
         if (_mio.sourceUserID == user.userID) {
             [_captionButton setTitle:@"+ add caption" forState:UIControlStateNormal];
@@ -1230,13 +1238,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     if (_mio.source == kMediaItemTypeOomami) {
         [self updateNumYums];
-        //test
-        bool cv = [_mio.createdAt isKindOfClass:[NSString class]];
-        NSLog(@"the date of this media item is %@ and is %d", _mio.createdAt, cv);
-
-
-
-        
+      
         
         __weak ViewPhotoVC *weakSelf = self;
     

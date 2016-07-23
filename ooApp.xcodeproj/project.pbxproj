@@ -234,6 +234,7 @@
 		7B7114C41D41E19F003EA054 /* TextFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B7114C31D41E19F003EA054 /* TextFieldView.m */; };
 		7B8915361D3E8CD60065DB43 /* CommentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B8915351D3E8CD60065DB43 /* CommentObject.m */; };
 		7B9DC9B01D42A9DC00CC306C /* CommentPhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */; };
+		7B9DC9B31D43393900CC306C /* NSString+NSStringToDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
@@ -615,6 +616,8 @@
 		7B8915351D3E8CD60065DB43 /* CommentObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentObject.m; sourceTree = "<group>"; };
 		7B9DC9AE1D42A9DC00CC306C /* CommentPhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentPhotoView.h; sourceTree = "<group>"; };
 		7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentPhotoView.m; sourceTree = "<group>"; };
+		7B9DC9B11D43393900CC306C /* NSString+NSStringToDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NSStringToDate.h"; sourceTree = "<group>"; };
+		7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringToDate.m"; sourceTree = "<group>"; };
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
 		9606C5641BBF08C400CB06FE /* EventsListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventsListVC.m; sourceTree = "<group>"; };
 		960F72541C2B5E2000DE31AC /* UserStatsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStatsObject.h; sourceTree = "<group>"; };
@@ -871,6 +874,8 @@
 		367704021B88078400B594E5 /* Common Tools */ = {
 			isa = PBXGroup;
 			children = (
+				7B9DC9B11D43393900CC306C /* NSString+NSStringToDate.h */,
+				7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */,
 				365638EF1CD8341C003F3C7E /* ConfirmPhotoVC.h */,
 				365638F01CD8341C003F3C7E /* ConfirmPhotoVC.m */,
 				3697D9F51C02A95C0022944F /* DropDownListTVC.h */,
@@ -1616,6 +1621,7 @@
 				36FC99EE1C478D4F00768FF0 /* OOAIV.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,
+				7B9DC9B31D43393900CC306C /* NSString+NSStringToDate.m in Sources */,
 				367E91D31C4050BD001B1795 /* ViewPhotoVC.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				3613B4821CB1A94900AA5B14 /* ShowModalAnimator.m in Sources */,
