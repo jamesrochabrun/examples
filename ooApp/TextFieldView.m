@@ -7,6 +7,7 @@
 //
 
 #import "TextFieldView.h"
+#import "CommonUIConstants.h"
 
 
 @interface TextFieldView ()
@@ -23,6 +24,7 @@
         
         _textField = [UITextField new];
         _postTextButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_postTextButton withText:@"SEND" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorTextActive target:self selector:@selector(test)];
                [self addSubview:_postTextButton];
         
         [self addSubview:_textField];
@@ -49,6 +51,7 @@
     frame.origin.x = margin;
     frame.origin.y = (h - _textField.bounds.size.height)/2 ;
     _textField.frame = frame;
+    _textField.backgroundColor = [UIColor whiteColor];
 
     frame = _postTextButton.frame;
     frame.size.width = w * 0.3 - margin * 2;
@@ -57,9 +60,11 @@
     frame.origin.y = _textField.frame.origin.y;
     _postTextButton.frame = frame;
    
-    _textField.backgroundColor = [UIColor redColor];
-    _postTextButton.backgroundColor = [UIColor blueColor];
 
 }
+
+
+
+
 
 @end

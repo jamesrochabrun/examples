@@ -18,6 +18,7 @@
 #import "TagObject.h"
 #import "AutoCompleteObject.h"
 #import "SpecialtyObject.h"
+#import "CommentObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -77,6 +78,32 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                NSLog(@"Error: %@", error);
            }];
 }
+
+///comment requestoperation
++ (AFHTTPRequestOperation *)getCommentMediaItemWithID:(NSUInteger)commentID
+                                        success:(void (^)(CommentObject *comment))success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu", kHTTPProtocol, [OOAPI URL], (unsigned long)commentID];
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+    
+    if (user.userID) {
+        [parameters setObject:[NSString stringWithFormat:@"%lu", (unsigned long)user.userID] forKey:kKeyUserID];
+    }
+    
+    return [rm GET:urlString parameters:parameters
+           success:^(id responseObject) {
+               CommentObject *comment = [CommentObject commentFromDict:responseObject];
+               success(comment);
+           } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+               NSLog(@"Error: %@", error);
+           }];
+}
+
 
 + (AFHTTPRequestOperation *)getNumMediaItemLikes:(NSUInteger)mediaItemID
                                       success:(void (^)(NSUInteger count))success
@@ -649,6 +676,9 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
         failure(operation, error);
     }];
 }
+
+//get media comments
+
 
 + (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)userID
                                   success:(void (^)(UserObject *user))success

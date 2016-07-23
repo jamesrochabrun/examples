@@ -213,7 +213,6 @@ static CGFloat kNextPhotoTolerance = 40;
             [_commentsButtonArray addObject:cPV];
         }
 
-
          //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _numYums, _yumButton, _userButton, _userViewButton, _captionButton]];
     }
@@ -398,7 +397,6 @@ static CGFloat kNextPhotoTolerance = 40;
     y = CGRectGetMaxY(_seeCommentsButton.frame);
     
     for (CommentPhotoView *v in _commentsButtonArray) {
-        v.backgroundColor = [UIColor yellowColor];
         frame = v.frame;
         frame.origin.x = 0;
         frame.origin.y = y;
@@ -480,6 +478,10 @@ static CGFloat kNextPhotoTolerance = 40;
     } else {
         _numYumsLabel.hidden = YES;
     }
+    
+    for (CommentPhotoView *cPV in _commentsButtonArray) {
+        cPV.hidden = !show;
+    }
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {
@@ -498,6 +500,10 @@ static CGFloat kNextPhotoTolerance = 40;
     _numYumsLabel.alpha =
     _iv.alpha =
     alpha;
+    
+    for (CommentPhotoView *cPV in _commentsButtonArray) {
+        cPV.alpha = alpha;
+    }
 }
 
 

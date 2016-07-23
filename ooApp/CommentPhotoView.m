@@ -15,8 +15,10 @@
     if (self) {
         _userNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_userNameButton.titleLabel setFont:[UIFont fontWithName:@"Arial-BoldMT" size:12]];
-        [_userNameButton setTitle:@"foodie foodie" forState:UIControlStateNormal];
+        [_userNameButton setTitle:@"foodie food" forState:UIControlStateNormal];
         _userNameButton.backgroundColor = [UIColor greenColor];
+        [_userNameButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+
   
         [self addSubview:_userNameButton];
         
@@ -26,8 +28,9 @@
         [_userCommentButton setTitle:@"helll  12341234123412341234 1234 1234 1234 1234 12341234 1234 1234 1234 1234 1234 1234 last item" forState:UIControlStateNormal];
         _userCommentButton.titleLabel.numberOfLines = 0;
         _userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
+        [_userCommentButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+
      
-        _userCommentButton.backgroundColor = [UIColor purpleColor];
         [self addSubview:_userCommentButton];
     }
     return self;
@@ -38,7 +41,6 @@
     [super layoutSubviews];
     CGRect frame = self.frame;
     CGFloat w = self.bounds.size.width;
-    CGFloat h = self.bounds.size.height;
     CGFloat margin = 8;
     CGFloat space = 4;
     

@@ -16,6 +16,7 @@ NSString *const kKeyCommentMediaItemID = @"media_item_id";
 NSString *const kKeyCommentContent = @"content";
 
 
+
 + (CommentObject *)commentFromDict:(NSDictionary *)dict {
     CommentObject *comment = [CommentObject new];
     comment.mediaItemCommentID = parseUnsignedIntegerOrNullFromServer(dict [kKeyCommentMediaItemCommentID]);

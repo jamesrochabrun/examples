@@ -18,13 +18,14 @@
 #import "Settings.h"
 #import "ProfileVC.h"
 #import "TextFieldView.h"
+#import "CommentObject.h"
 
 
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER  @"commentListTVC"
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"commentListTableCellEmpty"
 
 //==============================================================================
-@interface CommentListVC ()
+@interface CommentListVC ()<UITextFieldDelegate>
 @property (nonatomic,strong) UITableView *tableUsers;
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) TextFieldView *textFieldView;
@@ -52,7 +53,6 @@
     
     self.navTitle = nto;
     
-    
     //here is what creates a new instance of a tableView
     self.tableUsers = makeTable(self.view,self);
     _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -76,6 +76,7 @@
     
     //creating the instance of the subclass of UIView that contains the textfield that takes the input(user comment);
     _textFieldView = [TextFieldView new];
+    _textFieldView.textField.delegate = self;
     [self.view addSubview:_textFieldView];
     
 }
@@ -114,9 +115,6 @@
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
     self.tabBarController.tabBar.hidden = YES;
-    self.view.backgroundColor = [UIColor yellowColor];
-
-
 }
 
 - (void)refreshIfNeeded {
@@ -148,8 +146,7 @@
 - (void)doLayout {
     
     _textFieldView.frame = CGRectMake(0, CGRectGetMaxY(self.view.bounds) - 70, self.view.bounds.size.width, 70);
-    _textFieldView.backgroundColor = [UIColor yellowColor];
-    
+    _textFieldView.backgroundColor = [UIColor grayColor];
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
     frame.origin.y = self.view.bounds.origin.y;
@@ -251,6 +248,30 @@
     [self goToProfile:user];
 }
 
+
+//------------------------------------------------------------------------------
+// Name:    textFieldDelegate Methods
+// Purpose:
+//------------------------------------------------------------------------------
+
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    
+    CommentObject *comment = [CommentObject new];
+    comment.content = textField.text;
+    NSLog(@"this is the content %@", comment.content);
+    
+    
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    
+    CommentObject *comment = [CommentObject new];
+    comment.content = textField.text;
+    NSLog(@"this is the content %@", comment.content);
+}
+
+
 @end
 
 //==============================================================================
@@ -288,6 +309,16 @@
     double angle = _isExpanded ? 3*M_PI/2 : M_PI/2;
     _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
 }
+
+
+
+
+
+
+
+
+
+
 
 @end
 
