@@ -14,23 +14,19 @@
     self = [super init];
     if (self) {
         _userNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userNameButton.titleLabel setFont:[UIFont fontWithName:@"Arial-BoldMT" size:12]];
-        [_userNameButton setTitle:@"foodie food" forState:UIControlStateNormal];
-        _userNameButton.backgroundColor = [UIColor greenColor];
-        [_userNameButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-
-  
+        [_userNameButton setTitle:@"foodie food foodo" forState:UIControlStateNormal];
+        [_userNameButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
+        [_userNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        
         [self addSubview:_userNameButton];
         
         _userCommentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userCommentButton.titleLabel setFont:[UIFont fontWithName:@"Arial-BoldMT" size:12]];
-        [_userNameButton setTintColor:[UIColor blueColor]];
-        [_userCommentButton setTitle:@"helll  12341234123412341234 1234 1234 1234 1234 12341234 1234 1234 1234 1234 1234 1234 last item" forState:UIControlStateNormal];
+        [_userCommentButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
+        [_userCommentButton setTitle:@";klnk" forState:UIControlStateNormal];
         _userCommentButton.titleLabel.numberOfLines = 0;
         _userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
         [_userCommentButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-
-     
+        
         [self addSubview:_userCommentButton];
     }
     return self;
