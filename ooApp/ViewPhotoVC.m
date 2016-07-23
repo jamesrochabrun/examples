@@ -406,8 +406,6 @@ static CGFloat kNextPhotoTolerance = 40;
         NSLog(@"cpv.frame = %@", NSStringFromCGRect(v.frame));
     }
     
-
-    
     CommentPhotoView *cPV = [_commentsButtonArray lastObject];
     _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
     
@@ -1232,6 +1230,13 @@ static CGFloat kNextPhotoTolerance = 40;
     
     if (_mio.source == kMediaItemTypeOomami) {
         [self updateNumYums];
+        //test
+        bool cv = [_mio.createdAt isKindOfClass:[NSString class]];
+        NSLog(@"the date of this media item is %@ and is %d", _mio.createdAt, cv);
+
+
+
+        
         
         __weak ViewPhotoVC *weakSelf = self;
     
@@ -1256,6 +1261,11 @@ static CGFloat kNextPhotoTolerance = 40;
                 weakSelf.userViewButton.user = user;
                 [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
                 [weakSelf.userButton sizeToFit];
+                
+                //test
+                CommentPhotoView *c = [_commentsButtonArray firstObject];
+                c.userNameButton.titleLabel.text = userName;
+        
                 [weakSelf.view bringSubviewToFront:_userViewButton];
                 [weakSelf.view setNeedsLayout];
             });

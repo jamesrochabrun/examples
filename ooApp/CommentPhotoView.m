@@ -41,7 +41,7 @@
     CGFloat space = 4;
     
     frame = _userNameButton.frame;
-    CGFloat width = [_userNameButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, FLT_MAX)].width;
+    CGFloat width = [_userNameButton.titleLabel sizeThatFits:CGSizeMake(FLT_MAX, FLT_MAX)].width;
     frame.size.width = width;
     frame.size.height = 0;
     frame.origin.x = margin;
