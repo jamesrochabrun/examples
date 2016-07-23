@@ -29,6 +29,8 @@
 @property (nonatomic,strong) UITableView *tableUsers;
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) TextFieldView *textFieldView;
+@property CGFloat keyBoardHeight;
+
 @end
 
 @implementation CommentListVC
@@ -76,14 +78,81 @@
     
     //creating the instance of the subclass of UIView that contains the textfield that takes the input(user comment);
     _textFieldView = [TextFieldView new];
-    [_textFieldView.postTextButton addTarget:self action:@selector(postComment) forControlEvents:UIControlEventTouchUpInside];
+    [_textFieldView.postTextButton addTarget:self action:@selector(postComment:) forControlEvents:UIControlEventTouchUpInside];
     _textFieldView.textField.delegate = self;
     [self.view addSubview:_textFieldView];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
 }
 
-- (void)postComment {
-    NSLog(@"comment");
+//------------------------------------------------------------------------------
+// Name:    textFieldDelegate Methods
+// Purpose:
+//------------------------------------------------------------------------------
+
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    
+    CommentObject *comment = [CommentObject new];
+    comment.content = textField.text;
+    NSLog(@"this is the content %@", comment.content);
+    
 }
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    
+    CommentObject *comment = [CommentObject new];
+    comment.content = textField.text;
+    NSLog(@"this is the content %@", comment.content);
+    [self.tableUsers setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    
+}
+
+- (void) dismissKeyboard:(id)sender {
+    [self.view endEditing:YES];
+    [_textFieldView.textField resignFirstResponder];
+}
+
+
+- (void)keyboardWillShow:(NSNotification*)notification {
+    NSDictionary *info = [notification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    CGFloat deltaHeight = kbSize.height - _keyBoardHeight;
+    // Write code to adjust views accordingly using deltaHeight
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:.3];
+    [UIView setAnimationBeginsFromCurrentState:TRUE];
+    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - deltaHeight, self.view.frame.size.width, self.view.frame.size.height);
+    
+    [UIView commitAnimations];
+    
+    _keyBoardHeight = kbSize.height;
+}
+
+- (void)keyboardWillHide:(NSNotification*)notification {
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:.3];
+    [UIView setAnimationBeginsFromCurrentState:TRUE];
+    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + _keyBoardHeight, self.view.frame.size.width, self.view.frame.size.height);
+    [UIView commitAnimations];
+    _keyBoardHeight = 0.0f;
+}
+
+- (void)postComment:(UIButton*)sender {
+    NSLog(@"comment");
+    [self dismissKeyboard:sender];
+    _textFieldView.textField.text = @"";
+    
+}
+
+//----------------------------------------------------------------------
 
 - (void)setNeedsRefresh {
     _needRefresh = YES;
@@ -251,29 +320,6 @@
 - (void) userTappedImageOfUser:(UserObject*)user; {
     [self goToProfile:user];
 }
-
-
-//------------------------------------------------------------------------------
-// Name:    textFieldDelegate Methods
-// Purpose:
-//------------------------------------------------------------------------------
-
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    
-    CommentObject *comment = [CommentObject new];
-    comment.content = textField.text;
-    NSLog(@"this is the content %@", comment.content);
-    
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    
-    CommentObject *comment = [CommentObject new];
-    comment.content = textField.text;
-    NSLog(@"this is the content %@", comment.content);
-}
-
 
 
 @end
