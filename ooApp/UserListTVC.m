@@ -252,13 +252,11 @@
     
 }
 
-- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user
-{
+- (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
     [self.delegate userTappedImageOfUser:user];
 }
 
-- (void)provideUser:(UserObject *)user;
-{
+- (void)provideUser:(UserObject *)user {
     
     NSLog(@"_userInfo: %@ user: %@ same? %d", _userInfo, user, (_userInfo==user));
 
@@ -276,8 +274,7 @@
                        user.lastName ? : @""];
 }
 
-- (void)prepareForReuse
-{
+- (void)prepareForReuse {
     [super prepareForReuse];
     _labelUserName.text=nil;
     _labelName.text=nil;
@@ -298,8 +295,7 @@
     _buttonFollow.hidden = YES;
 }
 
-- (void)provideStats:(UserStatsObject *)stats
-{
+- (void)provideStats:(UserStatsObject *)stats{
     NSUInteger followers = stats.totalFollowers;
     NSUInteger following = stats.totalFollowees;
     NSUInteger restaurantCount = stats.totalVenues;

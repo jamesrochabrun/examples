@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "OOUserView.h"
 #import "UnverifiedUserVC.h"
+@class CommentObject;
 
 
 @protocol CommentListTVCDelegate <NSObject>
@@ -19,6 +20,9 @@
 @interface CommentListTVCell : UITableViewCell <OOUserViewDelegate, UnverifiedUserVCDelegate>
 - (void)provideUser:(UserObject *)user;
 - (void)fetchStats;
+- (void)provideComment:(CommentObject *)comment;
++ (CGFloat)heightForComment:(CommentObject *)comment;
+
 @property (nonatomic, weak) UIViewController *vc;
 @property (nonatomic, weak) id<CommentListTVCDelegate>delegate;
 

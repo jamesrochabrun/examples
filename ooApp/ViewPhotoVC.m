@@ -864,6 +864,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showYums {
+    
     UserListVC *vc = [[UserListVC alloc] init];
     vc.desiredTitle = @"Yummers";
     vc.user = _user;
@@ -885,6 +886,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showComments {
+    
     CommentListVC *vc = [[CommentListVC alloc] init];
     vc.desiredTitle = @"Comments";
     vc.user = _user;

@@ -8,7 +8,8 @@
 
 #import "CommentListTVCell.h"
 #import "DebugUtilities.h"
-
+#import "CommentObject.h"
+#import "DebugUtilities.h"
 
 
 @interface CommentListTVCell ()
@@ -29,10 +30,12 @@
     self = [super initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier];
     if (self) {
         
+        self.translatesAutoresizingMaskIntoConstraints = YES;
+
         _userView= [[OOUserView alloc] init];
         [self addSubview:_userView];
         _userView.delegate = self;
-        self.autoresizesSubviews = NO;
+        self.autoresizesSubviews = YES;
         [self setSeparatorInset:UIEdgeInsetsZero];
         self.backgroundColor = UIColorRGBA(kColorOffBlack);
         
@@ -49,7 +52,7 @@
         
         _commentLabel = [UILabel new];
         [_commentLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorOffBlack backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByClipping textAlignment:NSTextAlignmentNatural];
-        _commentLabel.text = @"hsdbkj ckjhkhelloeojmb;kjsdbkj";
+        //_commentLabel.text = @"hsdbkj ckjhkhelloeojmb;kjsdbkj";
         [self addSubview:_commentLabel];
         
         
@@ -114,6 +117,10 @@
                        user.lastName ? : @""];
 }
 
+- (void)provideComment:(CommentObject *)comment {
+    _commentLabel.text = comment.content;
+}
+
 - (void)prepareForReuse {
     
     [super prepareForReuse];
@@ -164,10 +171,30 @@
     frame.origin.y = CGRectGetMaxY(_labelName.frame) ;
     frame.origin.x = CGRectGetMaxX(_userView.frame) + spacing + kGeomSpaceCellPadding;
     _commentLabel.frame = frame;
+    NSLog(@"teh width is %f", _commentLabel.frame.size.width);
+    
     
     [_userView layoutIfNeeded];
+    
+    //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel, _commentDateLabel]];
+
 }
 
+
++ (CGFloat)heightForComment:(CommentObject *)comment {
+
+    CGFloat minHeight = 100; //kGeomHeightHorizontalListRow;
+    
+    UIFont *font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    
+    CGRect boundingBox = [comment.content boundingRectWithSize:CGSizeMake(230, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
+    
+    NSString *str = NSStringFromCGRect(boundingBox);
+    NSLog(@"the boundingbox is %@", str);
+    
+    return MAX(minHeight, CGRectGetHeight(boundingBox));
+    
+}
 
 
 

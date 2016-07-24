@@ -21,6 +21,7 @@
 #import "CommentObject.h"
 
 
+
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER  @"commentListTVC"
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"commentListTableCellEmpty"
 
@@ -30,6 +31,7 @@
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) TextFieldView *textFieldView;
 @property CGFloat keyBoardHeight;
+@property (nonatomic, strong) NSMutableArray *dummyCommentsArray;
 
 @end
 
@@ -90,6 +92,8 @@
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+    
+    [self initializingDummyComments];
 }
 
 //------------------------------------------------------------------------------
@@ -263,18 +267,27 @@
     cell.delegate = self;
     cell.vc = self;
     [cell provideUser:u];
+    
+    
+    CommentObject *comment = [_dummyCommentsArray objectAtIndex:indexPath.row];
+    [cell provideComment:comment];
 
     [cell fetchStats];
     
     return cell;
 }
 
+
+////testcell
+
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return kGeomHeightHorizontalListRow;
+    //return kGeomHeightHorizontalListRow;
+    CommentObject *comment = [_dummyCommentsArray objectAtIndex:indexPath.row];
+    return [CommentListTVCell heightForComment:comment];
 }
 
 //------------------------------------------------------------------------------
@@ -308,9 +321,15 @@
 // Purpose:
 //------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    @synchronized(self.usersArray)  {
-        return _usersArray.count;
+//    @synchronized(self.usersArray)  {
+//        return _usersArray.count;
+//    }
+    
+    @synchronized(self.dummyCommentsArray)  {
+        return _dummyCommentsArray.count;
     }
+    
+    
 }
 
 - (void)userTappedSectionHeader:(int)which {
@@ -320,6 +339,52 @@
 - (void) userTappedImageOfUser:(UserObject*)user; {
     [self goToProfile:user];
 }
+
+
+#pragma dummy data
+- (void)initializingDummyComments {
+    
+    
+    NSDictionary *dummyComments = @{kKeyCommentContent : @"comment # 1 Debbie Wasserman Schultz announced Sunday she will soon step down as Democratic National Committee chairwoman, amid the fallout over leaked emails indicating an anti-Bernie Sanders bias in her operation -- a stunning development just in .",
+                                    kKeyCommentMediaItemID : @"carlos",
+                                    kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                    kKeyCommentUserID : @"user Id1"
+                                    };
+    
+    NSDictionary *dummyComments1 = @{kKeyCommentContent : @"comment # 2 Debbie Wasserman Schultz announced Sunday she will soon step down as Democratic National Committee chairwoman, amid the fallout over leaked emails indicating an anti-Bernie Sanders bias in her operation -- a stunning development just in .",
+                                     kKeyCommentMediaItemID : @"foodiealloli",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id2"
+                                     };
+    NSDictionary *dummyComments2 = @{kKeyCommentContent : @"comment # 3 ... file inspector; Under Interface Builder Document uncheck",
+                                     kKeyCommentMediaItemID : @"waltrerosenkranz",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id3"
+                                     };
+    NSDictionary *dummyComments3 = @{kKeyCommentContent : @"comment # 4 ilder Document uncheck kjhjkh kjhfjkh kjshjkhjkh kjhkjh ;kjhfkjhhjkh khyh khfphdf 1234567890 1234567890",
+                                     kKeyCommentMediaItemID : @"waltrerosenkranz",
+                                     kKeyCommentMediaItemID : @"rociocarrasco",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id4"
+                                     };
+    NSDictionary *dummyComments4 = @{kKeyCommentContent : @"comment # 5",
+                                     kKeyCommentMediaItemID : @"ellazomatina",
+                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
+                                     kKeyCommentUserID : @"user Id5"
+                                     };
+    
+    NSArray *arrayOfDummyCommentDicts = @[dummyComments, dummyComments1, dummyComments2, dummyComments3, dummyComments4];
+    _dummyCommentsArray = [NSMutableArray new];
+    
+    for (NSDictionary *dummyCommentDict in arrayOfDummyCommentDicts) {
+        CommentObject *comment = [CommentObject commentFromDict:dummyCommentDict];
+        NSLog(@"the comment content is %@", comment.content);
+        [_dummyCommentsArray addObject:comment];
+    }
+    NSLog(@"the count is %lu", self.dummyCommentsArray.count);
+    
+}
+
 
 
 @end
