@@ -909,22 +909,25 @@ static CGFloat kNextPhotoTolerance = 40;
     [vc.aiv startAnimating];
     [self.navigationController pushViewController:vc animated:YES];
     
-//    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            weakVC.usersArray = users.mutableCopy;
-//            [weakVC.aiv stopAnimating];
-//        });
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        [weakVC.aiv stopAnimating];
-//    }];
-    
-    [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
+    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakVC.commentsArray = comments.mutableCopy;
+            weakVC.usersArray = users.mutableCopy;
             [weakVC.aiv stopAnimating];
-        });    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            [weakVC.aiv stopAnimating];
-        }];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [weakVC.aiv stopAnimating];
+    }];
+    
+//
+//    weakVC.commentsArray = _dummyCommentsArray.mutableCopy;
+//    
+//    [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            weakVC.commentsArray = comments.mutableCopy;
+//            [weakVC.aiv stopAnimating];
+//        });    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            [weakVC.aiv stopAnimating];
+//        }];
 }
 
 
