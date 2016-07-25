@@ -20,6 +20,7 @@
 #import "UserStatsObject.h"
 #import "LocationManager.h"
 #import "AFURLRequestSerialization.h"
+#import "CommentObject.h"
 
 //extern NSString *const kKeyName;
 
@@ -463,6 +464,17 @@ static NSUInteger kAllUsersID = 0; //means user not specified so trying to get i
 + (AFHTTPRequestOperation *)getUserRelevantMediaItemForRestaurant:(NSUInteger)restaurantID
                                                           success:(void (^)(NSArray *mediaItems))success
                                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
+//comments
+
++ (AFHTTPRequestOperation *)uploadComment:(CommentObject *)comment
+                                 success:(void (^)())success
+                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
+
++ (AFHTTPRequestOperation *)getCommentsFromMediaItem:(MediaItemObject *)mediaItem
+                                             success:(void (^)(NSArray *comments))success
+                                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 // Auto complete
 

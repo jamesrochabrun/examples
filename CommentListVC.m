@@ -83,15 +83,7 @@
     [_textFieldView.postTextButton addTarget:self action:@selector(postComment:) forControlEvents:UIControlEventTouchUpInside];
     _textFieldView.textField.delegate = self;
     [self.view addSubview:_textFieldView];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
+
     
     [self initializingDummyComments];
 }
@@ -101,12 +93,17 @@
 // Purpose:
 //------------------------------------------------------------------------------
 
+- (void)postComment:(UIButton*)sender {
+    [self dismissKeyboard:sender];
+    _textFieldView.textField.text = @"";
+    
+}
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     
     CommentObject *comment = [CommentObject new];
     comment.content = textField.text;
-    NSLog(@"this is the content %@", comment.content);
+    NSLog(@"this is the content on begin editing %@", comment.content);
     
 }
 
@@ -114,8 +111,15 @@
     
     CommentObject *comment = [CommentObject new];
     comment.content = textField.text;
-    NSLog(@"this is the content %@", comment.content);
-    [self.tableUsers setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    NSLog(@"this is the content on end editing %@", comment.content);
+    //[self.tableUsers setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+    [_dummyCommentsArray addObject:comment];
+    
+    [OOAPI uploadComment:comment success:^{
+        NSLog(@"success");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"error from the commentlistVC : %@", error);
+    }];
     
 }
 
@@ -149,12 +153,6 @@
     _keyBoardHeight = 0.0f;
 }
 
-- (void)postComment:(UIButton*)sender {
-    NSLog(@"comment");
-    [self dismissKeyboard:sender];
-    _textFieldView.textField.text = @"";
-    
-}
 
 //----------------------------------------------------------------------
 
@@ -192,6 +190,15 @@
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
     self.tabBarController.tabBar.hidden = YES;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
 }
 
 - (void)refreshIfNeeded {
@@ -403,10 +410,8 @@
     
     for (NSDictionary *dummyCommentDict in arrayOfDummyCommentDicts) {
         CommentObject *comment = [CommentObject commentFromDict:dummyCommentDict];
-        NSLog(@"the comment content is %@", comment.content);
         [_dummyCommentsArray addObject:comment];
     }
-    NSLog(@"the count is %lu", self.dummyCommentsArray.count);
     
 }
 

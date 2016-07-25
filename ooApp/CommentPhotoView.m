@@ -16,19 +16,9 @@
     self = [super init];
     if (self) {
         _userNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userNameButton setTitle:@"foodie food foodo" forState:UIControlStateNormal];
-        [_userNameButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
-        [_userNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-        
         [self addSubview:_userNameButton];
         
         _userCommentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userCommentButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
-        [_userCommentButton setTitle:@"; klnkklnkklnkklnkklnk klnk klnk klnk klnk klnk klnk klnk klnk klnk  klnk klnk klnk esto es el final de esto y vamos a ver como se crece y crece " forState:UIControlStateNormal];
-        _userCommentButton.titleLabel.numberOfLines = 0;
-        _userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
-        [_userCommentButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
-        
         [self addSubview:_userCommentButton];
         
     }
@@ -42,15 +32,6 @@
     CGFloat w = self.bounds.size.width;
     CGFloat margin = 8;
     CGFloat space = 4;
-    
-    //    frame = _userNameButton.frame;
-    //    CGFloat width = [_userNameButton.titleLabel sizeThatFits:CGSizeMake(FLT_MAX, FLT_MAX)].width;
-    //    NSLog(@"THE WIDTH OF THE USERNAMEBUTTON IS %f", width);
-    //    frame.size.width = width;
-    //    frame.size.height = 0;
-    //    frame.origin.x = margin;
-    //    frame.origin.y = CGRectGetMinY(self.bounds) + 20;
-    //    _userNameButton.frame = frame;
     
     frame = _userNameButton.frame;
     frame.size.height = kGeomDimensionsIconButton;
@@ -74,7 +55,7 @@
     frame.size.height = _userCommentButton.frame.size.height + margin + space;
     self.frame = frame;
     
-    [DebugUtilities addBorderToViews:@[_userNameButton, _userCommentButton, self]];
+    //[DebugUtilities addBorderToViews:@[_userNameButton, _userCommentButton, self]];
     
 }
 

@@ -59,9 +59,9 @@
 @property (nonatomic, strong) CommentPhotoView *commentPhotoView;
 @property (nonatomic, strong) CommentPhotoView *secondCommentView;
 @property (nonatomic, strong) NSMutableArray *commentsButtonArray;
+@property (nonatomic, strong) NSArray *rangeOfFiveArray;
 
 #pragma testing NewLayout properties
-
 @property (nonatomic, strong) NSMutableArray *dummyCommentsArray;
 
 
@@ -206,16 +206,12 @@ static CGFloat kNextPhotoTolerance = 40;
         _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [_seeYummersButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
+
         
-        _commentsButtonArray = [NSMutableArray new];
-        CommentPhotoView *cPV;
-        for (int i = 0; i <5; i++) {
-            cPV = [CommentPhotoView new];
-            [_commentsButtonArray addObject:cPV];
-        }
+        [self initializingDummyComments];
 
          //        [DebugUtilities addBorderToViews:@[self.view]];
-        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
+        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
     }
     return self;
 }
@@ -415,31 +411,31 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)initializingDummyComments {
     
     
-    NSDictionary *dummyComments = @{kKeyCommentContent : @"comment # 1",
+    NSDictionary *dummyComments = @{kKeyCommentContent : @"comment # 1 Es un hecho establecido hace demasiado tiempo que un lector se distraerá con el contenido del texto de un sitio mientras que mira su diseño. El punto de usar Lorem Ipsum es que tiene una distribución más o menos normal de las letras, al contrario de " ,
                                     kKeyCommentMediaItemID : @"userMediaItem",
                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                    kKeyCommentUserID : @"user Id1"
+                                    kKeyCommentUserID : @"@josette"
                                     };
     
-    NSDictionary *dummyComments1 = @{kKeyCommentContent : @"comment # 2",
+    NSDictionary *dummyComments1 = @{kKeyCommentContent : @"comment # 2 the layout for the views are working !!",
                                      kKeyCommentMediaItemID : @"userMediaItem",
                                      kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id2"
+                                     kKeyCommentUserID : @"@walt"
                                      };
-    NSDictionary *dummyComments2 = @{kKeyCommentContent : @"comment # 3",
+    NSDictionary *dummyComments2 = @{kKeyCommentContent : @"comment # 3 Al contrario del pensamiento popular, el texto de Lorem Ipsum no es simplemente texto aleatorio",
                                      kKeyCommentMediaItemID : @"userMediaItem",
                                      kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id3"
+                                     kKeyCommentUserID : @"@jorge"
                                      };
     NSDictionary *dummyComments3 = @{kKeyCommentContent : @"comment # 4",
                                      kKeyCommentMediaItemID : @"userMediaItem",
                                      kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id4"
+                                     kKeyCommentUserID : @"@James"
                                      };
     NSDictionary *dummyComments4 = @{kKeyCommentContent : @"comment # 5",
                                      kKeyCommentMediaItemID : @"userMediaItem",
                                      kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id5"
+                                     kKeyCommentUserID : @"@Anuj"
                                      };
     
     NSArray *arrayOfDummyCommentDicts = @[dummyComments, dummyComments1, dummyComments2, dummyComments3, dummyComments4];
@@ -447,10 +443,25 @@ static CGFloat kNextPhotoTolerance = 40;
     
     for (NSDictionary *dummyCommentDict in arrayOfDummyCommentDicts) {
         CommentObject *comment = [CommentObject commentFromDict:dummyCommentDict];
-        NSLog(@"the comment content is %@", comment.content);
         [_dummyCommentsArray addObject:comment];
     }
     NSLog(@"the count is %lu", self.dummyCommentsArray.count);
+    
+    _commentsButtonArray = [NSMutableArray new];
+    CommentPhotoView *cPV;
+    for (int i = 0; i < arrayOfDummyCommentDicts.count; i++) {
+        cPV = [CommentPhotoView new];
+        NSDictionary *dictComment = arrayOfDummyCommentDicts[i];
+        NSString *userName = [dictComment objectForKey:kKeyCommentUserID];
+        NSString *userComment = [dictComment objectForKey: kKeyCommentContent];
+        [cPV.userNameButton withText:userName fontSize:kGeomFontSizeH4 width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
+        [cPV.userNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        
+        [cPV.userCommentButton withText:userComment fontSize:kGeomFontSizeH4 width:0 height:0 backgroundColor:kColorClear textColor:kColorGrayMiddle  borderColor:kColorClear target:self selector:@selector(showComments)];
+        cPV.userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        cPV.userCommentButton.titleLabel.numberOfLines = 0;
+        [_commentsButtonArray addObject:cPV];
+    }
     
 }
 
@@ -873,8 +884,8 @@ static CGFloat kNextPhotoTolerance = 40;
     
     [vc.view bringSubviewToFront:vc.aiv];
     [vc.aiv startAnimating];
-    
     [self.navigationController pushViewController:vc animated:YES];
+    
     [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
         dispatch_async(dispatch_get_main_queue(), ^{
             weakVC.usersArray = users.mutableCopy;
@@ -883,6 +894,7 @@ static CGFloat kNextPhotoTolerance = 40;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [weakVC.aiv stopAnimating];
     }];
+
 }
 
 - (void)showComments {
@@ -895,16 +907,24 @@ static CGFloat kNextPhotoTolerance = 40;
     
     [vc.view bringSubviewToFront:vc.aiv];
     [vc.aiv startAnimating];
-    
     [self.navigationController pushViewController:vc animated:YES];
-    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
+    
+//    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            weakVC.usersArray = users.mutableCopy;
+//            [weakVC.aiv stopAnimating];
+//        });
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        [weakVC.aiv stopAnimating];
+//    }];
+    
+    [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakVC.usersArray = users.mutableCopy;
+            weakVC.commentsArray = comments.mutableCopy;
             [weakVC.aiv stopAnimating];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [weakVC.aiv stopAnimating];
-    }];
+        });    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            [weakVC.aiv stopAnimating];
+        }];
 }
 
 
@@ -1265,10 +1285,6 @@ static CGFloat kNextPhotoTolerance = 40;
                 weakSelf.userViewButton.user = user;
                 [weakSelf.userButton setTitle:userName forState:UIControlStateNormal];
                 [weakSelf.userButton sizeToFit];
-                
-                //test
-                CommentPhotoView *c = [_commentsButtonArray firstObject];
-                c.userNameButton.titleLabel.text = userName;
         
                 [weakSelf.view bringSubviewToFront:_userViewButton];
                 [weakSelf.view setNeedsLayout];
