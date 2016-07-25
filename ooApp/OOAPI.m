@@ -108,7 +108,6 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
                                         success:(void (^)())success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
     
-
     if  (!comment) {
         failure (nil,nil);
         return nil;

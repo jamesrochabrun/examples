@@ -21,7 +21,6 @@
 #import "CommentObject.h"
 
 
-
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER  @"commentListTVC"
 #define COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"commentListTableCellEmpty"
 
