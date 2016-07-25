@@ -206,6 +206,8 @@
 //------------------------------------------------------------------------------
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 //------------------------------------------------------------------------------
@@ -232,8 +234,6 @@
     _tableUsers.frame = frame;
     
 }
-
-
 
 #pragma TableView methods
 
@@ -277,8 +277,35 @@
     return cell;
 }
 
+//------------------------------------------------------------------------------
+// Name:    editingStyleForRowAtIndexPath
+// Purpose: Delete cells
+//------------------------------------------------------------------------------
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleDelete;
+}
 
-////testcell
+//- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+//    return YES;
+//}
+
+-(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewRowAction *updateButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:kFontIconCirclePlus handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+                                    {
+                                    //update comment?
+                                    }];
+    updateButton.backgroundColor = UIColorRGBA(kColorGrayMiddle);
+    UITableViewRowAction *deleteButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+                                     {
+                                   //delete comment
+                                     }];
+    deleteButton.backgroundColor =  UIColorRGBA(kColorTextActive);  //arbitrary color
+    
+    return @[updateButton, deleteButton];
+}
+
+
 
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
@@ -328,8 +355,6 @@
     @synchronized(self.dummyCommentsArray)  {
         return _dummyCommentsArray.count;
     }
-    
-    
 }
 
 - (void)userTappedSectionHeader:(int)which {
