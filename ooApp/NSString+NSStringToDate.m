@@ -11,16 +11,12 @@
 
 @implementation NSString (NSStringToDate)
 
-+ (NSString *)getTimeAgoString:(NSString *)dateStr {
++ (NSString *)getTimeAgoString:(NSDate *)date {
     
-    if(!dateStr) {
+    if(!date) {
         return @"";
     }
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
-    NSDate *date = [dateFormatter dateFromString:dateStr];
-    
+
     NSInteger seconds = -1 * [date timeIntervalSinceNow];
     NSString *timeStamp;
     

@@ -53,8 +53,9 @@ NSString *const kKeyMediaItemUpdatedAt = @"updated_at";
     mio.isUserYummed =  [dict[kKeyMediaItemIsUserYummed] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemIsUserYummed] boolValue];
     mio.sourceUsername = [[dict objectForKey:kKeyMediaItemSourceUsername] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyMediaItemSourceUsername];
     mio.restaurantID = parseUnsignedIntegerOrNullFromServer(dict [kKeyMediaItemRestaurantID]);
-    mio.createdAt = parseStringOrNullFromServer(dict [kKeyMediaItemCreatedAt]);
-    mio.updatedAt = parseStringOrNullFromServer(dict [kKeyMediaItemUpdatedAt]);
+    mio.createdAt = parseUTCDateFromServer(dict [kKeyMediaItemCreatedAt]);
+    mio.updatedAt = parseUTCDateFromServer(dict [kKeyMediaItemUpdatedAt]);
+    
     return mio;
 }
 

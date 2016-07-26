@@ -20,10 +20,6 @@
 #import "TextFieldView.h"
 #import "CommentObject.h"
 
-
-#define COMMENT_LIST_TABLE_REUSE_IDENTIFIER  @"commentListTVC"
-#define COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"commentListTableCellEmpty"
-
 //==============================================================================
 @interface CommentListVC ()<UITextFieldDelegate>
 @property (nonatomic,strong) UITableView *tableUsers;
@@ -36,6 +32,11 @@
 
 @implementation CommentListVC
 
+NSString *const kCommentsTableReuseIdentifier = @"commentListTVC";
+NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty";
+
+
+
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
 // Purpose:
@@ -47,8 +48,8 @@
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
-    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-
+    self.view.backgroundColor = UIColorRGBA(kColorGrayMiddle);
+    
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
            initWithHeader: _desiredTitle ?: LOCAL(@"Users")
@@ -59,8 +60,8 @@
     //here is what creates a new instance of a tableView
     self.tableUsers = makeTable(self.view,self);
     _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [_tableUsers registerClass:[CommentListTVCell class] forCellReuseIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER];
-    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
+    [_tableUsers registerClass:[CommentListTVCell class] forCellReuseIdentifier:kCommentsTableReuseIdentifier];
+    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:kCommentsTableReuseIdentifierEmpty];
     [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
     _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
@@ -79,11 +80,15 @@
     
     //creating the instance of the subclass of UIView that contains the textfield that takes the input(user comment);
     _textFieldView = [TextFieldView new];
+    _textFieldView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_textFieldView.postTextButton addTarget:self action:@selector(postComment:) forControlEvents:UIControlEventTouchUpInside];
     _textFieldView.textField.delegate = self;
     [self.view addSubview:_textFieldView];
+    _textFieldView.textField.keyboardAppearance = UIKeyboardTypeAlphabet;
+    _textFieldView.textField.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
+    UserObject *user = [Settings sharedInstance].userObject;
+    _textFieldView.textField.placeholder = [NSString stringWithFormat:@"add a comment as %@", user.username];
 
-    
     [self initializingDummyComments];
 }
 
@@ -95,7 +100,6 @@
 - (void)postComment:(UIButton*)sender {
     [self dismissKeyboard:sender];
     _textFieldView.textField.text = @"";
-    
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
@@ -114,12 +118,29 @@
     //[self.tableUsers setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
     [_dummyCommentsArray addObject:comment];
     
-    [OOAPI uploadComment:comment success:^{
-        NSLog(@"success");
+    [OOAPI uploadComment:comment forObject:_mio success:^(CommentObject *comment) {
+        if (comment) {
+            NSLog(@"success from commentlistvc");
+        } else {
+            NSLog(@"failed");
+        }
+            
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"error from the commentlistVC : %@", error);
+        NSLog(@"the error is %@", error);
     }];
+ 
     
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    // Prevent crashing undo bug – see note below.
+    if(range.length + range.location > textField.text.length)
+    {
+        return NO;
+    }
+    
+    NSUInteger newLength = [textField.text length] + [string length] - range.length;
+    return newLength <= 250;
 }
 
 - (void) dismissKeyboard:(id)sender {
@@ -136,7 +157,7 @@
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:.3];
     [UIView setAnimationBeginsFromCurrentState:TRUE];
-    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - deltaHeight, self.view.frame.size.width, self.view.frame.size.height);
+    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - deltaHeight , self.view.frame.size.width, self.view.frame.size.height);
     
     [UIView commitAnimations];
     
@@ -147,7 +168,7 @@
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:.3];
     [UIView setAnimationBeginsFromCurrentState:TRUE];
-    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + _keyBoardHeight, self.view.frame.size.width, self.view.frame.size.height);
+    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + _keyBoardHeight , self.view.frame.size.width, self.view.frame.size.height);
     [UIView commitAnimations];
     _keyBoardHeight = 0.0f;
 }
@@ -188,7 +209,6 @@
     ANALYTICS_SCREEN(@(object_getClassName(self)));
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-    self.tabBarController.tabBar.hidden = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -230,8 +250,7 @@
 //------------------------------------------------------------------------------
 - (void)doLayout {
     
-    _textFieldView.frame = CGRectMake(0, CGRectGetMaxY(self.view.bounds) - 50, self.view.bounds.size.width, 50);
-    _textFieldView.backgroundColor = [UIColor grayColor];
+    _textFieldView.frame = CGRectMake(0, CGRectGetMaxY(self.view.bounds) - kGeomHeightTabBar, self.view.bounds.size.width, kGeomHeightTabBar);
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
     frame.origin.y = self.view.bounds.origin.y;
@@ -256,7 +275,7 @@
 
     if (!u) {
         UITableViewCell *cell;
-        cell = [tableView dequeueReusableCellWithIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifierEmpty forIndexPath:indexPath];
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         cell.textLabel.textAlignment=NSTextAlignmentCenter;
         cell.textLabel.text =  @"Alas there are none.";
@@ -266,7 +285,7 @@
     }
     
     CommentListTVCell *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:COMMENT_LIST_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifier forIndexPath:indexPath];
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
     cell.selectionStyle = UITableViewCellSeparatorStyleNone;

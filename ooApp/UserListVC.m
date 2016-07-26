@@ -17,9 +17,6 @@
 #import "Settings.h"
 #import "ProfileVC.h"
 
-#define USER_LIST_TABLE_REUSE_IDENTIFIER  @"userListTVC"
-#define USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"userListTableCellEmpty"
-
 //==============================================================================
 
 @interface UserListTableSectionHeader ()
@@ -27,6 +24,9 @@
 @end
 
 @implementation UserListTableSectionHeader
+
+NSString *const kUsersTableReuseIdentifier = @"userListTVC";
+NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
 
 - (instancetype)initWithExpandedFlag:(BOOL)expanded
 {
@@ -102,8 +102,8 @@
     
     self.tableUsers = makeTable(self.view,self);
     _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [_tableUsers registerClass:[UserListTVC class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER];
-    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
+    [_tableUsers registerClass:[UserListTVC class] forCellReuseIdentifier:kUsersTableReuseIdentifier];
+    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:kUsersTableReuseIdentifierEmpty];
     [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
     _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
@@ -182,6 +182,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
 }
 
 //------------------------------------------------------------------------------
@@ -243,7 +244,7 @@
     
     if (!u) {
         UITableViewCell *cell;
-        cell = [tableView dequeueReusableCellWithIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:kUsersTableReuseIdentifierEmpty forIndexPath:indexPath];
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         cell.textLabel.textAlignment=NSTextAlignmentCenter;
         cell.textLabel.text=  @"Alas there are none.";
@@ -253,7 +254,7 @@
     }
     
     UserListTVC *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    cell = [tableView dequeueReusableCellWithIdentifier:kUsersTableReuseIdentifier forIndexPath:indexPath];
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     cell.textLabel.textAlignment=NSTextAlignmentCenter;
     cell.selectionStyle= UITableViewCellSeparatorStyleNone;

@@ -26,6 +26,8 @@
 @property (nonatomic, strong) UserObject* user;
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) NSMutableArray *usersArray;
+@property (nonatomic, strong) NavTitleObject *nto;
+
 
 
 @end

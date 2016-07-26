@@ -46,10 +46,14 @@ extern NSString *const kKeyMediaItemCreatedAt;
 @property (nonatomic) BOOL isUserYummed;
 @property (nonatomic) NSUInteger yumCount;
 @property (nonatomic, strong) NSString *sourceUsername;
-@property (nonatomic, strong) NSString *createdAt;
-@property (nonatomic, strong) NSString *updatedAt;
+@property (nonatomic, strong) NSDate *createdAt;
+@property (nonatomic, strong) NSDate *updatedAt;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryOfMediaItem;
 
 @end
+
+
+
+

@@ -64,7 +64,6 @@
 #pragma testing NewLayout properties
 @property (nonatomic, strong) NSMutableArray *dummyCommentsArray;
 
-
 @end
 
 static CGFloat kDismissTolerance = 20;
@@ -194,7 +193,7 @@ static CGFloat kNextPhotoTolerance = 40;
         [_yumButton addSubview:_numYumsLabel];
     
         _seeCommentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showComments)];
+        [_seeCommentsButton withText:@"see all comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showComments)];
         [_seeCommentsButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _seeCommentsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [_seeCommentsButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
@@ -328,24 +327,6 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
     _userButton.frame = frame;
     
-//    if (_mio.source == kMediaItemTypeOomami) {
-//        [_numYums sizeToFit];
-//        
-//        frame = _yumButton.frame;
-//        frame.size = CGSizeMake(kGeomDimensionsIconButton, kGeomDimensionsIconButton);
-//        frame.origin = CGPointMake(width(self.view) - kGeomDimensionsIconButton - kGeomSpaceEdge, CGRectGetMaxY(_iv.frame)+kGeomSpaceInter);
-//        _yumButton.frame = frame;
-//        
-//        frame = _numYums.frame;
-//        frame.origin = CGPointMake(width(self.view) - width(_numYums) - kGeomSpaceEdge, CGRectGetMaxY(_yumButton.frame));
-//        frame.size.height = kGeomDimensionsIconButton;
-//        _numYums.frame = frame;
-//        _numYums.center = CGPointMake(_yumButton.center.x, _numYums.center.y);
-//    } else {
-//        _yumButton.frame = CGRectZero;
-//        _numYums.frame = CGRectZero;
-//    }
-    
     frame = _mioDateCreated.frame;
     frame.size.height = kGeomDimensionsIconButton;
     CGFloat w2 = [_mioDateCreated sizeThatFits:CGSizeMake(0, frame.size.height)].width;
@@ -400,7 +381,6 @@ static CGFloat kNextPhotoTolerance = 40;
         frame.size.width = self.view.frame.size.width;
         y +=  frame.size.height;
         v.frame = frame;
-        NSLog(@"cpv.frame = %@", NSStringFromCGRect(v.frame));
     }
     
     CommentPhotoView *cPV = [_commentsButtonArray lastObject];
@@ -902,13 +882,16 @@ static CGFloat kNextPhotoTolerance = 40;
     CommentListVC *vc = [[CommentListVC alloc] init];
     vc.desiredTitle = @"Comments";
     vc.user = _user;
+    vc.mio = _mio;
+    vc.navigationController.delegate = self;
+    vc.modalPresentationStyle = UIModalPresentationCurrentContext;
     
     __weak CommentListVC *weakVC = vc;
     
     [vc.view bringSubviewToFront:vc.aiv];
     [vc.aiv startAnimating];
-    [self.navigationController pushViewController:vc animated:YES];
     
+    [self.navigationController pushViewController:vc animated:YES];
     [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
         dispatch_async(dispatch_get_main_queue(), ^{
             weakVC.usersArray = users.mutableCopy;
@@ -917,19 +900,38 @@ static CGFloat kNextPhotoTolerance = 40;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [weakVC.aiv stopAnimating];
     }];
-    
-//
+
+    //////TEST/////
+
+//    UINavigationController *navigationController =
+//    [[UINavigationController alloc] initWithRootViewController:vc];
+//    
+//    //now present this navigation controller modally
+//    [self presentViewController:navigationController
+//                       animated:YES
+//                     completion:^{
+//                         
+//                     }];
+  
+
 //    weakVC.commentsArray = _dummyCommentsArray.mutableCopy;
 //    
 //    [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
 //        dispatch_async(dispatch_get_main_queue(), ^{
 //            weakVC.commentsArray = comments.mutableCopy;
+//            
+//            NSLog(@"the comment array count is %lu", comments.count);
+//            
+//            for (CommentObject *comment in comments) {
+//                NSLog(@"the content is %@", comment.content);
+//            }
+//            
 //            [weakVC.aiv stopAnimating];
 //        });    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //            [weakVC.aiv stopAnimating];
 //        }];
+    
 }
-
 
 - (void)close {
     if ([_delegate respondsToSelector:@selector(viewPhotoVCClosed:)]) {

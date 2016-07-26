@@ -105,34 +105,44 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 
 
 + (AFHTTPRequestOperation *)uploadComment:(CommentObject *)comment
-                                        success:(void (^)())success
+                                forObject:(MediaItemObject *)mio
+                                        success:(void (^)(CommentObject *))success
                                         failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
     
-    if  (!comment) {
+    if  (!comment || !mio) {
         failure (nil,nil);
         return nil;
     }
     
-    UserObject *userInfo = [Settings sharedInstance].userObject;
-    NSUInteger userID = userInfo.userID;
-    NSLog(@"the user id is %lu", userID);
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    if (!user || !user.userID) {
+        failure (nil,nil);
+        return nil;
+    }
+    
     NSLog(@"the comment is %@", comment.content);
     
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/comments" , kHTTPProtocol, [OOAPI URL] , (unsigned long) userID];
+      NSString *str = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/comments", kHTTPProtocol, [OOAPI URL], (unsigned long)mio.mediaItemId];
     
-    NSLog(@"%@", urlString);
+    NSLog(@"%@", str);
     
-    NSDictionary *parameters = @{kKeyCommentMediaItemCommentID : [NSString stringWithFormat:@"%lu", (unsigned long)comment.mediaItemCommentID],
-                                 kKeyCommentUserID : [NSString stringWithFormat:@"%lu", (unsigned long)comment.userID],
-                                 kKeyCommentMediaItemID : [NSString stringWithFormat:@"%lu", (unsigned long)comment.mediaItemID],
+    NSDictionary *parameters = @{
+                                 //kKeyCommentMediaItemCommentID : [NSString stringWithFormat:@"%lu", (unsigned long)comment.mediaItemCommentID],
+                                 kKeyCommentUserID : [NSString stringWithFormat:@"%lu", (unsigned long)user.userID],
+                                 //kKeyCommentMediaItemID : [NSString stringWithFormat:@"%lu", (unsigned long)comment.mediaItemID],
                                  kKeyCommentContent : comment.content};
     
-    AFHTTPRequestOperation *op = [rm POST:urlString parameters:parameters
+    
+    
+    AFHTTPRequestOperation *op = [rm POST:str parameters:parameters
                                  success:^(id responseObject) {
-                                     success(responseObject);
+                                     CommentObject *co = [CommentObject commentFromDict:responseObject];
+                                     
+                                     success(co);
                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                                      failure(operation, error);
                                  }];
@@ -140,9 +150,6 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     NSLog(@"the operation returns %@", op.responseString);
     return op;
 }
-
-//+ (void)uploadComment:(CommentObject *)comment
-//              success:
 
 
 + (AFHTTPRequestOperation *)setMediaItemCaption:(NSUInteger)mediaItemID
@@ -3466,12 +3473,12 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 //#ifdef ADHOC
 //    APP.usingStagingServer = YES;
 //    if (APP.usingStagingServer) {
-        return kOOURLStage;
+     return kOOURLStage;
 //    } else {
-//        return kOOURLProduction;
+ //      return kOOURLProduction;
 //    }
 //#else
-    //return kOOURLProduction;
+  //return kOOURLProduction;
 //#endif
 }
 
