@@ -16,9 +16,15 @@
     self = [super init];
     if (self) {
         _userNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_userNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
+        [_userNameButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular  size: kGeomFontSizeH4]];
         [self addSubview:_userNameButton];
         
         _userCommentButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_userCommentButton setTitleColor:UIColorRGBA(kColorBlack) forState:UIControlStateNormal];
+        [_userCommentButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular  size: kGeomFontSizeH4]];
+        _userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        _userCommentButton.titleLabel.numberOfLines = 0;
         [self addSubview:_userCommentButton];
         
     }
@@ -44,7 +50,7 @@
     
     frame = _userCommentButton.frame;
     frame.size.width = w - _userNameButton.frame.size.width - space - margin * 3;
-    CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width,0)].height;
+    CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height;
     frame.size.height = height;
     frame.origin.x = CGRectGetMaxX(_userNameButton.frame) + space;
     frame.origin.y = CGRectGetMidY(_userNameButton.frame) - 8;

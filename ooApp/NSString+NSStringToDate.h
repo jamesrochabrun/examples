@@ -17,6 +17,6 @@
 
 
 @interface NSString (NSStringToDate)
-+ (NSString *)getTimeAgoString:(NSString *)dateStr;
++ (NSString *)getTimeAgoString:(NSDate *)date;
 
 @end
