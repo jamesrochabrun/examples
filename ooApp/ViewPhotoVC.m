@@ -219,10 +219,10 @@ static CGFloat kNextPhotoTolerance = 40;
     
     _commentPhotoViewsArray = [NSMutableArray new];
     
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 11; i++) {
         CommentPhotoView *cPV;
         cPV = [CommentPhotoView new];
-        [cPV.userNameButton addTarget:self action:@selector(showYums) forControlEvents:UIControlEventTouchUpInside];
+        [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
     }
@@ -275,7 +275,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 
 - (void)setMio:(MediaItemObject *)mio {
-        
+    
     if (mio == _mio) return;
     _mio = mio;
     
@@ -356,7 +356,6 @@ static CGFloat kNextPhotoTolerance = 40;
         }];
         //get the state of the yum button for this user
     }
-    
     //get comments
     [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -364,17 +363,19 @@ static CGFloat kNextPhotoTolerance = 40;
             for (int i = 0; i < _commentsArray.count; i++) {
                 //here goes the content
                 CommentObject *comment = [_commentsArray objectAtIndex:i];
-                NSLog(@"the content is %@", comment.content);
                 CommentPhotoView *cPV = [weakSelf.commentPhotoViewsArray objectAtIndex:i];
-                NSLog(@"the cpv is %@", cPV);
                 [cPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
+                [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
+                    [cPV.userNameButton setTitle:user.username forState:UIControlStateNormal];
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    NSLog(@"ERROR: failed to get user: %@", error);;
+                }];
             }
-           // weakSelf.numCommentsLabel.text = [[comments objectAtIndex:0] content];
+            weakSelf.numCommentsLabel.text = [NSString stringWithFormat:@"%lu", comments.count];
             
         });    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"the error is %@", error);
         }];
-    
     
     if (_mio.sourceUserID) {
         __weak ViewPhotoVC *weakSelf = self;
@@ -983,25 +984,6 @@ static CGFloat kNextPhotoTolerance = 40;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [weakVC.aiv stopAnimating];
     }];
-
-    //////TEST/////
-
-//    UINavigationController *navigationController =
-//    [[UINavigationController alloc] initWithRootViewController:vc];
-//    
-//    //now present this navigation controller modally
-//    [self presentViewController:navigationController
-//                       animated:YES
-//                     completion:^{
-//                         
-//                     }];
-    
-    
-  
-
-//    weakVC.commentsArray = _dummyCommentsArray.mutableCopy;
-
-    
 }
 
 - (void)close {
