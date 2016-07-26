@@ -54,6 +54,8 @@
     frame.origin.y = CGRectGetMidY(_userNameButton.frame);//CGRectGetMidY(_userNameButton.frame) - 8;
     _userCommentButton.frame = frame;
     
+    NSLog(@"the height is f = %f", height);
+    
     frame = self.frame;
     frame.size.width = self.frame.size.width;
     frame.size.height = _userCommentButton.frame.size.height + margin + kGeomSpaceInter;

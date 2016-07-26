@@ -206,27 +206,21 @@ static CGFloat kNextPhotoTolerance = 40;
         [_seeYummersButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
 
-        [self createLayoutForComments];
+        _commentPhotoViewsArray = [NSMutableArray new];
         
+        for (int i = 0; i < 15; i++) {
+            CommentPhotoView *cPV;
+            cPV = [CommentPhotoView new];
+            [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
+            [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
+            [_commentPhotoViewsArray addObject:cPV];
+        }
          //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
     }
     return self;
 }
 
-
-- (void)createLayoutForComments {
-    
-    _commentPhotoViewsArray = [NSMutableArray new];
-    
-    for (int i = 0; i < 11; i++) {
-        CommentPhotoView *cPV;
-        cPV = [CommentPhotoView new];
-        [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
-        [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
-        [_commentPhotoViewsArray addObject:cPV];
-    }
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -270,10 +264,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
 }
 
-
-
-
-
 - (void)setMio:(MediaItemObject *)mio {
     
     if (mio == _mio) return;
@@ -284,6 +274,7 @@ static CGFloat kNextPhotoTolerance = 40;
     } else {
         [_optionsButton removeFromSuperview];
     }
+    NSLog(@":the media item is %lu", (unsigned long)_mio.mediaItemId);
     
     UserObject *user = [Settings sharedInstance].userObject;
     
@@ -513,7 +504,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
     //comments View
     y = CGRectGetMaxY(_seeCommentsButton.frame);
-    
     for (CommentPhotoView *v in _commentPhotoViewsArray) {
         frame = v.frame;
         frame.origin.x = 0;
@@ -525,7 +515,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
     CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
     _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
-    
 }
 
 - (void)showComponents:(BOOL)show {
@@ -928,7 +917,6 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-
 - (void)showProfile {
     if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
         [_delegate viewPhotoVC:self showProfile:_user];
@@ -972,17 +960,16 @@ static CGFloat kNextPhotoTolerance = 40;
     
     __weak CommentListVC *weakVC = vc;
     
-    [vc.view bringSubviewToFront:vc.aiv];
-    [vc.aiv startAnimating];
-    
     [self.navigationController pushViewController:vc animated:YES];
-    [OOAPI getMediaItemYummers:_mio success:^(NSArray *users) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            weakVC.usersArray = users.mutableCopy;
-            [weakVC.aiv stopAnimating];
-        });
+    [vc.aiv startAnimating];
+    [vc.view bringSubviewToFront:vc.aiv];
+    [weakVC.aiv stopAnimating];
+    [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
+        weakVC.commentsArray = comments.mutableCopy;
+        NSLog(@":this method returns %lu", comments.count);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [weakVC.aiv stopAnimating];
+        
     }];
 }
 

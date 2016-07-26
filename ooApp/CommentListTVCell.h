@@ -19,7 +19,6 @@
 
 @interface CommentListTVCell : UITableViewCell <OOUserViewDelegate, UnverifiedUserVCDelegate>
 - (void)provideUser:(UserObject *)user;
-- (void)fetchStats;
 - (void)provideComment:(CommentObject *)comment;
 + (CGFloat)heightForComment:(CommentObject *)comment;
 

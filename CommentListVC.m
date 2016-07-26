@@ -26,7 +26,6 @@
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) TextFieldView *textFieldView;
 @property CGFloat keyBoardHeight;
-@property (nonatomic, strong) NSMutableArray *dummyCommentsArray;
 
 @end
 
@@ -35,7 +34,10 @@
 NSString *const kCommentsTableReuseIdentifier = @"commentListTVC";
 NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty";
 
-
+- (void)dealloc {
+    [_commentsArray removeAllObjects];
+    _commentsArray = nil;
+}
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -43,6 +45,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //------------------------------------------------------------------------------
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _commentsArray = [NSMutableArray new];
     
     _needRefresh = YES;
     
@@ -88,8 +92,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     _textFieldView.textField.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
     UserObject *user = [Settings sharedInstance].userObject;
     _textFieldView.textField.placeholder = [NSString stringWithFormat:@"add a comment as %@", user.username];
-
-    [self initializingDummyComments];
 }
 
 //------------------------------------------------------------------------------
@@ -115,8 +117,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     CommentObject *comment = [CommentObject new];
     comment.content = textField.text;
     NSLog(@"this is the content on end editing %@", comment.content);
-    //[self.tableUsers setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-    [_dummyCommentsArray addObject:comment];
+    [_commentsArray addObject:comment];
     
     [OOAPI uploadComment:comment forObject:_mio success:^(CommentObject *comment) {
         if (comment) {
@@ -124,12 +125,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
         } else {
             NSLog(@"failed");
         }
-            
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"the error is %@", error);
     }];
- 
-    
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -173,16 +171,15 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     _keyBoardHeight = 0.0f;
 }
 
-
 //----------------------------------------------------------------------
 
 - (void)setNeedsRefresh {
     _needRefresh = YES;
 }
 
-- (void)setUsersArray:(NSMutableArray *)usersArray {
-    if (_usersArray == usersArray) return;
-    _usersArray = usersArray;
+- (void)setCommentsArray:(NSMutableArray *)commentsArray {
+    if (_commentsArray == commentsArray) return;
+    _commentsArray = commentsArray;
     [_tableUsers reloadData];
     [self refreshIfNeeded];
 }
@@ -263,17 +260,17 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 #pragma TableView methods
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger row = indexPath.row;
-    UserObject *u = nil;
     
-    @synchronized(self.usersArray)  {
-        if (row < _usersArray.count) {
-            u = _usersArray[row];
+    NSInteger row = indexPath.row;
+    CommentObject *comment = nil;
+
+    @synchronized(self.commentsArray)  {
+        if (row < _commentsArray.count) {
+      comment = [_commentsArray objectAtIndex:indexPath.row];
         }
     }
-    NSLog(@"the count of users is %lu" , self.usersArray.count);
 
-    if (!u) {
+    if (!comment) {
         UITableViewCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifierEmpty forIndexPath:indexPath];
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -291,14 +288,13 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     cell.selectionStyle = UITableViewCellSeparatorStyleNone;
     cell.delegate = self;
     cell.vc = self;
-    [cell provideUser:u];
     
+    [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
+        [cell provideUser:user];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    }];
     
-    CommentObject *comment = [_dummyCommentsArray objectAtIndex:indexPath.row];
     [cell provideComment:comment];
-
-    [cell fetchStats];
-    
     return cell;
 }
 
@@ -330,15 +326,13 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     return @[updateButton, deleteButton];
 }
 
-
-
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     //return kGeomHeightHorizontalListRow;
-    CommentObject *comment = [_dummyCommentsArray objectAtIndex:indexPath.row];
+    CommentObject *comment = [_commentsArray objectAtIndex:indexPath.row];
     return [CommentListTVCell heightForComment:comment];
 }
 
@@ -373,12 +367,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//    @synchronized(self.usersArray)  {
-//        return _usersArray.count;
-//    }
-    
-    @synchronized(self.dummyCommentsArray)  {
-        return _dummyCommentsArray.count;
+
+    @synchronized(self.commentsArray)  {
+        return _commentsArray.count;
     }
 }
 
@@ -389,51 +380,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void) userTappedImageOfUser:(UserObject*)user; {
     [self goToProfile:user];
 }
-
-
-#pragma dummy data
-- (void)initializingDummyComments {
-    
-    
-    NSDictionary *dummyComments = @{kKeyCommentContent : @"comment # 1 Debbie Wasserman Schultz announced Sunday she will soon step down as Democratic National Committee chairwoman, amid the fallout over leaked emails indicating an anti-Bernie Sanders bias in her operation -- a stunning development just in .",
-                                    kKeyCommentMediaItemID : @"carlos",
-                                    kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                    kKeyCommentUserID : @"user Id1"
-                                    };
-    
-    NSDictionary *dummyComments1 = @{kKeyCommentContent : @"comment # 2 Debbie Wasserman Schultz announced Sunday she will soon step down as Democratic National Committee chairwoman, amid the fallout over leaked emails indicating an anti-Bernie Sanders bias in her operation -- a stunning development just in .",
-                                     kKeyCommentMediaItemID : @"foodiealloli",
-                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id2"
-                                     };
-    NSDictionary *dummyComments2 = @{kKeyCommentContent : @"comment # 3 ... file inspector; Under Interface Builder Document uncheck",
-                                     kKeyCommentMediaItemID : @"waltrerosenkranz",
-                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id3"
-                                     };
-    NSDictionary *dummyComments3 = @{kKeyCommentContent : @"comment # 4 ilder Document uncheck kjhjkh kjhfjkh kjshjkhjkh kjhkjh ;kjhfkjhhjkh khyh khfphdf 1234567890 1234567890",
-                                     kKeyCommentMediaItemID : @"waltrerosenkranz",
-                                     kKeyCommentMediaItemID : @"rociocarrasco",
-                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id4"
-                                     };
-    NSDictionary *dummyComments4 = @{kKeyCommentContent : @"comment # 5",
-                                     kKeyCommentMediaItemID : @"ellazomatina",
-                                     kKeyCommentMediaItemCommentID : @"mediaItemId",
-                                     kKeyCommentUserID : @"user Id5"
-                                     };
-    
-    NSArray *arrayOfDummyCommentDicts = @[dummyComments, dummyComments1, dummyComments2, dummyComments3, dummyComments4];
-    _dummyCommentsArray = [NSMutableArray new];
-    
-    for (NSDictionary *dummyCommentDict in arrayOfDummyCommentDicts) {
-        CommentObject *comment = [CommentObject commentFromDict:dummyCommentDict];
-        [_dummyCommentsArray addObject:comment];
-    }
-    
-}
-
-
 
 @end
 

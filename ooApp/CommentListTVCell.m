@@ -10,6 +10,8 @@
 #import "DebugUtilities.h"
 #import "CommentObject.h"
 #import "DebugUtilities.h"
+#import "NSString+NSStringToDate.h"
+
 
 
 @interface CommentListTVCell ()
@@ -47,7 +49,6 @@
         
         _commentDateLabel = [UILabel new];
         [_commentDateLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentCenter];
-        _commentDateLabel.text = @"1d";
         [self addSubview:_commentDateLabel];
         
         _commentLabel = [UILabel new];
@@ -84,41 +85,32 @@
     }];
 }
 
-- (void)fetchStats {
-    __weak CommentListTVCell *weakSelf = self;
-    NSUInteger userid = self.userInfo.userID;
-    [OOAPI getUserStatsFor:userid success:^(UserStatsObject *object) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //here 
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog  (@"STATS ERROR %@",error);
-    }
-     ];
-    
-}
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
     [self.delegate userTappedImageOfUser:user];
 }
 
-- (void)provideUser:(UserObject *)user; {
-    
-    NSLog(@"_userInfo: %@ user: %@ same? %d", _userInfo, user, (_userInfo==user));
-    
-    if (!user) return;
-    
-    self.userInfo = user;
-    
-    [_userView setUser:user];
-    
+//this its what I need to see in depth
+- (void)setUserInfo:(UserObject *)userInfo {
+    if (_userInfo == userInfo) return;
+    _userInfo = userInfo;
+    NSLog(@"_userInfo: %@ user: %@ same? %d", _userInfo, _userInfo, (_userInfo==userInfo));
+
+    [_userView setUser:_userInfo];
     _labelName.text = [NSString stringWithFormat:@"%@ %@",
-                       user.firstName ? : @"",
-                       user.lastName ? : @""];
+                       _userInfo.firstName ? : @"",
+                       _userInfo.lastName ? : @""];
 }
+
+- (void)provideUser:(UserObject *)user {
+    self.userInfo = user;
+}
+//////////////////////////////////////////////
 
 - (void)provideComment:(CommentObject *)comment {
     _commentLabel.text = comment.content;
+    NSString *commentCreatedAt = [NSString getTimeAgoString:comment.createdAt];
+    _commentDateLabel.text = commentCreatedAt;
 }
 
 - (void)prepareForReuse {
@@ -128,7 +120,6 @@
     _commentDateLabel = nil;
     _commentLabel =  nil;
     [_userView clear];
-
 }
 
 - (void)layoutSubviews {

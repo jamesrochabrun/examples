@@ -87,6 +87,7 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
 {
     [super viewDidLoad];
     
+    
     _needRefresh = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
@@ -231,8 +232,8 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
     }];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+   
     NSInteger row = indexPath.row;
     UserObject *u = nil;
     
@@ -241,7 +242,7 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
             u = _usersArray[row];
         }
     }
-    
+
     if (!u) {
         UITableViewCell *cell;
         cell = [tableView dequeueReusableCellWithIdentifier:kUsersTableReuseIdentifierEmpty forIndexPath:indexPath];

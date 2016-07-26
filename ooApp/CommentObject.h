@@ -21,8 +21,8 @@ extern NSString *const kKeyCommentUpdatedAt;
 @property (nonatomic, assign) NSUInteger userID;
 @property (nonatomic, assign) NSUInteger mediaItemID;
 @property (nonatomic, strong) NSString *content;
-@property (nonatomic, strong) NSString *createdAt;
-@property (nonatomic, strong) NSString *updatedAt;
+@property (nonatomic, strong) NSDate *createdAt;
+@property (nonatomic, strong) NSDate *updatedAt;
 
 + (CommentObject *)commentFromDict:(NSDictionary *)dict;
 @end

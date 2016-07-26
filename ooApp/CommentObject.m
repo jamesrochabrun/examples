@@ -24,8 +24,9 @@ NSString *const kKeyCommentUpdatedAt = @"updated_at";
     comment.userID = parseUnsignedIntegerOrNullFromServer(dict[kKeyCommentUserID]);
     comment.mediaItemID = parseUnsignedIntegerOrNullFromServer(dict[kKeyCommentMediaItemID]);
     comment.content = parseStringOrNullFromServer(dict[kKeyCommentContent]);
-    comment.createdAt = parseStringOrNullFromServer(dict[kKeyCommentCreatedAt]);
-    comment.updatedAt = parseStringOrNullFromServer(dict[kKeyCommentUpdatedAt]);
+    comment.createdAt = parseUTCDateFromServer(dict[kKeyCommentCreatedAt]);
+    comment.updatedAt = parseUTCDateFromServer(dict[kKeyCommentUpdatedAt]);
+    
     return comment;
 }
 
