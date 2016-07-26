@@ -208,7 +208,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
         _commentPhotoViewsArray = [NSMutableArray new];
         
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 20; i++) {
             CommentPhotoView *cPV;
             cPV = [CommentPhotoView new];
             [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
@@ -274,13 +274,11 @@ static CGFloat kNextPhotoTolerance = 40;
     } else {
         [_optionsButton removeFromSuperview];
     }
-    NSLog(@":the media item is %lu", (unsigned long)_mio.mediaItemId);
     
     UserObject *user = [Settings sharedInstance].userObject;
     
     NSString *mioCreatedAt = [NSString getTimeAgoString:_mio.createdAt];
     _mioDateCreated.text = mioCreatedAt;
-    NSLog(@"the date is %@", mioCreatedAt);
     
     if ([_mio.caption length]) {
         [_captionButton setTitle:[NSString stringWithFormat:@"%@ \n%@",_mio.caption, _mio.createdAt] forState:UIControlStateNormal];
@@ -957,20 +955,13 @@ static CGFloat kNextPhotoTolerance = 40;
     vc.mio = _mio;
     vc.navigationController.delegate = self;
     vc.modalPresentationStyle = UIModalPresentationCurrentContext;
-    
     __weak CommentListVC *weakVC = vc;
-    
     [self.navigationController pushViewController:vc animated:YES];
     [vc.aiv startAnimating];
     [vc.view bringSubviewToFront:vc.aiv];
     [weakVC.aiv stopAnimating];
-    [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
-        weakVC.commentsArray = comments.mutableCopy;
-        NSLog(@":this method returns %lu", comments.count);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [weakVC.aiv stopAnimating];
-        
-    }];
+    weakVC.commentsArray = _commentsArray.mutableCopy;
+    [weakVC.aiv stopAnimating];
 }
 
 - (void)close {
@@ -996,7 +987,7 @@ static CGFloat kNextPhotoTolerance = 40;
         
 //        _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
         
-        NSLog(@"began: %@", NSStringFromCGPoint(delta));
+        //NSLog(@"began: %@", NSStringFromCGPoint(delta));
         _originPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
         
     } else if (_panGesture.state == UIGestureRecognizerStateChanged) {
@@ -1018,7 +1009,7 @@ static CGFloat kNextPhotoTolerance = 40;
 //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != 1) {
                 _swipeType = kSwipeTypeNextPhoto;
-                NSLog(@"get next photo in direction 1");
+                //NSLog(@"get next photo in direction 1");
                 [self.interactiveController cancelInteractiveTransition];
                 if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
                 _direction = 1;
@@ -1033,7 +1024,7 @@ static CGFloat kNextPhotoTolerance = 40;
 //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != -1) {
                 _swipeType = kSwipeTypeNextPhoto;
-                NSLog(@"get next photo in direction -1");
+               // NSLog(@"get next photo in direction -1");
                 [self.interactiveController cancelInteractiveTransition];
                 if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
                 _direction = -1;
@@ -1051,20 +1042,20 @@ static CGFloat kNextPhotoTolerance = 40;
     } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
 
-        NSLog(@"changed: %@ %f %f %f", NSStringFromCGPoint(delta), width(self.view), fabs(delta.x)/width(self.view), self.interactiveController.percentComplete);
+       // NSLog(@"changed: %@ %f %f %f", NSStringFromCGPoint(delta), width(self.view), fabs(delta.x)/width(self.view), self.interactiveController.percentComplete);
         
         if (_swipeType == kSwipeTypeDismiss &&
             fabs(delta.y) > kDismissTolerance) {
-            NSLog(@"dismiss photo");
+            //NSLog(@"dismiss photo");
 //            [self.interactiveController finishInteractiveTransition];
 //            _iv.transform = CGAffineTransformIdentity;
             [self close];
         } else if (_swipeType == kSwipeTypeNextPhoto &&
                    fabs(delta.x) > kNextPhotoTolerance) {
-            NSLog(@"show next photo confirmed");
+           // NSLog(@"show next photo confirmed");
             [self.interactiveController finishInteractiveTransition];
         } else {
-            NSLog(@"cancel transition");
+            //NSLog(@"cancel transition");
             [self.interactiveController cancelInteractiveTransition];
             [UIView animateWithDuration:0.3 animations:^{
                 _iv.transform = CGAffineTransformIdentity;;
@@ -1098,7 +1089,7 @@ static CGFloat kNextPhotoTolerance = 40;
         animator.duration = 0.35;
         animationController = animator;
     } else {
-        NSLog(@"*** operation=%ld, fromVC=%@ , toVC=%@", (long)operation, [fromVC class], [toVC class]);
+        //NSLog(@"*** operation=%ld, fromVC=%@ , toVC=%@", (long)operation, [fromVC class], [toVC class]);
     }
     
     return animationController;
@@ -1112,7 +1103,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (ViewPhotoVC *)getNextVC:(NSUInteger)direction {
     NSInteger nextIndex = _currentIndex + (-direction);
-    NSLog(@"currentIndex=%ld nextIndex=%ld", (long)_currentIndex, (long)nextIndex);
+    //NSLog(@"currentIndex=%ld nextIndex=%ld", (long)_currentIndex, (long)nextIndex);
     
     if (nextIndex < 0 || nextIndex >= [_items count]) return nil;
     
@@ -1244,7 +1235,7 @@ static CGFloat kNextPhotoTolerance = 40;
             [weakSelf presentUnverifiedMessage:@"To yum this photo you will need to verify your email.\n\nCheck your email for a verification link."];
         } else {
             if ( _yumButton.isSelected) {
-                NSLog(@"unlike photo");
+                //NSLog(@"unlike photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;
                 [OOAPI unsetMediaItemLike:_mio.mediaItemId forUser:userID success:^{
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1257,7 +1248,7 @@ static CGFloat kNextPhotoTolerance = 40;
                     NSLog(@"ERROR: failed to unlike photo: %@", error);;
                 }];
             } else {
-                NSLog(@"like photo");
+                //NSLog(@"like photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;
                 [OOAPI setMediaItemLike:_mio.mediaItemId forUser:userID success:^{
                     [FBSDKAppEvents logEvent:kAppEventPhotoYummed];

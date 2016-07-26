@@ -34,10 +34,33 @@
 NSString *const kCommentsTableReuseIdentifier = @"commentListTVC";
 NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty";
 
-- (void)dealloc {
-    [_commentsArray removeAllObjects];
-    _commentsArray = nil;
+//- (void)dealloc {
+//    [_commentsArray removeAllObjects];
+//    _commentsArray = nil;
+//}
+
+
+//----------------------------------------------------------------------
+//
+//- (void)setNeedsRefresh {
+//    _needRefresh = YES;
+//}
+
+- (void)setCommentsArray:(NSMutableArray *)commentsArray {
+    if (_commentsArray == commentsArray) return;
+    _commentsArray = commentsArray;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_tableUsers reloadData];
+    });
+    //[self refreshIfNeeded];
 }
+
+
+//- (void)refreshIfNeeded {
+//    if (_needRefresh) {
+//        _needRefresh = NO;
+//    }
+//}
 
 //------------------------------------------------------------------------------
 // Name:    viewDidLoad
@@ -46,9 +69,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _commentsArray = [NSMutableArray new];
-    
-    _needRefresh = YES;
+    //_commentsArray = [NSMutableArray new];
+    //_needRefresh = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -72,10 +94,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     _tableUsers.separatorInset = UIEdgeInsetsZero;
     _tableUsers.showsVerticalScrollIndicator= NO;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setNeedsRefresh)
-                                                 name:kNotificationUserFollowingChanged object:nil];
-    
     [self removeNavButtonForSide:kNavBarSideTypeRight];
     [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     
@@ -90,8 +108,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [self.view addSubview:_textFieldView];
     _textFieldView.textField.keyboardAppearance = UIKeyboardTypeAlphabet;
     _textFieldView.textField.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
-    UserObject *user = [Settings sharedInstance].userObject;
-    _textFieldView.textField.placeholder = [NSString stringWithFormat:@"add a comment as %@", user.username];
+    
+     _user = [Settings sharedInstance].userObject;
+    _textFieldView.textField.placeholder = [NSString stringWithFormat:@"add a comment as %@", _user.username];
 }
 
 //------------------------------------------------------------------------------
@@ -102,14 +121,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void)postComment:(UIButton*)sender {
     [self dismissKeyboard:sender];
     _textFieldView.textField.text = @"";
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    
-    CommentObject *comment = [CommentObject new];
-    comment.content = textField.text;
-    NSLog(@"this is the content on begin editing %@", comment.content);
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_tableUsers reloadData];
+    });
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
@@ -117,7 +131,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     CommentObject *comment = [CommentObject new];
     comment.content = textField.text;
     NSLog(@"this is the content on end editing %@", comment.content);
-    [_commentsArray addObject:comment];
+    NSLog(@" the count of this array is %lu", _commentsArray.count);
     
     [OOAPI uploadComment:comment forObject:_mio success:^(CommentObject *comment) {
         if (comment) {
@@ -148,6 +162,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 
 - (void)keyboardWillShow:(NSNotification*)notification {
+   
     NSDictionary *info = [notification userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     CGFloat deltaHeight = kbSize.height - _keyBoardHeight;
@@ -163,26 +178,17 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 }
 
 - (void)keyboardWillHide:(NSNotification*)notification {
+    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:.3];
     [UIView setAnimationBeginsFromCurrentState:TRUE];
     self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + _keyBoardHeight , self.view.frame.size.width, self.view.frame.size.height);
     [UIView commitAnimations];
     _keyBoardHeight = 0.0f;
+    
 }
 
-//----------------------------------------------------------------------
 
-- (void)setNeedsRefresh {
-    _needRefresh = YES;
-}
-
-- (void)setCommentsArray:(NSMutableArray *)commentsArray {
-    if (_commentsArray == commentsArray) return;
-    _commentsArray = commentsArray;
-    [_tableUsers reloadData];
-    [self refreshIfNeeded];
-}
 
 - (void)done:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
@@ -217,11 +223,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
                                                object:nil];
 }
 
-- (void)refreshIfNeeded {
-    if (_needRefresh) {
-        _needRefresh = NO;
-    }
-}
 
 //------------------------------------------------------------------------------
 // Name:    viewWillDisappear
@@ -251,7 +252,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
     frame.origin.y = self.view.bounds.origin.y;
-    frame.size.height = self.view.bounds.size.height - _textFieldView.frame.size.height;
+    frame.size.height = self.view.bounds.size.height;
     frame.size.width = self.view.bounds.size.width;
     _tableUsers.frame = frame;
     
@@ -267,19 +268,20 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     @synchronized(self.commentsArray)  {
         if (row < _commentsArray.count) {
       comment = [_commentsArray objectAtIndex:indexPath.row];
+            NSLog(@"the comment is %@", comment.content );
+            NSLog(@"the count of the comment array is %lu", _commentsArray.count);
         }
     }
-
-    if (!comment) {
-        UITableViewCell *cell;
-        cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifierEmpty forIndexPath:indexPath];
-        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-        cell.textLabel.textAlignment=NSTextAlignmentCenter;
-        cell.textLabel.text =  @"Alas there are none.";
-        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
-        cell.selectionStyle = UITableViewCellSeparatorStyleNone;
-        return cell;
-    }
+//    if (!comment) {
+//        UITableViewCell *cell;
+//        cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifierEmpty forIndexPath:indexPath];
+//        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+//        cell.textLabel.textAlignment=NSTextAlignmentCenter;
+//        cell.textLabel.text =  @"Alas there are none.";
+//        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
+//        cell.selectionStyle = UITableViewCellSeparatorStyleNone;
+//        return cell;
+//    }
     
     CommentListTVCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifier forIndexPath:indexPath];
@@ -290,7 +292,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     cell.vc = self;
     
     [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-        [cell provideUser:user];
+            [cell provideUser:user];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
     }];
     
@@ -306,24 +308,19 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     return UITableViewCellEditingStyleDelete;
 }
 
-//- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-//    return YES;
-//}
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
 
 -(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    UITableViewRowAction *updateButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:kFontIconCirclePlus handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
-                                    {
-                                    //update comment?
-                                    }];
-    updateButton.backgroundColor = UIColorRGBA(kColorGrayMiddle);
+
     UITableViewRowAction *deleteButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
                                      {
                                    //delete comment
+                                         NSLog(@"delete this comment");
                                      }];
-    deleteButton.backgroundColor =  UIColorRGBA(kColorTextActive);  //arbitrary color
     
-    return @[updateButton, deleteButton];
+    return @[deleteButton];
 }
 
 //------------------------------------------------------------------------------
@@ -375,7 +372,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 - (void)userTappedSectionHeader:(int)which {
 }
-
 
 - (void) userTappedImageOfUser:(UserObject*)user; {
     [self goToProfile:user];

@@ -13,14 +13,12 @@
 #import "NSString+NSStringToDate.h"
 
 
-
 @interface CommentListTVCell ()
 
 
 @property (nonatomic, strong) OOUserView *userView;
 @property (nonatomic, strong) UILabel *labelName;
 @property (nonatomic, strong) UserObject *userInfo;
-@property (nonatomic, strong) AFHTTPRequestOperation* op;
 @property (nonatomic, strong) UILabel *commentDateLabel;
 @property (nonatomic, strong) UILabel *commentLabel;
 @end
@@ -56,13 +54,13 @@
         //_commentLabel.text = @"hsdbkj ckjhkhelloeojmb;kjsdbkj";
         [self addSubview:_commentLabel];
         
-        
          //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel , _commentDateLabel]];
     }
     return self;
 }
 
 - (void)presentUnverifiedMessage:(NSString *)message {
+   
     UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
     vc.delegate = self;
     vc.action = message;
@@ -84,7 +82,6 @@
         ;
     }];
 }
-
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
     [self.delegate userTappedImageOfUser:user];
@@ -112,15 +109,15 @@
     NSString *commentCreatedAt = [NSString getTimeAgoString:comment.createdAt];
     _commentDateLabel.text = commentCreatedAt;
 }
-
-- (void)prepareForReuse {
-    
-    [super prepareForReuse];
-    _labelName.text = nil;
-    _commentDateLabel = nil;
-    _commentLabel =  nil;
-    [_userView clear];
-}
+//
+//- (void)prepareForReuse {
+//    
+//    [super prepareForReuse];
+//    _labelName.text = nil;
+//    _commentDateLabel = nil;
+//    _commentLabel =  nil;
+//    [_userView clear];
+//}
 
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -170,7 +167,6 @@
     //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel, _commentDateLabel]];
 
 }
-
 
 + (CGFloat)heightForComment:(CommentObject *)comment {
 
