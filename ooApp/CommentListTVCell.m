@@ -105,7 +105,7 @@
 //////////////////////////////////////////////
 
 - (void)provideComment:(CommentObject *)comment {
-    _commentLabel.text = comment.content;
+    _commentLabel.text = [NSString stringWithFormat:@"%@, created at: %@", comment.content, comment.createdAt];
     NSString *commentCreatedAt = [NSString getTimeAgoString:comment.createdAt];
     _commentDateLabel.text = commentCreatedAt;
 }

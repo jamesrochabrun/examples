@@ -274,6 +274,9 @@ static CGFloat kNextPhotoTolerance = 40;
     NSString *mioCreatedAt = [NSString getTimeAgoString:_mio.createdAt];
     _mioDateCreated.text = mioCreatedAt;
     
+    NSLog(@"the miocreatedAt is %@", mioCreatedAt);
+    NSLog(@"the mio.mediaItemId = %lu", (unsigned long)_mio.mediaItemId);
+    
     if ([_mio.caption length]) {
         [_captionButton setTitle:[NSString stringWithFormat:@"%@ \n%@",_mio.caption, _mio.createdAt] forState:UIControlStateNormal];
         
