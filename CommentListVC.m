@@ -125,15 +125,19 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     NSLog(@"this is the content on end editing %@", comment.content);
     NSLog(@" the count of this array is %lu", _commentsArray.count);
     
+
     [OOAPI uploadComment:comment forObject:_mio success:^(CommentObject *comment) {
         if (comment) {
             NSLog(@"success from commentlistvc");
+            
         } else {
             NSLog(@"failed");
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"the error is %@", error);
     }];
+    
+    NSLog(@"the post was made on %lu", comment.createdAt);
     [self dismissKeyboard:sender];
  
 }

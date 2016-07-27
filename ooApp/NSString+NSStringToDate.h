@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-#define kDays       (86400)
-#define kMonths     (kDays*30)
-#define kHours      (3600)
-#define kMinutes    (60)
+
+//seconds in
+#define kDay       (86400)
+#define kMonth    (kDay*30)
+#define kHour     (3600)
+#define kMinute    (60)
 
 
 
