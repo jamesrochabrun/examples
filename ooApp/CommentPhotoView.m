@@ -54,12 +54,15 @@
     frame.origin.y = CGRectGetMidY(_userNameButton.frame) - 8;
     _userCommentButton.frame = frame;
     
-    NSLog(@"the height is f = %f", height);
-    
+    NSLog(@"the height of userCommentButton is  %f", height);
+
     frame = self.frame;
     frame.size.width = self.frame.size.width;
     frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + 15;
     self.frame = frame;
+    
+    NSLog(@"the height of the CommentPhotoview is  %f", frame.size.height);
+
     
     [DebugUtilities addBorderToViews:@[_userNameButton]];
     

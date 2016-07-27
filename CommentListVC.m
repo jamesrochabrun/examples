@@ -137,7 +137,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
         NSLog(@"the error is %@", error);
     }];
     
-    NSLog(@"the post was made on %lu", comment.createdAt);
     [self dismissKeyboard:sender];
  
 }
@@ -181,6 +180,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [UIView commitAnimations];
     
     _keyBoardHeight = kbSize.height;
+    
 }
 
 - (void)keyboardWillHide:(NSNotification*)notification {
@@ -311,7 +311,15 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     UITableViewRowAction *deleteButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
                                      {
                                    //delete comment
-                                         NSLog(@"delete this comment");
+                                         
+                                         CommentObject *comment = [self.commentsArray objectAtIndex:indexPath.row];
+                                         
+                                          [OOAPI deleteCommentFromMediaItem:comment forObject:_mio success:^(CommentObject *comment) {
+                                              NSLog(@"deleted");
+                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             NSLog(@"the error is %@", error);
+                                         }];
+                                         
                                      }];
     
     return @[deleteButton];

@@ -151,6 +151,38 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     return op;
 }
 
++ (AFHTTPRequestOperation *)deleteCommentFromMediaItem:(CommentObject *)comment
+                                                         forObject:(MediaItemObject *)mio
+                                                           success:(void (^)(CommentObject *))success
+                                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    
+    if (!comment) {
+        failure(nil, nil);
+        return nil;
+    }
+    
+   // /mediaItems/:media_item_id/comments/:media_item_comment_id
+    
+    NSString *url = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/comments/%lu", kHTTPProtocol , [OOAPI URL], (unsigned long)mio.mediaItemId, (unsigned long)comment.mediaItemCommentID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    NSDictionary *parameters = @{kKeyCommentUserID : [NSString stringWithFormat:@"%lu",comment.userID],
+                                 kKeyCommentMediaItemID :[NSString stringWithFormat:@"%lu", mio.mediaItemId],
+                                 kKeyCommentContent : comment.content
+                                 };
+    
+    AFHTTPRequestOperation *op = [rm PUT:url parameters:parameters success:^(id responseObject) {
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
+    
+    return op;
+    
+}
+
 
 + (AFHTTPRequestOperation *)setMediaItemCaption:(NSUInteger)mediaItemID
                                         caption:(NSString *)caption

@@ -406,13 +406,13 @@ static CGFloat kNextPhotoTolerance = 40;
         }];
         [self.backgroundView addSubview:cPV];
     }
-    //dispatch_async(dispatch_get_main_queue(), ^{
+   // dispatch_async(dispatch_get_main_queue(), ^{
         [self layoutCommentsView];
-        
-    //});
+   // });
 }
 
 - (void)layoutCommentsView {
+   
     //comments View
     CGRect frame;
     CGFloat y = CGRectGetMaxY(_seeCommentsButton.frame);
@@ -424,10 +424,11 @@ static CGFloat kNextPhotoTolerance = 40;
         frame.size.width = self.view.frame.size.width;
         y += v.frame.size.height;
         v.frame = frame;
+        NSLog(@"the frame height is %f", v.frame.size.height);
     }
 
     if (_commentPhotoViewsArray.count > 0) {
-        NSLog(@"the counter here itg %lu", _commentPhotoViewsArray.count);
+       // NSLog(@"the count here is %lu", _commentPhotoViewsArray.count);
         CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
         _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
     } else {
@@ -517,7 +518,7 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.width = CGRectGetMinX(_mioDateCreated.frame) - CGRectGetMaxX(_userViewButton.frame);
     height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
-    frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2;
+    frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2 + kGeomSpaceEdge;
     frame.origin.x = (width(self.view) - frame.size.width)/2;
     _captionButton.frame = frame;
     
@@ -1006,7 +1007,6 @@ static CGFloat kNextPhotoTolerance = 40;
     [vc.view bringSubviewToFront:vc.aiv];
     [weakVC.aiv stopAnimating];
     weakVC.commentsArray = _commentsArray.mutableCopy;
-    [weakVC.aiv stopAnimating];
 }
 
 - (void)close {

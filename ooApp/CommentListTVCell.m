@@ -105,7 +105,7 @@
 //////////////////////////////////////////////
 
 - (void)provideComment:(CommentObject *)comment {
-    _commentLabel.text = [NSString stringWithFormat:@"%@, created at: %@", comment.content, comment.createdAt];
+    _commentLabel.text = comment.content;
     NSString *commentCreatedAt = [NSString getTimeAgoString:comment.createdAt];
     _commentDateLabel.text = commentCreatedAt;
 }
@@ -145,7 +145,7 @@
     
     frame = _commentDateLabel.frame;
     frame.size = CGSizeMake(kGeomDimensionsIconButtonSmall, kGeomDimensionsIconButtonSmall);
-    frame.origin.x = width(self) - kGeomDimensionsIconButtonSmall + kGeomInterImageGap;
+    frame.origin.x = width(self) - kGeomDimensionsIconButtonSmall - kGeomInterImageGap;
     frame.origin.y = CGRectGetMaxY(_labelName.frame);
     _commentDateLabel.frame = frame;
     

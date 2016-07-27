@@ -80,12 +80,13 @@
     self.uploadProgressBar.tintColor = UIColorRGBA(kColorTextActive);
     self.uploadProgressBar.trackTintColor = UIColorRGBA(kColorTextReverse);
     [self.view addSubview:self.uploadProgressBar];
-    self.uploadProgressBar.hidden = YES;
+    self.uploadProgressBar.hidden = NO;
     
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
     
-    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
         self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {

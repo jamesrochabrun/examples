@@ -282,8 +282,7 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
 // Name:    heightForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return kGeomHeightHorizontalListRow;
 }
 
@@ -291,8 +290,7 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
 // Name:    didSelectRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger row = indexPath.row;
     UserObject *u = nil;
     
@@ -307,8 +305,8 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
     }
 }
 
-- (void)goToProfile: (UserObject*)u
-{
+- (void)goToProfile: (UserObject*)u {
+    
     ProfileVC *vc= [[ProfileVC alloc] init];
     vc.userInfo = u;
     vc.userID = u.userID;
@@ -319,21 +317,18 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
 // Name:    numberOfRowsInSection
 // Purpose:
 //------------------------------------------------------------------------------
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     @synchronized(self.usersArray)  {
         return _usersArray.count;
     }
 }
 
-- (void)userTappedSectionHeader:(int)which
-{
+- (void)userTappedSectionHeader:(int)which {
     
     
 }
 
-- (void)userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following
-{
+- (void)userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following {
     if (following ) {
         [_followeesArray addObject: user];
     } else {
@@ -341,8 +336,7 @@ NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
     }
 }
 
-- (void) userTappedImageOfUser:(UserObject*)user;
-{
+- (void) userTappedImageOfUser:(UserObject*)user {
     [self goToProfile:user];
 }
 

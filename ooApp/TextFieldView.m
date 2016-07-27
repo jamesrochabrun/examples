@@ -21,7 +21,7 @@
     if (self) {
         
         _textField = [UITextField new];
-        _textField.backgroundColor = UIColorRGBA(kColorGrayMiddle);
+        _textField.backgroundColor = UIColorRGBA(kColorButtonBackground);
         [self addSubview:_textField];
 
         _postTextButton = [UIButton buttonWithType:UIButtonTypeCustom];
