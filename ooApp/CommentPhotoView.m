@@ -51,17 +51,22 @@
     CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height;
     frame.size.height = height;
     frame.origin.x = CGRectGetMaxX(_userNameButton.frame) + kGeomSpaceInter;
-    frame.origin.y = CGRectGetMidY(_userNameButton.frame);//CGRectGetMidY(_userNameButton.frame) - 8;
+    frame.origin.y = CGRectGetMidY(_userNameButton.frame) - 8;
     _userCommentButton.frame = frame;
     
     NSLog(@"the height is f = %f", height);
     
     frame = self.frame;
     frame.size.width = self.frame.size.width;
-    frame.size.height = _userCommentButton.frame.size.height + margin + kGeomSpaceInter;
+    frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + 15;
     self.frame = frame;
     
-    [DebugUtilities addBorderToViews:@[_userNameButton, _userCommentButton, self]];
+    [DebugUtilities addBorderToViews:@[_userNameButton]];
+    
+    _userCommentButton.layer.borderColor = [UIColor blueColor].CGColor;
+    _userCommentButton.layer.borderWidth = 1;
+    self.layer.borderColor = [UIColor redColor].CGColor;
+    self.layer.borderWidth = 1;
     
 }
 

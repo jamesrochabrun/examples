@@ -119,17 +119,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //------------------------------------------------------------------------------
 
 - (void)postComment:(UIButton*)sender {
-    [self dismissKeyboard:sender];
-    _textFieldView.textField.text = @"";
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [_tableUsers reloadData];
-    });
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
     
     CommentObject *comment = [CommentObject new];
-    comment.content = textField.text;
+    comment.content = _textFieldView.textField.text;
     NSLog(@"this is the content on end editing %@", comment.content);
     NSLog(@" the count of this array is %lu", _commentsArray.count);
     
@@ -142,6 +134,16 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"the error is %@", error);
     }];
+    [self dismissKeyboard:sender];
+ 
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    
+    _textFieldView.textField.text = @"";
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_tableUsers reloadData];
+    });
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -252,7 +254,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
     frame.origin.y = self.view.bounds.origin.y;
-    frame.size.height = self.view.bounds.size.height;
+    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar;
     frame.size.width = self.view.bounds.size.width;
     _tableUsers.frame = frame;
     
@@ -268,20 +270,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     @synchronized(self.commentsArray)  {
         if (row < _commentsArray.count) {
       comment = [_commentsArray objectAtIndex:indexPath.row];
-            NSLog(@"the comment is %@", comment.content );
-            NSLog(@"the count of the comment array is %lu", _commentsArray.count);
         }
     }
-//    if (!comment) {
-//        UITableViewCell *cell;
-//        cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifierEmpty forIndexPath:indexPath];
-//        cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-//        cell.textLabel.textAlignment=NSTextAlignmentCenter;
-//        cell.textLabel.text =  @"Alas there are none.";
-//        cell.textLabel.textColor = UIColorRGBA(kColorWhite);
-//        cell.selectionStyle = UITableViewCellSeparatorStyleNone;
-//        return cell;
-//    }
     
     CommentListTVCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifier forIndexPath:indexPath];
@@ -346,7 +336,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
             u = _usersArray[row];
         }
     }
-    
     if (u) {
         [self goToProfile:u];
     }

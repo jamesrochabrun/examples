@@ -156,7 +156,7 @@
     frame.size.width = _labelName.frame.size.width;
     height = [_commentLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
-    frame.origin.y = CGRectGetMaxY(_labelName.frame) ;
+    frame.origin.y = CGRectGetMaxY(_labelName.frame) + kGeomSpaceEdge;
     frame.origin.x = CGRectGetMaxX(_userView.frame) + spacing + kGeomSpaceCellPadding;
     _commentLabel.frame = frame;
     NSLog(@"teh width is %f", _commentLabel.frame.size.width);
