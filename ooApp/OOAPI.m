@@ -161,26 +161,17 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
         failure(nil, nil);
         return nil;
     }
-    
-   // /mediaItems/:media_item_id/comments/:media_item_comment_id
-    
+    // /mediaItems/:media_item_id/comments/:media_item_comment_id
     NSString *url = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/comments/%lu", kHTTPProtocol , [OOAPI URL], (unsigned long)mio.mediaItemId, (unsigned long)comment.mediaItemCommentID];
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
-    NSDictionary *parameters = @{kKeyCommentUserID : [NSString stringWithFormat:@"%lu",comment.userID],
-                                 kKeyCommentMediaItemID :[NSString stringWithFormat:@"%lu", mio.mediaItemId],
-                                 kKeyCommentContent : comment.content
-                                 };
-    
-    AFHTTPRequestOperation *op = [rm PUT:url parameters:parameters success:^(id responseObject) {
+    AFHTTPRequestOperation *op = [rm DELETE:url parameters:nil success:^(id responseObject) {
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-    }];
+    };
     
     return op;
-    
 }
 
 
@@ -360,7 +351,6 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     } else {
         urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL], (unsigned long)restaurant.restaurantID];
     }
-    
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     

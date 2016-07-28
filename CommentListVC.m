@@ -83,6 +83,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
     self.navTitle = nto;
     
+    NSLog(@"the mediaitemSourceId  %lu ==  %lu userid", _mio.sourceUserID , _user.userID );
+    
     //here is what creates a new instance of a tableView
     self.tableUsers = makeTable(self.view,self);
     _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -303,7 +305,13 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
+    
+    CommentObject *comment = [self.commentsArray objectAtIndex:indexPath.row];
+    if (_user.userID == comment.userID || _user.userID == _mio.sourceUserID) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 -(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
