@@ -32,7 +32,6 @@
 }
 
 - (void)layoutSubviews {
-    
     [super layoutSubviews];
     CGRect frame = self.frame;
     CGFloat w = self.bounds.size.width;
