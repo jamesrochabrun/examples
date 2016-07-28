@@ -114,7 +114,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     _textFieldView.textField.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
     
      _user = [Settings sharedInstance].userObject;
-    _textFieldView.textField.placeholder = [NSString stringWithFormat:@"add a comment as %@", _user.username];
+    _textFieldView.textField.placeholder = [NSString stringWithFormat:@"  add a comment as %@", _user.username];
 }
 
 //------------------------------------------------------------------------------
@@ -246,7 +246,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 }
 
-
 //------------------------------------------------------------------------------
 // Name:    viewWillDisappear
 // Purpose:
@@ -264,7 +263,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 }
-
 
 #pragma TableView methods
 

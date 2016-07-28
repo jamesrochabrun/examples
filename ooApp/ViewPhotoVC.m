@@ -537,7 +537,8 @@ static CGFloat kNextPhotoTolerance = 40;
     } else {
         _commentCaptionButton.hidden = YES;
         _numCommentsLabel.hidden = YES;
-        _seeYummersButton.hidden = YES;
+        [_seeYummersButton setTitle:@"" forState:UIControlStateNormal];
+        _seeYummersButton.enabled = NO;
         _mioDateCreated.text = @"";
         _share.frame = CGRectMake(0, CGRectGetMaxY(_iv.frame) + kGeomInterImageGap, self.view.frame.size.width, kGeomHeightButton);
         [_share setTitle:@"Share it!" forState:UIControlStateNormal];
@@ -584,16 +585,16 @@ static CGFloat kNextPhotoTolerance = 40;
 
     _userViewButton.hidden = !show;
     
-    if (show) {
-        if (_numYumsLabel) {
-            NSLog(@"hey ther");
-            _numYumsLabel.hidden = NO;
-        } else {
-            _numYumsLabel.hidden = YES;
-        }
-    } else {
-        _numYumsLabel.hidden = YES;
-    }
+//    if (show) {
+//        if (_numYumsLabel) {
+//            NSLog(@"hey ther");
+//            _numYumsLabel.hidden = NO;
+//        } else {
+//            _numYumsLabel.hidden = YES;
+//        }
+//    } else {
+//        _numYumsLabel.hidden = YES;
+//    }
     
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.hidden = !show;
@@ -1197,7 +1198,6 @@ static CGFloat kNextPhotoTolerance = 40;
             }];
         }
     }
-
     return vc;
 }
              
@@ -1376,7 +1376,7 @@ static CGFloat kNextPhotoTolerance = 40;
             });
         } else {
             dispatch_async(dispatch_get_main_queue(), ^ {
-                weakSelf.numYumsLabel.hidden = YES;
+                weakSelf.numYumsLabel.text = @"";
                 [weakSelf.seeYummersButton setTitle:@"" forState:UIControlStateNormal];
                 weakSelf.seeYummersButton.enabled = NO;
                 [weakSelf.view setNeedsLayout];

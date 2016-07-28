@@ -235,6 +235,7 @@
 		7B8915361D3E8CD60065DB43 /* CommentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B8915351D3E8CD60065DB43 /* CommentObject.m */; };
 		7B9DC9B01D42A9DC00CC306C /* CommentPhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */; };
 		7B9DC9B31D43393900CC306C /* NSString+NSStringToDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */; };
+		7BC566E51D4A7D7B0006FE11 /* ViewPhotoCommentSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BC566E41D4A7D7B0006FE11 /* ViewPhotoCommentSubView.m */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
@@ -618,6 +619,8 @@
 		7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentPhotoView.m; sourceTree = "<group>"; };
 		7B9DC9B11D43393900CC306C /* NSString+NSStringToDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NSStringToDate.h"; sourceTree = "<group>"; };
 		7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringToDate.m"; sourceTree = "<group>"; };
+		7BC566E31D4A7D7B0006FE11 /* ViewPhotoCommentSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewPhotoCommentSubView.h; sourceTree = "<group>"; };
+		7BC566E41D4A7D7B0006FE11 /* ViewPhotoCommentSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewPhotoCommentSubView.m; sourceTree = "<group>"; };
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
 		9606C5641BBF08C400CB06FE /* EventsListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventsListVC.m; sourceTree = "<group>"; };
 		960F72541C2B5E2000DE31AC /* UserStatsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStatsObject.h; sourceTree = "<group>"; };
@@ -1236,6 +1239,8 @@
 		7B61A91E1D3FDA8D005CB257 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				7BC566E31D4A7D7B0006FE11 /* ViewPhotoCommentSubView.h */,
+				7BC566E41D4A7D7B0006FE11 /* ViewPhotoCommentSubView.m */,
 				7B7114C21D41E19F003EA054 /* TextFieldView.h */,
 				7B7114C31D41E19F003EA054 /* TextFieldView.m */,
 				7B9DC9AE1D42A9DC00CC306C /* CommentPhotoView.h */,
@@ -1651,6 +1656,7 @@
 				3613BE471BB9CF6000F1AF67 /* TimeUtilities.m in Sources */,
 				9694F0271C3DE85300D6C9AA /* ListStripCVCell.m in Sources */,
 				366BBC911BA8DEB400292F80 /* SettingsVC.m in Sources */,
+				7BC566E51D4A7D7B0006FE11 /* ViewPhotoCommentSubView.m in Sources */,
 				36D887DC1C1A2CDD0002A412 /* PriceSelectorCVCell.m in Sources */,
 				963A4D271C50465600E10263 /* UserListVC.m in Sources */,
 				96EBC2E71C3EFC3100836066 /* ProfileVCCVLayout.m in Sources */,
