@@ -398,21 +398,31 @@ static CGFloat kNextPhotoTolerance = 40;
         [cPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
         [self.backgroundView addSubview:cPV];
         
+        __weak CommentPhotoView *weakCPV = cPV;
+        __weak ViewPhotoVC *weakSelf = self;
+        
         [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-            [cPV.userNameButton setTitle:user.username forState:UIControlStateNormal];
-            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakCPV.userNameButton setTitle:user.username forState:UIControlStateNormal];
+                [weakCPV setNeedsLayout];
+                [weakSelf.view setNeedsLayout];
+            });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"ERROR: failed to get user: %@", error);;
+            NSLog(@"ERROR: failed to get user: %@", error);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakCPV setNeedsLayout];
+                [weakSelf.view setNeedsLayout];
+            });
         }];
         [self.backgroundView addSubview:cPV];
     }
    // dispatch_async(dispatch_get_main_queue(), ^{
-        [self layoutCommentsView];
+    //[self.view setNeedsLayout];
+
    // });
 }
 
 - (void)layoutCommentsView {
-   
     //comments View
     CGRect frame;
     CGFloat y = CGRectGetMaxY(_seeCommentsButton.frame);
@@ -557,6 +567,8 @@ static CGFloat kNextPhotoTolerance = 40;
 
     }
 
+    [self layoutCommentsView];
+    
     /////////////////
     _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
     _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_yumButton.frame), buttonWidth, kGeomHeightButton);
