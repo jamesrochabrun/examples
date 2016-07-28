@@ -53,6 +53,8 @@ typedef enum {
 @property (nonatomic, weak) id<UINavigationControllerDelegate> dismissNCDelegate;
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactiveController;
+@property (nonatomic, strong) NSArray *rangeOfFiveArray;
+
 
 - (void)showComponents:(BOOL)show;
 - (void)setComponentsAlpha:(CGFloat)alpha;

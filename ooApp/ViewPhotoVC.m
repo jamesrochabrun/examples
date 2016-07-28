@@ -60,7 +60,6 @@
 @property (nonatomic, strong) CommentPhotoView *secondCommentView;
 @property (nonatomic, strong) NSMutableArray *commentPhotoViewsArray;
 @property (nonatomic, strong) NSMutableArray *commentsArray;
-@property (nonatomic, strong) NSArray *rangeOfFiveArray;
 
 
 #pragma testing NewLayout properties
@@ -129,7 +128,7 @@ static CGFloat kNextPhotoTolerance = 40;
         _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
     
         _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
+        [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showUserProfile)];
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -210,7 +209,7 @@ static CGFloat kNextPhotoTolerance = 40;
         _commentPhotoViewsArray = [NSMutableArray new];
         
          //        [DebugUtilities addBorderToViews:@[self.view]];
-        [DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
+        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
     }
     return self;
 }
@@ -237,10 +236,7 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.backgroundView bringSubviewToFront:_yumIndicator];
     [self.backgroundView sendSubviewToBack:_backgroundView];
     [self.backgroundView addSubview:_yumButton];
-    
-//    for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
-//        [self.backgroundView addSubview:cPV];
-//    }
+
     [self.view setAutoresizesSubviews:NO];
     
     //    [_showRestaurantTapGesture addTarget:self action:@selector(tapGestureRecognized:)];
@@ -254,8 +250,6 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.view addGestureRecognizer:_panGesture];
     
     //    [DebugUtilities addBorderToViews:@[self.view]];
-    
-
 }
 
 - (void)setMio:(MediaItemObject *)mio {
@@ -278,7 +272,7 @@ static CGFloat kNextPhotoTolerance = 40;
     NSLog(@"the mio.mediaItemId = %lu", (unsigned long)_mio.mediaItemId);
     
     if ([_mio.caption length]) {
-        [_captionButton setTitle:[NSString stringWithFormat:@"%@ \n%@",_mio.caption, _mio.createdAt] forState:UIControlStateNormal];
+        [_captionButton setTitle:_mio.caption forState:UIControlStateNormal];
         
     } else {
         if (_mio.sourceUserID == user.userID) {
@@ -373,17 +367,24 @@ static CGFloat kNextPhotoTolerance = 40;
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.commentsArray = comments.mutableCopy;
             [weakSelf gotComments];
-
+            
             if (weakSelf.commentsArray.count > 0) {
                 weakSelf.numCommentsLabel.text = [NSString stringWithFormat:@"%lu", comments.count];
-                weakSelf.seeCommentsButton.hidden = NO;
             } else {
                 weakSelf.numCommentsLabel.text = @"";
-                weakSelf.seeCommentsButton.hidden = YES;
+                [weakSelf.seeCommentsButton setTitle:@"" forState:UIControlStateNormal];
+                weakSelf.seeCommentsButton.enabled = NO;
             }
         });    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"the error is %@", error);
         }];
+}
+
+- (void)showUserProfile {
+}
+
+- (void)createRangeArray:(NSArray *)array {
+    _rangeOfFiveArray = [array subarrayWithRange:NSMakeRange(0, 4)];
 }
 
 - (void)gotComments {
@@ -420,30 +421,6 @@ static CGFloat kNextPhotoTolerance = 40;
     //[self.view setNeedsLayout];
 
    // });
-}
-
-- (void)layoutCommentsView {
-    //comments View
-    CGRect frame;
-    CGFloat y = CGRectGetMaxY(_seeCommentsButton.frame);
-    
-    for (CommentPhotoView *v in _commentPhotoViewsArray) {
-        frame = v.frame;
-        frame.origin.x = 0;
-        frame.origin.y = y;
-        frame.size.width = self.view.frame.size.width;
-        y += v.frame.size.height;
-        v.frame = frame;
-        NSLog(@"the frame height is %f", v.frame.size.height);
-    }
-
-    if (_commentPhotoViewsArray.count > 0) {
-       // NSLog(@"the count here is %lu", _commentPhotoViewsArray.count);
-        CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
-        _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
-    } else {
-        _backgroundView.contentSize = CGSizeMake(50, CGRectGetMaxY(_share.frame) + kGeomConnectScreenUserImageHeight);
-    }
 }
 
 - (void)viewWillLayoutSubviews {
@@ -567,8 +544,25 @@ static CGFloat kNextPhotoTolerance = 40;
 
     }
 
-    [self layoutCommentsView];
+    y = CGRectGetMaxY(_seeCommentsButton.frame);
     
+    for (CommentPhotoView *v in _commentPhotoViewsArray) {
+        frame = v.frame;
+        frame.origin.x = 0;
+        frame.origin.y = y;
+        frame.size.width = self.view.frame.size.width;
+        y += v.frame.size.height;
+        v.frame = frame;
+        NSLog(@"the frame height is %f", v.frame.size.height);
+    }
+    
+    if (_commentPhotoViewsArray.count > 0) {
+        // NSLog(@"the count here is %lu", _commentPhotoViewsArray.count);
+        CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
+        _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
+    } else {
+        _backgroundView.contentSize = CGSizeMake(50, CGRectGetMaxY(_share.frame) + kGeomConnectScreenUserImageHeight);
+    }
     /////////////////
     _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
     _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_yumButton.frame), buttonWidth, kGeomHeightButton);
@@ -585,11 +579,14 @@ static CGFloat kNextPhotoTolerance = 40;
     _commentCaptionButton.hidden =
     _userButton.hidden =
     _mioDateCreated.hidden =
+    _seeCommentsButton.hidden =
+    _seeYummersButton.hidden =
 
     _userViewButton.hidden = !show;
     
     if (show) {
         if (_numYumsLabel) {
+            NSLog(@"hey ther");
             _numYumsLabel.hidden = NO;
         } else {
             _numYumsLabel.hidden = YES;
@@ -983,6 +980,7 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
+//delegate method in OOUserView
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
     [self showProfile];
 }
@@ -1044,7 +1042,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
     if (_panGesture.state == UIGestureRecognizerStateBegan) {
         _swipeType = kSwipeTypeNone;
-        CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
+       // CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
         
 //        _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
         
@@ -1239,7 +1237,6 @@ static CGFloat kNextPhotoTolerance = 40;
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     self.tabBarController.tabBar.hidden = YES;
-    
     [self.view bringSubviewToFront:_fv];
     
 //    _backgroundView.alpha = kAlphaBackground;
@@ -1371,14 +1368,17 @@ static CGFloat kNextPhotoTolerance = 40;
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getNumMediaItemLikes:_mio.mediaItemId success:^(NSUInteger count) {
         if (count) {
+            weakSelf.seeYummersButton.enabled = YES;
             dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.seeYummersButton setTitle:@"see yummers" forState:UIControlStateNormal];
                 weakSelf.numYumsLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)count];
                 [weakSelf.view setNeedsLayout];
             });
         } else {
             dispatch_async(dispatch_get_main_queue(), ^ {
                 weakSelf.numYumsLabel.hidden = YES;
-                weakSelf.seeYummersButton.hidden = YES;
+                [weakSelf.seeYummersButton setTitle:@"" forState:UIControlStateNormal];
+                weakSelf.seeYummersButton.enabled = NO;
                 [weakSelf.view setNeedsLayout];
             });
         }

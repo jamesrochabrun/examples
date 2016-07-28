@@ -75,6 +75,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
     self.view.backgroundColor = UIColorRGBA(kColorGrayMiddle);
+    self.edgesForExtendedLayout = UIRectEdgeAll;
     
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
@@ -91,9 +92,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [_tableUsers registerClass:[CommentListTVCell class] forCellReuseIdentifier:kCommentsTableReuseIdentifier];
     [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:kCommentsTableReuseIdentifierEmpty];
     [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
-    _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
-    _tableUsers.separatorInset = UIEdgeInsetsZero;
+    //_tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    //_tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
+    //_tableUsers.separatorInset = UIEdgeInsetsZero;
     _tableUsers.showsVerticalScrollIndicator= NO;
 
     [self removeNavButtonForSide:kNavBarSideTypeRight];
@@ -108,7 +109,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [_textFieldView.postTextButton addTarget:self action:@selector(postComment:) forControlEvents:UIControlEventTouchUpInside];
     _textFieldView.textField.delegate = self;
     [self.view addSubview:_textFieldView];
-    _textFieldView.textField.keyboardAppearance = UIKeyboardTypeAlphabet;
     _textFieldView.textField.font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
     
      _user = [Settings sharedInstance].userObject;
@@ -124,14 +124,10 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
     CommentObject *comment = [CommentObject new];
     comment.content = _textFieldView.textField.text;
-    NSLog(@"this is the content on end editing %@", comment.content);
-    NSLog(@" the count of this array is %lu", _commentsArray.count);
-    
 
     [OOAPI uploadComment:comment forObject:_mio success:^(CommentObject *comment) {
         if (comment) {
             NSLog(@"success from commentlistvc");
-            
         } else {
             NSLog(@"failed");
         }
@@ -140,7 +136,15 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     }];
     
     [self dismissKeyboard:sender];
- 
+}
+
+- (void) dismissKeyboard:(id)sender {
+    [self.view endEditing:YES];
+    [_textFieldView.textField resignFirstResponder];
+}
+
+- (void) textFieldDidBeginEditing:(UITextField *)textField {
+    
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
@@ -149,6 +153,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     dispatch_async(dispatch_get_main_queue(), ^{
         [_tableUsers reloadData];
     });
+
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -157,16 +162,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     {
         return NO;
     }
-    
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
     return newLength <= 250;
 }
-
-- (void) dismissKeyboard:(id)sender {
-    [self.view endEditing:YES];
-    [_textFieldView.textField resignFirstResponder];
-}
-
 
 - (void)keyboardWillShow:(NSNotification*)notification {
    
@@ -177,12 +175,12 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:.3];
     [UIView setAnimationBeginsFromCurrentState:TRUE];
-    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - deltaHeight , self.view.frame.size.width, self.view.frame.size.height);
+    
+    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - deltaHeight, self.view.frame.size.width, self.view.frame.size.height);
     
     [UIView commitAnimations];
     
     _keyBoardHeight = kbSize.height;
-    
 }
 
 - (void)keyboardWillHide:(NSNotification*)notification {
@@ -196,8 +194,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
 }
 
-
-
 - (void)done:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -207,8 +203,24 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewWillLayoutSubviews {
+    
     [super viewWillLayoutSubviews];
-    [self doLayout];
+
+    CGRect frame = _tableUsers.frame;
+    frame.origin.x = self.view.bounds.origin.x;
+    frame.origin.y = CGRectGetMaxY(self.navigationController.navigationBar.frame);
+    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar * 3;
+    frame.size.width = self.view.bounds.size.width;
+    _tableUsers.frame = frame;
+    
+    frame = _textFieldView.frame;
+    frame.origin.x = self.view.bounds.origin.x;
+    frame.origin.y = CGRectGetMaxY(self.view.frame) - kGeomHeightTabBar * 2;
+    frame.size.height = kGeomHeightTabBar;
+    frame.size.width = width(self.view);
+    _textFieldView.frame = frame;
+    
+
 }
 
 //------------------------------------------------------------------------------
@@ -250,21 +262,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [super viewDidAppear:animated];
 }
 
-//------------------------------------------------------------------------------
-// Name:    doLayout
-// Purpose: Programmatic equivalent of constraint equations.
-//------------------------------------------------------------------------------
-- (void)doLayout {
-    
-    _textFieldView.frame = CGRectMake(0, CGRectGetMaxY(self.view.bounds) - kGeomHeightTabBar, self.view.bounds.size.width, kGeomHeightTabBar);
-    CGRect frame = _tableUsers.frame;
-    frame.origin.x = self.view.bounds.origin.x;
-    frame.origin.y = self.view.bounds.origin.y;
-    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar;
-    frame.size.width = self.view.bounds.size.width;
-    _tableUsers.frame = frame;
-    
-}
 
 #pragma TableView methods
 
@@ -301,6 +298,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose: Delete cells
 //------------------------------------------------------------------------------
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     return UITableViewCellEditingStyleDelete;
 }
 
@@ -314,23 +312,26 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 }
 
 -(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    UITableViewRowAction *deleteButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
-                                     {
-                                   //delete comment
-                                         
-                                         CommentObject *comment = [self.commentsArray objectAtIndex:indexPath.row];
-                                         
-                                          [OOAPI deleteCommentFromMediaItem:comment forObject:_mio success:^(CommentObject *comment) {
-                                              NSLog(@"deleted");
-                                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                             NSLog(@"the error is %@", error);
-                                         }];
-                                         
-                                     }];
     
+    UITableViewRowAction *deleteButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+                                          {
+                                              
+                                              __weak CommentListVC *weakSelf = self;
+                                              CommentObject *comment = [weakSelf.commentsArray objectAtIndex:indexPath.row];
+                                              dispatch_async(dispatch_get_main_queue(), ^{
+                                                  [weakSelf.commentsArray removeObject:comment];
+                                                  [weakSelf.tableUsers reloadData];
+                                              });
+                                              //what is better here to get the object back too?
+                                              [OOAPI deleteCommentFromMediaItem:comment forObject:_mio success:^(CommentObject *comment) {
+                                              } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                  NSLog(@"the error is %@", error);
+                                              }];
+                                          }];
     return @[deleteButton];
 }
+
+
 
 //------------------------------------------------------------------------------
 // Name:    heightForRowAtIndexPath
@@ -361,6 +362,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 }
 
 - (void)goToProfile: (UserObject*)u {
+    
     ProfileVC *vc= [[ProfileVC alloc] init];
     vc.userInfo = u;
     vc.userID = u.userID;
@@ -396,6 +398,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 @implementation CommentListTableSectionHeader
 
 - (instancetype)initWithExpandedFlag:(BOOL)expanded {
+    
     self = [super init];
     if (self) {
         _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH3);
@@ -418,8 +421,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     self.labelTitle.frame = CGRectMake(kGeomUserListVCHeaderLeftMargin, 0, w/2, h);
     [self.labelExpander sizeToFit];
     CGFloat labelWidth = h;
-    self.labelExpander.frame = CGRectMake(w-kGeomUserListVCHeaderRightMargin-labelWidth, 0, labelWidth, h);
-    double angle = _isExpanded ? 3*M_PI/2 : M_PI/2;
+    self.labelExpander.frame = CGRectMake(w - kGeomUserListVCHeaderRightMargin - labelWidth, 0, labelWidth, h);
+    double angle = _isExpanded ? 3 * M_PI/2 : M_PI/2;
     _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
 }
 

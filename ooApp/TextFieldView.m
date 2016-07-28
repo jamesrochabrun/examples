@@ -43,7 +43,7 @@
     CGRect frame = self.frame;
     CGFloat w = self.frame.size.width;
     CGFloat h = self.frame.size.height;
-    CGFloat margin = 8;
+    CGFloat margin = kGeomSpaceEdge + kGeomInterImageGap;
     
     frame = _textField.frame;
     frame.size.width = w * 0.7 - margin;
