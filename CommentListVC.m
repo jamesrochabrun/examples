@@ -77,6 +77,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     self.view.backgroundColor = UIColorRGBA(kColorGrayMiddle);
     self.edgesForExtendedLayout = UIRectEdgeAll;
     
+
+    
     NavTitleObject *nto;
     nto = [[NavTitleObject alloc]
            initWithHeader: _desiredTitle ?: LOCAL(@"Users")
@@ -166,6 +168,30 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     return newLength <= 250;
 }
 
+//------------------------------------------------------------------------------
+// Name:    viewWillLayoutSubviews
+// Purpose:
+//------------------------------------------------------------------------------
+- (void)viewWillLayoutSubviews {
+    
+    [super viewWillLayoutSubviews];
+    
+    CGRect frame = _tableUsers.frame;
+    frame.origin.x = self.view.bounds.origin.x;
+    frame.origin.y = CGRectGetMaxY(self.navigationController.navigationBar.frame);
+    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar * 2;
+    frame.size.width = self.view.bounds.size.width;
+    _tableUsers.frame = frame;
+    
+    frame = _textFieldView.frame;
+    frame.origin.x = self.view.bounds.origin.x;
+    frame.origin.y = CGRectGetMaxY(self.view.frame) - kGeomHeightTabBar ;
+    frame.size.height = kGeomHeightTabBar;
+    frame.size.width = width(self.view);
+    _textFieldView.frame = frame;
+    
+}
+
 - (void)keyboardWillShow:(NSNotification*)notification {
    
     NSDictionary *info = [notification userInfo];
@@ -179,7 +205,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - deltaHeight, self.view.frame.size.width, self.view.frame.size.height);
     
     [UIView commitAnimations];
-    
     _keyBoardHeight = kbSize.height;
 }
 
@@ -196,31 +221,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 - (void)done:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
-}
-
-//------------------------------------------------------------------------------
-// Name:    viewWillLayoutSubviews
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)viewWillLayoutSubviews {
-    
-    [super viewWillLayoutSubviews];
-
-    CGRect frame = _tableUsers.frame;
-    frame.origin.x = self.view.bounds.origin.x;
-    frame.origin.y = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar * 3;
-    frame.size.width = self.view.bounds.size.width;
-    _tableUsers.frame = frame;
-    
-    frame = _textFieldView.frame;
-    frame.origin.x = self.view.bounds.origin.x;
-    frame.origin.y = CGRectGetMaxY(self.view.frame) - kGeomHeightTabBar * 2;
-    frame.size.height = kGeomHeightTabBar;
-    frame.size.width = width(self.view);
-    _textFieldView.frame = frame;
-    
-
 }
 
 //------------------------------------------------------------------------------
@@ -241,6 +241,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+    
+    self.tabBarController.tabBar.hidden = YES;
+
 }
 
 
