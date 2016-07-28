@@ -126,12 +126,16 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
     CommentObject *comment = [CommentObject new];
     comment.content = _textFieldView.textField.text;
-
+    
     [OOAPI uploadComment:comment forObject:_mio success:^(CommentObject *comment) {
         if (comment) {
-            NSLog(@"success from commentlistvc");
+            __weak CommentListVC *cLVC = self;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [cLVC.commentsArray addObject:comment];
+                [cLVC.tableUsers reloadData];
+            });
         } else {
-            NSLog(@"failed");
+            NSLog(@"operation in CommentlistVC failed");
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"the error is %@", error);
@@ -145,9 +149,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [_textFieldView.textField resignFirstResponder];
 }
 
-- (void) textFieldDidBeginEditing:(UITextField *)textField {
-    
-}
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     
@@ -160,12 +161,17 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     // Prevent crashing undo bug – see note below.
+    
     if(range.length + range.location > textField.text.length)
     {
+        
         return NO;
     }
+    
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
     return newLength <= 250;
+    
+
 }
 
 //------------------------------------------------------------------------------
@@ -290,7 +296,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
     }];
     
-    [cell provideComment:comment];
+    //[cell provideComment:comment];
+    cell.comment = comment;
     return cell;
 }
 

@@ -404,7 +404,7 @@ static CGFloat kNextPhotoTolerance = 40;
         
         [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakCPV.userNameButton setTitle:user.username forState:UIControlStateNormal];
+                [weakCPV.userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
                 [weakCPV setNeedsLayout];
                 [weakSelf.view setNeedsLayout];
             });
@@ -571,6 +571,21 @@ static CGFloat kNextPhotoTolerance = 40;
 
 
 - (void)showComponents:(BOOL)show {
+    
+    
+    for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
+        
+            if (show) {
+                if (cPV) {
+                    NSLog(@"hey ther");
+                } else {
+                }
+            } else {
+            }
+
+    }
+    
+    NSLog(@"the show is %d", show);
     _share.hidden =
     _optionsButton.hidden =
     _closeButton.hidden =
@@ -580,7 +595,7 @@ static CGFloat kNextPhotoTolerance = 40;
     _commentCaptionButton.hidden =
     _userButton.hidden =
     _mioDateCreated.hidden =
-    _seeCommentsButton.hidden =
+   // _seeCommentsButton.hidden =
     _seeYummersButton.hidden =
 
     _userViewButton.hidden = !show;
@@ -596,9 +611,7 @@ static CGFloat kNextPhotoTolerance = 40;
 //        _numYumsLabel.hidden = YES;
 //    }
     
-    for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
-        cPV.hidden = !show;
-    }
+
     
   
 }

@@ -104,11 +104,16 @@
 }
 //////////////////////////////////////////////
 
-- (void)provideComment:(CommentObject *)comment {
+
+- (void)setComment:(CommentObject *)comment {
+    if (comment == _comment) return;
+    _comment = comment;
     _commentLabel.text = comment.content;
     NSString *commentCreatedAt = [NSString getTimeAgoString:comment.createdAt];
     _commentDateLabel.text = commentCreatedAt;
 }
+
+
 //
 //- (void)prepareForReuse {
 //    
