@@ -310,7 +310,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     if (_user.userID == comment.userID || _user.userID == _mio.sourceUserID) {
         return YES;
     }
-    
     return NO;
 }
 

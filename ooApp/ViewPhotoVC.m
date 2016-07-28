@@ -585,6 +585,7 @@ static CGFloat kNextPhotoTolerance = 40;
     _commentCaptionButton.hidden =
     _userButton.hidden =
     _mioDateCreated.hidden =
+
     _userViewButton.hidden = !show;
     
     if (show) {
@@ -600,6 +601,8 @@ static CGFloat kNextPhotoTolerance = 40;
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.hidden = !show;
     }
+    
+  
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {
@@ -622,6 +625,7 @@ static CGFloat kNextPhotoTolerance = 40;
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.alpha = alpha;
     }
+    
 }
 
 

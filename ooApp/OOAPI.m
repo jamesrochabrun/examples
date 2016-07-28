@@ -167,9 +167,11 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
     AFHTTPRequestOperation *op = [rm DELETE:url parameters:nil success:^(id responseObject) {
-        
+        success(responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-    };
+        failure(operation, error);
+    }];
+    
     
     return op;
 }
