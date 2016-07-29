@@ -266,6 +266,10 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [super viewDidAppear:animated];
+    if (_commentsArray.count <= 0) {
+        [_textFieldView.textField becomeFirstResponder];
+    }
 }
 
 #pragma TableView methods
