@@ -18,11 +18,11 @@
 
 
 @interface CommentListTVCell : UITableViewCell <OOUserViewDelegate, UnverifiedUserVCDelegate>
+
 - (void)provideUser:(UserObject *)user;
-- (void)provideComment:(CommentObject *)comment;
 + (CGFloat)heightForComment:(CommentObject *)comment;
 @property (nonatomic, strong) CommentObject *comment;
-
+@property (nonatomic, strong) UserObject *user;
 @property (nonatomic, weak) UIViewController *vc;
 @property (nonatomic, weak) id<CommentListTVCDelegate>delegate;
 

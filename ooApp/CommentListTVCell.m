@@ -25,13 +25,13 @@
 
 @implementation CommentListTVCell
 
-- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
+- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    
     self = [super initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier];
     if (self) {
         
         self.translatesAutoresizingMaskIntoConstraints = YES;
-
+        
         _userView= [[OOUserView alloc] init];
         [self addSubview:_userView];
         _userView.delegate = self;
@@ -54,13 +54,13 @@
         //_commentLabel.text = @"hsdbkj ckjhkhelloeojmb;kjsdbkj";
         [self addSubview:_commentLabel];
         
-         //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel , _commentDateLabel]];
+        //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel , _commentDateLabel]];
     }
     return self;
 }
 
 - (void)presentUnverifiedMessage:(NSString *)message {
-   
+    
     UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
     vc.delegate = self;
     vc.action = message;
@@ -78,34 +78,36 @@
 }
 
 - (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    
     [[UIApplication sharedApplication].windows[0].rootViewController.childViewControllers.lastObject dismissViewControllerAnimated:YES completion:^{
-        ;
     }];
 }
 
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
+    
     [self.delegate userTappedImageOfUser:user];
 }
 
-//this its what I need to see in depth
 - (void)setUserInfo:(UserObject *)userInfo {
+    
     if (_userInfo == userInfo) return;
     _userInfo = userInfo;
     NSLog(@"_userInfo: %@ user: %@ same? %d", _userInfo, _userInfo, (_userInfo==userInfo));
-
     [_userView setUser:_userInfo];
     _labelName.text = [NSString stringWithFormat:@"%@ %@",
                        _userInfo.firstName ? : @"",
                        _userInfo.lastName ? : @""];
 }
 
-- (void)provideUser:(UserObject *)user {
+- (void)setUser:(UserObject *)user {
+    
+    if (user == _user) return;
+    _user = user;
     self.userInfo = user;
 }
-//////////////////////////////////////////////
-
 
 - (void)setComment:(CommentObject *)comment {
+    
     if (comment == _comment) return;
     _comment = comment;
     _commentLabel.text = comment.content;
@@ -164,8 +166,6 @@
     frame.origin.y = CGRectGetMaxY(_labelName.frame) + kGeomSpaceEdge;
     frame.origin.x = CGRectGetMaxX(_userView.frame) + spacing + kGeomSpaceCellPadding;
     _commentLabel.frame = frame;
-    NSLog(@"teh width is %f", _commentLabel.frame.size.width);
-    
     
     [_userView layoutIfNeeded];
     
@@ -175,15 +175,11 @@
 
 + (CGFloat)heightForComment:(CommentObject *)comment {
 
-    CGFloat minHeight = 100; //kGeomHeightHorizontalListRow;
-    
+    CGFloat minHeight = kGeomHeightHorizontalListRow;
     UIFont *font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-    
     CGRect boundingBox = [comment.content boundingRectWithSize:CGSizeMake(230, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
-    
-    NSString *str = NSStringFromCGRect(boundingBox);
-    NSLog(@"the boundingbox is %@", str);
-    
+   // NSString *str = NSStringFromCGRect(boundingBox);
+   // NSLog(@"the boundingbox is %@", str);
     return MAX(minHeight, CGRectGetHeight(boundingBox));
     
 }

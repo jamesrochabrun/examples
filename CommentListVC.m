@@ -290,7 +290,10 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     cell.vc = self;
     
     [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-            [cell provideUser:user];
+        
+        cell.user = user;
+        
+            //[cell provideUser:user];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
     }];
     
