@@ -55,7 +55,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     //[self refreshIfNeeded];
 }
 
-
 //- (void)refreshIfNeeded {
 //    if (_needRefresh) {
 //        _needRefresh = NO;

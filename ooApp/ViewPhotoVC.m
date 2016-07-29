@@ -362,7 +362,11 @@ static CGFloat kNextPhotoTolerance = 40;
 
 -(void)handleUpdatedData:(NSNotification *)notification {
     NSLog(@"recieved notification");
+    [_commentPhotoViewsArray removeAllObjects];
+    [self getComments];
+
 }
+
 
 - (void)getComments {
     
@@ -394,8 +398,7 @@ static CGFloat kNextPhotoTolerance = 40;
     for (int i = 0; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         
-        cPV.hidden = YES;
-        
+        //cPV.hidden = YES;
         [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
@@ -428,6 +431,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)viewWillLayoutSubviews {
+    
     [super viewWillLayoutSubviews];
     
     if (!_mio) return;
@@ -1233,6 +1237,8 @@ static CGFloat kNextPhotoTolerance = 40;
                                              selector:@selector(handleUpdatedData:)
                                                  name:kNotificationViewPhotoVCNeedsUpdate
                                                object:nil];
+    
+  
     
 //    _backgroundView.alpha = kAlphaBackground;
 }
