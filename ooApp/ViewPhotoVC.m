@@ -360,6 +360,10 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
+-(void)handleUpdatedData:(NSNotification *)notification {
+    NSLog(@"recieved notification");
+}
+
 - (void)getComments {
     
     __weak ViewPhotoVC *weakSelf = self;
@@ -1224,6 +1228,11 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     self.tabBarController.tabBar.hidden = YES;
     [self.view bringSubviewToFront:_fv];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleUpdatedData:)
+                                                 name:kNotificationViewPhotoVCNeedsUpdate
+                                               object:nil];
     
 //    _backgroundView.alpha = kAlphaBackground;
 }

@@ -146,6 +146,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 - (void) dismissKeyboard:(id)sender {
     [self.view endEditing:YES];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
+                                                        object:self];
     [_textFieldView.textField resignFirstResponder];
 }
 
@@ -266,8 +269,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [super viewDidAppear:animated];
+    
     if (_commentsArray.count <= 0) {
+        NSLog(@"the count in thi section is %lu", _commentsArray.count);
         [_textFieldView.textField becomeFirstResponder];
     }
 }

@@ -330,6 +330,7 @@ extern NSString *const kImageBackgroundFoodFeed;
 extern NSString *const kImageBackgroundConnect;
 extern NSString *const kImageBackgroundProfile;
 extern NSString *const kImageBackgroundSearch;
+extern NSString *const kNotificationViewPhotoVCNeedsUpdate;
 
 
 #endif
