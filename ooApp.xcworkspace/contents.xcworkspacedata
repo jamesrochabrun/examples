@@ -2,12 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:CommentListVC.h">
-   </FileRef>
-   <FileRef
-      location = "group:CommentListVC.m">
-   </FileRef>
-   <FileRef
       location = "group:ooApp.xcodeproj">
    </FileRef>
    <FileRef

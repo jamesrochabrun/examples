@@ -25,7 +25,7 @@
         [self addSubview:_textField];
 
         _postTextButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_postTextButton withText:@"Send" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorTextActive target:self selector:@selector(test)];
+        [_postTextButton withText:@"Post" fontSize:kGeomFontSizeH3 width:0 height:0 backgroundColor:kColorTextActive target:self selector:@selector(test)];
         [self addSubview:_postTextButton];
         [_postTextButton setTitleColor:UIColorRGBA(kColorTextReverse) forState:UIControlStateNormal];
         _postTextButton.layer.cornerRadius = kGeomCornerRadius;

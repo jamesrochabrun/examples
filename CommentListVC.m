@@ -179,19 +179,18 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewWillLayoutSubviews {
-    
     [super viewWillLayoutSubviews];
     
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
     frame.origin.y = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar * 2;
+    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar * 2 - _keyBoardHeight;
     frame.size.width = self.view.bounds.size.width;
     _tableUsers.frame = frame;
     
     frame = _textFieldView.frame;
     frame.origin.x = self.view.bounds.origin.x;
-    frame.origin.y = CGRectGetMaxY(self.view.frame) - kGeomHeightTabBar ;
+    frame.origin.y = CGRectGetMaxY(self.view.frame) - kGeomHeightTabBar - _keyBoardHeight;
     frame.size.height = kGeomHeightTabBar;
     frame.size.width = width(self.view);
     _textFieldView.frame = frame;
@@ -199,19 +198,20 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 }
 
 - (void)keyboardWillShow:(NSNotification*)notification {
-   
+    
     NSDictionary *info = [notification userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
-    CGFloat deltaHeight = kbSize.height - _keyBoardHeight;
+    _keyBoardHeight = kbSize.height;
+    
     // Write code to adjust views accordingly using deltaHeight
+    [self.view setNeedsLayout];
+    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:.3];
     [UIView setAnimationBeginsFromCurrentState:TRUE];
-    
-    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - deltaHeight, self.view.frame.size.width, self.view.frame.size.height);
-    
+    [self.view layoutIfNeeded];
     [UIView commitAnimations];
-    _keyBoardHeight = kbSize.height;
+
 }
 
 - (void)keyboardWillHide:(NSNotification*)notification {

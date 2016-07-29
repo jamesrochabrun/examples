@@ -128,7 +128,7 @@ static CGFloat kNextPhotoTolerance = 40;
         _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
     
         _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showUserProfile)];
+        [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -380,9 +380,6 @@ static CGFloat kNextPhotoTolerance = 40;
         }];
 }
 
-- (void)showUserProfile {
-}
-
 - (void)createRangeArray:(NSArray *)array {
     _rangeOfFiveArray = [array subarrayWithRange:NSMakeRange(0, 4)];
 }
@@ -392,6 +389,9 @@ static CGFloat kNextPhotoTolerance = 40;
     CommentPhotoView *cPV;
     for (int i = 0; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
+        
+        cPV.hidden = YES;
+        
         [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
@@ -514,26 +514,24 @@ static CGFloat kNextPhotoTolerance = 40;
     CGFloat buttonWidth = (w - (kGeomSpaceInter*2))/3;
     
     //horizontal 3 buttons section
-    
     if (_mio.source == kMediaItemTypeOomami) {
-
-    _commentCaptionButton.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
-    frame = _numCommentsLabel.frame;
-    frame.size.width = kGeomDimensionsIconButton;
-    frame.size.height = kGeomDimensionsIconButton;
-    frame.origin.y = _commentCaptionButton.frame.size.height - _numCommentsLabel.frame.size.height + kGeomSpaceEdge;
-    frame.origin.x = width(_commentCaptionButton)  - width(_numCommentsLabel) - kGeomSpaceEdge;
-    _numCommentsLabel.frame = frame;
-    
-    _share.frame = CGRectMake(buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
-    
-    _yumButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
-    frame = _numYumsLabel.frame;
-    frame.size.width = kGeomDimensionsIconButton;
-    frame.size.height = kGeomDimensionsIconButton;
-    frame.origin.y =  _yumButton.frame.size.height - _numYumsLabel.frame.size.height + kGeomSpaceEdge;
-    frame.origin.x = width(_yumButton) - width(_numYumsLabel) - kGeomSpaceEdge;
-    _numYumsLabel.frame = frame;
+        _commentCaptionButton.frame = CGRectMake(0, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
+        frame = _numCommentsLabel.frame;
+        frame.size.width = kGeomDimensionsIconButton;
+        frame.size.height = kGeomDimensionsIconButton;
+        frame.origin.y = _commentCaptionButton.frame.size.height - _numCommentsLabel.frame.size.height + kGeomSpaceEdge;
+        frame.origin.x = width(_commentCaptionButton)  - width(_numCommentsLabel) - kGeomSpaceEdge;
+        _numCommentsLabel.frame = frame;
+        
+        _share.frame = CGRectMake(buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
+        
+        _yumButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
+        frame = _numYumsLabel.frame;
+        frame.size.width = kGeomDimensionsIconButton;
+        frame.size.height = kGeomDimensionsIconButton;
+        frame.origin.y =  _yumButton.frame.size.height - _numYumsLabel.frame.size.height + kGeomSpaceEdge;
+        frame.origin.x = width(_yumButton) - width(_numYumsLabel) - kGeomSpaceEdge;
+        _numYumsLabel.frame = frame;
     } else {
         _commentCaptionButton.hidden = YES;
         _numCommentsLabel.hidden = YES;
@@ -572,19 +570,6 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)showComponents:(BOOL)show {
     
-    
-    for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
-        
-            if (show) {
-                if (cPV) {
-                    NSLog(@"hey ther");
-                } else {
-                }
-            } else {
-            }
-
-    }
-    
     NSLog(@"the show is %d", show);
     _share.hidden =
     _optionsButton.hidden =
@@ -595,28 +580,17 @@ static CGFloat kNextPhotoTolerance = 40;
     _commentCaptionButton.hidden =
     _userButton.hidden =
     _mioDateCreated.hidden =
-   // _seeCommentsButton.hidden =
+    _seeCommentsButton.hidden =
     _seeYummersButton.hidden =
-
     _userViewButton.hidden = !show;
     
-//    if (show) {
-//        if (_numYumsLabel) {
-//            NSLog(@"hey ther");
-//            _numYumsLabel.hidden = NO;
-//        } else {
-//            _numYumsLabel.hidden = YES;
-//        }
-//    } else {
-//        _numYumsLabel.hidden = YES;
-//    }
-    
-
-    
-  
+    for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
+        cPV.hidden = !show;
+    }
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {
+
     _share.alpha =
     _optionsButton.alpha =
     _closeButton.alpha =
@@ -636,7 +610,6 @@ static CGFloat kNextPhotoTolerance = 40;
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.alpha = alpha;
     }
-    
 }
 
 
