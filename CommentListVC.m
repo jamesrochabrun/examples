@@ -203,9 +203,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     _keyBoardHeight = kbSize.height;
     
-    // Write code to adjust views accordingly using deltaHeight
     [self.view setNeedsLayout];
-    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:.3];
     [UIView setAnimationBeginsFromCurrentState:TRUE];
@@ -216,13 +214,13 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 - (void)keyboardWillHide:(NSNotification*)notification {
     
+    [self.view setNeedsLayout];
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:.3];
     [UIView setAnimationBeginsFromCurrentState:TRUE];
-    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + _keyBoardHeight , self.view.frame.size.width, self.view.frame.size.height);
     [UIView commitAnimations];
     _keyBoardHeight = 0.0f;
-    
+    [self.view layoutIfNeeded];
 }
 
 - (void)done:(id)sender {
