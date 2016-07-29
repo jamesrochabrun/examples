@@ -14,6 +14,7 @@
 @property (nonatomic, strong) UILabel *headerLabel;
 @property (nonatomic, strong) UILabel *subHeaderLabel;
 @property (nonatomic, strong) UILabel *arrow;
+@property (nonatomic, strong) UILabel *logo;
 
 @end
 
@@ -25,21 +26,30 @@
         _headerLabel = [[UILabel alloc] init];
         _subHeaderLabel = [[UILabel alloc] init];
         _arrow = [[UILabel alloc] init];
+        _logo = [UILabel new];
+        _logo.hidden = YES;
+        CGRect frame = _logo.frame;
+        frame.size.height = 44;
+        _logo.frame = frame;
         
+        [_logo withFont:[UIFont fontWithName:kFontIcons size:135] textColor:kColorNavBarText backgroundColor:kColorClear];
+        _logo.text = kFontIconLogoFull;
         [_headerLabel withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeHeader] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [_subHeaderLabel withFont:[UIFont fontWithName:kFontLatoLight size:kGeomFontSizeSubheader] textColor:kColorNavBarText backgroundColor:kColorClear numberOfLines:1 lineBreakMode:NSLineBreakByTruncatingTail textAlignment:NSTextAlignmentCenter];
         [_arrow withFont:[UIFont fontWithName:kFontIcons size:20] textColor:kColorTextActive backgroundColor:kColorClear];
         _arrow.text = kFontIconBack;
         _arrow.hidden = YES;
         
-        _arrow.translatesAutoresizingMaskIntoConstraints = NO;
-        _headerLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        _logo.translatesAutoresizingMaskIntoConstraints =
+        _arrow.translatesAutoresizingMaskIntoConstraints =
+        _headerLabel.translatesAutoresizingMaskIntoConstraints =
         _subHeaderLabel.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_headerLabel];
         [self addSubview:_subHeaderLabel];
         [self addSubview:_arrow];
+        [self addSubview:_logo];
         
-        //[DebugUtilities addBorderToViews:@[_headerLabel, _subHeaderLabel, _arrow, self]];
+        //[DebugUtilities addBorderToViews:@[_headerLabel, _subHeaderLabel, _arrow, _logo]];
     }
     return self;
 }
@@ -50,7 +60,7 @@
 // Create the views and metrics dictionaries
     NSDictionary *metrics = @{@"height":@(kGeomHeightButton), @"width":@200, @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter)};
     UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _headerLabel, _subHeaderLabel, _arrow);
+    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _headerLabel, _subHeaderLabel, _arrow, _logo);
     
     // Vertical layout - note the options for aligning the top and bottom of all views
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=spaceEdge)-[_headerLabel][_subHeaderLabel]-(<=spaceEdge)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
@@ -58,7 +68,20 @@
     // Horizontal Layout
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_headerLabel]-spaceInter-[_arrow]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_subHeaderLabel]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=0)-[_logo]-(>=0)-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
 
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_logo
+                                                     attribute:NSLayoutAttributeCenterX
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeCenterX
+                                                    multiplier:1.f constant:0.f]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_logo
+                                                     attribute:NSLayoutAttributeCenterY
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeCenterY
+                                                    multiplier:1.f constant:5.f]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_headerLabel
                                                           attribute:NSLayoutAttributeCenterX
                                                           relatedBy:NSLayoutRelationEqual
@@ -95,6 +118,10 @@
     _subHeaderLabel.text = _navTitle.subheader;
     [_headerLabel sizeToFit];
     [_subHeaderLabel sizeToFit];
+    
+    if (!navTitle) {
+        _logo.hidden = NO;
+    }
     
     [self setNeedsUpdateConstraints];
     [self setNeedsLayout];

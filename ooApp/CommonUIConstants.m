@@ -98,3 +98,4 @@ NSString *const kNotificationUserStatsChanged = @"notificationUserStatsChanged";
 NSString *const kNotificationUserFollowingChanged = @"notificationUserFollowingChanged";
 NSString *const kNotificationUpdatePhotos = @"notificationUpdatePhotos";
 
+

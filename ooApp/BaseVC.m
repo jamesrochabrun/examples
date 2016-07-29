@@ -233,7 +233,7 @@
     [_navTitleView setNeedsLayout];
 }
 
-- (void)registerForNotification:(NSString*)name calling:(SEL)selector
+- (void)registerForNotification:(NSString *)name calling:(SEL)selector
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:selector
@@ -256,6 +256,7 @@
     self.tabBarController.tabBar.hidden = NO;
 
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageWithColor:UIColorRGBA(kColorNavBar)] forBarMetrics:UIBarMetricsDefault];
+    //self.navigationController.navigationBar.backgroundColor = UIColorRGBA(kColorOverlay40);
     
     CGRect frame = self.navigationController.navigationBar.frame;
     frame.origin.y = kGeomHeightStatusBar;

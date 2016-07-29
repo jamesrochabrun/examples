@@ -172,15 +172,15 @@
 - (void)registerForNotification:(NSString*) name calling:(SEL)selector
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector: selector
-                   name: name
+    [center addObserver:self selector:selector
+                   name:name
                  object:nil];
 }
 
 - (void)unregisterFromNotifications
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center removeObserver: self  ];
+    [center removeObserver:self];
 }
 
 - (void)dealloc

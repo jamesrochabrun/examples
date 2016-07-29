@@ -56,7 +56,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [_filterView addFilter:@"Newest" target:self selector:@selector(selectAll)];
     [_filterView addFilter:@"Around Me" target:self selector:@selector(selectAroundMe)];
     [_filterView addFilter:@"Following" target:self selector:@selector(selectFriends)];
-    [_filterView setCurrent:1];
+    [_filterView setCurrent:0];
     [self.view addSubview:_filterView];
     
     _cvl = [[FoodFeedVCCVL alloc] init];
@@ -148,7 +148,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN(@(object_getClassName(self)));
 
-    self.navTitle = _nto;
+    self.navTitle = nil;// _nto;
     
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self removeNavButtonForSide:kNavBarSideTypeRight];
@@ -573,12 +573,18 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
         if (_selectedItem != indexPath.row) return (width(self.view)*4/3)/2;
 //        return height(_collectionView);
     }
+
+    CGFloat height;
     
-    RestaurantObject *r =[_restaurants objectAtIndex:indexPath.row];
-    MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : [[MediaItemObject alloc] init];
-    if (!mio.width || !mio.height) return width(collectionView)/_numColumns; //NOTE: this should not happen
-    CGFloat height = floorf(((width(self.collectionView) - (_numColumns-1) - 2*kGeomSpaceEdge)/_numColumns)*mio.height/mio.width);
-    return height + ((mio.source == kMediaItemTypeOomami)? 30:0);
+    height = (CGRectGetWidth(self.view.frame)-kGeomSpaceEdge)/2;
+    height += (floorf(height) == height) ? 2:3;
+    return height;
+    
+//    RestaurantObject *r =[_restaurants objectAtIndex:indexPath.row];
+//    MediaItemObject *mio = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : [[MediaItemObject alloc] init];
+//    if (!mio.width || !mio.height) return width(collectionView)/_numColumns; //NOTE: this should not happen
+//    height = floorf(((width(self.collectionView) - (_numColumns-1) - 2*kGeomSpaceEdge)/_numColumns)*mio.height/mio.width);
+//    return height + ((mio.source == kMediaItemTypeOomami)? 30:0);
 }
 
 - (void)updateViewConstraints {

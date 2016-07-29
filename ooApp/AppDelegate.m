@@ -54,6 +54,7 @@
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:kUserDefaultsUsingStagingServer];
     }
     
+    self.window.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
 //    NSDictionary *notification;
 //    
 //    notification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
