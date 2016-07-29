@@ -362,7 +362,11 @@ static CGFloat kNextPhotoTolerance = 40;
 
 -(void)handleUpdatedData:(NSNotification *)notification {
     NSLog(@"recieved notification");
-    [_commentPhotoViewsArray removeAllObjects];
+    for (CommentPhotoView *cv in _commentPhotoViewsArray) {
+        [cv removeFromSuperview];
+    }
+    [_commentsArray removeAllObjects];
+    
     [self getComments];
 
 }
