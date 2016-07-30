@@ -360,15 +360,20 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
--(void)handleUpdatedData:(NSNotification *)notification {
-    NSLog(@"recieved notification");
-    for (CommentPhotoView *cv in _commentPhotoViewsArray) {
-        [cv removeFromSuperview];
-    }
-    [_commentsArray removeAllObjects];
-    
-    [self getComments];
 
+- (void)handleUpdatedData:(NSNotification *)notification {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        __weak ViewPhotoVC *weakSelf = self;
+        
+        for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
+            [cv removeFromSuperview];
+        }
+        [weakSelf.view setNeedsLayout];
+    });
+    [_commentPhotoViewsArray removeAllObjects];
+    [_commentsArray removeAllObjects];
+    [self getComments];
 }
 
 

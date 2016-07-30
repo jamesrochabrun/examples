@@ -7,8 +7,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol CommentPhotoViewDelegate <NSObject>
+@optional
+- (void)didUserPostComment;
+@end
+
 @interface CommentPhotoView : UIView
-@property UIButton *userNameButton;
-@property UIButton *userCommentButton;
+@property (nonatomic, strong) UIButton *userNameButton;
+@property (nonatomic, strong) UIButton *userCommentButton;
+@property CommentObject *comment;
 
 @end
