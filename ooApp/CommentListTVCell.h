@@ -19,7 +19,6 @@
 
 @interface CommentListTVCell : UITableViewCell <OOUserViewDelegate, UnverifiedUserVCDelegate>
 
-- (void)provideUser:(UserObject *)user;
 + (CGFloat)heightForComment:(CommentObject *)comment;
 @property (nonatomic, strong) CommentObject *comment;
 @property (nonatomic, strong) UserObject *user;

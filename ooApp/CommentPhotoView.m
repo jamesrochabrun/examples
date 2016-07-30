@@ -18,6 +18,8 @@
         _userNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_userNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [_userNameButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular  size: kGeomFontSizeH4]];
+        [_userNameButton addTarget:self action:@selector(dosomething) forControlEvents:UIControlEventTouchUpInside];
+        
         [self addSubview:_userNameButton];
         
         _userCommentButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -26,7 +28,6 @@
         _userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         _userCommentButton.titleLabel.numberOfLines = 0;
         [self addSubview:_userCommentButton];
-        
     }
     return self;
 }
@@ -71,9 +72,9 @@
     
 }
 
-
-
-
+- (void)dosomething {
+    NSLog(@"do something");
+}
 
 
 

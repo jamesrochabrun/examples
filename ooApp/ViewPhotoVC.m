@@ -363,24 +363,29 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)handleUpdatedData:(NSNotification *)notification {
     
+    [_commentsArray removeAllObjects];
+
     dispatch_async(dispatch_get_main_queue(), ^{
         __weak ViewPhotoVC *weakSelf = self;
         
         for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
             [cv removeFromSuperview];
+            [weakSelf.view setNeedsLayout];
         }
-        [weakSelf.view setNeedsLayout];
     });
-    [_commentPhotoViewsArray removeAllObjects];
-    [_commentsArray removeAllObjects];
+    //[_commentPhotoViewsArray removeAllObjects];
     [self getComments];
+    
+    NSLog(@"the user its updated");
 }
-
 
 - (void)getComments {
     
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
+        
+        NSLog(@"el mio es %@", _mio.sourceUsername);
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.commentsArray = comments.mutableCopy;
             [weakSelf gotComments];
@@ -409,6 +414,8 @@ static CGFloat kNextPhotoTolerance = 40;
         
         //cPV.hidden = YES;
         [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
+        //aqui es donde debo pensar en el delegate method
+        
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         CommentObject *comment = [_commentsArray objectAtIndex:i];
@@ -433,10 +440,6 @@ static CGFloat kNextPhotoTolerance = 40;
         }];
         [self.backgroundView addSubview:cPV];
     }
-   // dispatch_async(dispatch_get_main_queue(), ^{
-    //[self.view setNeedsLayout];
-
-   // });
 }
 
 - (void)viewWillLayoutSubviews {
