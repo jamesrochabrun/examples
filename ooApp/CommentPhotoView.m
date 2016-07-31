@@ -18,7 +18,7 @@
         _userNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_userNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
         [_userNameButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular  size: kGeomFontSizeH4]];
-        [_userNameButton addTarget:self action:@selector(dosomething) forControlEvents:UIControlEventTouchUpInside];
+        [_userNameButton addTarget:self action:@selector(userNameButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         
         [self addSubview:_userNameButton];
         
@@ -72,8 +72,14 @@
     
 }
 
-- (void)dosomething {
-    NSLog(@"do something");
+- (void)setComment:(CommentObject *)comment {
+    
+    if (comment == _comment) return;
+    _comment = comment;
+}
+
+- (void)userNameButtonTapped {
+    [self.delegate getUserFromComment:_comment];
 }
 
 

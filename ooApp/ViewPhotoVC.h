@@ -14,6 +14,7 @@
 #import "OOUserView.h"
 #import "UnverifiedUserVC.h"
 #import <FBSDKShareKit/FBSDKShareKit.h>
+#import "CommentPhotoView.h"
 
 static CGFloat kAlphaBackground = 1;
 
@@ -39,7 +40,8 @@ typedef enum {
                                     UIViewControllerTransitioningDelegate,
                                     UnverifiedUserVCDelegate,
                                     UIActivityItemSource,
-                                    FBSDKSharingDelegate>
+                                    FBSDKSharingDelegate,
+                                    CommentPhotoViewDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) UIImageView *iv;

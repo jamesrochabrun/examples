@@ -411,10 +411,9 @@ static CGFloat kNextPhotoTolerance = 40;
     CommentPhotoView *cPV;
     for (int i = 0; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
-        
+        cPV.delegate = self;
+        cPV.comment = [_commentsArray objectAtIndex:i];
         //cPV.hidden = YES;
-        [cPV.userNameButton addTarget:self action:@selector(showProfile) forControlEvents:UIControlEventTouchUpInside];
-        //aqui es donde debo pensar en el delegate method
         
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
@@ -440,6 +439,20 @@ static CGFloat kNextPhotoTolerance = 40;
         }];
         [self.backgroundView addSubview:cPV];
     }
+}
+
+- (void)getUserFromComment:(CommentObject *)comment {
+    
+    NSLog(@"the comment is %lu", comment.userID);
+    [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
+        
+        if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
+            [_delegate viewPhotoVC:self showProfile:user];
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    }];
+    
 }
 
 - (void)viewWillLayoutSubviews {
@@ -1402,6 +1415,9 @@ static CGFloat kNextPhotoTolerance = 40;
     }];
 }
 
+
+
+
 /*
 #pragma mark - Navigation
 
@@ -1413,3 +1429,12 @@ static CGFloat kNextPhotoTolerance = 40;
 */
 
 @end
+
+
+
+
+
+
+
+
+
