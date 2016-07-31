@@ -412,19 +412,20 @@ static CGFloat kNextPhotoTolerance = 40;
     for (int i = 0; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
-        cPV.comment = [_commentsArray objectAtIndex:i];
         //cPV.hidden = YES;
         
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         CommentObject *comment = [_commentsArray objectAtIndex:i];
         [cPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
+        //cPV.comment = [_commentsArray objectAtIndex:i];
         [self.backgroundView addSubview:cPV];
         
         __weak CommentPhotoView *weakCPV = cPV;
         __weak ViewPhotoVC *weakSelf = self;
         
         [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
+            weakCPV.user = user;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakCPV.userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
                 [weakCPV setNeedsLayout];
@@ -441,18 +442,23 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-- (void)getUserFromComment:(CommentObject *)comment {
+//- (void)getUserFromComment:(CommentObject *)comment {
+//    
+//    NSLog(@"the comment is %lu", comment.userID);
+//    [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
+//        
+//        if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
+//            [_delegate viewPhotoVC:self showProfile:user];
+//        }
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//    }];
+//}
+
+- (void)goToUserProfile:(UserObject *)user {
     
-    NSLog(@"the comment is %lu", comment.userID);
-    [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-        
-        if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
-            [_delegate viewPhotoVC:self showProfile:user];
-        }
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-    }];
-    
+    if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
+        [_delegate viewPhotoVC:self showProfile:user];
+    }
 }
 
 - (void)viewWillLayoutSubviews {

@@ -45,7 +45,7 @@
     frame.origin.x = margin;
     frame.origin.y = CGRectGetMinY(self.bounds);
     _userNameButton.frame = frame;
-    
+
     frame = _userCommentButton.frame;
     frame.size.width = w - _userNameButton.frame.size.width - kGeomSpaceInter - margin * 3;
     CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height;
@@ -78,8 +78,16 @@
     _comment = comment;
 }
 
+- (void)setUser:(UserObject *)user {
+    
+    if (user == _user) return;
+    _user = user;
+}
+
 - (void)userNameButtonTapped {
-    [self.delegate getUserFromComment:_comment];
+    
+    //[self.delegate getUserFromComment:_comment];
+    [self.delegate goToUserProfile:_user];
 }
 
 

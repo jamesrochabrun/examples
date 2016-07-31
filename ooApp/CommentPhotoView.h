@@ -6,17 +6,19 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@class UserObject;
 
 @protocol CommentPhotoViewDelegate <NSObject>
 @optional
-- (void)getUserFromComment:(CommentObject *)comment;
+//- (void)getUserFromComment:(CommentObject *)comment;
+- (void)goToUserProfile:(UserObject *)user;
 @end
 
 @interface CommentPhotoView : UIView
 @property (nonatomic, strong) UIButton *userNameButton;
 @property (nonatomic, strong) UIButton *userCommentButton;
 @property (nonatomic, strong) CommentObject *comment;
+@property (nonatomic, strong) UserObject *user;
 @property (nonatomic, weak) id<CommentPhotoViewDelegate> delegate;
 
 @end
