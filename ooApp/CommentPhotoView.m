@@ -33,6 +33,7 @@
 }
 
 - (void)layoutSubviews {
+    
     [super layoutSubviews];
     CGRect frame = self.frame;
     CGFloat w = self.bounds.size.width;
@@ -54,15 +55,10 @@
     frame.origin.y = CGRectGetMidY(_userNameButton.frame) - kGeomSpaceEdge - 1;
     _userCommentButton.frame = frame;
     
-    NSLog(@"the height of userCommentButton is  %f", height);
-
     frame = self.frame;
     frame.size.width = self.frame.size.width;
     frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + 15;
     self.frame = frame;
-    
-    NSLog(@"the height of the CommentPhotoview is  %f", frame.size.height);
-
     
 //    [DebugUtilities addBorderToViews:@[_userNameButton]];
 //    _userCommentButton.layer.borderColor = [UIColor blueColor].CGColor;

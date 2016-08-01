@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface TextFieldView : UIView
-@property UITextField *textField;
-@property UIButton *postTextButton;
+@property (nonatomic, strong) UITextField *textField;
+@property (nonatomic, strong) UIButton *postTextButton;
 
 
 

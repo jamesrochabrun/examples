@@ -60,9 +60,7 @@
 @property (nonatomic, strong) CommentPhotoView *secondCommentView;
 @property (nonatomic, strong) NSMutableArray *commentPhotoViewsArray;
 @property (nonatomic, strong) NSMutableArray *commentsArray;
-
-
-#pragma testing NewLayout properties
+//@property (nonatomic, strong) CommentListVC *commentListVC;
 
 @end
 
@@ -205,8 +203,11 @@ static CGFloat kNextPhotoTolerance = 40;
         _seeYummersButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [_seeYummersButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
-
+        
         _commentPhotoViewsArray = [NSMutableArray new];
+        
+//        _commentListVC = [[CommentListVC alloc] init];
+//        _commentListVC.delegate = self;
         
          //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
@@ -248,7 +249,6 @@ static CGFloat kNextPhotoTolerance = 40;
     //    [_backgroundView addGestureRecognizer:_showRestaurantTapGesture];
     [_backgroundView addGestureRecognizer:_yumPhotoTapGesture];
     [self.view addGestureRecognizer:_panGesture];
-    
     //    [DebugUtilities addBorderToViews:@[self.view]];
 }
 
@@ -360,36 +360,52 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-
 - (void)handleUpdatedData:(NSNotification *)notification {
     
-    [_commentsArray removeAllObjects];
-
+    NSLog(@"the amount of items in comment is %lu", _commentPhotoViewsArray.count);
+    NSLog(@"the amount of items in this array is %lu", _commentsArray.count);
+    
     __weak ViewPhotoVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
+        
         for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
             [cv removeFromSuperview];
-            [cv setNeedsLayout];
-            [weakSelf.view setNeedsLayout];
         }
+        [weakSelf.view layoutIfNeeded];
     });
+    [_commentsArray removeAllObjects];
     [_commentPhotoViewsArray removeAllObjects];
+    
     [self getComments];
     
-    NSLog(@"the user its updated");
+    
 }
+
+//- (void)didPostComment:(CommentObject *)comment {
+//
+//        __weak ViewPhotoVC *weakSelf = self;
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            if (comment) {
+//                [weakSelf.commentsArray addObject:comment];
+//            }
+//            [weakSelf.view setNeedsLayout];
+//            
+//        });
+//}
+
 
 - (void)getComments {
     
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
-        NSLog(@"el mio es %@", _mio.sourceUsername);
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.commentsArray = comments.mutableCopy;
-            [weakSelf gotComments];
+            weakSelf.commentsArray = [NSMutableArray arrayWithArray:comments];
             
+            NSLog(@"new amount of comments  inside getcomments is %lu" , (unsigned long)weakSelf.commentsArray.count);
+            
+            [weakSelf gotComments];
             if (weakSelf.commentsArray.count > 0) {
-                weakSelf.numCommentsLabel.text = [NSString stringWithFormat:@"%lu", comments.count];
+                weakSelf.numCommentsLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)comments.count];
             } else {
                 weakSelf.numCommentsLabel.text = @"";
                 [weakSelf.seeCommentsButton setTitle:@"" forState:UIControlStateNormal];
@@ -400,9 +416,6 @@ static CGFloat kNextPhotoTolerance = 40;
         }];
 }
 
-- (void)createRangeArray:(NSArray *)array {
-    _rangeOfFiveArray = [array subarrayWithRange:NSMakeRange(0, 4)];
-}
 
 - (void)gotComments {
     
@@ -410,15 +423,13 @@ static CGFloat kNextPhotoTolerance = 40;
     for (int i = 0; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
-        
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         CommentObject *comment = [_commentsArray objectAtIndex:i];
         //cPV.comment = [_commentsArray objectAtIndex:i];
-        //[self.backgroundView addSubview:cPV];
+        [self.backgroundView addSubview:cPV];
         __weak CommentPhotoView *weakCPV = cPV;
         __weak ViewPhotoVC *weakSelf = self;
-        
         [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
             cPV.user = user;
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -435,8 +446,12 @@ static CGFloat kNextPhotoTolerance = 40;
                 [weakSelf.view setNeedsLayout];
             });
         }];
-        [self.backgroundView addSubview:cPV];
     }
+}
+
+
+- (void)createRangeArray:(NSArray *)array {
+    _rangeOfFiveArray = [array subarrayWithRange:NSMakeRange(0, 4)];
 }
 
 //- (void)getUserFromComment:(CommentObject *)comment {
@@ -594,9 +609,8 @@ static CGFloat kNextPhotoTolerance = 40;
     }
     
     if (_commentPhotoViewsArray.count > 0) {
-        // NSLog(@"the count here is %lu", _commentPhotoViewsArray.count);
         CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
-        _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
+        _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame) + kGeomConnectScreenUserImageHeight);
     } else {
         _backgroundView.contentSize = CGSizeMake(50, CGRectGetMaxY(_share.frame) + kGeomConnectScreenUserImageHeight);
     }
@@ -621,6 +635,8 @@ static CGFloat kNextPhotoTolerance = 40;
     _seeCommentsButton.hidden =
     _seeYummersButton.hidden =
     _userViewButton.hidden = !show;
+    
+    NSLog(@"the counbt here iugougpu is %lu", _commentPhotoViewsArray.count);
     
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.hidden = !show;
@@ -930,6 +946,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)flagPhoto:(MediaItemObject *)mio {
+    
     [OOAPI flagMediaItem:mio.mediaItemId success:^(NSArray *names) {
         NSLog(@"photo flagged: %lu", (unsigned long)mio.mediaItemId);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -938,6 +955,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)addToList:(RestaurantObject *)restaurant {
+    
     ListsVC *vc = [[ListsVC alloc] init];
     vc.restaurantToAdd = restaurant;
     [vc getLists];
@@ -945,6 +963,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)addCaption {
+    
     _aNC = [[UINavigationController alloc] init];
 
     AddCaptionToMIOVC *vc = [[AddCaptionToMIOVC alloc] init];
@@ -964,6 +983,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)textEntryFinished:(NSString *)text {
+    
     _mio.caption = text;
     [_captionButton setTitle:text forState:UIControlStateNormal];
     [self.view setNeedsLayout];
@@ -973,6 +993,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)tapGestureRecognized:(UIGestureRecognizer *)gesture {
+    
     if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
         UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
         if (tapGesture.state == UIGestureRecognizerStateEnded) {
@@ -986,6 +1007,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    
     CGPoint location = [touch locationInView:self.view];
     CGRect frame = _userViewButton.frame;
     if (CGRectContainsPoint(frame, location))
@@ -994,12 +1016,14 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showRestaurant {
+    
     if ([_delegate respondsToSelector:@selector(viewPhotoVC:showRestaurant:)]) {
         [_delegate viewPhotoVC:self showRestaurant:_restaurant];
     }
 }
 
 - (void)showProfile {
+    
     if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
         [_delegate viewPhotoVC:self showProfile:_user];
     }
@@ -1007,6 +1031,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 //delegate method in OOUserView
 - (void)oOUserViewTapped:(OOUserView *)userView forUser:(UserObject *)user {
+    
     [self showProfile];
 }
 
@@ -1040,19 +1065,29 @@ static CGFloat kNextPhotoTolerance = 40;
     vc.mio = _mio;
     vc.navigationController.delegate = self;
     vc.modalPresentationStyle = UIModalPresentationCurrentContext;
-    __weak CommentListVC *weakVC = vc;
     [self.navigationController pushViewController:vc animated:YES];
     [vc.aiv startAnimating];
     [vc.view bringSubviewToFront:vc.aiv];
-    [weakVC.aiv stopAnimating];
-    weakVC.commentsArray = _commentsArray.mutableCopy;
+    [vc.aiv stopAnimating];
+    vc.commentsArray = _commentsArray.mutableCopy;
+    
+//    _commentListVC.desiredTitle = @"Comments";
+//    _commentListVC.user = _user;
+//    _commentListVC.mio = _mio;
+//    _commentListVC.navigationController.delegate = self;
+//    _commentListVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+//    [self.navigationController pushViewController:_commentListVC animated:YES];
+//    [_commentListVC.aiv startAnimating];
+//    [_commentListVC.view bringSubviewToFront:_commentListVC.aiv];
+//    [_commentListVC.aiv stopAnimating];
+//    _commentListVC.commentsArray = _commentsArray.mutableCopy;
 }
 
 - (void)close {
+    
     if ([_delegate respondsToSelector:@selector(viewPhotoVCClosed:)]) {
         [_delegate viewPhotoVCClosed:self];
     }
-    
     _direction = 0;
     _nextPhoto = nil;
     self.transitioningDelegate = _dismissTransitionDelegate;
@@ -1063,13 +1098,14 @@ static CGFloat kNextPhotoTolerance = 40;
 
 
 - (void)pan:(UIGestureRecognizer *)gestureRecognizer {
+    
     if (_panGesture != gestureRecognizer) return;
-
+    
     if (_panGesture.state == UIGestureRecognizerStateBegan) {
         _swipeType = kSwipeTypeNone;
-       // CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
+        // CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
         
-//        _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
+        //        _interactiveController = [[UIPercentDrivenInteractiveTransition alloc] init];
         
         //NSLog(@"began: %@", NSStringFromCGPoint(delta));
         _originPoint = CGPointMake([_panGesture locationInView:self.view].x, [_panGesture locationInView:self.view].y);
@@ -1078,11 +1114,11 @@ static CGFloat kNextPhotoTolerance = 40;
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
         
         delta.x = ([_items count] > 1)? delta.x:0;
- 
-//        NSLog(@"changed: %@", NSStringFromCGPoint(delta));
-
+        
+        //        NSLog(@"changed: %@", NSStringFromCGPoint(delta));
+        
         //if (_swipeType == kSwipeTypeDismiss) {
-            _iv.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, delta.x, delta.y);
+        _iv.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, delta.x, delta.y);
         //}
         if (_swipeType == kSwipeTypeNone &&
             fabs(delta.y) > kDismissTolerance) {
@@ -1090,7 +1126,7 @@ static CGFloat kNextPhotoTolerance = 40;
             [self.interactiveController cancelInteractiveTransition];
             self.interactiveController = nil;
         } else if (_swipeType != kSwipeTypeDismiss && delta.x > 55) {
-//            NSLog(@"show next photo? %f", delta.x);
+            //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != 1) {
                 _swipeType = kSwipeTypeNextPhoto;
                 //NSLog(@"get next photo in direction 1");
@@ -1105,10 +1141,10 @@ static CGFloat kNextPhotoTolerance = 40;
                 [self.navigationController pushViewController:_nextPhoto animated:YES];
             }
         } else if (_swipeType != kSwipeTypeDismiss && delta.x < -55) {
-//            NSLog(@"show next photo? %f", delta.x);
+            //            NSLog(@"show next photo? %f", delta.x);
             if (!_nextPhoto && _nextPhoto.direction != -1) {
                 _swipeType = kSwipeTypeNextPhoto;
-               // NSLog(@"get next photo in direction -1");
+                // NSLog(@"get next photo in direction -1");
                 [self.interactiveController cancelInteractiveTransition];
                 if (_nextPhoto) [_nextPhoto.interactiveController cancelInteractiveTransition];
                 _direction = -1;
@@ -1122,21 +1158,21 @@ static CGFloat kNextPhotoTolerance = 40;
         }
         
         [self.interactiveController updateInteractiveTransition:fabs(delta.x/width(self.view))];
-
+        
     } else if (_panGesture.state == UIGestureRecognizerStateEnded) {
         CGPoint delta = CGPointMake([_panGesture translationInView:self.view].x, [_panGesture translationInView:self.view].y);
-
-       // NSLog(@"changed: %@ %f %f %f", NSStringFromCGPoint(delta), width(self.view), fabs(delta.x)/width(self.view), self.interactiveController.percentComplete);
+        
+        // NSLog(@"changed: %@ %f %f %f", NSStringFromCGPoint(delta), width(self.view), fabs(delta.x)/width(self.view), self.interactiveController.percentComplete);
         
         if (_swipeType == kSwipeTypeDismiss &&
             fabs(delta.y) > kDismissTolerance) {
             //NSLog(@"dismiss photo");
-//            [self.interactiveController finishInteractiveTransition];
-//            _iv.transform = CGAffineTransformIdentity;
+            //            [self.interactiveController finishInteractiveTransition];
+            //            _iv.transform = CGAffineTransformIdentity;
             [self close];
         } else if (_swipeType == kSwipeTypeNextPhoto &&
                    fabs(delta.x) > kNextPhotoTolerance) {
-           // NSLog(@"show next photo confirmed");
+            // NSLog(@"show next photo confirmed");
             [self.interactiveController finishInteractiveTransition];
         } else {
             //NSLog(@"cancel transition");
@@ -1253,6 +1289,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN(@(object_getClassName(self)));
     
@@ -1267,32 +1304,33 @@ static CGFloat kNextPhotoTolerance = 40;
                                              selector:@selector(handleUpdatedData:)
                                                  name:kNotificationViewPhotoVCNeedsUpdate
                                                object:nil];
-    
-//    for (CommentPhotoView *c in _commentPhotoViewsArray) {
-//
-//        [c layoutIfNeeded];
-//    }
+
     
 //    _backgroundView.alpha = kAlphaBackground;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    
     [super viewDidAppear:animated];
     [self getListsForRestaurant];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    
     [super viewWillDisappear:animated];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
+    
     [super viewDidDisappear:animated];
+    //[[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationViewPhotoVCNeedsUpdate object:nil];
 }
 
 - (void)setRestaurant:(RestaurantObject *)restaurant {
+    
     if (restaurant == _restaurant) return;
-
     _restaurant = restaurant;
+    
     if (_restaurant) {
         _restaurantName.text =_restaurant.name;
     } else {
@@ -1308,18 +1346,18 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (NSString *)subheaderString {
-    NSString *s;
     
+    NSString *s;
     NSMutableArray *components = [NSMutableArray array];
     if (_restaurant.cuisine) [components addObject:[NSString stringWithFormat:@"#%@", _restaurant.cuisine]];
     if ([_restaurant distanceOrAddressString]) [components addObject:[_restaurant distanceOrAddressString]];
-    
     s = [components componentsJoinedByString:@" - "];
     
     return s;
 }
 
 - (void)yumPhotoTapped {
+    
     __weak ViewPhotoVC *weakSelf = self;
     
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
@@ -1380,6 +1418,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 
 - (void)presentUnverifiedMessage:(NSString *)message {
+    
     UnverifiedUserVC *vc = [[UnverifiedUserVC alloc] initWithSize:CGSizeMake(250, 200)];
     vc.delegate = self;
     vc.action = message;
@@ -1393,12 +1432,14 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)unverifiedUserVCDismiss:(UnverifiedUserVC *)unverifiedUserVC {
+    
     [self dismissViewControllerAnimated:YES completion:^{
         ;
     }];
 }
 
 - (void)updateNumYums {
+    
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getNumMediaItemLikes:_mio.mediaItemId success:^(NSUInteger count) {
         if (count) {

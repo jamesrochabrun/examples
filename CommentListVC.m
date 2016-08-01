@@ -47,6 +47,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //}
 
 - (void)setCommentsArray:(NSMutableArray *)commentsArray {
+    
     if (_commentsArray == commentsArray) return;
     _commentsArray = commentsArray;
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -118,7 +119,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Name:    textFieldDelegate Methods
 // Purpose:
 //------------------------------------------------------------------------------
--(void)textFieldDidChange :(UITextField *)textField{
+-(void)textFieldDidChange:(UITextField *)textField{
     
     if (textField.text.length <= 0) {
         _textFieldView.postTextButton.userInteractionEnabled = NO;
@@ -126,14 +127,16 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     } else {
         _textFieldView.postTextButton.userInteractionEnabled = YES;
         _textFieldView.postTextButton.alpha = 1.0f;
-
     }
-  
+    if (textField.text.length >= 250) {
+        
+    }
 }
 
-- (void)postComment:(UIButton*)sender {
+- (void)postComment:(UIButton *)sender {
     
-    NSLog(@"hey dont do that");
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
+                                                        object:self];
     
     CommentObject *comment = [CommentObject new];
     comment.content = _textFieldView.textField.text;
@@ -144,6 +147,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
             dispatch_async(dispatch_get_main_queue(), ^{
                 [cLVC.commentsArray addObject:comment];
                 [cLVC.tableUsers reloadData];
+                //                [_delegate didPostComment:comment];
             });
         } else {
             NSLog(@"operation in CommentlistVC failed");
@@ -158,8 +162,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void) dismissKeyboard:(id)sender {
     
     [self.view endEditing:YES];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
-                                                        object:self];
     [_textFieldView.textField resignFirstResponder];
 }
 
@@ -174,23 +176,21 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    // Prevent crashing undo bug – see note below.
     
     if(range.length + range.location > textField.text.length)
     {
         return NO;
     }
-    
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    return newLength <= 25;
+    return newLength <= 250;
     
 }
-
 //------------------------------------------------------------------------------
 // Name:    viewWillLayoutSubviews
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewWillLayoutSubviews {
+    
     [super viewWillLayoutSubviews];
     
     CGRect frame = _tableUsers.frame;
@@ -236,6 +236,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 }
 
 - (void)done:(id)sender {
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -244,6 +245,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     ANALYTICS_SCREEN(@(object_getClassName(self)));
     
@@ -266,6 +268,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewWillDisappear:(BOOL)animated {
+    
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
@@ -276,8 +279,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
     
+    [super viewDidAppear:animated];
     if (_commentsArray.count <= 0) {
         [_textFieldView.textField becomeFirstResponder];
     }
@@ -295,7 +298,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
             comment = [_commentsArray objectAtIndex:indexPath.row];
         }
     }
-    
     CommentListTVCell *cell;
     cell = [tableView dequeueReusableCellWithIdentifier:kCommentsTableReuseIdentifier forIndexPath:indexPath];
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
@@ -334,7 +336,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
     UITableViewRowAction *deleteButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"delete" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
                                           {
-                                              
                                               __weak CommentListVC *weakSelf = self;
                                               CommentObject *comment = [weakSelf.commentsArray objectAtIndex:indexPath.row];
                                               dispatch_async(dispatch_get_main_queue(), ^{
@@ -420,6 +421,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (instancetype)initWithExpandedFlag:(BOOL)expanded {
     
     self = [super init];
+    
     if (self) {
         _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH3);
         _labelTitle.textColor = UIColorRGBA(kColorWhite);
