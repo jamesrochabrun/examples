@@ -267,6 +267,7 @@
     } else {
         // User has probably selected restaurants but we do not yet have an image to show.
         [self.imageViewContainer1 setImage:placeholder];
+ 
     }
 }
 

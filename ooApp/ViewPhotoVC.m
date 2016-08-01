@@ -365,15 +365,15 @@ static CGFloat kNextPhotoTolerance = 40;
     
     [_commentsArray removeAllObjects];
 
+    __weak ViewPhotoVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __weak ViewPhotoVC *weakSelf = self;
-        
         for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
             [cv removeFromSuperview];
+            [cv setNeedsLayout];
             [weakSelf.view setNeedsLayout];
         }
     });
-    //[_commentPhotoViewsArray removeAllObjects];
+    [_commentPhotoViewsArray removeAllObjects];
     [self getComments];
     
     NSLog(@"the user its updated");
@@ -383,9 +383,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
-        
         NSLog(@"el mio es %@", _mio.sourceUsername);
-        
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.commentsArray = comments.mutableCopy;
             [weakSelf gotComments];
@@ -412,22 +410,21 @@ static CGFloat kNextPhotoTolerance = 40;
     for (int i = 0; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
-        //cPV.hidden = YES;
         
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         CommentObject *comment = [_commentsArray objectAtIndex:i];
-        [cPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
         //cPV.comment = [_commentsArray objectAtIndex:i];
-        [self.backgroundView addSubview:cPV];
-        
+        //[self.backgroundView addSubview:cPV];
         __weak CommentPhotoView *weakCPV = cPV;
         __weak ViewPhotoVC *weakSelf = self;
         
         [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-            weakCPV.user = user;
+            cPV.user = user;
             dispatch_async(dispatch_get_main_queue(), ^{
+                //weakCPV.hidden = YES;
                 [weakCPV.userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
+                [weakCPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
                 [weakCPV setNeedsLayout];
                 [weakSelf.view setNeedsLayout];
             });
@@ -445,10 +442,12 @@ static CGFloat kNextPhotoTolerance = 40;
 //- (void)getUserFromComment:(CommentObject *)comment {
 //    
 //    NSLog(@"the comment is %lu", comment.userID);
+//    
+//    __weak ViewPhotoVC *weakVPVC = self;
+//    
 //    [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-//        
 //        if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
-//            [_delegate viewPhotoVC:self showProfile:user];
+//            [_delegate viewPhotoVC:weakVPVC showProfile:user];
 //        }
 //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 //    }];
@@ -1269,7 +1268,10 @@ static CGFloat kNextPhotoTolerance = 40;
                                                  name:kNotificationViewPhotoVCNeedsUpdate
                                                object:nil];
     
-  
+//    for (CommentPhotoView *c in _commentPhotoViewsArray) {
+//
+//        [c layoutIfNeeded];
+//    }
     
 //    _backgroundView.alpha = kAlphaBackground;
 }
