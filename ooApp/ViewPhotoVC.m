@@ -263,6 +263,7 @@ static CGFloat kNextPhotoTolerance = 40;
         [_optionsButton removeFromSuperview];
     }
     
+    NSLog(@"the media item ID is  %lu", _mio.mediaItemId);
     UserObject *user = [Settings sharedInstance].userObject;
     
     NSString *mioCreatedAt = [NSString getTimeAgoString:_mio.createdAt];
@@ -360,26 +361,25 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-- (void)handleUpdatedData:(NSNotification *)notification {
-    
-    NSLog(@"the amount of items in comment is %lu", _commentPhotoViewsArray.count);
-    NSLog(@"the amount of items in this array is %lu", _commentsArray.count);
-    
-    __weak ViewPhotoVC *weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
-            [cv removeFromSuperview];
-        }
-        [weakSelf.view layoutIfNeeded];
-    });
-    [_commentsArray removeAllObjects];
-    [_commentPhotoViewsArray removeAllObjects];
-    
-    [self getComments];
-    
-    
-}
+//- (void)handleUpdatedData:(NSNotification *)notification {
+//    
+//    NSLog(@"the amount of items in commentPhotoViewsarray is %lu", _commentPhotoViewsArray.count);
+//    NSLog(@"the amount of items in comments array is %lu", _commentsArray.count);
+//    __weak ViewPhotoVC *weakSelf = self;
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        
+//        
+//        NSLog(@"the amount of items in commentPhotoViewsarray inside the dispacth is %lu", _commentPhotoViewsArray.count);
+//
+//        for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
+//            [cv removeFromSuperview];
+//        }
+//        [weakSelf.view layoutIfNeeded];
+//    });
+//    [_commentsArray removeAllObjects];
+//    [_commentPhotoViewsArray removeAllObjects];
+//    [self getComments];
+//}
 
 //- (void)didPostComment:(CommentObject *)comment {
 //
@@ -393,6 +393,26 @@ static CGFloat kNextPhotoTolerance = 40;
 //        });
 //}
 
+
+- (void)handleUpdatedData:(NSNotification *)notification {
+    
+    NSLog(@"the amount of items in commentPhotoViewsarray is %lu", _commentPhotoViewsArray.count);
+    NSLog(@"the amount of items in comments array is %lu", _commentsArray.count);
+   
+    __weak ViewPhotoVC *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSLog(@"the amount of items in commentPhotoViewsarray inside the dispacth is %lu", _commentPhotoViewsArray.count);
+        
+        for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
+            [cv removeFromSuperview];
+        }
+        [weakSelf.view layoutIfNeeded];
+    });
+    [_commentsArray removeAllObjects];
+    [_commentPhotoViewsArray removeAllObjects];
+    [self getComments];
+}
 
 - (void)getComments {
     
@@ -451,6 +471,7 @@ static CGFloat kNextPhotoTolerance = 40;
 
 
 - (void)createRangeArray:(NSArray *)array {
+    
     _rangeOfFiveArray = [array subarrayWithRange:NSMakeRange(0, 4)];
 }
 
@@ -1066,21 +1087,24 @@ static CGFloat kNextPhotoTolerance = 40;
     vc.navigationController.delegate = self;
     vc.modalPresentationStyle = UIModalPresentationCurrentContext;
     [self.navigationController pushViewController:vc animated:YES];
-    [vc.aiv startAnimating];
     [vc.view bringSubviewToFront:vc.aiv];
-    [vc.aiv stopAnimating];
+    
+    if (_commentsArray.count > 0 ) {
+        [vc.aiv startAnimating];
+        [vc.aiv stopAnimating];
+    }
     vc.commentsArray = _commentsArray.mutableCopy;
     
-//    _commentListVC.desiredTitle = @"Comments";
-//    _commentListVC.user = _user;
-//    _commentListVC.mio = _mio;
-//    _commentListVC.navigationController.delegate = self;
-//    _commentListVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-//    [self.navigationController pushViewController:_commentListVC animated:YES];
-//    [_commentListVC.aiv startAnimating];
-//    [_commentListVC.view bringSubviewToFront:_commentListVC.aiv];
-//    [_commentListVC.aiv stopAnimating];
-//    _commentListVC.commentsArray = _commentsArray.mutableCopy;
+    //    _commentListVC.desiredTitle = @"Comments";
+    //    _commentListVC.user = _user;
+    //    _commentListVC.mio = _mio;
+    //    _commentListVC.navigationController.delegate = self;
+    //    _commentListVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    //    [self.navigationController pushViewController:_commentListVC animated:YES];
+    //    [_commentListVC.aiv startAnimating];
+    //    [_commentListVC.view bringSubviewToFront:_commentListVC.aiv];
+    //    [_commentListVC.aiv stopAnimating];
+    //    _commentListVC.commentsArray = _commentsArray.mutableCopy;
 }
 
 - (void)close {
