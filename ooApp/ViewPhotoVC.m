@@ -361,57 +361,24 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-//- (void)handleUpdatedData:(NSNotification *)notification {
-//    
-//    NSLog(@"the amount of items in commentPhotoViewsarray is %lu", _commentPhotoViewsArray.count);
-//    NSLog(@"the amount of items in comments array is %lu", _commentsArray.count);
-//    __weak ViewPhotoVC *weakSelf = self;
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        
-//        
-//        NSLog(@"the amount of items in commentPhotoViewsarray inside the dispacth is %lu", _commentPhotoViewsArray.count);
-//
-//        for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
-//            [cv removeFromSuperview];
-//        }
-//        [weakSelf.view layoutIfNeeded];
-//    });
-//    [_commentsArray removeAllObjects];
-//    [_commentPhotoViewsArray removeAllObjects];
-//    [self getComments];
-//}
-
-//- (void)didPostComment:(CommentObject *)comment {
-//
-//        __weak ViewPhotoVC *weakSelf = self;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            if (comment) {
-//                [weakSelf.commentsArray addObject:comment];
-//            }
-//            [weakSelf.view setNeedsLayout];
-//            
-//        });
-//}
-
-
 - (void)handleUpdatedData:(NSNotification *)notification {
     
-    NSLog(@"the amount of items in commentPhotoViewsarray is %lu", _commentPhotoViewsArray.count);
-    NSLog(@"the amount of items in comments array is %lu", _commentsArray.count);
-   
+    NSLog(@"the notification is %@", notification);
+    
     __weak ViewPhotoVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        NSLog(@"the amount of items in commentPhotoViewsarray inside the dispacth is %lu", _commentPhotoViewsArray.count);
-        
+        NSLog(@"the amount of items in commentPhotoViewsArray is %lu", _commentPhotoViewsArray.count);
+        NSLog(@"the amount of items in commentsArray is %lu", _commentsArray.count);
         for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
             [cv removeFromSuperview];
         }
-        [weakSelf.view layoutIfNeeded];
+        [weakSelf.view setNeedsLayout];
+        [weakSelf.commentPhotoViewsArray removeAllObjects];
+        [weakSelf.commentsArray removeAllObjects];
+        [weakSelf getComments];
+
     });
-    [_commentsArray removeAllObjects];
-    [_commentPhotoViewsArray removeAllObjects];
-    [self getComments];
 }
 
 - (void)getComments {
@@ -421,8 +388,8 @@ static CGFloat kNextPhotoTolerance = 40;
         dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.commentsArray = [NSMutableArray arrayWithArray:comments];
             
+            NSLog(@"comments.count = %lu", comments.count);
             NSLog(@"new amount of comments  inside getcomments is %lu" , (unsigned long)weakSelf.commentsArray.count);
-            
             [weakSelf gotComments];
             if (weakSelf.commentsArray.count > 0) {
                 weakSelf.numCommentsLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)comments.count];
@@ -446,12 +413,12 @@ static CGFloat kNextPhotoTolerance = 40;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         CommentObject *comment = [_commentsArray objectAtIndex:i];
-        //cPV.comment = [_commentsArray objectAtIndex:i];
+        cPV.comment = [_commentsArray objectAtIndex:i];
         [self.backgroundView addSubview:cPV];
         __weak CommentPhotoView *weakCPV = cPV;
         __weak ViewPhotoVC *weakSelf = self;
         [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-            cPV.user = user;
+            weakCPV.user = user;
             dispatch_async(dispatch_get_main_queue(), ^{
                 //weakCPV.hidden = YES;
                 [weakCPV.userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
@@ -474,20 +441,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
     _rangeOfFiveArray = [array subarrayWithRange:NSMakeRange(0, 4)];
 }
-
-//- (void)getUserFromComment:(CommentObject *)comment {
-//    
-//    NSLog(@"the comment is %lu", comment.userID);
-//    
-//    __weak ViewPhotoVC *weakVPVC = self;
-//    
-//    [OOAPI getUserWithID:comment.userID success:^(UserObject *user) {
-//        if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
-//            [_delegate viewPhotoVC:weakVPVC showProfile:user];
-//        }
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//    }];
-//}
 
 - (void)goToUserProfile:(UserObject *)user {
     
@@ -614,19 +567,19 @@ static CGFloat kNextPhotoTolerance = 40;
         _mioDateCreated.text = @"";
         _share.frame = CGRectMake(0, CGRectGetMaxY(_iv.frame) + kGeomInterImageGap, self.view.frame.size.width, kGeomHeightButton);
         [_share setTitle:@"Share it!" forState:UIControlStateNormal];
-
     }
-
     y = CGRectGetMaxY(_seeCommentsButton.frame);
     
     for (CommentPhotoView *v in _commentPhotoViewsArray) {
         frame = v.frame;
         frame.origin.x = 0;
         frame.origin.y = y;
-        frame.size.width = self.view.frame.size.width;
-        y += v.frame.size.height;
+        frame.size.width = width(self.view);
+        CGFloat height = [v.userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height + 10;
+        frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + 15;
+        y += frame.size.height;
         v.frame = frame;
-        NSLog(@"the frame height is %f", v.frame.size.height);
+        NSLog(@"the frame height. is %f", v.frame.size.height);
     }
     
     if (_commentPhotoViewsArray.count > 0) {
@@ -657,8 +610,6 @@ static CGFloat kNextPhotoTolerance = 40;
     _seeYummersButton.hidden =
     _userViewButton.hidden = !show;
     
-    NSLog(@"the counbt here iugougpu is %lu", _commentPhotoViewsArray.count);
-    
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.hidden = !show;
     }
@@ -686,7 +637,6 @@ static CGFloat kNextPhotoTolerance = 40;
         cPV.alpha = alpha;
     }
 }
-
 
 - (BOOL)prefersStatusBarHidden {
     return YES;

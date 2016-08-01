@@ -39,7 +39,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //    _commentsArray = nil;
 //}
 
-
 //----------------------------------------------------------------------
 //
 //- (void)setNeedsRefresh {
@@ -129,14 +128,10 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
         _textFieldView.postTextButton.alpha = 1.0f;
     }
     if (textField.text.length >= 250) {
-        
     }
 }
 
 - (void)postComment:(UIButton *)sender {
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
-                                                        object:self];
     
     CommentObject *comment = [CommentObject new];
     comment.content = _textFieldView.textField.text;
@@ -147,7 +142,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
             dispatch_async(dispatch_get_main_queue(), ^{
                 [cLVC.commentsArray addObject:comment];
                 [cLVC.tableUsers reloadData];
-                //                [_delegate didPostComment:comment];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
+                                                                    object:self];
             });
         } else {
             NSLog(@"operation in CommentlistVC failed");
@@ -171,6 +167,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     dispatch_async(dispatch_get_main_queue(), ^{
         [_tableUsers reloadData];
     });
+    
     _textFieldView.postTextButton.userInteractionEnabled = NO;
     _textFieldView.postTextButton.alpha = 0.7f;
 }
@@ -206,7 +203,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     frame.size.height = kGeomHeightTabBar;
     frame.size.width = width(self.view);
     _textFieldView.frame = frame;
-    
 }
 
 - (void)keyboardWillShow:(NSNotification*)notification {

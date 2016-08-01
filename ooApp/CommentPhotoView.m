@@ -60,6 +60,7 @@
     frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + 15;
     self.frame = frame;
     
+    NSLog(@"self.frame = %@", NSStringFromCGRect(self.frame));
 //    [DebugUtilities addBorderToViews:@[_userNameButton]];
 //    _userCommentButton.layer.borderColor = [UIColor blueColor].CGColor;
 //    _userCommentButton.layer.borderWidth = 1;
@@ -72,12 +73,17 @@
     
     if (comment == _comment) return;
     _comment = comment;
+//    [_userCommentButton setTitle:_comment.content forState:UIControlStateNormal];
+//    [self setNeedsLayout];
 }
 
 - (void)setUser:(UserObject *)user {
     
     if (user == _user) return;
     _user = user;
+//    [_userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
+//    [_userCommentButton sizeToFit];
+//    [self setNeedsLayout];
 }
 
 - (void)userNameButtonTapped:(id)sender {
