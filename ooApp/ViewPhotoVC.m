@@ -205,6 +205,11 @@ static CGFloat kNextPhotoTolerance = 40;
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
         
          _commentPhotoViewsArray = [NSMutableArray new];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(reloadComments:)
+                                                     name:kNotificationViewPhotoVCNeedsUpdate
+                                                   object:nil];
 
          //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
@@ -247,11 +252,7 @@ static CGFloat kNextPhotoTolerance = 40;
     [_backgroundView addGestureRecognizer:_yumPhotoTapGesture];
     [self.view addGestureRecognizer:_panGesture];
     //    [DebugUtilities addBorderToViews:@[self.view]];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reloadComments:)
-                                                 name:kNotificationViewPhotoVCNeedsUpdate
-                                               object:nil];
+
 }
 
 - (void)setMio:(MediaItemObject *)mio {
@@ -1265,7 +1266,12 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)viewDidDisappear:(BOOL)animated {
     
     [super viewDidDisappear:animated];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationViewPhotoVCNeedsUpdate object:nil];
+   
+}
+
+- (void)dealloc {
+    
+     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationViewPhotoVCNeedsUpdate object:nil];
 }
 
 - (void)setRestaurant:(RestaurantObject *)restaurant {
