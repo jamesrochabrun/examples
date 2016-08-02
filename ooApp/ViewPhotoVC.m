@@ -428,12 +428,6 @@ static CGFloat kNextPhotoTolerance = 40;
     }
 }
 
-
-- (void)createRangeArray:(NSArray *)array {
-    
-    _rangeOfFiveArray = [array subarrayWithRange:NSMakeRange(0, 4)];
-}
-
 - (void)goToUserProfile:(UserObject *)user {
     
     if ([_delegate respondsToSelector:@selector(viewPhotoVC:showProfile:)]) {
@@ -654,7 +648,6 @@ static CGFloat kNextPhotoTolerance = 40;
     }
     
     [shareView addSubview:iv];
-    
     frame = iv.bounds;
     shareView.frame = frame;
     
@@ -1411,9 +1404,6 @@ static CGFloat kNextPhotoTolerance = 40;
         });
     }];
 }
-
-
-
 
 /*
 #pragma mark - Navigation
