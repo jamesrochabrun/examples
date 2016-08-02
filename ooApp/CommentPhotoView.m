@@ -73,17 +73,23 @@
     
     if (comment == _comment) return;
     _comment = comment;
-//    [_userCommentButton setTitle:_comment.content forState:UIControlStateNormal];
-//    [self setNeedsLayout];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+    [_userCommentButton setTitle:_comment.content forState:UIControlStateNormal];
+    [self setNeedsLayout];
+    });
 }
 
 - (void)setUser:(UserObject *)user {
     
     if (user == _user) return;
     _user = user;
-//    [_userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
-//    [_userCommentButton sizeToFit];
-//    [self setNeedsLayout];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
+        //[_userCommentButton sizeToFit];
+         [self setNeedsLayout];
+    });
 }
 
 - (void)userNameButtonTapped:(id)sender {

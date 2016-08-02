@@ -167,7 +167,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     dispatch_async(dispatch_get_main_queue(), ^{
         [_tableUsers reloadData];
     });
-    
     _textFieldView.postTextButton.userInteractionEnabled = NO;
     _textFieldView.postTextButton.alpha = 0.7f;
 }
@@ -180,8 +179,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     }
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
     return newLength <= 250;
-    
 }
+
 //------------------------------------------------------------------------------
 // Name:    viewWillLayoutSubviews
 // Purpose:
