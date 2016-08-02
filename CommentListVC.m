@@ -129,6 +129,10 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     if (textField.text.length >= 250) {
     }
 }
+//
+//- (void)textFieldDidBeginEditing:(UITextField *)textField {
+//
+//}
 
 - (void)postComment:(UIButton *)sender {
     
@@ -443,14 +447,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     double angle = _isExpanded ? 3 * M_PI/2 : M_PI/2;
     _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
 }
-
-
-
-
-
-
-
-
 
 
 
