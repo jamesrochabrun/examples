@@ -4,7 +4,6 @@
 //
 //  Created by James Rochabrun on 20-07-16.
 //
-//
 
 #import "CommentListVC.h"
 
@@ -339,6 +338,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
                                               });
                                               //what is better here to get the object back too?
                                               [OOAPI deleteCommentFromMediaItem:comment forObject:_mio success:^(CommentObject *comment) {
+                                                  [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
+                                                                                                      object:self];
                                               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                   NSLog(@"the error is %@", error);
                                               }];

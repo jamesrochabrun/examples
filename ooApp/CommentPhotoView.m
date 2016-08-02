@@ -73,7 +73,6 @@
     
     if (comment == _comment) return;
     _comment = comment;
-    
     dispatch_async(dispatch_get_main_queue(), ^{
     [_userCommentButton setTitle:_comment.content forState:UIControlStateNormal];
     [self setNeedsLayout];
@@ -84,10 +83,8 @@
     
     if (user == _user) return;
     _user = user;
-    
     dispatch_async(dispatch_get_main_queue(), ^{
         [_userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
-        //[_userCommentButton sizeToFit];
          [self setNeedsLayout];
     });
 }

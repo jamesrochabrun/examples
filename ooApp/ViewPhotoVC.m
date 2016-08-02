@@ -388,11 +388,7 @@ static CGFloat kNextPhotoTolerance = 40;
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            
             weakSelf.commentsArray = comments.mutableCopy;
-            NSLog(@"comments.count = %lu", comments.count);
-            NSLog(@"new amount of comments inside getcomments is %lu" , (unsigned long)weakSelf.commentsArray.count);
-            
             [weakSelf gotComments];
             
             if (weakSelf.commentsArray.count > 0) {
@@ -409,15 +405,12 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)gotComments {
     
-   // _commentPhotoViewsArray = [NSMutableArray new];
     CommentPhotoView *cPV;
     for (int i = 0; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
-        
-        NSLog(@"[_commentPhotoViewsArray addObject:cPV] count = %lu", _commentPhotoViewsArray.count);
         
         //CommentObject *comment = [_commentsArray objectAtIndex:i];
         cPV.comment = [_commentsArray objectAtIndex:i];
@@ -428,13 +421,6 @@ static CGFloat kNextPhotoTolerance = 40;
             weakCPV.user = user;
             [weakCPV setNeedsLayout];
             [weakSelf.view setNeedsLayout];
-            //dispatch_async(dispatch_get_main_queue(), ^{
-            //weakCPV.hidden = YES;
-            //                [weakCPV.userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
-            //                [weakCPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
-            //                [weakCPV setNeedsLayout];
-            //                [weakSelf.view setNeedsLayout];
-            //});
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"ERROR: failed to get user: %@", error);
             dispatch_async(dispatch_get_main_queue(), ^{
