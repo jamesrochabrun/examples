@@ -67,7 +67,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //_commentsArray = [NSMutableArray new];
     //_needRefresh = YES;
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -98,7 +97,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [self removeNavButtonForSide:kNavBarSideTypeLeft];
     [self addNavButtonWithIcon:kFontIconBack target:self action:@selector(done:) forSide:kNavBarSideTypeLeft isCTA:NO];
     
-    //creating the instance of the subclass of UIView that contains the textfield that takes the input(user comment);
     _textFieldView = [TextFieldView new];
     _textFieldView.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     [_textFieldView.postTextButton addTarget:self action:@selector(postComment:) forControlEvents:UIControlEventTouchUpInside];
@@ -110,7 +108,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     _textFieldView.postTextButton.alpha = 0.7f;
     _user = [Settings sharedInstance].userObject;
     _textFieldView.textField.placeholder = [NSString stringWithFormat:@"  add a comment as %@", _user.username];
-
 }
 
 //------------------------------------------------------------------------------
@@ -129,7 +126,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     if (textField.text.length >= 250) {
     }
 }
-//
 //- (void)textFieldDidBeginEditing:(UITextField *)textField {
 //
 //}
@@ -340,8 +336,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
                                                   [weakSelf.commentsArray removeObject:comment];
                                                   [weakSelf.tableUsers reloadData];
                                               });
-                                              //what is better here to get the object back too?
-                                              [OOAPI deleteCommentFromMediaItem:comment forObject:_mio success:^(CommentObject *comment) {
+                                              
+                                              [OOAPI deleteCommentFromMediaItem:comment success:^(CommentObject *comment) {
                                                   [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
                                                                                                       object:self];
                                               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

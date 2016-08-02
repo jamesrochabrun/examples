@@ -10,7 +10,7 @@
 
 @protocol CommentPhotoViewDelegate <NSObject>
 @optional
-//- (void)getUserFromComment:(CommentObject *)comment;
+
 - (void)goToUserProfile:(UserObject *)user;
 @end
 

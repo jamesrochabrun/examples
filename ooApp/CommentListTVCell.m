@@ -51,7 +51,6 @@
         
         _commentLabel = [UILabel new];
         [_commentLabel withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4] textColor:kColorOffBlack backgroundColor:kColorClear numberOfLines:0 lineBreakMode:NSLineBreakByClipping textAlignment:NSTextAlignmentNatural];
-        //_commentLabel.text = @"hsdbkj ckjhkhelloeojmb;kjsdbkj";
         [self addSubview:_commentLabel];
         
         //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel , _commentDateLabel]];
@@ -114,8 +113,6 @@
     NSString *commentCreatedAt = [NSString getTimeAgoString:comment.createdAt];
     _commentDateLabel.text = commentCreatedAt;
 }
-
-
 //
 //- (void)prepareForReuse {
 //    
@@ -184,15 +181,15 @@
     
 }
 
-
-- (CGFloat)heightForComment {
-    CGFloat minHeight = kGeomHeightHorizontalListRow;
-    UIFont *font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-    CGRect boundingBox = [_comment.content boundingRectWithSize:CGSizeMake(230, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
-    // NSString *str = NSStringFromCGRect(boundingBox);
-    // NSLog(@"the boundingbox is %@", str);
-    return MAX(minHeight, CGRectGetHeight(boundingBox));
-}
+//
+//- (CGFloat)heightForComment {
+//    CGFloat minHeight = kGeomHeightHorizontalListRow;
+//    UIFont *font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+//    CGRect boundingBox = [_comment.content boundingRectWithSize:CGSizeMake(230, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
+//    // NSString *str = NSStringFromCGRect(boundingBox);
+//    // NSLog(@"the boundingbox is %@", str);
+//    return MAX(minHeight, CGRectGetHeight(boundingBox));
+//}
 
 
 @end

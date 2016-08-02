@@ -191,7 +191,7 @@ static CGFloat kNextPhotoTolerance = 40;
         [_yumButton addSubview:_numYumsLabel];
     
         _seeCommentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_seeCommentsButton withText:@"see all comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showComments)];
+        [_seeCommentsButton withText:@"see comments" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showComments)];
         [_seeCommentsButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _seeCommentsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
         [_seeCommentsButton setTitleColor:UIColorRGBA(kColorGrayMiddle) forState:UIControlStateNormal];
@@ -205,10 +205,7 @@ static CGFloat kNextPhotoTolerance = 40;
         _seeYummersButton.titleLabel.shadowColor = UIColorRGBA(kColorBackgroundTheme);
         
          _commentPhotoViewsArray = [NSMutableArray new];
-        
-//        _commentListVC = [[CommentListVC alloc] init];
-//        _commentListVC.delegate = self;
-        
+
          //        [DebugUtilities addBorderToViews:@[self.view]];
         //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
     }
@@ -370,9 +367,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
     __weak ViewPhotoVC *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        NSLog(@"the amount of items in commentPhotoViewsArray is %lu", weakSelf.commentPhotoViewsArray.count);
-        NSLog(@"the amount of items in commentsArray is %lu", weakSelf.commentsArray.count);
         for (CommentPhotoView *cv in weakSelf.commentPhotoViewsArray) {
             [cv removeFromSuperview];
         }
@@ -388,11 +382,13 @@ static CGFloat kNextPhotoTolerance = 40;
     __weak ViewPhotoVC *weakSelf = self;
     [OOAPI getCommentsFromMediaItem:_mio success:^(NSArray *comments) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            weakSelf.commentsArray = comments.mutableCopy;
+            weakSelf.commentsArray = [NSMutableArray arrayWithArray:comments];
             [weakSelf gotComments];
             
             if (weakSelf.commentsArray.count > 0) {
                 weakSelf.numCommentsLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)comments.count];
+                [weakSelf.seeCommentsButton setTitle:@"See comments" forState:UIControlStateNormal];
+                weakSelf.seeCommentsButton.enabled = YES;
             } else {
                 weakSelf.numCommentsLabel.text = @"";
                 [weakSelf.seeCommentsButton setTitle:@"" forState:UIControlStateNormal];
@@ -412,15 +408,16 @@ static CGFloat kNextPhotoTolerance = 40;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         
-        //CommentObject *comment = [_commentsArray objectAtIndex:i];
         cPV.comment = [_commentsArray objectAtIndex:i];
         [self.backgroundView addSubview:cPV];
         __weak CommentPhotoView *weakCPV = cPV;
         __weak ViewPhotoVC *weakSelf = self;
         [OOAPI getUserWithID:cPV.comment.userID success:^(UserObject *user) {
-            weakCPV.user = user;
-            [weakCPV setNeedsLayout];
-            [weakSelf.view setNeedsLayout];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                weakCPV.user = user;
+                [weakCPV setNeedsLayout];
+                [weakSelf.view setNeedsLayout];
+            });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"ERROR: failed to get user: %@", error);
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -571,7 +568,7 @@ static CGFloat kNextPhotoTolerance = 40;
         frame.origin.y = y;
         frame.size.width = width(self.view);
         CGFloat height = [v.userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height + 10;
-        frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + kGeomSpaceEdge * 2;
+        frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + kGeomSpaceEdge * 3;
         y += frame.size.height;
         v.frame = frame;
     }
@@ -590,7 +587,6 @@ static CGFloat kNextPhotoTolerance = 40;
 
 - (void)showComponents:(BOOL)show {
     
-    NSLog(@"the show is %d", show);
     _share.hidden =
     _optionsButton.hidden =
     _closeButton.hidden =
@@ -1368,7 +1364,6 @@ static CGFloat kNextPhotoTolerance = 40;
         return;
     }];
 }
-
 
 - (void)presentUnverifiedMessage:(NSString *)message {
     
