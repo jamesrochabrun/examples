@@ -1103,7 +1103,7 @@
 				367704021B88078400B594E5 /* Common Tools */,
 				367703FC1B87E3A500B594E5 /* Resources */,
 				363B60BE1B6AC13900987A1B /* Models */,
-				7B61A91E1D3FDA8D005CB257 /* views */,
+				7B61A91E1D3FDA8D005CB257 /* Views */,
 				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
 				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
@@ -1233,7 +1233,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		7B61A91E1D3FDA8D005CB257 /* views */ = {
+		7B61A91E1D3FDA8D005CB257 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				7B7114C21D41E19F003EA054 /* TextFieldView.h */,
@@ -1241,7 +1241,7 @@
 				7B9DC9AE1D42A9DC00CC306C /* CommentPhotoView.h */,
 				7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */,
 			);
-			name = views;
+			name = Views;
 			sourceTree = "<group>";
 		};
 		838275ABF7295F8F9D0249ED /* Pods */ = {
