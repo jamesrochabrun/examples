@@ -595,19 +595,28 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
     __weak RestaurantVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
     
-    [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
-        _restaurant = restaurant;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (weakSelf.restaurant.permanentlyClosed) {
-                weakSelf.closedButton.hidden = NO;
-                [self.view bringSubviewToFront:weakSelf.closedButton];
-            }
-            [weakSelf.collectionView reloadData];// Sections:is];
-            [weakSelf getListsForRestaurant];
-        });
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ;
-    }];
+    if (!_restaurant.restaurantID) {
+        [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
+            _restaurant = restaurant;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (weakSelf.restaurant.permanentlyClosed) {
+                    weakSelf.closedButton.hidden = NO;
+                    [weakSelf.view bringSubviewToFront:weakSelf.closedButton];
+                }
+                [weakSelf.collectionView reloadData];// Sections:is];
+                [weakSelf getListsForRestaurant];
+            });
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
+    } else {
+        if (_restaurant.permanentlyClosed) {
+            _closedButton.hidden = NO;
+            [self.view bringSubviewToFront:_closedButton];
+        }
+        [_collectionView reloadData];
+        [self getListsForRestaurant];
+    }
 }
 
 - (void)getFolloweesWithRestaurantOnList {

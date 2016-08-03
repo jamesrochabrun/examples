@@ -84,7 +84,7 @@ typedef enum {
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog  (@"ERROR UNABLE TO IDENTIFY VENUE: %@",error);
         }];
-    } else {
+    } else { //AUG we should have a check here
         [self addFolloweesWithRestaurant];
         [self updateThumbnail];
         self.subHeader1.text = [self subheader1String];

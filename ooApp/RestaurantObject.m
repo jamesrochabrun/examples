@@ -51,18 +51,18 @@ BOOL isRestaurantObject (id  object)
         return nil;
     }
 
-    //NSLog(@"dict=%@", dict);
+    NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant = [[RestaurantObject alloc] init];
-    restaurant.googleID = [dict objectForKey:kKeyRestaurantGoogleID];
-    restaurant.placeID = [dict objectForKey:kKeyRestaurantPlaceID];
-    restaurant.restaurantID = [[dict objectForKey:kKeyRestaurantRestaurantID] unsignedIntegerValue];
-    restaurant.name = [dict objectForKey:kKeyRestaurantName];
+    restaurant.googleID = parseStringOrNullFromServer([dict objectForKey:kKeyRestaurantGoogleID]);
+    restaurant.placeID = parseStringOrNullFromServer([dict objectForKey:kKeyRestaurantPlaceID]);
+    restaurant.restaurantID = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyRestaurantRestaurantID]);
+    restaurant.name = parseStringOrNullFromServer([dict objectForKey:kKeyRestaurantName]);
     restaurant.rating = [[dict objectForKey:kKeyRestaurantRating] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyRestaurantRating] floatValue];
     restaurant.website = [[dict objectForKey:kKeyRestaurantWebsite] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantWebsite];
     restaurant.phone = [[dict objectForKey:kKeyRestaurantPhone] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantPhone];
     restaurant.address = [[dict objectForKey:kKeyRestaurantAddress] isKindOfClass:[NSNull class]] ? nil : [dict objectForKey:kKeyRestaurantAddress];
     
-    restaurant.totalVotes= parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyRestaurantVoteCount ]);
+    restaurant.totalVotes = parseUnsignedIntegerOrNullFromServer([dict objectForKey:kKeyRestaurantVoteCount ]);
     
     id value= [dict objectForKey:kKeyRestaurantOpenNow];
     if (! value || [value isKindOfClass:[NSNull class]] ) {
