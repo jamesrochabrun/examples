@@ -459,6 +459,7 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.width = imageWidth;
     frame.size.height = imageHeight;
     _iv.frame = CGRectIntegral(frame);
+    
     _iv.center = self.view.center;
     _aiv.center = CGPointMake(CGRectGetWidth(_iv.frame)/2, CGRectGetHeight(_iv.frame)/2);
     

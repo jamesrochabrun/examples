@@ -86,9 +86,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [_tableUsers registerClass:[CommentListTVCell class] forCellReuseIdentifier:kCommentsTableReuseIdentifier];
     [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:kCommentsTableReuseIdentifierEmpty];
     [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
-    //_tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    //_tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
-    //_tableUsers.separatorInset = UIEdgeInsetsZero;
+    _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
+    _tableUsers.separatorInset = UIEdgeInsetsZero;
     _tableUsers.showsVerticalScrollIndicator= NO;
     
     [self removeNavButtonForSide:kNavBarSideTypeRight];
@@ -307,7 +307,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     cell.comment = comment;
     return cell;
 }
-
 //------------------------------------------------------------------------------
 // Name:    editingStyleForRowAtIndexPath
 // Purpose: Delete cells

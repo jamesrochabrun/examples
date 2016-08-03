@@ -73,9 +73,10 @@
     
     if (comment == _comment) return;
     _comment = comment;
+    __weak CommentPhotoView *weakCPV = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-    [_userCommentButton setTitle:_comment.content forState:UIControlStateNormal];
-    [self setNeedsLayout];
+    [weakCPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
+    [weakCPV setNeedsLayout];
     });
 }
 
@@ -83,15 +84,15 @@
     
     if (user == _user) return;
     _user = user;
+    __weak CommentPhotoView *weakCPV = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
-         [self setNeedsLayout];
+        [weakCPV.userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
+         [weakCPV setNeedsLayout];
     });
 }
 
 - (void)userNameButtonTapped:(id)sender {
     
-    //[self.delegate getUserFromComment:_comment];
     [self.delegate goToUserProfile:_user];
 }
 
