@@ -43,7 +43,6 @@ typedef enum {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         _followeesView = [UIView new];
-//        _followeesView.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_followeesView];
         
         _numberAdditionalFollowees = [UILabel new];

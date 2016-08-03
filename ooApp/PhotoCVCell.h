@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MediaItemObject.h"
 #import "UnverifiedUserVC.h"
+#import "RestaurantObject.h"
 
 @class PhotoCVCell;
 
@@ -19,12 +20,13 @@
 - (void)photoCell:(PhotoCVCell *)photoCell userNotVerified:(MediaItemObject *)mio;
 @end
 
-@interface PhotoCVCell : UICollectionViewCell <UnverifiedUserVCDelegate>
+@interface PhotoCVCell : UICollectionViewCell
 
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;
+@property (nonatomic, strong) RestaurantObject *restaurantObject;
 @property (nonatomic, weak) id<PhotoCVCellDelegate> delegate;
 
-- (void)showActionButton:(BOOL)show;
+//- (void)showActionButton:(BOOL)show;
 - (UIImage *)shareImage;
 
 @end

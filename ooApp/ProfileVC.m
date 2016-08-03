@@ -813,7 +813,7 @@
 @property (nonatomic, strong) ProfileVCCVLayout *listsAndPhotosLayout;
 
 @property (nonatomic, strong) NSArray *arrayLists;
-@property (nonatomic, strong) NSArray *arrayPhotos;
+@property (nonatomic, strong) NSArray *restaurants;
 
 @property (nonatomic, strong) UIImageView *profilePhoto;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
@@ -907,7 +907,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     _viewingLists = YES;
     _needRefresh = YES;
     _arrayLists = @[];
-    _arrayPhotos = @[];
+    _restaurants = @[];
     _searchResultsArray=@[];
     
     _searchTable = [UITableView new];
@@ -1178,10 +1178,14 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     }
 
     if (mio) {
-        for (MediaItemObject* item in _arrayPhotos) {
-            if (item.mediaItemId == mio.mediaItemId) {
-                foundIt = YES;
-                break;
+        for (RestaurantObject *r in _restaurants) {
+            if (r.mediaItems && [r.mediaItems count]) {
+                MediaItemObject *m = [r.mediaItems objectAtIndex:0];
+                if (m.mediaItemId == mio.mediaItemId) {
+                    foundIt = YES;
+                    break;
+                }
+
             }
         }
     }
@@ -1281,22 +1285,36 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
         self.aiv.message = @"loading";
     }
     
-    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth:width(self.view) maxHeight:0
-                   success:^(NSArray *mediaObjects) {
-                       weakSelf.arrayPhotos= mediaObjects;
-                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
-                       NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           [weakSelf.aiv stopAnimating];
-                           [weakSelf.cv reloadData];
-                           [weakSelf.headerView refreshUserStats];
-                       });
-                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                       NSLog  (@"FAILED TO GET PHOTOS");
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           [weakSelf.aiv stopAnimating];
-                       });
-                   }];
+    [OOAPI getFoodFeedType:kFoodFeedTypeMe success:^(NSArray *restaurants) {
+        weakSelf.restaurants = restaurants;
+        weakSelf.listsAndPhotosLayout.thereAreNoItems= restaurants.count == 0;
+        NSLog (@"number of restaurants:  %ld", (long)_restaurants.count);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.aiv stopAnimating];
+            [weakSelf.cv reloadData];
+            [weakSelf.headerView refreshUserStats];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.aiv stopAnimating];
+        });
+    }];
+//    [OOAPI getPhotosOfUser:_profileOwner.userID maxWidth:width(self.view) maxHeight:0
+//                   success:^(NSArray *mediaObjects) {
+//                       weakSelf.arrayPhotos= mediaObjects;
+//                       weakSelf.listsAndPhotosLayout.thereAreNoItems= mediaObjects.count == 0;
+//                       NSLog (@"NUMBER OF PHOTOS FOR USER:  %ld", (long)_arrayPhotos.count);
+//                       dispatch_async(dispatch_get_main_queue(), ^{
+//                           [weakSelf.aiv stopAnimating];
+//                           [weakSelf.cv reloadData];
+//                           [weakSelf.headerView refreshUserStats];
+//                       });
+//                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                       NSLog  (@"FAILED TO GET PHOTOS");
+//                       dispatch_async(dispatch_get_main_queue(), ^{
+//                           [weakSelf.aiv stopAnimating];
+//                       });
+//                   }];
 }
 
 - (void)refetchListsPhotosAndStats
@@ -1741,7 +1759,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
         [self addNavButtonWithIcon:kFontIconPhotoThick target:self action:@selector(handleUpperRightButton) forSide:kNavBarSideTypeRight isCTA:YES];
     }
     
-    _listsAndPhotosLayout.thereAreNoItems= _arrayPhotos.count==0;
+    _listsAndPhotosLayout.thereAreNoItems = _restaurants.count==0;
     [self getPhotos];
 }
 
@@ -1751,23 +1769,31 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     return CGRectGetHeight(_headerView.frame);
 }
 
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:( ProfileVCCVLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(ProfileVCCVLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if  (_viewingLists ) {
         return kGeomHeightStripListRow;
     } else {
-        if (!_arrayPhotos.count) {
+        if (!_restaurants.count) {
             return kGeomHeightStripListRow;
         }
         NSInteger row = indexPath.row;
-        MediaItemObject *mio = row <_arrayPhotos.count ? _arrayPhotos[row] :nil;
-        if  (mio) {
-            CGFloat w = mio.width;
-            CGFloat h = mio.height;
-            CGFloat aspect = (h > 0)? w/h:0.05;
-            CGFloat availableWidth = [UIScreen mainScreen ].bounds.size.width/2;
-            CGFloat height = availableWidth/aspect;
-            return height + ((mio.source == kMediaItemTypeOomami)? 30:0) ;
+        RestaurantObject *r = row <_restaurants.count ? _restaurants[row] :nil;
+        
+        if (r.mediaItems && [r.mediaItems count]) {
+            //MediaItemObject *mio = [r.mediaItems objectAtIndex:0];
+            CGFloat height;
+            
+            height = (CGRectGetWidth(self.view.frame) - kGeomSpaceEdge)/2;
+            height -= (floorf(height) == height) ? 2:3;
+            return height;
+
+//            CGFloat w = mio.width;
+//            CGFloat h = mio.height;
+//            CGFloat aspect = (h > 0)? w/h:0.05;
+//            CGFloat availableWidth = [UIScreen mainScreen ].bounds.size.width/2;
+//            CGFloat height = availableWidth/aspect;
+//            return height + ((mio.source == kMediaItemTypeOomami)? 30:0) ;
         } else {
             return 0;
         }
@@ -1782,16 +1808,16 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     NSUInteger total;
-    if  (_viewingLists ) {
-        total=  self.arrayLists.count;
+    if  (_viewingLists) {
+        total = self.arrayLists.count;
     } else {
-        total=  self.arrayPhotos.count;
+        total = self.restaurants.count;
     }
     
-    if  (!total && (!self.aiv.isAnimating || self.aiv.endingAnimation)) {
+    if (!total && (!self.aiv.isAnimating || self.aiv.endingAnimation)) {
         // NOTE: We want to show an empty cell when there are no items to show,
         //  but not before the network call has finished.
-        total= 1;
+        total = 1;
     }
     return total;
 }
@@ -1799,7 +1825,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
 - (CGSize)collectionView:(UICollectionView *)collectionView
                   layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
-    return  CGSizeMake([UIScreen mainScreen].bounds.size.width , kGeomProfileFilterViewHeight);
+    return CGSizeMake([UIScreen mainScreen].bounds.size.width, kGeomProfileFilterViewHeight);
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
@@ -1833,8 +1859,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
         
         NSUInteger total= self.arrayLists.count;
         if (!total) {
-            ProfileEmptyCell *cell= [collectionView dequeueReusableCellWithReuseIdentifier:kProfileEmptyCellIdentifier
-                                                                              forIndexPath:indexPath];
+            ProfileEmptyCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kProfileEmptyCellIdentifier forIndexPath:indexPath];
             if (_viewingOwnProfile) {
                 [cell setListMode];
                 cell.message = @"Make your first list!";
@@ -1848,8 +1873,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
             return nil;
         }
         
-        ListStripCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kProfileListCellIdentifier
-                                                                          forIndexPath:indexPath];
+        ListStripCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kProfileListCellIdentifier forIndexPath:indexPath];
         
         NSArray *a = self.arrayLists;
         ListObject *listItem = a[row];
@@ -1862,7 +1886,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
         return cell;
     }
     else {
-        NSUInteger total= self.arrayPhotos.count;
+        NSUInteger total = _restaurants.count;
         if (!total) {
             ProfileEmptyCell*cell= [collectionView dequeueReusableCellWithReuseIdentifier:kProfileEmptyCellIdentifier
                                                                              forIndexPath:indexPath];
@@ -1881,14 +1905,17 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
             return nil;
         }
         
-        PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kProfilePhotoCellIdentifier
-                                                                      forIndexPath:indexPath];
-        NSArray *a = self.arrayPhotos;
-        MediaItemObject *object = a[row];
-        cell.mediaItemObject = object;
+        PhotoCVCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kProfilePhotoCellIdentifier forIndexPath:indexPath];
+    
+
+        NSArray *a = _restaurants;
+        RestaurantObject *r = a[row];
+        if (r.mediaItems && [r.mediaItems count]) {
+            cell.mediaItemObject = [r.mediaItems objectAtIndex:0];
+        }
+        cell.restaurantObject = r;
         cell.backgroundColor = UIColorRGBA(kColorTileBackground);
         cell.delegate = self;
-        [cell showActionButton:NO];
         return cell;
     }
 }
@@ -1992,33 +2019,38 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
         vc.listItem = object;
         [self.navigationController pushViewController:vc animated:YES];
     } else {
-        if (!_arrayPhotos.count) {
+        if (!_restaurants.count) {
             [self userPressedEmptyCell];
             return;
         }
         NSUInteger row = indexPath.row;
-        MediaItemObject *mediaObject = _arrayPhotos[row];
-        NSUInteger restaurantID = mediaObject.restaurantID;
+        RestaurantObject *r = _restaurants[row];
+        MediaItemObject *mio = nil;
+        if (r.mediaItems && [r.mediaItems count]) {
+            mio = [r.mediaItems objectAtIndex:0];
+        }
+    
+        NSUInteger restaurantID = mio.restaurantID;
         if (!restaurantID) {
-            [self launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
+            [self launchViewPhoto:mio restaurant:nil originFrame:originRect index:row];
         } else {
-            __weak ProfileVC *weakSelf = self;
-            OOAPI *api = [[OOAPI alloc] init];
-            [api getRestaurantWithID:stringFromUnsigned(restaurantID)
-                              source:kRestaurantSourceTypeOomami
-                             success:^(RestaurantObject *restaurant) {
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                     if (restaurant) {
-                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant originFrame:originRect index:row];
-                                     } else {
-                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
-                                     }
-                                 });
-                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
-                                 });
-                             }];
+//            __weak ProfileVC *weakSelf = self;
+//            OOAPI *api = [[OOAPI alloc] init];
+//            [api getRestaurantWithID:stringFromUnsigned(restaurantID)
+//                              source:kRestaurantSourceTypeOomami
+//                             success:^(RestaurantObject *restaurant) {
+//                                 dispatch_async(dispatch_get_main_queue(), ^{
+//                                     if (restaurant) {
+//                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant originFrame:originRect index:row];
+//                                     } else {
+//                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
+//                                     }
+//                                 });
+//                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                 dispatch_async(dispatch_get_main_queue(), ^{
+//                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
+//                                 });
+//                             }];
         }
     }
 }
@@ -2029,7 +2061,7 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     vc.originRect = originFrame;
     vc.mio = mio;
     vc.restaurant = restaurant;
-    vc.items = _arrayPhotos;
+    vc.items = _restaurants;
     vc.currentIndex = index;
     vc.delegate = self;
     vc.dismissNCDelegate = self;

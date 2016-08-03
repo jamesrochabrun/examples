@@ -41,16 +41,17 @@
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSUInteger section=  indexPath.section;
-    NSUInteger row=   indexPath.row;
-    if ( section>= _sectionAttributes.count) {
+    NSUInteger section = indexPath.section;
+    NSUInteger row = indexPath.row;
+    if ( section >= _sectionAttributes.count) {
         return nil;
     }
-    NSArray*sectionArray= [_sectionAttributes objectAtIndex: section];
-    if (  row>= sectionArray.count) {
+    NSArray *sectionArray = [_sectionAttributes objectAtIndex:section];
+    
+    if (row >= sectionArray.count) {
         return nil;
     }
-    return [ sectionArray objectAtIndex: row];
+    return [sectionArray objectAtIndex:row];
 }
 
 - (void)prepareLayout
@@ -80,7 +81,7 @@
     NSMutableArray *itemAttributes;
     CGSize itemSize;
     
-    float allowableHorizontalSpace= round ((width(self.collectionView)));
+    float allowableHorizontalSpace = round((width(self.collectionView)));
     
     CGFloat hdrHeight = [_delegate collectionView:self.collectionView layout:self heightForheader:0];
 
@@ -230,6 +231,8 @@
                            heightForItemAtIndexPath:[NSIndexPath
                                                      indexPathForItem:index
                                                      inSection:section]];
+        itemSize.width = itemSize.height;
+        itemSize.height += kGeomSpacePhotoCellInfoHeight;
         
         // Create the actual UICollectionViewLayoutAttributes and add it to your array. We'll use this later in layoutAttributesForItemAtIndexPath:
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:section];

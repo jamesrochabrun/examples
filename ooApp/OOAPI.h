@@ -29,9 +29,10 @@ typedef enum {
 } SearchSortType;
 
 typedef enum {
-    kFoodFeedTypeFriends = 1,
-    kFoodFeedTypeAll = 2,
-    kFoodFeedTypeAroundMe = 3
+    kFoodFeedTypeMe = 1,
+    kFoodFeedTypeFriends = 2,
+    kFoodFeedTypeAll = 3,
+    kFoodFeedTypeAroundMe = 4
 } FoodFeedType;
 
 static NSUInteger kAllUsersID = 0; //means user not specified so trying to get info for all users

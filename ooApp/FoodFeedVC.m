@@ -576,8 +576,8 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
 
     CGFloat height;
     
-    height = (CGRectGetWidth(self.view.frame)-kGeomSpaceEdge)/2;
-    height += (floorf(height) == height) ? 2:3;
+    height = (CGRectGetWidth(self.view.frame) - kGeomSpaceEdge)/2;
+    height -= (floorf(height) == height) ? 2:3;
     return height;
     
 //    RestaurantObject *r =[_restaurants objectAtIndex:indexPath.row];
@@ -634,8 +634,10 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     cvc.delegate = self;
     cvc.backgroundColor = UIColorRGBA(kColorTileBackground);
     cvc.mediaItemObject = ([r.mediaItems count]) ? [r.mediaItems objectAtIndex:0] : nil;
+    cvc.restaurantObject = r;
+    
 //    [cvc showActionButton:(cvc.mediaItemObject.source == kMediaItemTypeOomami) ? YES : NO];
-    [cvc showActionButton:NO];
+
     //[DebugUtilities addBorderToViews:@[cvc]];
     return cvc;
 }

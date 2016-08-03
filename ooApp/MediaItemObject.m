@@ -30,7 +30,7 @@ NSString *const kKeyMediaItemIsUserYummed = @"is_user_yummed";
         return nil;
     }
     
-//    NSLog(@"creating mio: %@", dict);
+    NSLog(@"creating mio: %@", dict);
     MediaItemObject *mio = [[MediaItemObject alloc] init];
     mio.mediaItemId = [[dict objectForKey:kKeyMediaItemID] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemID] unsignedIntegerValue];
     mio.type = [dict[kKeyMediaItemType] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemType] unsignedIntegerValue];

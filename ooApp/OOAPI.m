@@ -1109,9 +1109,10 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     
-    if (type == kFoodFeedTypeFriends) {
+    if (type == kFoodFeedTypeFriends ||
+        type == kFoodFeedTypeMe) {
         [parameters setObject:[NSNumber numberWithUnsignedInteger:kFoodFeedPageSize] forKey:kKeySearchLimit];
-        [parameters setObject:[NSNumber numberWithInt:2] forKey:kKeySearchFilter];
+        [parameters setObject:[NSNumber numberWithUnsignedInteger:type] forKey:kKeySearchFilter];
         urlString = [NSString stringWithFormat:@"%@://%@/users/%lu/mediaItems/restaurants", kHTTPProtocol, [OOAPI URL], (unsigned long)uo.userID];
     } else if (type == kFoodFeedTypeAll) {
         [parameters setObject:[NSNumber numberWithUnsignedInteger:kFoodFeedPageSize] forKey:kKeySearchLimit];

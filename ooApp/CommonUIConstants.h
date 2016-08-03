@@ -30,7 +30,7 @@ static const NSUInteger kColorElements1 = 0xFF272727;
 static const NSUInteger kColorElements2 = 0xFFe0e0e0;
 static const NSUInteger kColorElements3 = 0xff8D99AE;
 
-static const NSUInteger kColorGrayMiddle = 0xFFB2B2B2;
+static const NSUInteger kColorGrayMiddle = 0xFF53585F;//0xFFB2B2B2;
 static const NSUInteger kColorWhite = 0xFFFFFFFF;
 static const NSUInteger kColorBlack = 0xFF000000;
 static const NSUInteger kColorClear = 0x00000000;
@@ -174,6 +174,7 @@ static CGFloat kGeomSampleUsernameTableHeight = 175;
 static CGFloat kGeomInterImageGap = 2;
 static CGFloat kGeomSpaceLineEdgeBuffer = 4;
 static CGFloat kGeomMotionEffectDelta = 20;
+static CGFloat kGeomSpacePhotoCellInfoHeight = 77;
 
 static CGFloat kGeomUploadWidth = 750;
 

@@ -6,7 +6,7 @@
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-#import "TTTAttributedLabel.h"
+//#import "TTTAttributedLabel.h"
 #import "OOAPI.h"
 #import "RestaurantMainCVCell.h"
 #import "LocationManager.h"
@@ -20,9 +20,7 @@
 @interface RestaurantMainCVCell()
 
 @property (nonatomic, strong) AFHTTPRequestOperation *requestOperation;
-//@property (nonatomic, strong) TTTAttributedLabel *phoneNumber;
-//@property (nonatomic, strong) TTTAttributedLabel *website;
-@property (nonatomic, strong) TTTAttributedLabel *address;
+@property (nonatomic, strong) UILabel *address;
 @property (nonatomic, strong) UILabel *name;
 @property (nonatomic, strong) UILabel *priceRange;
 @property (nonatomic, strong) UILabel *isOpen;
@@ -102,7 +100,7 @@
         [_cuisine withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear];
         [self addSubview:_cuisine];
         
-        _address = [[TTTAttributedLabel alloc] initWithFrame:CGRectZero];
+        _address = [[UILabel alloc] initWithFrame:CGRectZero];
         [_address withFont:[UIFont fontWithName:kFontLatoMedium size:kGeomFontSizeH2] textColor:kColorText backgroundColor:kColorClear];
         [self addSubview:_address];
         self.backgroundColor = UIColorRGBA(kColorWhite);
