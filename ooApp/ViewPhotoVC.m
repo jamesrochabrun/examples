@@ -453,8 +453,13 @@ static CGFloat kNextPhotoTolerance = 40;
     frame = _iv.frame;
     
     CGFloat imageWidth = width(self.view);
+    CGFloat imageHeight;
     
-    CGFloat imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _mio.height/_mio.width * width(self.view);
+    if (!_mio.width) {
+        imageHeight = imageWidth;
+    } else {
+        imageHeight = (imageWidth < width(self.view)) ? height(_iv) : _mio.height/_mio.width * width(self.view);
+    }
     
     frame.size.width = imageWidth;
     frame.size.height = imageHeight;
