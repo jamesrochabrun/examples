@@ -162,7 +162,11 @@
             if (!_notifications) _notifications = [NSMutableArray array];
             [_notifications addObject:n];
         }
-        [self processNotifications];
+    
+        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateInactive) {
+            [UIApplication sharedApplication].applicationIconBadgeNumber = -1;
+            [self processNotifications];
+        }
     }
 }
 
@@ -379,6 +383,7 @@
         ANALYTICS_EVENT_OTHER(@"FacebookLink");
         return YES;
     } else {
+        //Handle deep link to Oomami
         if ([[url scheme] isEqualToString:@"oomami"]) {
 /* deep linking logic handles
         oomami://oomami/profile?username=<username>
@@ -461,8 +466,8 @@
 //This should not be enabled in production
     //[FBSDKSettings enableLoggingBehavior:FBSDKLoggingBehaviorAppEvents];
     
-    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-    
+
+
 //    [self testRemoteNotification];
 }
 

@@ -97,5 +97,6 @@ NSString *const kNotificationMediaItemAltered = @"notificationMediaItemAltered";
 NSString *const kNotificationUserStatsChanged = @"notificationUserStatsChanged";
 NSString *const kNotificationUserFollowingChanged = @"notificationUserFollowingChanged";
 NSString *const kNotificationUpdatePhotos = @"notificationUpdatePhotos";
+NSString *const kNotificationViewPhotoVCNeedsUpdate = @"notificationViewPhotoNeedsUpdate";
 
 

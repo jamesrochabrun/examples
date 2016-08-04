@@ -14,6 +14,7 @@
 #import "OOUserView.h"
 #import "UnverifiedUserVC.h"
 #import <FBSDKShareKit/FBSDKShareKit.h>
+#import "CommentPhotoView.h"
 
 static CGFloat kAlphaBackground = 1;
 
@@ -39,12 +40,12 @@ typedef enum {
                                     UIViewControllerTransitioningDelegate,
                                     UnverifiedUserVCDelegate,
                                     UIActivityItemSource,
-                                    FBSDKSharingDelegate>
+                                    FBSDKSharingDelegate,
+                                    CommentPhotoViewDelegate>
 @property (nonatomic, strong) MediaItemObject *mio;
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) UIImageView *iv;
 @property (nonatomic) CGRect originRect;
-
 @property (nonatomic, strong) NSArray *items;
 @property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSInteger direction;
@@ -54,6 +55,8 @@ typedef enum {
 @property (nonatomic, weak) id<UINavigationControllerDelegate> dismissNCDelegate;
 
 @property (nonatomic, strong) UIPercentDrivenInteractiveTransition *interactiveController;
+@property (nonatomic, strong) NSArray *rangeOfFiveArray;
+
 
 - (void)showComponents:(BOOL)show;
 - (void)setComponentsAlpha:(CGFloat)alpha;

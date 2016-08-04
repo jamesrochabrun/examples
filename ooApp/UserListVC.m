@@ -17,9 +17,6 @@
 #import "Settings.h"
 #import "ProfileVC.h"
 
-#define USER_LIST_TABLE_REUSE_IDENTIFIER  @"userListTVC"
-#define USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY  @"userListTableCellEmpty"
-
 //==============================================================================
 
 @interface UserListTableSectionHeader ()
@@ -27,6 +24,9 @@
 @end
 
 @implementation UserListTableSectionHeader
+
+NSString *const kUsersTableReuseIdentifier = @"userListTVC";
+NSString *const kUsersTableReuseIdentifierEmpty = @"userListTableCellEmpty";
 
 - (instancetype)initWithExpandedFlag:(BOOL)expanded
 {
@@ -87,6 +87,7 @@
 {
     [super viewDidLoad];
     
+    
     _needRefresh = YES;
     
     self.automaticallyAdjustsScrollViewInsets = NO;
@@ -102,8 +103,8 @@
     
     self.tableUsers = makeTable(self.view,self);
     _tableUsers.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-    [_tableUsers registerClass:[UserListTVC class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER];
-    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY];
+    [_tableUsers registerClass:[UserListTVC class] forCellReuseIdentifier:kUsersTableReuseIdentifier];
+    [_tableUsers registerClass:[UITableViewCell class] forCellReuseIdentifier:kUsersTableReuseIdentifierEmpty];
     [_tableUsers setLayoutMargins:UIEdgeInsetsZero];
     _tableUsers.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
@@ -156,6 +157,7 @@
     ANALYTICS_SCREEN(@(object_getClassName(self)));
  
     [self.navigationController setNavigationBarHidden:NO animated:NO];
+
 }
 
 - (void)refreshIfNeeded {
@@ -181,6 +183,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
 }
 
 //------------------------------------------------------------------------------
@@ -229,8 +232,8 @@
     }];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+   
     NSInteger row = indexPath.row;
     UserObject *u = nil;
     
@@ -239,10 +242,10 @@
             u = _usersArray[row];
         }
     }
-    
+
     if (!u) {
         UITableViewCell *cell;
-        cell = [tableView dequeueReusableCellWithIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER_EMPTY forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:kUsersTableReuseIdentifierEmpty forIndexPath:indexPath];
         cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
         cell.textLabel.textAlignment=NSTextAlignmentCenter;
         cell.textLabel.text=  @"Alas there are none.";
@@ -252,7 +255,7 @@
     }
     
     UserListTVC *cell;
-    cell = [tableView dequeueReusableCellWithIdentifier:USER_LIST_TABLE_REUSE_IDENTIFIER forIndexPath:indexPath];
+    cell = [tableView dequeueReusableCellWithIdentifier:kUsersTableReuseIdentifier forIndexPath:indexPath];
     cell.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
     cell.textLabel.textAlignment=NSTextAlignmentCenter;
     cell.selectionStyle= UITableViewCellSeparatorStyleNone;
@@ -279,8 +282,7 @@
 // Name:    heightForRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return kGeomHeightHorizontalListRow;
 }
 
@@ -288,8 +290,7 @@
 // Name:    didSelectRowAtIndexPath
 // Purpose:
 //------------------------------------------------------------------------------
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger row = indexPath.row;
     UserObject *u = nil;
     
@@ -304,8 +305,8 @@
     }
 }
 
-- (void)goToProfile: (UserObject*)u
-{
+- (void)goToProfile: (UserObject*)u {
+    
     ProfileVC *vc= [[ProfileVC alloc] init];
     vc.userInfo = u;
     vc.userID = u.userID;
@@ -316,21 +317,18 @@
 // Name:    numberOfRowsInSection
 // Purpose:
 //------------------------------------------------------------------------------
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     @synchronized(self.usersArray)  {
         return _usersArray.count;
     }
 }
 
-- (void)userTappedSectionHeader:(int)which
-{
+- (void)userTappedSectionHeader:(int)which {
     
     
 }
 
-- (void)userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following
-{
+- (void)userTappedFollowButtonForUser:(UserObject*)user following:(BOOL)following {
     if (following ) {
         [_followeesArray addObject: user];
     } else {
@@ -338,8 +336,7 @@
     }
 }
 
-- (void) userTappedImageOfUser:(UserObject*)user;
-{
+- (void) userTappedImageOfUser:(UserObject*)user {
     [self goToProfile:user];
 }
 

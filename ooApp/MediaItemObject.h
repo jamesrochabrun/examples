@@ -27,6 +27,8 @@ extern NSString *const kKeyMediaItemRestaurantID;
 extern NSString *const kKeyMediaItemYumCount;
 extern NSString *const kKeyMediaItemSourceUsername;
 extern NSString *const kKeyMediaItemIsYummedByUser;
+extern NSString *const kKeyMediaItemCreatedAt;
+
 
 @interface MediaItemObject : NSObject
 
@@ -44,8 +46,14 @@ extern NSString *const kKeyMediaItemIsYummedByUser;
 @property (nonatomic) BOOL isUserYummed;
 @property (nonatomic) NSUInteger yumCount;
 @property (nonatomic, strong) NSString *sourceUsername;
+@property (nonatomic, strong) NSDate *createdAt;
+@property (nonatomic, strong) NSDate *updatedAt;
 
 + (MediaItemObject *)mediaItemFromDict:(NSDictionary *)dict;
 - (NSDictionary*) dictionaryOfMediaItem;
 
 @end
+
+
+
+

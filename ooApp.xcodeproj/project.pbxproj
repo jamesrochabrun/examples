@@ -98,6 +98,7 @@
 		367E91D31C4050BD001B1795 /* ViewPhotoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367E91D21C4050BD001B1795 /* ViewPhotoVC.m */; };
 		3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490B1BE04B73003BF98B /* UIImageEffects.m */; };
 		3686490F1BE09CF3003BF98B /* OOActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */; };
+		368BB0E31D53E444007B77C8 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 368BB0E21D53E444007B77C8 /* Bolts.framework */; };
 		3690BFD41B745A9200BC7528 /* OOAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 3690BFD31B745A9200BC7528 /* OOAPI.m */; };
 		3695BE0D1D1B2C6B00369F53 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3695BE0A1D1B2C6B00369F53 /* FBSDKCoreKit.framework */; };
 		3695BE0E1D1B2C6B00369F53 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3695BE0B1D1B2C6B00369F53 /* FBSDKLoginKit.framework */; };
@@ -229,6 +230,12 @@
 		36FDA7071B585F650029D29D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36FDA7051B585F650029D29D /* LaunchScreen.xib */; };
 		36FDA7131B585F650029D29D /* ooAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA7121B585F650029D29D /* ooAppTests.m */; };
 		59F64BAACABE82EE3D988A1F /* libPods-ooApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11ACB46AFAC92A3682065049 /* libPods-ooApp.a */; };
+		7B3E4F3F1D52874D0061A59E /* CommentListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B3E4F3E1D52874D0061A59E /* CommentListVC.m */; };
+		7B61A9521D4039E7005CB257 /* CommentListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A9511D4039E7005CB257 /* CommentListTVCell.m */; };
+		7B7114C41D41E19F003EA054 /* TextFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B7114C31D41E19F003EA054 /* TextFieldView.m */; };
+		7B8915361D3E8CD60065DB43 /* CommentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B8915351D3E8CD60065DB43 /* CommentObject.m */; };
+		7B9DC9B01D42A9DC00CC306C /* CommentPhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */; };
+		7B9DC9B31D43393900CC306C /* NSString+NSStringToDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */; };
 		9606C5651BBF08C400CB06FE /* EventsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9606C5641BBF08C400CB06FE /* EventsListVC.m */; };
 		960F72561C2B5E2000DE31AC /* UserStatsObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 960F72551C2B5E2000DE31AC /* UserStatsObject.m */; };
 		961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 961AFC1A1BFBD61400B94EAE /* FeedObject.m */; };
@@ -434,6 +441,7 @@
 		3686490B1BE04B73003BF98B /* UIImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageEffects.m; path = External/UIImageEffects/UIImageEffects.m; sourceTree = "<group>"; };
 		3686490D1BE09CF3003BF98B /* OOActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOActivityItemProvider.h; sourceTree = "<group>"; };
 		3686490E1BE09CF3003BF98B /* OOActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOActivityItemProvider.m; sourceTree = "<group>"; };
+		368BB0E21D53E444007B77C8 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = Frameworks/Bolts.framework; sourceTree = "<group>"; };
 		3690BFD21B745A9200BC7528 /* OOAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOAPI.h; sourceTree = "<group>"; };
 		3690BFD31B745A9200BC7528 /* OOAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOAPI.m; sourceTree = "<group>"; };
 		3695BE0A1D1B2C6B00369F53 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = Frameworks/FBSDKCoreKit.framework; sourceTree = "<group>"; };
@@ -600,6 +608,18 @@
 		36FDA7121B585F650029D29D /* ooAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ooAppTests.m; sourceTree = "<group>"; };
 		437F4BC56C1FCF6A729494D3 /* Pods-ooApp.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ooApp.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-ooApp/Pods-ooApp.adhoc.xcconfig"; sourceTree = "<group>"; };
 		70AB7C3C5EFA9812059D2EDD /* Pods-ooApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ooApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-ooApp/Pods-ooApp.release.xcconfig"; sourceTree = "<group>"; };
+		7B3E4F3D1D52874D0061A59E /* CommentListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentListVC.h; sourceTree = "<group>"; };
+		7B3E4F3E1D52874D0061A59E /* CommentListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentListVC.m; sourceTree = "<group>"; };
+		7B61A9501D4039E7005CB257 /* CommentListTVCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentListTVCell.h; sourceTree = "<group>"; };
+		7B61A9511D4039E7005CB257 /* CommentListTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentListTVCell.m; sourceTree = "<group>"; };
+		7B7114C21D41E19F003EA054 /* TextFieldView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldView.h; sourceTree = "<group>"; };
+		7B7114C31D41E19F003EA054 /* TextFieldView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldView.m; sourceTree = "<group>"; };
+		7B8915341D3E8CD60065DB43 /* CommentObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentObject.h; sourceTree = "<group>"; };
+		7B8915351D3E8CD60065DB43 /* CommentObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentObject.m; sourceTree = "<group>"; };
+		7B9DC9AE1D42A9DC00CC306C /* CommentPhotoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentPhotoView.h; sourceTree = "<group>"; };
+		7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentPhotoView.m; sourceTree = "<group>"; };
+		7B9DC9B11D43393900CC306C /* NSString+NSStringToDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NSStringToDate.h"; sourceTree = "<group>"; };
+		7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringToDate.m"; sourceTree = "<group>"; };
 		9606C5631BBF08C400CB06FE /* EventsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsListVC.h; sourceTree = "<group>"; };
 		9606C5641BBF08C400CB06FE /* EventsListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventsListVC.m; sourceTree = "<group>"; };
 		960F72541C2B5E2000DE31AC /* UserStatsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStatsObject.h; sourceTree = "<group>"; };
@@ -675,6 +695,7 @@
 				3695BE0F1D1B2C6B00369F53 /* FBSDKShareKit.framework in Frameworks */,
 				967163E51C29E15B002DFDDB /* AddressBook.framework in Frameworks */,
 				3695BE0D1D1B2C6B00369F53 /* FBSDKCoreKit.framework in Frameworks */,
+				368BB0E31D53E444007B77C8 /* Bolts.framework in Frameworks */,
 				967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */,
 				96CA59D21BE14E2200618B57 /* MessageUI.framework in Frameworks */,
 				3695BE0E1D1B2C6B00369F53 /* FBSDKLoginKit.framework in Frameworks */,
@@ -696,6 +717,8 @@
 		3621F11C1B8F6DF5004537B6 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				7B61A9501D4039E7005CB257 /* CommentListTVCell.h */,
+				7B61A9511D4039E7005CB257 /* CommentListTVCell.m */,
 				3621F11D1B8F6E32004537B6 /* MenuTVCell.h */,
 				3621F11E1B8F6E32004537B6 /* MenuTVCell.m */,
 				365F175F1B9105B500015D5D /* ListStripTVCell.h */,
@@ -767,6 +790,8 @@
 				962B00C21BD95D22008790FD /* VoteObject.m */,
 				961AFC191BFBD61400B94EAE /* FeedObject.h */,
 				961AFC1A1BFBD61400B94EAE /* FeedObject.m */,
+				7B8915341D3E8CD60065DB43 /* CommentObject.h */,
+				7B8915351D3E8CD60065DB43 /* CommentObject.m */,
 				3621F1201B8F7E7A004537B6 /* MenuObject.h */,
 				3621F1211B8F7E7A004537B6 /* MenuObject.m */,
 				36F872D71B919BC200006C29 /* ListObject.h */,
@@ -852,6 +877,8 @@
 		367704021B88078400B594E5 /* Common Tools */ = {
 			isa = PBXGroup;
 			children = (
+				7B9DC9B11D43393900CC306C /* NSString+NSStringToDate.h */,
+				7B9DC9B21D43393900CC306C /* NSString+NSStringToDate.m */,
 				365638EF1CD8341C003F3C7E /* ConfirmPhotoVC.h */,
 				365638F01CD8341C003F3C7E /* ConfirmPhotoVC.m */,
 				3697D9F51C02A95C0022944F /* DropDownListTVC.h */,
@@ -1079,9 +1106,12 @@
 				367704021B88078400B594E5 /* Common Tools */,
 				367703FC1B87E3A500B594E5 /* Resources */,
 				363B60BE1B6AC13900987A1B /* Models */,
+				7B61A91E1D3FDA8D005CB257 /* Views */,
 				3621F11C1B8F6DF5004537B6 /* Cells */,
 				367112D21BA14071006FDCE7 /* RestaurantListVC.h */,
 				367112D31BA14071006FDCE7 /* RestaurantListVC.m */,
+				7B3E4F3D1D52874D0061A59E /* CommentListVC.h */,
+				7B3E4F3E1D52874D0061A59E /* CommentListVC.m */,
 				3613BE5F1BC5D87E00F1AF67 /* ListsVC.m */,
 				3613BE601BC5D87E00F1AF67 /* ListsVC.h */,
 				36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */,
@@ -1206,6 +1236,17 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		7B61A91E1D3FDA8D005CB257 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7B7114C21D41E19F003EA054 /* TextFieldView.h */,
+				7B7114C31D41E19F003EA054 /* TextFieldView.m */,
+				7B9DC9AE1D42A9DC00CC306C /* CommentPhotoView.h */,
+				7B9DC9AF1D42A9DC00CC306C /* CommentPhotoView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		838275ABF7295F8F9D0249ED /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1219,6 +1260,7 @@
 		DF3DC48B77314A2BA614CB58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				368BB0E21D53E444007B77C8 /* Bolts.framework */,
 				3695BE0A1D1B2C6B00369F53 /* FBSDKCoreKit.framework */,
 				3695BE0B1D1B2C6B00369F53 /* FBSDKLoginKit.framework */,
 				3695BE0C1D1B2C6B00369F53 /* FBSDKShareKit.framework */,
@@ -1548,6 +1590,7 @@
 				36AF0CCA1C6A9ABF0063A58E /* UserListTVC.m in Sources */,
 				3613BE551BBDD1A600F1AF67 /* MediaItemObject.m in Sources */,
 				3697D9F71C02A95C0022944F /* DropDownListTVC.m in Sources */,
+				7B8915361D3E8CD60065DB43 /* CommentObject.m in Sources */,
 				96ACD7871BC3331000E37DC1 /* EventTVCell.m in Sources */,
 				36175CDD1C22AE9C00E6FE3D /* FoodFeedVCCVL.m in Sources */,
 				3625598D1C0A5102002553B4 /* OptionsVC.m in Sources */,
@@ -1581,6 +1624,7 @@
 				36FC99EE1C478D4F00768FF0 /* OOAIV.m in Sources */,
 				3613BE5E1BC46BE800F1AF67 /* FilterObject.m in Sources */,
 				3686490C1BE04B73003BF98B /* UIImageEffects.m in Sources */,
+				7B9DC9B31D43393900CC306C /* NSString+NSStringToDate.m in Sources */,
 				367E91D31C4050BD001B1795 /* ViewPhotoVC.m in Sources */,
 				96D175BB1BA76926000C88AC /* NSString+MD5.m in Sources */,
 				3613B4821CB1A94900AA5B14 /* ShowModalAnimator.m in Sources */,
@@ -1590,11 +1634,14 @@
 				36132A071D12080000EE3710 /* AppLogObject.m in Sources */,
 				36BBD9D81BA767C20008DCF1 /* RestaurantVC.m in Sources */,
 				3613BE521BBCFB7000F1AF67 /* EmptyRestaurantTile.m in Sources */,
+				7B7114C41D41E19F003EA054 /* TextFieldView.m in Sources */,
 				3632F7781C44BEDF007901D9 /* OOTBC.m in Sources */,
 				36FDA6F61B585F650029D29D /* main.m in Sources */,
 				36215DA91C37CA11000A293C /* OOTextEntryVC.m in Sources */,
+				7B3E4F3F1D52874D0061A59E /* CommentListVC.m in Sources */,
 				36587B751B93C7AD00D01EB5 /* ListCVFL.m in Sources */,
 				9695C1001C1618D100911E84 /* ConnectVC.m in Sources */,
+				7B61A9521D4039E7005CB257 /* CommentListTVCell.m in Sources */,
 				365FB7861C59198000826629 /* ShowMediaItemAnimator.m in Sources */,
 				36B1CC9A1CA5ECF8007D0263 /* ShowAuthScreenAnimator.m in Sources */,
 				364D70C01CBEB22400FADC29 /* IntroScreenView.m in Sources */,
@@ -1630,6 +1677,7 @@
 				3613BE5B1BC445A700F1AF67 /* OOFilterView.m in Sources */,
 				3621F11F1B8F6E32004537B6 /* MenuTVCell.m in Sources */,
 				362559901C102ECD002553B4 /* TagTileCVCell.m in Sources */,
+				7B9DC9B01D42A9DC00CC306C /* CommentPhotoView.m in Sources */,
 				96BF31231BB36C55002BFDD2 /* CreateUsernameVC.m in Sources */,
 				961AFC1B1BFBD61400B94EAE /* FeedObject.m in Sources */,
 				366BBC8B1BA8B70100292F80 /* NavTitleView.m in Sources */,

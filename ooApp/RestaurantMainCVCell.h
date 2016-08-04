@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TTTAttributedLabel.h"
 #import "RestaurantObject.h"
 #import "MediaItemObject.h"
 #import "ListObject.h"
@@ -27,7 +26,7 @@
 - (void)restaurantMainCVCellMorePressed:(id)sender;
 @end
 
-@interface RestaurantMainCVCell : UICollectionViewCell <TTTAttributedLabelDelegate>
+@interface RestaurantMainCVCell : UICollectionViewCell
 
 @property (nonatomic, strong) RestaurantObject *restaurant;
 @property (nonatomic, strong) MediaItemObject *mediaItemObject;

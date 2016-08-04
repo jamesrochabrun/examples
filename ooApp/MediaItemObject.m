@@ -22,6 +22,8 @@ NSString *const kKeyMediaItemRestaurantID = @"restaurant_id";
 NSString *const kKeyMediaItemCaption = @"caption";
 NSString *const kKeyMediaItemIsFood = @"is_food";
 NSString *const kKeyMediaItemIsUserYummed = @"is_user_yummed";
+NSString *const kKeyMediaItemCreatedAt = @"created_at";
+NSString *const kKeyMediaItemUpdatedAt = @"updated_at";
 
 @implementation MediaItemObject
 
@@ -30,7 +32,7 @@ NSString *const kKeyMediaItemIsUserYummed = @"is_user_yummed";
         return nil;
     }
     
-    NSLog(@"creating mio: %@", dict);
+   //NSLog(@"creating mio : %@", dict);
     MediaItemObject *mio = [[MediaItemObject alloc] init];
     mio.mediaItemId = [[dict objectForKey:kKeyMediaItemID] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemID] unsignedIntegerValue];
     mio.type = [dict[kKeyMediaItemType] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemType] unsignedIntegerValue];
@@ -51,6 +53,9 @@ NSString *const kKeyMediaItemIsUserYummed = @"is_user_yummed";
     mio.isUserYummed =  [dict[kKeyMediaItemIsUserYummed] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemIsUserYummed] boolValue];
     mio.sourceUsername = [[dict objectForKey:kKeyMediaItemSourceUsername] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyMediaItemSourceUsername];
     mio.restaurantID = parseUnsignedIntegerOrNullFromServer(dict [kKeyMediaItemRestaurantID]);
+    mio.createdAt = parseUTCDateFromServer(dict [kKeyMediaItemCreatedAt]);
+    mio.updatedAt = parseUTCDateFromServer(dict [kKeyMediaItemUpdatedAt]);
+    
     return mio;
 }
 

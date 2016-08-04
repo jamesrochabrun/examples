@@ -45,7 +45,7 @@ PODS:
   - TTTAttributedLabel (1.13.4)
 
 DEPENDENCIES:
-  - AFNetworking (~> 2.0)
+  - AFNetworking
   - Google/Analytics
   - GoogleMaps
   - HockeySDK (~> 3.8.2)
@@ -67,6 +67,6 @@ SPEC CHECKSUMS:
   iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
   TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
 
-PODFILE CHECKSUM: 2349ffd2424dce1f2f714c67575dcc9cf566d84a
+PODFILE CHECKSUM: fc17c84908baaa93aaf8c0011c5f6bed63a0def6
 
 COCOAPODS: 1.0.1

@@ -6,7 +6,6 @@
 //  Copyright © 2015 Oomami Inc. All rights reserved.
 //
 
-//#import "TTTAttributedLabel.h"
 #import "OOAPI.h"
 #import "RestaurantMainCVCell.h"
 #import "LocationManager.h"
@@ -162,10 +161,6 @@
 
 - (void)showOnMap {
     [_delegate restaurantMainCVCell:self showMapTapped:_restaurant.location];
-}
-
-- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    [_delegate restaurantMainCVCell:self gotoURL:url];
 }
 
 - (void)layoutSubviews {

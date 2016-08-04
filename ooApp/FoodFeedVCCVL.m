@@ -85,7 +85,7 @@
             //get the items height
             itemSize = CGSizeMake(floorf(w), floorf(w) + kGeomSpacePhotoCellInfoHeight);
             
-            itemSize.height = [_delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:section]];
+//            itemSize.height = [_delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:section]];
             
             
             // Create the actual UICollectionViewLayoutAttributes and add it to your array. We'll use this later in layoutAttributesForItemAtIndexPath:

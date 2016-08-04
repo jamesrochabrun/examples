@@ -23,8 +23,6 @@
 @property (nonatomic, strong) UILabel *numYums;
 @property (nonatomic, strong) UserObject *userObject;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapGesture;
-@property (nonatomic, strong) NSArray *captionConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *imageContraint;
 @property (nonatomic, strong) UILabel *yumIndicator;
 @property (nonatomic, strong) UIImage *imageToShare;
 @property (nonatomic, strong) UILabel *restaurantName;
@@ -38,7 +36,6 @@
     self = [super initWithFrame:frame];
     if (self) {
         _backgroundImage = [[UIImageView alloc] init];
-        _backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
         _backgroundImage.contentMode = UIViewContentModeScaleAspectFill;
         _backgroundImage.clipsToBounds = YES;
         
@@ -49,7 +46,6 @@
         _yumButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         
         _yumIndicator = [[UILabel alloc] init];
-        _yumIndicator.translatesAutoresizingMaskIntoConstraints = NO;
         [_yumIndicator withFont:[UIFont fontWithName:kFontIcons size:60] textColor:kColorBackgroundTheme backgroundColor:kColorClear];
         _yumIndicator.text = kFontIconYum;
         [_yumIndicator sizeToFit];
@@ -65,14 +61,12 @@
         
         _caption = [[UILabel alloc] init];
         [_caption withFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH5] textColor:kColorGrayMiddle backgroundColor:kColorClear numberOfLines:3 lineBreakMode:NSLineBreakByWordWrapping textAlignment:NSTextAlignmentLeft];
-//        _caption.translatesAutoresizingMaskIntoConstraints = NO;
         
         _numYums = [[UILabel alloc] init];
         [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH6] textColor:kColorTextActive backgroundColor:kColorClear];
         
         _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
-        _userButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
         _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
@@ -130,7 +124,18 @@
     CGSize size;
     CGFloat w = width(self) - 2*kGeomSpaceCellPadding;
     CGFloat y;
-
+    CGFloat imageHeightAdjust = 0;
+    if (_mediaItemObject.source == kMediaItemTypeOomami) {
+        imageHeightAdjust = (_restaurantObject) ? 77:50;
+    }
+    
+    frame = _backgroundImage.frame;
+    frame.origin = CGPointMake(0,0);
+    frame.size = CGSizeMake(width(self), height(self)-imageHeightAdjust);
+    _backgroundImage.frame = frame;
+    
+    _yumIndicator.center = _backgroundImage.center;
+    
     frame = _yumButton.frame;
     frame.size = CGSizeMake(25, 25);
     frame.origin = CGPointMake(width(self)-CGRectGetWidth(frame), CGRectGetMaxY(_backgroundImage.frame) + kGeomSpaceCellPadding);
@@ -150,10 +155,11 @@
     
     frame = _line2.frame;
     frame.origin = CGPointMake(kGeomSpaceCellPadding, (_restaurantObject) ? CGRectGetMaxY(_restaurantName.frame):y);
-    frame.size = CGSizeMake(w, CGRectGetHeight(frame));
+    frame.size.width = (_restaurantObject) ? w : CGRectGetMinX(_numYums.frame) - kGeomSpaceEdge;
+    frame.size.height = CGRectGetHeight(frame);
     _line2.frame = frame;
 
-    size = [_caption sizeThatFits:CGSizeMake(w, 200)];
+    size = [_caption sizeThatFits:CGSizeMake((_restaurantObject) ? w : CGRectGetMinX(_numYums.frame) - kGeomSpaceEdge, 200)];
     frame = _caption.frame;
     frame.origin = CGPointMake(kGeomSpaceCellPadding, CGRectGetMaxY(_line2.frame) + kGeomSpaceCellPadding);
     frame.size = size;
@@ -183,18 +189,19 @@
 - (void)yumPhotoTapped {
     if (_mediaItemObject.source != kMediaItemTypeOomami) return;
     
+    __weak PhotoCVCell *weakSelf = self;
     [OOAPI isCurrentUserVerifiedSuccess:^(BOOL result) {
         if (!result) {
             [_delegate photoCell:self userNotVerified:_mediaItemObject];
         } else {
-            __weak PhotoCVCell *weakSelf = self;
+            //__weak PhotoCVCell *weakSelf = self;
             if (_yumButton.isSelected) {
                 NSLog(@"unlike photo");
                 NSUInteger userID = [Settings sharedInstance].userObject.userID;
                 [OOAPI unsetMediaItemLike:_mediaItemObject.mediaItemId forUser:userID success:^{
-                    ON_MAIN_THREAD(^{
-                        [_yumButton setSelected:NO];
-                        _mediaItemObject.isUserYummed = NO;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.yumButton setSelected:NO];
+                        weakSelf.mediaItemObject.isUserYummed = NO;
                         [weakSelf updateNumYums];
                         if ([weakSelf.delegate respondsToSelector:@selector(photoCell:likePhoto:)]) {
                             [weakSelf.delegate photoCell:weakSelf likePhoto:_mediaItemObject];
@@ -244,68 +251,6 @@
     }];
 }
 
-- (void)updateConstraints {
-    [super updateConstraints];
-    NSDictionary *metrics = @{@"height":@(kGeomHeightStripListRow), @"buttonY":@(kGeomHeightStripListRow-30), @"spaceCellPadding":@(kGeomSpaceCellPadding), @"spaceEdge":@(kGeomSpaceEdge), @"spaceInter": @(kGeomSpaceInter), @"nameWidth":@(kGeomHeightStripListCell-2*(kGeomSpaceEdge)), @"listHeight":@(kGeomHeightStripListRow+2*kGeomSpaceInter), @"iconButtonSmall": @(kGeomDimensionsIconButtonSmall), @"userNameLength" : @([_userButton sizeThatFits:CGSizeMake(200, 10)].width + 2)};
-
-    UIView *superview = self;
-    NSDictionary *views = NSDictionaryOfVariableBindings(superview, _backgroundImage, _userButton, /*_yumButton*/ _yumIndicator);
-    
-    // Vertical layout - note the options for aligning the top and bottom of all views
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backgroundImage]-infoHeight-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backgroundImage]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    if (_userButton.titleLabel.text) {
-//        if (_captionConstraint) {
-//            [self removeConstraints:_captionConstraint];
-//        }
-//        _captionConstraint = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(userNameLength)-[_caption]" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views];
-//        [self addConstraints:_captionConstraint];
-//    }
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-spaceCellPadding-[_userButton][_numYums]-spaceCellPadding-|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_userButton]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_numYums]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_caption]|" options:NSLayoutFormatDirectionLeadingToTrailing metrics:metrics views:views]];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_yumIndicator attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    
-    CGFloat infoHeight = (_mediaItemObject.source == kMediaItemTypeOomami)? 77:0;
-    
-    [self removeConstraint:_imageContraint];
-    _imageContraint = [NSLayoutConstraint constraintWithItem:_backgroundImage
-                                                   attribute:NSLayoutAttributeHeight
-                                                   relatedBy:NSLayoutRelationEqual
-                                                      toItem:nil
-                                                   attribute:0
-                                                  multiplier:1
-                                                    constant:height(self)-infoHeight];
-    
-    [self addConstraint:_imageContraint];
-    
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_userButton
-                                                     attribute:NSLayoutAttributeHeight
-                                                     relatedBy:NSLayoutRelationEqual
-                                                        toItem:nil
-                                                     attribute:0
-                                                    multiplier:1
-                                                      constant:30]];
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_caption
-//                                                     attribute:NSLayoutAttributeHeight
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_userButton
-//                                                     attribute:NSLayoutAttributeHeight
-//                                                    multiplier:1
-//                                                      constant:0]];
-//    [self addConstraint:[NSLayoutConstraint constraintWithItem:_numYums
-//                                                     attribute:NSLayoutAttributeHeight
-//                                                     relatedBy:NSLayoutRelationEqual
-//                                                        toItem:_userButton
-//                                                     attribute:NSLayoutAttributeHeight
-//                                                    multiplier:1
-//                                                      constant:0]];
-}
-
 - (void)setRestaurantObject:(RestaurantObject *)restaurantObject {
     if (restaurantObject == _restaurantObject) return;
     _restaurantObject = restaurantObject;
@@ -353,14 +298,13 @@
         [_backgroundImage setImageWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:link]]
                                 placeholderImage:nil
                                          success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-                                             ON_MAIN_THREAD(^ {
+                                             dispatch_async(dispatch_get_main_queue(), ^{
                                                  [weakIV setAlpha:0.0];
                                                  weakIV.image = image;
                                                  [UIView beginAnimations:nil context:NULL];
                                                  [UIView setAnimationDuration:0.3];
                                                  [weakIV setAlpha:1.0];
                                                  [UIView commitAnimations];
-                                                 [weakSelf setNeedsUpdateConstraints];
                                                  [weakSelf setNeedsLayout];
                                              });
                                          }
@@ -378,7 +322,6 @@
     if (_mediaItemObject.sourceUserID) {
         [_userButton setTitle:[NSString stringWithFormat:@"@%@", _mediaItemObject.sourceUsername] forState:UIControlStateNormal];
         _userButton.hidden = YES;
-        [self setNeedsUpdateConstraints];
         _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)_mediaItemObject.yumCount];
         [_numYums sizeToFit];
         _numYums.hidden = (_mediaItemObject.yumCount) ? NO : YES;
@@ -404,7 +347,7 @@
 - (NSString *)captionString {
     NSString *s;
     if (!_mediaItemObject) return @"";
-    
+
     s = [NSString stringWithFormat:@" says \"%@\"", trimString(_mediaItemObject.caption)];
     s = [NSString stringWithFormat:@"@%@%@", _mediaItemObject.sourceUsername, [_mediaItemObject.caption length]?s:@""];
     
@@ -419,9 +362,9 @@
         if (mio && mio.mediaItemId == _mediaItemObject.mediaItemId) {
             
             _mediaItemObject.caption = mio.caption;
+            __weak PhotoCVCell *weakSelf = self;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self updateLikedState];
-                [self setNeedsUpdateConstraints];
+                [weakSelf updateLikedState];
             });
             
         }
@@ -434,12 +377,12 @@
     if (_mediaItemObject.source == kMediaItemTypeOomami) {
         //get the state of the yum button for this user
         _roGetLiked = [OOAPI getMediaItemLiked:_mediaItemObject.mediaItemId byUser:[Settings sharedInstance].userObject.userID success:^(BOOL liked) {
-            ON_MAIN_THREAD(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.yumButton setSelected:liked];
                 weakSelf.yumButton.hidden = NO;
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            ON_MAIN_THREAD(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.yumButton setSelected:NO];
                 weakSelf.yumButton.hidden = YES;
             });
@@ -457,21 +400,20 @@
         _mediaItemObject.yumCount = count;
         if (count) {
             _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)count];
-            ON_MAIN_THREAD(^ {
+            dispatch_async(dispatch_get_main_queue(), ^{
                 weakSelf.numYums.hidden = NO;
                 [weakSelf.numYums sizeToFit];
                 [weakSelf setNeedsLayout];
             });
         } else {
-            ON_MAIN_THREAD(^ {
+            dispatch_async(dispatch_get_main_queue(), ^{
                 weakSelf.numYums.hidden = YES;
                 [weakSelf setNeedsLayout];
             });
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        ON_MAIN_THREAD(^ {
+        dispatch_async(dispatch_get_main_queue(), ^{
             weakSelf.numYums.hidden = YES;
-            [weakSelf setNeedsUpdateConstraints];
         });
     }];
 }

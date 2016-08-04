@@ -2034,23 +2034,23 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
         if (!restaurantID) {
             [self launchViewPhoto:mio restaurant:nil originFrame:originRect index:row];
         } else {
-//            __weak ProfileVC *weakSelf = self;
-//            OOAPI *api = [[OOAPI alloc] init];
-//            [api getRestaurantWithID:stringFromUnsigned(restaurantID)
-//                              source:kRestaurantSourceTypeOomami
-//                             success:^(RestaurantObject *restaurant) {
-//                                 dispatch_async(dispatch_get_main_queue(), ^{
-//                                     if (restaurant) {
-//                                         [weakSelf launchViewPhoto:mediaObject restaurant:restaurant originFrame:originRect index:row];
-//                                     } else {
-//                                         [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
-//                                     }
-//                                 });
-//                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                 dispatch_async(dispatch_get_main_queue(), ^{
-//                                     [weakSelf launchViewPhoto:mediaObject restaurant:nil originFrame:originRect index:row];
-//                                 });
-//                             }];
+            __weak ProfileVC *weakSelf = self;
+            OOAPI *api = [[OOAPI alloc] init];
+            [api getRestaurantWithID:stringFromUnsigned(restaurantID)
+                              source:kRestaurantSourceTypeOomami
+                             success:^(RestaurantObject *restaurant) {
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     if (restaurant) {
+                                         [weakSelf launchViewPhoto:mio restaurant:restaurant originFrame:originRect index:row];
+                                     } else {
+                                         [weakSelf launchViewPhoto:mio restaurant:nil originFrame:originRect index:row];
+                                     }
+                                 });
+                             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     [weakSelf launchViewPhoto:mio restaurant:nil originFrame:originRect index:row];
+                                 });
+                             }];
         }
     }
 }

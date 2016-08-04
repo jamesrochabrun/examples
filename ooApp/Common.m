@@ -209,7 +209,7 @@ UICollectionView* makeVerticalCollectionView (UIView *parent,id  delegate, CGSiz
 
 UITableView* makeTable (UIView *parent,id  delegate)
 {
-    UITableView* tv= [[ UITableView alloc ]init ];
+    UITableView *tv= [[ UITableView alloc ]init ];
     if  (tv) {
         [parent addSubview: tv ];
     }

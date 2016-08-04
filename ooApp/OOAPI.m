@@ -18,6 +18,7 @@
 #import "TagObject.h"
 #import "AutoCompleteObject.h"
 #import "SpecialtyObject.h"
+#import "CommentObject.h"
 
 NSString *const kKeySearchRadius = @"radius";
 NSString *const kKeySearchSort = @"sort";
@@ -76,6 +77,129 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
            } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
                NSLog(@"Error: %@", error);
            }];
+}
+
+///comment requestoperation test
++ (AFHTTPRequestOperation *)getCommentsFromMediaItem:(MediaItemObject *)mediaItem
+                                              success:(void (^)(NSArray *comments))success
+                                              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/comments", kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItem.mediaItemId];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    return [rm GET:urlString parameters:nil success:^(id responseObject) {
+        NSMutableArray *comments = [NSMutableArray array];
+        for (id dict in responseObject) {
+            CommentObject *comment = [CommentObject commentFromDict:dict];
+            if (comment) {
+                [comments addObject:comment];
+            }
+        }
+        success(comments);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+        NSLog(@"Error: %@", error);
+        failure(operation, error);
+    }];
+}
+
+
++ (AFHTTPRequestOperation *)uploadComment:(CommentObject *)comment
+                                forObject:(MediaItemObject *)mio
+                                        success:(void (^)(CommentObject *))success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    if  (!comment || !mio) {
+        failure (nil,nil);
+        return nil;
+    }
+    
+    UserObject *user = [Settings sharedInstance].userObject;
+    
+    if (!user || !user.userID) {
+        failure (nil,nil);
+        return nil;
+    }
+    
+    NSLog(@"the comment is %@", comment.content);
+    
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+      NSString *str = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/comments", kHTTPProtocol, [OOAPI URL], (unsigned long)mio.mediaItemId];
+    
+    NSLog(@"%@", str);
+    
+    NSDictionary *parameters = @{
+                                 //kKeyCommentMediaItemCommentID : [NSString stringWithFormat:@"%lu", (unsigned long)comment.mediaItemCommentID],
+                                 kKeyCommentUserID : [NSString stringWithFormat:@"%lu", (unsigned long)user.userID],
+                                 //kKeyCommentMediaItemID : [NSString stringWithFormat:@"%lu", (unsigned long)comment.mediaItemID],
+                                 kKeyCommentContent : comment.content};
+    
+    
+    
+    AFHTTPRequestOperation *op = [rm POST:str parameters:parameters
+                                 success:^(id responseObject) {
+                                     CommentObject *co = [CommentObject commentFromDict:responseObject];
+                                     
+                                     success(co);
+                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                     failure(operation, error);
+                                 }];
+    
+    NSLog(@"the operation returns %@", op.responseString);
+    return op;
+}
+
++ (AFHTTPRequestOperation *)deleteCommentFromMediaItem:(CommentObject *)comment
+                                                           success:(void (^)(CommentObject *))success
+                                                           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    
+    if (!comment) {
+        failure(nil, nil);
+        return nil;
+    }
+    // /mediaItems/:media_item_id/comments/:media_item_comment_id
+    NSString *url = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu/comments/%lu", kHTTPProtocol , [OOAPI URL], (unsigned long)comment.mediaItemID, (unsigned long)comment.mediaItemCommentID];
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation *op = [rm DELETE:url parameters:nil success:^(id responseObject) {
+        success(responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        failure(operation, error);
+    }];
+    
+    
+    return op;
+}
+
+
++ (AFHTTPRequestOperation *)setMediaItemCaption:(NSUInteger)mediaItemID
+                                        caption:(NSString *)caption
+                                        success:(void (^)())success
+                                        failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    if  (!mediaItemID) {
+        failure (nil,nil);
+        return nil;
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu",
+                           kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
+    
+    NSDictionary *parameters = @{kKeyMediaItemCaption : caption};
+    
+    OONetworkManager *rm = [[OONetworkManager alloc] init];
+    
+    AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
+                                 success:^(id responseObject) {
+                                     success(responseObject);
+                                 } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
+                                     failure(operation, error);
+                                 }];
+    
+    return op;
 }
 
 + (AFHTTPRequestOperation *)getNumMediaItemLikes:(NSUInteger)mediaItemID
@@ -185,32 +309,6 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     return op;
 }
 
-+ (AFHTTPRequestOperation *)setMediaItemCaption:(NSUInteger)mediaItemID
-                                     caption:(NSString *)caption
-                                     success:(void (^)())success
-                                     failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
-{
-    if  (!mediaItemID) {
-        failure (nil,nil);
-        return nil;
-    }
-    NSString *urlString = [NSString stringWithFormat:@"%@://%@/mediaItems/%lu",
-                           kHTTPProtocol, [OOAPI URL], (unsigned long)mediaItemID];
-    
-    NSDictionary *parameters = @{kKeyMediaItemCaption : caption};
-    
-    OONetworkManager *rm = [[OONetworkManager alloc] init];
-    
-    AFHTTPRequestOperation *op = [rm PUT:urlString parameters:parameters
-                                  success:^(id responseObject) {
-                                      success(responseObject);
-                                  } failure:^(AFHTTPRequestOperation *operation, NSError *error ) {
-                                      failure(operation, error);
-                                  }];
-    
-    return op;
-}
-
 + (AFHTTPRequestOperation *)setMediaItem:(NSUInteger)mediaItemID
                               properties:(NSDictionary *)properties
                                  success:(void (^)())success
@@ -254,7 +352,6 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     } else {
         urlString = [NSString stringWithFormat:@"%@://%@/restaurants/%lu/photos", kHTTPProtocol, [self ooURL], (unsigned long)restaurant.restaurantID];
     }
-    
     
     OONetworkManager *rm = [[OONetworkManager alloc] init];
     
@@ -650,9 +747,10 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     }];
 }
 
+
 + (AFHTTPRequestOperation *)getUserWithID:(NSUInteger)userID
                                   success:(void (^)(UserObject *user))success
-                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+                                  failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     NSString *urlString = [NSString stringWithFormat:@"%@://%@/users/%lu", kHTTPProtocol, [OOAPI URL], ( unsigned long)userID];
     
@@ -2144,6 +2242,7 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
     
     return op;
 }
+/////////
 
 + (AFHTTPRequestOperation *)reportPhoto:(MediaItemObject *)mio success:(void (^)(void))success
                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
@@ -3398,12 +3497,12 @@ NSString *const kKeyFacebookAccessToken = @"access_token";
 //#ifdef ADHOC
 //    APP.usingStagingServer = YES;
 //    if (APP.usingStagingServer) {
-//        return kOOURLStage;
+      return kOOURLStage;
 //    } else {
-//        return kOOURLProduction;
+//      return kOOURLProduction;
 //    }
 //#else
-    return kOOURLProduction;
+  //return kOOURLProduction;
 //#endif
 }
 
