@@ -20,7 +20,7 @@
 #import "CommentObject.h"
 
 //==============================================================================
-@interface CommentListVC ()<UITextFieldDelegate>
+@interface CommentListVC () 
 @property (nonatomic,strong) UITableView *tableUsers;
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) TextFieldView *textFieldView;
@@ -51,7 +51,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     dispatch_async(dispatch_get_main_queue(), ^{
         [_tableUsers reloadData];
     });
-    //[self refreshIfNeeded];
 }
 
 //- (void)refreshIfNeeded {
@@ -65,8 +64,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)viewDidLoad {
-    [super viewDidLoad];
     
+    [super viewDidLoad];
     //_needRefresh = YES;
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.autoresizesSubviews = NO;
@@ -114,7 +113,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Name:    textFieldDelegate Methods
 // Purpose:
 //------------------------------------------------------------------------------
--(void)textFieldDidChange:(UITextField *)textField{
+- (void)textFieldDidChange:(UITextField *)textField {
     
     if (textField.text.length <= 0) {
         _textFieldView.postTextButton.userInteractionEnabled = NO;
@@ -123,7 +122,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
         _textFieldView.postTextButton.userInteractionEnabled = YES;
         _textFieldView.postTextButton.alpha = 1.0f;
     }
-    if (textField.text.length >= 250) {
+    if (textField.text.length >= kGeomMaxCommentLimit) {
     }
 }
 
@@ -134,10 +133,11 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
     [OOAPI uploadComment:comment forObject:_mio success:^(CommentObject *comment) {
         if (comment) {
-            __weak CommentListVC *cLVC = self;
+            __weak CommentListVC *weakSelf = self;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [cLVC.commentsArray addObject:comment];
-                [cLVC.tableUsers reloadData];
+                [weakSelf.commentsArray addObject:comment];
+                [weakSelf.tableUsers reloadData];
+                [weakSelf tableviewScrollToTheBottom:YES];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationViewPhotoVCNeedsUpdate
                                                                     object:self];
             });
@@ -147,7 +147,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"the error is %@", error);
     }];
-    
     [self dismissKeyboard:sender];
 }
 
@@ -160,8 +159,9 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     
     _textFieldView.textField.text = @"";
+    __weak CommentListVC *weakSeelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_tableUsers reloadData];
+        [weakSeelf.tableUsers reloadData];
     });
     _textFieldView.postTextButton.userInteractionEnabled = NO;
     _textFieldView.postTextButton.alpha = 0.7f;
@@ -212,7 +212,14 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [UIView setAnimationBeginsFromCurrentState:TRUE];
     [self.view layoutIfNeeded];
     [UIView commitAnimations];
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
     
+    __weak CommentListVC *weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [weakSelf tableviewScrollToTheBottom:YES];
+    });
 }
 
 - (void)keyboardWillHide:(NSNotification*)notification {
@@ -251,7 +258,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
     self.tabBarController.tabBar.hidden = YES;
-    
 }
 
 //------------------------------------------------------------------------------
@@ -282,13 +288,10 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 - (void)tableviewScrollToTheBottom:(BOOL)scroll {
     
     __weak CommentListVC *weakSelf = self;
-        dispatch_async(dispatch_get_main_queue(), ^{
-        CGFloat height = weakSelf.tableUsers.contentSize.height - weakSelf.tableUsers.bounds.size.height;
-        [weakSelf.tableUsers setContentOffset:CGPointMake(0, height) animated:scroll];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakSelf.tableUsers scrollRectToVisible:CGRectMake(0, weakSelf.tableUsers.contentSize.height - weakSelf.tableUsers.bounds.size.height, weakSelf.tableUsers.bounds.size.width, weakSelf.tableUsers.bounds.size.height) animated:YES];
     });
 }
-
-
 
 #pragma TableView methods
 

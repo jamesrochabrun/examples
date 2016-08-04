@@ -17,7 +17,7 @@
 
 
 //SubBase is a subclass of UIViewController
-@interface CommentListVC : SubBaseVC  <CommentListTVCDelegate, UITextViewDelegate>
+@interface CommentListVC : SubBaseVC  <CommentListTVCDelegate, UITextFieldDelegate>
 @property (nonatomic, strong) NSMutableArray *commentsArray;
 @property (nonatomic, strong) NSString *desiredTitle;
 @property (nonatomic, strong) UserObject *user;
