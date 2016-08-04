@@ -404,8 +404,8 @@ static CGFloat kNextPhotoTolerance = 40;
 - (void)gotComments {
     
     CommentPhotoView *cPV;
-
-    for (NSUInteger i = (_commentsArray.count < 5)?_commentsArray.count: _commentsArray.count-5; i < _commentsArray.count; i++) {
+    
+    for (NSUInteger i = (_commentsArray.count < 5)?0:(_commentsArray.count-5); i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
