@@ -395,15 +395,17 @@ static CGFloat kNextPhotoTolerance = 40;
                 [weakSelf.seeCommentsButton setTitle:@"" forState:UIControlStateNormal];
                 weakSelf.seeCommentsButton.enabled = NO;
             }
-        });    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"the error is %@", error);
-        }];
+        });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+       NSLog(@"the error is %@", error);
+    }];
 }
 
 - (void)gotComments {
     
     CommentPhotoView *cPV;
-    for (int i = 0; i < _commentsArray.count; i++) {
+
+    for (NSUInteger i = (_commentsArray.count < 5)?_commentsArray.count: _commentsArray.count-5; i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
@@ -416,14 +418,14 @@ static CGFloat kNextPhotoTolerance = 40;
         [OOAPI getUserWithID:cPV.comment.userID success:^(UserObject *user) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 weakCPV.user = user;
-                [weakCPV setNeedsLayout];
                 [weakSelf.view setNeedsLayout];
+                [weakSelf.view layoutIfNeeded];
             });
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"ERROR: failed to get user: %@", error);
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakCPV setNeedsLayout];
                 [weakSelf.view setNeedsLayout];
+                [weakSelf.view layoutIfNeeded];
             });
         }];
     }
@@ -540,7 +542,7 @@ static CGFloat kNextPhotoTolerance = 40;
         frame.size.width = kGeomDimensionsIconButton;
         frame.size.height = kGeomDimensionsIconButton;
         frame.origin.y = _commentCaptionButton.frame.size.height - _numCommentsLabel.frame.size.height + kGeomSpaceEdge;
-        frame.origin.x = width(_commentCaptionButton)  - width(_numCommentsLabel) - kGeomSpaceEdge;
+        frame.origin.x = width(_commentCaptionButton) - width(_numCommentsLabel) - kGeomSpaceEdge;
         _numCommentsLabel.frame = frame;
         
         _share.frame = CGRectMake(buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
@@ -549,7 +551,7 @@ static CGFloat kNextPhotoTolerance = 40;
         frame = _numYumsLabel.frame;
         frame.size.width = kGeomDimensionsIconButton;
         frame.size.height = kGeomDimensionsIconButton;
-        frame.origin.y =  _yumButton.frame.size.height - _numYumsLabel.frame.size.height + kGeomSpaceEdge;
+        frame.origin.y = _yumButton.frame.size.height - _numYumsLabel.frame.size.height + kGeomSpaceEdge;
         frame.origin.x = width(_yumButton) - width(_numYumsLabel) - kGeomSpaceEdge;
         _numYumsLabel.frame = frame;
     } else {
@@ -568,17 +570,17 @@ static CGFloat kNextPhotoTolerance = 40;
         frame.origin.x = 0;
         frame.origin.y = y;
         frame.size.width = width(self.view);
-        CGFloat height = [v.userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height + 10;
-        frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + kGeomSpaceEdge * 3;
+        frame.size.height = MAX(CGRectGetMaxY(v.userCommentButton.frame), CGRectGetMaxY(v.userNameButton.frame)) + kGeomSpaceInter;
+        NSLog(@"height=%f", height);
         y += frame.size.height;
         v.frame = frame;
     }
     
     if (_commentPhotoViewsArray.count > 0) {
         CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
-        _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame) + kGeomConnectScreenUserImageHeight);
+        _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
     } else {
-        _backgroundView.contentSize = CGSizeMake(50, CGRectGetMaxY(_share.frame) + kGeomConnectScreenUserImageHeight);
+        _backgroundView.contentSize = CGSizeMake(50, CGRectGetMaxY(_share.frame));
     }
     
     _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
@@ -1020,7 +1022,6 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showComments {
-    
     CommentListVC *vc = [[CommentListVC alloc] init];
     vc.desiredTitle = @"Comments";
     vc.user = _user;
@@ -1030,10 +1031,10 @@ static CGFloat kNextPhotoTolerance = 40;
     [self.navigationController pushViewController:vc animated:YES];
     [vc.view bringSubviewToFront:vc.aiv];
     
-    if (_commentsArray.count > 0 ) {
-        [vc.aiv startAnimating];
-        [vc.aiv stopAnimating];
-    }
+//    if (_commentsArray.count > 0 ) {
+//        [vc.aiv startAnimating];
+//        [vc.aiv stopAnimating];
+//    }
     vc.commentsArray = _commentsArray.mutableCopy;
 }
 

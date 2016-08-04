@@ -16,18 +16,24 @@
     self = [super init];
     if (self) {
         _userNameButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _userNameButton.contentVerticalAlignment = UIControlContentVerticalAlignmentTop;
+        //[_userNameButton setContentVerticalAlignment:UIControlContentVerticalAlignmentTop];
+        _userNameButton.titleEdgeInsets = UIEdgeInsetsMake(-6, 0, 0, 0);
         [_userNameButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-        [_userNameButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular  size: kGeomFontSizeH4]];
+        [_userNameButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
         [_userNameButton addTarget:self action:@selector(userNameButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         
         [self addSubview:_userNameButton];
         
         _userCommentButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_userCommentButton setTitleColor:UIColorRGBA(kColorBlack) forState:UIControlStateNormal];
-        [_userCommentButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular  size: kGeomFontSizeH4]];
+        [_userCommentButton.titleLabel setFont:[UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4]];
         _userCommentButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         _userCommentButton.titleLabel.numberOfLines = 0;
         [self addSubview:_userCommentButton];
+        
+        //[DebugUtilities addBorderToViews:@[_userNameButton, _userCommentButton]];
+        //[DebugUtilities addBorderToViews:@[self]];
     }
     return self;
 }
@@ -39,25 +45,26 @@
     CGFloat w = self.bounds.size.width;
     CGFloat margin = kGeomSpaceEdge + kGeomSpaceInter;
     
+    [_userNameButton sizeToFit];
     frame = _userNameButton.frame;
-    frame.size.height = kGeomDimensionsIconButton;
-    CGFloat w2 = [_userNameButton sizeThatFits:CGSizeMake(0, frame.size.height)].width;
-    frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
+    //frame.size.height = kGeomDimensionsIconButton;
+    //CGFloat w2 = [_userNameButton sizeThatFits:CGSizeMake(0, frame.size.height)].width;
+    //frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
     frame.origin.x = margin;
     frame.origin.y = CGRectGetMinY(self.bounds);
     _userNameButton.frame = frame;
 
     frame = _userCommentButton.frame;
-    frame.size.width = w - _userNameButton.frame.size.width - kGeomSpaceInter - margin * 3;
-    CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height;
-    frame.size.height = height;
     frame.origin.x = CGRectGetMaxX(_userNameButton.frame) + kGeomSpaceInter;
-    frame.origin.y = CGRectGetMidY(_userNameButton.frame) - kGeomSpaceEdge - 1;
+    frame.size.width = w - kGeomSpaceEdge - CGRectGetMinX(frame);// _userNameButton.frame.size.width - kGeomSpaceInter - kGeomSpaceEdge * 3;
+    CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
+    frame.size.height = height;
+    frame.origin.y = CGRectGetMinY(_userNameButton.frame);
     _userCommentButton.frame = frame;
     
     frame = self.frame;
     frame.size.width = self.frame.size.width;
-    frame.size.height = (kGeomDimensionsIconButton > height) ? kGeomDimensionsIconButton : height + 15;
+    frame.size.height = MAX(CGRectGetMaxY(_userCommentButton.frame), CGRectGetMaxY(_userNameButton.frame)) + kGeomSpaceInter;
     self.frame = frame;
     
     NSLog(@"self.frame = %@", NSStringFromCGRect(self.frame));
@@ -73,10 +80,10 @@
     
     if (comment == _comment) return;
     _comment = comment;
-    __weak CommentPhotoView *weakCPV = self;
+    __weak CommentPhotoView *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-    [weakCPV.userCommentButton setTitle:comment.content forState:UIControlStateNormal];
-    [weakCPV setNeedsLayout];
+        [weakSelf.userCommentButton setTitle:weakSelf.comment.content forState:UIControlStateNormal];
+        [weakSelf setNeedsLayout];
     });
 }
 
@@ -84,10 +91,10 @@
     
     if (user == _user) return;
     _user = user;
-    __weak CommentPhotoView *weakCPV = self;
+    __weak CommentPhotoView *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [weakCPV.userNameButton setTitle:[NSString stringWithFormat:@"@%@", user.username] forState:UIControlStateNormal];
-         [weakCPV setNeedsLayout];
+        [weakSelf.userNameButton setTitle:[NSString stringWithFormat:@"@%@", weakSelf.user.username] forState:UIControlStateNormal];
+        [weakSelf setNeedsLayout];
     });
 }
 

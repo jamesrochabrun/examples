@@ -51,7 +51,7 @@ BOOL isRestaurantObject (id  object)
         return nil;
     }
 
-    NSLog(@"dict=%@", dict);
+    //NSLog(@"dict=%@", dict);
     RestaurantObject *restaurant = [[RestaurantObject alloc] init];
     restaurant.googleID = parseStringOrNullFromServer([dict objectForKey:kKeyRestaurantGoogleID]);
     restaurant.placeID = parseStringOrNullFromServer([dict objectForKey:kKeyRestaurantPlaceID]);
