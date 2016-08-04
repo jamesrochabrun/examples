@@ -240,6 +240,9 @@ static CGFloat kGeomCreateUsernameCentralIconSize= 150;
 static CGFloat kGeomConnectScreenHeaderHeight= 33;
 static CGFloat kGeomConnectScreenUserImageHeight= 82;
 
+//comments
+static CGFloat kGeomMaxCommentLimit = 250;
+
 // Images
 extern NSString *const kImageNoProfileImage;
 

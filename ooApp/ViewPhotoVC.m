@@ -545,7 +545,7 @@ static CGFloat kNextPhotoTolerance = 40;
         
         _share.frame = CGRectMake(buttonWidth + kGeomSpaceInter, CGRectGetMaxY(_userButton.frame), buttonWidth, kGeomHeightButton);
         
-        _yumButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) *2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
+        _yumButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) * 2, CGRectGetMaxY(_userButton.frame),buttonWidth, kGeomHeightButton);
         frame = _numYumsLabel.frame;
         frame.size.width = kGeomDimensionsIconButton;
         frame.size.height = kGeomDimensionsIconButton;

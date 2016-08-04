@@ -16,7 +16,6 @@
 - (void)userTappedImageOfUser:(UserObject *)user;
 @end
 
-
 @interface CommentListTVCell : UITableViewCell <OOUserViewDelegate, UnverifiedUserVCDelegate>
 
 + (CGFloat)heightForComment:(CommentObject *)comment;

@@ -90,7 +90,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     _tableUsers.separatorColor= UIColorRGBA(kColorBordersAndLines);
     _tableUsers.separatorInset = UIEdgeInsetsZero;
     _tableUsers.showsVerticalScrollIndicator= NO;
-    
+ 
     [self removeNavButtonForSide:kNavBarSideTypeRight];
     [self addNavButtonWithIcon:@"" target:nil action:nil forSide:kNavBarSideTypeRight isCTA:NO];
     
@@ -177,7 +177,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
         return NO;
     }
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    return newLength <= 250;
+    return newLength <= kGeomMaxCommentLimit;
 }
 
 //------------------------------------------------------------------------------
@@ -191,13 +191,13 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     CGRect frame = _tableUsers.frame;
     frame.origin.x = self.view.bounds.origin.x;
     frame.origin.y = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar * 2 - _keyBoardHeight;
+    frame.size.height = self.view.bounds.size.height - kGeomHeightTabBar * 2 - _keyBoardHeight - 15;
     frame.size.width = self.view.bounds.size.width;
     _tableUsers.frame = frame;
     
     frame = _textFieldView.frame;
     frame.origin.x = self.view.bounds.origin.x;
-    frame.origin.y = CGRectGetMaxY(self.view.frame) - kGeomHeightTabBar - _keyBoardHeight;
+    frame.origin.y = CGRectGetMaxY(self.view.bounds) - kGeomHeightTabBar - _keyBoardHeight;
     frame.size.height = kGeomHeightTabBar;
     frame.size.width = width(self.view);
     _textFieldView.frame = frame;
@@ -353,7 +353,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //return kGeomHeightHorizontalListRow;
+    
     CommentObject *comment = [_commentsArray objectAtIndex:indexPath.row];
     return [CommentListTVCell heightForComment:comment];
 }
@@ -376,7 +376,7 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     }
 }
 
-- (void)goToProfile: (UserObject*)u {
+- (void)goToProfile:(UserObject *)u {
     
     ProfileVC *vc= [[ProfileVC alloc] init];
     vc.userInfo = u;
@@ -395,9 +395,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     }
 }
 
-- (void)userTappedSectionHeader:(int)which {
-}
-
 - (void) userTappedImageOfUser:(UserObject*)user; {
     
     [self goToProfile:user];
@@ -405,47 +402,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 
 @end
 
-//==============================================================================
-
-@interface CommentListTableSectionHeader ()
-@property (nonatomic,strong) UILabel *labelExpander;
-@end
-
-@implementation CommentListTableSectionHeader
-
-- (instancetype)initWithExpandedFlag:(BOOL)expanded {
-    
-    self = [super init];
-    
-    if (self) {
-        _labelTitle = makeLabelLeft (self, nil, kGeomFontSizeH3);
-        _labelTitle.textColor = UIColorRGBA(kColorWhite);
-        _labelExpander = makeIconLabel(self, kFontIconBack, kGeomIconSize);
-        _labelExpander.textColor = UIColorRGBA(kColorTextActive);
-        self.backgroundColor = UIColorRGBA(kColorOffWhite);
-        _isExpanded = expanded;
-    }
-    return self;
-}
-
-- (void)layoutSubviews {
-    
-    [super layoutSubviews];
-    CGFloat w = width(self);
-    CGFloat h = height(self);
-    const float kGeomUserListVCHeaderLeftMargin = 29;
-    const float kGeomUserListVCHeaderRightMargin = 24;
-    self.labelTitle.frame = CGRectMake(kGeomUserListVCHeaderLeftMargin, 0, w/2, h);
-    [self.labelExpander sizeToFit];
-    CGFloat labelWidth = h;
-    self.labelExpander.frame = CGRectMake(w - kGeomUserListVCHeaderRightMargin - labelWidth, 0, labelWidth, h);
-    double angle = _isExpanded ? 3 * M_PI/2 : M_PI/2;
-    _labelExpander.layer.transform=CATransform3DMakeRotation(angle, 0, 0, 1);
-}
-
-
-
-@end
 
 
 

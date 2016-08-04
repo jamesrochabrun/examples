@@ -87,22 +87,18 @@
     [self.delegate userTappedImageOfUser:user];
 }
 
-- (void)setUserInfo:(UserObject *)userInfo {
-    
-    if (_userInfo == userInfo) return;
-    _userInfo = userInfo;
-    NSLog(@"_userInfo: %@ user: %@ same? %d", _userInfo, _userInfo, (_userInfo==userInfo));
-    [_userView setUser:_userInfo];
-    _labelName.text = [NSString stringWithFormat:@"%@ %@",
-                       _userInfo.firstName ? : @"",
-                       _userInfo.lastName ? : @""];
-}
+
 
 - (void)setUser:(UserObject *)user {
     
     if (user == _user) return;
     _user = user;
-    self.userInfo = user;
+    __weak CommentListTVCell *weakCell = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakCell.userView setUser:weakCell.user];
+        weakCell.labelName.text = [NSString stringWithFormat:@"@%@", user.username];
+    });
+    
 }
 
 - (void)setComment:(CommentObject *)comment {
@@ -138,7 +134,7 @@
     if  (labelHeight < 1) {
         labelHeight = kGeomHeightButton; //44.0
     }
-    _labelName.frame = CGRectMake(x, y, w - x - kGeomDimensionsIconButtonSmall - kGeomInterImageGap, labelHeight);
+    _labelName.frame = CGRectMake(x, y, w - x - kGeomDimensionsIconButtonSmall - kGeomSpaceEdge - kGeomInterImageGap, labelHeight);
     
     CGRect frame = _userView.frame;
     frame.size.height = imageSize;
@@ -148,9 +144,10 @@
     _userView.frame = frame;
     
     frame = _commentDateLabel.frame;
-    frame.size.width = kGeomDimensionsIconButtonSmall + kGeomInterImageGap;
+    frame = _commentDateLabel.frame;
+    frame.size.width = kGeomDimensionsIconButtonSmall + kGeomSpaceEdge + kGeomInterImageGap;
     frame.size.height = labelHeight;
-    frame.origin.x = width(self) - kGeomDimensionsIconButtonSmall - kGeomInterImageGap;
+    frame.origin.x = width(self) - kGeomDimensionsIconButtonSmall - kGeomSpaceEdge - kGeomInterImageGap;
     frame.origin.y = CGRectGetMinY(_labelName.frame);
     _commentDateLabel.frame = frame;
     [_commentDateLabel sizeToFit];
@@ -159,26 +156,28 @@
     
     CGFloat height;
     frame = _commentLabel.frame;
-    frame.size.width = _labelName.frame.size.width;
+    frame.size.width = _labelName.frame.size.width + kGeomSpaceEdge * 2.5;
     height = [_commentLabel sizeThatFits:CGSizeMake(frame.size.width, 0)].height;
-    frame.size.height = height;//(kGeomHeightButton > height) ? kGeomHeightButton : height;
+    frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
     frame.origin.y = CGRectGetMaxY(_labelName.frame);
     frame.origin.x = CGRectGetMaxX(_userView.frame) + spacing + kGeomSpaceCellPadding;
     _commentLabel.frame = frame;
+    [_commentLabel sizeToFit];
     
     [_userView layoutIfNeeded];
     
     [DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel, _commentDateLabel]];
-
 }
 
 + (CGFloat)heightForComment:(CommentObject *)comment {
 
-    CGFloat minHeight = kGeomHeightHorizontalListRow * 0.7;
+    CGFloat minHeight = kGeomHeightHorizontalListRow * 0.6;
     UIFont *font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
     CGRect boundingBox = [comment.content boundingRectWithSize:CGSizeMake(230, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
-   // NSString *str = NSStringFromCGRect(boundingBox);
-   // NSLog(@"the boundingbox is %@", str);
+   
+    NSString *str = NSStringFromCGRect(boundingBox);
+   NSLog(@"the boundingbox is %@", str);
+    
     return MAX(minHeight, CGRectGetHeight(boundingBox));
     
 }
