@@ -43,22 +43,17 @@
     [super layoutSubviews];
     CGRect frame = self.frame;
     CGFloat w = self.bounds.size.width;
-    CGFloat margin = kGeomSpaceEdge + kGeomSpaceInter;
     
     [_userNameButton sizeToFit];
     frame = _userNameButton.frame;
-    //frame.size.height = kGeomDimensionsIconButton;
-    //CGFloat w2 = [_userNameButton sizeThatFits:CGSizeMake(0, frame.size.height)].width;
-    //frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
-    frame.origin.x = margin;
+    frame.origin.x = kGeomSpaceEdge;
     frame.origin.y = CGRectGetMinY(self.bounds);
     _userNameButton.frame = frame;
 
     frame = _userCommentButton.frame;
     frame.origin.x = CGRectGetMaxX(_userNameButton.frame) + kGeomSpaceInter;
-    frame.size.width = w - kGeomSpaceEdge - CGRectGetMinX(frame);// _userNameButton.frame.size.width - kGeomSpaceInter - kGeomSpaceEdge * 3;
-    CGFloat height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
-    frame.size.height = height;
+    frame.size.width = w - kGeomSpaceEdge - CGRectGetMinX(frame);
+    frame.size.height = [_userCommentButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.origin.y = CGRectGetMinY(_userNameButton.frame);
     _userCommentButton.frame = frame;
     
