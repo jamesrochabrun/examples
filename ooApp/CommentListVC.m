@@ -126,9 +126,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     if (textField.text.length >= 250) {
     }
 }
-//- (void)textFieldDidBeginEditing:(UITextField *)textField {
-//
-//}
 
 - (void)postComment:(UIButton *)sender {
     
@@ -277,8 +274,21 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     [super viewDidAppear:animated];
     if (_commentsArray.count <= 0) {
         [_textFieldView.textField becomeFirstResponder];
+    } else {
+        [self tableviewScrollToTheBottom:YES];
     }
 }
+
+- (void)tableviewScrollToTheBottom:(BOOL)scroll {
+    
+    __weak CommentListVC *weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+        CGFloat height = weakSelf.tableUsers.contentSize.height - weakSelf.tableUsers.bounds.size.height;
+        [weakSelf.tableUsers setContentOffset:CGPointMake(0, height) animated:scroll];
+    });
+}
+
+
 
 #pragma TableView methods
 
@@ -383,7 +393,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     vc.userID = u.userID;
     [self.navigationController  pushViewController:vc animated:YES];
 }
-
 //------------------------------------------------------------------------------
 // Name:    numberOfRowsInSection
 // Purpose:
