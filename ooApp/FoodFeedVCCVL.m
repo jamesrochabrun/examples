@@ -56,6 +56,7 @@
     NSUInteger numberOfColumnsInRow;
     NSMutableArray *itemAttributes;
     CGSize itemSize;
+    CGFloat interImageGap;
     
     // Loop through all sections in the collectionview and set each item's attributes
     for (NSUInteger section = 0; section < [self.collectionView numberOfSections]; section++) {
@@ -66,6 +67,9 @@
         NSLog(@"section:%lu items:%lu yOffset=%f", (unsigned long)section, (unsigned long)[self.collectionView numberOfItemsInSection:section], yOffset);
     
         numberOfColumnsInRow = [_delegate collectionView:self.collectionView layout:self numberOfColumnsInSection:section];// kFoodFeedNumColumnsForMediaItems;
+        
+        CGFloat w = (width(self.collectionView)-2*(kGeomSpaceEdge)-kGeomInterImageGap)/2;
+        interImageGap = (floorf(w) == w) ? 2:3;
         
         itemSize = CGSizeMake(floorf((width(self.collectionView) - (numberOfColumnsInRow-1) - 2*kGeomSpaceEdge)/numberOfColumnsInRow), 0);
         xOffset = kGeomSpaceEdge;
@@ -79,16 +83,18 @@
         for (NSUInteger index = 0; index < numberOfItems; index++)
         {
             //get the items height
+            itemSize = CGSizeMake(floorf(w), floorf(w) + kGeomSpacePhotoCellInfoHeight);
+            
             itemSize.height = [_delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:section]];
-            itemSize.width = itemSize.height;
-            itemSize.height += kGeomSpacePhotoCellInfoHeight;
+            
+            
             // Create the actual UICollectionViewLayoutAttributes and add it to your array. We'll use this later in layoutAttributesForItemAtIndexPath:
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:section];
             UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
             
             if ([lastRowAttributes count] > index%numberOfColumnsInRow) {
                 UICollectionViewLayoutAttributes *itemAboveAttributes = [lastRowAttributes objectAtIndex:index%numberOfColumnsInRow];
-                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + kGeomInterImageGap;
+                yOffset = itemAboveAttributes.frame.origin.y+itemAboveAttributes.frame.size.height + interImageGap;
             }
                 
             attributes.frame = CGRectIntegral(CGRectMake(xOffset, yOffset, itemSize.width, itemSize.height));
@@ -104,7 +110,7 @@
                 [lastRowAttributes addObject:attributes];
             }
             
-            xOffset = xOffset+itemSize.width + kGeomInterImageGap;
+            xOffset = xOffset+itemSize.width + interImageGap;
             column++;
             
             // Create a new row if this was the last column

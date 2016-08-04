@@ -1039,10 +1039,17 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
             break;
         }
         case kRestaurantSectionTypeMediaItems: {
-            MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
-            if (!mio.width || !mio.height) return width(collectionView)/kRestaurantNumColumnsForMediaItems; //NOTE: this should not happen
-            CGFloat height = floorf(((width(self.collectionView) - (kRestaurantNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kRestaurantNumColumnsForMediaItems)*mio.height/mio.width);
-            return height + ((mio.source == kMediaItemTypeOomami)? 30:0);
+            CGFloat height;
+            
+            height = (CGRectGetWidth(self.view.frame) - kGeomSpaceEdge)/2;
+            height -= (floorf(height) == height) ? 2:3;
+            
+            return height;
+
+//            MediaItemObject *mio = [_mediaItems objectAtIndex:indexPath.row];
+//            if (!mio.width || !mio.height) return width(collectionView)/kRestaurantNumColumnsForMediaItems; //NOTE: this should not happen
+//            CGFloat height = floorf(((width(self.collectionView) - (kRestaurantNumColumnsForMediaItems-1) - 2*kGeomSpaceEdge)/kRestaurantNumColumnsForMediaItems)*mio.height/mio.width);
+//            return height + ((mio.source == kMediaItemTypeOomami)? 30:0);
             break;
         }
         default:

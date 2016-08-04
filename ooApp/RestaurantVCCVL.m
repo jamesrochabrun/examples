@@ -106,8 +106,11 @@
         {
             //get the items height
             itemSize.height = [_delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:section]];
-            itemSize.width = itemSize.height;
-            itemSize.height += kGeomSpacePhotoCellInfoHeight;
+            
+            if (section == kRestaurantSectionTypeMediaItems) {
+                itemSize.width = itemSize.height;
+                itemSize.height += kGeomSpacePhotoCellInfoHeight;
+            }
             // Create the actual UICollectionViewLayoutAttributes and add it to your array. We'll use this later in layoutAttributesForItemAtIndexPath:
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:section];
             UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
