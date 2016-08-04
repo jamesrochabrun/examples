@@ -455,6 +455,17 @@ NSUInteger parseUnsignedIntegerOrNullFromServer (id object)
     return 0;
 }
 
+CGFloat parseFloatOrNullFromServer (id object) {
+    
+    if  (object && [object isKindOfClass:[NSNumber class]]) {
+        return  ((NSNumber*)object).floatValue;
+    }
+    if  (object && [object isKindOfClass:[NSString class]]) {
+        return  ((NSString*)object).floatValue;
+    }
+    return 0;
+}
+
 NSInteger parseIntegerOrNullFromServer (id object)
 {
     if  (object && [object isKindOfClass:[NSNumber class]]) {

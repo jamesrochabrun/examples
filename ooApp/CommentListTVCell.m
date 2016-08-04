@@ -89,8 +89,6 @@
     [self.delegate userTappedImageOfUser:user];
 }
 
-
-
 - (void)setUser:(UserObject *)user {
     
     if (user == _user) return;
@@ -128,19 +126,6 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
-//    CGFloat kGeomUserListVCCellMiddleGap = 7;
-//    //CGFloat w = self.frame.size.width;
-//    CGFloat margin = kGeomSpaceEdge; //6
-//    CGFloat spacing = kGeomSpaceCellPadding; //3
-//    CGFloat imageSize = kGeomDimensionsIconButton; //40
-//    
-//    float x = margin + imageSize + kGeomUserListVCCellMiddleGap + kGeomSpaceCellPadding; //53
-//    float y = margin; //6
-//    float labelHeight = _labelName.intrinsicContentSize.height;
-//    if  (labelHeight < 1) {
-//        labelHeight = kGeomHeightButton; //44.0
-//    }
     
     CGRect frame = _userView.frame;
     frame.size.height = kGeomDimensionsIconButton;

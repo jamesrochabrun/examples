@@ -41,8 +41,11 @@ NSString *const kKeyMediaItemUpdatedAt = @"updated_at";
     mio.reference = parseStringOrNullFromServer ( dict [kKeyMediaItemReference]) ;
     mio.url = parseStringOrNullFromServer ( dict [kKeyMediaItemURL]) ;
     
-    mio.height = [dict[kKeyMediaItemHeight] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemHeight] floatValue];
-    mio.width = [dict[kKeyMediaItemWidth] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemWidth] floatValue]; 
+//    mio.height = [dict[kKeyMediaItemHeight] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemHeight] floatValue];
+//    mio.width = [dict[kKeyMediaItemWidth] isKindOfClass:[NSNull class]] ? 0 : [dict[kKeyMediaItemWidth] floatValue];
+    mio.height = parseFloatOrNullFromServer (dict[kKeyMediaItemHeight]);
+    mio.width = parseFloatOrNullFromServer(dict[kKeyMediaItemWidth]);
+    
     mio.caption = [[dict objectForKey:kKeyMediaItemCaption] isKindOfClass:[NSNull class]] ? @"" : [dict objectForKey:kKeyMediaItemCaption];
     mio.sourceUserID = [dict[kKeyMediaItemSourceUserID] isKindOfClass:[NSNull class]] ? 0 : [[dict objectForKey:kKeyMediaItemSourceUserID] unsignedIntegerValue];
 //    if (mio.mediaItemId == 56019) {

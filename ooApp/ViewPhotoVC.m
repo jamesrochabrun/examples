@@ -405,7 +405,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     CommentPhotoView *cPV;
     
-    for (NSUInteger i = (_commentsArray.count < 5)?0:(_commentsArray.count-5); i < _commentsArray.count; i++) {
+    for (NSUInteger i = (_commentsArray.count < 5)?0:(_commentsArray.count - 5); i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
@@ -446,7 +446,6 @@ static CGFloat kNextPhotoTolerance = 40;
     
     self.view.frame = APP.window.bounds;
     CGFloat w = width(self.view);
-    //CGFloat h = height(self.view);
     CGRect frame;
     CGFloat y;
     
@@ -533,7 +532,7 @@ static CGFloat kNextPhotoTolerance = 40;
     
     _fv.center = self.view.center;
     
-    CGFloat buttonWidth = (w - (kGeomSpaceInter*2))/3;
+    CGFloat buttonWidth = (w - (kGeomSpaceInter * 2))/3;
     
     //horizontal 3 buttons section
     if (_mio.source == kMediaItemTypeOomami) {
