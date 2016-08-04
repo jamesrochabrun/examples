@@ -131,7 +131,7 @@
     frame.size.height = kGeomDimensionsIconButton;
     frame.size.width = kGeomDimensionsIconButton;
     frame.origin.x = kGeomSpaceEdge;
-    frame.origin.y = kGeomSpaceEdge;//CGRectGetMinY(_labelName.frame);
+    frame.origin.y = kGeomSpaceEdge;
     _userView.frame = frame;
     
     [_commentDateLabel sizeToFit];
@@ -143,7 +143,6 @@
     [_labelName sizeToFit];
     frame = _labelName.frame;
     frame.origin = CGPointMake(CGRectGetMaxX(_userView.frame) + kGeomSpaceEdge, CGRectGetMinY(_userView.frame));
-    //frame.size.width = CGRectGetMinX(_commentDateLabel.frame) - frame.origin.x;
     _labelName.frame = frame;
 
     //NSLog(@"self.frame=%@, _commentdatelabel.frame = %@, labelName.Frame=%@", NSStringFromCGRect(self.frame), NSStringFromCGRect(_commentDateLabel.frame), NSStringFromCGRect(_labelName.frame));
@@ -162,7 +161,7 @@
 
 + (CGFloat)heightForComment:(CommentObject *)comment {
     
-    CGFloat minHeight = kGeomDimensionsIconButton + 2 * kGeomSpaceEdge;// kGeomHeightHorizontalListRow * 0.6;
+    CGFloat minHeight = kGeomDimensionsIconButton + kGeomSpaceEdge * 2;
     UIFont *font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4];// [UIFont systemFontOfSize:[UIFont systemFontSize]];
     CGRect commentBoundingBox = [comment.content boundingRectWithSize:CGSizeMake(width([UIApplication sharedApplication].keyWindow) - (2 * kGeomSpaceEdge) -kGeomDimensionsIconButton - 20, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
     
@@ -170,20 +169,11 @@
     CGRect nameBoundingBox = [@"FFF" boundingRectWithSize:CGSizeMake(width([UIApplication sharedApplication].keyWindow) - (2 * kGeomSpaceEdge) - kGeomDimensionsIconButton, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
     
     NSString *str = NSStringFromCGRect(commentBoundingBox);
-   NSLog(@"the boundingbox is %@", str);
+    NSLog(@"the boundingbox is %@", str);
     
-    return MAX(minHeight, CGRectGetHeight(commentBoundingBox) + 2 * kGeomSpaceEdge + CGRectGetHeight(nameBoundingBox));
+    return MAX(minHeight, CGRectGetHeight(commentBoundingBox) + CGRectGetHeight(nameBoundingBox) + 2 * kGeomSpaceEdge );
 }
 
-//
-//- (CGFloat)heightForComment {
-//    CGFloat minHeight = kGeomHeightHorizontalListRow;
-//    UIFont *font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
-//    CGRect boundingBox = [_comment.content boundingRectWithSize:CGSizeMake(230, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
-//    // NSString *str = NSStringFromCGRect(boundingBox);
-//    // NSLog(@"the boundingbox is %@", str);
-//    return MAX(minHeight, CGRectGetHeight(boundingBox));
-//}
 
 
 @end

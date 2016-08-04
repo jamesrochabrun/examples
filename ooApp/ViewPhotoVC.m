@@ -60,7 +60,6 @@
 @property (nonatomic, strong) CommentPhotoView *secondCommentView;
 @property (nonatomic, strong) NSMutableArray *commentPhotoViewsArray;
 @property (nonatomic, strong) NSMutableArray *commentsArray;
-//@property (nonatomic, strong) CommentListVC *commentListVC;
 
 @end
 
@@ -388,7 +387,7 @@ static CGFloat kNextPhotoTolerance = 40;
             
             if (weakSelf.commentsArray.count > 0) {
                 weakSelf.numCommentsLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)comments.count];
-                [weakSelf.seeCommentsButton setTitle:@"See comments" forState:UIControlStateNormal];
+                [weakSelf.seeCommentsButton setTitle:@"see comments" forState:UIControlStateNormal];
                 weakSelf.seeCommentsButton.enabled = YES;
             } else {
                 weakSelf.numCommentsLabel.text = @"";
@@ -467,9 +466,9 @@ static CGFloat kNextPhotoTolerance = 40;
     _iv.frame = CGRectIntegral(frame);
     
     _iv.center = self.view.center;
-    _aiv.center = CGPointMake(CGRectGetWidth(_iv.frame)/2, CGRectGetHeight(_iv.frame)/2);
+    _aiv.center = CGPointMake(CGRectGetWidth(_iv.frame) / 2, CGRectGetHeight(_iv.frame) / 2);
     
-    y = CGRectGetMidY(self.view.frame) - imageHeight/2 - kGeomDimensionsIconButton;
+    y = CGRectGetMidY(self.view.frame) - imageHeight / 2 - kGeomDimensionsIconButton;
     
     frame = _closeButton.frame;
     frame.origin = CGPointMake(0, 0);
@@ -477,23 +476,23 @@ static CGFloat kNextPhotoTolerance = 40;
     
     y = (y < CGRectGetMaxY(_closeButton.frame)) ? CGRectGetMaxY(_closeButton.frame) : y;
     frame = _restaurantButton.frame;
-    frame.size.width = w;//-2*kGeomSpaceEdge;
-    frame.origin.y = CGRectGetMaxY(_closeButton.frame);// y;
-    frame.origin.x = 0;//(width(self.view) - width(_restaurantButton))/2;
+    frame.size.width = w;
+    frame.origin.y = CGRectGetMaxY(_closeButton.frame);
+    frame.origin.x = 0;
     frame.size.height = kGeomHeightButton;
     _restaurantButton.frame = frame;
     
     frame = _restaurantName.frame;
     frame.origin.y = 0;
-    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
+    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2 * kGeomSpaceEdge;
     _restaurantName.frame = frame;
     
     frame = _subheader.frame;
     frame.origin.y = CGRectGetMaxY(_restaurantName.frame) + kGeomSpaceInter;
-    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2*kGeomSpaceEdge;
+    frame.size.width = CGRectGetWidth(_restaurantButton.frame) - 2 * kGeomSpaceEdge;
     _subheader.frame = frame;
     
-    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantButton.frame) /*+ kGeomSpaceInter*/, imageWidth, imageHeight);
+    _iv.frame = CGRectMake(0, CGRectGetMaxY(_restaurantButton.frame), imageWidth, imageHeight);
     
     _yumIndicator.center = _iv.center;
     
@@ -518,7 +517,8 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = kGeomDimensionsIconButton;
     CGFloat w2 = [_mioDateCreated sizeThatFits:CGSizeMake(0, frame.size.height)].width;
     frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
-    frame.origin = CGPointMake(CGRectGetMaxX(self.view.bounds) - kGeomDimensionsIconButton - kGeomSpaceEdge * 2, CGRectGetMaxY(_iv.frame) + kGeomSpaceInter);
+    frame.origin.x = CGRectGetMaxX(self.view.bounds) - kGeomDimensionsIconButton - kGeomSpaceEdge;
+    frame.origin.y =  CGRectGetMinY(_userButton.frame);
     _mioDateCreated.frame = frame;
     
     CGFloat height;
@@ -527,12 +527,12 @@ static CGFloat kNextPhotoTolerance = 40;
     height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
     frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2 + kGeomSpaceEdge;
-    frame.origin.x = (width(self.view) - frame.size.width)/2;
+    frame.origin.x = (width(self.view) - frame.size.width) / 2;
     _captionButton.frame = frame;
     
     _fv.center = self.view.center;
     
-    CGFloat buttonWidth = (w - (kGeomSpaceInter * 2))/3;
+    CGFloat buttonWidth = (w - (kGeomSpaceInter * 2)) / 3;
     
     //horizontal 3 buttons section
     if (_mio.source == kMediaItemTypeOomami) {
@@ -570,7 +570,7 @@ static CGFloat kNextPhotoTolerance = 40;
         frame.origin.y = y;
         frame.size.width = width(self.view);
         frame.size.height = MAX(CGRectGetMaxY(v.userCommentButton.frame), CGRectGetMaxY(v.userNameButton.frame)) + kGeomSpaceInter;
-        NSLog(@"height=%f", height);
+        NSLog(@"height = %f", height);
         y += frame.size.height;
         v.frame = frame;
     }
@@ -579,7 +579,7 @@ static CGFloat kNextPhotoTolerance = 40;
         CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
         _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
     } else {
-        _backgroundView.contentSize = CGSizeMake(50, CGRectGetMaxY(_share.frame));
+        _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_share.frame));
     }
     
     _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
@@ -631,6 +631,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (BOOL)prefersStatusBarHidden {
+    
     return YES;
 }
 
@@ -1021,6 +1022,7 @@ static CGFloat kNextPhotoTolerance = 40;
 }
 
 - (void)showComments {
+    
     CommentListVC *vc = [[CommentListVC alloc] init];
     vc.desiredTitle = @"Comments";
     vc.user = _user;
@@ -1029,11 +1031,6 @@ static CGFloat kNextPhotoTolerance = 40;
     vc.modalPresentationStyle = UIModalPresentationCurrentContext;
     [self.navigationController pushViewController:vc animated:YES];
     [vc.view bringSubviewToFront:vc.aiv];
-    
-//    if (_commentsArray.count > 0 ) {
-//        [vc.aiv startAnimating];
-//        [vc.aiv stopAnimating];
-//    }
     vc.commentsArray = _commentsArray.mutableCopy;
 }
 
