@@ -60,6 +60,7 @@
 @property (nonatomic, strong) CommentPhotoView *secondCommentView;
 @property (nonatomic, strong) NSMutableArray *commentPhotoViewsArray;
 @property (nonatomic, strong) NSMutableArray *commentsArray;
+@property BOOL hide;
 
 @end
 
@@ -407,6 +408,7 @@ static CGFloat kNextPhotoTolerance = 40;
     for (NSUInteger i = (_commentsArray.count < 5)?0:(_commentsArray.count - 5); i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
+        cPV.hidden = !_hide;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         
@@ -605,6 +607,7 @@ static CGFloat kNextPhotoTolerance = 40;
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.hidden = !show;
     }
+    _hide = show;
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {
