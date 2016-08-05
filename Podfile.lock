@@ -1,51 +1,52 @@
 PODS:
-  - AFNetworking (2.6.0):
-    - AFNetworking/NSURLConnection (= 2.6.0)
-    - AFNetworking/NSURLSession (= 2.6.0)
-    - AFNetworking/Reachability (= 2.6.0)
-    - AFNetworking/Security (= 2.6.0)
-    - AFNetworking/Serialization (= 2.6.0)
-    - AFNetworking/UIKit (= 2.6.0)
-  - AFNetworking/NSURLConnection (2.6.0):
+  - AFNetworking (2.6.3):
+    - AFNetworking/NSURLConnection (= 2.6.3)
+    - AFNetworking/NSURLSession (= 2.6.3)
+    - AFNetworking/Reachability (= 2.6.3)
+    - AFNetworking/Security (= 2.6.3)
+    - AFNetworking/Serialization (= 2.6.3)
+    - AFNetworking/UIKit (= 2.6.3)
+  - AFNetworking/NSURLConnection (2.6.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.6.0):
+  - AFNetworking/NSURLSession (2.6.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.6.0)
-  - AFNetworking/Security (2.6.0)
-  - AFNetworking/Serialization (2.6.0)
-  - AFNetworking/UIKit (2.6.0):
+  - AFNetworking/Reachability (2.6.3)
+  - AFNetworking/Security (2.6.3)
+  - AFNetworking/Serialization (2.6.3)
+  - AFNetworking/UIKit (2.6.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - Google/Analytics (1.2.1):
+  - FirebaseAnalytics (3.2.1):
+    - FirebaseInstanceID (~> 1.0)
+    - GoogleInterchangeUtilities (~> 1.2)
+    - GoogleSymbolUtilities (~> 1.1)
+    - GoogleUtilities (~> 1.3)
+  - FirebaseInstanceID (1.0.7)
+  - Google/Analytics (3.0.3):
     - Google/Core
     - GoogleAnalytics (~> 3.12)
-  - Google/Core (1.2.1):
-    - GoogleInterchangeUtilities (~> 1.0)
-    - GoogleNetworkingUtilities (~> 1.0)
-    - GoogleSymbolUtilities (~> 1.0)
-    - GoogleUtilities (~> 1.1)
+  - Google/Core (3.0.3):
+    - FirebaseAnalytics (~> 3.2)
   - GoogleAnalytics (3.14.0)
-  - GoogleInterchangeUtilities (1.1.0):
+  - GoogleInterchangeUtilities (1.2.1):
     - GoogleSymbolUtilities (~> 1.0)
-  - GoogleMaps (1.10.3)
-  - GoogleNetworkingUtilities (1.0.0):
+  - GoogleMaps (1.13.2)
+  - GoogleSymbolUtilities (1.1.1)
+  - GoogleUtilities (1.3.1):
     - GoogleSymbolUtilities (~> 1.0)
-  - GoogleSymbolUtilities (1.0.3)
-  - GoogleUtilities (1.1.0):
-    - GoogleSymbolUtilities (~> 1.0.0)
   - HockeySDK (3.8.6):
     - HockeySDK/AllFeaturesLib (= 3.8.6)
   - HockeySDK/AllFeaturesLib (3.8.6)
-  - Instabug (5.1.2)
+  - Instabug (5.3)
   - iRate (1.11.4)
-  - TTTAttributedLabel (1.13.4)
+  - TTTAttributedLabel (2.0.0)
 
 DEPENDENCIES:
-  - AFNetworking
+  - AFNetworking (~> 2.0)
   - Google/Analytics
   - GoogleMaps
   - HockeySDK (~> 3.8.2)
@@ -54,19 +55,20 @@ DEPENDENCIES:
   - TTTAttributedLabel
 
 SPEC CHECKSUMS:
-  AFNetworking: 79f7eb1a0fcfa7beb409332b2ca49afe9ce53b05
-  Google: fd33b5fa40fa3aaee5176de49c873a74e3d11dce
+  AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
+  FirebaseAnalytics: 0fd6532cb2c3d03cd5cf26ad295ccb091efd3104
+  FirebaseInstanceID: a9d923f3d0b6fbf9fac89310860357aaadc34be5
+  Google: 813c467362eabc11385f5a5cc9ad0cb651a58f4e
   GoogleAnalytics: 9be1afdb8deeac4bb5f13ca7f7d3b9db2a1f43dc
-  GoogleInterchangeUtilities: d7f7174176fbcf9710f696f1acebad4dbd98ac03
-  GoogleMaps: 945e4ac3b74bcca3ddada51df256eb7beddb474d
-  GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
-  GoogleSymbolUtilities: 82ad9f93d3615244b3f4ce440f5ab2515e8b4f56
-  GoogleUtilities: 8ed9134debe11719097881711464752900668f10
+  GoogleInterchangeUtilities: def8415a862effc67d549d5b5b0b9c7a2f97d4de
+  GoogleMaps: b20a103ff307f58392e603cf142e59d7e30374c1
+  GoogleSymbolUtilities: 33117db1b5f290c6fbf259585e4885b4c84b98d7
+  GoogleUtilities: 56c5ac05b7aa5dc417a1bb85221a9516e04d7032
   HockeySDK: ab68303eec6680f6b539de65d747742dd276e934
-  Instabug: c315abe1a1c4cbd3ea1cc6ec8f9954d6c5371c39
+  Instabug: 16031235d7656f3b7104232a25ec4cecb3c0ce3b
   iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
-  TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
+  TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
 
-PODFILE CHECKSUM: fc17c84908baaa93aaf8c0011c5f6bed63a0def6
+PODFILE CHECKSUM: 2349ffd2424dce1f2f714c67575dcc9cf566d84a
 
 COCOAPODS: 1.0.1

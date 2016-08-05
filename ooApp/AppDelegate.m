@@ -183,7 +183,13 @@
 }
 
 - (void)processNotifications {
-    if (![self makeSureNCIsSet]) return;
+    if (![self makeSureNCIsSet]) {
+//        UINavigationController *nc = [UINavigationController new];
+//        nc.view.frame = [UIApplication sharedApplication].keyWindow.bounds;
+//        [[UIApplication sharedApplication].keyWindow.rootViewController addChildViewController:nc];
+//        _nc = nc;
+        return;
+    }
     NotificationObject *notif =[_notifications firstObject];
     [_notifications removeObject:notif];
 
@@ -304,7 +310,9 @@
 }
 
 - (void)showList:(NSUInteger)listID {
-    if (![self makeSureNCIsSet]) return;
+    if (![self makeSureNCIsSet]) {
+        return;
+    }
     
     __weak UINavigationController *weakNC = _nc;
     

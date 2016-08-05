@@ -73,6 +73,7 @@
 		367112CE1B9A076B006FDCE7 /* ImageRefObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112CD1B9A076B006FDCE7 /* ImageRefObject.m */; };
 		367112D11BA13E69006FDCE7 /* ObjectTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D01BA13E69006FDCE7 /* ObjectTVCell.m */; };
 		367112D41BA14071006FDCE7 /* RestaurantListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 367112D31BA14071006FDCE7 /* RestaurantListVC.m */; };
+		3674ED461D53FE8500450B37 /* libPods-ooApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3674ED451D53FE8500450B37 /* libPods-ooApp.a */; };
 		367703FB1B86884700B594E5 /* CommonUIConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 367703FA1B86884700B594E5 /* CommonUIConstants.m */; };
 		367704051B8807F600B594E5 /* UIButton+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704041B8807F600B594E5 /* UIButton+Additions.m */; };
 		367704081B88103900B594E5 /* UIImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 367704071B88103900B594E5 /* UIImage+Additions.m */; };
@@ -229,7 +230,6 @@
 		36FDA7041B585F650029D29D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36FDA7031B585F650029D29D /* Images.xcassets */; };
 		36FDA7071B585F650029D29D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36FDA7051B585F650029D29D /* LaunchScreen.xib */; };
 		36FDA7131B585F650029D29D /* ooAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FDA7121B585F650029D29D /* ooAppTests.m */; };
-		59F64BAACABE82EE3D988A1F /* libPods-ooApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11ACB46AFAC92A3682065049 /* libPods-ooApp.a */; };
 		7B3E4F3F1D52874D0061A59E /* CommentListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B3E4F3E1D52874D0061A59E /* CommentListVC.m */; };
 		7B61A9521D4039E7005CB257 /* CommentListTVCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B61A9511D4039E7005CB257 /* CommentListTVCell.m */; };
 		7B7114C41D41E19F003EA054 /* TextFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B7114C31D41E19F003EA054 /* TextFieldView.m */; };
@@ -272,6 +272,7 @@
 		96F4C5621BB1E01C0009E9FE /* No-Profile_Image.png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5601BB1E01C0009E9FE /* No-Profile_Image.png */; };
 		96F4C5631BB1E01C0009E9FE /* No-Profile_Image(circled).png in Resources */ = {isa = PBXBuildFile; fileRef = 96F4C5611BB1E01C0009E9FE /* No-Profile_Image(circled).png */; };
 		96F7C1351C4704BB0002C01E /* OOTextEntryModalVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 96F7C1341C4704BB0002C01E /* OOTextEntryModalVC.m */; };
+		B9A43E964C38E5E05BD23EA8 /* libPods-ooApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11ACB46AFAC92A3682065049 /* libPods-ooApp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -402,6 +403,7 @@
 		367112D01BA13E69006FDCE7 /* ObjectTVCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectTVCell.m; sourceTree = "<group>"; };
 		367112D21BA14071006FDCE7 /* RestaurantListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantListVC.h; sourceTree = "<group>"; };
 		367112D31BA14071006FDCE7 /* RestaurantListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantListVC.m; sourceTree = "<group>"; };
+		3674ED451D53FE8500450B37 /* libPods-ooApp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libPods-ooApp.a"; path = "../../../Library/Developer/Xcode/DerivedData/Build/Products/Debug-iphonesimulator/libPods-ooApp.a"; sourceTree = "<group>"; };
 		367703FA1B86884700B594E5 /* CommonUIConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUIConstants.m; sourceTree = "<group>"; };
 		367704031B8807F600B594E5 /* UIButton+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Additions.h"; sourceTree = "<group>"; };
 		367704041B8807F600B594E5 /* UIButton+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Additions.m"; sourceTree = "<group>"; };
@@ -497,7 +499,6 @@
 		36BA032F1C50CE1D00802EF8 /* ooLoading89.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ooLoading89.png; path = "Graphic Assets/ooLoading/ooLoading89.png"; sourceTree = "<group>"; };
 		36BBD9D61BA767C20008DCF1 /* RestaurantVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestaurantVC.h; sourceTree = "<group>"; };
 		36BBD9D71BA767C20008DCF1 /* RestaurantVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestaurantVC.m; sourceTree = "<group>"; };
-		36C09D501CF76C470085A13D /* ooApp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ooApp copy-Info.plist"; path = "/Users/agujar/Projects/Oomami/ooApp/ooApp copy-Info.plist"; sourceTree = "<absolute>"; };
 		36C39BDF1B84C7CD00648879 /* DebugUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtilities.h; sourceTree = "<group>"; };
 		36C39BE01B84C7CD00648879 /* DebugUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugUtilities.m; sourceTree = "<group>"; };
 		36C572D81C01309900C57DA2 /* TagObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagObject.h; sourceTree = "<group>"; };
@@ -698,9 +699,10 @@
 				368BB0E31D53E444007B77C8 /* Bolts.framework in Frameworks */,
 				967163E61C29E15B002DFDDB /* AddressBookUI.framework in Frameworks */,
 				96CA59D21BE14E2200618B57 /* MessageUI.framework in Frameworks */,
+				3674ED461D53FE8500450B37 /* libPods-ooApp.a in Frameworks */,
 				3695BE0E1D1B2C6B00369F53 /* FBSDKLoginKit.framework in Frameworks */,
 				96CA59D01BE14C2E00618B57 /* UIKit.framework in Frameworks */,
-				59F64BAACABE82EE3D988A1F /* libPods-ooApp.a in Frameworks */,
+				B9A43E964C38E5E05BD23EA8 /* libPods-ooApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1085,7 +1087,6 @@
 				36FDA70F1B585F650029D29D /* ooAppTests */,
 				36FDA6F11B585F650029D29D /* Products */,
 				DF3DC48B77314A2BA614CB58 /* Frameworks */,
-				36C09D501CF76C470085A13D /* ooApp copy-Info.plist */,
 				838275ABF7295F8F9D0249ED /* Pods */,
 			);
 			sourceTree = "<group>";
@@ -1260,6 +1261,7 @@
 		DF3DC48B77314A2BA614CB58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3674ED451D53FE8500450B37 /* libPods-ooApp.a */,
 				368BB0E21D53E444007B77C8 /* Bolts.framework */,
 				3695BE0A1D1B2C6B00369F53 /* FBSDKCoreKit.framework */,
 				3695BE0B1D1B2C6B00369F53 /* FBSDKLoginKit.framework */,
@@ -1894,6 +1896,7 @@
 					"\"Security\"",
 					"-framework",
 					"\"SystemConfiguration\"",
+					"$(inherited)",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oomamiapp.oomami;
@@ -1977,6 +1980,7 @@
 					"\"Security\"",
 					"-framework",
 					"\"SystemConfiguration\"",
+					"$(inherited)",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oomamiapp.oomami;
@@ -2076,7 +2080,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = BrandAsset;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				ENABLE_BITCODE = NO;
@@ -2140,6 +2144,7 @@
 					"\"Security\"",
 					"-framework",
 					"\"SystemConfiguration\"",
+					"$(inherited)",
 				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oomamiapp.oomami;

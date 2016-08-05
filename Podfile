@@ -1,4 +1,4 @@
-platform :ios, '8.4'
+platform :ios, '8.0'
 
 target 'ooApp' do
     pod 'AFNetworking', '~> 2.0'
