@@ -387,26 +387,12 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     //    NSLog(@"the boundingbox is %@", str);
     //
     //    return MAX(minHeight, CGRectGetHeight(commentBoundingBox) + CGRectGetHeight(nameBoundingBox) + 2 * kGeomSpaceEdge );
-    
 }
 
-//------------------------------------------------------------------------------
-// Name:    didSelectRowAtIndexPath
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+- (void)userTappedImageOfUser:(UserObject *)user; {
     
-    NSInteger row = indexPath.row;
-    UserObject *user = nil;
-    
-    @synchronized(self.usersArray)  {
-        if (row < _usersArray.count) {
-            user = _usersArray[row];
-        }
-    }
-    if (user) {
-        [self goToProfile:user];
-    }
+    [self goToProfile:user];
 }
 
 - (void)goToProfile:(UserObject *)user {
@@ -427,10 +413,25 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     }
 }
 
-- (void) userTappedImageOfUser:(UserObject*)user; {
-    
-    [self goToProfile:user];
-}
+
+//------------------------------------------------------------------------------
+// Name:    didSelectRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//
+//    NSInteger row = indexPath.row;
+//    UserObject *user = nil;
+//
+//    @synchronized(self.usersArray)  {
+//        if (row < _usersArray.count) {
+//            user = _usersArray[row];
+//        }
+//    }
+//    if (user) {
+//        [self goToProfile:user];
+//    }
+//}
 
 @end
 

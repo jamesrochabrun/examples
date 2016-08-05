@@ -110,15 +110,15 @@
         [weakSelf setNeedsLayout];
     });
 }
-//
-//- (void)prepareForReuse {
-//    
-//    [super prepareForReuse];
+
+- (void)prepareForReuse {
+    
+    [super prepareForReuse];
 //    _labelName.text = nil;
 //    _commentDateLabel = nil;
 //    _commentLabel =  nil;
-//    [_userView clear];
-//}
+    [_userView clear];
+}
 
 - (void)layoutSubviews {
     [super layoutSubviews];
