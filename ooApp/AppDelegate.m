@@ -55,24 +55,6 @@
     }
     
     self.window.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
-//    NSDictionary *notification;
-//    
-//    notification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-//    if (!notification) {
-//        UIAlertView *av = [UIAlertView new];
-//        av.message = @"no remote not";
-//        [av show];
-//    } else {
-////        UIAlertView *av = [UIAlertView new];
-////        av.message = [NSString stringWithFormat:@"%@", notification] ;
-////        [av show];
-//
-//        NotificationObject *n = [self parseNotification:notification];
-//        if (n) {
-//            [_notifications addObject:n];
-//            message([NSString stringWithFormat:@"type=%lu id=%lu", (unsigned long)n.type, (unsigned long)n.identifier]);
-//        }
-//    }
 
     _launchedURL = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
     

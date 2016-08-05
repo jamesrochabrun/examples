@@ -16,8 +16,6 @@
 @property (nonatomic, strong) UIButton *displayDropDownButton;
 @property (nonatomic, strong) UIView *mainCoverView;
 @property (nonatomic, strong) UITapGestureRecognizer *tap;
-//@property (nonatomic, strong) UIBarButtonItem *rightNavButton;
-//@property (nonatomic, strong) UIButton *rightBarButtonView;
 @property (nonatomic, strong) UIView *leftBarButtonView;
 @property (nonatomic, strong) UIView *rightBarButtonView;
 @property (nonatomic, strong) NSMutableArray *leftBarItems;
@@ -34,37 +32,22 @@
     
     _aiv = [[OOAIV alloc] initWithFrame:CGRectMake(0, 0, 100, 80)];
     _aiv.message = @"loading";
-
+    
     CGRect frame = _aiv.frame;
     frame.origin.x = (width(self.view) - width(_aiv))/2;
     frame.origin.y = ((height(self.view) - kGeomHeightNavBarStatusBar - kGeomHeightTabBar) - height(_aiv))/2;
     _aiv.frame = frame;
     [self.view addSubview:_aiv];
 
-//    _rightBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
-//    _rightBarButtonView.frame = CGRectMake(0, 0, 40, 40);
-//    [_rightBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-//    [_rightBarButtonView setTitleColor:UIColorRGBA(kColorTextActiveFaded) forState:UIControlStateNormal];
-//    _rightBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-//
-//    _rightNavButton = [[UIBarButtonItem alloc] initWithCustomView:_rightBarButtonView];
-//    self.navigationItem.rightBarButtonItem = _rightNavButton;
-    
     _leftBarItems = [NSMutableArray array];
     _rightBarItems = [NSMutableArray array];
     _leftBarButtonView = [UIView new];
     _rightBarButtonView = [UIView new];
 
-//    _leftBarButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
-//    _leftBarButtonView.frame = CGRectMake(0, 0, 40, 40);
-//    [_leftBarButtonView withText:@"" fontSize:kGeomIconSize width:40 height:40 backgroundColor:kColorClear target:nil selector:nil];
-//    [_leftBarButtonView setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-//    _leftBarButtonView.titleLabel.font = [UIFont fontWithName:kFontIcons size:kGeomIconSize];
-//    _leftNavButton = [[UIBarButtonItem alloc] initWithCustomView:_leftBarButtonView];
     self.navigationItem.leftBarButtonItems = _leftBarItems;// @[_leftNavButton];
     
     _navTitleView = [[NavTitleView alloc] init];
-    _navTitleView.frame = CGRectZero;// (0, 0, [UIScreen mainScreen].bounds.size.width-250 /*- kGeomWidthMenuButton*2*/, 44);
+    _navTitleView.frame = CGRectZero;
     self.navigationItem.titleView = _navTitleView;
     
     _mainCoverView = [[UIView alloc] initWithFrame:self.view.frame];

@@ -45,10 +45,13 @@ static NSString * const cellIdentifier = @"locationCell";
         _locationSearchBar.barTintColor = UIColorRGBA(kColorBlack);
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         _locationSearchBar.delegate = self;
-        _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         _locationSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
+        _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
+        _locationSearchBar.layer.borderColor = UIColorRGBA(kColorNavBar).CGColor;
+        _locationSearchBar.layer.borderWidth = 1;
+
     }
     return self;
 }

@@ -27,6 +27,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    self.view.backgroundColor = UIColorRGBA(kColorBackgroundTheme);
+    
     self.tabBar.backgroundColor = UIColorRGBA(kColorTabBar);
     self.tabBar.backgroundImage = [UIImage imageWithColor:UIColorRGBA(kColorTabBar)];
     self.tabBar.tintColor = UIColorRGBA(kColorTextActive);

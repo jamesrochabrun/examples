@@ -216,6 +216,9 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     _searchBar.placeholder = kSearchPlaceholderPeople;
     _searchBar.backgroundColor = UIColorRGBA(kColorNavBar);
     _searchBar.barTintColor = UIColorRGBA(kColorNavBar);
+    _searchBar.layer.borderColor = UIColorRGBA(kColorNavBar).CGColor;
+    _searchBar.layer.borderWidth = 1;
+
     _searchBar.delegate = self;
     [self.view addSubview:_searchBar];
     _searchBar.alpha =0;
@@ -429,8 +432,6 @@ static NSString *const kConnectEmptyCellIdentifier = @"connectTableCellEmpty";
     [OOAPI getFollowingForUser:currentUser.userID success:^(NSArray *users) {
         weakSelf.followeesArray = users;
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSArray *visibleRowIndeces = [weakSelf.tableAccordion indexPathsForVisibleRows];
-            //[weakSelf.tableAccordion reloadRowsAtIndexPaths:visibleRowIndeces withRowAnimation:UITableViewRowAnimationAutomatic];
             [weakSelf.tableAccordion reloadData];
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

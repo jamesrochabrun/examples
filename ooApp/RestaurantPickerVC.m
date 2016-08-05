@@ -62,7 +62,7 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         _searchBar.barTintColor = UIColorRGBA(kColorNavBar);
         _searchBar.keyboardType = UIKeyboardTypeAlphabet;
         _searchBar.delegate = self;
-        _searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
+        _searchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
         _searchBar.keyboardType = UIKeyboardTypeAlphabet;
         _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         _searchBar.translatesAutoresizingMaskIntoConstraints = NO;
@@ -78,10 +78,13 @@ static NSString * const cellIdentifier = @"restaurantPickerCell";
         [l sizeToFit];
         [_locationSearchBar setImage:[UIImage imageFromView:l] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
         _locationSearchBar.delegate = self;
-        _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
+        _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
         _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
         _locationSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
+        _locationSearchBar.layer.borderColor = UIColorRGBA(kColorNavBar).CGColor;
+        _locationSearchBar.layer.borderWidth = 1;
+
                 
         _currentSearchBar = _searchBar;
         

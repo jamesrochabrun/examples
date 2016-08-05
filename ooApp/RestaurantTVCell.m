@@ -67,7 +67,7 @@ typedef enum {
     OOAPI *api = [[OOAPI alloc] init];
     __weak RestaurantTVCell *weakSelf = self;
     
-    if (!_restaurant.restaurantID) {
+    if (_restaurant && !_restaurant.restaurantID) {
         _roRestaurant = [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
             _restaurant = restaurant;
             if (_restaurant.restaurantID) {

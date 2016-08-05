@@ -59,6 +59,7 @@
 @property (nonatomic, strong) UIView *closedButton;
 @property (nonatomic, strong) UILabel *closedIcon1, *closedIcon2, *message1, *message2;
 @property (nonatomic, strong) UITapGestureRecognizer *closedTap;
+@property (nonatomic, assign) BOOL gotRestaurantDetails; //slight hack, but gave up
 
 
 @end
@@ -197,6 +198,8 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
                                              selector:@selector(handlePhotoDeleted:)
                                                  name:kNotificationPhotoDeleted object:nil];
     [self.view bringSubviewToFront:self.uploadProgressBar];
+    
+    _gotRestaurantDetails = NO;
 }
 
 - (void)closedTapped {
@@ -587,17 +590,19 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
 
 //    NavTitleObject *nto = [[NavTitleObject alloc] initWithHeader:restaurant.name subHeader:nil];
 //    self.navTitle = nto;
-    
-    [self getRestaurant];
+    if (!_gotRestaurantDetails) {
+        [self getRestaurant];
+    }
 }
 
 - (void)getRestaurant {
     __weak RestaurantVC *weakSelf = self;
     OOAPI *api = [[OOAPI alloc] init];
     
-    if (!_restaurant.restaurantID) {
+    if (_restaurant && !_restaurant.restaurantID) {
         [api getRestaurantWithID:_restaurant.googleID source:kRestaurantSourceTypeGoogle success:^(RestaurantObject *restaurant) {
-            _restaurant = restaurant;
+            weakSelf.gotRestaurantDetails = YES;
+            weakSelf.restaurant = restaurant;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (weakSelf.restaurant.permanentlyClosed) {
                     weakSelf.closedButton.hidden = NO;
@@ -609,13 +614,19 @@ static NSString *const kRestaurantPhotosHeaderIdentifier = @"RestaurantPhotosHea
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             ;
         }];
-    } else {
-        if (_restaurant.permanentlyClosed) {
-            _closedButton.hidden = NO;
-            [self.view bringSubviewToFront:_closedButton];
-        }
-        [_collectionView reloadData];
-        [self getListsForRestaurant];
+    } else if (_restaurant) {
+        [OOAPI getRestaurantWithID:_restaurant.restaurantID success:^(RestaurantObject *restaurant) {
+            weakSelf.gotRestaurantDetails = YES;
+            weakSelf.restaurant = restaurant;
+            if (weakSelf.restaurant.permanentlyClosed) {
+                weakSelf.closedButton.hidden = NO;
+                [weakSelf.view bringSubviewToFront:weakSelf.closedButton];
+            }
+            [weakSelf.collectionView reloadData];
+            [weakSelf getListsForRestaurant];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            ;
+        }];
     }
 }
 

@@ -92,6 +92,9 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     _locationSearchBar.delegate = self;
     _locationSearchBar.placeholder = LOCAL(@"Around Here");
     _locationSearchBar.enablesReturnKeyAutomatically = NO;
+    _locationSearchBar.layer.borderColor = UIColorRGBA(kColorNavBar).CGColor;
+    _locationSearchBar.layer.borderWidth = 1;
+    
     
     _locationsBgView = [UIView new];
     _locationsBgView.backgroundColor = UIColorRGBA(kColorNavBar);
@@ -103,10 +106,11 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     l.text = kFontIconLocation;
     [l sizeToFit];
     [_locationSearchBar setImage:[UIImage imageFromView:l] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
-    _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDark;
+    _locationSearchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
     _locationSearchBar.keyboardType = UIKeyboardTypeAlphabet;
     _locationSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;
     _locationSearchBar.translatesAutoresizingMaskIntoConstraints = NO;
+    
     [_locationsBgView addSubview:_locationSearchBar];
 
     _mapView = [GMSMapView mapWithFrame:CGRectZero camera:_camera];
@@ -813,16 +817,10 @@ static NSUInteger const kMinCharactersForAutoSearch = 3;
     if (![objectTVCell isKindOfClass:[RestaurantTVCell class]]) return;
     
     RestaurantObject *restaurant = ((RestaurantTVCell *)objectTVCell).restaurant;
-    MediaItemObject *mio = ([restaurant.mediaItems count]) ? [restaurant.mediaItems objectAtIndex:0] : nil;
-    
-//    if (!mio) {
-        RestaurantVC *vc = [[RestaurantVC alloc] init];
-        vc.restaurant = restaurant;
-        [self.navigationController pushViewController:vc animated:YES];
-        return; //can pop up a message to tell the user to upload a photo
-//    } else {
-//        [self showRestaurantPhotoFullScreen:mio];
-//    }
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = restaurant;
+    [self.navigationController pushViewController:vc animated:YES];
+    return; //can pop up a message to tell the user to upload a photo
 }
 
 - (void)showRestaurantPhotoFullScreen:(id)sender {

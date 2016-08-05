@@ -350,7 +350,7 @@
 {
     [_username resignFirstResponder];
     
-    UserObject *userInfo= [Settings sharedInstance].userObject;
+//    UserObject *userInfo= [Settings sharedInstance].userObject;
     
     @try {
         [self performSegueWithIdentifier:@"mainUISegue" sender:self];

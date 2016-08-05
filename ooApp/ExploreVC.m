@@ -97,6 +97,9 @@ typedef enum: char {
     _searchBar.keyboardAppearance = UIKeyboardAppearanceDefault;
     _searchBar.keyboardType = UIKeyboardTypeAlphabet;
     _searchBar.autocorrectionType = UITextAutocorrectionTypeYes;
+    _searchBar.layer.borderColor = UIColorRGBA(kColorNavBar).CGColor;
+    _searchBar.layer.borderWidth = 1;
+
 
     UITextField *searchTextField = [_searchBar valueForKey:@"_searchField"];
     searchTextField.textAlignment = NSTextAlignmentCenter;

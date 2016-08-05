@@ -924,10 +924,11 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     _searchBar = [UISearchBar new];
     _searchBar.alpha = 0;
     _searchBar.delegate = self;
-    [self.view addSubview:_searchBar];
-    
+    _searchBar.layer.borderColor = UIColorRGBA(kColorNavBar).CGColor;
+    _searchBar.layer.borderWidth = 1;
     _searchBar.backgroundColor = UIColorRGBA(kColorNavBar);
     _searchBar.barTintColor = UIColorRGBA(kColorNavBar);
+    [self.view addSubview:_searchBar];
     
     self.automaticallyAdjustsScrollViewInsets= NO;
     self.view.autoresizesSubviews= NO;
