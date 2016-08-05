@@ -774,9 +774,9 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
     
 }
 
-- (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject {
-    ProfileVC *vc = [[ProfileVC alloc] init];
-    vc.userInfo = userObject;
+- (void)photoCell:(PhotoCVCell *)photoCell showRestaurant:(RestaurantObject *)restaurant {
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = restaurant;
     
     self.transitioningDelegate = nil;
     self.navigationController.delegate = nil;
@@ -833,7 +833,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                    weakSelf.uploading = NO;
                    dispatch_async(dispatch_get_main_queue(), ^{
                        weakSelf.uploadProgressBar.hidden = YES;
-                       [weakSelf.filterView setCurrent:2];
+                       [weakSelf.filterView setCurrent:0];
                        [weakSelf addCaption:mio];
                        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                    });
@@ -861,7 +861,7 @@ static NSString * const kPhotoCellIdentifier = @"PhotoCell";
                                weakSelf.uploading = NO;
                                dispatch_async(dispatch_get_main_queue(), ^{
                                    weakSelf.uploadProgressBar.hidden = YES;
-                                   [weakSelf.filterView setCurrent:2];
+                                   [weakSelf.filterView setCurrent:0];
                                    [weakSelf addCaption:mio];
                                    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFoodFeedNeedsUpdate object:nil];
                                });

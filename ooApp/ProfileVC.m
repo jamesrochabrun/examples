@@ -1920,12 +1920,14 @@ static NSString *const kRestaurantCellIdentifier =   @"restaurantsCell";
     }
 }
 
-- (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject
-{
-    if (_viewingOwnProfile) {
-        NSLog(@"OWN PROFILE");
-        return;
-    }
+- (void)photoCell:(PhotoCVCell *)photoCell showRestaurant:(RestaurantObject *)restaurant {
+    RestaurantVC *vc = [[RestaurantVC alloc] init];
+    vc.restaurant = restaurant;
+    
+    self.transitioningDelegate = nil;
+    self.navigationController.delegate = nil;
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio

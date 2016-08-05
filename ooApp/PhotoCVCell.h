@@ -15,7 +15,7 @@
 
 @protocol PhotoCVCellDelegate <NSObject>
 - (void)photoCell:(PhotoCVCell *)photoCell showPhotoOptions:(MediaItemObject *)mio;
-- (void)photoCell:(PhotoCVCell *)photoCell showProfile:(UserObject *)userObject;
+- (void)photoCell:(PhotoCVCell *)photoCell showRestaurant:(RestaurantObject *)restaurant;
 - (void)photoCell:(PhotoCVCell *)photoCell likePhoto:(MediaItemObject *)mio;
 - (void)photoCell:(PhotoCVCell *)photoCell userNotVerified:(MediaItemObject *)mio;
 @end

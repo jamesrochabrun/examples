@@ -18,7 +18,7 @@
 @property (nonatomic, strong) AFHTTPRequestOperation *roGetUser;
 @property (nonatomic, strong) AFHTTPRequestOperation *roGetNumLikes;
 @property (nonatomic, strong) UIImageView *backgroundImage;
-@property (nonatomic, strong) UIButton *userButton;
+@property (nonatomic, strong) UIButton *restaurantButton;
 @property (nonatomic, strong) UIButton *yumButton;
 @property (nonatomic, strong) UILabel *numYums;
 @property (nonatomic, strong) UserObject *userObject;
@@ -65,19 +65,14 @@
         _numYums = [[UILabel alloc] init];
         [_numYums withFont:[UIFont fontWithName:kFontLatoBold size:kGeomFontSizeH6] textColor:kColorTextActive backgroundColor:kColorClear];
         
-        _userButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_userButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showProfile)];
-        [_userButton.titleLabel setTextAlignment:NSTextAlignmentLeft];
-        _userButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateNormal];
-        [_userButton setTitleColor:UIColorRGBA(kColorTextActive) forState:UIControlStateDisabled];
-        _userButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+        _restaurantButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_restaurantButton withText:@"" fontSize:kGeomFontSizeSubheader width:0 height:0 backgroundColor:kColorClear target:self selector:@selector(showRestaurant)];
         
         [self addSubview:_backgroundImage];
         
         [self addSubview:_line2];
         [self addSubview:_restaurantName];
-        [self addSubview:_userButton];
+        [self addSubview:_restaurantButton];
         [self addSubview:_yumButton];
         [self addSubview:_numYums];
         [self addSubview:_caption];
@@ -94,7 +89,7 @@
         self.layer.borderWidth = 1;
         self.layer.cornerRadius = kGeomCornerRadius;
         self.clipsToBounds = YES;
-//        [DebugUtilities addBorderToViews:@[_yumButton, _caption, _numYums, _userButton, _restaurantName]];
+//        [DebugUtilities addBorderToViews:@[_yumButton, _restaurantButton]];
     }
     return self;
 }
@@ -125,6 +120,7 @@
     CGFloat w = width(self) - 2*kGeomSpaceCellPadding;
     CGFloat y;
     CGFloat imageHeightAdjust = 0;
+    
     if (_mediaItemObject.source == kMediaItemTypeOomami) {
         imageHeightAdjust = (_restaurantObject) ? 77:50;
     }
@@ -133,7 +129,12 @@
     frame.origin = CGPointMake(0,0);
     frame.size = CGSizeMake(width(self), height(self)-imageHeightAdjust);
     _backgroundImage.frame = frame;
-    
+
+    frame = _restaurantButton.frame;
+    frame.origin = CGPointMake(0,CGRectGetMaxY(_backgroundImage.frame));
+    frame.size = CGSizeMake(width(self), imageHeightAdjust);
+    _restaurantButton.frame = frame;
+
     _yumIndicator.center = _backgroundImage.center;
     
     frame = _yumButton.frame;
@@ -166,17 +167,10 @@
     _caption.frame = frame;
 }
 
-- (void)showProfile {
-    __weak PhotoCVCell *weakSelf = self;
-    if ([_delegate respondsToSelector:@selector(photoCell:showProfile:)]) {
-        _roGetUser = [OOAPI getUserWithID:_mediaItemObject.sourceUserID success:^(UserObject *user) {
-            weakSelf.userObject = user;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.delegate photoCell:self showProfile:_userObject];
-            });
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Could not get the user");
-        }];
+- (void)showRestaurant {
+    if ([_delegate respondsToSelector:@selector(photoCell:showRestaurant:)] &&
+        _restaurantObject) {
+        [self.delegate photoCell:self showRestaurant:_restaurantObject];
     }
 }
 
@@ -256,6 +250,7 @@
     _restaurantObject = restaurantObject;
     _restaurantName.text = _restaurantObject.name;
     _line2.text = [self line2String];
+    _restaurantButton.enabled = YES;
     
     [_restaurantName sizeToFit];
     [_line2 sizeToFit];
@@ -285,7 +280,7 @@
 
     _mediaItemObject = mediaItemObject;
     
-    _userButton.hidden = _caption.hidden = _numYums.hidden = _yumButton.hidden = YES;
+    _restaurantButton.hidden = _caption.hidden = _numYums.hidden = _yumButton.hidden = YES;
     _backgroundImage.image = nil;
 
     OOAPI *api = [[OOAPI alloc] init];
@@ -320,8 +315,7 @@
     _yumButton.hidden = (_mediaItemObject.source == kMediaItemTypeOomami) ? NO : YES;
     
     if (_mediaItemObject.sourceUserID) {
-        [_userButton setTitle:[NSString stringWithFormat:@"@%@", _mediaItemObject.sourceUsername] forState:UIControlStateNormal];
-        _userButton.hidden = YES;
+        _restaurantButton.hidden = NO;
         _numYums.text = [NSString stringWithFormat:@"%lu", (unsigned long)_mediaItemObject.yumCount];
         [_numYums sizeToFit];
         _numYums.hidden = (_mediaItemObject.yumCount) ? NO : YES;
@@ -329,14 +323,8 @@
         _caption.hidden = NO;
         _caption.text = [self captionString];
     } else {
-        _userButton.hidden = YES;
+        _restaurantButton.hidden = YES;
         _caption.hidden = YES;
-    }
-    
-    if (_mediaItemObject.sourceUserID == [Settings sharedInstance].userObject.userID) {
-        _userButton.enabled = NO;
-    } else {
-        _userButton.enabled = YES;
     }
     
     [self setNeedsLayout];
