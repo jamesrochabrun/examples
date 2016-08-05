@@ -87,6 +87,8 @@ extern NSInteger parseIntegerOrNullFromServer(id object);
 extern NSUInteger parseUnsignedIntegerOrNullFromServer(id object);
 extern NSArray *parseArrayOrNullFromServer(id object);
 extern BOOL parseBoolOrNullFromServer(id object);
+extern CGFloat parseFloatOrNullFromServer (id object);
+
 
 extern BOOL isValidEmailAddress(NSString *string);
 
