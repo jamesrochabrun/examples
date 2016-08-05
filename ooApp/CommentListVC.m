@@ -115,7 +115,11 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //------------------------------------------------------------------------------
 - (void)textFieldDidChange:(UITextField *)textField {
     
-    if (textField.text.length <= 0) {
+    NSString *rawString = [textField text];
+    NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSString *trimmed = [rawString stringByTrimmingCharactersInSet:whitespace];
+    
+    if ([trimmed length] == 0) {
         _textFieldView.postTextButton.userInteractionEnabled = NO;
         _textFieldView.postTextButton.alpha = 0.7f;
     } else {

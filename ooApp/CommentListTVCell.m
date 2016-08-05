@@ -22,7 +22,6 @@
 
 @end
 
-
 @implementation CommentListTVCell
 
 - (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -97,7 +96,6 @@
         weakSelf.labelName.text = [NSString stringWithFormat:@"@%@", user.username];
         [weakSelf setNeedsLayout];
     });
-    
 }
 
 - (void)setComment:(CommentObject *)comment {
@@ -154,7 +152,7 @@
     
     [_userView layoutIfNeeded];
     
-    [DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel, _commentDateLabel]];
+    //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel, _commentDateLabel]];
 }
 
 + (CGFloat)heightForComment:(CommentObject *)comment {
