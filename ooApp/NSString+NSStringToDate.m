@@ -24,15 +24,15 @@
     
     if (seconds <= kMinute) {
         //return NSLocalizedString(@"moments ago", @"datetime string");
-        return timeStamp = [NSString stringWithFormat:@"%li sec", (NSInteger)seconds];
+        return timeStamp = [NSString stringWithFormat:@"%lisec", (NSInteger)seconds];
 
     } else if (seconds <= kMinute + 29) {
         //return NSLocalizedString(@"1 minute ago", @"datetime string");
-        return timeStamp = [NSString stringWithFormat:@"%li min", (NSInteger)seconds/kMinute];
+        return timeStamp = [NSString stringWithFormat:@"%limin", (NSInteger)seconds/kMinute];
         
     } else if (seconds <= 44 * kMinute + 29) {
         //return [[NSString alloc] initWithFormat:NSLocalizedString(@"%d minutes ago", @"datetime string"),(NSInteger)(seconds/kMinutes == 1 ? 2 : seconds/kMinutes)];];
-        return timeStamp = [NSString stringWithFormat:@"%li min", (NSInteger)(seconds/kMinute == 1 ? 2 : seconds/kMinute)];
+        return timeStamp = [NSString stringWithFormat:@"%limin", (NSInteger)(seconds/kMinute == 1 ? 2 : seconds/kMinute)];
 
     } else if (seconds <= 90 * kMinute) {
         //return NSLocalizedString(@"about 1 hour ago", @"datetime string");
@@ -40,7 +40,7 @@
         
     } else if (seconds <= 23 * kHour + 59 * kMinute + 29) {
         //return [[NSString alloc] initWithFormat:NSLocalizedString(@"about %d hours ago", @"datetime string"),(NSInteger)(seconds/kHours)];
-        NSString *timeStamp = [NSString stringWithFormat:@"%ld h", (NSInteger)(seconds/kHour)];
+        NSString *timeStamp = [NSString stringWithFormat:@"%ldh", (NSInteger)(seconds/kHour)];
         NSLog(@"the timestamp is  %@", timeStamp);
         return timeStamp;
         
@@ -50,15 +50,15 @@
         
     } else if (seconds <= 29 * kDay + 23 * kHour + 59 * kMinute + 29) {
         //return [[NSString alloc] initWithFormat:NSLocalizedString(@"%d days ago", @"datetime string"),(NSInteger)seconds/kDays];
-        return timeStamp = [NSString stringWithFormat:@"%ld d" , (NSInteger)seconds/kDay];
+        return timeStamp = [NSString stringWithFormat:@"%ldd" , (NSInteger)seconds/kDay];
         
     } else if (seconds <= 59 * kDay + 23 * kHour + 59 * kMinute + 29) {
         //return NSLocalizedString(@"1 month ago", @"datetime string");
-        return  timeStamp = @"1 m";
+        return  timeStamp = @"1m";
         
     } else if (seconds <= 365 * kDay - 1) {
         //return [[NSString alloc] initWithFormat:NSLocalizedString(@"%d months ago", @"datetime string"), (NSInteger)seconds/kMonths];
-        return timeStamp = [NSString stringWithFormat:@"%ld m",(NSInteger)seconds/kMonth];
+        return timeStamp = [NSString stringWithFormat:@"%ldm",(NSInteger)seconds/kMonth];
         
     } else if (seconds <= 365 * kDay + 3 * kMonth) {
         //return NSLocalizedString(@"1 year ago", @"datetime string");
@@ -70,11 +70,11 @@
         
     } else if (seconds <= 2 * 365 * kDay - 1) {
         //return NSLocalizedString(@"2 years ago", @"datetime string");
-        return timeStamp = @"2 y";
+        return timeStamp = @"2y";
         
     } else {
        // return [[NSString alloc] initWithFormat:NSLocalizedString(@"%d years ago", @"datetime string"), (NSInteger)seconds/(365*kDays)];
-        return timeStamp = [NSString stringWithFormat:@"%ld y", (NSInteger)seconds/(365 * kDay)];
+        return timeStamp = [NSString stringWithFormat:@"%ldy", (NSInteger)seconds/(365 * kDay)];
         
     }
 }
