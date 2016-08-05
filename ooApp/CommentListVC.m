@@ -25,6 +25,7 @@
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) TextFieldView *textFieldView;
 @property CGFloat keyBoardHeight;
+@property CGFloat h;
 
 @end
 
@@ -43,7 +44,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //- (void)setNeedsRefresh {
 //    _needRefresh = YES;
 //}
-
 - (void)setCommentsArray:(NSMutableArray *)commentsArray {
     
     if (_commentsArray == commentsArray) return;
@@ -198,6 +198,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     frame.size.height = kGeomHeightTabBar;
     frame.size.width = width(self.view);
     _textFieldView.frame = frame;
+    
+    
 }
 
 - (void)keyboardWillShow:(NSNotification*)notification {
@@ -369,6 +371,19 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
     CommentObject *comment = [_commentsArray objectAtIndex:indexPath.row];
     return [CommentListTVCell heightForComment:comment];
+    
+    //other way to avoid a class method :
+    //    CGFloat minHeight = kGeomDimensionsIconButton + kGeomSpaceEdge * 2;
+    //    UIFont *font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4];// [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    //    CGRect commentBoundingBox = [comment.content boundingRectWithSize:CGSizeMake(width(self.view) - (2 * kGeomSpaceEdge) -kGeomDimensionsIconButton - 20, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
+    //    font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
+    //    CGRect nameBoundingBox = [@"FFF" boundingRectWithSize:CGSizeMake(width(self.view) - (2 * kGeomSpaceEdge) - kGeomDimensionsIconButton, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
+    //
+    //    NSString *str = NSStringFromCGRect(commentBoundingBox);
+    //    NSLog(@"the boundingbox is %@", str);
+    //
+    //    return MAX(minHeight, CGRectGetHeight(commentBoundingBox) + CGRectGetHeight(nameBoundingBox) + 2 * kGeomSpaceEdge );
+    
 }
 
 //------------------------------------------------------------------------------

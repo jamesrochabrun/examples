@@ -17,10 +17,8 @@
 
 
 @property (nonatomic, strong) OOUserView *userView;
-@property (nonatomic, strong) UILabel *labelName;
 @property (nonatomic, strong) UserObject *userInfo;
 @property (nonatomic, strong) UILabel *commentDateLabel;
-@property (nonatomic, strong) UILabel *commentLabel;
 
 @end
 

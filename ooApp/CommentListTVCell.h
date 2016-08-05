@@ -23,6 +23,10 @@
 @property (nonatomic, strong) UserObject *user;
 @property (nonatomic, weak) UIViewController *vc;
 @property (nonatomic, weak) id<CommentListTVCDelegate>delegate;
+@property (nonatomic, strong) UILabel *commentLabel;
+@property (nonatomic, strong) UILabel *labelName;
+
+
 
 
 @end
