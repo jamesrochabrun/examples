@@ -536,7 +536,7 @@ static CGFloat kNextPhotoTolerance = 40;
     height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
     frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2 + kGeomSpaceEdge;
-    frame.origin.x = CGRectGetMaxX(_userViewButton.frame) + kGeomSpaceEdge;
+    frame.origin.x = CGRectGetMaxX(_userViewButton.frame);
     _captionButton.frame = frame;
     
     _fv.center = self.view.center;
