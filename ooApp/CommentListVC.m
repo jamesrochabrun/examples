@@ -395,24 +395,25 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 // Purpose:
 //------------------------------------------------------------------------------
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     NSInteger row = indexPath.row;
-    UserObject *u = nil;
+    UserObject *user = nil;
     
     @synchronized(self.usersArray)  {
         if (row < _usersArray.count) {
-            u = _usersArray[row];
+            user = _usersArray[row];
         }
     }
-    if (u) {
-        [self goToProfile:u];
+    if (user) {
+        [self goToProfile:user];
     }
 }
 
-- (void)goToProfile:(UserObject *)u {
+- (void)goToProfile:(UserObject *)user {
     
     ProfileVC *vc= [[ProfileVC alloc] init];
-    vc.userInfo = u;
-    vc.userID = u.userID;
+    vc.userInfo = user;
+    vc.userID = user.userID;
     [self.navigationController  pushViewController:vc animated:YES];
 }
 //------------------------------------------------------------------------------
