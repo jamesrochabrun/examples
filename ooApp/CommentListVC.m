@@ -25,6 +25,7 @@
 @property (nonatomic) BOOL needRefresh;
 @property (nonatomic, strong) TextFieldView *textFieldView;
 @property CGFloat keyBoardHeight;
+@property CGFloat h;
 
 @end
 
@@ -43,7 +44,6 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //- (void)setNeedsRefresh {
 //    _needRefresh = YES;
 //}
-
 - (void)setCommentsArray:(NSMutableArray *)commentsArray {
     
     if (_commentsArray == commentsArray) return;
@@ -115,7 +115,11 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
 //------------------------------------------------------------------------------
 - (void)textFieldDidChange:(UITextField *)textField {
     
-    if (textField.text.length <= 0) {
+    NSString *rawString = [textField text];
+    NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSString *trimmed = [rawString stringByTrimmingCharactersInSet:whitespace];
+    
+    if ([trimmed length] == 0) {
         _textFieldView.postTextButton.userInteractionEnabled = NO;
         _textFieldView.postTextButton.alpha = 0.7f;
     } else {
@@ -198,6 +202,8 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     frame.size.height = kGeomHeightTabBar;
     frame.size.width = width(self.view);
     _textFieldView.frame = frame;
+    
+    
 }
 
 - (void)keyboardWillShow:(NSNotification*)notification {
@@ -369,31 +375,31 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     
     CommentObject *comment = [_commentsArray objectAtIndex:indexPath.row];
     return [CommentListTVCell heightForComment:comment];
-}
-
-//------------------------------------------------------------------------------
-// Name:    didSelectRowAtIndexPath
-// Purpose:
-//------------------------------------------------------------------------------
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger row = indexPath.row;
-    UserObject *u = nil;
     
-    @synchronized(self.usersArray)  {
-        if (row < _usersArray.count) {
-            u = _usersArray[row];
-        }
-    }
-    if (u) {
-        [self goToProfile:u];
-    }
+    //other way to avoid a class method :
+    //    CGFloat minHeight = kGeomDimensionsIconButton + kGeomSpaceEdge * 2;
+    //    UIFont *font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH4];// [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    //    CGRect commentBoundingBox = [comment.content boundingRectWithSize:CGSizeMake(width(self.view) - (2 * kGeomSpaceEdge) -kGeomDimensionsIconButton - 20, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
+    //    font = [UIFont fontWithName:kFontLatoRegular size:kGeomFontSizeH3];
+    //    CGRect nameBoundingBox = [@"FFF" boundingRectWithSize:CGSizeMake(width(self.view) - (2 * kGeomSpaceEdge) - kGeomDimensionsIconButton, CGFLOAT_MAX) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) attributes:@{NSFontAttributeName : font} context:nil];
+    //
+    //    NSString *str = NSStringFromCGRect(commentBoundingBox);
+    //    NSLog(@"the boundingbox is %@", str);
+    //
+    //    return MAX(minHeight, CGRectGetHeight(commentBoundingBox) + CGRectGetHeight(nameBoundingBox) + 2 * kGeomSpaceEdge );
 }
 
-- (void)goToProfile:(UserObject *)u {
+
+- (void)userTappedImageOfUser:(UserObject *)user; {
+    
+    [self goToProfile:user];
+}
+
+- (void)goToProfile:(UserObject *)user {
     
     ProfileVC *vc= [[ProfileVC alloc] init];
-    vc.userInfo = u;
-    vc.userID = u.userID;
+    vc.userInfo = user;
+    vc.userID = user.userID;
     [self.navigationController  pushViewController:vc animated:YES];
 }
 //------------------------------------------------------------------------------
@@ -407,10 +413,25 @@ NSString *const kCommentsTableReuseIdentifierEmpty = @"commentListTableCellEmpty
     }
 }
 
-- (void) userTappedImageOfUser:(UserObject*)user; {
-    
-    [self goToProfile:user];
-}
+
+//------------------------------------------------------------------------------
+// Name:    didSelectRowAtIndexPath
+// Purpose:
+//------------------------------------------------------------------------------
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//
+//    NSInteger row = indexPath.row;
+//    UserObject *user = nil;
+//
+//    @synchronized(self.usersArray)  {
+//        if (row < _usersArray.count) {
+//            user = _usersArray[row];
+//        }
+//    }
+//    if (user) {
+//        [self goToProfile:user];
+//    }
+//}
 
 @end
 

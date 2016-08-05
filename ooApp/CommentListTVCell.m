@@ -17,13 +17,10 @@
 
 
 @property (nonatomic, strong) OOUserView *userView;
-@property (nonatomic, strong) UILabel *labelName;
 @property (nonatomic, strong) UserObject *userInfo;
 @property (nonatomic, strong) UILabel *commentDateLabel;
-@property (nonatomic, strong) UILabel *commentLabel;
 
 @end
-
 
 @implementation CommentListTVCell
 
@@ -99,7 +96,6 @@
         weakSelf.labelName.text = [NSString stringWithFormat:@"@%@", user.username];
         [weakSelf setNeedsLayout];
     });
-    
 }
 
 - (void)setComment:(CommentObject *)comment {
@@ -114,15 +110,15 @@
         [weakSelf setNeedsLayout];
     });
 }
-//
-//- (void)prepareForReuse {
-//    
-//    [super prepareForReuse];
+
+- (void)prepareForReuse {
+    
+    [super prepareForReuse];
 //    _labelName.text = nil;
 //    _commentDateLabel = nil;
 //    _commentLabel =  nil;
-//    [_userView clear];
-//}
+    [_userView clear];
+}
 
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -156,7 +152,7 @@
     
     [_userView layoutIfNeeded];
     
-    [DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel, _commentDateLabel]];
+    //[DebugUtilities addBorderToViews:@[_userView, _labelName, _commentLabel, _commentDateLabel]];
 }
 
 + (CGFloat)heightForComment:(CommentObject *)comment {

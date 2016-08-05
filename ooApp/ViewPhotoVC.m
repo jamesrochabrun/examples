@@ -60,6 +60,7 @@
 @property (nonatomic, strong) CommentPhotoView *secondCommentView;
 @property (nonatomic, strong) NSMutableArray *commentPhotoViewsArray;
 @property (nonatomic, strong) NSMutableArray *commentsArray;
+@property BOOL hide;
 
 @end
 
@@ -211,7 +212,7 @@ static CGFloat kNextPhotoTolerance = 40;
                                                    object:nil];
 
          //        [DebugUtilities addBorderToViews:@[self.view]];
-        //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
+    //[DebugUtilities addBorderToViews:@[_closeButton, _optionsButton, _restaurantName, _iv, _yumButton, _userButton, _userViewButton, _captionButton, _mioDateCreated, _seeYummersButton, _seeCommentsButton, _share , _commentCaptionButton]];
     }
     return self;
 }
@@ -407,6 +408,7 @@ static CGFloat kNextPhotoTolerance = 40;
     for (NSUInteger i = (_commentsArray.count < 5)?0:(_commentsArray.count - 5); i < _commentsArray.count; i++) {
         cPV = [CommentPhotoView new];
         cPV.delegate = self;
+        cPV.hidden = !_hide;
         [cPV.userCommentButton addTarget:self action:@selector(showComments) forControlEvents:UIControlEventTouchUpInside];
         [_commentPhotoViewsArray addObject:cPV];
         
@@ -513,21 +515,28 @@ static CGFloat kNextPhotoTolerance = 40;
     frame.size.height = (_mio.source == kMediaItemTypeOomami) ? kGeomDimensionsIconButton : 0;
     _userButton.frame = frame;
     
+    [_mioDateCreated sizeToFit];
     frame = _mioDateCreated.frame;
-    frame.size.height = kGeomDimensionsIconButton;
-    CGFloat w2 = [_mioDateCreated sizeThatFits:CGSizeMake(0, frame.size.height)].width;
-    frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
-    frame.origin.x = CGRectGetMaxX(self.view.bounds) - kGeomDimensionsIconButton - kGeomSpaceEdge;
-    frame.origin.y =  CGRectGetMinY(_userButton.frame);
+    frame.origin.x = width(self.view) - frame.size.width - kGeomSpaceEdge;
+    frame.origin.y = CGRectGetMaxY(_iv.frame) + kGeomSpaceEdge;
     _mioDateCreated.frame = frame;
+    
+    //date label at the bottom
+//    frame = _mioDateCreated.frame;
+//    frame.size.height = kGeomDimensionsIconButton;
+//    CGFloat w2 = [_mioDateCreated sizeThatFits:CGSizeMake(0, frame.size.height)].width;
+//    frame.size.width = (kGeomDimensionsIconButton > w2) ? kGeomDimensionsIconButton : w2;
+//    frame.origin.x = CGRectGetMaxX(self.view.bounds) - kGeomDimensionsIconButton - kGeomSpaceEdge;
+//    frame.origin.y =  CGRectGetMinY(_userButton.frame);
+//    _mioDateCreated.frame = frame;
     
     CGFloat height;
     frame = _captionButton.frame;
-    frame.size.width = CGRectGetMinX(_mioDateCreated.frame) - CGRectGetMaxX(_userViewButton.frame);
+    frame.size.width = CGRectGetMinX(_mioDateCreated.frame) - CGRectGetMaxX(_userViewButton.frame) - kGeomSpaceEdge * 2;
     height = [_captionButton.titleLabel sizeThatFits:CGSizeMake(frame.size.width, 200)].height;
     frame.size.height = (kGeomHeightButton > height) ? kGeomHeightButton : height;
     frame.origin.y = CGRectGetMinY(_userViewButton.frame) + (CGRectGetHeight(_userViewButton.frame) - frame.size.height)/2 + kGeomSpaceEdge;
-    frame.origin.x = (width(self.view) - frame.size.width) / 2;
+    frame.origin.x = CGRectGetMaxX(_userViewButton.frame);
     _captionButton.frame = frame;
     
     _fv.center = self.view.center;
@@ -575,15 +584,16 @@ static CGFloat kNextPhotoTolerance = 40;
         v.frame = frame;
     }
     
+    _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
+    _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) * 2, CGRectGetMaxY(_yumButton.frame), buttonWidth, kGeomHeightButton);
+    
     if (_commentPhotoViewsArray.count > 0) {
         CommentPhotoView *cPV = [_commentPhotoViewsArray lastObject];
         _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(cPV.frame));
     } else {
         _backgroundView.contentSize = CGSizeMake(width(self.view), CGRectGetMaxY(_share.frame));
     }
-    
-    _seeCommentsButton.frame = CGRectMake(0, CGRectGetMaxY(_share.frame), buttonWidth, kGeomHeightButton);
-    _seeYummersButton.frame = CGRectMake((buttonWidth + kGeomSpaceInter) * 2, CGRectGetMaxY(_yumButton.frame), buttonWidth, kGeomHeightButton);
+ 
 }
 
 
@@ -605,6 +615,7 @@ static CGFloat kNextPhotoTolerance = 40;
     for (CommentPhotoView *cPV in _commentPhotoViewsArray) {
         cPV.hidden = !show;
     }
+    _hide = show;
 }
 
 - (void)setComponentsAlpha:(CGFloat)alpha {

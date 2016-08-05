@@ -22,7 +22,12 @@
 @property (nonatomic, strong) CommentObject *comment;
 @property (nonatomic, strong) UserObject *user;
 @property (nonatomic, weak) UIViewController *vc;
-@property (nonatomic, weak) id<CommentListTVCDelegate>delegate;
+@property (nonatomic, weak) id <CommentListTVCDelegate> delegate;
+//make this properties public if we want to add the logic of the height of the cell in the commentListVC
+@property (nonatomic, strong) UILabel *commentLabel;
+@property (nonatomic, strong) UILabel *labelName;
+
+
 
 
 @end
